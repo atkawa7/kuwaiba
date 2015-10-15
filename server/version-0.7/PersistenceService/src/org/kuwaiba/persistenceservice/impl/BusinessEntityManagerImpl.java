@@ -1212,8 +1212,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                             
                             List<Node> listTypeNodes = Util.getRealValue(attributes.get(att.getName()), listTypeNode);
                             
-                            if (listTypeNodes.isEmpty())
-                                throw new InvalidArgumentException(String.format("At least one of list type items could not be found. Check attribute definition for %s", att.getName()), Level.INFO);
+                            //if (listTypeNodes.isEmpty())
+                            //    throw new InvalidArgumentException(String.format("At least one of list type items could not be found. Check attribute definition for %s", att.getName()), Level.INFO);
                       
                             //Create the new relationships
                             for (Node item : listTypeNodes){
