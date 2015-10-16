@@ -56,19 +56,23 @@ public class SyncService implements Runnable {
         InputOutput io = IOProvider.getDefault().getIO ("Bulk upload results", true);
         CommunicationsStub com = CommunicationsStub.getInstance();
         fileName =  com.loadDataFromFile(file, commitSize, fileType);
-        logResults = com.downloadLog(fileName);
-        if (logResults != null) {
-            BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(logResults)));
-            try {
-                String line;
-                while ((line = br.readLine()) != null)
-                    io.getOut().println (line);
-                
-                br.close();
-            }catch (IOException ex){
-                io.getOut().println ("Error reading log file");
-            }
-        }else
+        
+        if (fileName != null) {
+            logResults = com.downloadLog(fileName);
+            if (logResults != null) {
+                BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(logResults)));
+                try {
+                    String line;
+                    while ((line = br.readLine()) != null)
+                        io.getOut().println (line);
+
+                    br.close();
+                }catch (IOException ex){
+                    io.getOut().println ("Error reading log file");
+                }
+            }else
+                io.getOut().println (com.getError());
+        } else
             io.getOut().println (com.getError());
         
         io.getOut().close();

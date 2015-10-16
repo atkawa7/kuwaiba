@@ -1076,6 +1076,7 @@ public class CommunicationsStub {
      * @param endpointBId target object oid
      * @param parentClass connection's parent class
      * @param parentId connection's parent id
+     * @param type This can be either the type name or its id
      * @param connectionClass Class for the corresponding connection to be created
      * @return A local object light representing the new connection
      */
@@ -1087,7 +1088,8 @@ public class CommunicationsStub {
             valueName.getItem().add(name);
 
             StringArray valueType = new StringArray();
-            valueType.getItem().add(type);
+            if (type != null && !type.equals("0")) //0 is the dummy id of a null list type item
+                valueType.getItem().add(type);
 
             values.add(valueName);
             values.add(valueType);

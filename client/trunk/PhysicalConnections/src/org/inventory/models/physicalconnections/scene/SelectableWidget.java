@@ -19,7 +19,7 @@ import java.awt.Color;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 
 /**
- * Repeated. Show be merged with the one from ObjectView
+ * Repeated. Should be merged with the one from ObjectView
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public interface SelectableWidget {

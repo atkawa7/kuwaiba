@@ -37,10 +37,11 @@ public class PhysicalConnectionsService {
         SimpleObjectConnectionWidget lastConnectionWidget = null;
         for (LocalObjectLight element : trace){
             if (com.getMetaForClass(element.getClassName(), false).
-                    getValidator(Constants.VALIDATOR_PHYSICAL_LINK) != 1){
+                    getValidator(Constants.VALIDATOR_PHYSICAL_LINK) != 1) { //It's a port
                 LocalObjectLight[] ancestors = com.getParents(element.getClassName(), element.getOid());
                 
                 lastPortWidget = (ObjectBoxWidget)scene.addNode(element);
+                
                 if (lastConnectionWidget != null)
                     lastConnectionWidget.setTargetAnchor(AnchorFactory.createCenterAnchor(lastPortWidget));
                 lastConnectionWidget = null;
@@ -52,14 +53,14 @@ public class PhysicalConnectionsService {
                         Widget node = scene.addNode(ancestors[i]);
                         ((ObjectBoxWidget)node).addBox(lastWidget);
                         lastWidget = node;
-                        scene.validate();
                     }else{
                         ((ObjectBoxWidget)possibleParent).addBox(lastWidget);
                         break;
                     }
-                    if (com.getMetaForClass(ancestors[i].getClassName(), false).
-                            getValidator(Constants.VALIDATOR_PHYSICAL_NODE) == 1){ //Only parents up to the first physical node (say a building) will be displayed
+                    if (com.getMetaForClass(ancestors[i].getClassName(), false).getValidator(Constants.VALIDATOR_PHYSICAL_NODE) == 1 || //Only parents up to the first physical node (say a building) will be displayed
+                                            i == ancestors.length - 2){ //Or if the next level is the dummy root
                         scene.addRootWidget(lastWidget);
+                        scene.validate();
                         break;
                     }
                 }
@@ -70,7 +71,6 @@ public class PhysicalConnectionsService {
                 lastPortWidget = null;
             }
         }
-        scene.revalidate();
         return scene;
     }
 }
