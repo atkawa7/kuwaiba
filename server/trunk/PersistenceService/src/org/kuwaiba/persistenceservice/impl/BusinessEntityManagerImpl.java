@@ -233,7 +233,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         try{
             if (classNamesString.size() != parentClassNames.size() || parentClassNames.size() != criteria.size()
                     || criteria.size() != attributes.size())
-                throw new InvalidArgumentException("The length of the parameters provided doen't match", Level.INFO);
+                throw new InvalidArgumentException("The length of the parameters provided doesn't match", Level.INFO);
 
             tx = graphDb.beginTx();
             long[] newObjects = new long[classNamesString.size()];
@@ -1256,7 +1256,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                             List<Node> listTypeNodes = Util.getRealValue(attributes.get(att.getName()), listTypeNode);
                             
                             if (listTypeNodes.isEmpty())
-                                throw new InvalidArgumentException(String.format("At least one of list type items could not be found. Check attribute definition for %s", att.getName()), Level.INFO);
+                                throw new InvalidArgumentException(String.format("At least one of the list type items could not be found. Check attribute definition for %s", att.getName()), Level.INFO);
                       
                             //Create the new relationships
                             for (Node item : listTypeNodes){

@@ -47,7 +47,6 @@ import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.psremoteinterfaces.ApplicationEntityManagerRemote;
 import org.kuwaiba.psremoteinterfaces.BusinessEntityManagerRemote;
 import org.kuwaiba.psremoteinterfaces.MetadataEntityManagerRemote;
-import org.kuwaiba.sync.LoadDataFromFile;
 import org.kuwaiba.sync.SyncManager;
 import org.kuwaiba.util.bre.TempBusinessRulesEngine;
 import org.kuwaiba.ws.todeserialize.TransientQuery;
@@ -1939,7 +1938,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Helper methods. Click on the + sign on the left to edit the code.">
-    protected void connect(){
+    protected final void connect(){
         try{
             Registry registry = LocateRegistry.getRegistry("localhost", 1099);
             mem = (MetadataEntityManagerRemote) registry.lookup(MetadataEntityManagerRemote.REFERENCE_MEM);

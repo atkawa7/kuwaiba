@@ -143,7 +143,7 @@ public class Util {
      * @param propertyName Relationship's property to be used as filter
      * @param propertyValue Relationship's property value to be used as filter
      */
-    public static void releaseRelationshipss(Node instance, RelTypes relationshipType,
+    public static void releaseRelationships(Node instance, RelTypes relationshipType,
             Direction relationshipDirection, String propertyName, String propertyValue) {
         Iterable<Relationship> relatedItems = instance.getRelationships(relationshipType, relationshipDirection);
         for (Relationship relatedItemRelationship : relatedItems){
