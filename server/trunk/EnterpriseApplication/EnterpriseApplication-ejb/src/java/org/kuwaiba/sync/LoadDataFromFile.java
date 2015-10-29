@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2015 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License
@@ -29,7 +29,6 @@ import java.rmi.registry.Registry;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -64,29 +63,13 @@ public final class LoadDataFromFile{
      */
     private static final String PATH_DATA_LOAD_FILES = "../kuwaiba/upload-files/";
     /**
-     * Attribute name
-     */
-    private static final String ATTRIBUTE_NAME = "name";
-    /**
-     * Attribute parent name for the class
-     */
-    private static final String ATTRIBUTE_PARENT_NAME = "parentName";
-    /**
-     * Attribute parent class for the class
-     */
-    private static final String ATTRIBUTE_PARENT_CLASS = "parentClass";
-    /**
      * Path to log file after a bulk upload
      */
     private static final String PATH_DATA_LOAD_LOGS = "../kuwaiba/logs/";
     /**
-     * Minimum fields required in a csv file to load list types
-     */
-    private static final int MINIMUN_LISTTYPE_FIELDS = 3;
-    /**
      * Minimum fields required in a csv file to load objects
      */
-    private static final int MINIMUN_CLASSTYPE_FIELDS = 6;
+    private static final int MINIMUM_CLASSTYPE_FIELDS = 4;
     /**
      * if the parent is the dummy root
      */
@@ -162,7 +145,7 @@ public final class LoadDataFromFile{
     }
     
     private void loadObjects(){
-        boolean errors = false;
+        boolean hasErrors = false;
         String errorsMsgs = "";
         
         try {
@@ -170,62 +153,70 @@ public final class LoadDataFromFile{
             String line;
             int currentLine = 0;
 
+            /**
+             * The line must have the following format (fields surrounded by brackets are optional and of variable length):
+             * OBJECT_CLASS_NAME~t~CLASS_OF_THE_PARENT_OBJECT~t~PARENT_OBJECT_NAME_DISTINGUISHABLE_ATTRIBUTE~c~VALUE_OF_THE_PARENT_OBJECT_DISTINGUISHABLE_ATTRIBUTE~t~ATTR1_NAME~c~ATTR1_VALUE~t~ATTR2_NAME~c~ATTR2_VALUE~t~...
+             **/
             while ((line = input.readLine()) != null) {
                 currentLine ++;
                 
                 String[] splitLine = line.split("~t~");
-                //not enough fields in the line
-                if (splitLine.length < MINIMUN_CLASSTYPE_FIELDS) {
-                    errorsMsgs += "Line " + currentLine + "   " + java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_NOT_ENOUGH_FIELDS")+"\n";
-                    errors = true;
+                //Not enough fields in the line
+                if (splitLine.length < MINIMUM_CLASSTYPE_FIELDS) {
+                    errorsMsgs += String.format("ERROR\t%s\tThe line has %s fields but %s were expected.\n", currentLine, splitLine.length, MINIMUM_CLASSTYPE_FIELDS);
+                    hasErrors = true;
+                    continue;
                 }
-                else{
-                    try{
-                        String className = splitLine[0];
-                        //TODO implement templates support
-                        String parentClass = splitLine[2];
-                        String parentName = splitLine[4];
-                        HashMap<String, List<String>> attributes = new HashMap<String, List<String>>();
-                        
-                        for(int i = 5; i < splitLine.length; i ++){
-                            String[] attributeDefinition = splitLine[i].split("~c~");
-                            if (attributeDefinition.length < 2) {
-                                errorsMsgs +=  "Line " + currentLine + 
-                                        "   An attribute definition must have at least two components: " + splitLine[i] + "\n";
-                                errors = true;
-                                continue;
-                            }
-                            
-                            List<String> attributeValue = new ArrayList<String>();
-                            
-                            for (int j = 1;j < attributeDefinition.length;j++)
-                                attributeValue.add(attributeDefinition[j]);
-                            attributes.put(attributeDefinition[0], attributeValue);
-                        }
-                        
-                        long template = 0; //Long.parseLong(object.getAttributes().remove(ATTRIBUTE_TEMPLATE).get(0));
-                
-                        if (parentClass.equals(ROOT) && parentName.equals(ROOT)){ 
-                            bem.createObject(className, null, -1, 
-                                    attributes, 
-                                    template, IPAddress, sessionId);
-                        }
-                        else
-                             bem.createObject(className, 
-                                    parentClass, 
-                                    "name:"  + parentName, 
-                                    attributes, 
-                                    template, IPAddress, sessionId);
-                    }catch(Exception ex){
-                        errorsMsgs += "Line " + currentLine + " " + ex.getMessage() + "\n";
-                        errors = true;
+                try{
+                    String className = splitLine[0];
+                    String parentClass = splitLine[1];
+                    String[] parentFilter = splitLine[2].split("~c~");
+                    
+                    if (parentFilter.length != 2) {
+                        errorsMsgs += String.format("ERROR\t%s\tThe parent filter definition has an unexpected number of fields (%s).\n", currentLine, parentFilter.length);
+                        continue;
                     }
+                    
+                    HashMap<String, List<String>> attributes = new HashMap<String, List<String>>();
+
+                    for(int i = 2; i < splitLine.length; i ++){
+                        String[] attributeDefinition = splitLine[i].split("~c~");
+                        if (attributeDefinition.length < 2) {
+                            errorsMsgs += String.format("ERROR\t%s\tAn attribute definition must have at least two components: %s\n.", currentLine, splitLine[i]);
+                            hasErrors = true;
+                            continue;
+                        }
+
+                        List<String> attributeValue = new ArrayList<String>();
+
+                        for (int j = 1;j < attributeDefinition.length;j++)
+                            attributeValue.add(attributeDefinition[j]);
+                        attributes.put(attributeDefinition[0], attributeValue);
+                    }
+
+                    long template = 0; //TODO Support for templates
+
+                    if (parentClass.equals(ROOT)){ //The parent is the navigation tree root
+                        bem.createObject(className, null, -1, 
+                                attributes, 
+                                template, IPAddress, sessionId);
+                    }
+                    else
+                         bem.createObject(className, 
+                                parentClass, 
+                                parentFilter[0] + ":"  + parentFilter[1], 
+                                attributes, 
+                                template, IPAddress, sessionId);
+                }catch(Exception ex){
+                    errorsMsgs += String.format("ERROR\t%s\tUnexpected error: %s.\n", currentLine, ex.getMessage());
+                    hasErrors = true;
                 }
+                
             }// end while read line
-            if(errors)
-                log(uploadFile.getName(), errorsMsgs, line);
+            if(hasErrors)
+                save(uploadFile.getName(), errorsMsgs);
             else
-                log(uploadFile.getName(), "[" + Calendar.getInstance().getTime() + "] " + "All lines processed successfully", line);
+                save(uploadFile.getName(), "All lines processed successfully.");
             
             input.close();
         } catch (IOException ex) {
@@ -234,90 +225,78 @@ public final class LoadDataFromFile{
     }
        
     private void loadListTypes() {
-        boolean errors = false;
+        boolean hasErrors = false;
         String errorsMsgs = "";
-        HashMap<String, String> insertedAttributes = new HashMap<String, String>();
         data = new ArrayList<RemoteBusinessObject>();
         
         try {
             BufferedReader input = new BufferedReader(new FileReader(uploadFile));
             int currentFileLine = 0;
-            int commitCounter = 0;
             String line;
-
+            
+            /**
+             * The line must have the following format (fields surrounded by brackets are optional and of variable length):
+             * LIST_TYPE_CLASS_NAME~t~ATTR1_NAME~c~ATTR1_VALUE~t~ATTR2_NAME~c~ATTR2_VALUE~t~...
+             **/
+            hasErrors = false;
             while ((line = input.readLine()) != null) {
                 currentFileLine++;
-                errors = false;
-                HashMap<String, List<String>> attributes = new HashMap<String, List<String>>();
+                if (line.startsWith("#")) { //Comments are ignored
+                    errorsMsgs += String.format("INFO\t%s\tComment line detected, ignored.\n", currentFileLine);
+                    hasErrors = true;
+                    continue;
+                }
+                
                 String[] splitLine = line.split("~t~");
-                //not enough fields in the line
-                if (splitLine.length < MINIMUN_LISTTYPE_FIELDS) {
-                    errorsMsgs += "Line " + currentFileLine + "  The line does not have enough fields (3)\n";
-                    errors = true;
+                
+                //Not enough fields in the line, in this case, the line is empty
+                if (splitLine.length == 0) {
+                    errorsMsgs += String.format("INFO\t%s\tEmpty line detected, ignored.\n", currentFileLine);
+                    hasErrors = true;
+                    continue;
                 }
-                else if(splitLine.length % 2 == 0){
-                    errorsMsgs += "Line " + currentFileLine + " The attribute values were not organized correctly\n";
-                    errors = true;
-                }
-                else{
-                    try{
-                        String className = splitLine[0];
-
-                        for(int i = 2; i < splitLine.length; i+=2){
-                            List<String> attirbuteValues = new  ArrayList<String>();
-                            String attributeType = "";
-                            if(insertedAttributes.containsKey(splitLine[i]))
-                                attributeType = insertedAttributes.get(splitLine[i]);
-                            else{    
-                                AttributeMetadata attribute = mem.getAttribute(className, splitLine[i-1]);
-                                if(attribute ==  null){
-                                    errorsMsgs += "Line " + currentFileLine + " Attribute not found: " + splitLine[i-1] +"\n";
-                                    errors = true;
-                                }
-                                else{    
-                                    insertedAttributes.put(splitLine[i], attribute.getType());
-                                    attributeType = attribute.getType();
-                                }
-                            }
-                            if (!isPrimitive(attributeType)){
-                               RemoteBusinessObjectLight newObj = aem.getListTypeItem(splitLine[i], IPAddress, sessionId);
-                               if(newObj == null){
-                                    errorsMsgs += "Line " + currentFileLine + " List type not found: " + splitLine[i] +"\n";
-                                    errors = true;
-                               }
-                               else
-                                    attirbuteValues.add(Long.toString(newObj.getId()));
-                            }
-                            else
-                                attirbuteValues.add(splitLine[i]);
-                            
-                            attributes.put(splitLine[i-1],attirbuteValues);
+                
+                String className = splitLine[0];
+                try{
+                    
+                    HashMap<String, List<String>> attributes = new HashMap<String, List<String>>();
+                    for(int i = 1; i < splitLine.length; i++) {
+                        String[] attributeDefinitionParts = splitLine[i].split("~c~");
+                        if (attributeDefinitionParts.length < 2) {
+                            errorsMsgs += String.format("ERROR\t%s\tIncorrect attribute definition. At least two fields were expected.\n", currentFileLine);
+                            hasErrors = true;
+                            continue;
                         }
-                        long oid = aem.createListTypeItem(className, "", "", IPAddress , sessionId);
-                        bem.updateObject(className, oid, attributes, IPAddress, sessionId);
-                    }catch(Exception ex){
-                        errorsMsgs += "Line " + currentFileLine + " " + ex.getMessage() + "\n";
-                        errors = true;
+                        List<String> attributeValues = new ArrayList<String>();
+                        for (int j = 1; j < attributeDefinitionParts.length; j++)
+                            attributeValues.add(attributeDefinitionParts[j]);
+                        attributes.put(attributeDefinitionParts[0], attributeValues);
                     }
-                }               
+                    
+                    long oid = aem.createListTypeItem(className, "", "", IPAddress , sessionId);
+                    bem.updateObject(className, oid, attributes, IPAddress, sessionId);
+                }catch(Exception ex){
+                    errorsMsgs += String.format("ERROR\t%s\tUnexpected error: %s.\n", currentFileLine, ex.getMessage());
+                    hasErrors = true;
+                }
             }// end while read line
-            if(errors)
-                log(uploadFile.getName(), errorsMsgs, line);
+            if(hasErrors)
+                save(uploadFile.getName(), errorsMsgs);
             else
-                log(uploadFile.getName(), "[" + Calendar.getInstance().getTime() + "] " + "All lines processed successfully", line);
+                save(uploadFile.getName(), "All lines processed successfully.");
             input.close();
         } catch (IOException ex) {
-            Logger.getLogger(LoadDataFromFile.class.getName()).log(Level.SEVERE, "Check atribute names", ex);
-        }
+            Logger.getLogger(LoadDataFromFile.class.getName()).log(Level.SEVERE, "Check atribute names.", ex);
+        } 
     }
     
     public void commitLisTypes(int currentFileLine) throws IOException{
         
     }
     
-    public void log(String fileName, String msgs, String fileLines) throws IOException{
+    public void save(String fileName, String text) throws IOException{
         FileWriter aWriter = new FileWriter(PATH_DATA_LOAD_LOGS + fileName, false);
-        aWriter.write(msgs);
+        aWriter.write(text);
         aWriter.flush();
         aWriter.close();
     }

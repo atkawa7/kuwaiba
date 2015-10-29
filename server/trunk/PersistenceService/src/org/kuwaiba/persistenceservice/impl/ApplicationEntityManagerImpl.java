@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2014 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2015 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -667,21 +667,33 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
    //List type related methods
     @Override
    public long createListTypeItem(String className, String name, String displayName, String ipAddress, String sessionId)
-            throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
+            throws MetadataObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, NotAuthorizedException {
        
        validateCall("createListTypeItem", ipAddress, sessionId);
-        
-       if (name == null || className == null){
+               
+       if (name == null || className == null)
            throw new InvalidArgumentException("Item name and class name can not be null", Level.INFO);
-       }
        
+       ClassMetadata myClass= cm.getClass(className);
+              
        Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
-       if (classNode ==  null){
+       if (classNode ==  null)
            throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %s",className));
-       }
-       if (!cm.isSubClass(Constants.CLASS_GENERICOBJECTLIST, className)){
+
+       if (myClass == null){
+            myClass = Util.createClassMetadataFromNode(classNode);
+            cm.putClass(myClass);
+        }      
+       
+       if (!cm.isSubClass(Constants.CLASS_GENERICOBJECTLIST, className))
             throw new InvalidArgumentException(String.format("Class %s is not a list type", className), Level.WARNING);
-       }
+       
+       if (myClass.isInDesign())
+            throw new OperationNotPermittedException("Create List Type Item", "Can not create instances of classes marked as isDesign");
+        
+       if (myClass.isAbstract())
+            throw new OperationNotPermittedException("Create List Type Item", "Can not create instances of abstract classes");
+       
        Transaction tx = null;
        try{
            tx = graphDb.beginTx();

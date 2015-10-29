@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2014 Neotropic SAS <contact@neotropic.co>
+ *  Copyright 2010-2015 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -168,7 +168,7 @@ public interface ApplicationEntityManager {
      * @throws InvalidArgumentException if the class provided is not a list type
      */
     public long createListTypeItem(String className, String name, String displayName, String ipAddress, String sessionId)
-            throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException;
+            throws MetadataObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, NotAuthorizedException;
 
     /**
      * Retrieves all the items related to a given list type

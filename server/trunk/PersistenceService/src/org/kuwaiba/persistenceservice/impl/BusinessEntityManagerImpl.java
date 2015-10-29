@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 - 2013 Neotropic SAS <contact@neotropic.co>
+ *  Copyright 2010-2015 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -134,14 +134,15 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             throw new OperationNotPermittedException("Create Object", "Can not create non-inventory objects");
 
         //The object should be created under an instance other than the dummy root
-        if (parentClassName != null){
+        if (parentClassName != null) {
             ClassMetadata myParentObjectClass= cm.getClass(parentClassName);
             if (myParentObjectClass == null)
                 throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
-
-            if (!cm.getPossibleChildren(parentClassName).contains(className))
-                throw new OperationNotPermittedException("Create Object", String.format("An instance of class %s can't be created as child of class %s", className, myParentObjectClass.getName()));
         }
+        
+        if (!cm.getPossibleChildren(parentClassName).contains(className))
+            throw new OperationNotPermittedException("Create Object", 
+                    String.format("An instance of class %s can't be created as child of %s", className, parentClassName == null ? Constants.NODE_DUMMYROOT : parentClassName));
 
         Node parentNode;
         if (parentOid != -1){
@@ -1227,41 +1228,36 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         Node newObject = graphDb.createNode();
         newObject.setProperty(Constants.PROPERTY_NAME, ""); //The default value is an empty string 
 
+        newObject.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis()); //The default value is right now
+        
         if (attributes != null){
-            for (AttributeMetadata att : classToMap.getAttributes()){
-                if (att.getName().equals(Constants.PROPERTY_CREATION_DATE)){
-                    newObject.setProperty(att.getName(), Calendar.getInstance().getTimeInMillis());
-                    continue;
-                }
-
-                if (attributes.get(att.getName()) == null)
-                    continue;
-
+            for(String attributeName : attributes.keySet()) {
                 //If the array is empty, it means the attribute should be set to null, that is, ignore it
-                if (!attributes.get(att.getName()).isEmpty()){
-                    if (attributes.get(att.getName()).get(0) != null){
-                        if (AttributeMetadata.isPrimitive(classToMap.getType(att.getName())))
-                                newObject.setProperty(att.getName(), Util.getRealValue(attributes.get(att.getName()).get(0), classToMap.getType(att.getName())));
+                if (!attributes.get(attributeName).isEmpty()){
+                    if (attributes.get(attributeName).get(0) != null){
+                        String attributeType = classToMap.getType(attributeName);
+                        if (AttributeMetadata.isPrimitive(attributeType))
+                                newObject.setProperty(attributeName, Util.getRealValue(attributes.get(attributeName).get(0), classToMap.getType(attributeName)));
                         else{
                         //If it's not a primitive type, maybe it's a relationship
 
-                            if (!cm.isSubClass(Constants.CLASS_GENERICOBJECTLIST, att.getType()))
-                                throw new InvalidArgumentException(String.format("Type %s is not a primitive nor a list type", att.getName()), Level.WARNING);
+                            if (!cm.isSubClass(Constants.CLASS_GENERICOBJECTLIST, attributeType))
+                                throw new InvalidArgumentException(String.format("Type %s is not a primitive nor a list type", attributeName), Level.WARNING);
                                                            
-                            Node listTypeNode = classIndex.get(Constants.PROPERTY_NAME, att.getType()).getSingle();
+                            Node listTypeNode = classIndex.get(Constants.PROPERTY_NAME, attributeType).getSingle();
                             
                             if (listTypeNode == null)
-                                throw new InvalidArgumentException(String.format("Class %s could not be found as list type", att.getType()), Level.INFO);
+                                throw new InvalidArgumentException(String.format("Class %s could not be found as list type", attributeType), Level.INFO);
                             
-                            List<Node> listTypeNodes = Util.getRealValue(attributes.get(att.getName()), listTypeNode);
+                            List<Node> listTypeNodes = Util.getRealValue(attributes.get(attributeName), listTypeNode);
                             
                             if (listTypeNodes.isEmpty())
-                                throw new InvalidArgumentException(String.format("At least one of the list type items could not be found. Check attribute definition for %s", att.getName()), Level.INFO);
+                                throw new InvalidArgumentException(String.format("At least one of the list type items could not be found. Check attribute definition for %s", attributeName), Level.INFO);
                       
                             //Create the new relationships
                             for (Node item : listTypeNodes){
                                 Relationship newRelationship = newObject.createRelationshipTo(item, RelTypes.RELATED_TO);
-                                newRelationship.setProperty(Constants.PROPERTY_NAME, att.getName());
+                                newRelationship.setProperty(Constants.PROPERTY_NAME, attributeName);
                             }
                         }
                     }

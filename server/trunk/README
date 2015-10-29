@@ -1,7 +1,7 @@
-Kuwaiba aims to be an enterprise grade network inventory system. This is the server, you'll need JDK 1.6.x and Glassfishv3.1 and  to run it.
+Kuwaiba aims to be an enterprise grade network inventory system. This is the server, you'll need JDK 1.7.x and Glassfishv3.1 and  to run it.
 
 This software is provided “as is”, with no warranty at all. Install it and use it at your own risk.
 
-This software is dual-licensed EPLv1 and GPLv2, choose the one that fits your purposes, but keep in mind that we ship third-party libraries whose licenses are only compatible with GPL. See THIRDPARTY and LICENSE.EPLv1/LICENSE.GPLv2 files for details.
+This software is dual-licensed EPLv1 and GPLv2, choose the one that fits your purposes, but keep in mind that we ship third-party libraries whose licenses are only compatible with GPL. See THIRDPARTY and LICENSE.EPL/LICENSE.GPLv2 files for details.
 
 Visit http://www.kuwaiba.org

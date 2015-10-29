@@ -25,7 +25,7 @@ import org.kuwaiba.ws.toserialize.application.Validator;
 
 /**
  * This class is a simple representation of an object. It's used for trees and view. This is jus an entity wrapper
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteObjectLight implements Serializable {
