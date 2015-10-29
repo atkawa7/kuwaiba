@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2014 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2015 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -52,8 +52,16 @@ public class BulkUploadFrame extends javax.swing.JFrame {
     private javax.swing.JFileChooser fChooser;
     private SyncService ss;
     private byte[] chosenFile;
+    private static BulkUploadFrame instance; //Singleton
 
-    public BulkUploadFrame() {
+    public static BulkUploadFrame getInstance() {
+        if (instance == null) 
+            instance = new BulkUploadFrame();
+
+        return instance;
+    }
+    
+    private BulkUploadFrame() {
         initComponents();
         TopComponent outputWindow = WindowManager.getDefault().findTopComponent("output");
         if (!outputWindow.isOpened())

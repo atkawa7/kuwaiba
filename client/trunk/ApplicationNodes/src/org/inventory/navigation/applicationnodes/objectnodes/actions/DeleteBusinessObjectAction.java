@@ -62,7 +62,7 @@ public final class DeleteBusinessObjectAction extends AbstractAction {
                 if (node != null && node.getParentNode() != null) 
                     node.getParentNode().getChildren().remove(new Node[]{node});
                 
-                NotificationUtil.getInstance().showSimplePopup("Sucess", 
+                NotificationUtil.getInstance().showSimplePopup("Success", 
                         NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TEXT_OK"));
             }
             else

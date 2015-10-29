@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2014 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2015 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ public final class CreateSpecialBusinessObjectAction extends AbstractAction
             if (!((SpecialChildren)node.getChildren()).isCollapsed())
                 ((SpecialChildren)node.getChildren()).add(new SpecialObjectNode[]{new SpecialObjectNode(myLol)});
                 
-            NotificationUtil.getInstance().showSimplePopup("Sucess", NotificationUtil.INFO_MESSAGE,
+            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE,
                         java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATED"));
         }
     }
