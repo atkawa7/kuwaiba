@@ -28,7 +28,7 @@ public class Constants {
     /**
      * Persistence Service version
      */
-    public static final String PERSISTENCE_SERVICE_VERSION = "0.5.1";
+    public static final String PERSISTENCE_SERVICE_VERSION = "0.7.1";
     /**
      * Class type for RootObject
      */

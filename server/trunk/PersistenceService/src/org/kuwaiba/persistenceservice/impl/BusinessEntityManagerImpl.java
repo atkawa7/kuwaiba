@@ -176,7 +176,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         }
     }
     
-    //TODO: This method could be optimized, since it force to search for the parent object twice
+    //TODO: This method could be optimized, since it forces to search for the parent object twice
     @Override
     public long createObject(String className, String parentClassName, String criteria, HashMap<String,List<String>> attributes, long template, String ipAddress, String sessionId)
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException, DatabaseException, ApplicationObjectNotFoundException, NotAuthorizedException {
@@ -193,7 +193,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                 if (parentClass == null)
                     throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", parentClassName));
                 
-                AttributeMetadata filterAttribute = parentClass.getAttribute(splitCriteria[1]);
+                AttributeMetadata filterAttribute = parentClass.getAttribute(splitCriteria[0]);
                 
                 if (filterAttribute == null)
                     throw new MetadataObjectNotFoundException(String.format("Attribute %s could not be found", splitCriteria[1]));
@@ -240,7 +240,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             long[] newObjects = new long[classNamesString.size()];
             
             for (int i = 0; i < classNamesString.size(); i++){
-                
+                //TODO
             }
             
             tx.success();

@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
@@ -43,7 +42,6 @@ import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
-import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.psremoteinterfaces.ApplicationEntityManagerRemote;
 import org.kuwaiba.psremoteinterfaces.BusinessEntityManagerRemote;
@@ -159,6 +157,11 @@ public final class LoadDataFromFile{
              **/
             while ((line = input.readLine()) != null) {
                 currentLine ++;
+                if (line.startsWith("#")) { //Comments are ignored
+                    errorsMsgs += String.format("INFO\t%s\tComment line detected, ignored.\n", currentLine);
+                    hasErrors = true;
+                    continue;
+                }
                 
                 String[] splitLine = line.split("~t~");
                 //Not enough fields in the line
@@ -179,7 +182,7 @@ public final class LoadDataFromFile{
                     
                     HashMap<String, List<String>> attributes = new HashMap<String, List<String>>();
 
-                    for(int i = 2; i < splitLine.length; i ++){
+                    for(int i = 3; i < splitLine.length; i ++){
                         String[] attributeDefinition = splitLine[i].split("~c~");
                         if (attributeDefinition.length < 2) {
                             errorsMsgs += String.format("ERROR\t%s\tAn attribute definition must have at least two components: %s\n.", currentLine, splitLine[i]);
@@ -231,18 +234,17 @@ public final class LoadDataFromFile{
         
         try {
             BufferedReader input = new BufferedReader(new FileReader(uploadFile));
-            int currentFileLine = 0;
+            int currentLine = 0;
             String line;
             
             /**
              * The line must have the following format (fields surrounded by brackets are optional and of variable length):
              * LIST_TYPE_CLASS_NAME~t~ATTR1_NAME~c~ATTR1_VALUE~t~ATTR2_NAME~c~ATTR2_VALUE~t~...
              **/
-            hasErrors = false;
             while ((line = input.readLine()) != null) {
-                currentFileLine++;
+                currentLine++;
                 if (line.startsWith("#")) { //Comments are ignored
-                    errorsMsgs += String.format("INFO\t%s\tComment line detected, ignored.\n", currentFileLine);
+                    errorsMsgs += String.format("INFO\t%s\tComment line detected, ignored.\n", currentLine);
                     hasErrors = true;
                     continue;
                 }
@@ -251,7 +253,7 @@ public final class LoadDataFromFile{
                 
                 //Not enough fields in the line, in this case, the line is empty
                 if (splitLine.length == 0) {
-                    errorsMsgs += String.format("INFO\t%s\tEmpty line detected, ignored.\n", currentFileLine);
+                    errorsMsgs += String.format("INFO\t%s\tEmpty line detected, ignored.\n", currentLine);
                     hasErrors = true;
                     continue;
                 }
@@ -263,7 +265,7 @@ public final class LoadDataFromFile{
                     for(int i = 1; i < splitLine.length; i++) {
                         String[] attributeDefinitionParts = splitLine[i].split("~c~");
                         if (attributeDefinitionParts.length < 2) {
-                            errorsMsgs += String.format("ERROR\t%s\tIncorrect attribute definition. At least two fields were expected.\n", currentFileLine);
+                            errorsMsgs += String.format("ERROR\t%s\tIncorrect attribute definition. At least two fields were expected.\n", currentLine);
                             hasErrors = true;
                             continue;
                         }
@@ -276,7 +278,7 @@ public final class LoadDataFromFile{
                     long oid = aem.createListTypeItem(className, "", "", IPAddress , sessionId);
                     bem.updateObject(className, oid, attributes, IPAddress, sessionId);
                 }catch(Exception ex){
-                    errorsMsgs += String.format("ERROR\t%s\tUnexpected error: %s.\n", currentFileLine, ex.getMessage());
+                    errorsMsgs += String.format("ERROR\t%s\tUnexpected error: %s.\n", currentLine, ex.getMessage());
                     hasErrors = true;
                 }
             }// end while read line

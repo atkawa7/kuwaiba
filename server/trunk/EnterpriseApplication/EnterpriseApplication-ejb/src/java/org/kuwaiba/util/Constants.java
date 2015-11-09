@@ -1,5 +1,5 @@
 /**
- *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2015 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ public interface Constants {
     /**
      * Server version
      */
-    public static final String SERVER_VERSION = "0.4";
+    public static final String SERVER_VERSION = "0.7.1";
     /**
      * Max icon size in bytes
      */
@@ -42,7 +42,8 @@ public interface Constants {
     /**
      * Base URL to retrieve images (mostly view backgrounds)
      */
-    public static final String BASE_PATH_FOR_IMAGES = "files"+File.separator+"images"+File.separator+"views"+File.separator;
+    public static final String BASE_PATH_FOR_IMAGES = "files "+ File.separator + 
+                                                        "images" + File.separator + "views" + File.separator;
     /**
      * Name of the validator to indicate if a given class is a connection
      */
@@ -76,5 +77,4 @@ public interface Constants {
      * Constant to identify when a requests refers to a Topology view
      */
     public static int VIEWS_TOPOLOGY = 4;
-
 }
