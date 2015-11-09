@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 - 2014 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2015 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.navigationtree.windows.SpecialChildrenTopComponent;
 import org.openide.util.lookup.ServiceProvider;
-import org.openide.windows.TopComponent;
 
 /**
  * Creates a software asset and relates it to an element
@@ -43,8 +42,11 @@ public class CreateSoftwareAssetAction extends GenericObjectNodeAction {
         if (newLicense == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else{
-            TopComponent explorer = SpecialChildrenTopComponent.getInstance();
-            explorer.open();
+            SpecialChildrenTopComponent explorer = SpecialChildrenTopComponent.getInstance();
+            if (!explorer.isOpen())
+                explorer.open();
+            else
+                explorer.refresh();
             explorer.requestActive();
         }
     }

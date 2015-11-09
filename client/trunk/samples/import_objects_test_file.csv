@@ -1,0 +1,7 @@
+#Small-sized business objects test file
+Country~t~root~t~name~c~root~t~name~c~Colombia~t~acronym~c~CO
+Building~t~Country~t~name~c~Colombia~t~name~c~Edificio Colpatria~t~owner~c~Tyler Durden
+Building~t~Country~t~name~c~Colombia~t~name~c~Palacio de Nariño~t~owner~c~Helena Bonham Carter
+Building~t~Country~t~name~c~Colombia~t~name~c~World Trade Center
+Building~t~Country~t~name~c~Colombia~t~name~c~Casa del Florero~t~owner~c~Tyler Durden
+Router~t~Building~t~name~c~Palacio de Nariño~t~serialNumber~c~123456

@@ -84,3 +84,9 @@
 * Lots of bugfixes
 * Special Relationships window improved and moved
 * Full JRE 1.7 compatibility
+
+0.7.1 (06112015)
+* Bulk upload interface improved.
+* Bug fix in the physical trail graphical view
+* Misc bug fixes
+* Object View renamed to "Physical View" to be consistent with the docs

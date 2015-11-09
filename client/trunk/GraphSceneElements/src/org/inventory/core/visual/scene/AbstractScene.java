@@ -195,20 +195,26 @@ public abstract class AbstractScene <N, E> extends GraphScene<N, E>
      */
     public void setSceneFont (Font newFont) {
         setFont(newFont == null ? defaultFont : newFont);
-        for (Widget aLabel : labelsLayer.getChildren())
-            aLabel.setFont(getFont());
+        if (labelsLayer != null) { //Not all views will have a layer to place labels
+            for (Widget aLabel : labelsLayer.getChildren())
+                aLabel.setFont(getFont());
+        }
     }
     
     public void setSceneForegroundColor (Color foregroundColor) {
         setForeground(foregroundColor == null ? defaultForegroundColor : foregroundColor);
-        for (Widget aLabel : labelsLayer.getChildren())
-            aLabel.setForeground(getForeground());
+        if (labelsLayer != null) { //Not all views will have a layer to place labels
+            for (Widget aLabel : labelsLayer.getChildren())
+                aLabel.setForeground(getForeground());
+        }
     }
 
     public void setSceneBackgroundColor (Color backgroundColor) {
         setForeground(backgroundColor == null ? defaultForegroundColor : backgroundColor);
-        for (Widget aLabel : labelsLayer.getChildren())
-            aLabel.setBackground(getBackground());
+        if (labelsLayer != null) { //Not all views will have a layer to place labels
+            for (Widget aLabel : labelsLayer.getChildren())
+                aLabel.setBackground(getBackground());
+        }
     }
     
     public void clear(){

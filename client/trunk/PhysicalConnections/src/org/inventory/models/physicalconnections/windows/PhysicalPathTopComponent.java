@@ -90,7 +90,10 @@ public class PhysicalPathTopComponent extends TopComponent implements ExplorerMa
         lstPath.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                selectedObject = new ObjectNode((LocalObjectLight)lstPath.getSelectedValue());
+                LocalObjectLight selectedItem = (LocalObjectLight)lstPath.getSelectedValue();
+                if (selectedItem == null)
+                    return;
+                selectedObject = new ObjectNode(selectedItem);
                 setActivatedNodes(new Node[]{selectedObject});
             }
         });
@@ -122,7 +125,7 @@ public class PhysicalPathTopComponent extends TopComponent implements ExplorerMa
 
     @Override
     public void componentOpened() {
-        //This requires that CoreUI to be enable in the project
+        //This requires that CoreUI to be enabled in the project
         
     }
     

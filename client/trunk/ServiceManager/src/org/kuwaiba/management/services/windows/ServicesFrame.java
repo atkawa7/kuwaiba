@@ -32,6 +32,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.inventory.communications.CommunicationsStub;
@@ -64,6 +65,7 @@ public class ServicesFrame extends JFrame{
         JPanel pnlSearch = new JPanel();
         pnlSearch.setLayout(new GridLayout(1, 2));
         lstAvailableServices = new JList(services);
+        lstAvailableServices.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         pnlScrollMain = new JScrollPane();
         txtField = new JTextField();
         txtField.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 2));
@@ -94,7 +96,7 @@ public class ServicesFrame extends JFrame{
         
         JPanel pnlButtons = new JPanel();
         pnlButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
-        JButton btnRelate = new JButton("Make relationship");
+        JButton btnRelate = new JButton("Create relationship");
         pnlButtons.add(btnRelate);
         btnRelate.addActionListener(new BtnConnectActionListener());
         JButton btnClose = new JButton("Close");

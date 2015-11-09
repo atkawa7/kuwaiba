@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 - 2014 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2015 Neotropic SAS <contact@neotropic.co>.
  *
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -37,7 +37,6 @@ import org.inventory.core.visual.scene.AbstractNodeWidget;
 import org.inventory.views.topology.scene.ObjectConnectionWidget;
 import org.inventory.views.topology.scene.TopologyViewScene;
 import org.netbeans.api.visual.widget.Widget;
-import org.openide.util.Lookup;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
 
@@ -67,7 +66,6 @@ public class TopologyViewService implements LookupListener {
      * (name, description and share as public)
      */
     private Object[] viewProperties;
-    private NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
     
     public TopologyViewService(TopologyViewScene scene, TopologyViewTopComponent tvtc) {
         this.tvtc = tvtc;
@@ -106,14 +104,14 @@ public class TopologyViewService implements LookupListener {
         if(tvId == 0){
             try{
                 tvId = com.createGeneralView(LocalObjectViewLight.TYPE_TOPOLOGY, (String)viewProperties[0], (String)viewProperties[1], viewStructure, background);
-                tvtc.getNotifier().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Topology view created successfully");
+                tvtc.getNotifier().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Topology created successfully");
             }catch(Exception ex){
                 tvtc.getNotifier().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE, com.getError());
             }
         }
         else{
             if(com.updateGeneralView(tvId, (String)viewProperties[0], (String)viewProperties[1], viewStructure, background))
-                tvtc.getNotifier().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Topology view updated successfully");
+                tvtc.getNotifier().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Topology updated successfully");
             else
                 tvtc.getNotifier().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE, com.getError());
         }
@@ -149,17 +147,17 @@ public class TopologyViewService implements LookupListener {
             try {
                 parseXML(localView.getStructure());
             } catch (XMLStreamException ex) {
-                System.out.println("An exception was thrown parsing the XML View: "+ ex.getMessage());
+                System.out.println("An exception was thrown parsing the topology structure: "+ ex.getMessage());
             }
             tvtc.getScene().validate();
         }
     }
 
     public void deleteView(){
-        if(tvId>0){
-            try{
+        if(tvId > 0){
+            try {
                 com.deleteGeneralViews(new long[]{tvId});
-                tvtc.getNotifier().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Saved view deleted successfully");
+                tvtc.getNotifier().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Topology deleted successfully");
             }catch(Exception ex){
                 tvtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             }
@@ -167,7 +165,7 @@ public class TopologyViewService implements LookupListener {
     }
 
     private void resetProperties() {
-        viewProperties[0] = "New topology view "+ new Random().nextInt(10000);
+        viewProperties[0] = "New topology " + new Random().nextInt(10000);
         viewProperties[1] = "";
     }
 
@@ -280,7 +278,7 @@ public class TopologyViewService implements LookupListener {
                                     myPolygon.setPreferredBounds(r);
                                     }
                                 else{
-                                    //An unknown discardable tag
+                                    //Unknown tags are ignored
                                 }
                             }//end icons
                         }//end polygons

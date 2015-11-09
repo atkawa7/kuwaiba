@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 - 2014 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2015 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ public class RackViewBuilder implements AbstractViewBuilder {
         
         Integer rackUnits = (Integer)rack.getAttribute(Constants.PROPERTY_RACKUNITS);
         if (rackUnits == null || rackUnits == 0)
-            throw new IllegalArgumentException(String.format("Attribute %s in rack %s doesn not exist or is not set correctly", Constants.PROPERTY_RACKUNITS, lol.toString()));
+            throw new IllegalArgumentException(String.format("Attribute %s in rack %s does not exist or is not set correctly", Constants.PROPERTY_RACKUNITS, lol.toString()));
         else{
             List<LocalObjectLight> children = com.getObjectChildren(lol.getOid(), lol.getClassName());
             if (children == null)

@@ -17,11 +17,12 @@ package org.inventory.navigation.navigationtree.windows;
 
 import java.awt.BorderLayout;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.inventory.navigation.applicationnodes.objectnodes.SpecialChildren;
 import org.inventory.navigation.applicationnodes.objectnodes.SpecialObjectNode;
-import org.inventory.navigation.applicationnodes.objectnodes.SpecialRootNode;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
+import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
@@ -46,6 +47,7 @@ public class SpecialChildrenTopComponent extends TopComponent
     //Singleton
     private static SpecialChildrenTopComponent self;
     private Lookup.Result<ObjectNode> lookupResult;
+    private boolean open = false;
     
     private SpecialChildrenTopComponent() {
         em = new ExplorerManager();
@@ -54,19 +56,22 @@ public class SpecialChildrenTopComponent extends TopComponent
         tree = new BeanTreeView();
         setLayout(new BorderLayout());
         add(tree);
-        em.setRootContext(new SpecialRootNode());
+        em.setRootContext(Node.EMPTY);
+        em.getRootContext().setDisplayName("Select a node from the Navigation Tree");
     }
     
     public static SpecialChildrenTopComponent getInstance() {
-        if (self  == null)
+        if (self  == null) {
             self = new SpecialChildrenTopComponent();
-        Mode navigator = WindowManager.getDefault().findMode("navigator");//For some reason, the TopComponent.Registration annotation is being ignored
-        navigator.dockInto(self);
+            Mode navigator = WindowManager.getDefault().findMode("navigator");//For some reason, the TopComponent.Registration annotation is being ignored
+            navigator.dockInto(self);
+        }
         return self;
     }
 
     @Override
     public void componentOpened() {
+        open = true;
         lookupResult = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class);
         lookupResult.addLookupListener(this);
         resultChanged(null);
@@ -74,8 +79,10 @@ public class SpecialChildrenTopComponent extends TopComponent
     
     @Override
     public void componentClosed() {
-        em.getRootContext().getChildren().remove(em.getRootContext().getChildren().getNodes());
+        //em.getRootContext().getChildren().remove(em.getRootContext().getChildren().getNodes());
+        em.setRootContext(Node.EMPTY);
         lookupResult.removeLookupListener(this);
+        open = false;
     }
 
     @Override
@@ -100,5 +107,17 @@ public class SpecialChildrenTopComponent extends TopComponent
             em.setRootContext(newRootNode);
             tree.expandNode(newRootNode);
         }
+    }
+    
+    public void refresh() {
+        ((SpecialChildren)em.getRootContext().getChildren()).addNotify();
+    }
+    
+    /**
+     * Since isOpened doesn't seem to be working fine, this is a rewrite
+     * @return 
+     */
+    public boolean isOpen(){
+        return open;
     }
 }

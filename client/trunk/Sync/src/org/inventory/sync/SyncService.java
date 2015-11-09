@@ -54,7 +54,7 @@ public class SyncService implements Runnable {
 
     @Override
     public void run() {
-        InputOutput io = IOProvider.getDefault().getIO ("Bulk upload results " + Calendar.getInstance().getTime(), true);
+        InputOutput io = IOProvider.getDefault().getIO ("Bulk import results " + Calendar.getInstance().getTime(), true);
         CommunicationsStub com = CommunicationsStub.getInstance();
         io.getOut().println(String.format("[%s] Starting importing process... ", Calendar.getInstance().getTime()));
         io.getOut().println(String.format("[%s] Uploading file...", Calendar.getInstance().getTime()));

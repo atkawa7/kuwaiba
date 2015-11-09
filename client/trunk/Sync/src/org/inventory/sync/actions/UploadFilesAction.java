@@ -32,7 +32,7 @@ import org.openide.util.NbBundle;
 @ActionID(category = "Tools", id = "org.inventory.sync.actions.UploadFilesAction")
 @ActionRegistration(iconBase="org/inventory/sync/res/sync.png", displayName = "#CTL_Uploadfile")
 @ActionReference(path = "Menu/Tools")
-@NbBundle.Messages({"CTL_Uploadfile=Bulk upload"})
+@NbBundle.Messages({"CTL_Uploadfile=Bulk Import"})
 public class UploadFilesAction  extends AbstractAction{
 
     @Override
