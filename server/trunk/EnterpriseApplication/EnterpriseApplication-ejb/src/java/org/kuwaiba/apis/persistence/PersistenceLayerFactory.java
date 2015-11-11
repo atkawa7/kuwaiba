@@ -56,14 +56,14 @@ public class PersistenceLayerFactory{
      * @throws IllegalArgumentException
      * @throws InvocationTargetException 
      */
-    public MetadataEntityManager createMetadataEntityManager(ConnectionManager connectionManager) 
+    public MetadataEntityManager createMetadataEntityManager(ConnectionManager connectionManager, ApplicationEntityManager aem) 
             throws InstantiationException, IllegalAccessException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException {
         try {
             Class myClass = (Class) Class.forName(
                     "org.kuwaiba.services.persistence.impl.neo4j.MetadataEntityManagerImpl");
             
-            Constructor cmMem = myClass.getConstructor(ConnectionManager.class);
-            return (MetadataEntityManager)cmMem.newInstance(connectionManager);
+            Constructor cmMem = myClass.getConstructor(ConnectionManager.class, ApplicationEntityManager.class);
+            return (MetadataEntityManager)cmMem.newInstance(connectionManager, aem);
         }
         catch (ClassNotFoundException cnfe) {
             throw new IllegalArgumentException ("MetadataEntityManager implementation not found: " + cnfe.getMessage());

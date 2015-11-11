@@ -29,6 +29,7 @@ import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.ConnectionManager;
+import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
@@ -71,7 +72,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     /**
      * Instance of application entity manager
      */
-    ApplicationEntityManagerImpl aem;
+    ApplicationEntityManager aem;
     /**
      * Reference to the CacheManager
      */
@@ -85,8 +86,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
      * Constructor
      * Get the a database connection and indexes from the connection manager.
      */
-    public MetadataEntityManagerImpl(ConnectionManager cmn) {
+    public MetadataEntityManagerImpl(ConnectionManager cmn, ApplicationEntityManager aem) {
         this();
+        this.aem = aem;
         graphDb = (EmbeddedGraphDatabase) cmn.getConnectionHandler();
         classIndex = graphDb.index().forNodes(Constants.INDEX_CLASS);
         categoryIndex = graphDb.index().forNodes(Constants.INDEX_CATEGORY);
@@ -1585,12 +1587,4 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             cm.putPossibleChildren(Constants.NODE_DUMMYROOT, possibleChildrenOfRoot);
         }catch(Exception e){}
    }
-   
-   public void setApplicationEntityManager(ApplicationEntityManagerImpl aem) {
-        this.aem = aem;
-   }
-
-    public void createAttribute(long classId, AttributeMetadata attributeDefinition, String ipAddress, String sessionId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, InvalidArgumentException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 }

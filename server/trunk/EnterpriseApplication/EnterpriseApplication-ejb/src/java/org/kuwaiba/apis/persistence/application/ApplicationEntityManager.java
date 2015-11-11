@@ -413,19 +413,6 @@ public interface ApplicationEntityManager {
             throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException, NotAuthorizedException;
 
     /**
-     * Creates an object inside a pool
-     * @param poolId Parent pool id
-     * @param className Class this object is going to be instance of
-     * @param attributeNames Attributes to be set
-     * @param attributeValues Attribute values to be set
-     * @param templateId Template used to create the object, if applicable. -1 for none
-     * @throws ApplicationObjectNotFoundException If the parent pool can't be found
-     * @throws InvalidArgumentException If any of the attributes or its type is invalid
-     * @return the id of the newly created object
-     */
-    public long createPoolItem(long poolId, String className, String[] attributeNames, String[][] attributeValues, long templateId, String ipAddress, String sessionId) 
-            throws ApplicationObjectNotFoundException, InvalidArgumentException, ArraySizeMismatchException, NotAuthorizedException;
-    /**
      * Deletes a set of pools
      * @param ids the list of ids from the objects to be deleted
      * @throws InvalidArgumentException If any of the pools to be deleted couldn't be found

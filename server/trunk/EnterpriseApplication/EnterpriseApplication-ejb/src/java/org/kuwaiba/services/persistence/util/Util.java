@@ -23,6 +23,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
@@ -155,9 +157,10 @@ public class Util {
     /**
      * Deletes recursively and object and all its children. Note that the transaction should be handled by the caller
      * @param instance The object to be deleted
+     * @param unsafeDeletion True if you want the object to be deleted no matter if it has RELATED_TO and RELATED_TO_SPECIAL relationships
      */
-    public static void deleteObject(Node instance, boolean releaseAll) throws OperationNotPermittedException {
-        if(!releaseAll){
+    public static void deleteObject(Node instance, boolean unsafeDeletion) throws OperationNotPermittedException {
+        if(!unsafeDeletion){
             if (instance.getRelationships(RelTypes.RELATED_TO, Direction.INCOMING).iterator().hasNext())
                 throw new OperationNotPermittedException("deleteObject",String.format("The object with id %s can not be deleted since it has relationships", instance.getId()));
 
@@ -166,7 +169,7 @@ public class Util {
         }
 
         for (Relationship rel : instance.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF, RelTypes.CHILD_OF_SPECIAL))
-            deleteObject(rel.getStartNode(), releaseAll);
+            deleteObject(rel.getStartNode(), unsafeDeletion);
 
         for (Relationship rel : instance.getRelationships())
             rel.delete();
@@ -215,8 +218,10 @@ public class Util {
      * @throws IOException
      */
     public static void saveFile(String directory, String fileName, byte[] content) throws FileNotFoundException, IOException {
-        File imgDir = new File(directory);
-        imgDir.mkdirs();
+        java.nio.file.Path directoryPath = FileSystems.getDefault().getPath(directory);
+        if (!Files.exists(directoryPath) || !Files.isWritable(directoryPath))
+            throw new FileNotFoundException(String.format("Path %s does not exist or is not writeable", directoryPath.toAbsolutePath()));
+
         FileOutputStream fos = new FileOutputStream(directory + "/" + fileName); //NOI18N
         fos.write(content);
         fos.close();

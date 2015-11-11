@@ -25,7 +25,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,7 +34,6 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
-import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
@@ -91,7 +89,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     /**
      * Default background path
      */
-    private static String DEFAULT_BACKGROUNDS_PATH = "img/backgrounds";
+    private static String DEFAULT_BACKGROUNDS_PATH = "../img/backgrounds";
     /**
      * Class index
      */
@@ -132,10 +130,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
      * Index for special nodes(like group root node)
      */
     private Index<Node> specialNodesIndex;
-    /**
-     * Instance of business entity manager
-     */
-    private  BusinessEntityManagerImpl bem;
     /**
      * Reference to the singleton instance of CacheManager
      */
@@ -248,7 +242,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             return newUser.getId();
            
         }catch(Exception ex){
-            Logger.getLogger("Create user: "+ex.getMessage()); //NOI18N
+            Logger.getLogger("Create user: " + ex.getMessage()); //NOI18N
             if (tx != null){
                 tx.failure();
             }
@@ -1420,75 +1414,14 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             throw new RuntimeException(ex.getMessage());
         }
     }
-    /**
-     * Creates an object inside a pool
-     * @param poolId Parent pool id. 
-     * @param attributeNames Attributes to be set
-     * @param attributeValues Attribute values to be set
-     * @param templateId Template used to create the object, if applicable. -1 for none
-     * @throws ApplicationObjectNotFoundException If the parent pool can't be found
-     * @throws InvalidArgumentException If any of the attributes or its type is invalid
-     * @return the id of the newly created object
-     */
-    @Override
-    public long createPoolItem(long poolId, String className, String[] attributeNames, 
-    String[][] attributeValues, long templateId, String ipAddress, String sessionId) 
-            throws ApplicationObjectNotFoundException, InvalidArgumentException, ArraySizeMismatchException, NotAuthorizedException {
-        
-        validateCall("createPoolItem", ipAddress, sessionId);
-        
-        if (attributeNames != null && attributeValues != null){
-            if (attributeNames.length != attributeValues.length)
-            throw new ArraySizeMismatchException("attributeNames", "attributeValues");
-        }
-        
-        Transaction tx = null;
-        try{
-            tx = graphDb.beginTx();
-            Node pool = poolsIndex.get(Constants.PROPERTY_ID, poolId).getSingle();
-            
-            if (pool == null)
-                throw new ApplicationObjectNotFoundException(String.format("Pool with id %s can not be found", poolId));
-            
-            if (!pool.hasProperty(Constants.PROPERTY_CLASS_NAME))
-                throw new InvalidArgumentException("This pool has not set his class name attribute", Level.INFO);
-            
-            Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
-            if (classNode == null)
-                throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
-            
-            ClassMetadata classMetadata = cm.getClass(className);
-            
-            if (!cm.isSubClass((String)pool.getProperty(Constants.PROPERTY_CLASS_NAME), className))
-                throw new InvalidArgumentException(String.format("Class %s is not subclass of %s", className, (String)pool.getProperty(Constants.PROPERTY_CLASS_NAME)), Level.OFF);
-            
-            HashMap<String, List<String>> attributes = new HashMap<String, List<String>>();
-            if (attributeNames != null && attributeValues != null){
-                for (int i = 0; i < attributeNames.length; i++)
-                    attributes.put(attributeNames[i], Arrays.asList(attributeValues[i]));
-            }
-            
-            Node newObject = bem.createObject(classNode, classMetadata, attributes, templateId);
-            newObject.createRelationshipTo(pool, RelTypes.CHILD_OF_SPECIAL).setProperty(Constants.PROPERTY_NAME, Constants.REL_PROPERTY_POOL);
-            tx.success();
-            return newObject.getId();
-
-        }catch(Exception ex){
-            Logger.getLogger("createPoolItem: " + ex.getMessage()); //NOI18N
-            tx.failure();
-            throw new RuntimeException(ex.getMessage());
-        }finally{
-            if (tx != null)
-                tx.finish();
-        }
-    }
-
+    
     @Override
     public void deletePools(long[] ids, String ipAddress, String sessionId) throws NotAuthorizedException, InvalidArgumentException {
         
         validateCall("deletePools", ipAddress, sessionId);
         
         Transaction tx = null;
+        String affectedObjects = "";
         try{
             tx = graphDb.beginTx();
             for (long id : ids){
@@ -1523,29 +1456,45 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                         }
                     }
                 }
-                bem.deleteObjects(toBeDeleted, false, ipAddress, sessionId);
+                
+                for (String className : toBeDeleted.keySet()){
+                    for (long oid : toBeDeleted.get(className)){
+                        if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, className))
+                            throw new OperationNotPermittedException(className, String.format("Class %s is not a business-related class", className));
+
+                        Node instance = getInstanceOfClass(className, oid);
+                        Util.deleteObject(instance, false);
+                        affectedObjects += instance.getId()  + " ";;
+                    }
+                }
 
                 for (long pId : poolsToBeDeleted){
                     Node servicePoolNode = poolsIndex.get(Constants.PROPERTY_ID, pId).getSingle();
                     for (Relationship rel : servicePoolNode.getRelationships())
                         rel.delete();
                     poolsIndex.remove(servicePoolNode);
+                    servicePoolNode.delete();
+                    affectedObjects += servicePoolNode.getId() + " ";
                 }
                 
                 for (Relationship rel : poolNode.getRelationships())
                     rel.delete();
                 poolsIndex.remove(poolNode);
                 poolNode.delete();
+                affectedObjects += poolNode.getId() + " ";
             }
+            
+            //Creates an activity log entry
+            Util.createActivityLogEntry(null, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle(), 
+                    getSessions().get(sessionId).getUser().getUserName(), ActivityLogEntry.ACTIVITY_TYPE_MASSIVE_DELETE_APPLICATION_OBJECT, 
+                    Calendar.getInstance().getTimeInMillis(), null, null, null, affectedObjects.trim());
             tx.success();
-
+            tx.finish();
         }catch(Exception ex){
-            Logger.getLogger("deletePools: "+ex.getMessage()); //NOI18N
+            Logger.getLogger("deletePools: " + ex.getMessage()); //NOI18N
             tx.failure();
+            tx.finish();
             throw new RuntimeException(ex.getMessage());
-        }finally{
-            if (tx != null)
-                tx.finish();
         }
     }
 
@@ -1812,10 +1761,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         if (!aSession.getIpAddress().equals(remoteAddress))
             throw new NotAuthorizedException(String.format("The IP %s does not match with the one registered for this session", remoteAddress));
         sessions.remove(sessionId);
-    }
-            
-    public void setBusinessEntityManager(BusinessEntityManagerImpl bem) {
-        this.bem = bem;
     }
     
     @Override

@@ -62,13 +62,13 @@ public class PersistenceService {
             System.out.println(String.format("[KUWAIBA] [%s] Establishing connection to the database...", Calendar.getInstance().getTime()));
             connectionManager.openConnection();
             System.out.println(String.format("[KUWAIBA] [%s] Connection established", Calendar.getInstance().getTime()));
-            System.out.println(String.format("[KUWAIBA] [%s] Connection details: %s", Calendar.getInstance().getTime(), connectionManager.getConnectionDetails()));
+            System.out.println(String.format("[KUWAIBA] [%s] %s", Calendar.getInstance().getTime(), connectionManager.getConnectionDetails()));
             
-            mem = plf.createMetadataEntityManager(connectionManager);
             aem = plf.createApplicationEntityManager(connectionManager);
             Properties applicationConfiguration = new Properties();
             applicationConfiguration.put("backgroundsPath", configuration.getProperty("backgroundsPath"));
             aem.setConfiguration(applicationConfiguration);
+            mem = plf.createMetadataEntityManager(connectionManager, aem);
             bem = plf.createBusinessEntityManager(connectionManager, aem);
             
             System.out.println(String.format("[KUWAIBA] [%s] Persistence Service is up and running", Calendar.getInstance().getTime()));

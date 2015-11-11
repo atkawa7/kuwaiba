@@ -50,7 +50,7 @@ import org.kuwaiba.ws.toserialize.metadata.ClassInfoLight;
  * Main webservice
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-@WebService()
+@WebService
 public class Kuwaiba {
     /**
      * The main session bean in charge of providing the business logic
@@ -1839,6 +1839,7 @@ public class Kuwaiba {
             @WebParam(name = "attributeValues")String[] attributeValues,
             @WebParam(name = "sessionId")String sessionId) throws Exception {
         try{
+            System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
             return wsBean.createCustomer(customerClass, attributes, attributeValues, getIPAddress(), sessionId);
         }catch(Exception e){
             Level level = Level.SEVERE;

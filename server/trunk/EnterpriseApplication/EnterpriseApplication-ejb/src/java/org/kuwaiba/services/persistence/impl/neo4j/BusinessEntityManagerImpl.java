@@ -18,6 +18,7 @@ package org.kuwaiba.services.persistence.impl.neo4j;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -78,6 +79,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      */
     private Index<Node> objectIndex;
     /**
+     * Pools index
+     */
+    private Index<Node> poolsIndex;
+    /**
      * Special nodes index
      */
     private Index<Node> specialNodesIndex;
@@ -99,6 +104,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         this.graphDb = (EmbeddedGraphDatabase)cmn.getConnectionHandler();
         this.classIndex = graphDb.index().forNodes(Constants.INDEX_CLASS);
         this.objectIndex = graphDb.index().forNodes(Constants.INDEX_OBJECTS);
+        this.poolsIndex = graphDb.index().forNodes(Constants.INDEX_POOLS);
         this.specialNodesIndex = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES);
         this.aem = aem;
     }
@@ -258,7 +264,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException, DatabaseException, ApplicationObjectNotFoundException, NotAuthorizedException {
 
         aem.validateCall("createSpecialObject", ipAddress, sessionId);
-        
         ClassMetadata myClass= cm.getClass(className);
         if (myClass == null)
             throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
@@ -311,6 +316,68 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             tx.failure();
             tx.finish();
             throw new RuntimeException(ex.getMessage());
+        }
+    }
+    
+    /**
+     * Creates an object inside a pool
+     * @param poolId Parent pool id. 
+     * @param attributeNames Attributes to be set
+     * @param attributeValues Attribute values to be set
+     * @param templateId Template used to create the object, if applicable. -1 for none
+     * @throws ApplicationObjectNotFoundException If the parent pool can't be found
+     * @throws InvalidArgumentException If any of the attributes or its type is invalid
+     * @return the id of the newly created object
+     */
+    @Override
+    public long createPoolItem(long poolId, String className, String[] attributeNames, 
+    String[][] attributeValues, long templateId, String ipAddress, String sessionId) 
+            throws ApplicationObjectNotFoundException, InvalidArgumentException, ArraySizeMismatchException, NotAuthorizedException {
+        
+        aem.validateCall("createPoolItem", ipAddress, sessionId);
+        
+        if (attributeNames != null && attributeValues != null){
+            if (attributeNames.length != attributeValues.length)
+            throw new ArraySizeMismatchException("attributeNames", "attributeValues");
+        }
+        
+        Transaction tx = null;
+        try{
+            tx = graphDb.beginTx();
+            Node pool = poolsIndex.get(Constants.PROPERTY_ID, poolId).getSingle();
+            
+            if (pool == null)
+                throw new ApplicationObjectNotFoundException(String.format("Pool with id %s can not be found", poolId));
+            
+            if (!pool.hasProperty(Constants.PROPERTY_CLASS_NAME))
+                throw new InvalidArgumentException("This pool has not set his class name attribute", Level.INFO);
+            
+            Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
+            if (classNode == null)
+                throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
+            
+            ClassMetadata classMetadata = cm.getClass(className);
+            
+            if (!cm.isSubClass((String)pool.getProperty(Constants.PROPERTY_CLASS_NAME), className))
+                throw new InvalidArgumentException(String.format("Class %s is not subclass of %s", className, (String)pool.getProperty(Constants.PROPERTY_CLASS_NAME)), Level.OFF);
+            
+            HashMap<String, List<String>> attributes = new HashMap<String, List<String>>();
+            if (attributeNames != null && attributeValues != null){
+                for (int i = 0; i < attributeNames.length; i++)
+                    attributes.put(attributeNames[i], Arrays.asList(attributeValues[i]));
+            }
+            
+            Node newObject = createObject(classNode, classMetadata, attributes, templateId);
+            newObject.createRelationshipTo(pool, RelTypes.CHILD_OF_SPECIAL).setProperty(Constants.PROPERTY_NAME, Constants.REL_PROPERTY_POOL);
+            tx.success();
+            return newObject.getId();
+
+        }catch(Exception ex){
+            tx.failure();
+            throw new RuntimeException(ex.getMessage());
+        }finally{
+            if (tx != null)
+                tx.finish();
         }
     }
 
@@ -1191,7 +1258,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         if (classId == -1)
             return graphDb.getReferenceNode().getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.BOTH).getEndNode();
 
-        Node classNode = classIndex.get(Constants.PROPERTY_ID,classId).getSingle();
+        Node classNode = classIndex.get(Constants.PROPERTY_ID, classId).getSingle();
 
         if (classNode == null)
             throw new MetadataObjectNotFoundException(String.format("Class with id %s can not be found", classId));

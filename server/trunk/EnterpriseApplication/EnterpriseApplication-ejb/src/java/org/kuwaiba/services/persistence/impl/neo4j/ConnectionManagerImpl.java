@@ -15,6 +15,9 @@
  */
 package org.kuwaiba.services.persistence.impl.neo4j;
 
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Properties;
 import org.kuwaiba.apis.persistence.exceptions.ConnectionException;
@@ -32,7 +35,7 @@ public class ConnectionManagerImpl implements ConnectionManager <GraphDatabaseSe
     /**
      * Default db path
      */
-    private static final String DEFAULT_DB_PATH = "target/kuwaiba.db";
+    private static final String DEFAULT_DB_PATH = "../target/kuwaiba.db";
     /**
      * Database path
      */
@@ -75,7 +78,11 @@ public class ConnectionManagerImpl implements ConnectionManager <GraphDatabaseSe
     @Override
     public void openConnection() throws ConnectionException {
         try {
-            graphDb = new EmbeddedGraphDatabase(configuration.getProperty("dbPath", DEFAULT_DB_PATH));
+            String dbPathString = configuration.getProperty("dbPath", DEFAULT_DB_PATH);
+            Path dbPath = FileSystems.getDefault().getPath(dbPathString);
+            if (!Files.exists(dbPath) || !Files.isWritable(dbPath))
+                throw new Exception(String.format("Path %s does not exist or is not writeable", dbPath.toAbsolutePath()));
+            graphDb = new EmbeddedGraphDatabase(dbPathString);
         }catch(Exception e){
             throw new ConnectionException(e.getMessage());
         }

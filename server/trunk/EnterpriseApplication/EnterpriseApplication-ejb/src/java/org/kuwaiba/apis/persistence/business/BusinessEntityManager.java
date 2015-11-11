@@ -94,6 +94,20 @@ public interface BusinessEntityManager {
             throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, DatabaseException, ApplicationObjectNotFoundException, NotAuthorizedException;
     
     /**
+     * Creates an object inside a pool
+     * @param poolId Parent pool id
+     * @param className Class this object is going to be instance of
+     * @param attributeNames Attributes to be set
+     * @param attributeValues Attribute values to be set
+     * @param templateId Template used to create the object, if applicable. -1 for none
+     * @throws ApplicationObjectNotFoundException If the parent pool can't be found
+     * @throws InvalidArgumentException If any of the attributes or its type is invalid
+     * @return the id of the newly created object
+     */
+    public long createPoolItem(long poolId, String className, String[] attributeNames, String[][] attributeValues, long templateId, String ipAddress, String sessionId) 
+            throws ApplicationObjectNotFoundException, InvalidArgumentException, ArraySizeMismatchException, NotAuthorizedException;
+    
+    /**
      * Create massively objects related to their parent using a child_of_special relationship.
      * The name of the objects is automatically set numerically from1 to numberOfChildren
      * @param objectClass Object class

@@ -831,7 +831,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
         if (bem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try {
-            return RemoteObjectLight.toRemoteObjectLightArray(bem.getObjectChildren(oid, objectClassId, maxResults, ipAddress, sessionId));
+            return RemoteObjectLight.toRemoteObjectLightArray(bem.getObjectChildren(objectClassId, oid, maxResults, ipAddress, sessionId));
         } catch (Exception ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
@@ -1801,7 +1801,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
         if (aem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try{
-            return aem.createPoolItem(poolId, className, attributeNames, attributeValues, templateId, ipAddress, sessionId);
+            return bem.createPoolItem(poolId, className, attributeNames, attributeValues, templateId, ipAddress, sessionId);
         }catch (Exception ex){
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());

@@ -87,3 +87,5 @@
 
 0.8
 * The Persistence Service was merged to the web application
+* Service startup improved and logging level increased. 
+* Neo4J libraries unused dependencies causing warning were fulfilled with dummy jar files.

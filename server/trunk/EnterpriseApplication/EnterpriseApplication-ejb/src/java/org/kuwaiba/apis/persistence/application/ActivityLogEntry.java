@@ -68,6 +68,7 @@ public class ActivityLogEntry implements Serializable {
     public static final int ACTIVITY_TYPE_DELETE_METADATA_OBJECT = 8;
     public static final int ACTIVITY_TYPE_UPDATE_METADATA_OBJECT = 9;
     public static final int ACTIVITY_TYPE_CHANGE_PARENT = 10;
+    public static final int ACTIVITY_TYPE_MASSIVE_DELETE_APPLICATION_OBJECT = 11;
 
     public ActivityLogEntry(long id, long objectId, int type, String userName, long timestamp, String affectedProperty, String oldValue, String newValue, String notes) {
         this.id = id;

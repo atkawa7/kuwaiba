@@ -21,7 +21,7 @@ import javax.ejb.Startup;
 import org.kuwaiba.apis.persistence.PersistenceService;
 
 /**
- *This bean holds the application's shutdown logic
+ * This bean holds the application's shutdown logic
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Singleton
@@ -33,7 +33,7 @@ public class ShutdownBean {
             PersistenceService persistenceService = PersistenceService.getInstance();
             persistenceService.stop();
         } catch (IllegalStateException ise) {
-            System.out.println("Unexpected error: " + ise.getMessage());
+            System.out.println("[KUWAIBA] " + ise.getMessage());
         }
     }
 }
