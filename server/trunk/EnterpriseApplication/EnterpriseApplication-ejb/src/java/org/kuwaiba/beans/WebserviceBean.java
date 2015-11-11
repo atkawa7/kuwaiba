@@ -16,10 +16,6 @@
 
 package org.kuwaiba.beans;
 
-import java.io.IOException;
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -28,7 +24,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Singleton;
+import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
+import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.application.CompactQuery;
 import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
@@ -36,17 +34,16 @@ import org.kuwaiba.apis.persistence.application.Session;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.application.ViewObject;
 import org.kuwaiba.apis.persistence.application.ViewObjectLight;
+import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
+import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.exceptions.NotAuthorizedException;
 import org.kuwaiba.exceptions.ServerSideException;
-import org.kuwaiba.psremoteinterfaces.ApplicationEntityManagerRemote;
-import org.kuwaiba.psremoteinterfaces.BusinessEntityManagerRemote;
-import org.kuwaiba.psremoteinterfaces.MetadataEntityManagerRemote;
 import org.kuwaiba.sync.SyncManager;
 import org.kuwaiba.util.bre.TempBusinessRulesEngine;
 import org.kuwaiba.ws.todeserialize.TransientQuery;
@@ -78,15 +75,15 @@ public class WebserviceBean implements WebserviceBeanRemote {
     /**
      * Reference to the Metadata Entity Manager
      */
-    private MetadataEntityManagerRemote mem;
+    private MetadataEntityManager mem;
     /**
      * Reference to the Business Entity Manager
      */
-    private BusinessEntityManagerRemote bem;
+    private BusinessEntityManager bem;
     /**
      * Reference to the Application Entity Manager
      */
-    private ApplicationEntityManagerRemote aem;
+    private ApplicationEntityManager aem;
     /**
      * Business rules engine reference
      */
@@ -822,8 +819,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.closeSession(sessionId, remoteAddress);
         } catch (org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (RemoteException ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -1667,9 +1662,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.updateObjectRelatedView(objectOid, objectClass, viewId, viewName, viewDescription, structure, background, ipAddress, sessionId);
         }catch(InventoryException ie){
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ie.getMessage());
-        }catch(IOException ioe){
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ioe.getMessage());
-            throw new ServerSideException(Level.SEVERE, ioe.getMessage());
         }
     }
 
@@ -1682,9 +1674,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.updateGeneralView(viewId, viewName, viewDescription, structure, background, ipAddress, sessionId);
         }catch(InventoryException ie){
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ie.getMessage());
-        }catch(IOException ioe){
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ioe.getMessage());
-            throw new ServerSideException(Level.SEVERE, ioe.getMessage());
         }
     }
 
@@ -1696,9 +1685,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.deleteGeneralViews(oids, ipAddress, sessionId);
         }catch(InventoryException ie){
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ie.getMessage());
-        }catch(IOException ioe){
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ioe.getMessage());
-            throw new ServerSideException(Level.SEVERE, ioe.getMessage());
         }
     }
 
@@ -1940,13 +1926,13 @@ public class WebserviceBean implements WebserviceBeanRemote {
     // <editor-fold defaultstate="collapsed" desc="Helper methods. Click on the + sign on the left to edit the code.">
     protected final void connect(){
         try{
-            Registry registry = LocateRegistry.getRegistry("localhost", 1099);
-            mem = (MetadataEntityManagerRemote) registry.lookup(MetadataEntityManagerRemote.REFERENCE_MEM);
-            bem = (BusinessEntityManagerRemote) registry.lookup(BusinessEntityManagerRemote.REFERENCE_BEM);
-            aem = (ApplicationEntityManagerRemote) registry.lookup(ApplicationEntityManagerRemote.REFERENCE_AEM);
+            PersistenceService persistenceService = PersistenceService.getInstance();
+            mem = persistenceService.getMetadataEntityManager();
+            bem = persistenceService.getBusinessEntityManager();
+            aem = persistenceService.getApplicationEntityManager();
         }catch(Exception ex){
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE,
-                    ex.getClass().getSimpleName()+": {0}",ex.getMessage()); //NOI18N
+                    ex.getClass().getSimpleName() + ": {0}",ex.getMessage()); //NOI18N
             mem = null;
             bem = null;
             aem = null;

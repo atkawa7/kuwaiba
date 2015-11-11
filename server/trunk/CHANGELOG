@@ -81,6 +81,9 @@
 * Lots of bugfixes
 * Preliminary support for bulk uploads
 
-0.7.1
+0.7.1 (06112015)
 * The bulk upload file format was improved
 * Added method to allow the creation of multiple objects at once in the API
+
+0.8
+* The Persistence Service was merged to the web application

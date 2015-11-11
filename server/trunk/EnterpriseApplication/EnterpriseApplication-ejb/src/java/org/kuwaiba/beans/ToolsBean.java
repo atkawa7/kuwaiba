@@ -16,18 +16,13 @@
 
 package org.kuwaiba.beans;
 
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.Stateless;
+import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.exceptions.ServerSideException;
-import org.kuwaiba.psremoteinterfaces.ApplicationEntityManagerRemote;
-import org.kuwaiba.psremoteinterfaces.BusinessEntityManagerRemote;
 
 /**
  * Session bean implementing
@@ -35,24 +30,17 @@ import org.kuwaiba.psremoteinterfaces.BusinessEntityManagerRemote;
  */
 @Stateless
 public class ToolsBean implements ToolsBeanRemote {
-    
-    private static ApplicationEntityManagerRemote aem;
-    private static BusinessEntityManagerRemote bem;
-    
+        
     @Override
     public void resetAdmin()  throws ServerSideException, NotAuthorizedException{
         try{
-            getAEMInstance().setUserProperties("admin",null, "kuwaiba", null, null, true, null, null, null, null);
-        }catch(ApplicationObjectNotFoundException ex){ //If the user does not exist, create it
-            try{
-                getAEMInstance().createUser("admin", "kuwaiba", "Radamel", "Falcao", true, null, null);
-            }catch(RemoteException re){
-                throw new ServerSideException(Level.SEVERE, re.getMessage());
+            PersistenceService.getInstance().getApplicationEntityManager().setUserProperties("admin",null, "kuwaiba", null, null, true, null, null, null, null);
+        }catch(ApplicationObjectNotFoundException onfe){ //If the user does not exist, create it
+            try {
+                PersistenceService.getInstance().getApplicationEntityManager().createUser("admin", "kuwaiba", "Radamel", "Falcao", true, null, null);
             }catch(InvalidArgumentException ie){
                 throw new ServerSideException(Level.SEVERE, ie.getMessage());
             }
-        }catch(RemoteException ex){
-            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }catch(InvalidArgumentException ex){
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
@@ -60,48 +48,6 @@ public class ToolsBean implements ToolsBeanRemote {
 
     @Override
     public int[] executePatch() throws ServerSideException, NotAuthorizedException {
-        try{
-            return getBEMInstance().executePatch();
-        }catch(RemoteException re){
-            throw new ServerSideException(Level.SEVERE, re.getMessage());
-        }
-    }
-   
-    private static ApplicationEntityManagerRemote getAEMInstance(){
-        if (aem == null){
-            try{
-                Registry registry = LocateRegistry.getRegistry("localhost", 1099);
-                aem = (ApplicationEntityManagerRemote) registry.lookup(ApplicationEntityManagerRemote.REFERENCE_AEM);
-            }catch(Exception ex){
-                Logger.getLogger(ToolsBean.class.getName()).log(Level.SEVERE,
-                        ex.getClass().getSimpleName()+": {0}",ex.getMessage()); //NOI18N
-                aem = null;
-            }
-        }
-        return aem;
-    }
-    
-    private static BusinessEntityManagerRemote getBEMInstance(){
-        if (bem == null){
-            try{
-                Registry registry = LocateRegistry.getRegistry("localhost", 1099);
-                bem = (BusinessEntityManagerRemote) registry.lookup(BusinessEntityManagerRemote.REFERENCE_BEM);
-            }catch(Exception ex){
-                Logger.getLogger(ToolsBean.class.getName()).log(Level.SEVERE,
-                        ex.getClass().getSimpleName()+": {0}",ex.getMessage()); //NOI18N
-                bem = null;
-            }
-        }
-        return bem;
-    }
-
-    @Override
-    public void connect() throws ServerSideException {
-        try {
-            //
-        } catch (Exception ex) {
-            Logger.getLogger(ToolsBean.class.getName()).log(Level.INFO, ex.getMessage());
-            throw new ServerSideException(Level.SEVERE, ex.getMessage());
-        }
+            return PersistenceService.getInstance().getApplicationEntityManager().executePatch();
     }
 }

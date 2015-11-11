@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2015 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,25 +14,27 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.beans;
-
-import javax.ejb.Remote;
+package org.kuwaiba.services.persistence.cache;
 
 /**
- * Misc management tools
+ * Implementors implement different algorithms to manage the cache
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-@Remote
-public interface ToolsBeanRemote {
+public interface CacheStrategy {
     /**
-     * Resets/create admin account (sets it to user <b>admin</b> password <b>kuwaiba</b>)
-     * @throws Exception 
+     * Refreshes the cache
      */
-    public void resetAdmin() throws Exception;
-    
+    public void refresh();
     /**
-     * Executes patches
-     * @throws Exception 
+     * Fills the cache with initial values
      */
-    public int[] executePatch() throws Exception;
+    public void start();
+    /**
+     * Purges the cache
+     */
+    public void purge();
+    /**
+     * Runs the caching strategy
+     */
+    public void run();
 }

@@ -24,8 +24,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,6 +32,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.kuwaiba.apis.persistence.PersistenceService;
+import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
+import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
@@ -42,10 +43,8 @@ import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
+import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.beans.WebserviceBean;
-import org.kuwaiba.psremoteinterfaces.ApplicationEntityManagerRemote;
-import org.kuwaiba.psremoteinterfaces.BusinessEntityManagerRemote;
-import org.kuwaiba.psremoteinterfaces.MetadataEntityManagerRemote;
 
 /**
  * Manages the bulk load for list types an object from CSV files
@@ -83,9 +82,9 @@ public final class LoadDataFromFile{
     private int dataType;
     private byte [] uploadData;
     
-    private BusinessEntityManagerRemote bem;
-    private ApplicationEntityManagerRemote aem;
-    private MetadataEntityManagerRemote mem;
+    private BusinessEntityManager bem;
+    private ApplicationEntityManager aem;
+    private MetadataEntityManager mem;
     
     private List<RemoteBusinessObject> data;
     
@@ -305,13 +304,13 @@ public final class LoadDataFromFile{
 
     protected void connect(){
         try{
-            Registry registry = LocateRegistry.getRegistry("localhost", 1099);
-            bem = (BusinessEntityManagerRemote) registry.lookup(BusinessEntityManagerRemote.REFERENCE_BEM);
-            aem = (ApplicationEntityManagerRemote) registry.lookup(ApplicationEntityManagerRemote.REFERENCE_AEM);
-            mem = (MetadataEntityManagerRemote) registry.lookup(MetadataEntityManagerRemote.REFERENCE_MEM);
+            PersistenceService persistenceService = PersistenceService.getInstance();
+            bem = persistenceService.getBusinessEntityManager();
+            aem = persistenceService.getApplicationEntityManager();
+            mem = persistenceService.getMetadataEntityManager();
         }catch(Exception ex){
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE,
-                    ex.getClass().getSimpleName()+": {0}",ex.getMessage()); //NOI18N
+                    ex.getClass().getSimpleName() + ": {0}",ex.getMessage()); //NOI18N
             bem = null;
             aem = null;
             mem = null;

@@ -1,4 +1,4 @@
-/*
+/**
  *  Copyright 2010-2015 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
@@ -14,25 +14,12 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.beans;
-
-import javax.ejb.Remote;
+package org.kuwaiba.apis.persistence.metadata;
 
 /**
- * Misc management tools
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+  * Contains the basic meta data information about a InterfaceMetadata
+ *  @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-@Remote
-public interface ToolsBeanRemote {
-    /**
-     * Resets/create admin account (sets it to user <b>admin</b> password <b>kuwaiba</b>)
-     * @throws Exception 
-     */
-    public void resetAdmin() throws Exception;
+public class InterfaceMetadata extends ClassMetadataLight{
     
-    /**
-     * Executes patches
-     * @throws Exception 
-     */
-    public int[] executePatch() throws Exception;
 }
