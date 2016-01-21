@@ -1745,6 +1745,7 @@ public class Kuwaiba {
     
     //Services manager
     /**
+     * @deprecated 
      * Associates an object (a resource) to an existing service
      * @param objectClass Object class
      * @param objectId Object id
@@ -1762,6 +1763,34 @@ public class Kuwaiba {
             @WebParam(name = "sessionId")String sessionId) throws Exception {
         try{
             wsBean.associateObjectToService(objectClass, objectId, serviceClass, serviceId, getIPAddress(), sessionId);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+    
+     /**
+     * Associates a list of objects (resources) to an existing service
+     * @param objectClass Object class
+     * @param objectId Object id
+     * @param serviceClass service class
+     * @param serviceId service id
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime   
+     */
+    @WebMethod(operationName = "associateObjectsToService")
+    public void associateObjectsToService (
+            @WebParam(name = "objectClass")String[] objectClass,
+            @WebParam(name = "objectId")long[] objectId,
+            @WebParam(name = "serviceClass")String serviceClass,
+            @WebParam(name = "serviceId")long serviceId,
+            @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try{
+            wsBean.associateObjectsToService(objectClass, objectId, serviceClass, serviceId, getIPAddress(), sessionId);
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)

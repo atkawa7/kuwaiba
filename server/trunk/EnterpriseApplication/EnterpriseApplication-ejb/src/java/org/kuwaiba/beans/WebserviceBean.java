@@ -1362,6 +1362,24 @@ public class WebserviceBean implements WebserviceBeanRemote {
         }
     }
     
+    
+    @Override
+    public void associateObjectsToService(String[] objectClass, long[] objectId, String serviceClass, long serviceId, String ipAddress, String sessionId) 
+            throws ServerSideException{
+        if (bem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            if (!mem.isSubClass("GenericService", serviceClass, ipAddress, sessionId))
+                throw new ServerSideException(Level.SEVERE, String.format("Class %s is not a service", serviceClass));
+            for (int i = 0; i < objectId.length; i++) 
+                bem.createSpecialRelationship(serviceClass, serviceId, objectClass[i], objectId[i], "uses", ipAddress, sessionId);
+            
+        } catch (Exception ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+    
     @Override
     public void releaseObjectFromService(String serviceClass, long serviceId, long otherObjectId, String ipAddress, String sessionId) 
             throws ServerSideException {
