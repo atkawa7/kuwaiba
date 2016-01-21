@@ -47,12 +47,12 @@ public class ServicesFrame extends JFrame{
     private JTextField txtField;
     private JScrollPane pnlScrollMain;
     private JList lstAvailableServices;
-    private LocalObjectLight object;
+    private LocalObjectLight[] selectedObjects;
     private LocalObjectLight[] services;
     
     
-    public ServicesFrame(LocalObjectLight object, LocalObjectLight[] services) {
-        this.object = object;
+    public ServicesFrame(LocalObjectLight[] selectedObjects, LocalObjectLight[] services) {
+        this.selectedObjects = selectedObjects;
         this.services = services;
         setLayout(new BorderLayout());
         setTitle(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_TITLE_AVAILABLE_SERVICES"));
@@ -119,16 +119,23 @@ public class ServicesFrame extends JFrame{
             if (lstAvailableServices.getSelectedValue() == null)
                 JOptionPane.showMessageDialog(null, "Select a service from the list");
             else{
-                if (CommunicationsStub.getInstance().associateObjectToService(
-                        object.getClassName(), object.getOid(), 
-                        ((LocalObjectLight)lstAvailableServices.getSelectedValue()).getClassName(),
-                        ((LocalObjectLight)lstAvailableServices.getSelectedValue()).getOid())){
-                    JOptionPane.showMessageDialog(null, String.format("The object was related to %s", lstAvailableServices.getSelectedValue()));
-                    dispose();
+                String [] objectsClassName = new String[selectedObjects.length];
+                Long [] objectsId = new Long[selectedObjects.length];
+                for(int i=0; i<selectedObjects.length; i++){
+                    objectsClassName[i] = selectedObjects[i].getClassName();
+                    objectsId [i] = selectedObjects[i].getOid();
+                }
+                
+                if (CommunicationsStub.getInstance().associateObjectsToService(
+                    objectsClassName, objectsId, 
+                    ((LocalObjectLight)lstAvailableServices.getSelectedValue()).getClassName(),
+                    ((LocalObjectLight)lstAvailableServices.getSelectedValue()).getOid())){
+                        JOptionPane.showMessageDialog(null, String.format("%s object was related to %s", selectedObjects.length, lstAvailableServices.getSelectedValue()));
+                        dispose();
                 }
                 else 
                     JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError(), 
-                            "Error", JOptionPane.ERROR_MESSAGE);
+                        "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }

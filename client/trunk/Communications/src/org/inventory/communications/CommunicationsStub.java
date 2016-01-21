@@ -1170,9 +1170,13 @@ public class CommunicationsStub {
     }
     
     //Service Manager
-    public boolean associateObjectToService(String objectClass, long objectId, String serviceClass, long serviceId){
+    public boolean associateObjectsToService(String[] objectClass, Long [] objectId, String serviceClass, long serviceId){
         try{
-            port.associateObjectToService(objectClass, objectId, serviceClass, serviceId, session.getSessionId());
+            List<String> objectsClassList = new ArrayList<String>();
+            List<Long> objectsIdList = new ArrayList<Long>();
+            objectsClassList.addAll(Arrays.asList(objectClass));
+            objectsIdList.addAll(Arrays.asList(objectId));
+            port.associateObjectsToService(objectsClassList, objectsIdList, serviceClass, serviceId, session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error =  ex.getMessage();
