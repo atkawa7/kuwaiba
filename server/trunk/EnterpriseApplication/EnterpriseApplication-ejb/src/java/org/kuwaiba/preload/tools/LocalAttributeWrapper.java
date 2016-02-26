@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.tests.tools;
+package org.kuwaiba.preload.tools;
 
 import java.util.Random;
 

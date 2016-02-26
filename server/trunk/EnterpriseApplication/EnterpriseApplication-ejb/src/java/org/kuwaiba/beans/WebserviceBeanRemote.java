@@ -18,6 +18,8 @@ package org.kuwaiba.beans;
 
 import java.util.List;
 import javax.ejb.Remote;
+import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
+import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.exceptions.NotAuthorizedException;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.ws.todeserialize.TransientQuery;
@@ -34,7 +36,6 @@ import org.kuwaiba.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.ws.toserialize.business.RemoteObjectSpecialRelationships;
 import org.kuwaiba.ws.toserialize.metadata.AttributeInfo;
-import org.kuwaiba.ws.toserialize.metadata.CategoryInfo;
 import org.kuwaiba.ws.toserialize.metadata.ClassInfo;
 import org.kuwaiba.ws.toserialize.metadata.ClassInfoLight;
 @Remote
@@ -223,40 +224,11 @@ public interface WebserviceBeanRemote {
      * @param attributeName
      */
     public void deleteAttribute(long classId, String attributeName, String ipAddress, String sessionId) throws ServerSideException;
-
-    /**
-     * Creates a new category
-     * @param categoryDefinition
-     * @return CategoryId
-     */
-    public long createCategory(CategoryInfo categoryDefinition, String ipAddress, String sessionId) throws ServerSideException;
-
-    /**
-     * Gets a Category with it's name
-     * @param categoryName
-     * @return CategoryMetadata
-     * @throws MiscException if the Category does not exist
-     */
-    public CategoryInfo getCategory(String categoryName, String ipAddress, String sessionId) throws ServerSideException;
-
-    /**
-     * Gets a Category with it's Id
-     * @param categoryId
-     * @return CategoryMetadata
-     * @throws MiscException if there is no Category with such cetegoryId
-     */
-    public CategoryInfo getCategory(long categoryId, String ipAddress, String sessionId) throws ServerSideException;
-
-    /**
-     * Changes a category definition
-     * @param categoryDefinition
-     */
-    public void setCategoryProperties (CategoryInfo categoryDefinition, String ipAddress, String sessionId) throws ServerSideException;
         
     /**
      * Gets all classes whose instances can be contained into the given parent class. This method
      * is recursive, so the result include the possible children in children classes
-     * @param parentClass
+     * @param parentClassName
      * @return an array with the list of classes
      */
     public List<ClassInfoLight> getPossibleChildren(String parentClassName, String ipAddress, String sessionId) throws ServerSideException;

@@ -116,7 +116,7 @@ public class Constants {
     /**
      * Label used for the category index
      */
-    public static final String INDEX_CATEGORY = "categories"; //NOI18N
+    //public static final String INDEX_CATEGORY = "categories"; //NOI18N
     /**
      * Label used for the special nodes index
      */
@@ -125,6 +125,22 @@ public class Constants {
      * Label used for the privilege nodes index
      */
     public static final String INDEX_PRIVILEGE_NODES = "privilegeNodes"; //NOI18N
+    /**
+     * Label used for the attributes nodes label
+     */
+    public static final String LABEL_ATTRIBUTE = "attribute"; //NOI18N
+    /**
+     * Label used for the metadata classes nodes label
+     */
+    public static final String LABEL_CLASS = "class"; //NOI18N
+    /**
+     * label used for root, dummyRoot, groupsRoot, nodes
+     */
+    public static final String LABEL_ROOT = "root";
+    /**
+     * label used for root, dummyRoot, groupsRoot, nodes
+     */
+    public static final String LABEL_LIST_TYPE = "listType";
     /**
      * Property "background path" for views
      */
@@ -173,6 +189,7 @@ public class Constants {
     public static final String PROPERTY_METHOD_GROUP = "methodGroup"; //NOI18N
     public static final String PROPERTY_METHOD_MANAGER = "methodManager"; //NOI18N
     public static final String PROPERTY_DEPENDS_OF = "dependsOf"; //NOI18N
+    public static final String PROPERTY_CATEGORY = "category"; //NOI18N
     
     /**
      * Root for all business classes
@@ -234,4 +251,5 @@ public class Constants {
      * Hint in patch file for a cypher query
      */
     public static final String DATABASE_SENTENCE = "!db_sentence";
+    
 }

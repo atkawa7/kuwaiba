@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.tests.tools;
+package org.kuwaiba.preload.tools;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -32,15 +32,16 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import org.kuwaiba.apis.persistence.ConnectionManager;
-import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
+import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
+import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 
 /**
- *
+ * Reads the kuwaiba data model from the class_hierarchy.xml file and create 
+ * every class and it's attributes in the database.
  * @author Adrian Fernando Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class XMLBackupReader {
@@ -49,17 +50,19 @@ public class XMLBackupReader {
     private String serverVersion;
     private Date date;
     private List<LocalClassWrapper> roots;
-
     private MetadataEntityManager mem;
-    private ConnectionManager cm;
 
+    public XMLBackupReader(MetadataEntityManager mem) {
+        this.mem = mem;
+    }
+    
     public void read(byte[] xmlDocument) throws Exception{
         QName hierarchyTag = new QName("hierarchy"); //NOI18N
         QName classTag = new QName("class"); //NOI18N
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         ByteArrayInputStream bais = new ByteArrayInputStream(xmlDocument);
         XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
-        roots = new ArrayList<LocalClassWrapper>();
+        roots = new ArrayList<>();
 
         while (reader.hasNext()){
             int event = reader.next();
@@ -90,7 +93,6 @@ public class XMLBackupReader {
         aClass.setClassPackage(reader.getAttributeValue(null, "classPackage")); //NOI18N
         QName attributeTag = new QName("attribute"); //NOI18N
         QName classTag = new QName("class"); //NOI18N
-        
 
         while (true){
             int event = reader.next();
@@ -154,29 +156,24 @@ public class XMLBackupReader {
         return bytes;
     }
 
-    public void load(){
+    public boolean load(){
         try {
-            PersistenceService persistenceService = PersistenceService.getInstance();
-            persistenceService.start();
-            cm = persistenceService.getConnectionManager();
-            cm.openConnection();
-            mem = persistenceService.getMetadataEntityManager();
-            createSchema();
             readRoots(roots, null);
-            cm.closeConnection();
-            persistenceService.stop();
-        } catch (Exception ex) {
+            return true;
+        } catch (DatabaseException | MetadataObjectNotFoundException | InvalidArgumentException ex) {
             Logger.getLogger(XMLBackupReader.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return false;
     }
 
-    public void readRoots(List<LocalClassWrapper> listNodes, String parentClassName) throws Exception{
-
+    public void readRoots(List<LocalClassWrapper> listNodes, String parentClassName) 
+            throws DatabaseException, MetadataObjectNotFoundException, InvalidArgumentException
+    {
         ClassMetadata clmt = new ClassMetadata();
         for (LocalClassWrapper lcw: listNodes) {
 
             clmt.setAbstract(Modifier.isAbstract(lcw.getJavaModifiers()));
-            clmt.setCategory(null);
+            clmt.setCategory(lcw.getClassPackage());
             clmt.setColor(0);
             clmt.setCountable((lcw.getApplicationModifiers() & LocalClassWrapper.MODIFIER_NOCOUNT) != LocalClassWrapper.MODIFIER_NOCOUNT);
             clmt.setCustom(false);
@@ -190,7 +187,7 @@ public class XMLBackupReader {
             clmt.setSmallIcon(new byte[0]);
             clmt.setInDesign(false);
             
-            List<AttributeMetadata> attList = new ArrayList<AttributeMetadata>();
+            List<AttributeMetadata> attList = new ArrayList<>();
             
             for (LocalAttributeWrapper law : lcw.getAttributes())
             {
@@ -215,20 +212,12 @@ public class XMLBackupReader {
             clmt.setAttributes(attList);
             try{
                 mem.createClass(clmt);
-            }catch (Exception ex){
+            }catch (DatabaseException | MetadataObjectNotFoundException | InvalidArgumentException ex){
                 System.out.println(String.format("Class %s could not be created: %s", lcw.getName(), ex.getMessage()));
             }
             //The subclasses are processed even if the parent class failed
             if(lcw.getDirectSubClasses().size() > 0)
                 readRoots(lcw.getDirectSubClasses(), lcw.getName());
         }
-    }
-
-    public void createSchema() throws DatabaseException {
-        DataIntegrityService dis = new DataIntegrityService(cm);
-        dis.createDummyroot();
-        dis.createGroupsRootNode();
-        dis.createActivityLogRootNodes();
-        dis.createPrivilegeRootNode();
     }
 }

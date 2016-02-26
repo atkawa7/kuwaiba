@@ -1,5 +1,5 @@
-/*
- *  Copyright 2010-2015 Neotropic SAS <contact@neotropic.co>
+/**
+ *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,16 +15,14 @@
  */
 package org.kuwaiba.services.persistence.impl.neo4j;
 
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.File;
 import java.util.List;
 import java.util.Properties;
 import org.kuwaiba.apis.persistence.exceptions.ConnectionException;
 import org.kuwaiba.apis.persistence.ConnectionManager;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.kernel.EmbeddedGraphDatabase;
+import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
 /**
  * ConnectionManager reference implementation
@@ -79,10 +77,11 @@ public class ConnectionManagerImpl implements ConnectionManager <GraphDatabaseSe
     public void openConnection() throws ConnectionException {
         try {
             String dbPathString = configuration.getProperty("dbPath", DEFAULT_DB_PATH);
-            Path dbPath = FileSystems.getDefault().getPath(dbPathString);
-            if (!Files.exists(dbPath) || !Files.isWritable(dbPath))
-                throw new Exception(String.format("Path %s does not exist or is not writeable", dbPath.toAbsolutePath()));
-            graphDb = new EmbeddedGraphDatabase(dbPathString);
+            
+            File dbFile = new File(dbPathString);
+            if (!dbFile.exists() || !dbFile.canWrite())
+                throw new Exception(String.format("Path %s does not exist or is not writeable", dbFile.getAbsolutePath()));
+            graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(dbFile);
         }catch(Exception e){
             throw new ConnectionException(e.getMessage());
         }
@@ -104,15 +103,15 @@ public class ConnectionManagerImpl implements ConnectionManager <GraphDatabaseSe
     }
     
     @Override
-    public EmbeddedGraphDatabase getConnectionHandler(){
-        return (EmbeddedGraphDatabase)graphDb;
+    public GraphDatabaseService getConnectionHandler(){
+        return graphDb;
     }
 
     @Override
     public void shutDown() {
         System.out.println( "[KUWAIBA] Shutting down database..." );
         graphDb.shutdown();
-        System.out.println( "[KUWAiBA] Database shut down" );
+        System.out.println( "[KUWAIBA] Database shut down" );
     }
     
     @Override

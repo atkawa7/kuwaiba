@@ -125,10 +125,13 @@ public interface BusinessEntityManager {
      * Gets the detailed information about an object
      * @param className Object class name
      * @param oid Object's oid
+     * @param ipAddress
+     * @param sessionId
      * @return A detailed representation of the requested object
      * @throws MetadataObjectNotFoundException If the className class can't be found
      * @throws ObjectNotFoundException If the requested object can't be found
-     * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked
+     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException
+     * @throws org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException
      * @throws NotAuthorizedException If the update can't be performed due to permissions
      */
     public RemoteBusinessObject getObject(String className, long oid, String ipAddress, String sessionId)
@@ -216,11 +219,15 @@ public interface BusinessEntityManager {
      * @param oid Object's oid
      * @param attributes The attributes to be updated (the key is the attribute name, 
      * the value is and array with the value -or values in case of MANY TO MANY list type attributes-)
+     * @param ipAddress
+     * @param sessionId
      * @throws MetadataObjectNotFoundException If the object class can't be found
      * @throws ObjectNotFoundException If the object can't be found
      * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked
+     * @throws org.kuwaiba.apis.persistence.exceptions.WrongMappingException
      * @throws InvalidArgumentException If any of the names provided does not exist or can't be set using this method
      * @throws ApplicationObjectNotFoundException If it's not possible to create the log entry because the user couldn't be found
+     * @throws org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException
      */
     public void updateObject(String className, long oid, HashMap<String,List<String>> attributes, String ipAddress, String sessionId)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException,

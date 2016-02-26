@@ -35,4 +35,11 @@ public interface ToolsBeanRemote {
      * @throws Exception 
      */
     public int[] executePatch() throws Exception;
+    
+    /**
+     * load the initial data model 
+     * @return if the load was successful
+     * @throws Exception 
+     */
+    public boolean loadDataModel() throws Exception;
 }

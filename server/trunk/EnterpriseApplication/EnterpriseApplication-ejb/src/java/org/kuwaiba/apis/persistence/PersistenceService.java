@@ -20,6 +20,8 @@ import java.util.Properties;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
+import org.kuwaiba.preload.tools.DataIntegrityService;
+import org.kuwaiba.preload.tools.DataModelLoader;
 import org.kuwaiba.services.persistence.util.Constants;
 
 /**
@@ -27,14 +29,18 @@ import org.kuwaiba.services.persistence.util.Constants;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class PersistenceService {
+    
     private static PersistenceService instance;
+    
+    private EXECUTION_STATE state;
     private Properties configuration;
     private ConnectionManager connectionManager;
     private MetadataEntityManager mem;
     private BusinessEntityManager bem;
     private ApplicationEntityManager aem;
-    private EXECUTION_STATE state;
-    
+    private DataIntegrityService dataIntegrityService;
+    private DataModelLoader dataModelLoader;
+        
     private PersistenceService(){
         state = EXECUTION_STATE.STOPPED;
         configuration = new Properties();
@@ -63,14 +69,15 @@ public class PersistenceService {
             connectionManager.openConnection();
             System.out.println(String.format("[KUWAIBA] [%s] Connection established", Calendar.getInstance().getTime()));
             System.out.println(String.format("[KUWAIBA] [%s] %s", Calendar.getInstance().getTime(), connectionManager.getConnectionDetails()));
-            
             aem = plf.createApplicationEntityManager(connectionManager);
             Properties applicationConfiguration = new Properties();
             applicationConfiguration.put("backgroundsPath", configuration.getProperty("backgroundsPath"));
             aem.setConfiguration(applicationConfiguration);
             mem = plf.createMetadataEntityManager(connectionManager, aem);
             bem = plf.createBusinessEntityManager(connectionManager, aem);
-            
+            dataModelLoader = new DataModelLoader(connectionManager, mem);
+            //dataIntegrityService = new DataIntegrityService(connectionManager);
+            //dataIntegrityService.checkIntegrity();
             System.out.println(String.format("[KUWAIBA] [%s] Persistence Service is up and running", Calendar.getInstance().getTime()));
             state = EXECUTION_STATE.RUNNING;
         }catch(Exception e){
@@ -116,6 +123,18 @@ public class PersistenceService {
         if (state != EXECUTION_STATE.RUNNING)
             throw new IllegalStateException("Can't locate an instance of the Connection Manager. Persistence Service is not running");
         return connectionManager;
+    }
+    
+    public DataIntegrityService getDataIntegrityService() throws IllegalStateException{
+        if (state != EXECUTION_STATE.RUNNING)
+            throw new IllegalStateException("Can't locate an instance of the Data Integrity Service. Persistence Service is not running");
+        return dataIntegrityService; 
+    }
+    
+    public DataModelLoader getDataModelLoader() throws IllegalStateException{
+        if (state != EXECUTION_STATE.RUNNING)
+            throw new IllegalStateException("Can't locate an instance of the Data model loader. Persistence Service is not running");
+        return dataModelLoader; 
     }
     
     public EXECUTION_STATE getState() {

@@ -50,7 +50,7 @@ import org.kuwaiba.ws.toserialize.metadata.ClassInfoLight;
  * Main webservice
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-@WebService
+@WebService (serviceName = "KuwaibaService")
 public class Kuwaiba {
     /**
      * The main session bean in charge of providing the business logic

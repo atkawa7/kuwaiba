@@ -16,13 +16,11 @@
 
 package org.kuwaiba.apis.persistence.application;
 
-import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
-import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
@@ -103,26 +101,33 @@ public interface ApplicationEntityManager {
             throws InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException;
     /**
      * Creates a group
-     * @param name
-     * @param description
-     * @param creationDate
+     * @param groupName the group name
+     * @param description group description
+     * @param privileges group privileges
+     * @param users users who belong the group
+     * @return group id
      * @throws InvalidArgumentException if there's already a group with that name
+     * @throws NotAuthorizedException 
      */
-    public long createGroup(String groupName, String description, long[]
+     public long createGroup(String groupName, String description, long[]
             privileges, long[] users)//, String ipAddress, String sessionId)
             throws InvalidArgumentException, NotAuthorizedException;
 
     /**
-     * Retrieves the user list
+     * Retrieves the list of all users
+     * @param ipAddress
+     * @param sessionId
      * @return An array of UserProfile
-     * @throws InvalidArgumentException
-     * @throws ObjectNotFoundException
+     * @throws NotAuthorizedException
      */
     public List<UserProfile> getUsers(String ipAddress, String sessionId) throws NotAuthorizedException;
 
     /**
-     * Retrieves the group list
+     * Retrieves the list of all groups
+     * @param ipAddress
+     * @param sessionId
      * @return An array of GroupProfile
+     * @throws NotAuthorizedException
      */
     public List<GroupProfile> getGroups(String ipAddress, String sessionId) throws NotAuthorizedException;
 
@@ -173,6 +178,8 @@ public interface ApplicationEntityManager {
     /**
      * Retrieves all the items related to a given list type
      * @param className list type
+     * @param ipAddress
+     * @param sessionId
      * @return A list of RemoteBusinessObjectLight instances representing the items
      * @throws MetadataObjectNotFoundException if className is not an existing class
      * @throws InvalidArgumentException if the class provided is not a list type
@@ -204,6 +211,8 @@ public interface ApplicationEntityManager {
 
     /**
      * Get the possible list types
+     * @param ipAddress
+     * @param sessionId
      * @return A list of ClassMetadataLight instances representing the possible list types
      * @throws ApplicationObjectNotFoundException if the GenericObjectList class does not exist
      */
@@ -471,9 +480,10 @@ public interface ApplicationEntityManager {
     /**
      * Validate if an user is allowed to perform an operation
      * @param methodName the method name
-     * @param user the user profile
-     * @throws ApplicationObjectNotFoundException
-     * @throws RemoteException 
+     * @param ipAddress
+     * @param sessionId
+     * @throws ApplicationObjectNotFoundException 
+     * @throws org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException 
      */
     public void validateCall(String methodName, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException;
     
@@ -499,6 +509,7 @@ public interface ApplicationEntityManager {
     
     /**
      * Executes a patch file 
+     * @return 
      * @throws MetadataObjectNotFoundException
      * @throws NotAuthorizedException 
      */

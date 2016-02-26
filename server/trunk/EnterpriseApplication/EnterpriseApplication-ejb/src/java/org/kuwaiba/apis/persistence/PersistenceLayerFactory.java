@@ -49,6 +49,7 @@ public class PersistenceLayerFactory{
     /**
      * Dynamically creates a metadata entity manager
      * @param connectionManager
+     * @param aem
      * @return The manager
      * @throws InstantiationException
      * @throws IllegalAccessException
@@ -97,6 +98,7 @@ public class PersistenceLayerFactory{
     /**
      * Dynamically creates a business entity manager
      * @param connectionManager
+     * @param aem
      * @return The manager
      * @throws InstantiationException
      * @throws IllegalAccessException

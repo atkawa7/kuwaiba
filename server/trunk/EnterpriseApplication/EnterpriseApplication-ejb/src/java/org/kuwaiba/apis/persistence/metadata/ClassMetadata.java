@@ -52,7 +52,7 @@ public class ClassMetadata extends ClassMetadataLight{
     /**
      *  Classmetada's category
      */
-    private CategoryMetadata category;
+    private String category;
     /**
      *  ClassMetada's description
      */
@@ -63,8 +63,8 @@ public class ClassMetadata extends ClassMetadataLight{
     private long creationDate;
 
     public ClassMetadata() {
-        attributes = new ArrayList<AttributeMetadata>();
-        possibleChildren = new ArrayList<String>();
+        attributes = new ArrayList<>();
+        possibleChildren = new ArrayList<>();
     }
     
    // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
@@ -100,11 +100,11 @@ public class ClassMetadata extends ClassMetadataLight{
         this.attributes = attributes;
     }
 
-    public CategoryMetadata getCategory() {
+    public String getCategory() {
         return category;
     }
 
-    public void setCategory(CategoryMetadata category) {
+    public void setCategory(String category) {
         this.category = category;
     }
 

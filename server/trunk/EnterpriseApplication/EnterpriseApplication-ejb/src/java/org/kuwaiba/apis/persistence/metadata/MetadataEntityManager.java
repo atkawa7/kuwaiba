@@ -1,5 +1,5 @@
-/*
- *  Copyright 2010-2015 Neotropic SAS <contact@neotropic.co>
+/**
+ *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,8 +32,7 @@ public interface MetadataEntityManager {
     /**
      * Creates a class metadata with its:
      * attributes(some new attributes and others extedended from the parent).
-     * category (if the category does not exist it will be create).
-     * @param classDefinition
+     * @param classDefinition the class definition, name, display name, etc
      * @return the Id of the newClassMetadata
      * @throws MetadataObjectNotFoundException if the specified parent class doesn't exist
      * @throws DatabaseException if the reference node doesn't exist
@@ -43,34 +42,57 @@ public interface MetadataEntityManager {
 
     /**
      * Changes a class metadata definition
-     * @param newClassDefinition
-     * @throws ClassNotFoundException if there is no class with such classId
+     * @param newClassDefinition the new class definition 
+     * @param ipAddress
+     * @param sessionId
+     * @throws ApplicationObjectNotFoundException
+     * @throws NotAuthorizedException the user has no privileges to execute this action
+     * @throws MetadataObjectNotFoundException 
      */
-    public void setClassProperties(ClassMetadata newClassDefinition, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
+    public void setClassProperties(ClassMetadata newClassDefinition, String ipAddress, String sessionId) 
+            throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
 
     /**
      * Deletes a class metadata, its attributes and category relationships
-     * @param classId
-     * @throws ClassNotFoundException if there is not a class with de ClassId
+     * @param className the class name
+     * @param ipAddress
+     * @param sessionId
+     * @throws ApplicationObjectNotFoundException
+     * @throws NotAuthorizedException the user has no privileges to execute this action
+     * @throws MetadataObjectNotFoundException if there is not a class with de ClassName
      */
-    public void deleteClass(String className, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
+    public void deleteClass(String className, String ipAddress, String sessionId) 
+            throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
 
     /**
      * Deletes a class metadata, its attributes and category relationships
-     * @param classId
-     * @throws ClassNotFoundException if there is not a class with de ClassName
+     * @param classId the class id
+     * @param ipAddress
+     * @param sessionId
+     * @throws MetadataObjectNotFoundException if there is not a class with de ClassName
+     * @throws ApplicationObjectNotFoundException
+     * @throws NotAuthorizedException
+     * @throws InvalidArgumentException 
      */
-    public void deleteClass(long classId, String ipAddress, String sessionId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, InvalidArgumentException;
+    public void deleteClass(long classId, String ipAddress, String sessionId) 
+            throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, InvalidArgumentException;
     
     /**
-     * Retrieves the simplified list of classes. This list won't include either
+     * Retrieves the simplified list of classes, This list won't include either
      * those classes marked as dummy
-     * @param includeListTypes boolean to indicate if the list should include
+     * @param includeListTypes boolean to indicate if the list should include 
      * the subclasses of GenericObjectList
+     * @param includeIndesign Include all the data model classes or only the classes in production
+     * @param ipAddress
+     * @param sessionId
      * @return the list of classes
-     * @throws Exception EntityManagerNotAvailableException or something unexpected
+     * @throws ApplicationObjectNotFoundException
+     * @throws NotAuthorizedException
+     * @throws MetadataObjectNotFoundException 
      */
-    public List<ClassMetadataLight> getAllClassesLight (boolean includeListTypes, boolean includeIndesign, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
+    public List<ClassMetadataLight> getAllClassesLight (boolean includeListTypes, 
+            boolean includeIndesign, String ipAddress, String sessionId) 
+            throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
     
     /**
      * Gets the subclasses of a given class
@@ -206,41 +228,6 @@ public interface MetadataEntityManager {
      */
     public void deleteAttribute(long classId,String attributeName, String ipAddress, String sessionId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, InvalidArgumentException;
 
-    /**
-     * Creates a new category
-     * @param categoryDefinition
-     * @return CategoryId
-     */
-    public long createCategory(CategoryMetadata categoryDefinition, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
-
-    /**
-     * Gets a Category with it's name
-     * @param categoryName
-     * @return CategoryMetadata
-     * @throws MiscException if the Category does not exist
-     */
-    public CategoryMetadata getCategory(String categoryName, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
-
-    /**
-     * Gets a Category with it's Id
-     * @param categoryId
-     * @return CategoryMetadata
-     */
-    public CategoryMetadata getCategory(long categoryId, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
-
-    /**
-     * Changes a category definition
-     * @param categoryDefinition
-     * @return true if success
-     */
-    public void setCategoryProperties(CategoryMetadata categoryDefinition, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
-
-    /**
-     * Deletes a category definition Still don't know what to do with the clasess
-     * @param categoryDefinition
-     */
-    public void deleteCategory(String categoryName, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
-    public void deleteCategory(int categoryId, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
     public void addImplementor(String classWhichImplementsName,String interfaceToImplementName, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException, Exception;
     public void removeImplementor(String classWhichImplementsName ,String interfaceToBeRemovedName, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException, Exception;
     public void addImplementor(int classWhichImplementsId, int interfaceToImplementId, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException, Exception;

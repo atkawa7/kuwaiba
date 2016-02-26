@@ -105,8 +105,18 @@ public class Tools extends HttpServlet {
                 }
                 break;
             case 3:
-                out.println("<h2 class=\"error\">Error</h2>");
-                out.println("<div id=\"content\">Unknown option</div>");
+                try {
+                    out.println("<h1>Loading data model....</h1>");
+                    boolean success = tbr.loadDataModel();
+                    if(success){
+                        out.println("<h2>Success</h2>");
+                        out.println("<div id=\"content\">The data model was loaded successfully</div>");
+                    }
+                } catch (Exception ex) {
+                    Logger.getLogger(Tools.class.getName()).log(Level.SEVERE, null, ex);
+                    out.println("<h2 class=\"error\">Error</h2>");
+                    out.println("<div id=\"content\">"+ex.getMessage()+"</div>");
+                }
                
                 break;
             default:

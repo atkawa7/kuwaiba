@@ -2,15 +2,13 @@
  * 
  */
 
-package org.kuwaiba.tests.tools;
+package org.kuwaiba.tests.tools.fixtures;
 
 import java.util.Calendar;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
-import org.kuwaiba.tests.tools.fixtures.Containment;
-import org.kuwaiba.tests.tools.fixtures.ListTypes;
 
 
 /**

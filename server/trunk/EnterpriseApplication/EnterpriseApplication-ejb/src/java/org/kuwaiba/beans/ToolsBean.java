@@ -17,9 +17,11 @@
 package org.kuwaiba.beans;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.exceptions.ServerSideException;
@@ -33,9 +35,10 @@ public class ToolsBean implements ToolsBeanRemote {
         
     @Override
     public void resetAdmin()  throws ServerSideException, NotAuthorizedException{
+        
         try{
             PersistenceService.getInstance().getApplicationEntityManager().setUserProperties("admin",null, "kuwaiba", null, null, true, null, null, null, null);
-        }catch(ApplicationObjectNotFoundException onfe){ //If the user does not exist, create it
+        }catch(ApplicationObjectNotFoundException ex){ //If the user does not exist, create it
             try {
                 PersistenceService.getInstance().getApplicationEntityManager().createUser("admin", "kuwaiba", "Radamel", "Falcao", true, null, null);
             }catch(InvalidArgumentException ie){
@@ -49,5 +52,17 @@ public class ToolsBean implements ToolsBeanRemote {
     @Override
     public int[] executePatch() throws ServerSideException, NotAuthorizedException {
             return PersistenceService.getInstance().getApplicationEntityManager().executePatch();
+    }
+    
+    @Override
+    public boolean loadDataModel() throws ServerSideException{
+        try{
+            return PersistenceService.getInstance().getDataModelLoader().loadDataModel();
+        }catch(DatabaseException ex){
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        } catch (Exception ex) {
+            Logger.getLogger(ToolsBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
 }

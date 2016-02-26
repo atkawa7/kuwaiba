@@ -107,7 +107,7 @@ public class CacheManager {
     /**
      * Adds an entry to the possible children index
      * @param parent
-     * @param children
+     * @param child
      */
     public void putPossibleChild(String parent, String child){
         List<String> myList = possibleChildrenIndex.get(parent);
@@ -150,7 +150,7 @@ public class CacheManager {
 
     /**
      * Tries to retrieve a cached user
-     * @param userName the class to be retrieved from the cache
+     * @param groupName the class to be retrieved from the cache
      * @return the cached version of the group. Null if it's  not cached
      */
     public GroupProfile getGroup(String groupName){
@@ -159,7 +159,7 @@ public class CacheManager {
 
     /**
      * Put/replaces an entry into the group cache
-     * @param newUser user to be added
+     * @param newGroup user to be added
      */
     public void putGroup(GroupProfile newGroup){
         groupIndex.put(newGroup.getName(), newGroup);

@@ -48,18 +48,20 @@ import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.exceptions.UnsupportedPropertyException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
-import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.apis.persistence.metadata.GenericObjectList;
 import org.kuwaiba.services.persistence.impl.neo4j.RelTypes;
 import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.DynamicLabel;
+import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Path;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.traversal.TraversalDescription;
-import org.neo4j.kernel.Traversal;
-import org.neo4j.kernel.impl.traversal.TraversalDescriptionImpl;
+import org.neo4j.kernel.impl.traversal.MonoDirectionalTraversalDescription;
+
 
 /**
  * Utility class containing misc methods to perform common tasks
@@ -275,19 +277,6 @@ public class Util {
         return classDefinition;
     }
 
-    public static CategoryMetadata createDefaultCategoryMetadata(CategoryMetadata categoryDefinition) throws MetadataObjectNotFoundException{
-        if(categoryDefinition.getName() == null){
-            throw new MetadataObjectNotFoundException("Can not create a category without a name");
-        }
-        if(categoryDefinition.getDescription() == null){
-            categoryDefinition.setDescription("");
-        }
-        if(categoryDefinition.getDisplayName() == null){
-            categoryDefinition.setDisplayName("");
-        }
-        return categoryDefinition;
-    }
-    
     /**
      * Converts a class metadata node into a ClassMetadataLight object
      * @param classNode
@@ -325,9 +314,13 @@ public class Util {
     {
         ClassMetadata myClass = new ClassMetadata();
         List<AttributeMetadata> listAttributes = new ArrayList();
-        CategoryMetadata ctgr = new CategoryMetadata();
 
         myClass.setName((String)classNode.getProperty(Constants.PROPERTY_NAME));
+        Iterable<Label> labels = classNode.getLabels();
+        for (Label label : labels) {
+            if(label.name().contains("org."))
+                myClass.setCategory(label.name());
+        }
         myClass.setAbstract((Boolean)classNode.getProperty(Constants.PROPERTY_ABSTRACT));
         myClass.setColor((Integer)classNode.getProperty(Constants.PROPERTY_COLOR));
         myClass.setCountable((Boolean)classNode.getProperty(Constants.PROPERTY_COUNTABLE));
@@ -356,15 +349,6 @@ public class Util {
         
         myClass.setAttributes(listAttributes);
 
-        //Category
-        if(classNode.getSingleRelationship(RelTypes.BELONGS_TO_GROUP, Direction.BOTH) != null)
-        {
-            ctgr.setName((String)classNode.getSingleRelationship(RelTypes.BELONGS_TO_GROUP, Direction.BOTH).getEndNode().getProperty(Constants.PROPERTY_NAME));
-            ctgr.setDisplayName((String)classNode.getSingleRelationship(RelTypes.BELONGS_TO_GROUP, Direction.BOTH).getEndNode().getProperty(Constants.PROPERTY_DISPLAY_NAME));
-            ctgr.setDescription((String)classNode.getSingleRelationship(RelTypes.BELONGS_TO_GROUP, Direction.BOTH).getEndNode().getProperty(Constants.PROPERTY_DESCRIPTION));
-
-            myClass.setCategory(ctgr);
-        }
         //Possible Children
         for (Relationship rel : classNode.getRelationships(Direction.OUTGOING, RelTypes.POSSIBLE_CHILD))
         {
@@ -386,8 +370,8 @@ public class Util {
 
     /**
      * Converts a attribute metadata node into a AttrributeMetadata object
-     * @param AttributeNode
-     * @return
+     * @param attributeNode
+     * @return the attribute as an instance of AttributeMetada class
      */
     public static AttributeMetadata createAttributeMetadataFromNode(Node attributeNode)
     {
@@ -422,40 +406,44 @@ public class Util {
      */
     public static RemoteBusinessObject createRemoteObjectFromNode(Node instance, ClassMetadata myClass) throws InvalidArgumentException{
         
-        HashMap<String, List<String>> attributes = new HashMap<String, List<String>>();
+        HashMap<String, List<String>> attributes = new HashMap<>();
 
-        for (AttributeMetadata myAtt : myClass.getAttributes()){
-            //Only set the attributes existing in the current node. Please note that properties can't be null in
-            //Neo4J, so a null value is actually a non-existing relationship/value
-            if (instance.hasProperty(myAtt.getName())){
-               if (AttributeMetadata.isPrimitive(myAtt.getType())) {
-                   if (!myAtt.getType().equals("Binary")) {
-                        List<String> attributeValue = new ArrayList<String>();
-                        attributeValue.add(instance.getProperty(myAtt.getName()).toString());
-                        attributes.put(myAtt.getName(),attributeValue);
+        
+            for (AttributeMetadata myAtt : myClass.getAttributes()){
+                //Only set the attributes existing in the current node. Please note that properties can't be null in
+                //Neo4J, so a null value is actually a non-existing relationship/value
+                if (instance.hasProperty(myAtt.getName())){
+                   if (AttributeMetadata.isPrimitive(myAtt.getType())) {
+                       if (!myAtt.getType().equals("Binary")) {
+                            List<String> attributeValue = new ArrayList<>();
+                            attributeValue.add(instance.getProperty(myAtt.getName()).toString());
+                            attributes.put(myAtt.getName(),attributeValue);
+                        }
                     }
                 }
             }
-        }
-        
-        //Iterates through relationships and transform the into "plain" attributes
-        Iterable<Relationship> relationships = instance.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING);
-        while(relationships.iterator().hasNext()){
-            Relationship relationship = relationships.iterator().next();
-            if (!relationship.hasProperty(Constants.PROPERTY_NAME))
-                throw new InvalidArgumentException(String.format("The object with id %s is malformed", instance.getId()), Level.SEVERE);
 
-            String attributeName = (String)relationship.getProperty(Constants.PROPERTY_NAME);
-            for (AttributeMetadata myAtt : myClass.getAttributes()){
-                if (myAtt.getName().equals(attributeName)){
-                    if (attributes.get(attributeName)==null)
-                        attributes.put(attributeName, new ArrayList<String>());
-                    attributes.get(attributeName).add(String.valueOf(relationship.getEndNode().getId()));
+            //Iterates through relationships and transform the into "plain" attributes
+            Iterable<Relationship> relationships = instance.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING);
+
+            while(relationships.iterator().hasNext()){
+                Relationship relationship = relationships.iterator().next();
+                if (!relationship.hasProperty(Constants.PROPERTY_NAME))
+                    throw new InvalidArgumentException(String.format("The object with id %s is malformed", instance.getId()), Level.SEVERE);
+
+                String attributeName = (String)relationship.getProperty(Constants.PROPERTY_NAME);
+                for (AttributeMetadata myAtt : myClass.getAttributes()){
+                    if (myAtt.getName().equals(attributeName)){
+                        if (attributes.get(attributeName)==null)
+                            attributes.put(attributeName, new ArrayList<String>());
+                        attributes.get(attributeName).add(String.valueOf(relationship.getEndNode().getId()));
+                    }
                 }
             }
-        }
-        RemoteBusinessObject res = new RemoteBusinessObject(instance.getId(), myClass.getName(), attributes);
-        return res;
+            RemoteBusinessObject res = new RemoteBusinessObject(instance.getId(), myClass.getName(), attributes);
+            
+            return res;
+        
     }
 
     /**
@@ -465,14 +453,14 @@ public class Util {
      */
 
     public static UserProfile createUserProfileFromNode(Node userNode){
-       List<GroupProfile> groups = new ArrayList<GroupProfile>();
-       List<Privilege> privileges = new ArrayList<Privilege>();
+       List<GroupProfile> groups = new ArrayList<>();
+       List<Privilege> privileges = new ArrayList<>();
        Iterable<Relationship> groupRelationships = userNode.getRelationships(RelTypes.BELONGS_TO_GROUP, Direction.OUTGOING);
        //groups
        for (Relationship relationship : groupRelationships) {
            //group Privileges         
            Node groupNode = relationship.getEndNode();
-           List<Privilege> groupPrivileges = new ArrayList<Privilege>();
+           List<Privilege> groupPrivileges = new ArrayList<>();
            for(Relationship rel: groupNode.getRelationships(RelTypes.HAS_PRIVILEGE, Direction.INCOMING))
                 groupPrivileges.add(createPrivilegeFromNode(rel.getStartNode()));
            //TODO get users
@@ -493,7 +481,7 @@ public class Util {
                 (Long)userNode.getProperty(Constants.PROPERTY_CREATION_DATE),
                 (Boolean)userNode.getProperty(Constants.PROPERTY_ENABLED),
                 groups, privileges);
-         return user;
+        return user;
     }
 
     /**
@@ -562,7 +550,7 @@ public class Util {
      * Traverses the graph up into the class hierarchy trying to find out if a given class
      * is the subclass of another
      * @param allegedParentClass The alleged parent class name
-     * @param startNode Class metadata node corresponding to the child class
+     * @param currentNode
      * @return
      */
     public static boolean isSubClass(String allegedParentClass, Node currentNode){
@@ -616,12 +604,11 @@ public class Util {
 
     /**
      * Retrieves the subclasses of a given class metadata node within the class hierarchy
-     * @param ClassMetadata
      * @return
      */
 
     public static Iterable<Node> getAllSubclasses(final Node classMetadata){
-        TraversalDescription td = new TraversalDescriptionImpl();
+        TraversalDescription td = new MonoDirectionalTraversalDescription(); //TODO revisar esto!
         td = td.depthFirst();
         td = td.relationships(RelTypes.EXTENDS, Direction.INCOMING);
         org.neo4j.graphdb.traversal.Traverser traverse = td.traverse(classMetadata);
@@ -717,8 +704,9 @@ public class Util {
         return (String)aClass.iterator().next().getEndNode().getProperty(Constants.PROPERTY_NAME);
     }
        
-    public static void createAttribute(Node classNode, AttributeMetadata attributeDefinition) throws InvalidArgumentException{
-            final TraversalDescription UPDATE_TRAVERSAL = Traversal.description().
+    public static void createAttribute(Node classNode, AttributeMetadata attributeDefinition) throws InvalidArgumentException
+    {
+        final TraversalDescription UPDATE_TRAVERSAL = classNode.getGraphDatabase().traversalDescription().
                     breadthFirst().
                     relationships(RelTypes.EXTENDS, Direction.INCOMING);
 
@@ -730,8 +718,8 @@ public class Util {
                             currentClassName, attributeDefinition.getName()), Level.INFO);
                 
             }
-            
-            Node attrNode = classNode.getGraphDatabase().createNode();
+            Label label = DynamicLabel.label(Constants.LABEL_ATTRIBUTE);
+            Node attrNode = classNode.getGraphDatabase().createNode(label);
             attrNode.setProperty(Constants.PROPERTY_NAME, attributeDefinition.getName()); //This should not be null. That should be checked in the caller
             attrNode.setProperty(Constants.PROPERTY_DESCRIPTION, attributeDefinition.getDescription() ==  null ? "" : attributeDefinition.getDescription());
             attrNode.setProperty(Constants.PROPERTY_DISPLAY_NAME, attributeDefinition.getDisplayName() == null ? "" : attributeDefinition.getDisplayName());
@@ -754,7 +742,7 @@ public class Util {
      * @param attributeType 
      */
     public static void changeAttributeTypeIfPrimitive (Node classNode, String attributeName, String newAttributeType) throws InvalidArgumentException {
-        final TraversalDescription UPDATE_TRAVERSAL = Traversal.description().
+        final TraversalDescription UPDATE_TRAVERSAL = classNode.getGraphDatabase().traversalDescription().
                     breadthFirst().
                     relationships(RelTypes.EXTENDS, Direction.INCOMING);
 
@@ -780,7 +768,7 @@ public class Util {
     }
     
     public static void changeAttributeTypeIfListType (Node classNode, String attributeName, String newAttributeType) throws InvalidArgumentException {
-        final TraversalDescription UPDATE_TRAVERSAL = Traversal.description().
+        final TraversalDescription UPDATE_TRAVERSAL = classNode.getGraphDatabase().traversalDescription().
                     breadthFirst().
                     relationships(RelTypes.EXTENDS, Direction.INCOMING);
 
@@ -802,7 +790,7 @@ public class Util {
     }
     
     public static void changeAttributeProperty (Node classNode, String attributeName, String propertyName, Object propertyValue) throws InvalidArgumentException {
-        final TraversalDescription UPDATE_TRAVERSAL = Traversal.description().
+        final TraversalDescription UPDATE_TRAVERSAL = classNode.getGraphDatabase().traversalDescription().
                     breadthFirst().
                     relationships(RelTypes.EXTENDS, Direction.INCOMING);
 
@@ -824,7 +812,7 @@ public class Util {
      * @throws InvalidArgumentException 
      */
     public static void changeAttributeName(Node classNode, String oldAttributeName, String newAttributeName) {
-        final TraversalDescription UPDATE_TRAVERSAL = Traversal.description().
+        final TraversalDescription UPDATE_TRAVERSAL = classNode.getGraphDatabase().traversalDescription().
                     breadthFirst().
                     relationships(RelTypes.EXTENDS, Direction.INCOMING);
 
@@ -847,7 +835,7 @@ public class Util {
     }
     
     public static void deleteAttributeIfPrimitive(Node classNode, String attributeName){
-        final TraversalDescription TRAVERSAL = Traversal.description().
+        final TraversalDescription TRAVERSAL = classNode.getGraphDatabase().traversalDescription().
                     breadthFirst().relationships(RelTypes.EXTENDS, Direction.INCOMING);
         
         for(Path p : TRAVERSAL.traverse(classNode)){
@@ -867,7 +855,7 @@ public class Util {
     }
     
     public static void deleteAttributeIfListType(Node classNode, String attributeName){
-        final TraversalDescription TRAVERSAL = Traversal.description().
+        final TraversalDescription TRAVERSAL = classNode.getGraphDatabase().traversalDescription().
                     breadthFirst().relationships(RelTypes.EXTENDS, Direction.INCOMING);
         
         for(Path p : TRAVERSAL.traverse(classNode)){
