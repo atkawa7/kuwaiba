@@ -409,6 +409,8 @@ public interface BusinessEntityManager {
      * @param objectClass object's class
      * @param objectId object's id
      * @param specialAttributeName Special attribute name
+     * @param ipAddress
+     * @param sessionId
      * @return A list of objects related to the object through a special relationship
      * @throws ObjectNotFoundException if the object can not be found
      * @throws MetadataObjectNotFoundException if either the object class or the attribute can not be found

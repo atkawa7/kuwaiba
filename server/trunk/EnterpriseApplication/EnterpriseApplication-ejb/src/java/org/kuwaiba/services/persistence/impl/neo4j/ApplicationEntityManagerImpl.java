@@ -1532,7 +1532,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                         logEntry.hasProperty(Constants.PROPERTY_NEW_VALUE) ? (String)logEntry.getProperty(Constants.PROPERTY_NEW_VALUE) : null, 
                         logEntry.hasProperty(Constants.PROPERTY_NOTES) ? (String)logEntry.getProperty(Constants.PROPERTY_NOTES) : null));
             }
-            tx.success();
+            
             return log;
         }
     }
@@ -1581,7 +1581,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                         logEntry.hasProperty(Constants.PROPERTY_NEW_VALUE) ? (String)logEntry.getProperty(Constants.PROPERTY_NEW_VALUE) : null, 
                         logEntry.hasProperty(Constants.PROPERTY_NOTES) ? (String)logEntry.getProperty(Constants.PROPERTY_NOTES) : null));
             }
-            tx.success();
+            
             return log;
         }
     }

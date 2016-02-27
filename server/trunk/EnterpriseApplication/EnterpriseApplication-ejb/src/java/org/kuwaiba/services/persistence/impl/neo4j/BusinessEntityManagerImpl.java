@@ -474,22 +474,24 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
         
         aem.validateCall("getParent", ipAddress, sessionId);
-        
-        Node objectNode = getInstanceOfClass(objectClass, oid);
-        if (objectNode.hasRelationship(Direction.OUTGOING, RelTypes.CHILD_OF)){
-            Node parentNode = objectNode.getSingleRelationship(RelTypes.CHILD_OF, Direction.OUTGOING).getEndNode();
-            
-            //If the direct parent is DummyRoot, return a dummy RemoteBusinessObject with oid = -1
-            if (parentNode.hasRelationship(RelTypes.DUMMY_ROOT))
-                return new RemoteBusinessObject(-1L, Constants.NODE_DUMMYROOT, Constants.NODE_DUMMYROOT);
-            else    
+        try(Transaction tx = graphDb.beginTx())
+        {
+            Node objectNode = getInstanceOfClass(objectClass, oid);
+            if (objectNode.hasRelationship(Direction.OUTGOING, RelTypes.CHILD_OF)){
+                Node parentNode = objectNode.getSingleRelationship(RelTypes.CHILD_OF, Direction.OUTGOING).getEndNode();
+
+                //If the direct parent is DummyRoot, return a dummy RemoteBusinessObject with oid = -1
+                if (parentNode.hasRelationship(RelTypes.DUMMY_ROOT))
+                    return new RemoteBusinessObject(-1L, Constants.NODE_DUMMYROOT, Constants.NODE_DUMMYROOT);
+                else    
+                    return Util.createRemoteObjectFromNode(parentNode, cm.getClass(Util.getClassName(parentNode)));
+            }
+            if (objectNode.hasRelationship(Direction.OUTGOING, RelTypes.CHILD_OF_SPECIAL)){
+                Node parentNode = objectNode.getSingleRelationship(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).getEndNode();
                 return Util.createRemoteObjectFromNode(parentNode, cm.getClass(Util.getClassName(parentNode)));
+            }
+            return null;
         }
-        if (objectNode.hasRelationship(Direction.OUTGOING, RelTypes.CHILD_OF_SPECIAL)){
-            Node parentNode = objectNode.getSingleRelationship(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).getEndNode();
-            return Util.createRemoteObjectFromNode(parentNode, cm.getClass(Util.getClassName(parentNode)));
-        }
-        return null;
     }
     
     @Override
@@ -528,25 +530,27 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
         
         aem.validateCall("getParentOfClass", ipAddress, sessionId);
-        
-        Node objectNode = getInstanceOfClass(objectClass, oid);
-        
-        while (true){
-            //This method won't support CHILD_OF_SPECIAL relationships
-            if (objectNode.hasRelationship(Direction.OUTGOING, RelTypes.CHILD_OF)){
-                Node parentNode = objectNode.getSingleRelationship(RelTypes.CHILD_OF, Direction.OUTGOING).getEndNode();
+        try(Transaction tx = graphDb.beginTx())
+        {
+            Node objectNode = getInstanceOfClass(objectClass, oid);
 
-                if (parentNode.hasRelationship(RelTypes.DUMMY_ROOT))
-                    return null;
-                else {
-                    String thisNodeClass = Util.getClassName(parentNode);
-                    if (cm.isSubClass(thisNodeClass, parentClass))
-                        return Util.createRemoteObjectFromNode(parentNode, cm.getClass(thisNodeClass));
-                    objectNode = parentNode;
-                    continue;
+            while (true){
+                //This method won't support CHILD_OF_SPECIAL relationships
+                if (objectNode.hasRelationship(Direction.OUTGOING, RelTypes.CHILD_OF)){
+                    Node parentNode = objectNode.getSingleRelationship(RelTypes.CHILD_OF, Direction.OUTGOING).getEndNode();
+
+                    if (parentNode.hasRelationship(RelTypes.DUMMY_ROOT))
+                        return null;
+                    else {
+                        String thisNodeClass = Util.getClassName(parentNode);
+                        if (cm.isSubClass(thisNodeClass, parentClass))
+                            return Util.createRemoteObjectFromNode(parentNode, cm.getClass(thisNodeClass));
+                        objectNode = parentNode;
+                        continue;
+                    }
                 }
+                return null;
             }
-            return null;
         }
     }
 
@@ -875,24 +879,25 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             else
                 parentNode = getInstanceOfClass(classId, oid);
             
-            Iterable<Relationship> children = parentNode.getRelationships(RelTypes.CHILD_OF,Direction.INCOMING);
+            Iterable<Relationship> iterableChildren = parentNode.getRelationships(RelTypes.CHILD_OF,Direction.INCOMING);
+            Iterator<Relationship> children = iterableChildren.iterator();
             List<RemoteBusinessObjectLight> res = new ArrayList<>();
             if (maxResults > 0){
                 int counter = 0;
-                while(children.iterator().hasNext() && (counter < maxResults)){
+                while(children.hasNext() && (counter < maxResults)){
                     counter++;
-                    Node child = children.iterator().next().getStartNode();
+                    Node child = children.next().getStartNode();
                     res.add(new RemoteBusinessObjectLight(child.getId(), (String)child.getProperty(Constants.PROPERTY_NAME), Util.getClassName(child)));
                 }
             }else{
-                while(children.iterator().hasNext()){
-                    Node child = children.iterator().next().getStartNode();
+                while(children.hasNext()){
+                    Node child = children.next().getStartNode();
                     res.add(new RemoteBusinessObjectLight(child.getId(), (String)child.getProperty(Constants.PROPERTY_NAME), Util.getClassName(child)));
                 }
             }
-            tx.success();
             return res;
         }catch(Exception ex){
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "getObjectChildren: {0}", ex.getMessage()); //NOI18N
             throw new RuntimeException(ex.getMessage());
         }
     }
@@ -942,9 +947,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             if (classMetadataNode == null)
                 throw new MetadataObjectNotFoundException(className);
 
-            List<RemoteBusinessObjectLight> instances = new ArrayList<RemoteBusinessObjectLight>();
+            List<RemoteBusinessObjectLight> instances = new ArrayList<>();
 
-            TraversalDescription traversal = Traversal.description().breadthFirst().relationships(RelTypes.EXTENDS, Direction.INCOMING);
+            TraversalDescription traversal = graphDb.traversalDescription().breadthFirst().relationships(RelTypes.EXTENDS, Direction.INCOMING);
             int counter = 0;
             for(Path p : traversal.traverse(classMetadataNode)){
                 for (Relationship rel : p.endNode().getRelationships(RelTypes.INSTANCE_OF)){
@@ -966,13 +971,14 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
         aem.validateCall("getChildrenOfClass", ipAddress, sessionId); 
         Node parentNode = getInstanceOfClass(parentClass, parentOid);
-        Iterable<Relationship> children = parentNode.getRelationships(RelTypes.CHILD_OF,Direction.INCOMING);
+        Iterable<Relationship> iterableChildren = parentNode.getRelationships(RelTypes.CHILD_OF,Direction.INCOMING);
+        Iterator<Relationship> children = iterableChildren.iterator();
         List<RemoteBusinessObject> res = new ArrayList<>();
-
         int counter = 0;
 
-        while(children.iterator().hasNext()){
-            Node child = children.iterator().next().getStartNode();
+        
+        while(children.hasNext()){
+            Node child = children.next().getStartNode();
 
             if (!child.getRelationships(RelTypes.INSTANCE_OF).iterator().hasNext())
                 throw new MetadataObjectNotFoundException(String.format("Class for object with oid %s could not be found",child.getId()));
@@ -1071,14 +1077,17 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         aem.validateCall("getSpecialAttribute", ipAddress, sessionId); 
         Node instance = getInstanceOfClass(objectClass, objectId);
         List<RemoteBusinessObjectLight> res = new ArrayList<>();
-        for (Relationship rel : instance.getRelationships(RelTypes.RELATED_TO_SPECIAL)){
-            if(rel.hasProperty(Constants.PROPERTY_NAME)){
-                if (rel.getProperty(Constants.PROPERTY_NAME).equals(specialAttributeName))
-                    res.add(rel.getEndNode().getId() == objectId ? 
-                        Util.createRemoteObjectLightFromNode(rel.getStartNode()) : Util.createRemoteObjectLightFromNode(rel.getEndNode()));
+        try(Transaction tx = graphDb.beginTx())
+        {
+            for (Relationship rel : instance.getRelationships(RelTypes.RELATED_TO_SPECIAL)){
+                if(rel.hasProperty(Constants.PROPERTY_NAME)){
+                    if (rel.getProperty(Constants.PROPERTY_NAME).equals(specialAttributeName))
+                        res.add(rel.getEndNode().getId() == objectId ? 
+                            Util.createRemoteObjectLightFromNode(rel.getStartNode()) : Util.createRemoteObjectLightFromNode(rel.getEndNode()));
+                }
             }
+            return res;
         }
-        return res;
     }
     
     @Override
@@ -1087,16 +1096,19 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         aem.validateCall("getSpecialAttributes", ipAddress, sessionId); 
         Node objectNode = getInstanceOfClass(className, objectId);
         HashMap<String,List<RemoteBusinessObjectLight>> res = new HashMap<>();
-        for (Relationship rel : objectNode.getRelationships(RelTypes.RELATED_TO_SPECIAL)){
-            String relName = (String)rel.getProperty(Constants.PROPERTY_NAME);
-            List<RemoteBusinessObjectLight> currentObjects = res.get(relName);
-            if (currentObjects == null){
-                currentObjects = new ArrayList<>();
-                res.put(relName, currentObjects);
+        try(Transaction tx = graphDb.beginTx())
+        {
+            for (Relationship rel : objectNode.getRelationships(RelTypes.RELATED_TO_SPECIAL)){
+                String relName = (String)rel.getProperty(Constants.PROPERTY_NAME);
+                List<RemoteBusinessObjectLight> currentObjects = res.get(relName);
+                if (currentObjects == null){
+                    currentObjects = new ArrayList<>();
+                    res.put(relName, currentObjects);
+                }
+                currentObjects.add(Util.createRemoteObjectLightFromNode(rel.getOtherNode(objectNode)));
             }
-            currentObjects.add(Util.createRemoteObjectLightFromNode(rel.getOtherNode(objectNode)));
+            return res;
         }
-        return res;
     }
     
     @Override
@@ -1105,14 +1117,17 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         aem.validateCall("getObjectSpecialChildren", ipAddress, sessionId); 
         Node instance = getInstanceOfClass(objectClass, objectId);
         List<RemoteBusinessObjectLight> res = new ArrayList<>();
-        for (Relationship rel : instance.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF_SPECIAL)){
-            if(rel.hasProperty(Constants.PROPERTY_NAME)){
-                if(rel.getProperty(Constants.PROPERTY_NAME).equals(Constants.REL_PROPERTY_POOL))
-                    return res;
+        try(Transaction tx = graphDb.beginTx())
+        {
+            for (Relationship rel : instance.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF_SPECIAL)){
+                if(rel.hasProperty(Constants.PROPERTY_NAME)){
+                    if(rel.getProperty(Constants.PROPERTY_NAME).equals(Constants.REL_PROPERTY_POOL))
+                        return res;
+                }
+                res.add(Util.createRemoteObjectLightFromNode(rel.getStartNode()));
             }
-            res.add(Util.createRemoteObjectLightFromNode(rel.getStartNode()));
+            return res;
         }
-        return res;
     }
 
     @Override
@@ -1121,13 +1136,16 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         aem.validateCall("hasRelationship", ipAddress, sessionId); 
         Node object = getInstanceOfClass(objectClass, objectId);
         int relationshipsCounter = 0;
-        for (Relationship rel : object.getRelationships(RelTypes.RELATED_TO)){
-            if (rel.getProperty(Constants.PROPERTY_NAME).equals(relationshipName))
-                relationshipsCounter++;
-            if (relationshipsCounter == numberOfRelationships)
-                return true;
+        try(Transaction tx = graphDb.beginTx())
+        {
+            for (Relationship rel : object.getRelationships(RelTypes.RELATED_TO)){
+                if (rel.getProperty(Constants.PROPERTY_NAME).equals(relationshipName))
+                    relationshipsCounter++;
+                if (relationshipsCounter == numberOfRelationships)
+                    return true;
+            }
+            return false;
         }
-        return false;
     }
     
     @Override
@@ -1155,7 +1173,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                              "MATCH path = o-[r:" + RelTypes.RELATED_TO_SPECIAL.toString() + "*]-c " +
                              "WHERE all(rel in r where rel.name = 'mirror' or rel.name = 'endpointA' or rel.name = 'endpointB') "+
                              "RETURN collect(distinct c) as path";
-        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> params = new HashMap<>();
         params.put("oid", objectId);
         try (Transaction tx = graphDb.beginTx()){
            
@@ -1177,6 +1195,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 for(Node node : listOfNodes)
                     path.add(Util.createRemoteObjectLightFromNode(node));
             }
+            tx.success();
         }catch(Exception ex){
             throw new RuntimeException(ex.getMessage());
         }

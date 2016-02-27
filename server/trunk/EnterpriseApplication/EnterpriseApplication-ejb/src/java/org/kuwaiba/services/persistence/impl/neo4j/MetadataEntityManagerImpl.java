@@ -493,7 +493,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     {
         //aem.validateCall("getClass", ipAddress, sessionId);
         ClassMetadata clmt = null;
-        try {
+        try(Transaction tx = graphDb.beginTx()) 
+        {
             Node node = classIndex.get(Constants.PROPERTY_ID, classId).getSingle();
             if (node == null)
                 throw new MetadataObjectNotFoundException(String.format(
