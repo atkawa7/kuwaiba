@@ -46,8 +46,6 @@ import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.services.persistence.cache.CacheManager;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.services.persistence.util.Util;
-import org.neo4j.cypher.javacompat.ExecutionEngine;
-import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -58,7 +56,6 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.traversal.TraversalDescription;
 import org.neo4j.helpers.collection.IteratorUtil;
-import org.neo4j.kernel.Traversal;
 
 /**
  * Business entity manager reference implementation (using Neo4J as backend)

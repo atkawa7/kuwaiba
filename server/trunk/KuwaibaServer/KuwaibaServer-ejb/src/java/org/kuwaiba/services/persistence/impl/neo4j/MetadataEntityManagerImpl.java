@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
@@ -184,13 +183,16 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             buildContainmentCache();
         }catch(InvalidArgumentException | MetadataObjectNotFoundException ex){
             Logger.getLogger("Create class: "+ex.getMessage()); //NOI18N
+            throw new RuntimeException(ex.getMessage());
         }
         return id;
     }
 
     @Override
-    public void setClassProperties (ClassMetadata newClassDefinition, String ipAdress, String sessionId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
-        //aem.validateCall("setClassProperties", ipAddress, sessionId);
+    public void setClassProperties (ClassMetadata newClassDefinition, String ipAddress, String sessionId) 
+            throws MetadataObjectNotFoundException, NotAuthorizedException 
+    {
+        aem.validateCall("setClassProperties", ipAddress, sessionId);
         try (Transaction tx = graphDb.beginTx())
         {
             Node classMetadata = classIndex.get(Constants.PROPERTY_ID, newClassDefinition.getId()).getSingle();
@@ -236,20 +238,22 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             
             if(newClassDefinition.getAttributes() != null ){
                 for (AttributeMetadata attr : newClassDefinition.getAttributes())
-                    setAttributeProperties(newClassDefinition.getId(), attr, ipAdress, sessionId);
+                    setAttributeProperties(newClassDefinition.getId(), attr, ipAddress, sessionId);
             }        
             tx.success();
             cm.removeClass(formerName);
             cm.putClass(Util.createClassMetadataFromNode(classMetadata));
         }catch(Exception ex){
             Logger.getLogger("setClassProperties: "+ex.getMessage()); //NOI18N
+            throw new RuntimeException(ex.getMessage());
         }
     }
   
     @Override
     public void deleteClass(long classId, String ipAddress, String sessionId) 
-            throws MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException  {
-        //aem.validateCall("deleteClass", ipAddress, sessionId);
+            throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException  
+    {
+        aem.validateCall("deleteClass", ipAddress, sessionId);
         try (Transaction tx = graphDb.beginTx())
         {
             Node node = classIndex.get(Constants.PROPERTY_ID, classId).getSingle();
@@ -288,14 +292,15 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             buildContainmentCache();
         } catch(Exception ex){
             Logger.getLogger("deleteClass: "+ex.getMessage()); //NOI18N
+            throw new RuntimeException(ex.getMessage());
         }
     }
     
     @Override
     public void deleteClass(String className, String ipAddress, String sessionId) 
-            throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException 
+            throws MetadataObjectNotFoundException, NotAuthorizedException 
     {
-        //aem.validateCall("deleteClass", ipAddress, sessionId);
+        aem.validateCall("deleteClass", ipAddress, sessionId);
         try (Transaction tx  = graphDb.beginTx())
         {
             Node node = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
@@ -330,15 +335,16 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             buildContainmentCache();
         } catch(InvalidArgumentException | MetadataObjectNotFoundException ex){
             Logger.getLogger("deleteClass: " + ex.getMessage()); //NOI18N
+            throw new RuntimeException(ex.getMessage());
         }
     }
    
     @Override
     public List<ClassMetadataLight> getAllClassesLight(boolean includeListTypes, 
             boolean includeIndesign, String ipAddress, String sessionId) 
-            throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException 
+            throws MetadataObjectNotFoundException, NotAuthorizedException 
     {
-        //aem.validateCall("getAllClassesLight", ipAddress, sessionId);
+        aem.validateCall("getAllClassesLight", ipAddress, sessionId);
         List<ClassMetadataLight> cml = new ArrayList<>();
         try (Transaction tx = graphDb.beginTx())
         {
@@ -372,6 +378,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             tx.success();
         }catch(MetadataObjectNotFoundException | CypherException ex){
             Logger.getLogger("getAllClassesLight: " + ex.getMessage()); //NOI18N
+            throw new RuntimeException(ex.getMessage());
         }
         return cml;
     }
@@ -379,9 +386,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     @Override
     public List<ClassMetadataLight> getSubClassesLight(String className, boolean includeAbstractClasses, 
             boolean includeSelf, String ipAddress, String sessionId) 
-            throws MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException 
+            throws MetadataObjectNotFoundException, NotAuthorizedException 
     {
-        //aem.validateCall("getSubClassesLight", ipAddress, sessionId);
+        aem.validateCall("getSubClassesLight", ipAddress, sessionId);
         List<ClassMetadataLight> cml = new ArrayList<>();
         
         ClassMetadata aClass = cm.getClass(className);
@@ -408,6 +415,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             tx.success();
         }catch(CypherException ex){
             Logger.getLogger("getAllClassesLight: " + ex.getMessage()); //NOI18N
+            throw new RuntimeException(ex.getMessage());
         }
         return cml;
     }
@@ -416,10 +424,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     @Override
     public List<ClassMetadataLight> getSubClassesLightNoRecursive(String className, 
             boolean includeAbstractClasses, boolean includeSelf, String ipAddress, String sessionId) 
-            throws MetadataObjectNotFoundException, InvalidArgumentException, 
-            ApplicationObjectNotFoundException, NotAuthorizedException 
+            throws MetadataObjectNotFoundException, NotAuthorizedException 
     {
-        //aem.validateCall("getSubClassesLightNoRecursive", ipAddress, sessionId);
+        aem.validateCall("getSubClassesLightNoRecursive", ipAddress, sessionId);
         List<ClassMetadataLight> classManagerResultList = new ArrayList<>();
             
         ClassMetadata aClass = cm.getClass(className);
@@ -446,6 +453,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             tx.success();
         }catch(CypherException ex){
             Logger.getLogger("getAllClassesLight: " + ex.getMessage()); //NOI18N
+            throw new RuntimeException(ex.getMessage());
         }
         return classManagerResultList;
     }
@@ -453,9 +461,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     @Override
     public List<ClassMetadata> getAllClasses(boolean includeListTypes, boolean includeIndesign, 
             String ipAddress, String sessionId) 
-            throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException 
+            throws MetadataObjectNotFoundException, NotAuthorizedException 
     {
-        //aem.validateCall("getAllClasses", ipAddress, sessionId);
+        aem.validateCall("getAllClasses", ipAddress, sessionId);
         List<ClassMetadata> classMetadataResultList = new ArrayList<>();
         
         String cypherQuery = "START inventory = node:classes({className}) " +
@@ -483,15 +491,16 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
            tx.success();
         }catch(CypherException ex){
             Logger.getLogger("getAllClassesLight: " + ex.getMessage()); //NOI18N
+            throw new RuntimeException(ex.getMessage());
         }
         return classMetadataResultList;
     }
    
     @Override
     public ClassMetadata getClass(long classId, String ipAddress, String sessionId) 
-            throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException 
+            throws MetadataObjectNotFoundException, NotAuthorizedException 
     {
-        //aem.validateCall("getClass", ipAddress, sessionId);
+        aem.validateCall("getClass", ipAddress, sessionId);
         ClassMetadata clmt = null;
         try(Transaction tx = graphDb.beginTx()) 
         {
@@ -509,9 +518,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     
     @Override
     public ClassMetadata getClass(String className, String ipAddress, String sessionId) 
-            throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException 
+            throws MetadataObjectNotFoundException, NotAuthorizedException 
     {
-        //aem.validateCall("getClass", ipAddress, sessionId);
+        aem.validateCall("getClass", ipAddress, sessionId);
         ClassMetadata clmt = null;
         try (Transaction tx = graphDb.beginTx())
         {
@@ -519,7 +528,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             if (node == null)
                 throw new MetadataObjectNotFoundException(String.format(
                         "Can not find a class with name %s", className));
-            tx.success();
             clmt = Util.createClassMetadataFromNode(node);
         }catch(MetadataObjectNotFoundException ex) {
             Logger.getLogger("getClass: " + ex.getMessage()); //NOI18N
@@ -530,9 +538,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     @Override
     public void moveClass(String classToMoveName, String targetParentClassName, 
             String ipAddress, String sessionId) 
-            throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException 
+            throws MetadataObjectNotFoundException, NotAuthorizedException 
     {
-        //aem.validateCall("moveClass", ipAddress, sessionId);
+        aem.validateCall("moveClass", ipAddress, sessionId);
         try (Transaction tx = graphDb.beginTx())
         {
             Node ctm = classIndex.get(Constants.PROPERTY_NAME, classToMoveName).getSingle();
@@ -550,16 +558,17 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 ctm.createRelationshipTo(tcn, RelTypes.EXTENDS);
             }
             tx.success();
-        } catch(Exception ex){
+        } catch(MetadataObjectNotFoundException ex){
             Logger.getLogger("moveClass: "+ex.getMessage()); //NOI18N
+            throw new RuntimeException(ex.getMessage());
         }
     }
 
     @Override
     public void moveClass(long classToMoveId, long targetParentClassId, String ipAddress, String sessionId) 
-            throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException
+            throws MetadataObjectNotFoundException, NotAuthorizedException
     {
-        //aem.validateCall("moveClass", ipAddress, sessionId);
+        aem.validateCall("moveClass", ipAddress, sessionId);
         try (Transaction tx = graphDb.beginTx())
         {
             Node ctm = classIndex.get(Constants.PROPERTY_ID, classToMoveId).getSingle();
@@ -577,17 +586,18 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 ctm.createRelationshipTo(tcn, RelTypes.EXTENDS);
             }
             tx.success();
-        } catch(Exception ex){
+        } catch(MetadataObjectNotFoundException ex){
             Logger.getLogger("moveClass: "+ex.getMessage()); //NOI18N
+            throw new RuntimeException(ex.getMessage());
         }
     }
 
     @Override
     public void createAttribute(String className, AttributeMetadata attributeDefinition, 
             String ipAddress, String sessionId) 
-            throws MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException 
+            throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException 
     {
-        //aem.validateCall("createAttribute", ipAddress, sessionId);
+        aem.validateCall("createAttribute", ipAddress, sessionId);
         if (attributeDefinition.getName() == null || attributeDefinition.getName().isEmpty())
             throw new InvalidArgumentException("Attribute name can not be null or an empty string", Level.INFO);
         
@@ -603,7 +613,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             Util.createAttribute(classNode, attributeDefinition);
             tx.success();
             //Refresh cache for the affected classes
-            //refreshCacheOn(classNode);
+            refreshCacheOn(classNode);
         } catch(Exception ex){
             Logger.getLogger("createAttribute: "+ex.getMessage()); //NOI18N
             throw new InvalidArgumentException(ex.getMessage(), Level.WARNING);
@@ -630,7 +640,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             Util.createAttribute(classNode, attributeDefinition);
             tx.success();
             //Refresh cache for the affected classes
-            //refreshCacheOn(classNode);
+            refreshCacheOn(classNode);
         } catch(Exception ex){
             Logger.getLogger("createAttribute: "+ex.getMessage()); //NOI18N
             throw new InvalidArgumentException(ex.getMessage(), Level.WARNING);
@@ -666,9 +676,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     
     @Override
     public AttributeMetadata getAttribute(long classId, long attributeId, String ipAddress, String sessionId) 
-            throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException
+            throws MetadataObjectNotFoundException, NotAuthorizedException
     {
-        //aem.validateCall("getAttribute", ipAddress, sessionId);
+        aem.validateCall("getAttribute", ipAddress, sessionId);
         AttributeMetadata attribute = null;
         try (Transaction tx = graphDb.beginTx())
         {
@@ -693,9 +703,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     @Override
     public void setAttributeProperties(long classId, AttributeMetadata newAttributeDefinition, 
             String ipAddress, String sessionId) 
-            throws MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException
+            throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException
     {
-        //aem.validateCall("setAttributeProperties", ipAddress, sessionId);
+        aem.validateCall("setAttributeProperties", ipAddress, sessionId);
         try(Transaction tx = graphDb.beginTx())
         {
             Node classNode = classIndex.get(Constants.PROPERTY_ID, classId).getSingle();
@@ -743,7 +753,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     if(newAttributeDefinition.isUnique() != null)
                         Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
                     tx.success();
-                    
                     //Refresh cache for the affected classes
                     refreshCacheOn(classNode);
                     return;
@@ -760,9 +769,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     @Override
     public void setAttributeProperties (String className, AttributeMetadata newAttributeDefinition, 
             String ipAddress, String sessionId) 
-            throws MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException 
+            throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException 
     {
-        //aem.validateCall("setAttributeProperties", ipAddress, sessionId);
+        aem.validateCall("setAttributeProperties", ipAddress, sessionId);
         try(Transaction tx = graphDb.beginTx())
         {
             Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
@@ -824,9 +833,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     
     @Override
     public void deleteAttribute(String className, String attributeName, String ipAddress, String sessionId) 
-            throws MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException 
+            throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException 
     {
-        //aem.validateCall("deleteAttribute", ipAddress, sessionId);
+        aem.validateCall("deleteAttribute", ipAddress, sessionId);
         if (attributeName.equals(Constants.PROPERTY_NAME))
             throw new InvalidArgumentException("Attribute \"name\" can not be deleted", Level.INFO);
         
@@ -861,9 +870,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
 
     @Override
     public void deleteAttribute(long classId, String attributeName, String ipAddress, String sessionId) 
-            throws MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException 
+            throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException 
     {
-        //aem.validateCall("deleteAttribute", ipAddress, sessionId);
+        aem.validateCall("deleteAttribute", ipAddress, sessionId);
         if (attributeName.equals(Constants.PROPERTY_CREATION_DATE))
             throw new InvalidArgumentException("Attribute \"creationDate\" can not be deleted", Level.INFO);
         
@@ -880,13 +889,11 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             for (Relationship relationship : classNode.getRelationships(RelTypes.HAS_ATTRIBUTE)) {
                 Node attrNode = relationship.getEndNode();
                 if (String.valueOf(attrNode.getProperty(Constants.PROPERTY_NAME)).equals(attributeName)){
-
                         if (AttributeMetadata.isPrimitive((String)attrNode.getProperty(Constants.PROPERTY_TYPE)))
                             Util.deleteAttributeIfPrimitive(classNode, attributeName);
                         else
                             Util.deleteAttributeIfListType(classNode, attributeName);
                         tx.success();
-
                         return;
                 }
             }//end for
@@ -926,20 +933,18 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     
     @Override
     public List<ClassMetadataLight> getPossibleChildren(String parentClassName) 
-            throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException 
+            throws MetadataObjectNotFoundException, NotAuthorizedException 
     {
         //aem.validateCall("getPossibleChildren", ipAddress, sessionId);
         List<ClassMetadataLight> classMetadataResultList = new ArrayList<>();
-        
         List<String> cachedPossibleChildren = cm.getPossibleChildren(parentClassName);
-        if (cachedPossibleChildren != null){
+        if (cachedPossibleChildren != null)
+        {
             for (String cachedPossibleChild : cachedPossibleChildren)
                 classMetadataResultList.add(cm.getClass(cachedPossibleChild));
             return classMetadataResultList;
         }
-        
         cachedPossibleChildren = new ArrayList<>();
-        
         String cypherQuery;
         Map<String, Object> params = new HashMap<>();
         if (parentClassName == null || parentClassName.equals(Constants.NODE_DUMMYROOT)){
@@ -957,7 +962,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         "ORDER BY directChild.name,subClass.name ASC";
             params.put(Constants.PROPERTY_CLASS_NAME, "className:" + parentClassName);//NOI18N
         }
-
         try (Transaction tx = graphDb.beginTx())
         {
             Result result = graphDb.execute(cypherQuery, params);
@@ -978,15 +982,16 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             cm.putPossibleChildren(parentClassName, cachedPossibleChildren);
         }catch(Exception ex){
             Logger.getLogger("getPossibleChildren: " + ex.getMessage()); //NOI18N
+            throw new RuntimeException(ex.getMessage());
         }
         return classMetadataResultList;
     }
 
     @Override
     public List<ClassMetadataLight> getPossibleChildrenNoRecursive(String parentClassName, String ipAddress, String sessionId) 
-            throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException
+            throws MetadataObjectNotFoundException, NotAuthorizedException
     {
-        //aem.validateCall("getPossibleChildrenNoRecursive", ipAddress, sessionId);
+        aem.validateCall("getPossibleChildrenNoRecursive", ipAddress, sessionId);
         List<ClassMetadataLight> classMetadaListResult = new ArrayList<>();
 
         String cypherQuery;
@@ -994,7 +999,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             cypherQuery = "MATCH (n:root {name:\"" + Constants.NODE_DUMMYROOT + "\"})-[:POSSIBLE_CHILD]->directChild " +
                           "RETURN directChild "+
                           "ORDER BY directChild.name ASC ";
-
         }else{
             cypherQuery = "START parentClassNode=node:classes(name = {className}) " +
                     "MATCH (parentClassNode:class)-[:POSSIBLE_CHILD]->(directChild) " +
@@ -1017,10 +1021,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
 
     @Override
     public void addPossibleChildren(long parentClassId, long[] possibleChildren, String ipAddress, String sessionId)
-            throws MetadataObjectNotFoundException, InvalidArgumentException, 
-            DatabaseException, ApplicationObjectNotFoundException, NotAuthorizedException 
+            throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException 
     {
-        //aem.validateCall("addPossibleChildren", ipAddress, sessionId);
+        aem.validateCall("addPossibleChildren", ipAddress, sessionId);
         Node parentNode;
         try(Transaction tx = graphDb.beginTx())
         {
@@ -1061,7 +1064,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     for (ClassMetadataLight possibleChild : currentPossibleChildren){
                         if (possibleChild.getId() == childNode.getId())
                             throw new InvalidArgumentException(String.format("Class %s is already a possible child for instances of %s", (String)childNode.getProperty(Constants.PROPERTY_NAME), (String)parentNode.getProperty(Constants.PROPERTY_NAME)), Level.INFO);
-                        
                     }
                 }
                 parentNode.createRelationshipTo(childNode, RelTypes.POSSIBLE_CHILD);
@@ -1071,19 +1073,19 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         cm.putPossibleChild((String)parentNode.getProperty(Constants.PROPERTY_NAME),subclass.getName());
                 }else
                     cm.putPossibleChild((String)parentNode.getProperty(Constants.PROPERTY_NAME), (String)childNode.getProperty(Constants.PROPERTY_NAME));
-
                 tx.success();
             }
         }catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
-            throw ex;
+            Logger.getLogger("addPossibleChildren: "+ex.getMessage()); //NOI18N
+            throw new RuntimeException(ex.getMessage());
         }
     }
 
     @Override
     public void addPossibleChildren(String parentClassName, String[] possibleChildren, String ipAddress, String sessionId) 
-            throws MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException 
+            throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException 
     {
-        //aem.validateCall("addPossibleChildren", ipAddress, sessionId);
+        aem.validateCall("addPossibleChildren", ipAddress, sessionId);
         Node parentNode;
 
         try(Transaction tx = graphDb.beginTx())
@@ -1098,14 +1100,12 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, (String)parentNode.getProperty(Constants.PROPERTY_NAME)))
                     throw new InvalidArgumentException(
                             String.format("%s is not a business class, thus can not be added to the containment hierarchy", (String)parentNode.getProperty(Constants.PROPERTY_NAME)), Level.INFO);
-                
             }
             else{
                 parentNode = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
 
                 if(!(Constants.NODE_DUMMYROOT).equals((String)parentNode.getProperty(Constants.PROPERTY_NAME)))
                         throw new MetadataObjectNotFoundException("DummyRoot node is corrupted");
-                
             }
             List<ClassMetadataLight> currentPossibleChildren = getPossibleChildren((String)parentNode.getProperty(Constants.PROPERTY_NAME));
         
@@ -1142,18 +1142,18 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 else
                     cm.putPossibleChild(parentClassName, (String)childNode.getProperty(Constants.PROPERTY_NAME));
                 tx.success();
-                
             }
         }catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
-            throw ex;
+            Logger.getLogger("addPossibleChildren: "+ex.getMessage()); //NOI18N
+            throw new RuntimeException(ex.getMessage());
         }
     }
     
     @Override
-    public void removePossibleChildren(long parentClassId, long[] childrenToBeRemoved, String ipAddress, String sessionId)
-            throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException 
+    public void removePossibleChildren(long parentClassId, long[] childrenToBeRemoved, 
+            String ipAddress, String sessionId) throws MetadataObjectNotFoundException, NotAuthorizedException 
     {
-        //aem.validateCall("removePossibleChildren", ipAddress, sessionId);
+        aem.validateCall("removePossibleChildren", ipAddress, sessionId);
         Node parentNode;
         try (Transaction tx = graphDb.beginTx())
         {
@@ -1184,7 +1184,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         }
                         else
                             cm.removePossibleChild(parentClassName, (String)childNode.getProperty(Constants.PROPERTY_NAME));
-                        
                         break;
                     }
                 }//end for
@@ -1196,23 +1195,11 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         }
     }
 
-    /**
-     * Get the upstream containment hierarchy for a given class, unlike getPossibleChildren (which will give you the
-     * downstream hierarchy).
-     * @param className Class name
-     * @param recursive Get only the direct possible parents, or go up into the <strong>containment</strong> hierarchy. Beware: don't mistake the class hierarchy for the containment one
-     * @param ipAddress
-     * @param sessionId
-     * @return An ordered list with the . Repeated elements are omitted
-     * @throws MetadataObjectNotFoundException if className does not correspond to any existing class
-     * @throws org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException
-     * @throws org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException
-     */
     @Override
-    public List<ClassMetadataLight> getUpstreamContainmentHierarchy(String className, boolean recursive, String ipAddress, String sessionId) 
-            throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException 
+    public List<ClassMetadataLight> getUpstreamContainmentHierarchy(String className, 
+            boolean recursive, String ipAddress, String sessionId) throws MetadataObjectNotFoundException, NotAuthorizedException 
     {
-        //aem.validateCall("getUpstreamContainmentHierarchy", ipAddress, sessionId);
+        aem.validateCall("getUpstreamContainmentHierarchy", ipAddress, sessionId);
         List<ClassMetadataLight> res = new ArrayList<>();
         try(Transaction tx = graphDb.beginTx())
         {
@@ -1241,9 +1228,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     @Override
     public boolean isSubClass(String allegedParent, String classToBeEvaluated, 
             String ipAddress, String sessionId) 
-            throws ApplicationObjectNotFoundException, NotAuthorizedException
+            throws NotAuthorizedException
     {
-        //aem.validateCall("isSubClass", ipAddress, sessionId);
+        aem.validateCall("isSubClass", ipAddress, sessionId);
         try {
             return cm.isSubClass(allegedParent, classToBeEvaluated);
         } catch (MetadataObjectNotFoundException ex) {
@@ -1254,13 +1241,17 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     /**
      * HELPERS
      */
-    private void refreshCacheOn(Node rootClassNode){
-        TraversalDescription UPDATE_TRAVERSAL = graphDb.traversalDescription().
-                    breadthFirst().relationships(RelTypes.EXTENDS, Direction.INCOMING);
-        
-        for(Path p : UPDATE_TRAVERSAL.traverse(rootClassNode)){
-            cm.removeClass((String)p.endNode().getProperty(Constants.PROPERTY_NAME));
-            cm.putClass(Util.createClassMetadataFromNode(p.endNode()));
+   private void refreshCacheOn(Node rootClassNode){
+        try(Transaction tx = graphDb.beginTx())
+        {
+            TraversalDescription UPDATE_TRAVERSAL = graphDb.traversalDescription().
+                        breadthFirst().relationships(RelTypes.EXTENDS, Direction.INCOMING);
+
+            for(Path p : UPDATE_TRAVERSAL.traverse(rootClassNode)){
+                cm.removeClass((String)p.endNode().getProperty(Constants.PROPERTY_NAME));
+                cm.putClass(Util.createClassMetadataFromNode(p.endNode()));
+            }
+            tx.success();
         }
     }
     
@@ -1279,7 +1270,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             possibleChildrenOfRoot.add(aClass.getName());
         cm.putPossibleChildren(Constants.NODE_DUMMYROOT, possibleChildrenOfRoot);
         tx.success();
-       } catch (MetadataObjectNotFoundException | ApplicationObjectNotFoundException | NotAuthorizedException ex) {
+       } catch (MetadataObjectNotFoundException | NotAuthorizedException ex) {
             Logger.getLogger(MetadataEntityManagerImpl.class.getName()).log(Level.SEVERE, "Build containmentCache: {0}", ex.getMessage());
        }
    }

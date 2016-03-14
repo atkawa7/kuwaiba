@@ -28,6 +28,7 @@ import org.kuwaiba.services.persistence.util.Constants;
 public class CypherParser {
     /**
      * creates the start for the cypher query
+     * @param className
      * @param isAbstract if the class is an abstract classMetadata
      * @return a query part
      */
@@ -52,7 +53,6 @@ public class CypherParser {
 
      /**
      * Adds the match when the query has parent
-     * @param isAbstract
      * @return
      */
     public String createParentMatch(){
@@ -66,11 +66,11 @@ public class CypherParser {
      */
     public String createListypeMatch(String listTypeName, String listTypeName2){
         if(listTypeName2.isEmpty())
-            return ", instance-[r_"+listTypeName+"?:"+RelTypes.RELATED_TO+"]->listType_"+listTypeName;
+            return "OPTIONAL MATCH instance-[r_"+listTypeName+":"+RelTypes.RELATED_TO+"]->listType_"+listTypeName;
         if(listTypeName2.equalsIgnoreCase("parent"))
-            return ", "+listTypeName2+"-[r_"+listTypeName+"?:"+RelTypes.RELATED_TO+"]->listType_"+listTypeName;
+            return "OPTIONAL MATCH "+listTypeName2+"-[r_"+listTypeName+":"+RelTypes.RELATED_TO+"]->listType_"+listTypeName;
         else
-            return ", listType_"+listTypeName2+"-[r_"+listTypeName+"?:"+RelTypes.RELATED_TO+"]->listType_"+listTypeName;
+            return "OPTIONAL MATCH listType_"+listTypeName2+"-[r_"+listTypeName+":"+RelTypes.RELATED_TO+"]->listType_"+listTypeName;
     }
 
     /**
@@ -81,9 +81,9 @@ public class CypherParser {
      */
     public String createListypeParentMatch(String listTypeName, String listTypeName2){
         if(listTypeName2.isEmpty())
-            return ", parent-[r_"+listTypeName+"?:"+RelTypes.RELATED_TO+"]->listType_"+listTypeName;
+            return "OPTIONAL MATCH  parent-[r_"+listTypeName+":"+RelTypes.RELATED_TO+"]->listType_"+listTypeName;
         else
-            return ", listType_"+listTypeName2+"-[r_"+listTypeName+"?:"+RelTypes.RELATED_TO+"]->listType_"+listTypeName;
+            return "OPTIONAL MATCH  listType_"+listTypeName2+"-[r_"+listTypeName+":"+RelTypes.RELATED_TO+"]->listType_"+listTypeName;
     }
 
     /**

@@ -25,9 +25,9 @@ import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.ResultRecord;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.services.persistence.util.Util;
-import org.neo4j.cypher.javacompat.ExecutionEngine;
-import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Result;
+import org.neo4j.graphdb.Transaction;
 
 /**
  * Creates cypher Query
@@ -40,15 +40,15 @@ public class CypherQueryBuilder {
     /**
      * nodes selected for query
      */
-    public Map<String, Node> classNodes = new HashMap<String, Node>();
+    public Map<String, Node> classNodes = new HashMap<>();
     /**
      * attributes selected
      */
-    public Map<String, List<String>> visibleAttributes = new HashMap<String, List<String>>();
+    public Map<String, List<String>> visibleAttributes = new HashMap<>();
     /**
      * if has not selected attribute, name is taken as default visible attribute
      */
-    private List defaultVisibleAttributes = new ArrayList<String>();
+    private List<String> defaultVisibleAttributes = new ArrayList<>();
     /**
      * match statements
      */
@@ -68,7 +68,7 @@ public class CypherQueryBuilder {
     /**
      * result list
      */
-    public List<ResultRecord> resultList = new ArrayList<ResultRecord>();
+    public List<ResultRecord> resultList = new ArrayList<>();
 
     /**
      * read the parent and his joins
@@ -189,15 +189,14 @@ public class CypherQueryBuilder {
              visibleAttributes.put(INSTANCE, query.getVisibleAttributeNames());
         else
             visibleAttributes.put(INSTANCE, new ArrayList<String>());
-        if(query.getAttributeNames() != null){
+        if(query.getAttributeNames() != null)
+        {
             for(int i=0; i<query.getAttributeNames().size(); i++){
                 if(query.getAttributeValues().get(i) == null){
-                    if(query.getAttributeNames().get(i).equalsIgnoreCase(PARENT)){
+                    if(query.getAttributeNames().get(i).equalsIgnoreCase(PARENT))
                         readVissibleAttributeParent(query.getJoins().get(i));
-                    }
-                    else{
+                    else
                         readVissibleAttributeJoins(query.getAttributeNames().get(i), query.getJoins().get(i));
-                    }
                 }
             }//end for
         }
@@ -214,9 +213,8 @@ public class CypherQueryBuilder {
             visibleAttributes.put(PARENT, new ArrayList<String>() {{ add("name");}});
         if(query.getAttributeNames() != null){
             for(int i=0; i<query.getAttributeNames().size(); i++){
-                if(query.getJoins().get(i) != null){
+                if(query.getJoins().get(i) != null)
                     readVissibleAttributeJoins(query.getAttributeNames().get(i)+"_P", query.getJoins().get(i));
-                }
             }
         }//listTypeName, listTypeName2;
     }
@@ -233,9 +231,8 @@ public class CypherQueryBuilder {
             visibleAttributes.put(LISTTYPE.concat(listTypeName), new ArrayList<String>() {{ add("name");}});
         if(query.getAttributeNames() != null){
             for(int i=0; i<query.getAttributeNames().size(); i++){
-                if(query.getJoins().get(i) != null){
+                if(query.getJoins().get(i) != null)
                     readVissibleAttributeJoins(query.getAttributeNames().get(i), query.getJoins().get(i));
-                }
             }
         }
     }
@@ -244,29 +241,32 @@ public class CypherQueryBuilder {
      * Creates the query
      * @param query 
      */
-    public void createQuery(ExtendedQuery query){
-
+    public void createQuery(ExtendedQuery query)
+    {
         cp = new CypherParser();
         Node classNode = classNodes.get(query.getClassName());
-        boolean isAbstract = (Boolean) classNode.getProperty(Constants.PROPERTY_ABSTRACT);
+        try(Transaction tx = classNode.getGraphDatabase().beginTx())
+        {
+            boolean isAbstract = (Boolean) classNode.getProperty(Constants.PROPERTY_ABSTRACT);
 
-        String cypherQuery = cp.createStart(query.getClassName(), isAbstract);
-        cypherQuery = cypherQuery.concat(cp.createInstanceMatch(isAbstract));
-        readQuery(query);
-        if(!match.isEmpty())
-            cypherQuery = cypherQuery.concat(match);
-        if(!where.isEmpty())
-            cypherQuery = cypherQuery.concat(" WHERE ".concat(where.substring(0, where.length() - 4)));
-        
-        cypherQuery = cypherQuery.concat(" RETURN ".concat(_return));
+            String cypherQuery = cp.createStart(query.getClassName(), isAbstract);
+            cypherQuery = cypherQuery.concat(cp.createInstanceMatch(isAbstract));
+            readQuery(query);
+            if(!match.isEmpty())
+                cypherQuery = cypherQuery.concat(match);
+            if(!where.isEmpty())
+                cypherQuery = cypherQuery.concat(" WHERE ".concat(where.substring(0, where.length() - 4)));
 
-        cypherQuery = cypherQuery.concat(" ORDER BY instance.name ASC");
-        if(query.getPage()>0){
-            cypherQuery = cypherQuery.concat(" skip 0 limit 10");//NOI18N
+            cypherQuery = cypherQuery.concat(" RETURN ".concat(_return));
+
+            cypherQuery = cypherQuery.concat(" ORDER BY instance.name ASC");
+            if(query.getPage()>0)
+                cypherQuery = cypherQuery.concat(" skip 0 limit 10");//NOI18N
+
+            readVissibleAttributes(query);
+            executeQuery(classNode, cypherQuery);
+            tx.success();
         }
-
-        readVissibleAttributes(query);
-        executeQuery(classNode, cypherQuery);
     }
 
     /**
@@ -275,19 +275,18 @@ public class CypherQueryBuilder {
      * @param cypherQuery
      */
     public void executeQuery(Node classNode, String cypherQuery){
-        ExecutionEngine engine = new ExecutionEngine(classNode.getGraphDatabase());
-        ExecutionResult result = engine.execute(cypherQuery, new HashMap<String, Object>());
-        readResult(result.iterator());
+        Result result = classNode.getGraphDatabase().execute(cypherQuery, new HashMap<String, Object>());
+        readResult(result);
     }
 
     /**
      * Read the results
-     * @param columnsIterator
+     * @param queryResult
      */
-    public void readResult(Iterator<Map<String, Object>> columnsIterator){
-        List<ResultRecord> onlyResults =  new ArrayList<ResultRecord>();
+    public void readResult(Result queryResult){//<Map<String, Object>> columnsIterator){
+        List<ResultRecord> onlyResults =  new ArrayList<>();
         ResultRecord rr;
-        List<String> vissibleAttibutesTitles = new ArrayList<String>();
+        List<String> vissibleAttibutesTitles = new ArrayList<>();
 
         String[] split = _return.split(", ");
         for(int g = 0; g < split.length; g++){
@@ -295,9 +294,9 @@ public class CypherQueryBuilder {
                 vissibleAttibutesTitles.add(va);
         }
 
-        while(columnsIterator.hasNext()){//interates by row
-            Map<String, Object> column = columnsIterator.next();
-            List<String> extraColumns = new ArrayList<String>();
+        while(queryResult.hasNext()){//interates by row
+            Map<String, Object> column = queryResult.next();
+            List<String> extraColumns = new ArrayList<>();
             //create the class
             Node instanceNode = (Node)column.get(split[0]);
             rr = new ResultRecord(instanceNode.getId(), Util.getAttributeFromNode(instanceNode, Constants.PROPERTY_NAME) ,Util.getClassName(instanceNode));

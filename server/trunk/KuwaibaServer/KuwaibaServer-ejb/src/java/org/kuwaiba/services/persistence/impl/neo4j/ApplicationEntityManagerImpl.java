@@ -58,7 +58,6 @@ import org.kuwaiba.apis.persistence.metadata.GenericObjectList;
 import org.kuwaiba.services.persistence.cache.CacheManager;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.services.persistence.util.Util;
-import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -508,7 +507,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                         userNode.createRelationshipTo(groupNode, RelTypes.BELONGS_TO_GROUP);
                     else{
                         tx.failure();
-                        throw new InvalidArgumentException(String.format("User with id %s can not be found",userId), Level.OFF);
+                        throw new ApplicationObjectNotFoundException(String.format("User with id %s can not be found",userId));
                     }
                 }
             }
@@ -622,8 +621,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
        
        ClassMetadata myClass= cm.getClass(className);
        long id=0;
-       try(Transaction tx = graphDb.beginTx()){
-           
+       try(Transaction tx = graphDb.beginTx())
+       {
             Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
             if (classNode ==  null)
                 throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %s",className));
@@ -642,8 +641,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (myClass.isAbstract())
                  throw new OperationNotPermittedException("Create List Type Item", "Can not create instances of abstract classes");
        
-          Label label = DynamicLabel.label(Constants.LABEL_LIST_TYPE);
-           Node newItem = graphDb.createNode();
+           Label label = DynamicLabel.label(Constants.LABEL_LIST_TYPE);
+           Node newItem = graphDb.createNode(label);
            newItem.setProperty(Constants.PROPERTY_NAME, name);
            if (displayName != null)
                newItem.setProperty(Constants.PROPERTY_DISPLAY_NAME, displayName);
@@ -662,9 +661,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override
     public void deleteListTypeItem(String className, long oid, boolean realeaseRelationships, String ipAddress, String sessionId) 
             throws MetadataObjectNotFoundException, OperationNotPermittedException, ObjectNotFoundException, NotAuthorizedException {
-       
         validateCall("deleteListTypeItem", ipAddress, sessionId);
-        
         try(Transaction tx = graphDb.beginTx())
         {
             if (!cm.isSubClass(Constants.CLASS_GENERICOBJECTLIST, className))
@@ -1104,8 +1101,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override
     public void saveQuery(long queryOid, String queryName, long ownerOid,
             byte[] queryStructure, String description, String ipAddress, String sessionId) 
-            throws MetadataObjectNotFoundException, NotAuthorizedException{
-
+            throws ApplicationObjectNotFoundException, NotAuthorizedException
+    {
         validateCall("saveQuery", ipAddress, sessionId);
         try(Transaction tx = graphDb.beginTx())
         {
@@ -1693,13 +1690,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     br = new BufferedReader(new FileReader(patchFile));
                     String line = br.readLine();
                     while (line != null) {
-                        if (line.startsWith("#")) {
+                        if (line.startsWith("#"))
                             System.out.println(line);
-                        }
                         if (line.startsWith(Constants.DATABASE_SENTENCE)) {
                             String cypherQuery = br.readLine();
-                            ExecutionEngine engine = new ExecutionEngine(graphDb);
-                            engine.execute(cypherQuery);
+                            graphDb.execute(cypherQuery);
                         }
                         line = br.readLine();
                     }
@@ -1816,9 +1811,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         Map<String, Node> classNodes = new HashMap<>();
         List<String> ListClassNames = new ArrayList();
         readJoins(ListClassNames, query);
-        for(String className : ListClassNames)
-            classNodes.put(className, classIndex.get(Constants.PROPERTY_NAME, className).getSingle());
-        
+        try(Transaction tx = graphDb.beginTx())
+        {
+            for(String className : ListClassNames)
+                classNodes.put(className, classIndex.get(Constants.PROPERTY_NAME, className).getSingle());
+        }
         return classNodes;
     }
     
