@@ -114,7 +114,7 @@ public class Util {
      */
     public static List<Node> getRealValue(List<String> values, Node listType) throws InvalidArgumentException{
         Iterable<Relationship> listTypeItems = listType.getRelationships(RelTypes.INSTANCE_OF, Direction.INCOMING);
-        List<Node> res = new ArrayList<Node>();
+        List<Node> res = new ArrayList<>();
         
         for (String value : values) {
             try { //If the value provided is a number, match the node id, if not, the name
@@ -424,10 +424,11 @@ public class Util {
             }
 
             //Iterates through relationships and transform the into "plain" attributes
-            Iterable<Relationship> relationships = instance.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING);
+            Iterable<Relationship> iterableRelationships = instance.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING);
+            Iterator<Relationship> relationships = iterableRelationships.iterator();
 
-            while(relationships.iterator().hasNext()){
-                Relationship relationship = relationships.iterator().next();
+            while(relationships.hasNext()){
+                Relationship relationship = relationships.next();
                 if (!relationship.hasProperty(Constants.PROPERTY_NAME))
                     throw new InvalidArgumentException(String.format("The object with id %s is malformed", instance.getId()), Level.SEVERE);
 
@@ -491,13 +492,13 @@ public class Util {
      */
     public static GroupProfile createGroupProfileFromNode(Node groupNode){
         
-        List<UserProfile> users = new ArrayList<UserProfile>();
+        List<UserProfile> users = new ArrayList<>();
         Iterable<Relationship> usersRelationships = groupNode.getRelationships(RelTypes.BELONGS_TO_GROUP, Direction.INCOMING);
         //Users
         for (Relationship relationship : usersRelationships) {
             Node userNode = relationship.getStartNode();
             //user Privileges
-            List<Privilege> userPrivileges = new ArrayList<Privilege>();
+            List<Privilege> userPrivileges = new ArrayList<>();
             for(Relationship rel: userNode.getRelationships(RelTypes.HAS_PRIVILEGE, Direction.INCOMING))
                 userPrivileges.add(createPrivilegeFromNode(rel.getStartNode()));
             //TODO User Groups
@@ -570,7 +571,7 @@ public class Util {
      * Traverses the graph up into the class hierarchy trying to find out if a given class
      * is the possiblechild of another
      * @param allegedParentClass The alleged parent class name
-     * @param startNode Class metadata node corresponding to the child class
+     * @param currentNode
      * @return
      */
     public static boolean isPossibleChild(String allegedParentClass, Node currentNode){
