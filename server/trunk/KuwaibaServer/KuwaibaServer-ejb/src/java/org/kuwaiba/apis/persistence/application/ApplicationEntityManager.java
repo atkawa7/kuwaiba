@@ -352,10 +352,11 @@ public interface ApplicationEntityManager {
      * @param ownerOid
      * @param queryStructure
      * @param description
-     * @throws MetadataObjectNotFoundException
+     * @param ipAddress
+     * @throws ApplicationObjectNotFoundException If the query can not be found
      */
     public void saveQuery(long queryOid, String queryName, long ownerOid, byte[] queryStructure, String description, String ipAddress, String sessionId)
-            throws MetadataObjectNotFoundException, NotAuthorizedException;
+            throws ApplicationObjectNotFoundException, NotAuthorizedException;
 
     /**
      * Deletes a Query
@@ -483,9 +484,8 @@ public interface ApplicationEntityManager {
      * @param ipAddress
      * @param sessionId
      * @throws ApplicationObjectNotFoundException 
-     * @throws org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException 
      */
-    public void validateCall(String methodName, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException;
+    public void validateCall(String methodName, String ipAddress, String sessionId) throws NotAuthorizedException;
     
     /**
      * 

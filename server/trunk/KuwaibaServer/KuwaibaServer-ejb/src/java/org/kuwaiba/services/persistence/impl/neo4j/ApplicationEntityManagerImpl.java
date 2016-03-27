@@ -232,9 +232,21 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             userIndex.putIfAbsent(newUserNode, Constants.PROPERTY_ID, newUserNode.getId());
             userIndex.putIfAbsent(newUserNode, Constants.PROPERTY_NAME, userName);
             
+            
+            try {
+                //Creates an activity log entry
+                Util.createActivityLogEntry(null, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle(),
+                        "admin", ActivityLogEntry.ACTIVITY_TYPE_CREATE_USER,
+                        Calendar.getInstance().getTimeInMillis(), null, null, null, userName);
+            } catch (ApplicationObjectNotFoundException ex) {
+                Logger.getLogger(ApplicationEntityManagerImpl.class.getName()).log(Level.SEVERE, String.format("The audit trail record could not be created: %s", ex.getMessage()));
+            }
+            
             tx.success();
             
             cm.putUser(Util.createUserProfileFromNode(newUserNode));
+            
+            
 
             return newUserNode.getId();
         }
@@ -256,8 +268,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 if (userName.trim().equals(""))
                     throw new InvalidArgumentException("User name can not be an empty string", Level.INFO);
 
-                if (!userName.matches("^[a-zA-Z0-9_]*$"))
-                    throw new InvalidArgumentException(String.format("Class %s contains invalid characters", userName), Level.INFO);
+                if (!userName.matches("^[a-zA-Z0-9_.]*$"))
+                    throw new InvalidArgumentException(String.format("The user name %s contains invalid characters", userName), Level.INFO);
 
                 Node storedUser = userIndex.get(Constants.PROPERTY_NAME, userName).getSingle();
                 if (storedUser != null)
@@ -330,8 +342,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 if (storedUser != null)
                     throw new InvalidArgumentException(String.format("User name %s already exists", newUserName), Level.WARNING);
 
-                if (!newUserName.matches("^[a-zA-Z0-9_]*$"))
-                    throw new InvalidArgumentException(String.format("Class %s contains invalid characters", newUserName), Level.INFO);
+                if (!newUserName.matches("^[a-zA-Z0-9_.]*$"))
+                    throw new InvalidArgumentException(String.format("The user name %s contains invalid characters", newUserName), Level.INFO);
             }
             if(password != null){
                 if (password.trim().isEmpty())
@@ -557,6 +569,16 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     userNode.delete();
                 }
             }
+            
+            try {
+                //Creates an activity log entry
+                Util.createActivityLogEntry(null, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle(),
+                        getSessions().get(sessionId).getUser().getUserName(), ActivityLogEntry.ACTIVITY_TYPE_MASSIVE_DELETE_USERS,
+                        Calendar.getInstance().getTimeInMillis(), null, null, null, null);
+            } catch (ApplicationObjectNotFoundException ex) {
+                Logger.getLogger(ApplicationEntityManagerImpl.class.getName()).log(Level.SEVERE, String.format("The audit trail record could not be created: %s", ex.getMessage()));
+            }
+            
             tx.success();
         }catch(Exception ex){
             Logger.getLogger("deleteUsers: "+ex.getMessage()); //NOI18N
@@ -574,7 +596,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 for (long id : oids) {
                     Node groupNode = groupIndex.get(Constants.PROPERTY_ID, id).getSingle();
                     if(groupNode == null)
-                        throw new ApplicationObjectNotFoundException(String.format("Can not find the group with id %1s",id));
+                        throw new ApplicationObjectNotFoundException(String.format("Can not find the group with id %s",id));
                     
                     cm.removeGroup((String)groupNode.getProperty(Constants.PROPERTY_NAME));
 
@@ -889,13 +911,21 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
         try(Transaction tx = graphDb.beginTx())
         {
+            String affectedProperty = Constants.PROPERTY_STRUCTURE, oldValue = "", newValue = ""; //NOI18N
             Node gView = generalViewsIndex.get(Constants.PROPERTY_ID, oid).getSingle();
             if (gView == null)
                 throw new ObjectNotFoundException("View", oid);
-            if (name != null)
+            if (name != null) {
+                oldValue = String.valueOf(gView.getProperty(Constants.PROPERTY_NAME));
                 gView.setProperty(Constants.PROPERTY_NAME, name);
-            if (description != null)
+                affectedProperty = Constants.PROPERTY_NAME; //NOI18N
+                newValue = name;
+            }
+            if (description != null) {
+                oldValue = String.valueOf(gView.getProperty(Constants.PROPERTY_DESCRIPTION));
                 gView.setProperty(Constants.PROPERTY_DESCRIPTION, description);
+                affectedProperty = Constants.PROPERTY_DESCRIPTION; //NOI18N
+            }
             if (structure != null)
                 gView.setProperty(Constants.PROPERTY_STRUCTURE, structure);
             if (background != null){
@@ -904,14 +934,26 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                         String fileName = "view-" + oid + "-" + gView.getProperty(Constants.PROPERTY_TYPE);
                         Util.saveFile(configuration.getProperty("backgroundsPath", DEFAULT_BACKGROUNDS_PATH), fileName, background);
                         gView.setProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME, fileName);
+                        affectedProperty = "background"; //NOI18N
                     }catch(Exception ex){
                         throw new InvalidArgumentException(String.format("Background image for view %s couldn't be saved: %s",
                                 oid, ex.getMessage()), Level.SEVERE);
                     }
                 }
-            }else
+            }else {
                 gView.removeProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME);
+                affectedProperty = "background"; //NOI18N
+            }
 
+            try {
+            //Creates an activity log entry
+            Util.createActivityLogEntry(null, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle(),
+                    getSessions().get(sessionId).getUser().getUserName(), ActivityLogEntry.ACTIVITY_TYPE_UPDATE_VIEW,
+                    Calendar.getInstance().getTimeInMillis(), affectedProperty, oldValue, newValue, null);
+            } catch (ApplicationObjectNotFoundException ex) {
+                Logger.getLogger(ApplicationEntityManagerImpl.class.getName()).log(Level.SEVERE, String.format("The audit trail record could not be created: %s", ex.getMessage()));
+            }
+            
             tx.success();
 
         }catch (Exception ex){
@@ -1630,8 +1672,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     {
         if (userName == null || password == null)
             throw  new ApplicationObjectNotFoundException("User or Password can not be null");
-        try(Transaction tx = graphDb.beginTx())
-        {
+        try(Transaction tx = graphDb.beginTx()) {
             Node userNode = userIndex.get(Constants.PROPERTY_NAME,userName).getSingle();
             tx.success();
             
@@ -1657,6 +1698,16 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             }
             Session newSession = new Session(Util.createUserProfileFromNode(userNode), IPAddress);
             sessions.put(newSession.getToken(), newSession);
+            
+            try {
+                //Creates an activity log entry
+                Util.createActivityLogEntry(null, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle(),
+                        userName, ActivityLogEntry.ACTIVITY_TYPE_OPEN_SESSION,
+                        Calendar.getInstance().getTimeInMillis(), null, null, null, null);
+                tx.success();
+            } catch (ApplicationObjectNotFoundException ex) {
+                Logger.getLogger(ApplicationEntityManagerImpl.class.getName()).log(Level.SEVERE, String.format("The audit trail record could not be created: %s", ex.getMessage()));
+            }
             return newSession;
         }
     }
@@ -1670,11 +1721,22 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override
     public void closeSession(String sessionId, String remoteAddress) throws NotAuthorizedException {
         Session aSession = sessions.get(sessionId);
+        String userName = aSession.getUser().getUserName();
         if (aSession == null)
             throw new NotAuthorizedException("Invalid session ID");
         if (!aSession.getIpAddress().equals(remoteAddress))
             throw new NotAuthorizedException(String.format("The IP %s does not match with the one registered for this session", remoteAddress));
         sessions.remove(sessionId);
+        
+        try (Transaction tx = graphDb.beginTx()){
+            //Creates an activity log entry
+            Util.createActivityLogEntry(null, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle(),
+                    userName, ActivityLogEntry.ACTIVITY_TYPE_CLOSE_SESSION,
+                    Calendar.getInstance().getTimeInMillis(), null, null, null, null);
+            tx.success();
+        } catch (ApplicationObjectNotFoundException ex) {
+            Logger.getLogger(ApplicationEntityManagerImpl.class.getName()).log(Level.SEVERE, String.format("The audit trail record could not be created: %s", ex.getMessage()));
+        }
     }
     
     @Override

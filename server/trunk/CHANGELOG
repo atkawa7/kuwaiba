@@ -92,3 +92,5 @@
 * Names of some web service methods changed. The types remain unchanged
 * The name of the web service class changed to KuwaibaService
 * JSF 2.2 is used now to support the administration console
+* Added isSubclassOf method to the web service API
+* Open session, close session, create user, delete users methods have now audit trail entries

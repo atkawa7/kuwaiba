@@ -554,10 +554,16 @@ public interface WebserviceBeanRemote {
     public String bulkUpload(byte[] file, int commitSize, int dataType, String ipAddress, String sessionId) throws ServerSideException;
     /**
      * Returns a file with the wrong lines of the load file
-     * @param fileName
-     * @return
+     * @param fileName 
+     * @param ipAddress
+     * @param sessionId
+     * @return 
      * @throws ServerSideException 
      */
     public byte[] downloadBulkLoadLog(String fileName, String ipAddress, String sessionId) throws ServerSideException;
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Help methods. Click on the + sign on the left to edit the code.">
+    public boolean isSubclassOf(String className, String subclassOf, String remoteAddress, String sessionId) throws ServerSideException;
     // </editor-fold>
 }

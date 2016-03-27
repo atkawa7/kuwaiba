@@ -36,6 +36,7 @@ import org.kuwaiba.apis.persistence.application.ViewObject;
 import org.kuwaiba.apis.persistence.application.ViewObjectLight;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
+import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
@@ -921,7 +922,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
         if (classNames.length != oids.length)
             throw new ServerSideException(Level.SEVERE, "Array sizes do not match");
         try {
-            HashMap<String,long[]> objects = new HashMap<String, long[]>();
+            HashMap<String,long[]> objects = new HashMap<>();
             for (int i = 0; i< classNames.length;i++){
                 if (objects.get(classNames[i]) == null)
                     objects.put(classNames[i], new long[]{oids[i]});
@@ -1823,6 +1824,18 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
+
+    @Override
+    public boolean isSubclassOf(String className, String subclassOf, String remoteAddress, String sessionId) throws ServerSideException {
+        try {
+            return mem.isSubClass(subclassOf, className, remoteAddress, sessionId);
+        } catch (ApplicationObjectNotFoundException | org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+    
+    
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Helper methods. Click on the + sign on the left to edit the code.">

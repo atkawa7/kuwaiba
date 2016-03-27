@@ -201,6 +201,10 @@ public interface BusinessEntityManager {
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException;
     /**
      * Deletes a set of objects
+     * @param oids
+     * @param releaseRelationships
+     * @param ipAddress
+     * @param sessionId
      * @param  objects a hashmap where the class name is the key and the value is a list of long containing the ids of the objects to be deleted that are instance of the key class
      * @param  should all relationships be released, forcing the deletion?
      * @throws ObjectNotFoundException If the requested object can't be found

@@ -150,7 +150,7 @@ public class Constants {
      */
     public static final String PROPERTY_CLASS_NAME = "className";
     /**
-     * Property CHILD_OF_SPECIAL realtionship type
+     * Property CHILD_OF_SPECIAL relationship type
      */
     public static final String REL_PROPERTY_POOL = "pool";
     /**

@@ -2852,6 +2852,35 @@ public class KuwaibaService {
     }
     // </editor-fold>
     
+    // <editor-fold defaultstate="collapsed" desc="Utility methods. Click on the + sign on the left to edit the code.">/**
+
+    /**
+     * Says if a given class is subclass of another. 
+     * @param className Name of the class to test
+     * @param subclassOf Name of the alleged super class
+     * @param sessionId Session token
+     * @return True if className is subclass of subclassOf and false otherwise. If className is equals to subclassOf, it will return true as well
+     * @throws Exception If something goes wrong
+     */
+    @WebMethod(operationName = "isSubclassOf")
+    public boolean isSubclassOf(@WebParam(name = "className") String className,
+            @WebParam(name = "subclassOf") String subclassOf,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            String remoteAddress = getIPAddress();
+            return wsBean.isSubclassOf(className, subclassOf, remoteAddress, sessionId);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(KuwaibaService.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+    // </editor-fold>
+    
+    
     // <editor-fold defaultstate="collapsed" desc="Helpers. Click on the + sign on the left to edit the code.">/**
     /**
      * Gets the IP address from the client issuing the request

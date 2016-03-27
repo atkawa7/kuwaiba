@@ -119,8 +119,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         //aem.validateCall("createObject", ipAddress, sessionId);
         
         ClassMetadata myClass= cm.getClass(className);
-        try (Transaction tx = graphDb.beginTx())
-        {        
+        try (Transaction tx = graphDb.beginTx()) {        
             Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
@@ -345,7 +344,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             if (!cm.isSubClass((String)pool.getProperty(Constants.PROPERTY_CLASS_NAME), className))
                 throw new InvalidArgumentException(String.format("Class %s is not subclass of %s", className, (String)pool.getProperty(Constants.PROPERTY_CLASS_NAME)), Level.OFF);
             
-            HashMap<String, List<String>> attributes = new HashMap<String, List<String>>();
+            HashMap<String, List<String>> attributes = new HashMap<>();
             if (attributeNames != null && attributeValues != null){
                 for (int i = 0; i < attributeNames.length; i++)
                     attributes.put(attributeNames[i], Arrays.asList(attributeValues[i]));
@@ -373,7 +372,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
 
         if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, className))
-            throw new OperationNotPermittedException("Create Object", String.format("Class %s is not an business class"));
+            throw new OperationNotPermittedException("Create Object", String.format("Class %s is not an business class", className));
         
         if (myClass.isInDesign())
             throw new OperationNotPermittedException("Create Object", "Can not create instances of classes marked as isDesign");
@@ -395,7 +394,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
             }
 
-            Node parentNode = null;
+            Node parentNode;
             if (parentId != -1){
                  parentNode = getInstanceOfClass(parentClassName, parentId);
                 if (parentNode == null)
@@ -447,7 +446,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         
         aem.validateCall("getObjectLight", ipAddress, sessionId);
         //Perform benchmarks to see if accessing to the objects index is less expensive
-        try(Transaction tx =graphDb.beginTx())
+        try(Transaction tx = graphDb.beginTx())
         {
             Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
             tx.success();
