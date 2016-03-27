@@ -23,7 +23,6 @@ import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.applicationnodes.pools.PoolChildren;
 import org.inventory.navigation.applicationnodes.pools.PoolNode;
 import org.kuwaiba.management.services.nodes.CustomerChildren;
 import org.kuwaiba.management.services.nodes.CustomerNode;
@@ -70,7 +69,7 @@ public class CreateServiceAction extends GenericObjectNodeAction implements Pres
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         }
         else if(poolNode != null && poolNode instanceof ServicesPoolNode){
-            LocalObjectLight newService = CommunicationsStub.getInstance().createPoolItem(poolNode.getObject().getOid(), ((JMenuItem)e.getSource()).getName());
+            LocalObjectLight newService = CommunicationsStub.getInstance().createPoolItem(poolNode.getPool().getOid(), ((JMenuItem)e.getSource()).getName());
             if (newService == null)
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             else{

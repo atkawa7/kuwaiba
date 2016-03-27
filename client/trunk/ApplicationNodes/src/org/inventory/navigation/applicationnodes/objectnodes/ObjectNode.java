@@ -59,7 +59,7 @@ import org.openide.util.datatransfer.PasteType;
 import org.openide.util.lookup.Lookups;
 
 /**
- * Represents a node within the navigation tree
+ * Represents a node within the navigation tree and perhaps other trees displaying inventory objects
  *
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
@@ -70,19 +70,22 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
     protected static OpenLocalExplorerAction explorerAction = new OpenLocalExplorerAction();
     protected CommunicationsStub com;
     protected CreateBusinessObjectAction createAction;
-    protected DeleteBusinessObjectAction deleteAction;
     protected RefreshObjectAction refreshAction;
     protected EditObjectAction editAction;
     protected ShowObjectIdAction showObjectIdAction;
     protected Sheet sheet;
     private Image icon;
 
+    public ObjectNode(Children children) {
+        super(children);
+    }
+    
     public ObjectNode(LocalObjectLight lol) {
         super(new ObjectChildren(), Lookups.singleton(lol));
         this.object = lol;
         com = CommunicationsStub.getInstance();
         if (lol.getClassName() != null) {
-            this.object.addPropertyChangeListener(this);
+            object.addPropertyChangeListener(this);
             icon = com.getMetaForClass(lol.getClassName(), false).getSmallIcon();
             explorerAction.putValue(OpenLocalExplorerAction.NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_EXPLORE"));
         }
@@ -241,12 +244,12 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
         actions.add(createAction == null ? createAction = new CreateBusinessObjectAction(this) : createAction);
         actions.add(refreshAction == null ? refreshAction = new RefreshObjectAction(this) : refreshAction);
         actions.add(editAction == null ? editAction = new EditObjectAction(this) : editAction);
-        actions.add(deleteAction == null ? deleteAction = new DeleteBusinessObjectAction(this) : deleteAction);
         actions.add(null); //Separator
         if (!isLeaf()) {
             actions.add(SystemAction.get(CopyAction.class));
             actions.add(SystemAction.get(CutAction.class));
             actions.add(SystemAction.get(PasteAction.class));
+            actions.add(SystemAction.get(DeleteBusinessObjectAction.class));
             actions.add(explorerAction);
             actions.add(null); //Separator
         }
@@ -336,7 +339,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
                         }
                     } else {
                         NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE,
-                                String.format(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_MOVEOPERATION_TEXT"), obj.getClassName(), object.getClassName()).toString());
+                                String.format(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_MOVEOPERATION_TEXT"), obj.getClassName(), object.getClassName()));
                     }
                 } catch (Exception ex) {
                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());

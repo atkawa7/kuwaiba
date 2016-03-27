@@ -30,7 +30,7 @@ import org.inventory.communications.util.Constants;
  * This class is a simple representation of a business object with a very basic information
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class LocalObjectLight implements Transferable { //This class does not implement Transferable because of
+public class LocalObjectLight implements Transferable, Comparable<LocalObjectLight> { //This class does not implement Transferable because of
                                                                //LocalObjectLight interface extends from it
     public static final DataFlavor DATA_FLAVOR =
             new DataFlavor(LocalObjectLight.class,"Object/LocalObjectLight");
@@ -157,5 +157,10 @@ public class LocalObjectLight implements Transferable { //This class does not im
     @Override
     public String toString(){
         return (getName() == null ? Constants.LABEL_NONAME : getName()) + " [" + getClassName() + "]"; //NOI18N
+    }
+
+    @Override
+    public int compareTo(LocalObjectLight o) {
+        return getName().compareTo(o.getName());
     }
 }

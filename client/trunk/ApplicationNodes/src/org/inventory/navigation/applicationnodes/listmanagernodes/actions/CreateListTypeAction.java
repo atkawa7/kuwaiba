@@ -23,6 +23,7 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.listmanagernodes.ListTypeItemChildren;
 import org.inventory.navigation.applicationnodes.listmanagernodes.ListTypeItemNode;
 import org.inventory.navigation.applicationnodes.listmanagernodes.ListTypeNode;
+import org.openide.nodes.Node;
 
 /**
  * Action to create a new list type item
@@ -44,8 +45,7 @@ public final class CreateListTypeAction extends AbstractAction {
             if (myLol == null)
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else{
-            if (!((ListTypeItemChildren)node.getChildren()).isCollapsed())
-                node.getChildren().add(new ListTypeItemNode[]{new ListTypeItemNode(myLol)});
+            ((ListTypeItemChildren)node.getChildren()).add(new Node[] { new ListTypeItemNode(myLol) });
             //Refresh cache
             com.getList(node.getObject().getClassName(), false, true);
         }

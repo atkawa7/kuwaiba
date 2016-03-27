@@ -36,7 +36,7 @@ public class MainTest {
             System.out.println("Starting at: " + Calendar.getInstance().getTime());
             URL serverURL = new URL("http", "localhost", 8080,"/kuwaiba/KuwaibaService?wsdl"); //NOI18n
             KuwaibaService service = new KuwaibaService(serverURL);
-            port = service.getKuwaibaPort();
+            port = service.getKuwaibaServicePort();
             session = port.createSession("admin", "kuwaiba");
 
             System.out.println("Generating a containment hierarchy...");

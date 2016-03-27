@@ -28,6 +28,7 @@ import org.kuwaiba.management.services.nodes.actions.CreateServiceAction;
 import org.kuwaiba.management.services.nodes.actions.CreateServicesPoolAction;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
+import org.openide.util.actions.SystemAction;
 
 /**
  * Node representing a customer
@@ -61,7 +62,7 @@ public class CustomerNode extends ObjectNode {
         }
         else
             actions.add(createServicesPoolAction);
-        actions.add(new DeleteBusinessObjectAction(this));
+        actions.add(SystemAction.get(DeleteBusinessObjectAction.class));
         actions.add(null); //Separator
         actions.add(explorerAction);
         actions.add(null); //Separator

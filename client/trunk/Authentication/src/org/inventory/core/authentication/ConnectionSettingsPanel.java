@@ -26,12 +26,15 @@ public class ConnectionSettingsPanel extends javax.swing.JPanel {
     ConnectionSettingsPanel(Properties loginProperties) {
         initComponents();        
         if (loginProperties != null){
+            if (loginProperties.getProperty("protocol") != null) //NOI18N
+                if (Boolean.valueOf(loginProperties.getProperty("protocol")))
+                    radBtnHttps.setSelected(true);
             if (loginProperties.getProperty("address") != null) //NOI18N
-                txtServerAddress.setText((String)loginProperties.getProperty("address")); //NOI18N
+                txtServerAddress.setText(loginProperties.getProperty("address")); //NOI18N
             if (loginProperties.getProperty("port") != null) //NOI18N
                 txtServerPort.setText(loginProperties.getProperty("port")); //NOI18N
             if (loginProperties.getProperty("path") != null) //NOI18N
-                txtWSDLPath.setText((String)loginProperties.getProperty("path")); //NOI18N
+                txtWSDLPath.setText(loginProperties.getProperty("path")); //NOI18N
         }
         
     }
@@ -45,12 +48,15 @@ public class ConnectionSettingsPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        grpBtnProtocol = new javax.swing.ButtonGroup();
         txtServerPort = new javax.swing.JTextField();
         lblServerPort = new javax.swing.JLabel();
         lblServerAddress = new javax.swing.JLabel();
         txtServerAddress = new javax.swing.JTextField();
         lblWSDLPath = new javax.swing.JLabel();
         txtWSDLPath = new javax.swing.JTextField();
+        radBtnHttps = new javax.swing.JRadioButton();
+        radBtnHttp = new javax.swing.JRadioButton();
 
         txtServerPort.setText(org.openide.util.NbBundle.getMessage(ConnectionSettingsPanel.class, "ConnectionSettingsPanel.txtServerPort.text")); // NOI18N
 
@@ -64,30 +70,54 @@ public class ConnectionSettingsPanel extends javax.swing.JPanel {
 
         txtWSDLPath.setText(org.openide.util.NbBundle.getMessage(ConnectionSettingsPanel.class, "ConnectionSettingsPanel.txtWSDLPath.text")); // NOI18N
 
+        grpBtnProtocol.add(radBtnHttps);
+        radBtnHttps.setText(org.openide.util.NbBundle.getMessage(ConnectionSettingsPanel.class, "ConnectionSettingsPanel.radBtnHttps.text")); // NOI18N
+        radBtnHttps.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radBtnHttpsActionPerformed(evt);
+            }
+        });
+
+        grpBtnProtocol.add(radBtnHttp);
+        radBtnHttp.setSelected(true);
+        radBtnHttp.setText(org.openide.util.NbBundle.getMessage(ConnectionSettingsPanel.class, "ConnectionSettingsPanel.radBtnHttp.text")); // NOI18N
+        radBtnHttp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radBtnHttpActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(20, 20, 20)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblWSDLPath)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblServerAddress)
-                            .addComponent(lblServerPort))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtWSDLPath, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(txtServerPort)
-                                .addComponent(txtServerAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                            .addComponent(lblWSDLPath)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblServerAddress)
+                                    .addComponent(lblServerPort))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtWSDLPath, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(txtServerPort)
+                                        .addComponent(txtServerAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(84, 84, 84)
+                        .addComponent(radBtnHttps)
+                        .addGap(57, 57, 57)
+                        .addComponent(radBtnHttp)))
                 .addContainerGap(22, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblServerAddress)
                     .addComponent(txtServerAddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -99,15 +129,29 @@ public class ConnectionSettingsPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtWSDLPath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblWSDLPath))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(8, 8, 8)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(radBtnHttps)
+                    .addComponent(radBtnHttp)))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void radBtnHttpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radBtnHttpActionPerformed
+        this.txtServerPort.setText("8080"); //NOI18N
+    }//GEN-LAST:event_radBtnHttpActionPerformed
+
+    private void radBtnHttpsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radBtnHttpsActionPerformed
+        this.txtServerPort.setText("8181"); //NOI18N
+    }//GEN-LAST:event_radBtnHttpsActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup grpBtnProtocol;
     private javax.swing.JLabel lblServerAddress;
     private javax.swing.JLabel lblServerPort;
     private javax.swing.JLabel lblWSDLPath;
+    private javax.swing.JRadioButton radBtnHttp;
+    private javax.swing.JRadioButton radBtnHttps;
     private javax.swing.JTextField txtServerAddress;
     private javax.swing.JTextField txtServerPort;
     private javax.swing.JTextField txtWSDLPath;
@@ -127,7 +171,7 @@ public class ConnectionSettingsPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Retrieves the port number. Defaults to 8080 if the text is misformatted
+     * Retrieves the port number. Defaults to 8080 if the text is formatted incorrectly
      * @return an integer with a valid port number
      */
     public int getServerPort(){
@@ -158,5 +202,13 @@ public class ConnectionSettingsPanel extends javax.swing.JPanel {
     
     public void setWSDLPath(String wsdlPath) {
         txtWSDLPath.setText(wsdlPath);
-    }    
+    }
+    
+    public boolean getProtocol() {
+        return radBtnHttps.isSelected();
+    }
+    
+    public void setProtocol(boolean protocol) {
+        radBtnHttps.setSelected(protocol);
+    }
 }

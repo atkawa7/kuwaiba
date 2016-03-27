@@ -90,3 +90,8 @@
 * Bug fix in the physical trail graphical view
 * Misc bug fixes
 * Object View renamed to "Physical View" to be consistent with the docs
+
+1.0 (03112016)
+* Bug fixes: When a node in the data model hierarchy tree was collapsed and a subclass was created, the subclass node was duplicated. An "Object not found" exception appeared if a pool node was selected and the Special Relationships and Special Children navigators were opened
+* Keyboard shortcuts for copying, cutting, pasting and deleting work now
+* Client support for HTTPS connections

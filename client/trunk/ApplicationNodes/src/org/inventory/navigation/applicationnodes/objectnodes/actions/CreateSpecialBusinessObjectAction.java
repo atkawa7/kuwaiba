@@ -53,8 +53,7 @@ public final class CreateSpecialBusinessObjectAction extends AbstractAction
         if (myLol == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else{
-            if (!((SpecialChildren)node.getChildren()).isCollapsed())
-                ((SpecialChildren)node.getChildren()).add(new SpecialObjectNode[]{new SpecialObjectNode(myLol)});
+            ((SpecialChildren)node.getChildren()).refreshList();
                 
             NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE,
                         java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATED"));

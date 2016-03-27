@@ -34,18 +34,18 @@ public class DeletePoolAction extends AbstractAction{
     /**
      * Reference to the root node;
      */
-    private PoolNode pn;
+    private PoolNode node;
 
     public DeletePoolAction(PoolNode pn){
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETE"));
         com = CommunicationsStub.getInstance();
-        this.pn = pn;
+        this.node = pn;
     }
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        if (com.deletePool(pn.getObject().getOid())){
-            pn.getParentNode().getChildren().remove(new Node[]{pn});
+        if (com.deletePool(node.getPool().getOid())){
+            node.getParentNode().getChildren().remove(new Node[]{node});
             NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
                     java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TEXT_OK"));
         }

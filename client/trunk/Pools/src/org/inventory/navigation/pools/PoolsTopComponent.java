@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.swing.ActionMap;
+import javax.swing.text.DefaultEditorKit;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -74,7 +75,11 @@ public final class PoolsTopComponent extends TopComponent implements ExplorerMan
     
     private void initCustomComponents(){
         ps = new PoolsService(this);
-        associateLookup(ExplorerUtils.createLookup(em, new ActionMap()));
+        ActionMap map = getActionMap();
+        map.put(DefaultEditorKit.copyAction, ExplorerUtils.actionCopy(em));
+        map.put(DefaultEditorKit.cutAction, ExplorerUtils.actionCut(em));
+        map.put(DefaultEditorKit.pasteAction, ExplorerUtils.actionPaste(em));
+        associateLookup(ExplorerUtils.createLookup(em, map));
         treeView = new BeanTreeView();
         treeView.setWheelScrollingEnabled(true);
         add(treeView);

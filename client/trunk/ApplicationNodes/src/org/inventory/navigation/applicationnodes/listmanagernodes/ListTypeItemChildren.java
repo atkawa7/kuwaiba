@@ -32,7 +32,6 @@ public class ListTypeItemChildren extends ObjectChildren {
 
     @Override
     public void addNotify(){
-        collapsed = false;
         LocalClassMetadataLight lcml = ((ListTypeNode)this.getNode()).getObject();
         List<LocalObjectListItem> myObjects = CommunicationsStub.getInstance().getList(lcml.getClassName(), false, false);
 

@@ -25,6 +25,7 @@ import org.inventory.navigation.applicationnodes.objectnodes.actions.EditObjectA
 import org.inventory.navigation.applicationnodes.objectnodes.actions.RefreshObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
 import org.openide.util.Lookup;
+import org.openide.util.actions.SystemAction;
 
 /**
  * It's like an ObjectNode, but you can filter what actions would be shown. Its children
@@ -44,7 +45,7 @@ public class SpecialObjectNode extends ObjectNode {
         actions.add(new CreateSpecialBusinessObjectAction(this));
         actions.add(refreshAction == null ? refreshAction = new RefreshObjectAction(this) : refreshAction);
         actions.add(editAction == null ? editAction = new EditObjectAction(this) : editAction);
-        actions.add(deleteAction == null ? deleteAction = new DeleteBusinessObjectAction(this) : deleteAction);
+        actions.add(SystemAction.get(DeleteBusinessObjectAction.class));
         actions.add(null); //Separator
                 for (GenericObjectNodeAction action : Lookup.getDefault().lookupAll(GenericObjectNodeAction.class)){
             if (action.getValidator() == null){

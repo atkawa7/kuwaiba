@@ -61,7 +61,7 @@ public class CreateCustomerAction extends GenericObjectNodeAction implements Pre
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         }
         else if(object.getClassName().equals(Constants.CLASS_GENERICCUSTOMER)){
-            LocalObjectLight newCustomer = CommunicationsStub.getInstance().createPoolItem(customersPoolNode.getObject().getOid(), ((JMenuItem)e.getSource()).getName());
+            LocalObjectLight newCustomer = CommunicationsStub.getInstance().createPoolItem(customersPoolNode.getPool().getOid(), ((JMenuItem)e.getSource()).getName());
             if (newCustomer == null)
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             else{

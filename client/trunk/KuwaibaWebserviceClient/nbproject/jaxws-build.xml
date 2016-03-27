@@ -1,12 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<?xml version="1.0" encoding="UTF-8"?><!--
         *** GENERATED FROM jax-ws.xml - DO NOT EDIT !                             ***
         *** TO MODIFY wsimport options USE Web Service node -> Edit WS Attributes ***
         *** TO CHANGE TARGETS GENERATED TO jaxws-build.xml COPY THOSE             ***
         *** TARGETS TO ../build.xml AND MODIFY THAT FILE INSTEAD                  ***
 
-        -->
-<project xmlns:xalan="http://xml.apache.org/xslt" xmlns:j2seproject3="http://www.netbeans.org/ns/j2se-project/3" xmlns:jaxws="http://www.netbeans.org/ns/jax-ws/1">
+        --><project xmlns:xalan="http://xml.apache.org/xslt" xmlns:j2seproject3="http://www.netbeans.org/ns/j2se-project/3" xmlns:jaxws="http://www.netbeans.org/ns/jax-ws/1">
     <!--
                 ===================
                 JAX-WS WSIMPORT SECTION
@@ -21,7 +19,7 @@
     <target name="wsimport-client-KuwaibaService" depends="wsimport-init">
         <mkdir dir="${build.generated.dir}/jax-wsCache/KuwaibaService"/>
         <property name="wsdl-KuwaibaService" location="xml-resources/web-service-references/KuwaibaService/wsdl/localhost_8080/kuwaiba/KuwaibaService.wsdl"/>
-        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/KuwaibaService" destdir="${build.generated.dir}/jax-wsCache/KuwaibaService" wsdl="${wsdl-KuwaibaService}" catalog="catalog.xml" extension="true" verbose="true" wsdlLocation="localhost:8080/kuwaiba/KuwaibaService?wsdl" xendorsed="true" package="org.kuwaiba.wsclient">
+        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/KuwaibaService" destdir="${build.generated.dir}/jax-wsCache/KuwaibaService" wsdl="${wsdl-KuwaibaService}" catalog="catalog.xml" encoding="${source.encoding}" extension="true" verbose="true" wsdlLocation="localhost:8080/kuwaiba/KuwaibaService?wsdl" xendorsed="true" package="org.kuwaiba.wsclient">
             <depends file="${wsdl-KuwaibaService}"/>
             <produces dir="${build.generated.dir}/jax-wsCache/KuwaibaService"/>
         </wsimport>

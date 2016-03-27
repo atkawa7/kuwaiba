@@ -35,20 +35,19 @@ public class ServicesPoolNode extends PoolNode {
     
     public ServicesPoolNode(LocalObjectLight service) {
         super(service);
-        this.object = service;
         setChildren(new ServiceChildren(service));
     }
 
     @Override
     public String getName(){
-        return object.getName() +" ["+java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_SERVICES_POOL")+"]";
+        return getPool().getName() +" ["+java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_SERVICES_POOL")+"]";
     }
     
     @Override
     public Action[] getActions(boolean context){
         return new Action[]{new CreateServiceAction(this), 
             new DeletePoolAction(this),
-            new ShowObjectIdAction(object.getOid(), object.getClassName())};
+            new ShowObjectIdAction(getPool().getOid(), getPool().getClassName())};
     }
     
     @Override

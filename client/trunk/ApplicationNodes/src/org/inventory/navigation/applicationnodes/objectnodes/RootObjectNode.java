@@ -18,8 +18,10 @@ package org.inventory.navigation.applicationnodes.objectnodes;
 
 import javax.swing.Action;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.CreateBusinessObjectAction;
+import org.openide.actions.PasteAction;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
+import org.openide.util.actions.SystemAction;
 
 /**
  * Simple class to represent the root node
@@ -37,6 +39,6 @@ public class RootObjectNode extends AbstractNode {
 
     @Override
     public Action[] getActions(boolean context){
-        return new Action[]{new CreateBusinessObjectAction(this)};
+        return new Action[]{new CreateBusinessObjectAction(this), null, SystemAction.get(PasteAction.class)};
     }
 }

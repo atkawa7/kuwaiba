@@ -27,7 +27,6 @@ import org.inventory.communications.core.caching.Cache;
 import org.inventory.communications.util.Constants;
 import org.inventory.navigation.applicationnodes.classmetadatanodes.ClassMetadataNode;
 import org.openide.nodes.PropertySupport.ReadWrite;
-import sun.beans.editors.ColorEditor;
 
 /**
  * ClassMetadata properties
@@ -95,10 +94,7 @@ public class ClassMetadataProperty extends ReadWrite {
     @Override
     public boolean canWrite(){
         //Dates are read only  by now until we integrate a date picker
-        if (getValueType().equals(Date.class)){
-            return false;
-        }
-        return true;
+        return !getValueType().equals(Date.class);
     }
     
     public String getExtension(File f) {

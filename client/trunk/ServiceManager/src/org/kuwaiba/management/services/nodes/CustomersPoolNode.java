@@ -35,22 +35,21 @@ public class CustomersPoolNode extends PoolNode{
     
     public CustomersPoolNode(LocalObjectLight customer) {
         super(customer);
-        this.object = customer;
         setChildren(new CustomersPoolChildren(customer));
     }
     
     @Override
     public String getName(){
-        return object.getName() + " ["+java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CUSTOMERS_POOL")+"]";
+        return getPool().getName() + " ["+java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CUSTOMERS_POOL")+"]";
     }
     
     @Override
     public Action[] getActions(boolean context){
         CreateCustomerAction createCustomerAction = new CreateCustomerAction(this);
-        createCustomerAction.setObject(object);
+        createCustomerAction.setObject(getPool());
         return new Action[]{createCustomerAction, 
             new DeletePoolAction(this),
-            new ShowObjectIdAction(object.getOid(), object.getClassName())};
+            new ShowObjectIdAction(getPool().getOid(), getPool().getClassName())};
     }
    
     @Override

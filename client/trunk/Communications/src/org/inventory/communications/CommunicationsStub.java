@@ -132,7 +132,7 @@ public class CommunicationsStub {
                 serverURL = new URL("http", "localhost", 8080,"/kuwaiba/KuwaibaService?wsdl"); //NOI18n
 
             this.service = new KuwaibaService(serverURL);
-            this.port = service.getKuwaibaPort();
+            this.port = service.getKuwaibaServicePort();
             this.session = new LocalSession(port.createSession(user, password));
             return true;
         }catch(Exception ex){ 
@@ -586,6 +586,15 @@ public class CommunicationsStub {
             return null;
         }
    }
+    
+   public boolean isSubclassOf (String className, String subclassOf) {
+       try {
+           return port.isSubclassOf(className, subclassOf, this.session.getSessionId());
+       } catch (Exception ex) {
+           this.error = ex.getMessage();
+           return false;
+       }
+   }
 
     // <editor-fold defaultstate="collapsed" desc="Metadata methods. Click on the + sign on the left to edit the code.">
     /**
@@ -985,17 +994,13 @@ public class CommunicationsStub {
 
     /**
      * Deletes the given object
-     * @param className Object class (including its package)
-     * @param oid object id
+     * @param classNames Object classes
+     * @param oids object ids
      * @return Success or failure
      */
-    public boolean deleteObject(String className, long oid){
+    public boolean deleteObjects(List<String> classNames, List<Long> oids){
         try{
-            List classes = new ArrayList();
-            classes.add(className);
-            List ids = new ArrayList();
-            ids.add(oid);
-            port.deleteObjects(classes, ids, false, this.session.getSessionId());
+            port.deleteObjects(classNames, oids, false, this.session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = ex.getMessage();

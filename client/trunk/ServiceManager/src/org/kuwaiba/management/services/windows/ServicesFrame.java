@@ -64,7 +64,7 @@ public class ServicesFrame extends JFrame{
                 
         JPanel pnlSearch = new JPanel();
         pnlSearch.setLayout(new GridLayout(1, 2));
-        lstAvailableServices = new JList(services);
+        lstAvailableServices = new JList<LocalObjectLight>(services);
         lstAvailableServices.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         pnlScrollMain = new JScrollPane();
         txtField = new JTextField();

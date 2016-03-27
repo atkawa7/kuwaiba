@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015, 2013 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2016, Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -60,11 +60,9 @@ public final class CreateBusinessObjectAction extends AbstractAction implements 
         if (myLol == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else{
-            if (!((ObjectChildren)node.getChildren()).isCollapsed())
-                ((ObjectChildren)node.getChildren()).add(new ObjectNode[]{new ObjectNode(myLol)});
-            
-                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE,
-                    java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATED"));
+            ((ObjectChildren)node.getChildren()).refreshList();
+            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE,
+                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATED"));
         }
     }
 
