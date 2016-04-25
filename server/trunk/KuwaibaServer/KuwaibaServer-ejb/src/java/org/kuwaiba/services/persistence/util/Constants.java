@@ -157,6 +157,7 @@ public class Constants {
      * Property "structure" for views
      */
     public static final String PROPERTY_STRUCTURE = "structure"; //NOI18N
+    public static final String PROPERTY_BACKGROUND = "background"; //NOI18N
     public static final String PROPERTY_PRIVILEGES = "privileges"; //NOI18N
     public static final String PROPERTY_NAME = "name"; //NOI18N
     public static final String PROPERTY_CREATION_DATE = "creationDate"; //NOI18N

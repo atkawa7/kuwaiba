@@ -26,7 +26,7 @@ public interface Constants {
     /**
      * Server version
      */
-    public static final String SERVER_VERSION = "0.8";
+    public static final String SERVER_VERSION = "1.0";
     /**
      * Max icon size in bytes
      */

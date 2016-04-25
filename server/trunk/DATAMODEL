@@ -185,3 +185,5 @@
 * Added class PowerLink
 * Added class PowerLinkType
 * Class GenericPhysicalLink does not have the attributes owner and operator anymore
+* Class SDHLink removed
+* Class SONETLink removed

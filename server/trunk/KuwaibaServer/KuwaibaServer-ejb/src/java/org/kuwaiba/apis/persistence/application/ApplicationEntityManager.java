@@ -27,6 +27,7 @@ import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
+import org.kuwaiba.util.ChangeDescriptor;
 
 /**
  * This is the entity in charge of manipulating application objects such as users, views, etc
@@ -62,7 +63,7 @@ public interface ApplicationEntityManager {
      * @throws InvalidArgumentException Thrown if the username is null or empty or the username already exists
      */
     public long createUser(String userName, String password, String firstName,
-            String lastName, boolean enabled, long[] privileges, long[] groups)//, String ipAddress, String sessionId)
+            String lastName, boolean enabled, long[] privileges, long[] groups)//)
             throws InvalidArgumentException, NotAuthorizedException;
     
     /**
@@ -78,7 +79,7 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException Thrown if any of the ids provided for the groups does not belong to an existing group
      */
     public void setUserProperties(long oid, String userName, String password, String firstName,
-            String lastName, boolean enabled, long[] privileges, long[] groups, String ipAddress, String sessionId)
+            String lastName, boolean enabled, long[] privileges, long[] groups)
             throws InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException;
     /**
      * Updates the attributes of a user, using its username as key to find it
@@ -90,14 +91,12 @@ public interface ApplicationEntityManager {
      * @param enabled Is this user enabled?
      * @param privileges Privileges
      * @param groups List of ids with the groups. It overwrites the existing ones
-     * @param ipAddress IP address this request is made
-     * @param sessionId Session token
      * @throws InvalidArgumentException If the format of any of the parameters provided is erroneous
      * @throws ApplicationObjectNotFoundException If the user can not be found
      * @throws NotAuthorizedException If the session is not valid or the caller doesn't have enough rights to perform this operation
      */
     public void setUserProperties(String formerUsername, String newUserName, String password, String firstName,
-            String lastName, boolean enabled, long[] privileges, long[] groups, String ipAddress, String sessionId)
+            String lastName, boolean enabled, long[] privileges, long[] groups)
             throws InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException;
     /**
      * Creates a group
@@ -110,26 +109,22 @@ public interface ApplicationEntityManager {
      * @throws NotAuthorizedException 
      */
      public long createGroup(String groupName, String description, long[]
-            privileges, long[] users)//, String ipAddress, String sessionId)
+            privileges, long[] users)//)
             throws InvalidArgumentException, NotAuthorizedException;
 
     /**
      * Retrieves the list of all users
-     * @param ipAddress
-     * @param sessionId
      * @return An array of UserProfile
      * @throws NotAuthorizedException
      */
-    public List<UserProfile> getUsers(String ipAddress, String sessionId) throws NotAuthorizedException;
+    public List<UserProfile> getUsers() throws NotAuthorizedException;
 
     /**
      * Retrieves the list of all groups
-     * @param ipAddress
-     * @param sessionId
      * @return An array of GroupProfile
      * @throws NotAuthorizedException
      */
-    public List<GroupProfile> getGroups(String ipAddress, String sessionId) throws NotAuthorizedException;
+    public List<GroupProfile> getGroups() throws NotAuthorizedException;
 
     /**
      * Set user attributes (group membership is managed using other methods)
@@ -142,7 +137,7 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException
      */
     public void setGroupProperties(long oid, String groupName, String description,
-            long[] privileges, long[] users, String ipAddress, String sessionId)
+            long[] privileges, long[] users)
             throws InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException;
 
    /**
@@ -151,7 +146,7 @@ public interface ApplicationEntityManager {
      * @throws InvalidArgumentException
      * @throws ApplicationObjectNotFoundException
      */
-    public void deleteUsers(long[] oids, String ipAddress, String sessionId)
+    public void deleteUsers(long[] oids)
             throws ApplicationObjectNotFoundException, NotAuthorizedException;
 
     /**
@@ -160,7 +155,7 @@ public interface ApplicationEntityManager {
      * @throws InvalidArgumentException
      * @throws ApplicationObjectNotFoundException
      */
-    public void deleteGroups(long[] oids, String ipAddress, String sessionId) 
+    public void deleteGroups(long[] oids) 
             throws ApplicationObjectNotFoundException, NotAuthorizedException;
     
    /**
@@ -172,7 +167,7 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException if className is not an existing class
      * @throws InvalidArgumentException if the class provided is not a list type
      */
-    public long createListTypeItem(String className, String name, String displayName, String ipAddress, String sessionId)
+    public long createListTypeItem(String className, String name, String displayName)
             throws MetadataObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, NotAuthorizedException;
 
     /**
@@ -184,7 +179,7 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException if className is not an existing class
      * @throws InvalidArgumentException if the class provided is not a list type
      */
-    public List<RemoteBusinessObjectLight> getListTypeItems(String className, String ipAddress, String sessionId)
+    public List<RemoteBusinessObjectLight> getListTypeItems(String className)
             throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException;
 
     /**
@@ -194,7 +189,7 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException
      * @throws InvalidArgumentException 
      */
-    public RemoteBusinessObjectLight getListTypeItem(String listTypeName, String ipAddress, String sessionId) 
+    public RemoteBusinessObjectLight getListTypeItem(String listTypeName) 
             throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException;
     
     /**
@@ -206,7 +201,7 @@ public interface ApplicationEntityManager {
      * @throws ObjectNotFoundException if the list type item can't be found
      * @throws OperationNotPermittedException if the object has relationships
      */
-    public void deleteListTypeItem(String className, long oid, boolean realeaseRelationships, String ipAddress, String sessionId)
+    public void deleteListTypeItem(String className, long oid, boolean realeaseRelationships)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, NotAuthorizedException;
 
     /**
@@ -216,7 +211,7 @@ public interface ApplicationEntityManager {
      * @return A list of ClassMetadataLight instances representing the possible list types
      * @throws ApplicationObjectNotFoundException if the GenericObjectList class does not exist
      */
-    public List<ClassMetadataLight> getInstanceableListTypes(String ipAddress, String sessionId)
+    public List<ClassMetadataLight> getInstanceableListTypes()
             throws ApplicationObjectNotFoundException, NotAuthorizedException;
 
     /**
@@ -229,7 +224,7 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException if the corresponding class metadata can not be found
      * @throws InvalidArgumentException if the provided view type is not supported
      */
-    public ViewObject getObjectRelatedView(long oid, String objectClass, long viewId, String ipAddress, String sessionId)
+    public ViewObject getObjectRelatedView(long oid, String objectClass, long viewId)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException;
 
     /**
@@ -242,7 +237,7 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException if the corresponding class metadata can not be found
      * @throws InvalidArgumentException if the provided view type is not supported
      */
-    public List<ViewObjectLight> getObjectRelatedViews(long oid, String objectClass, int limit, String ipAddress, String sessionId)
+    public List<ViewObjectLight> getObjectRelatedViews(long oid, String objectClass, int limit)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException;
 
     /**
@@ -252,7 +247,7 @@ public interface ApplicationEntityManager {
      * @return a list of object with the minimum information about the view (id, class and name)
      * @throws InvalidArgumentException if the viewType is not a valid value
      */
-    public List<ViewObjectLight> getGeneralViews(int viewType, int limit, String ipAddress, String sessionId)
+    public List<ViewObjectLight> getGeneralViews(int viewType, int limit)
             throws InvalidArgumentException, NotAuthorizedException;
 
     /**
@@ -261,7 +256,7 @@ public interface ApplicationEntityManager {
      * @return An object representing the view
      * @throws ObjectNotFoundException if the requested view
      */
-    public ViewObject getGeneralView(long viewId, String ipAddress, String sessionId) throws ObjectNotFoundException, NotAuthorizedException;
+    public ViewObject getGeneralView(long viewId) throws ObjectNotFoundException, NotAuthorizedException;
 
     /**
      * Creates a view for a given object. If there's already a view of the provided view type, it will be overwritten
@@ -277,7 +272,7 @@ public interface ApplicationEntityManager {
      * @throws InvalidArgumentException if the view type is not supported
      */
     public long createObjectRelatedView(long oid, String objectClass, String name, String description, 
-            int viewType, byte[] structure, byte[] background, String ipAddress, String sessionId)
+            int viewType, byte[] structure, byte[] background)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException;
 
     /**
@@ -290,7 +285,7 @@ public interface ApplicationEntityManager {
      * @param background Background image
      * @throws InvalidArgumentException if the view type is invalid
      */
-    public long createGeneralView(int viewType, String name, String description, byte[] structure, byte[] background, String ipAddress, String sessionId)
+    public long createGeneralView(int viewType, String name, String description, byte[] structure, byte[] background)
             throws InvalidArgumentException, NotAuthorizedException;
 
     /**
@@ -302,25 +297,27 @@ public interface ApplicationEntityManager {
      * @param description view description
      * @param structure XML document with the view structure (see http://neotropic.co/kuwaiba/wiki/index.php?title=XML_Documents#To_Save_Object_Views for details about the supported format)
      * @param background Background image. If null, the previous will be removed, if 0-sized array, it will remain unchanged
+     * @return The summary of the changes
      * @throws ObjectNotFoundException if the object can not be found
      * @throws MetadataObjectNotFoundException if the object class can not be found
      * @throws InvalidArgumentException if the view type is not supported
      */
-    public void updateObjectRelatedView(long oid, String objectClass, long viewId, String name, 
-            String description, byte[] structure, byte[] background, String ipAddress, String sessionId)
+    public ChangeDescriptor updateObjectRelatedView(long oid, String objectClass, long viewId, String name, 
+            String description, byte[] structure, byte[] background)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException;
 
     /**
      * Saves a view not related to a particular object. The view type can not be changed
-     * @param view id
+     * @param oid View id
      * @param name view name. Null to leave unchanged
      * @param description view description. Null to leave unchanged
      * @param structure XML document specifying the view structure (nodes, edges, control points). Null to leave unchanged
      * @param background Background image. If null, the previous will be removed, if 0-sized array, it will remain unchanged
+     * @return The summary of the changes.
      * @throws InvalidArgumentException if the view type is invalid
      * @throws ObjectNotFoundException if the view couldn't be found
      */
-    public void updateGeneralView(long oid, String name, String description, byte[] structure, byte[] background, String ipAddress, String sessionId)
+    public ChangeDescriptor updateGeneralView(long oid, String name, String description, byte[] structure, byte[] background)
             throws InvalidArgumentException, ObjectNotFoundException, NotAuthorizedException;
 
 
@@ -329,7 +326,7 @@ public interface ApplicationEntityManager {
      * @param ids view ids
      * @throws ObjectNotFoundException if the view can't be found
      */
-    public void deleteGeneralViews(long[] ids, String ipAddress, String sessionId) throws ObjectNotFoundException, NotAuthorizedException;
+    public void deleteGeneralViews(long[] ids) throws ObjectNotFoundException, NotAuthorizedException;
 
     /**
      * Creates a Query
@@ -342,7 +339,7 @@ public interface ApplicationEntityManager {
      * @throws InvalidArgumentException
      */
     public long createQuery(String queryName, long ownerOid, byte[] queryStructure,
-            String description, String ipAddress, String sessionId) 
+            String description) 
             throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException;
 
     /**
@@ -355,7 +352,7 @@ public interface ApplicationEntityManager {
      * @param ipAddress
      * @throws ApplicationObjectNotFoundException If the query can not be found
      */
-    public void saveQuery(long queryOid, String queryName, long ownerOid, byte[] queryStructure, String description, String ipAddress, String sessionId)
+    public void saveQuery(long queryOid, String queryName, long ownerOid, byte[] queryStructure, String description)
             throws ApplicationObjectNotFoundException, NotAuthorizedException;
 
     /**
@@ -364,7 +361,7 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException
      * @throws InvalidArgumentException
      */
-    public void deleteQuery(long queryOid, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, InvalidArgumentException, NotAuthorizedException;
+    public void deleteQuery(long queryOid) throws ApplicationObjectNotFoundException, InvalidArgumentException, NotAuthorizedException;
 
     /**
      * Gets all queries
@@ -373,7 +370,7 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException
      * @throws InvalidArgumentException
      */
-    public List<CompactQuery> getQueries(boolean showPublic, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, InvalidArgumentException, NotAuthorizedException;
+    public List<CompactQuery> getQueries(boolean showPublic) throws ApplicationObjectNotFoundException, InvalidArgumentException, NotAuthorizedException;
 
     /**
      * Gets a single query
@@ -382,7 +379,7 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException
      * @throws InvalidArgumentException
      */
-    public CompactQuery getQuery(long queryOid, String ipAddress, String sessionId) 
+    public CompactQuery getQuery(long queryOid) 
             throws ApplicationObjectNotFoundException, InvalidArgumentException, NotAuthorizedException;
 
     /**
@@ -394,7 +391,7 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException
      * @throws InvalidArgumentException 
      */
-    public List<ResultRecord> executeQuery(ExtendedQuery query, String ipAddress, String sessionId)
+    public List<ResultRecord> executeQuery(ExtendedQuery query)
             throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException;
 
     /**
@@ -404,7 +401,7 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException
      * @throws InvalidArgumentException
      */
-    public byte[] getClassHierachy(boolean showAll, String ipAddress, String sessionId) 
+    public byte[] getClassHierachy(boolean showAll) 
             throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException;
     
     //Pools
@@ -419,7 +416,7 @@ public interface ApplicationEntityManager {
      * @throws InvalidArgumentException If the owner doesn't exist
      * @throws ObjectNotFoundException If the parent can not be found
      */
-    public long createPool(long parentId, String name, String description, String instancesOfClass, String ipAddress, String sessionId) 
+    public long createPool(long parentId, String name, String description, String instancesOfClass) 
             throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException, NotAuthorizedException;
 
     /**
@@ -427,7 +424,7 @@ public interface ApplicationEntityManager {
      * @param ids the list of ids from the objects to be deleted
      * @throws InvalidArgumentException If any of the pools to be deleted couldn't be found
      */
-    public void deletePools(long[] ids, String ipAddress, String sessionId) throws InvalidArgumentException, NotAuthorizedException;
+    public void deletePools(long[] ids) throws InvalidArgumentException, NotAuthorizedException;
    
     /**
      * Gets the available pools for a specific parent id
@@ -439,13 +436,13 @@ public interface ApplicationEntityManager {
      * @return
      * @throws NotAuthorizedException 
      */
-    public List<RemoteBusinessObjectLight> getPools(int limit, long parentId, String className, String ipAddress, String sessionId) throws NotAuthorizedException, ObjectNotFoundException;
+    public List<RemoteBusinessObjectLight> getPools(int limit, long parentId, String className) throws NotAuthorizedException, ObjectNotFoundException;
     /**
      * Gets the available pools
      * @param limit Maximum number of pool records to be returned. -1 to return all
      * @return The list of pools as RemoteBusinessObjectLight instances
      */
-    public List<RemoteBusinessObjectLight> getPools(int limit, String className, String ipAddress, String sessionId) throws NotAuthorizedException;
+    public List<RemoteBusinessObjectLight> getPools(int limit, String className) throws NotAuthorizedException;
     
     /**
      * Gets the list of objects into a pool
@@ -454,7 +451,7 @@ public interface ApplicationEntityManager {
      * @return The list of items inside the pool
      * @throws ApplicationObjectNotFoundException If the pool id provided is not valid
      */
-    public List<RemoteBusinessObjectLight> getPoolItems(long poolId, int limit, String ipAddress, String sessionId)
+    public List<RemoteBusinessObjectLight> getPoolItems(long poolId, int limit)
             throws ApplicationObjectNotFoundException, NotAuthorizedException;
     
     /**
@@ -467,7 +464,7 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException If the provided class couldn't be found
      * @throws InvalidArgumentException If the class provided is not subclass of  InventoryObject
      */
-    public List<ActivityLogEntry> getBusinessObjectAuditTrail(String objectClass, long objectId, int limit, String ipAddress, String sessionId)
+    public List<ActivityLogEntry> getBusinessObjectAuditTrail(String objectClass, long objectId, int limit)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException;
     
     /**
@@ -476,10 +473,10 @@ public interface ApplicationEntityManager {
      * @param limit limit of results per page. 0 to retrieve them all
      * @return The list of activity log entries
      */
-    public List<ActivityLogEntry> getGeneralActivityAuditTrail(int page, int limit, String ipAddress, String sessionId) throws NotAuthorizedException;
+    public List<ActivityLogEntry> getGeneralActivityAuditTrail(int page, int limit) throws NotAuthorizedException;
     
     /**
-     * Validate if an user is allowed to perform an operation
+     * Validates if an user is allowed to perform an operation
      * @param methodName the method name
      * @param ipAddress
      * @param sessionId
@@ -516,7 +513,7 @@ public interface ApplicationEntityManager {
     public int[] executePatch() throws NotAuthorizedException;
     
     /**
-     * 
+     * Closes a session
      * @param sessionId
      * @param remoteAddress
      * @throws NotAuthorizedException 
@@ -528,4 +525,51 @@ public interface ApplicationEntityManager {
      * @param properties A Properties object with the configuration variables
      */
     public void setConfiguration(Properties properties);
+    
+    /**
+     * Creates a general activity log entry, that is, an entry that is not associated to a particular object
+     * @param userName User that performed the action
+     * @param type Type of action. See class ActivityLogEntry for possible values
+     * @param notes Optional additional notes related to the action. The Id of the element, if it was created/deleted. Null if no notes should be added 
+     * @throws ApplicationObjectNotFoundException If the log root node could not be found
+     */
+    public void createGeneralActivityLogEntry(String userName, int type,
+            String notes) throws ApplicationObjectNotFoundException;
+    /**
+     * Creates a general activity log entry, that is, an entry that is not associated to a particular object
+     * @param userName User that performed the action
+     * @param type Type of action. See class ActivityLogEntry for possible values
+     * @param changeDescriptor The descriptor with all the changes performed by the method
+     * @throws ApplicationObjectNotFoundException If the log root node could not be found
+     */
+    public void createGeneralActivityLogEntry(String userName, int type, ChangeDescriptor changeDescriptor) throws ApplicationObjectNotFoundException;
+    
+    /**
+     * Creates an object activity log entry, that is, an entry that is directly related to an object, such as the modification of the value of an attribute
+     * @param userName User that performs the operation
+     * @param className The class of the object being modified
+     * @param oid The oid of the object being modified
+     * @param type The type of action. See ActivityLogEntry class for possible values
+     * @param affectedProperties Properties that were affected. Normally, they're separated by spaces, but it's not required
+     * @param oldValues Old values. Normally, they're separated by spaces, but it's not required
+     * @param newValues New values. Normally, they're separated by spaces, but it's not required
+     * @param notes Additional notes associated with the change
+     * @throws ApplicationObjectNotFoundException If the object activity log could no be found
+     * @throws ObjectNotFoundException  If the modified object itself could not be found
+     */
+    public void createObjectActivityLogEntry(String userName, String className, long oid, int type, 
+        String affectedProperties, String oldValues, String newValues, String notes) throws ApplicationObjectNotFoundException, ObjectNotFoundException;
+    
+    /**
+     * Creates an object activity log entry, that is, an entry that is directly related to an object, such as the modification of the value of an attribute
+     * @param userName User that performs the operation
+     * @param className The class of the object being modified
+     * @param oid The oid of the object being modifies
+     * @param type The type of action. See ActivityLogEntry class for possible values
+     * @param changeDescriptor The summary of the changes that were done
+     * @throws ApplicationObjectNotFoundException If the object activity log could no be found
+     * @throws ObjectNotFoundException If the modified object itself could not be found
+     */
+    public void createObjectActivityLogEntry(String userName, String className, long oid,  
+            int type, ChangeDescriptor changeDescriptor) throws ApplicationObjectNotFoundException, ObjectNotFoundException;
 }

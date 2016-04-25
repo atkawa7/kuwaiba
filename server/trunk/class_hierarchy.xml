@@ -2061,20 +2061,6 @@
                         </attributes>
                         <subclasses/>
                       </class>
-                      <class name="SDHLink" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.connections.logical">
-                        <attributes>
-                          <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
-                          <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
-                        </attributes>
-                        <subclasses/>
-                      </class>
-                      <class name="SONETLink" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.connections.logical">
-                        <attributes>
-                          <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
-                          <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
-                        </attributes>
-                        <subclasses/>
-                      </class>
                     </subclasses>
                   </class>
 				  <class name="GenericPhysicalConnection" javaModifiers="1025" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.connections.physical">

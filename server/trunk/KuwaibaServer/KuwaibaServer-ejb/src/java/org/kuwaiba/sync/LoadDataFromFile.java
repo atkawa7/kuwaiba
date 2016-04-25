@@ -179,7 +179,7 @@ public final class LoadDataFromFile{
                         continue;
                     }
                     
-                    HashMap<String, List<String>> attributes = new HashMap<String, List<String>>();
+                    HashMap<String, List<String>> attributes = new HashMap<>();
 
                     for(int i = 3; i < splitLine.length; i ++){
                         String[] attributeDefinition = splitLine[i].split("~c~");
@@ -189,7 +189,7 @@ public final class LoadDataFromFile{
                             continue;
                         }
 
-                        List<String> attributeValue = new ArrayList<String>();
+                        List<String> attributeValue = new ArrayList<>();
 
                         for (int j = 1;j < attributeDefinition.length;j++)
                             attributeValue.add(attributeDefinition[j]);
@@ -201,14 +201,14 @@ public final class LoadDataFromFile{
                     if (parentClass.equals(ROOT)){ //The parent is the navigation tree root
                         bem.createObject(className, null, -1, 
                                 attributes, 
-                                template, IPAddress, sessionId);
+                                template);
                     }
                     else
                          bem.createObject(className, 
                                 parentClass, 
                                 parentFilter[0] + ":"  + parentFilter[1], 
                                 attributes, 
-                                template, IPAddress, sessionId);
+                                template);
                 }catch(Exception ex){
                     errorsMsgs += String.format("ERROR\t%s\tUnexpected error: %s.\n", currentLine, ex.getMessage());
                     hasErrors = true;
@@ -229,7 +229,7 @@ public final class LoadDataFromFile{
     private void loadListTypes() {
         boolean hasErrors = false;
         String errorsMsgs = "";
-        data = new ArrayList<RemoteBusinessObject>();
+        data = new ArrayList<>();
         
         try {
             BufferedReader input = new BufferedReader(new FileReader(uploadFile));
@@ -260,7 +260,7 @@ public final class LoadDataFromFile{
                 String className = splitLine[0];
                 try{
                     
-                    HashMap<String, List<String>> attributes = new HashMap<String, List<String>>();
+                    HashMap<String, List<String>> attributes = new HashMap<>();
                     for(int i = 1; i < splitLine.length; i++) {
                         String[] attributeDefinitionParts = splitLine[i].split("~c~");
                         if (attributeDefinitionParts.length < 2) {
@@ -268,14 +268,14 @@ public final class LoadDataFromFile{
                             hasErrors = true;
                             continue;
                         }
-                        List<String> attributeValues = new ArrayList<String>();
+                        List<String> attributeValues = new ArrayList<>();
                         for (int j = 1; j < attributeDefinitionParts.length; j++)
                             attributeValues.add(attributeDefinitionParts[j]);
                         attributes.put(attributeDefinitionParts[0], attributeValues);
                     }
                     
-                    long oid = aem.createListTypeItem(className, "", "", IPAddress , sessionId);
-                    bem.updateObject(className, oid, attributes, IPAddress, sessionId);
+                    long oid = aem.createListTypeItem(className, "", "");
+                    bem.updateObject(className, oid, attributes);
                 }catch(Exception ex){
                     errorsMsgs += String.format("ERROR\t%s\tUnexpected error: %s.\n", currentLine, ex.getMessage());
                     hasErrors = true;
@@ -296,10 +296,10 @@ public final class LoadDataFromFile{
     }
     
     public void save(String fileName, String text) throws IOException{
-        FileWriter aWriter = new FileWriter(PATH_DATA_LOAD_LOGS + fileName, false);
-        aWriter.write(text);
-        aWriter.flush();
-        aWriter.close();
+        try (FileWriter aWriter = new FileWriter(PATH_DATA_LOAD_LOGS + fileName, false)) {
+            aWriter.write(text);
+            aWriter.flush();
+        }
     }
 
     protected void connect(){
@@ -353,11 +353,8 @@ public final class LoadDataFromFile{
     }
 
     private boolean isPrimitive(String type){
-        if (type.equals("String") || type.equals("Long")
+        return type.equals("String") || type.equals("Long")
                 || type.equals("Date") || type.equals("Float")
-                || type.equals("Integer") || type.equals("Boolean")) 
-            return true;
-        else
-            return false;
+                || type.equals("Integer") || type.equals("Boolean");
     }
 }

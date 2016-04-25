@@ -27,6 +27,7 @@ import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
+import org.kuwaiba.util.ChangeDescriptor;
 
 /**
  * This is the entity in charge of manipulating business objects
@@ -50,7 +51,7 @@ public interface BusinessEntityManager {
      * @throws DatabaseException if the reference node used by the dummy root doesn't exist
      */
     public long createObject(String className, String parentClassName, long parentOid,
-            HashMap<String,List<String>> attributes,long template, String ipAddress, String sessionId)
+            HashMap<String,List<String>> attributes,long template)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, DatabaseException, ApplicationObjectNotFoundException, NotAuthorizedException;
     
     /**
@@ -60,8 +61,6 @@ public interface BusinessEntityManager {
      * @param criteria Criteria to search for the parent. This is a string with two parts: One is the name of the attribute and the other its value, both separated by a fixed colon <b>:</b>. Example: name:Colombia
      * @param attributes Dictionary with the names and the values of the attributes to be set.
      * @param template Reserved for future uses
-     * @param ipAddress 
-     * @param sessionId
      * @return
      * @throws MetadataObjectNotFoundException
      * @throws ObjectNotFoundException
@@ -71,7 +70,7 @@ public interface BusinessEntityManager {
      * @throws ApplicationObjectNotFoundException
      * @throws NotAuthorizedException
      */
-    public long createObject(String className, String parentClassName, String criteria, HashMap<String,List<String>> attributes, long template, String ipAddress, String sessionId)
+    public long createObject(String className, String parentClassName, String criteria, HashMap<String,List<String>> attributes, long template)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, DatabaseException, ApplicationObjectNotFoundException, NotAuthorizedException;
     /**
      * Creates a new inventory object for a domain specific model (where the standard containment rules don't apply)
@@ -90,7 +89,7 @@ public interface BusinessEntityManager {
      * @throws DatabaseException if the reference node used by the dummy root doesn't exist
      */
     public long createSpecialObject(String className, String parentClassName, long parentOid,
-            HashMap<String,List<String>> attributes,long template, String ipAddress, String sessionId)
+            HashMap<String,List<String>> attributes,long template)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, DatabaseException, ApplicationObjectNotFoundException, NotAuthorizedException;
     
     /**
@@ -104,14 +103,13 @@ public interface BusinessEntityManager {
      * @throws InvalidArgumentException If any of the attributes or its type is invalid
      * @return the id of the newly created object
      */
-    public long createPoolItem(long poolId, String className, String[] attributeNames, String[][] attributeValues, long templateId, String ipAddress, String sessionId) 
+    public long createPoolItem(long poolId, String className, String[] attributeNames, String[][] attributeValues, long templateId) 
             throws ApplicationObjectNotFoundException, InvalidArgumentException, ArraySizeMismatchException, NotAuthorizedException;
     
     /**
      * Create massively objects related to their parent using a child_of_special relationship.
      * The name of the objects is automatically set numerically from1 to numberOfChildren
      * @param objectClass Object class
-     * @param numberOfObjects Number of objets
      * @param parentClass Parent class
      * @param parentId parent id
      * @return A list of ids of the newly created objects 
@@ -119,14 +117,12 @@ public interface BusinessEntityManager {
      * @throws ObjectNotFoundException if the parent can not be found
      * @throws OperationNotPermittedException If due to business rules, the operation can't be performed
      */
-    public long[] createBulkSpecialObjects(String objectClass, int numberOfChildren, String parentClass, long parentId, String ipAddress, String sessionId)
+    public long[] createBulkSpecialObjects(String objectClass, int numberOfChildren, String parentClass, long parentId)
            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, ApplicationObjectNotFoundException, NotAuthorizedException;
     /**
      * Gets the detailed information about an object
      * @param className Object class name
      * @param oid Object's oid
-     * @param ipAddress
-     * @param sessionId
      * @return A detailed representation of the requested object
      * @throws MetadataObjectNotFoundException If the className class can't be found
      * @throws ObjectNotFoundException If the requested object can't be found
@@ -134,22 +130,20 @@ public interface BusinessEntityManager {
      * @throws org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException
      * @throws NotAuthorizedException If the update can't be performed due to permissions
      */
-    public RemoteBusinessObject getObject(String className, long oid, String ipAddress, String sessionId)
+    public RemoteBusinessObject getObject(String className, long oid)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException;
 
     /**
      * Gets the special children of a given object
      * @param objectClass Object class
      * @param objectId object id
-     * @param ipAddress
-     * @param sessionId
      * @return
      * @throws MetadataObjectNotFoundException
      * @throws ObjectNotFoundException
      * @throws ApplicationObjectNotFoundException
      * @throws NotAuthorizedException 
      */
-    public List<RemoteBusinessObjectLight> getObjectSpecialChildren(String objectClass, long objectId, String ipAddress, String sessionId)
+    public List<RemoteBusinessObjectLight> getObjectSpecialChildren(String objectClass, long objectId)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException;
     
     /**
@@ -161,7 +155,7 @@ public interface BusinessEntityManager {
      * @throws ObjectNotFoundException If the requested object can't be found
      * @throws NotAuthorizedException If the update can't be performed due to permissions
      */
-    public RemoteBusinessObjectLight getObjectLight(String className, long oid, String ipAddress, String sessionId)
+    public RemoteBusinessObjectLight getObjectLight(String className, long oid)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException;
 
     /**
@@ -173,7 +167,7 @@ public interface BusinessEntityManager {
      * @throws MetadataObjectNotFoundException If any of the class nodes involved is malformed
      * @throws InvalidArgumentException If any of the nodes involved is malformed
      */
-    public RemoteBusinessObject getParent(String objectClass, long oid, String ipAddress, String sessionId)
+    public RemoteBusinessObject getParent(String objectClass, long oid)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException;
     
     /**
@@ -184,7 +178,7 @@ public interface BusinessEntityManager {
      * @throws ObjectNotFoundException If the object does not exist
      * @throws MetadataObjectNotFoundException if the class can not be found
      */
-    public List<RemoteBusinessObjectLight> getParents(String objectClassName, long oid, String ipAddress, String sessionId)
+    public List<RemoteBusinessObjectLight> getParents(String objectClassName, long oid)
         throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException;
 
     /**
@@ -197,14 +191,12 @@ public interface BusinessEntityManager {
      * @throws MetadataObjectNotFoundException If any of the class nodes involved is malformed
      * @throws InvalidArgumentException If any of the nodes involved is malformed
      */
-    public RemoteBusinessObject getParentOfClass(String objectClass, long oid, String parentClass, String ipAddress, String sessionId)
+    public RemoteBusinessObject getParentOfClass(String objectClass, long oid, String parentClass)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException;
     /**
      * Deletes a set of objects
      * @param oids
      * @param releaseRelationships
-     * @param ipAddress
-     * @param sessionId
      * @param  objects a hashmap where the class name is the key and the value is a list of long containing the ids of the objects to be deleted that are instance of the key class
      * @param  should all relationships be released, forcing the deletion?
      * @throws ObjectNotFoundException If the requested object can't be found
@@ -213,7 +205,7 @@ public interface BusinessEntityManager {
      * or it is blocked or if the requested object or one of it's children have
      * relationships that should be released manually before to delete them
      */
-    public void deleteObjects(HashMap<String, long[]> oids, boolean releaseRelationships, String ipAddress, String sessionId)
+    public void deleteObjects(HashMap<String, long[]> oids, boolean releaseRelationships)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException, ApplicationObjectNotFoundException, NotAuthorizedException;
 
     /**
@@ -223,8 +215,7 @@ public interface BusinessEntityManager {
      * @param oid Object's oid
      * @param attributes The attributes to be updated (the key is the attribute name, 
      * the value is and array with the value -or values in case of MANY TO MANY list type attributes-)
-     * @param ipAddress
-     * @param sessionId
+     * @return The summary of the changes that were made
      * @throws MetadataObjectNotFoundException If the object class can't be found
      * @throws ObjectNotFoundException If the object can't be found
      * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked
@@ -233,7 +224,7 @@ public interface BusinessEntityManager {
      * @throws ApplicationObjectNotFoundException If it's not possible to create the log entry because the user couldn't be found
      * @throws org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException
      */
-    public void updateObject(String className, long oid, HashMap<String,List<String>> attributes, String ipAddress, String sessionId)
+    public ChangeDescriptor updateObject(String className, long oid, HashMap<String,List<String>> attributes)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException,
                 WrongMappingException, InvalidArgumentException, ApplicationObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException;
     /**
@@ -248,7 +239,7 @@ public interface BusinessEntityManager {
      * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked
      * @throws ArraySizeMismatchException If the arrays attributeNames and attributeValues have different lengths
      */
-    public boolean setBinaryAttributes(String className, long oid, List<String> attributeNames, List<byte[]> attributeValues, String ipAddress, String sessionId)
+    public boolean setBinaryAttributes(String className, long oid, List<String> attributeNames, List<byte[]> attributeValues)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, ArraySizeMismatchException, ApplicationObjectNotFoundException, NotAuthorizedException;
     /**
      * Move a list of objects to a new parent: this methods ignores those who can't be moved and raises
@@ -259,9 +250,8 @@ public interface BusinessEntityManager {
      * @throws MetadataObjectNotFoundException If the object's or new parent's class can't be found
      * @throws ObjectNotFoundException If the object or its new parent can't be found
      * @throws OperationNotPermittedException If the update can't be performed due to a business rule
-     * @throws ArraySizeMismatchException If the oids and classNames array sizes do not match
      */
-    public void moveObjects(String targetClassName, long targetOid, HashMap<String,long[]> objects, String ipAddress, String sessionId)
+    public void moveObjects(String targetClassName, long targetOid, HashMap<String,long[]> objects)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, ApplicationObjectNotFoundException, NotAuthorizedException;
 
     /**
@@ -275,7 +265,7 @@ public interface BusinessEntityManager {
      * @throws ObjectNotFoundException If any of the template objects couldn't be found
      * @throws OperationNotPermittedException If the target parent can't contain any of the new instances
      */
-    public long[] copyObjects(String targetClassName, long targetOid, HashMap<String, long[]> objects, boolean recursive, String ipAddress, String sessionId)
+    public long[] copyObjects(String targetClassName, long targetOid, HashMap<String, long[]> objects, boolean recursive)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, ApplicationObjectNotFoundException, NotAuthorizedException;
 
     /**
@@ -288,7 +278,7 @@ public interface BusinessEntityManager {
      * @throws ObjectNotFoundException If the object or its new parent can't be found
      * @throws OperationNotPermittedException If the update can't be performed due to a business rule
      */
-    public boolean setObjectLockState(String className, long oid, Boolean value, String ipAddress, String sessionId)
+    public boolean setObjectLockState(String className, long oid, Boolean value)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, ApplicationObjectNotFoundException, NotAuthorizedException;
 
     /**
@@ -299,9 +289,8 @@ public interface BusinessEntityManager {
      * @return The list of children
      * @throws MetadataObjectNotFoundException If the object's can't be found
      * @throws ObjectNotFoundException If the object or its new parent can't be found
-     * @throws OperationNotPermittedException If the update can't be performed due to a business rule
      */
-    public List<RemoteBusinessObjectLight> getObjectChildren(String className, long oid, int maxResults, String ipAddress, String sessionId)
+    public List<RemoteBusinessObjectLight> getObjectChildren(String className, long oid, int maxResults)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException;
     
     /**
@@ -309,15 +298,13 @@ public interface BusinessEntityManager {
      * @param classId The id of the class the object is instance of
      * @param oid The oid of the object
      * @param maxResults The max number of results to be retrieved. Use 0 to retrieve all
-     * @param ipAddress
-     * @param sessionId
      * @return
      * @throws ObjectNotFoundException
      * @throws MetadataObjectNotFoundException
      * @throws ApplicationObjectNotFoundException
      * @throws NotAuthorizedException 
      */
-    public List<RemoteBusinessObjectLight> getObjectChildren(long classId, long oid, int maxResults, String ipAddress, String sessionId)
+    public List<RemoteBusinessObjectLight> getObjectChildren(long classId, long oid, int maxResults)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException;
     
     /**
@@ -330,7 +317,7 @@ public interface BusinessEntityManager {
      * @throws MetadataObjectNotFoundException If any of the classes can not be found
      * @throws ObjectNotFoundException If parent object can not be found
      */
-    public List<RemoteBusinessObject> getChildrenOfClass(long parentOid, String parentClass, String classToFilter, int maxResults, String ipAddress, String sessionId)
+    public List<RemoteBusinessObject> getChildrenOfClass(long parentOid, String parentClass, String classToFilter, int maxResults)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException;
     
     /**
@@ -343,7 +330,7 @@ public interface BusinessEntityManager {
      * @throws MetadataObjectNotFoundException If any of the classes can not be found
      * @throws ObjectNotFoundException If parent object can not be found
      */
-    public List<RemoteBusinessObjectLight> getChildrenOfClassLight(long parentOid, String parentClass, String classToFilter, int maxResults, String ipAddress, String sessionId)
+    public List<RemoteBusinessObjectLight> getChildrenOfClassLight(long parentOid, String parentClass, String classToFilter, int maxResults)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException;
 
     /**
@@ -355,7 +342,7 @@ public interface BusinessEntityManager {
      * @throws MetadataObjectNotFoundException If the class does not exist
      * @throws ObjectNotFoundException If the object does not exist
      */
-    public List<RemoteBusinessObjectLight> getSiblings(String className, long oid, int maxResults, String ipAddress, String sessionId)
+    public List<RemoteBusinessObjectLight> getSiblings(String className, long oid, int maxResults)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException;
     
     /**
@@ -366,7 +353,7 @@ public interface BusinessEntityManager {
      * @throws MetadataObjectNotFoundException if the class can not be found
      * @throws InvalidArgumentException If the class is not subclass of InventoryObject
      */
-    public List<RemoteBusinessObjectLight> getObjectsOfClassLight(String className, int maxResults, String ipAddress, String sessionId)
+    public List<RemoteBusinessObjectLight> getObjectsOfClassLight(String className, int maxResults)
             throws MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException;
     
     /**
@@ -380,7 +367,7 @@ public interface BusinessEntityManager {
      * @throws OperationNotPermittedException if any of the objects involved can't be connected (i.e. if it's not an inventory object)
      * @throws MetadataObjectNotFoundException if any of the classes provided can not be found
      */
-    public void createSpecialRelationship(String aObjectClass, long aObjectId, String bObjectClass, long bObjectId, String name, String ipAddress, String sessionId)
+    public void createSpecialRelationship(String aObjectClass, long aObjectId, String bObjectClass, long bObjectId, String name)
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException;
     
     /**
@@ -392,7 +379,7 @@ public interface BusinessEntityManager {
      * @throws ObjectNotFoundException If the object can not be found
      * @throws MetadataObjectNotFoundException  If the class can not be found
      */
-    public void releaseSpecialRelationship(String objectClass, long objectId, long otherObjectId, String relationshipName, String ipAddress, String sessionId)
+    public void releaseSpecialRelationship(String objectClass, long objectId, long otherObjectId, String relationshipName)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException;
     
     /**
@@ -404,7 +391,7 @@ public interface BusinessEntityManager {
      * @throws ObjectNotFoundException If the object can not be found
      * @throws MetadataObjectNotFoundException  If the class can not be found
      */
-    public void releaseSpecialRelationship(String objectClass, long objectId, String relationshipName, long targetId, String ipAddress, String sessionId)
+    public void releaseSpecialRelationship(String objectClass, long objectId, String relationshipName, long targetId)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException;
 
     /**
@@ -413,13 +400,11 @@ public interface BusinessEntityManager {
      * @param objectClass object's class
      * @param objectId object's id
      * @param specialAttributeName Special attribute name
-     * @param ipAddress
-     * @param sessionId
      * @return A list of objects related to the object through a special relationship
      * @throws ObjectNotFoundException if the object can not be found
      * @throws MetadataObjectNotFoundException if either the object class or the attribute can not be found
      */    
-    public List<RemoteBusinessObjectLight> getSpecialAttribute(String objectClass, long objectId, String specialAttributeName, String ipAddress, String sessionId) 
+    public List<RemoteBusinessObjectLight> getSpecialAttribute(String objectClass, long objectId, String specialAttributeName) 
             throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException;
     
     /**
@@ -431,7 +416,7 @@ public interface BusinessEntityManager {
      * @throws MetadataObjectNotFoundException If the class provided does not exist
      * @throws ObjectNotFoundException if the object does not exist
      */
-    public HashMap<String,List<RemoteBusinessObjectLight>> getSpecialAttributes (String className, long objectId, String ipAddress, String sessionId) 
+    public HashMap<String,List<RemoteBusinessObjectLight>> getSpecialAttributes (String className, long objectId) 
         throws MetadataObjectNotFoundException, ObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException;
     
     /**
@@ -444,7 +429,7 @@ public interface BusinessEntityManager {
      * @throws ObjectNotFoundException If the object can not be found
      * @throws MetadataObjectNotFoundException  if objectClass does not exist
      */
-    public boolean hasRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships, String ipAddress, String sessionId) 
+    public boolean hasRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships) 
             throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException;
 
     /**
@@ -457,19 +442,17 @@ public interface BusinessEntityManager {
      * @throws ObjectNotFoundException If the object can not be found
      * @throws MetadataObjectNotFoundException  if objectClass does not exist
      */
-    public boolean hasSpecialRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships, String ipAddress, String sessionId) 
+    public boolean hasSpecialRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships) 
             throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException;
     
     /**
      * 
      * @param objectClass
      * @param objectId
-     * @param ipAddress
-     * @param sessionId
      * @return
      * @throws ApplicationObjectNotFoundException
      * @throws NotAuthorizedException 
      * @deprecated This method shouldn't be here since it's context dependant. Don't use it, will be removed in the future
      */
-    public List<RemoteBusinessObjectLight> getPhysicalPath(String objectClass, long objectId, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException;
+    public List<RemoteBusinessObjectLight> getPhysicalPath(String objectClass, long objectId) throws ApplicationObjectNotFoundException, NotAuthorizedException;
 }

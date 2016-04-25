@@ -35,7 +35,7 @@ public class ToolsBean implements ToolsBeanRemote {
     public void resetAdmin()  throws ServerSideException, NotAuthorizedException{
         
         try{
-            PersistenceService.getInstance().getApplicationEntityManager().setUserProperties("admin",null, "kuwaiba", null, null, true, null, null, null, null);
+            PersistenceService.getInstance().getApplicationEntityManager().setUserProperties("admin",null, "kuwaiba", null, null, true, null, null);
         }catch(ApplicationObjectNotFoundException ex){ //If the user does not exist, create it
             try {
                 PersistenceService.getInstance().getApplicationEntityManager().createUser("admin", "kuwaiba", "John", "Doe", true, null, null);

@@ -43,38 +43,32 @@ public interface MetadataEntityManager {
     /**
      * Changes a class metadata definition
      * @param newClassDefinition the new class definition 
-     * @param ipAddress
-     * @param sessionId
      * @throws ApplicationObjectNotFoundException
      * @throws NotAuthorizedException the user has no privileges to execute this action
      * @throws MetadataObjectNotFoundException 
      */
-    public void setClassProperties(ClassMetadata newClassDefinition, String ipAddress, String sessionId) 
+    public void setClassProperties(ClassMetadata newClassDefinition) 
             throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
 
     /**
      * Deletes a class metadata, its attributes and category relationships
      * @param className the class name
-     * @param ipAddress
-     * @param sessionId
      * @throws ApplicationObjectNotFoundException
      * @throws NotAuthorizedException the user has no privileges to execute this action
      * @throws MetadataObjectNotFoundException if there is not a class with de ClassName
      */
-    public void deleteClass(String className, String ipAddress, String sessionId) 
+    public void deleteClass(String className) 
             throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
 
     /**
      * Deletes a class metadata, its attributes and category relationships
      * @param classId the class id
-     * @param ipAddress
-     * @param sessionId
      * @throws MetadataObjectNotFoundException if there is not a class with de ClassName
      * @throws ApplicationObjectNotFoundException
      * @throws NotAuthorizedException
      * @throws InvalidArgumentException 
      */
-    public void deleteClass(long classId, String ipAddress, String sessionId) 
+    public void deleteClass(long classId) 
             throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, InvalidArgumentException;
     
     /**
@@ -83,15 +77,13 @@ public interface MetadataEntityManager {
      * @param includeListTypes boolean to indicate if the list should include 
      * the subclasses of GenericObjectList
      * @param includeIndesign Include all the data model classes or only the classes in production
-     * @param ipAddress
-     * @param sessionId
      * @return the list of classes
      * @throws ApplicationObjectNotFoundException
      * @throws NotAuthorizedException
      * @throws MetadataObjectNotFoundException 
      */
     public List<ClassMetadataLight> getAllClassesLight (boolean includeListTypes, 
-            boolean includeIndesign, String ipAddress, String sessionId) 
+            boolean includeIndesign) 
             throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
     
     /**
@@ -103,7 +95,7 @@ public interface MetadataEntityManager {
      * @throws MetadataObjectNotFoundException If the class can not be found
      * @throws InvalidArgumentException If the provided class is not a subclass of InventoryObject
      */
-    public List<ClassMetadataLight> getSubClassesLight(String className, boolean includeAbstractClasses, boolean includeSelf, String ipAddress, String sessionId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, InvalidArgumentException;
+    public List<ClassMetadataLight> getSubClassesLight(String className, boolean includeAbstractClasses, boolean includeSelf) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, InvalidArgumentException;
 
     /**
      * Gets the subclasses of a given class
@@ -114,7 +106,7 @@ public interface MetadataEntityManager {
      * @throws MetadataObjectNotFoundException
      * @throws InvalidArgumentException 
      */
-    public List<ClassMetadataLight> getSubClassesLightNoRecursive(String className, boolean includeAbstractClasses, boolean includeSelf, String ipAddress, String sessionId) 
+    public List<ClassMetadataLight> getSubClassesLightNoRecursive(String className, boolean includeAbstractClasses, boolean includeSelf) 
             throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, InvalidArgumentException;
     /**
      * Retrieves all the class metadata except for classes marked as dummy
@@ -122,7 +114,7 @@ public interface MetadataEntityManager {
      * the subclasses of GenericObjectList
      * @return An array of classes
      */
-    public List<ClassMetadata> getAllClasses(boolean includeListTypes, boolean includeIndesign, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
+    public List<ClassMetadata> getAllClasses(boolean includeListTypes, boolean includeIndesign) throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
 
     /**
      * Gets a class metadata, its attributes and Category
@@ -130,7 +122,7 @@ public interface MetadataEntityManager {
      * @return A ClassMetadata with the className
      * @throws ClassNotFoundException there is no class with such className
      */
-    public ClassMetadata getClass(String className, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
+    public ClassMetadata getClass(String className) throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
 
     /**
      * Gets a class metadata, its attributes and Category
@@ -138,7 +130,7 @@ public interface MetadataEntityManager {
      * @return A ClassMetadata with the classId
      * @throws ClassNotFoundException there is no class with such classId
      */
-    public ClassMetadata getClass(long classId, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
+    public ClassMetadata getClass(long classId) throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
 
     /**
      * Moves a class from one parentClass to an other parentClass
@@ -147,7 +139,7 @@ public interface MetadataEntityManager {
      * @throws ClassNotFoundException if there is no a classToMove with such name
      * or if there is no a targetParentClass with such name
      */
-    public void moveClass(String classToMoveName, String targetParentName, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
+    public void moveClass(String classToMoveName, String targetParentName) throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
 
     /**
      * Moves a class from one parentClass to an other parentClass
@@ -156,7 +148,7 @@ public interface MetadataEntityManager {
      * @throws ClassNotFoundException if there is no a classToMove with such classId
      * or if there is no a targetParentClass with such classId
      */
-    public void moveClass(long classToMoveId, long targetParentId, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
+    public void moveClass(long classToMoveId, long targetParentId) throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
 
     /**
      * Adds an attribute to the class
@@ -165,7 +157,7 @@ public interface MetadataEntityManager {
      * @throws MetadataObjectNotFoundException if there is no a class with such className
      * @throws InvalidArgumentException if any of the parameters to create the attribute has a wrong value
      */
-    public void createAttribute(String className, AttributeMetadata attributeDefinition, String ipAddress, String sessionId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, InvalidArgumentException;
+    public void createAttribute(String className, AttributeMetadata attributeDefinition) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, InvalidArgumentException;
 
     /**
      * Adds an attribute to a class
@@ -194,16 +186,16 @@ public interface MetadataEntityManager {
      * @throws ClassNotFoundException if there is no a class with such classId
      * @throws MiscException if the attributeName does not exist
      */
-    public AttributeMetadata getAttribute(long classId, long attributeId, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
+    public AttributeMetadata getAttribute(long classId, long attributeId) throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
 
     /**
      * Changes an attribute definition belonging to a class metadata using the class id as key
-     * @param ClassId
+     * @param classId
      * @param newAttributeDefinition
      * @throws MetadataObjectNotFoundException
      * @throws InvalidArgumentException 
      */
-    public void setAttributeProperties(long classId, AttributeMetadata newAttributeDefinition, String ipAddress, String sessionId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, InvalidArgumentException;
+    public void setAttributeProperties(long classId, AttributeMetadata newAttributeDefinition) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, InvalidArgumentException;
     
     /**
      * Changes an attribute definition belonging to a class metadata use the class name as id
@@ -212,28 +204,28 @@ public interface MetadataEntityManager {
      * @throws MetadataObjectNotFoundException
      * @throws InvalidArgumentException 
      */
-    public void setAttributeProperties(String className, AttributeMetadata newAttributeDefinition, String ipAddress, String sessionId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, InvalidArgumentException;
+    public void setAttributeProperties(String className, AttributeMetadata newAttributeDefinition) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, InvalidArgumentException;
 
     /**
      * Deletes an attribute belonging to a classMetadata
      * @param className
      * @param attributeName
      */
-    public void  deleteAttribute(String className, String attributeName, String ipAddress, String sessionId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, InvalidArgumentException;
+    public void  deleteAttribute(String className, String attributeName) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, InvalidArgumentException;
 
     /**
      * Deletes an attribute belonging to a classMetadata
      * @param classId
      * @param attributeName
      */
-    public void deleteAttribute(long classId,String attributeName, String ipAddress, String sessionId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, InvalidArgumentException;
+    public void deleteAttribute(long classId,String attributeName) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, InvalidArgumentException;
 
-    public void addImplementor(String classWhichImplementsName,String interfaceToImplementName, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException, Exception;
-    public void removeImplementor(String classWhichImplementsName ,String interfaceToBeRemovedName, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException, Exception;
-    public void addImplementor(int classWhichImplementsId, int interfaceToImplementId, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException, Exception;
-    public void removeImplementor(int classWhichImplementsId ,int interfaceToBeRemovedId, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException, Exception;
-    public InterfaceMetadata getInterface(String interfaceName, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException, Exception;
-    public InterfaceMetadata getInterface(int interfaceid, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException, Exception;
+    public void addImplementor(String classWhichImplementsName,String interfaceToImplementName) throws ApplicationObjectNotFoundException, NotAuthorizedException, Exception;
+    public void removeImplementor(String classWhichImplementsName ,String interfaceToBeRemovedName) throws ApplicationObjectNotFoundException, NotAuthorizedException, Exception;
+    public void addImplementor(int classWhichImplementsId, int interfaceToImplementId) throws ApplicationObjectNotFoundException, NotAuthorizedException, Exception;
+    public void removeImplementor(int classWhichImplementsId ,int interfaceToBeRemovedId) throws ApplicationObjectNotFoundException, NotAuthorizedException, Exception;
+    public InterfaceMetadata getInterface(String interfaceName) throws ApplicationObjectNotFoundException, NotAuthorizedException, Exception;
+    public InterfaceMetadata getInterface(int interfaceid) throws ApplicationObjectNotFoundException, NotAuthorizedException, Exception;
 
     /**
      * Gets all classes whose instances can be contained into the given parent class. This method
@@ -249,26 +241,26 @@ public interface MetadataEntityManager {
      * @param parentClass
      * @return The list of possible children
      */
-    public List<ClassMetadataLight> getPossibleChildrenNoRecursive(String parentClassName, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
+    public List<ClassMetadataLight> getPossibleChildrenNoRecursive(String parentClassName) throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
 
     /**
      * Adds to a given class a list of possible children classes whose instances can be contained
      *
      * @param parentClassId Id of the class whose instances can contain the instances of the next param
-     * @param _possibleChildren ids of the candidates to be contained
+     * @param possibleChildren ids of the candidates to be contained
      * @throws MetadataObjectNotFoundException if any of the possible children or the parent don't exist
      * @throws InvalidArgumentException
      * @throws DatabaseException if the reference node doesn't exist
      */
-    public void addPossibleChildren(long parentClassId, long[] possibleChildren, String ipAddress, String sessionId) throws MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException, DatabaseException;
+    public void addPossibleChildren(long parentClassId, long[] possibleChildren) throws MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException, DatabaseException;
     /**
      * Adds to a given class a list of possible children classes whose instances can be contained using the class name to find the parent class
      * @param parentClassName parent class name
-     * @param newPossibleChildren list of possible children
+     * @param possibleChildren list of possible children
      * @throws MetadataObjectNotFoundException if the parent class or any of the possible children can not be found
      * @throws InvalidArgumentException if any of the given possible children can not be a possible children of parentClassName
      */
-    public void addPossibleChildren(String parentClassName, String[] possibleChildren, String ipAddress, String sessionId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, InvalidArgumentException;
+    public void addPossibleChildren(String parentClassName, String[] possibleChildren) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, InvalidArgumentException;
     /**
      * The opposite of addPossibleChildren. It removes the given possible children
      * TODO: Make this method safe. This is, check if there's already intances of the given
@@ -277,14 +269,14 @@ public interface MetadataEntityManager {
      * @param childrenTBeRemoved ids of the candidates to be deleted
      * @throws MetadataObjectNotFoundException If any of the ids provided can't be found
      */
-    public void removePossibleChildren(long parentClassId, long[] childrenToBeRemoved, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
+    public void removePossibleChildren(long parentClassId, long[] childrenToBeRemoved) throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
     /**
      * Assess if a given class is subclass of another
      * @param allegedParent Alleged super class
      * @param classToBeEvaluated class to be evaluated
      * @return True if classToBeEvaluated is subclass of allegedParent
      */
-    public boolean isSubClass(String allegedParent, String classToBeEvaluated, String ipAddress, String sessionId)throws ApplicationObjectNotFoundException, NotAuthorizedException;
+    public boolean isSubClass(String allegedParent, String classToBeEvaluated)throws ApplicationObjectNotFoundException, NotAuthorizedException;
     /**
      * Get the upstream containment hierarchy for a given class, unlike getPossibleChildren (which will give you the 
      * downstream hierarchy).
@@ -293,5 +285,5 @@ public interface MetadataEntityManager {
      * @return An ordered list with the . Repeated elements are omitted
      * @throws MetadataObjectNotFoundException if className does not correspond to any existing class
      */
-    public List<ClassMetadataLight> getUpstreamContainmentHierarchy(String className, boolean recursive, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
+    public List<ClassMetadataLight> getUpstreamContainmentHierarchy(String className, boolean recursive) throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
 }

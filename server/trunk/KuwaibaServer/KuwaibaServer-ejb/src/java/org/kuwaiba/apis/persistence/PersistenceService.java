@@ -78,6 +78,7 @@ public class PersistenceService {
             dataModelLoader = new DataModelLoader(connectionManager, mem);
             //dataIntegrityService = new DataIntegrityService(connectionManager);
             //dataIntegrityService.checkIntegrity();
+            System.out.println(String.format("[INFO] [KUWAIBA] [%s] Detecting commercial modules...", Calendar.getInstance().getTime()));
             System.out.println(String.format("[INFO] [KUWAIBA] [%s] Persistence Service is up and running", Calendar.getInstance().getTime()));
             state = EXECUTION_STATE.RUNNING;
         }catch(Exception e){
