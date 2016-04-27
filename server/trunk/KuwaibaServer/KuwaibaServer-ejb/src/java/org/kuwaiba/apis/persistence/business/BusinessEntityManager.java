@@ -206,8 +206,21 @@ public interface BusinessEntityManager {
      * relationships that should be released manually before to delete them
      */
     public void deleteObjects(HashMap<String, long[]> oids, boolean releaseRelationships)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException, ApplicationObjectNotFoundException, NotAuthorizedException;
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException, NotAuthorizedException;
 
+    /**
+     * Deletes a single object
+     * @param className Object's class name
+     * @param oid Objects oid
+     * @param releaseRelationships Release relationships automatically. If set to false, it will fail if the object already has incoming relationships
+     * @throws ObjectNotFoundException If the object couldn't be found
+     * @throws MetadataObjectNotFoundException If the class could not be found
+     * @throws OperationNotPermittedException If the object could not be deleted because there's some business rules that avoids it
+     * @throws NotAuthorizedException If the current user can't delete the object
+     */
+    public void deleteObject(String className, long oid, boolean releaseRelationships)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException, NotAuthorizedException;
+    
     /**
      * Updates an object attributes. Note that you can't set binary attributes through this
      * method. Use setBinaryAttributes instead.

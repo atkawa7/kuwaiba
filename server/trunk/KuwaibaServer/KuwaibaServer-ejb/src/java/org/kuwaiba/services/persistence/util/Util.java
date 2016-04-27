@@ -58,7 +58,6 @@ import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Path;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.traversal.TraversalDescription;
 import org.neo4j.kernel.impl.traversal.MonoDirectionalTraversalDescription;
 
@@ -224,9 +223,9 @@ public class Util {
         if (!Files.exists(directoryPath) || !Files.isWritable(directoryPath))
             throw new FileNotFoundException(String.format("Path %s does not exist or is not writeable", directoryPath.toAbsolutePath()));
 
-        FileOutputStream fos = new FileOutputStream(directory + "/" + fileName); //NOI18N
-        fos.write(content);
-        fos.close();
+        try (FileOutputStream fos = new FileOutputStream(directory + "/" + fileName)) { //NOI18N
+            fos.write(content);
+        }
     }
 
     /**

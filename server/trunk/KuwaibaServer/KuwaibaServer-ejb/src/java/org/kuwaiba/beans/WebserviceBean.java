@@ -722,6 +722,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try {
             Session newSession = aem.createSession(user, password, IPAddress);
+            aem.createGeneralActivityLogEntry(user, ActivityLogEntry.ACTIVITY_TYPE_OPEN_SESSION, String.format("Connected from %s", IPAddress));
             return new RemoteSession(newSession.getToken(), newSession.getUser());
         } catch (Exception ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
@@ -734,8 +735,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
         if (aem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try {
+            String user = getUserNameFromSession(sessionId);
             aem.closeSession(sessionId, remoteAddress);
-        } catch (org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException ex) {
+            aem.createGeneralActivityLogEntry(user, ActivityLogEntry.ACTIVITY_TYPE_CLOSE_SESSION, String.format("Connected from %s", remoteAddress));
+        } catch (org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException | ApplicationObjectNotFoundException ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

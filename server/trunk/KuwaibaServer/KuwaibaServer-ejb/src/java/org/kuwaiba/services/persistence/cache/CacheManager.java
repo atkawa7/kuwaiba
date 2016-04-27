@@ -57,11 +57,11 @@ public class CacheManager {
 
 
     private CacheManager(){
-        classIndex = new HashMap<String, ClassMetadata>();
-        userIndex = new HashMap<String, UserProfile>();
-        groupIndex = new HashMap<String, GroupProfile>();
-        possibleChildrenIndex = new HashMap<String, List<String>>();
-        listTypeIndex = new HashMap<String, GenericObjectList>();
+        classIndex = new HashMap<>();
+        userIndex = new HashMap<>();
+        groupIndex = new HashMap<>();
+        possibleChildrenIndex = new HashMap<>();
+        listTypeIndex = new HashMap<>();
     }
 
     public static CacheManager getInstance(){
