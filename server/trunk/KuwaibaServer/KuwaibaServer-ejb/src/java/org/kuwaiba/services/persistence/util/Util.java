@@ -704,8 +704,13 @@ public class Util {
         return (String)aClass.iterator().next().getEndNode().getProperty(Constants.PROPERTY_NAME);
     }
        
-    public static void createAttribute(Node classNode, AttributeMetadata attributeDefinition) throws InvalidArgumentException
-    {
+    public static void createAttribute(Node classNode, AttributeMetadata attributeDefinition) throws InvalidArgumentException {
+        if (attributeDefinition.getName() == null || attributeDefinition.getName().isEmpty())
+            throw new InvalidArgumentException("Attribute name can not be null or an empty string", Level.INFO);
+        
+        if (!attributeDefinition.getName().matches("^[a-zA-Z0-9_]*$"))
+            throw new InvalidArgumentException(String.format("Attribute %s contains invalid characters", attributeDefinition.getName()), Level.INFO);
+
         final TraversalDescription UPDATE_TRAVERSAL = classNode.getGraphDatabase().traversalDescription().
                     breadthFirst().
                     relationships(RelTypes.EXTENDS, Direction.INCOMING);

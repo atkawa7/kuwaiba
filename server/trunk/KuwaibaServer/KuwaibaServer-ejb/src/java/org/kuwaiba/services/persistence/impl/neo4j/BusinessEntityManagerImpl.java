@@ -84,10 +84,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      */
     private Index<Node> specialNodesIndex;
     /**
-     * Instance of application entity manager
-     */
-    private ApplicationEntityManager aem;
-    /**
      * Reference to the CacheManager
      */
     private CacheManager cm;
@@ -108,7 +104,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         }catch(Exception ex) {
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, "BEM constructor: {0}", ex.getMessage()); //NOI18N
         }
-        this.aem = aem;
     }
 
     @Override
@@ -585,9 +580,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             }
             tx.success();
             return new ChangeDescriptor(affectedProperties.trim(), oldValues.trim(), newValues.trim(), null);
-        }catch(Exception ex){
-            Logger.getLogger(getClass().getName()).log(Level.INFO, "updateObject: {0}", ex.getMessage()); //NOI18N
-            throw new RuntimeException(ex.getMessage());
         }
     }
 

@@ -45,6 +45,7 @@ import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.exceptions.NotAuthorizedException;
 import org.kuwaiba.exceptions.ServerSideException;
+import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.sync.SyncManager;
 import org.kuwaiba.util.ChangeDescriptor;
 import org.kuwaiba.util.bre.TempBusinessRulesEngine;
@@ -1087,8 +1088,9 @@ public class WebserviceBean implements WebserviceBeanRemote {
             for (int i = 0; i < attributeNames.length; i++)
                 attributes.put(attributeNames[i], Arrays.asList(attributeValues[i]));
 
-            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), className,
-                    oid, ActivityLogEntry.ACTIVITY_TYPE_UPDATE_INVENTORY_OBJECT, bem.updateObject(className, oid,attributes));
+            if (!mem.isSubClass(Constants.CLASS_GENERICOBJECTLIST, className))
+                aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), className,
+                        oid, ActivityLogEntry.ACTIVITY_TYPE_UPDATE_INVENTORY_OBJECT, bem.updateObject(className, oid,attributes));
         } catch (Exception ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());

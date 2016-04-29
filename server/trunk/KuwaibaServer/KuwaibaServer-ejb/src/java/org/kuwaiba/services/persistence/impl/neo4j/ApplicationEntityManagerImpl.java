@@ -594,13 +594,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
            throw new InvalidArgumentException("Item name and class name can not be null", Level.INFO);
        
        ClassMetadata myClass= cm.getClass(className);
-       long id = 0;
        try(Transaction tx = graphDb.beginTx()) {
             Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
             if (classNode ==  null)
                 throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %s",className));
 
-            if (myClass == null){
+            if (myClass == null) {
                  myClass = Util.createClassMetadataFromNode(classNode);
                  cm.putClass(myClass);
              }      
@@ -624,11 +623,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
            tx.success();
            GenericObjectList newListType = new GenericObjectList(newItem.getId(), name);
            cm.putListType(newListType);
-           id = newItem.getId();
-        }catch(Exception ex){
-            Logger.getLogger("createListTypeItem: " + ex.getMessage()); //NOI18N
+           return newItem.getId();
         }
-        return id;
     }
 
     @Override
@@ -1240,6 +1236,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException
      * @throws InvalidArgumentException 
      */
+    @Override
     public long createPool(long parentId, String name, String description, String instancesOfClass)
             throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
         try(Transaction tx = graphDb.beginTx())
@@ -1481,8 +1478,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
      */
     @Override
     public List<ActivityLogEntry> getGeneralActivityAuditTrail(int page, int limit) 
-            throws NotAuthorizedException
-    {        
+            throws NotAuthorizedException {        
         try(Transaction tx = graphDb.beginTx()) {
             Node generalActivityLogNode = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).
                     get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle();
@@ -1616,9 +1612,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     File readFile = new File(patchFile.getPath()+".ole");
                     patchFile.renameTo(readFile);
                     executedFiles++;
-                } catch (IOException e) {
-                    Logger.getLogger(getClass().getName()).log(Level.INFO, "executePatch: {0}", e.getMessage()); //NOI18N
-                } catch (Exception ex) {
+                }  catch (Exception ex) {
                     throw new RuntimeException(ex.getMessage());
                 } finally {
                     try {
@@ -1800,7 +1794,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         else
             className = query.getClassName();
 
-        if(query.getJoins() != null){
+        if(query.getJoins() != null) {
             for(ExtendedQuery join : query.getJoins()){
                     readJoins(l,join);
             }
@@ -1814,15 +1808,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             throws MetadataObjectNotFoundException, ObjectNotFoundException, NotAuthorizedException
     {
         //Note that for this method, the caller should handle the transaction
-        //try(Transaction tx = graphDb.beginTx())
-        //{
             //if any of the parameters is null, return the dummy root
             if (className == null)
                 return specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
 
             Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
             if (classNode == null)
-                throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", className));
+                throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
             
             Iterable<Relationship> iteratorInstances = classNode.getRelationships(RelTypes.INSTANCE_OF);
             Iterator<Relationship> instances = iteratorInstances.iterator();
