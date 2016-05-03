@@ -691,9 +691,8 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("getListTypeItems", ipAddress, sessionId);
             List<RemoteBusinessObjectLight> listTypeItems = aem.getListTypeItems(className);
             RemoteObjectLight[] res = new RemoteObjectLight[listTypeItems.size()];
-            for (int i = 0; i < res.length; i++){
+            for (int i = 0; i < res.length; i++)
                 res[i] = new RemoteObjectLight(listTypeItems.get(i));
-            }
             return res;
         } catch (Exception ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
@@ -1088,9 +1087,13 @@ public class WebserviceBean implements WebserviceBeanRemote {
             for (int i = 0; i < attributeNames.length; i++)
                 attributes.put(attributeNames[i], Arrays.asList(attributeValues[i]));
 
-            if (!mem.isSubClass(Constants.CLASS_GENERICOBJECTLIST, className))
+            ChangeDescriptor theChange = bem.updateObject(className, oid, attributes);
+            
+            if (mem.isSubClass(Constants.CLASS_GENERICOBJECTLIST, className))
+                aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), ActivityLogEntry.ACTIVITY_TYPE_UPDATE_APPLICATION_OBJECT, theChange);
+            else
                 aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), className,
-                        oid, ActivityLogEntry.ACTIVITY_TYPE_UPDATE_INVENTORY_OBJECT, bem.updateObject(className, oid,attributes));
+                        oid, ActivityLogEntry.ACTIVITY_TYPE_UPDATE_INVENTORY_OBJECT, theChange);
         } catch (Exception ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());

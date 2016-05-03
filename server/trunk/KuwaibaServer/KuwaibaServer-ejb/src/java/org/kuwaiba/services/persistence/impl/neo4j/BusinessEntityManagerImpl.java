@@ -1101,7 +1101,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     public Node getInstanceOfClass(String className, long oid) throws MetadataObjectNotFoundException, ObjectNotFoundException{
         
         //if any of the parameters is null, return the dummy root
-        if (className == null)
+        if (className == null || className.equals(Constants.NODE_DUMMYROOT))
             return specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
 
         Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();

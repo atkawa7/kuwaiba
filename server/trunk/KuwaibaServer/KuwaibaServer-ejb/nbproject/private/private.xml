@@ -2,11 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/home/gir/workspace/java/KuwaibaServer/trunk/KuwaibaServer/KuwaibaServer-ejb/src/java/org/kuwaiba/services/persistence/impl/neo4j/MetadataEntityManagerImpl.java</file>
-            <file>file:/home/gir/workspace/java/KuwaibaServer/trunk/KuwaibaServer/KuwaibaServer-ejb/src/java/org/kuwaiba/services/persistence/util/Util.java</file>
-            <file>file:/home/gir/workspace/java/KuwaibaServer/trunk/KuwaibaServer/KuwaibaServer-ejb/src/java/org/kuwaiba/services/persistence/cache/CacheManager.java</file>
-            <file>file:/home/gir/workspace/java/KuwaibaServer/trunk/KuwaibaServer/KuwaibaServer-ejb/src/java/org/kuwaiba/beans/WebserviceBean.java</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>

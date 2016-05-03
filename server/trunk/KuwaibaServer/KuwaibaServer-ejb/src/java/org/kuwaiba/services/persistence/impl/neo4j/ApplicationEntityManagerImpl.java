@@ -629,7 +629,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
     @Override
     public void deleteListTypeItem(String className, long oid, boolean realeaseRelationships) 
-            throws MetadataObjectNotFoundException, OperationNotPermittedException, ObjectNotFoundException, NotAuthorizedException {
+            throws MetadataObjectNotFoundException, OperationNotPermittedException, ObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
         try(Transaction tx = graphDb.beginTx())
         {
             if (!cm.isSubClass(Constants.CLASS_GENERICOBJECTLIST, className))
@@ -637,12 +637,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
             Node instance = getInstanceOfClass(className, oid);
             Util.deleteObject(instance, realeaseRelationships);
-
             tx.success();
             cm.removeListType(className);
-            
-        }catch(Exception ex){
-            Logger.getLogger("deleteListTypeItem: " + ex.getMessage()); //NOI18N
         }
     }
 

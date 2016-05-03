@@ -200,9 +200,11 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException if the class name is not valid
      * @throws ObjectNotFoundException if the list type item can't be found
      * @throws OperationNotPermittedException if the object has relationships
+     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If the class provided is not a list type
+     * @throws org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException If the user can't delete a list type item
      */
     public void deleteListTypeItem(String className, long oid, boolean realeaseRelationships)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, NotAuthorizedException;
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException, NotAuthorizedException;
 
     /**
      * Get the possible list types

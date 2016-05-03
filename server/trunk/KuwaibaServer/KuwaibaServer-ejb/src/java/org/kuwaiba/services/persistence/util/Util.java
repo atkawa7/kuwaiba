@@ -248,7 +248,7 @@ public class Util {
 
     /**
      * Creates a ClassMetadata with default values
-     * @param classMetadata
+     * @param classDefinition
      * @return
      */
     public static ClassMetadata setDefaultsForClassMetadatas(ClassMetadata classDefinition) throws MetadataObjectNotFoundException{
@@ -267,12 +267,8 @@ public class Util {
         if(classDefinition.getSmallIcon() == null){
             classDefinition.setSmallIcon(new byte[0]);
         }
-        try {
-            Integer.valueOf(classDefinition.getColor());
-        } catch (NumberFormatException e) {
-            classDefinition.setColor(0);
-        }
-
+        
+        classDefinition.getColor();
         return classDefinition;
     }
 
@@ -510,7 +506,7 @@ public class Util {
                         userPrivileges)
                      );
         }
-        List<Privilege> privileges = new ArrayList<Privilege>();
+        List<Privilege> privileges = new ArrayList<>();
         for(Relationship relationship: groupNode.getRelationships(RelTypes.HAS_PRIVILEGE, Direction.INCOMING)){
            Node node = relationship.getStartNode();
            privileges.add(createPrivilegeFromNode(node));
