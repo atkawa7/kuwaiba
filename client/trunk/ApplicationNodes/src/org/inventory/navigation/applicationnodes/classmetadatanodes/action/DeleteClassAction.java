@@ -21,8 +21,8 @@ import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.navigation.applicationnodes.classmetadatanodes.ClassMetadataChildren;
 import org.inventory.navigation.applicationnodes.classmetadatanodes.ClassMetadataNode;
-import org.openide.nodes.Node;
 
 /**
  * Action to delete a class metadata
@@ -44,14 +44,14 @@ public class DeleteClassAction extends AbstractAction {
         LocalClassMetadata classMetaData = com.getMetaForClass(node.getClassMetadata().getClassName(), false);
 
         if (JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this class?", 
-                "Data integrity", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.CANCEL_OPTION)
+                "Data Integrity", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.CANCEL_OPTION)
             return;
         
-            if (com.deleteClassMetadata(classMetaData.getOid())){
-                node.getParentNode().getChildren().remove(new Node[]{node});
-                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "The class was deleted successfully");
-            }
-            else
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+        if (com.deleteClassMetadata(classMetaData.getOid())){
+            ((ClassMetadataChildren)node.getParentNode().getChildren()).refreshList();
+            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "The class was deleted successfully");
+        }
+        else
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
     }
 }

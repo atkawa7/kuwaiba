@@ -55,8 +55,8 @@ public class CreateClassAction extends AbstractAction {
             NotificationUtil.getInstance().showSimplePopup(java.util.
                     ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.ERROR_MESSAGE,
                     com.getError());
-        else{           
-            ((ClassMetadataChildren)node.getChildren()).addNotify();
+        else {           
+            ((ClassMetadataChildren)node.getChildren()).refreshList();
             NotificationUtil.getInstance().showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.INFO_MESSAGE,
                     java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CLASS_CREATED"));
         }

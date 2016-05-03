@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import org.inventory.communications.util.Utils;
  * metadata is not necessary (ie. Container Hierarchy Manager)
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class LocalClassMetadataLight implements Transferable {
+public class LocalClassMetadataLight implements Transferable, Comparable<LocalClassMetadataLight> {
     /**
      * Class id
      */
@@ -235,7 +235,7 @@ public class LocalClassMetadataLight implements Transferable {
         
     public void addPropertyChangeListener(PropertyChangeListener newListener){
         if (propertyChangeListeners == null){
-            propertyChangeListeners = new ArrayList<PropertyChangeListener>();
+            propertyChangeListeners = new ArrayList<>();
         }
         if (propertyChangeListeners.contains(newListener)){
             return;
@@ -254,5 +254,10 @@ public class LocalClassMetadataLight implements Transferable {
         for (PropertyChangeListener listener : propertyChangeListeners){
             listener.propertyChange(new PropertyChangeEvent(this, property, oldValue, newValue));
         }
+    }
+
+    @Override
+    public int compareTo(LocalClassMetadataLight o) {
+        return getClassName().compareTo(o.getClassName());
     }
  }

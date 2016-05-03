@@ -17,6 +17,8 @@ package org.inventory.navigation.applicationnodes.classmetadatanodes.action;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -50,13 +52,12 @@ public class CreateAttributeAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent ae) {
         
-        LocalClassMetadataLight[] instanceableListTypes = CommunicationsStub.getInstance().getInstanceableListTypes();
+        List<LocalClassMetadataLight> instanceableListTypes = CommunicationsStub.getInstance().getInstanceableListTypes();
         
         ArrayList<String> attributeTypeslist = new ArrayList<String>();
         
         //Primitive types
-        for(String primitive : Constants.ATTRIBUTE_TYPES)
-            attributeTypeslist.add(primitive);
+        attributeTypeslist.addAll(Arrays.asList(Constants.ATTRIBUTE_TYPES));
         
         //List types
         for(LocalClassMetadataLight listType : instanceableListTypes)

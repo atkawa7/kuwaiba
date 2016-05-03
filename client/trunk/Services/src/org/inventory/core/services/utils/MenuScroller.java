@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Thibaut Voquet <contact@kuwaiba.org>.
+ *  Copyright 2010-2016 Thibaut Voquet <contact@kuwaiba.org>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.

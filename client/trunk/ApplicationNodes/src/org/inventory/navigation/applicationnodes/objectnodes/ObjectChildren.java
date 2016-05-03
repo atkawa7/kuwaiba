@@ -1,5 +1,5 @@
 /**
- * Copyright 2010-2015 Neotropic SAS <contact@neotropic.co>.
+ * Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
  *
  * Licensed under the EPL License, Version 1.0 (the "License"); you may not use
  * this file except in compliance with the License. You may obtain a copy of the
@@ -60,22 +60,24 @@ public class ObjectChildren extends Children.Keys<LocalObjectLight> {
     }
     
     public void refreshList() {
-        
+        CommunicationsStub com = CommunicationsStub.getInstance();
+        List <LocalObjectLight> children;
         //The tree root is not an AbstractNode, but a RootObjectNode
         if (this.getNode() instanceof RootObjectNode)
-            return;
-               
-        CommunicationsStub com = CommunicationsStub.getInstance();
-        LocalObjectLight node = ((ObjectNode)this.getNode()).getObject();
+            children = com.getObjectChildren(-1, -1);
+        else {
+            LocalObjectLight node = ((ObjectNode)this.getNode()).getObject();
         
-        List <LocalObjectLight> children = com.getObjectChildren(node.getOid(),
-                com.getMetaForClass(node.getClassName(),false).getOid());
-        if (children == null)
+            children = com.getObjectChildren(node.getOid(),
+                    com.getMetaForClass(node.getClassName(), false).getOid());
+        }
+        if (children == null) {
+            setKeys(Collections.EMPTY_LIST);
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, "An error has occurred retrieving this object's children: "+com.getError());
-        else{
+        }
+        else {
             Collections.sort(children);
             setKeys(children);
         }
-        setKeys(children);
     }
 }

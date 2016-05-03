@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Neotropic SAS <contact@neotropic.co>
+ *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -841,25 +841,23 @@ public class CommunicationsStub {
         }
     }
     
-     public LocalClassMetadataLight[] getLightSubclassesNoRecursive(String className, boolean includeAbstractSubClasses, boolean includeSelf) {
-        try{
+     public List<LocalClassMetadataLight> getLightSubclassesNoRecursive(String className, boolean includeAbstractSubClasses, boolean includeSelf) {
+        try {
             List<ClassInfoLight> subClasses = port.getSubClassesLightNoRecursive(className, includeAbstractSubClasses, includeSelf, session.getSessionId());
-            LocalClassMetadataLight[] res = new LocalClassMetadataLight[subClasses.size()];
+            List<LocalClassMetadataLight> res = new ArrayList<>();
 
-            int i = 0;
             for (ClassInfoLight cil : subClasses){
-                HashMap<String, Integer> validators = new HashMap<String, Integer>();
+                HashMap<String, Integer> validators = new HashMap<>();
                     for (Validator validator : cil.getValidators())
                         validators.put(validator.getLabel(), validator.getValue());
                     
-                res[i] = new LocalClassMetadataLight(cil.getId(),
+                res.add(new LocalClassMetadataLight(cil.getId(),
                                 cil.getClassName(),
                                 cil.getDisplayName(),
                                 cil.getParentClassName(),
                                 cil.isAbstract(),cil.isViewable(), cil.isListType(),
                                 cil.isCustom(), cil.isInDesign(),
-                                cil.getSmallIcon(), cil.getColor(), validators);
-                i++;
+                                cil.getSmallIcon(), cil.getColor(), validators));
             }
             return res;
         }catch(Exception ex){
@@ -1548,26 +1546,24 @@ public class CommunicationsStub {
      * Retrieves the list types
      * @return an array with all possible instanceable list types
      */
-    public LocalClassMetadataLight[] getInstanceableListTypes() {
+    public List<LocalClassMetadataLight> getInstanceableListTypes() {
         try{
             List<ClassInfoLight> listTypes;
             listTypes = port.getInstanceableListTypes(this.session.getSessionId());
 
-            LocalClassMetadataLight[] res = new LocalClassMetadataLight[listTypes.size()];
-            int i = 0;
+            List<LocalClassMetadataLight> res = new ArrayList<>();
             for (ClassInfoLight cil : listTypes){
-                HashMap<String, Integer> validators = new HashMap<String, Integer>();
+                HashMap<String, Integer> validators = new HashMap<>();
                     for (Validator validator : cil.getValidators())
                         validators.put(validator.getLabel(), validator.getValue());
                     
-                res[i] = new LocalClassMetadataLight(cil.getId(),
+                res.add(new LocalClassMetadataLight(cil.getId(),
                                 cil.getClassName(),
                                 cil.getDisplayName(),
                                 cil.getParentClassName(),
                                 cil.isAbstract(),cil.isViewable(), cil.isListType(),
                                 cil.isCustom(), cil.isInDesign(), 
-                                cil.getSmallIcon(), cil.getColor(), validators);
-                i++;
+                                cil.getSmallIcon(), cil.getColor(), validators));
             }
             return res;
         }catch(Exception ex){

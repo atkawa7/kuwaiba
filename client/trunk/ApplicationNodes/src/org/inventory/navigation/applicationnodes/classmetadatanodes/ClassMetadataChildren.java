@@ -29,8 +29,6 @@ import org.openide.nodes.Node;
  */
 public class ClassMetadataChildren extends Children.Keys<LocalClassMetadataLight> {
     
-    protected List<LocalClassMetadataLight> keys;
-
     /**
      * This constructor is used to create a node with no children
      *  since they're going to be created on demand (see method addNotify)
@@ -46,18 +44,8 @@ public class ClassMetadataChildren extends Children.Keys<LocalClassMetadataLight
      * Creates children nodes on demand
      */
     @Override
-    public void addNotify(){     
-        if (!(this.getNode() instanceof ClassMetadataNode))
-            return;
-        
-        CommunicationsStub com = CommunicationsStub.getInstance();
-        ClassMetadataNode node = ((ClassMetadataNode)this.getNode());
-        LocalClassMetadataLight[] subClasses = com.getLightSubclassesNoRecursive(node.getClassMetadata().getClassName(), true, false);
-
-        if (subClasses == null)
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, "An error has occurred retrieving this Metadata Sub Class: "+com.getError());
-        else
-            setKeys(subClasses);
+    public void addNotify(){
+        refreshList();
     }
     
     @Override
@@ -68,5 +56,23 @@ public class ClassMetadataChildren extends Children.Keys<LocalClassMetadataLight
     @Override
     protected Node[] createNodes(LocalClassMetadataLight key) {
         return new Node[] {new ClassMetadataNode(key)};
+    }
+    
+    public void refreshList() {
+        if (!(this.getNode() instanceof ClassMetadataNode))
+            return;
+        
+        CommunicationsStub com = CommunicationsStub.getInstance();
+        ClassMetadataNode node = ((ClassMetadataNode)this.getNode());
+        List<LocalClassMetadataLight> subClasses = com.getLightSubclassesNoRecursive(node.getClassMetadata().getClassName(), true, false);
+
+        if (subClasses == null) {
+            setKeys(Collections.EMPTY_LIST);
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, "An error has occurred retrieving this Metadata Sub Class: "+com.getError());
+        }
+        else {
+            Collections.sort(subClasses);
+            setKeys(subClasses);
+        }
     }
 }

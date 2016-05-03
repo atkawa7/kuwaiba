@@ -1,5 +1,5 @@
 /**
- * Copyright 2010-2015 Neotropic SAS <contact@neotropic.co>.
+ * Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
  *
  * Licensed under the EPL License, Version 1.0 (the "License"); you may not use
  * this file except in compliance with the License. You may obtain a copy of the
@@ -16,9 +16,11 @@
 
 package org.inventory.navigation.applicationnodes.listmanagernodes;
 
+import java.util.Collections;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
+import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
@@ -31,15 +33,24 @@ import org.openide.nodes.Node;
 public class ListTypeItemChildren extends ObjectChildren {
 
     @Override
-    public void addNotify(){
+    public void refreshList() {
         LocalClassMetadataLight lcml = ((ListTypeNode)this.getNode()).getObject();
-        List<LocalObjectListItem> myObjects = CommunicationsStub.getInstance().getList(lcml.getClassName(), false, false);
+        List<LocalObjectListItem> theListTypeItems = CommunicationsStub.getInstance().getList(lcml.getClassName(), false, true);
 
-        if (myObjects == null)
+        if (theListTypeItems == null) {
+            setKeys(Collections.EMPTY_LIST);
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-        else{
-            for (LocalObjectListItem child : myObjects)
-                add(new Node[]{new ListTypeItemNode(child)});
+        }
+        else {
+            Collections.sort(theListTypeItems);
+            setKeys(theListTypeItems);
         }
     }
+
+    @Override
+    protected Node[] createNodes(LocalObjectLight key) {
+        return new ListTypeItemNode[] { new ListTypeItemNode(key) };
+    }
+    
+    
 }

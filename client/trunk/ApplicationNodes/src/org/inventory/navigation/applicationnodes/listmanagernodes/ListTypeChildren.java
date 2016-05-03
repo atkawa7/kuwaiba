@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Neotropic SAS <contact@neotropic.co>
+ *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>
  * 
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,32 +16,50 @@
 
 package org.inventory.navigation.applicationnodes.listmanagernodes;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
-import org.openide.nodes.Children.Array;
+import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 
 /**
  * Represents the children corresponding to list type classes
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ListTypeChildren extends Array {
-    private List<LocalClassMetadataLight> keys;
-    public ListTypeChildren(LocalClassMetadataLight[] classes) {
-        keys = new ArrayList<LocalClassMetadataLight>();
-        keys.addAll(Arrays.asList(classes));
+public class ListTypeChildren extends Children.Keys<LocalClassMetadataLight> {
+
+    public ListTypeChildren(List<LocalClassMetadataLight> lcml) {
+        setKeys(lcml);
+    }
+    
+    @Override
+    protected void removeNotify() {
+        setKeys(Collections.EMPTY_LIST);
     }
 
     @Override
-    protected Collection<Node> initCollection(){
-        List<Node> myNodes = new ArrayList<Node>();
-        for (LocalClassMetadataLight myClass : keys)
-            myNodes.add(new ListTypeNode(myClass));
-        return myNodes;
+    protected void addNotify() {
+        refreshList();
+    }
+
+    @Override
+    protected Node[] createNodes(LocalClassMetadataLight key) {
+        return new Node[] { new ListTypeNode(key)};
     }
     
-    
+    public void refreshList() {
+        List<LocalClassMetadataLight> theListTypes = CommunicationsStub.getInstance().getInstanceableListTypes();
+
+        if (theListTypes == null) {
+            setKeys(Collections.EMPTY_LIST);
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, 
+                    CommunicationsStub.getInstance().getError());
+        }
+        else {
+            Collections.sort(theListTypes);
+            setKeys(theListTypes);
+        }        
+    }
 }
