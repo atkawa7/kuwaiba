@@ -14,10 +14,12 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.apis.persistence.business;
+package org.kuwaiba.apis.persistence.business.telecom;
 
 import java.util.HashMap;
 import java.util.List;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.DatabaseException;

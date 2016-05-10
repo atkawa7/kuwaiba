@@ -20,7 +20,7 @@ package org.kuwaiba.apis.persistence;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
-import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
+import org.kuwaiba.apis.persistence.business.telecom.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 
 

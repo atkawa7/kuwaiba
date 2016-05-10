@@ -82,7 +82,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -101,7 +101,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -123,7 +123,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -144,7 +144,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -180,7 +180,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -217,7 +217,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -247,7 +247,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -277,7 +277,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -299,7 +299,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -321,7 +321,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -347,7 +347,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -375,7 +375,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -399,7 +399,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -421,7 +421,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -455,7 +455,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -485,7 +485,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -515,7 +515,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -541,7 +541,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -561,7 +561,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -589,7 +589,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
 
@@ -617,7 +617,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
 
@@ -641,7 +641,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
 
@@ -664,7 +664,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -688,7 +688,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -716,7 +716,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -745,7 +745,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -766,7 +766,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -788,7 +788,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -810,7 +810,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -832,7 +832,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -863,7 +863,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -893,7 +893,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -914,7 +914,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -941,7 +941,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -965,7 +965,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -989,7 +989,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1019,7 +1019,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1046,7 +1046,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1073,7 +1073,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1102,7 +1102,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1130,7 +1130,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1155,7 +1155,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1179,7 +1179,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1203,7 +1203,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1227,7 +1227,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1243,7 +1243,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1268,7 +1268,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1294,7 +1294,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1321,7 +1321,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1337,7 +1337,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1364,7 +1364,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1396,7 +1396,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1430,7 +1430,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1455,7 +1455,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1482,7 +1482,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1513,7 +1513,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1545,7 +1545,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1569,7 +1569,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1610,7 +1610,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1638,7 +1638,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1661,7 +1661,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1685,7 +1685,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     } 
@@ -1715,7 +1715,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1739,7 +1739,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1769,7 +1769,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1797,7 +1797,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1823,7 +1823,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1848,7 +1848,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1876,7 +1876,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1907,7 +1907,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1931,7 +1931,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1959,7 +1959,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1984,7 +1984,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -2010,7 +2010,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -2082,7 +2082,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -2147,7 +2147,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -2172,7 +2172,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -2197,7 +2197,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -2242,7 +2242,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -2287,7 +2287,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -2332,7 +2332,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -2377,7 +2377,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -2403,7 +2403,7 @@ public class KuwaibaService {
                 level = ((ServerSideException)e).getLevel();
             }
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -2428,7 +2428,7 @@ public class KuwaibaService {
                 level = ((ServerSideException)e).getLevel();
             }
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -2452,7 +2452,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -2475,7 +2475,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -2503,7 +2503,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
 
@@ -2532,7 +2532,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
 
@@ -2558,7 +2558,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -2583,7 +2583,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
 
@@ -2608,7 +2608,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -2632,7 +2632,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -2657,7 +2657,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -2683,7 +2683,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -2708,7 +2708,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -2734,7 +2734,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -2760,7 +2760,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -2784,7 +2784,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -2810,7 +2810,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -2830,7 +2830,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -2846,7 +2846,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -2874,7 +2874,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 level = ((ServerSideException)e).getLevel();
             Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
             throw e;
         }
     }

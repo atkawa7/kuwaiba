@@ -1686,6 +1686,28 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             int type, ChangeDescriptor changeDescriptor) throws ApplicationObjectNotFoundException, ObjectNotFoundException {
         createObjectActivityLogEntry(userName, className, oid, type, changeDescriptor.getAffectedProperties(), changeDescriptor.getOldValues(), changeDescriptor.getNewValues(), changeDescriptor.getNotes());
     }
+
+    @Override
+    public void createMap(String name) throws NotAuthorizedException, IllegalArgumentException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void deleteMap(String name) throws NotAuthorizedException, ApplicationObjectNotFoundException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void addMapConnection(String mapName, long connectionId, long sourceNodeId, long destinationsNodeId) throws NotAuthorizedException, ApplicationObjectNotFoundException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void removeMapConnection(String mapName, long connectionId) throws NotAuthorizedException, ApplicationObjectNotFoundException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    
     
     // Helpers
     /**

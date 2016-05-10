@@ -35,7 +35,7 @@ import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
-import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
+import org.kuwaiba.apis.persistence.business.telecom.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.ConnectionManager;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
@@ -579,7 +579,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                             String.format("The attribute %s does not exist in class %s", attributeName, className), Level.WARNING);
             }
             tx.success();
-            return new ChangeDescriptor(affectedProperties.trim(), oldValues.trim(), newValues.trim(), null);
+            return new ChangeDescriptor(affectedProperties.trim(), oldValues.trim(), newValues.trim(), String.valueOf(oid));
         }
     }
 
@@ -1097,6 +1097,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      * @param oid object id
      * @return a Node representing the entity
      * @throws MetadataObjectNotFoundException id the class cannot be found
+     * @throws org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException if the object could not be found
      */
     public Node getInstanceOfClass(String className, long oid) throws MetadataObjectNotFoundException, ObjectNotFoundException{
         
