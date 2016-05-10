@@ -20,12 +20,12 @@ import org.inventory.communications.core.queries.LocalResultRecord;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 
 /**
- * A node used to represents a single result in query result
+ * A node used to represent a single result in query result
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class QueryResultRecordNode extends ObjectNode{
+public class QueryResultRecordNode extends ObjectNode {
 
     public QueryResultRecordNode(LocalResultRecord record) {
-        super(record.getObject(),true);
+        super(record.getObject(), true);
     }
 }

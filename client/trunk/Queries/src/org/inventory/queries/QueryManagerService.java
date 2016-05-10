@@ -218,8 +218,9 @@ public class QueryManagerService implements ActionListener {
                         }
                         myMetadata = com.getMetaForClass(selectedValue.getClassName(),false);
                         isParentMenu = true;
-                    }else
-                    myMetadata = com.getMetaForClass((String)insideCheck.getClientProperty("className"),false);
+                    } else
+                        myMetadata = com.getMetaForClass((String)insideCheck.getClientProperty("className"),false);
+                    
                     LocalClassMetadataLight myMetadataLight;
                     if(!isParentMenu){
                         myMetadataLight = new LocalClassMetadataLight(myMetadata.getOid(), 
@@ -325,6 +326,6 @@ public class QueryManagerService implements ActionListener {
     private void resetProperties() {
         queryProperties[0] = "New Query "+ new Random().nextInt(10000);
         queryProperties[1] = "";
-        queryProperties[2] = false; //By default the views are private
+        queryProperties[2] = false; //By default the queries are private
     }
 }
