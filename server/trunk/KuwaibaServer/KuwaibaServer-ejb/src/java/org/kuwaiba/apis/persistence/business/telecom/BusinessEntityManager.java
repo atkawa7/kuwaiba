@@ -378,12 +378,29 @@ public interface BusinessEntityManager {
      * @param bObjectClass b side object class
      * @param bObjectId b side object id
      * @param name Name to label the new relationship
+     * @param unique If there could be only one relationship between both elements with that name
      * @throws ObjectNotFoundException If any of the objects can't be found
      * @throws OperationNotPermittedException if any of the objects involved can't be connected (i.e. if it's not an inventory object)
      * @throws MetadataObjectNotFoundException if any of the classes provided can not be found
      */
-    public void createSpecialRelationship(String aObjectClass, long aObjectId, String bObjectClass, long bObjectId, String name)
-            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException;
+    public void createSpecialRelationship(String aObjectClass, long aObjectId, String bObjectClass, long bObjectId, String name, boolean unique)
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException;
+    
+    /**
+     * This method creates a special relationship  with a set of property values
+     * @param aObjectClass The class of the first object to related
+     * @param aObjectId The id of the first object to related
+     * @param bObjectClass The class of the second object to related
+     * @param bObjectId The id of the first object to related
+     * @param name The name of the relationship
+     * @param unique If there could be only one relationship between both elements with that name
+     * @param properties A hash with the set of properties and their respective values
+     * @throws ObjectNotFoundException If any of the objects can not be found
+     * @throws OperationNotPermittedException If, due to a business rule, the objects can not be related
+     * @throws MetadataObjectNotFoundException If any of the classes specified does not exist
+     */
+    public void createSpecialRelationship(String aObjectClass, long aObjectId, String bObjectClass, 
+            long bObjectId, String name, boolean unique, HashMap<String, Object> properties) throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException;
     
     /**
      * Release all special relationships with a given name
@@ -459,6 +476,19 @@ public interface BusinessEntityManager {
      */
     public boolean hasSpecialRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships) 
             throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException;
+
+    /**
+     * Sets the display name of a special relationship used in a model
+     * @param relationshipName The name of the relationship the display name is going to be set
+     * @param relationshipDisplayName The display name
+     */
+    public void setSpecialRelationshipDisplayName(String relationshipName, String relationshipDisplayName);
+    /**
+     * Returns the display name of a special relationship. The display name is useful to improve the way the relationship is displayed on trees and other modules
+     * @param relationshipName The name of the relationship
+     * @return The display name for the relationship name provided. If it can not be found, the relationship name is returned instead
+     */
+    public String getSpecialRelationshipDisplayName(String relationshipName);
     
     /**
      * 

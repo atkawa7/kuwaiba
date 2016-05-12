@@ -1687,28 +1687,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         createObjectActivityLogEntry(userName, className, oid, type, changeDescriptor.getAffectedProperties(), changeDescriptor.getOldValues(), changeDescriptor.getNewValues(), changeDescriptor.getNotes());
     }
 
-    @Override
-    public void createMap(String name) throws NotAuthorizedException, IllegalArgumentException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void deleteMap(String name) throws NotAuthorizedException, ApplicationObjectNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void addMapConnection(String mapName, long connectionId, long sourceNodeId, long destinationsNodeId) throws NotAuthorizedException, ApplicationObjectNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void removeMapConnection(String mapName, long connectionId) throws NotAuthorizedException, ApplicationObjectNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
-    
-    
     // Helpers
     /**
      * recursive method used to generate a single "class" node (see the <a href="http://neotropic.co/kuwaiba/wiki/index.php?title=XML_Documents#To_describe_the_data_model">wiki</a> for details)

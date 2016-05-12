@@ -87,6 +87,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      * Reference to the CacheManager
      */
     private CacheManager cm;
+    /**
+     * This hash contains the display name of the special relationship used in the different models
+     */
+    private HashMap<String, String> relationshipDisplayNames;
 
     private BusinessEntityManagerImpl() {
         cm = CacheManager.getInstance();
@@ -95,6 +99,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     public BusinessEntityManagerImpl(ConnectionManager cmn, ApplicationEntityManager aem) {
         this();
         this.graphDb = (GraphDatabaseService)cmn.getConnectionHandler();
+        this.relationshipDisplayNames = new HashMap<>();
         try(Transaction tx = graphDb.beginTx())
         {
             this.classIndex = graphDb.index().forNodes(Constants.INDEX_CLASS);
@@ -590,19 +595,36 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public void createSpecialRelationship(String aObjectClass, long aObjectId, String bObjectClass, long bObjectId, String name)
-            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
-        try(Transaction tx = graphDb.beginTx())
-        {
+    public void createSpecialRelationship(String aObjectClass, long aObjectId, String bObjectClass, long bObjectId, String name, boolean unique)
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
+        
+        createSpecialRelationship(aObjectClass, aObjectId, bObjectClass, bObjectId, name, unique, new HashMap<String, Object>());
+    }
+    
+    @Override
+    public void createSpecialRelationship(String aObjectClass, long aObjectId, String bObjectClass, 
+            long bObjectId, String name, boolean unique, HashMap<String, Object> properties) throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
+        
+        if (aObjectId == bObjectId)
+            throw new OperationNotPermittedException("Relate Objects", "An object can not be related with itself");
+        
+        try(Transaction tx = graphDb.beginTx()) {
             Node nodeA = getInstanceOfClass(aObjectClass, aObjectId);
             for (Relationship rel : nodeA.getRelationships(RelTypes.RELATED_TO_SPECIAL)){
                 if (rel.getOtherNode(nodeA).getId() == bObjectId 
-                        && rel.getProperty(Constants.PROPERTY_NAME).equals(name))
+                        && rel.getProperty(Constants.PROPERTY_NAME).equals(name) && unique)
                     throw new OperationNotPermittedException("Relate Objects", "These elements are already related");
             }
             Node nodeB = getInstanceOfClass(bObjectClass, bObjectId);
             Relationship rel = nodeA.createRelationshipTo(nodeB, RelTypes.RELATED_TO_SPECIAL);
             rel.setProperty(Constants.PROPERTY_NAME, name);
+            String relationshipDisplayName = relationshipDisplayNames.get(name);
+            rel.setProperty(Constants.PROPERTY_DISPLAY_NAME, relationshipDisplayName == null ? name : relationshipDisplayName);
+            
+            //Custom properties
+            for (String property : properties.keySet())
+                rel.setProperty(property, properties.get(property));
+            
             tx.success();
         }catch(Exception ex){
             Logger.getLogger(getClass().getName()).log(Level.INFO, "createSpecialRelationship: {0}", ex.getMessage()); //NOI18N
@@ -1086,6 +1108,18 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             }
         }
         return path;
+    }
+    
+    
+    @Override
+    public void setSpecialRelationshipDisplayName(String relationshipName, String relationshipDisplayName) {
+        relationshipDisplayNames.put(relationshipName, relationshipDisplayName);
+    }
+    
+    @Override
+    public String getSpecialRelationshipDisplayName(String relationshipName) {
+        String displayName = relationshipDisplayNames.get(relationshipName);
+        return displayName == null ? relationshipName : displayName;
     }
     
     /**

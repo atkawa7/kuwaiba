@@ -1123,7 +1123,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             if (bem.hasSpecialRelationship(bObjectClass, bObjectId, "mirror", 1))
                 throw new ServerSideException(Level.INFO, String.format("Object %s [%s] already has a mirror port", bObjectId, bObjectClass));
             
-            bem.createSpecialRelationship(aObjectClass, aObjectId, bObjectClass, bObjectId, "mirror");
+            bem.createSpecialRelationship(aObjectClass, aObjectId, bObjectClass, bObjectId, "mirror", true);
             
         } catch (Exception ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
@@ -1179,8 +1179,8 @@ public class WebserviceBean implements WebserviceBeanRemote {
             }
 
             newConnectionId = bem.createSpecialObject(connectionClass, parentClass, parentId, attributes, 0);
-            bem.createSpecialRelationship(connectionClass, newConnectionId, aObjectClass, aObjectId, "endpointA");
-            bem.createSpecialRelationship(connectionClass, newConnectionId, bObjectClass, bObjectId, "endpointB");
+            bem.createSpecialRelationship(connectionClass, newConnectionId, aObjectClass, aObjectId, "endpointA", true);
+            bem.createSpecialRelationship(connectionClass, newConnectionId, bObjectClass, bObjectId, "endpointB", true);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                     ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.format("New connection of class %s", connectionClass));
@@ -1279,7 +1279,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
                         throw new ServerSideException(Level.INFO, String.format("The selected endpoint %s [%s] is already connected", sideAClassNames[i], sideAIds[i]));
                     
                     if (aEndpointList.isEmpty())
-                        bem.createSpecialRelationship(linksClassNames[i], linksIds[i], sideAClassNames[i], sideAIds[i], "endpointA");
+                        bem.createSpecialRelationship(linksClassNames[i], linksIds[i], sideAClassNames[i], sideAIds[i], "endpointA", true);
                     else
                         throw new ServerSideException(Level.INFO, String.format("Link %s [%s] already has an aEndpoint", linksIds[i], linksClassNames[i]));
                 }
@@ -1289,7 +1289,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
                         throw new ServerSideException(Level.INFO, String.format("The selected endpoint %s [%s] is already connected", sideBClassNames[i], sideBIds[i]));
                     
                     if (bEndpointList.isEmpty())
-                        bem.createSpecialRelationship(linksClassNames[i], linksIds[i], sideBClassNames[i], sideBIds[i], "endpointB");
+                        bem.createSpecialRelationship(linksClassNames[i], linksIds[i], sideBClassNames[i], sideBIds[i], "endpointB", true);
                     else
                         throw new ServerSideException(Level.INFO, String.format("Link %s [%s] already has a bEndpoint", linksIds[i], linksClassNames[i]));
                 }
@@ -1331,7 +1331,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("associateObjectToService", ipAddress, sessionId);
             if (!mem.isSubClass("GenericService", serviceClass))
                 throw new ServerSideException(Level.SEVERE, String.format("Class %s is not a service", serviceClass));
-            bem.createSpecialRelationship(serviceClass, serviceId, objectClass, objectId, "uses");
+            bem.createSpecialRelationship(serviceClass, serviceId, objectClass, objectId, "uses", true);
         } catch (Exception ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
@@ -1349,7 +1349,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             if (!mem.isSubClass("GenericService", serviceClass))
                 throw new ServerSideException(Level.SEVERE, String.format("Class %s is not a service", serviceClass));
             for (int i = 0; i < objectId.length; i++) 
-                bem.createSpecialRelationship(serviceClass, serviceId, objectClass[i], objectId[i], "uses");
+                bem.createSpecialRelationship(serviceClass, serviceId, objectClass[i], objectId[i], "uses", true);
             
         } catch (Exception ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());

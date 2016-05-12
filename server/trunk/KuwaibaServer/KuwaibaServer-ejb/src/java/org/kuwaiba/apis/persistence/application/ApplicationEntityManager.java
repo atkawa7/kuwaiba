@@ -575,44 +575,4 @@ public interface ApplicationEntityManager {
     public void createObjectActivityLogEntry(String userName, String className, long oid,  
             int type, ChangeDescriptor changeDescriptor) throws ApplicationObjectNotFoundException, ObjectNotFoundException;
     
-    /**
-     * A map is a persistence entity based on nodes connected by edges that could be used to represent situations 
-     * when it's necessary to find routes between nodes (transportation, telecomunications, utilities, etc) or when 
-     * it's necessary to represent complex relationships as a graph. The entity is thought to be used only to find routes, so the information
-     * stored about a particular node or connection, will be just the id 
-     * This method creates a map.
-     * @param name Name of the map. This name must be unique
-     * @throws NotAuthorizedException If the user is not authorized to create maps
-     * @throws IllegalArgumentException If the name of the map already existed
-     */
-    public void createMap(String name) throws NotAuthorizedException, IllegalArgumentException;
-    
-    /**
-     * Deletes a map. Does nothing if the map does not exist
-     * @param name The name of the map
-     * @throws NotAuthorizedException If the user can't delete a map
-     * @throws ApplicationObjectNotFoundException If the map could not be found
-     */
-    public void deleteMap(String name) throws NotAuthorizedException, ApplicationObjectNotFoundException;
-    
-    /**
-     * Since the idea of a map is to provide a way to find routes, it doesn't really make sense to add 
-     * nodes alone. Note that if there could be many connections between two nodes depending on the case. This method adds a connection and if the endpoints do not exist, they will be created.
-     * @param mapName The name of the map
-     * @param connectionId The id of the connection to be added
-     * @param sourceNodeId The id of one of the source endpoint of the connection
-     * @param destinationsNodeId The id of the destination endpoint of the connection
-     * @throws NotAuthorizedException If the user is not authorized to modify a map
-     * @throws ApplicationObjectNotFoundException If the map does not exist
-     */
-    public void addMapConnection(String mapName, long connectionId, long sourceNodeId, long destinationsNodeId) throws NotAuthorizedException, ApplicationObjectNotFoundException;
-    
-    /**
-     * Removes a connection from the map
-     * @param mapName The name of the map
-     * @param connectionId The id of the connection to be deleted
-     * @throws NotAuthorizedException If the user is not authorized to modify the map
-     * @throws ApplicationObjectNotFoundException If the map does not exist
-     */
-    public void removeMapConnection(String mapName, long connectionId) throws NotAuthorizedException, ApplicationObjectNotFoundException;
 }

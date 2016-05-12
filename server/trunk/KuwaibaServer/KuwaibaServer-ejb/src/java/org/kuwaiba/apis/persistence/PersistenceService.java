@@ -20,8 +20,8 @@ import java.util.Properties;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.telecom.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
-import org.kuwaiba.preload.tools.DataIntegrityService;
-import org.kuwaiba.preload.tools.DataModelLoader;
+import org.kuwaiba.apis.persistence.integrity.DataIntegrityService;
+import org.kuwaiba.apis.persistence.integrity.DataModelLoader;
 import org.kuwaiba.services.persistence.util.Constants;
 
 /**

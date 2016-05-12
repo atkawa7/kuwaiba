@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.telecom.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.exceptions.ServerSideException;
@@ -75,6 +76,14 @@ public class SDHModule extends GenericCommercialModule {
         this.aem  = aem;
         this.mem = mem;
         this.bem = bem;
+        
+        this.bem.setSpecialRelationshipDisplayName("sdhTLEndpointA", "SDH Transport Link A Side");
+        this.bem.setSpecialRelationshipDisplayName("sdhTLEndpointB", "SDH Transport Link B Side");
+        this.bem.setSpecialRelationshipDisplayName("sdhTransportLink", "SDH Transport Link Connecting To");
+        this.bem.setSpecialRelationshipDisplayName("sdhCLEndpointA", "SDH Container Link A Side");
+        this.bem.setSpecialRelationshipDisplayName("sdhCLEndpointB", "SDH Container Link B Side");
+        this.bem.setSpecialRelationshipDisplayName("sdhTTLEndpointA", "SDH Tributary Link A Side");
+        this.bem.setSpecialRelationshipDisplayName("sdhTTLEndpointB", "SDH Tributary Link B Side");
     }
     
     //The actual methods
@@ -95,7 +104,6 @@ public class SDHModule extends GenericCommercialModule {
         if (bem == null || aem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         
-        
         long newConnectionId = -1;
         try {
             if (!mem.isSubClass("GenericTransportLink", linkType))
@@ -103,15 +111,34 @@ public class SDHModule extends GenericCommercialModule {
 
             HashMap<String, List<String>> attributesToBeSet = new HashMap<>();
             if (defaultName != null)
-                attributesToBeSet.put(Constants.PROPERTY_NAME, Arrays.asList(new String[] {defaultName}));
+                attributesToBeSet.put(Constants.PROPERTY_NAME, Arrays.asList(new String[] { defaultName }));
             
-            newConnectionId = bem.createSpecialObject(linkType, null, -1, attributesToBeSet, 0);
+            RemoteBusinessObject communicationsEquipmentA = bem.getParentOfClass(classNameEndpointA, idEndpointA, Constants.CLASS_GENERICCOMMUNICATIONSEQUIPMENT);
+            if (communicationsEquipmentA == null)
+                throw new ServerSideException(Level.INFO, String.format("The specified port (%s : %s) doesn't seem to be located in a communications equipment", classNameEndpointA, idEndpointA));
             
-            bem.createSpecialRelationship(linkType, newConnectionId, classNameEndpointA, idEndpointA, "sdhTLendpointA");
-            bem.createSpecialRelationship(linkType, newConnectionId, classNameEndpointB, idEndpointB, "sdhTLendpointB");
+            RemoteBusinessObject communicationsEquipmentB = bem.getParentOfClass(classNameEndpointB, idEndpointB, Constants.CLASS_GENERICCOMMUNICATIONSEQUIPMENT);
+            if (communicationsEquipmentB == null)
+                throw new ServerSideException(Level.INFO, String.format("The specified port (%s : %s) doesn't seem to be located in a communications equipment", classNameEndpointB, idEndpointB));
+            
+            newConnectionId = bem.createSpecialObject(linkType, null, -1, attributesToBeSet, 0);                      
+                       
+            bem.createSpecialRelationship(linkType, newConnectionId, classNameEndpointA, idEndpointA, "sdhTLEndpointA", true);
+            bem.createSpecialRelationship(linkType, newConnectionId, classNameEndpointB, idEndpointB, "sdhTLEndpointB", true);
+            
+            //We add a relationship between the shelves so we can easily find a route between two equipment when creatin low order connections
+            //based on TransportLinks paths
+            HashMap<String, Object> properties = new HashMap<>();
+            properties.put("transportLinkId", newConnectionId); //NOI18N
+            
+            bem.createSpecialRelationship(communicationsEquipmentA.getClassName(), communicationsEquipmentA.getId(), 
+                    communicationsEquipmentB.getClassName(), communicationsEquipmentB.getId(), "sdhTransportLink", false);
+            
             
             return newConnectionId;
         } catch (Exception e) {
+            //TODO: This should be replace with a transaction that lasts as long as everything in this method has been done, instead of
+            //doing commits in every call to the BEM
             //If the new connection was successfully created, but there's a problem creating the relationships,
             //delete the connection and throw an exception
             if (newConnectionId != -1) {

@@ -217,6 +217,10 @@ public class Constants {
      */
     public static final String CLASS_GENERICCUSTOMER = "GenericCustomer"; //NOI18N
     /**
+     * Class Generic Communications Equipment
+     */
+    public static final String CLASS_GENERICCOMMUNICATIONSEQUIPMENT = "GenericCommunicationsEquipment";
+    /**
      * Dummy root node name
      */
     public static final String NODE_DUMMYROOT = "DummyRoot"; //NOI18N
