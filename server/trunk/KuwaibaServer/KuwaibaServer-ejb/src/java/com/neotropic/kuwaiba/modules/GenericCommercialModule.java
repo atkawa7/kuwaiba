@@ -16,7 +16,7 @@
 package com.neotropic.kuwaiba.modules;
 
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
-import org.kuwaiba.apis.persistence.business.telecom.BusinessEntityManager;
+import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 
 /**

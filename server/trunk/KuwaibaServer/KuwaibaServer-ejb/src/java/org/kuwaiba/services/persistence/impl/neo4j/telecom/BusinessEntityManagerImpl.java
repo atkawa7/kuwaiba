@@ -14,8 +14,9 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.services.persistence.impl.neo4j;
+package org.kuwaiba.services.persistence.impl.neo4j.telecom;
 
+import com.sun.faces.util.CollectionsUtils;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,14 +36,17 @@ import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
-import org.kuwaiba.apis.persistence.business.telecom.BusinessEntityManager;
+import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.ConnectionManager;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
+import org.kuwaiba.apis.persistence.business.AnnotatedRemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.services.persistence.cache.CacheManager;
+import org.kuwaiba.services.persistence.impl.neo4j.RelTypes;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.services.persistence.util.Util;
 import org.kuwaiba.util.ChangeDescriptor;
@@ -987,7 +991,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     @Override
     public List<RemoteBusinessObjectLight> getSpecialAttribute(String objectClass, long objectId, String specialAttributeName) 
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, NotAuthorizedException {
         
         try(Transaction tx = graphDb.beginTx()) {
             Node instance = getInstanceOfClass(objectClass, objectId);
@@ -997,6 +1001,24 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     if (rel.getProperty(Constants.PROPERTY_NAME).equals(specialAttributeName))
                         res.add(rel.getEndNode().getId() == objectId ? 
                             Util.createRemoteObjectLightFromNode(rel.getStartNode()) : Util.createRemoteObjectLightFromNode(rel.getEndNode()));
+                }
+            }
+            return res;
+        }
+    }
+
+    @Override
+    public List<AnnotatedRemoteBusinessObjectLight> getAnnotatedSpecialAttribute(String objectClass, long objectId, String specialAttributeName) throws ObjectNotFoundException, MetadataObjectNotFoundException, NotAuthorizedException {
+        try(Transaction tx = graphDb.beginTx()) {
+            Node instance = getInstanceOfClass(objectClass, objectId);
+            List<AnnotatedRemoteBusinessObjectLight> res = new ArrayList<>();
+            for (Relationship rel : instance.getRelationships(RelTypes.RELATED_TO_SPECIAL)){
+                if(rel.hasProperty(Constants.PROPERTY_NAME)){
+                    if (rel.getProperty(Constants.PROPERTY_NAME).equals(specialAttributeName)) {
+                        RemoteBusinessObjectLight theObject = rel.getEndNode().getId() == objectId ? 
+                            Util.createRemoteObjectLightFromNode(rel.getStartNode()) : Util.createRemoteObjectLightFromNode(rel.getEndNode());
+                        res.add(new AnnotatedRemoteBusinessObjectLight(theObject, rel.getAllProperties()));
+                    }
                 }
             }
             return res;
@@ -1060,7 +1082,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     @Override
     public boolean hasSpecialRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships) 
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException  {
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, NotAuthorizedException  {
         try (Transaction tx = graphDb.beginTx()) {
             Node object = getInstanceOfClass(objectClass, objectId);
             int relationshipsCounter = 0;
@@ -1121,6 +1143,32 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         String displayName = relationshipDisplayNames.get(relationshipName);
         return displayName == null ? relationshipName : displayName;
     }
+
+    @Override
+    public List<RemoteBusinessObjectLightList> findRoutesThroughSpecialRelationships(String objectAClassName, 
+            long objectAId, String objectBClassName, long objectBId, String relationshipName) {
+        List<RemoteBusinessObjectLightList> paths = new ArrayList<>();
+        String cypherQuery = String.format("START o = id(%s) " +
+                             "MATCH path = o-[r:%s*{name:'%s'}]-id(%s) " +
+                             "WHERE all(x in nodes(path) where 1 = size (filter(y in nodes(path) where x = y))) " +
+                             "RETURN nodes(path), length(path) as l order by l", objectAId, RelTypes.RELATED_TO_SPECIAL, relationshipName, objectBId);
+                                
+        try (Transaction tx = graphDb.beginTx()){
+           
+            Result result = graphDb.execute(cypherQuery);
+            Iterator<List<Node>> column = result.columnAs("path");
+            
+            for (List<Node> list : IteratorUtil.asIterable(column)){
+                RemoteBusinessObjectLightList aPath = new RemoteBusinessObjectLightList();
+                for (Node aNode : list)
+                    aPath.add(Util.createRemoteObjectLightFromNode(aNode));
+                paths.add(aPath);
+            }
+        }
+        return paths;
+    }
+    
+    
     
     /**
      * Helpers

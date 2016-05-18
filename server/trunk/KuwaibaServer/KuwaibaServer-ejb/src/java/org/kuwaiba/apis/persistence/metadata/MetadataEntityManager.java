@@ -275,8 +275,9 @@ public interface MetadataEntityManager {
      * @param allegedParent Alleged super class
      * @param classToBeEvaluated class to be evaluated
      * @return True if classToBeEvaluated is subclass of allegedParent
+     * @throws org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException
      */
-    public boolean isSubClass(String allegedParent, String classToBeEvaluated)throws ApplicationObjectNotFoundException, NotAuthorizedException;
+    public boolean isSubClass(String allegedParent, String classToBeEvaluated)throws NotAuthorizedException;
     /**
      * Get the upstream containment hierarchy for a given class, unlike getPossibleChildren (which will give you the 
      * downstream hierarchy).

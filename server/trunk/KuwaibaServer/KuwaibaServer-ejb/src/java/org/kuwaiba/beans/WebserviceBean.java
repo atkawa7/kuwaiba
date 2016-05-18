@@ -35,7 +35,7 @@ import org.kuwaiba.apis.persistence.application.Session;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.application.ViewObject;
 import org.kuwaiba.apis.persistence.application.ViewObjectLight;
-import org.kuwaiba.apis.persistence.business.telecom.BusinessEntityManager;
+import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
@@ -1941,7 +1941,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     
     // </editor-fold>
     
-    // <editor-fold defaultstate="collapsed" desc="Sync/Bulk load data methods. Click on the + sign on the left to edit the code.">
+    // <editor-fold defaultstate="collapsed" desc="Sync/Bulk load data methods">
     @Override
     public String bulkUpload(byte[] file, int commitSize, int dataType, String ipAddress, String sessionId) throws ServerSideException{
         if (sync == null)
@@ -1970,7 +1970,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     public boolean isSubclassOf(String className, String subclassOf, String remoteAddress, String sessionId) throws ServerSideException {
         try {
             return mem.isSubClass(subclassOf, className);
-        } catch (ApplicationObjectNotFoundException | org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException ex) {
+        } catch (org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, null, ex);
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
@@ -1979,8 +1979,16 @@ public class WebserviceBean implements WebserviceBeanRemote {
     
     // </editor-fold>
     
-    // <editor-fold defaultstate="collapsed" desc="Commercial modules data methods. Click on the + sign on the left to edit the code.">
-    
+    // <editor-fold defaultstate="collapsed" desc="Commercial modules data methods">
+        // <editor-fold defaultstate="collapsed" desc="SDH Module">
+    public long createSDHTransportLink(String classNameEndpointA, long idEndpointA, 
+            String classNameEndpointB, long idEndpointB, String linkType, String defaultName, String ipAddress, String sessionId) throws ServerSideException {
+        
+        //aem.validateCall("createSDHTransportLink", ipAddress, sessionId);
+        
+        return 0;
+    }
+        // </editor-fold>    
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Helper methods. Click on the + sign on the left to edit the code.">
