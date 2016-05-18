@@ -20,8 +20,9 @@ import java.awt.Dimension;
 import javax.swing.BorderFactory;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.netbeans.api.visual.layout.LayoutFactory;
 import org.netbeans.api.visual.model.ObjectState;
-import org.netbeans.api.visual.widget.LayerWidget;
+import org.netbeans.api.visual.widget.LabelWidget;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Lookup;
@@ -47,29 +48,39 @@ public class AbstractNodeWidget extends Widget implements SelectableWidget {
     /**
      * The label
      */
-    private TagLabelWidget label;
-
+    private LabelWidget labelWidget;
+    /**
+     * The generic icon (a square)
+     */
+    private Widget squareWidget;
+    
     /**
      * Default constructor
      * @param scene Scene this widget belongs to
      * @param object object represented by this widget
-     * @param labelLayer Layer where the label associated with this widget will be placed. Null if none (no label will be added)
      */
-    public AbstractNodeWidget(Scene scene, LocalObjectLight object, LayerWidget labelLayer) {
+    public AbstractNodeWidget(Scene scene, LocalObjectLight object) {
         super(scene);
         this.node = new ObjectNode(object);
-        setPreferredSize(DEFAULT_DIMENSION);
-        setBackground(Color.ORANGE);
+        this.squareWidget = new Widget(scene);
+        this.labelWidget = new LabelWidget(scene);
+        
+        this.labelWidget.setLabel(object.toString());
+        
+        this.squareWidget.setPreferredSize(DEFAULT_DIMENSION);
+        this.squareWidget.setBackground(Color.ORANGE);
+        this.squareWidget.setOpaque(true);
+        
+        //Centers the text, and makes the widgets to stack one onto another
+        setLayout(LayoutFactory.createVerticalFlowLayout (LayoutFactory.SerialAlignment.CENTER, 5));
+        
+        addChild(squareWidget);
+        addChild(labelWidget);
+        
         setToolTipText(object.toString());
         this.lookup = Lookups.singleton(object);
         createActions(AbstractScene.ACTION_SELECT);
         createActions(AbstractScene.ACTION_CONNECT);
-        setOpaque(true);
-        if (labelLayer != null){
-            label = new TagLabelWidget(scene, this, object.toString(), TagLabelWidget.BOTTOM);
-            labelLayer.addChild(label);
-            addDependency(label);
-        }
     }
 
     /**
@@ -88,6 +99,10 @@ public class AbstractNodeWidget extends Widget implements SelectableWidget {
         this.node = new ObjectNode(object);
     }
     
+    public void showLabel(boolean shouldShow) {
+        labelWidget.setVisible(shouldShow);
+    }
+    
     @Override
     public Lookup getLookup(){
         return lookup;
@@ -101,9 +116,9 @@ public class AbstractNodeWidget extends Widget implements SelectableWidget {
     @Override
     public void notifyStateChanged (ObjectState previousState, ObjectState state) {
         if (state.isSelected())
-            label.setBorder(BorderFactory.createLineBorder(Color.RED));
+            labelWidget.setBorder(BorderFactory.createLineBorder(Color.RED));
         else
-            label.setBorder(BorderFactory.createEmptyBorder());
+            labelWidget.setBorder(BorderFactory.createEmptyBorder());
     }
 
     @Override

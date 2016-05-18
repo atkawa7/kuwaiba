@@ -93,7 +93,7 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
      */
     @Override
     protected Widget attachNodeWidget(LocalObjectLight node) {
-        AbstractNodeWidget widget = new AbstractNodeWidget(this, node, labelsLayer);
+        AbstractNodeWidget widget = new AbstractNodeWidget(this, node);
         widget.getActions().addAction(ActionFactory.createPopupMenuAction(defaultPopupMenuProvider));
         //The order the actions are added to a widget matters, if Select goes
         //after Move, you will need a double click to select the widget

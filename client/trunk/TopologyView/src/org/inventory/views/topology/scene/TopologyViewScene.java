@@ -116,10 +116,7 @@ public class TopologyViewScene extends GraphScene<Object, String>
      * Layer to contain additional labels (free text)
      */
     private LayerWidget freeLabelsLayer;
-    /**
-     * Layer to contain additional labels (free text)
-     */
-    private LayerWidget labelsLayer;
+    
     /**
      * A rectangle to delimit nodes, labels, connections (free frames)
      */
@@ -168,7 +165,6 @@ public class TopologyViewScene extends GraphScene<Object, String>
         nodesLayer = new LayerWidget(this);
         edgesLayer = new LayerWidget(this);
         freeLabelsLayer = new LayerWidget(this);
-        labelsLayer = new LayerWidget(this);
         framesLayer =  new LayerWidget(this);
         iconsLayer = new LayerWidget(this);
         //menus
@@ -184,7 +180,6 @@ public class TopologyViewScene extends GraphScene<Object, String>
         addChild(edgesLayer);
         addChild(nodesLayer);
         addChild(freeLabelsLayer);
-        addChild(labelsLayer);
         addChild(iconsLayer);
         
 
@@ -220,13 +215,18 @@ public class TopologyViewScene extends GraphScene<Object, String>
     protected Widget attachNodeWidget(Object node) {
         if(node instanceof LocalObjectLight){
             if(((LocalObjectLight)node).getName() == null || !((LocalObjectLight)node).getName().contains(CLOUD_ICON)){
-                AbstractNodeWidget myWidget = new AbstractNodeWidget(this, (LocalObjectLight)node, labelsLayer);
+                AbstractNodeWidget myWidget = new AbstractNodeWidget(this, (LocalObjectLight)node);
                 
                 myWidget.getActions(ACTION_SELECT).addAction(createSelectAction());
                 myWidget.getActions(ACTION_SELECT).addAction(ActionFactory.createMoveAction());
-                myWidget.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(edgesLayer, new SceneConnectProvider(this)));
                 myWidget.getActions(ACTION_SELECT).addAction(ActionFactory.createPopupMenuAction(nodeMenu));
+                
+                myWidget.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(edgesLayer, new SceneConnectProvider(this)));
+                myWidget.getActions(ACTION_CONNECT).addAction(createSelectAction());
+                myWidget.getActions(ACTION_CONNECT).addAction(ActionFactory.createPopupMenuAction(nodeMenu));
+                
                 fireChangeEvent(new ActionEvent(node, SCENE_OBJECTADDED, "lol-add-operation"));
+                
                 nodesLayer.addChild(myWidget);
                 return myWidget;
             }
@@ -362,7 +362,6 @@ public class TopologyViewScene extends GraphScene<Object, String>
             removeNode(getNodes().iterator().next());
         while (!getEdges().isEmpty())
             removeEdge(getEdges().iterator().next());
-        labelsLayer.removeChildren();
         validate();
         
     }
@@ -499,8 +498,10 @@ public class TopologyViewScene extends GraphScene<Object, String>
         return notifier;
     }
     
-    public void toggleLabels(boolean visible){
-        labelsLayer.setVisible(visible);
+    public void toggleLabels(boolean visible) {
+        for (Widget aWidget : nodesLayer.getChildren()) 
+            ((AbstractNodeWidget)aWidget).showLabel(visible);
+        
         if (getView() != null)
             getView().repaint();
     }

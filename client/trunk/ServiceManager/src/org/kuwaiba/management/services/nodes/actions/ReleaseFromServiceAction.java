@@ -51,16 +51,23 @@ public class ReleaseFromServiceAction extends GenericObjectNodeAction implements
         JMenu mnuServices = new JMenu(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_RELEASE_ELEMENT"));
         LocalObjectLight[] services = CommunicationsStub.getInstance().getSpecialAttribute(object.getClassName(), 
                 object.getOid(), "uses");
-        if (services.length == 0)
-            mnuServices.setEnabled(false);
-        else{
-            for (LocalObjectLight service : services){
-                JMenuItem smiServices = new JMenuItem(service.toString());
-                smiServices.setName(String.valueOf(service.getOid()));
-                smiServices.addActionListener(this);
-                mnuServices.add(smiServices);
+        
+        if (services != null) {
+        
+            if (services.length == 0)
+                mnuServices.setEnabled(false);
+            else {
+                for (LocalObjectLight service : services){
+                    JMenuItem smiServices = new JMenuItem(service.toString());
+                    smiServices.setName(String.valueOf(service.getOid()));
+                    smiServices.addActionListener(this);
+                    mnuServices.add(smiServices);
+                }
             }
-        }
-        return mnuServices;
+            return mnuServices;
+        } else {
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            return null;
+        } 
     }
 }

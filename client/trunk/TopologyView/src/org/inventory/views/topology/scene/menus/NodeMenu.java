@@ -20,7 +20,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import org.inventory.views.topology.scene.ObjectNodeWidget;
 import org.inventory.views.topology.scene.TopologyViewScene;
 import org.netbeans.api.visual.action.PopupMenuProvider;
 import org.netbeans.api.visual.widget.Widget;
@@ -34,32 +33,28 @@ public class NodeMenu implements PopupMenuProvider, ActionListener {
     private static final String DELETE_NODE_ACTION = "deleteNodeAction"; // NOI18N
 
     private JPopupMenu menu;
-    private ObjectNodeWidget node;
-
     private TopologyViewScene scene;
 
     public NodeMenu(TopologyViewScene scene) {
-        this.scene=scene;
+        this.scene = scene;
         menu = new JPopupMenu("Node Menu");
         JMenuItem item;
-
-        item = new JMenuItem("Delete Node");
+        item = new JMenuItem("Remove node from view");
         item.setActionCommand(DELETE_NODE_ACTION);
         item.addActionListener(this);
         menu.add(item);
     }
 
     @Override
-    public JPopupMenu getPopupMenu(Widget widget,Point point){
-        node = (ObjectNodeWidget) widget;
-        
+    public JPopupMenu getPopupMenu(Widget widget,Point point) {
         return menu;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getActionCommand().equals(DELETE_NODE_ACTION)){
-            scene.removeNodeWithEdges(scene.findObject(node));
+            for (Object selectedObject : scene.getSelectedObjects())
+                scene.removeNodeWithEdges(selectedObject);
             scene.validate();
         }
     }

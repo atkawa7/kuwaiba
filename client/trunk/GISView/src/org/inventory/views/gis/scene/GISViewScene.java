@@ -139,7 +139,7 @@ public class GISViewScene extends AbstractScene<LocalObjectLight, LocalObjectLig
     
     @Override
     protected Widget attachNodeWidget(LocalObjectLight node) {
-        GeoPositionedNodeWidget myWidget =  new GeoPositionedNodeWidget(this,node, 0, 0, labelsLayer);
+        GeoPositionedNodeWidget myWidget =  new GeoPositionedNodeWidget(this,node, 0, 0);
         myWidget.getActions(AbstractScene.ACTION_SELECT).addAction(createSelectAction());
         myWidget.getActions(AbstractScene.ACTION_SELECT).addAction(ActionFactory.createMoveAction());
         myWidget.getActions(AbstractScene.ACTION_CONNECT).addAction(ActionFactory.createConnectAction(interactionLayer, connectionProvider));

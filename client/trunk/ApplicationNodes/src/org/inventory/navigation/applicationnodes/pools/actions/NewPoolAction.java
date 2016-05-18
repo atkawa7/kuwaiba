@@ -58,7 +58,7 @@ public class NewPoolAction extends AbstractAction{
         
         LocalClassMetadataLight[] allMeta = com.getAllLightMeta(false);
         
-        JComboBox lstType = new JComboBox(allMeta);
+        JComboBox<LocalClassMetadataLight> lstType = new JComboBox<LocalClassMetadataLight>(allMeta);
         lstType.setName("lstType"); //NOI18N
         JComplexDialogPanel pnlMyDialog = new JComplexDialogPanel(
                 new String[]{java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NAME"), java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DESCRIPTION"), java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_TYPE")},

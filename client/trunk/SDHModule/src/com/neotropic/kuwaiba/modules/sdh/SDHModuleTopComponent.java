@@ -17,7 +17,7 @@ import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 
 /**
- * Top component which displays something.
+ * Top component to display the SDH module tools
  */
 @ConvertAsProperties(
         dtd = "-//com.neotropic.kuwaiba.modules.sdh//SDHModule//EN",
