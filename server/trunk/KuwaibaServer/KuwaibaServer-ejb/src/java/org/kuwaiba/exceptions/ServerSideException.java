@@ -16,25 +16,13 @@
 
 package org.kuwaiba.exceptions;
 
-import java.util.logging.Level;
-
 /**
- * The root of all server side exceptions. This is, all the exceptions thrown inside the enterprise application
+ * A wrapper, convenience exception to all InventoryExceptions
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ServerSideException extends Exception{
-    private Level level;
+public class ServerSideException extends Exception {
 
-    public Level getLevel() {
-        return level;
-    }
-
-    public void setLevel(Level level) {
-        this.level = level;
-    }
-
-    public ServerSideException(Level level, String msg) {
+    public ServerSideException(String msg) {
         super(msg);
-        this.level = level;
     }
 }

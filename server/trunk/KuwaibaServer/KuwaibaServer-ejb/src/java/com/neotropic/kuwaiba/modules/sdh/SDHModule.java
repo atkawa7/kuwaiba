@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.Stateless;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.AnnotatedRemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
@@ -21,6 +20,7 @@ import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
@@ -32,13 +32,8 @@ import org.kuwaiba.services.persistence.util.Constants;
  * This class implements the functionality corresponding to the SDH module
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-@Stateless
-public class SDHModule extends GenericCommercialModule {
+public class SDHModule implements GenericCommercialModule {
 
-    /**
-     * The ApplicationEntityManager instance
-     */
-    private ApplicationEntityManager aem;
     /**
      * The MetadataEntityManager instance
      */
@@ -92,7 +87,12 @@ public class SDHModule extends GenericCommercialModule {
     
     @Override
     public String getName() {
-        return "SDH Module"; //NOI18N
+        return "SDH Networks Module"; //NOI18N
+    }
+
+    @Override
+    public String getDescription() {
+        return "Simple SDH module that allows the creation of STMX links, high and low order virtual circuits and finding routes between multiplexers";
     }
 
     @Override
@@ -122,7 +122,6 @@ public class SDHModule extends GenericCommercialModule {
 
     @Override
     public void configureModule(ApplicationEntityManager aem, MetadataEntityManager mem, BusinessEntityManager bem) {
-        this.aem  = aem;
         this.mem = mem;
         this.bem = bem;
         
@@ -154,23 +153,23 @@ public class SDHModule extends GenericCommercialModule {
             String classNameEndpointB, long idEndpointB, String linkType, String defaultName) throws ServerSideException {
 
         if (bem == null || mem == null)
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
         
         long newConnectionId = -1;
         try {
             if (!mem.isSubClass("GenericSDHTransportLink", linkType)) //NOI18N
-                throw new ServerSideException(Level.SEVERE, "Class %s is not subclass of GenericSDHTransportLink");
+                throw new ServerSideException("Class %s is not subclass of GenericSDHTransportLink");
 
             HashMap<String, List<String>> attributesToBeSet = new HashMap<>();
             attributesToBeSet.put(Constants.PROPERTY_NAME, Arrays.asList(new String[] { defaultName == null ? "" : defaultName }));
             
             RemoteBusinessObject communicationsEquipmentA = bem.getParentOfClass(classNameEndpointA, idEndpointA, Constants.CLASS_GENERICCOMMUNICATIONSEQUIPMENT);
             if (communicationsEquipmentA == null)
-                throw new ServerSideException(Level.INFO, String.format("The specified port (%s : %s) doesn't seem to be located in a communications equipment", classNameEndpointA, idEndpointA));
+                throw new ServerSideException(String.format("The specified port (%s : %s) doesn't seem to be located in a communications equipment", classNameEndpointA, idEndpointA));
             
             RemoteBusinessObject communicationsEquipmentB = bem.getParentOfClass(classNameEndpointB, idEndpointB, Constants.CLASS_GENERICCOMMUNICATIONSEQUIPMENT);
             if (communicationsEquipmentB == null)
-                throw new ServerSideException(Level.INFO, String.format("The specified port (%s : %s) doesn't seem to be located in a communications equipment", classNameEndpointB, idEndpointB));
+                throw new ServerSideException(String.format("The specified port (%s : %s) doesn't seem to be located in a communications equipment", classNameEndpointB, idEndpointB));
             
             newConnectionId = bem.createSpecialObject(linkType, null, -1, attributesToBeSet, 0);                      
                        
@@ -199,7 +198,7 @@ public class SDHModule extends GenericCommercialModule {
                 } 
             }
 
-            throw new ServerSideException(Level.SEVERE, e.getMessage());
+            throw new ServerSideException(e.getMessage());
         }
     }
     
@@ -218,15 +217,15 @@ public class SDHModule extends GenericCommercialModule {
     public long createSDHContainerLink(String classNameEndpointA, long idEndpointA, 
             String classNameEndpointB, long idEndpointB, String linkType, List<SDHPosition> positions, String defaultName) throws ServerSideException {
         if (bem == null || mem == null)
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
         
         long newConnectionId = -1;
         try {
             if (!mem.isSubClass("GenericSDHContainerLink", linkType)) //NOI18N
-                throw new ServerSideException(Level.SEVERE, "Class %s is not subclass of GenericSDHContainerLink");
+                throw new ServerSideException("Class %s is not subclass of GenericSDHContainerLink");
 
             if (!mem.isSubClass("GenericCommunicationsEquipment", classNameEndpointA) || !mem.isSubClass("GenericCommunicationsEquipment", classNameEndpointB))
-                throw new ServerSideException(Level.SEVERE, "The endpoints must be subclasses of GenericCommunicationsEquipment");
+                throw new ServerSideException("The endpoints must be subclasses of GenericCommunicationsEquipment");
                 
             HashMap<String, List<String>> attributesToBeSet = new HashMap<>();
             attributesToBeSet.put(Constants.PROPERTY_NAME, Arrays.asList(new String[] { defaultName == null ? "" : defaultName }));
@@ -263,7 +262,7 @@ public class SDHModule extends GenericCommercialModule {
                 } 
             }
 
-            throw new ServerSideException(Level.SEVERE, e.getMessage());
+            throw new ServerSideException(e.getMessage());
         }
     }
     
@@ -282,14 +281,14 @@ public class SDHModule extends GenericCommercialModule {
     public long createSDHTributaryLink(String classNameEndpointA, long idEndpointA, 
             String classNameEndpointB, long idEndpointB, String linkType, List<SDHPosition> positions, String defaultName) throws ServerSideException {
         if (bem == null || mem == null)
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
         
         long newTributaryLinkId = -1;
         long newContainerLinkId;
         
         try {
             if (!mem.isSubClass("GenericSDHTributaryLink", linkType)) //NOI18N
-                throw new ServerSideException(Level.SEVERE, "Class %s is not subclass of GenericSDHTributaryLink");
+                throw new ServerSideException("Class %s is not subclass of GenericSDHTributaryLink");
 
             HashMap<String, List<String>> attributesToBeSet = new HashMap<>();
             attributesToBeSet.put(Constants.PROPERTY_NAME, Arrays.asList(new String[] { defaultName == null ? "" : defaultName }));
@@ -329,7 +328,7 @@ public class SDHModule extends GenericCommercialModule {
                 } 
             }
 
-            throw new ServerSideException(Level.SEVERE, e.getMessage());
+            throw new ServerSideException(e.getMessage());
         }
     }
     
@@ -340,50 +339,43 @@ public class SDHModule extends GenericCommercialModule {
      * @param forceDelete Delete recursively all sdh elements transported by the transport link
      * @throws org.kuwaiba.exceptions.ServerSideException If something goes wrong
      */
-    public void deleteSDHTransportLink(String transportLinkClass, long transportLinkId, boolean forceDelete) throws ServerSideException {
+    public void deleteSDHTransportLink(String transportLinkClass, long transportLinkId, boolean forceDelete) throws ServerSideException, InventoryException {
         if (bem == null || mem == null)
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
         
-        try {
-            if (!mem.isSubClass("GenericSDHContainerLink", transportLinkClass)) //NOI18N
-                    throw new ServerSideException(Level.WARNING, "Class %s is not subclass of GenericSDHContainerLink");
-        } catch(Exception ex){
-            throw new ServerSideException(Level.SEVERE, ex.getMessage());
-        }
+        if (!mem.isSubClass("GenericSDHContainerLink", transportLinkClass)) //NOI18N
+                throw new ServerSideException("Class %s is not subclass of GenericSDHContainerLink");
+        
     }
     /**
      * Deletes a container link
      * @param containerLinkClass Container link class
      * @param containerLinkId Container class id
      * @param forceDelete Delete recursively all sdh elements contained by the container link
-     * @throws ServerSideException If something goes wrong
+     * @throws ServerSideException If some high level thing goes wrong
+     * @throws InventoryException  If some low level thing goes wrong
      */
-    public void deleteSDHContainerLink(String containerLinkClass, long containerLinkId, boolean forceDelete) throws ServerSideException {
+    public void deleteSDHContainerLink(String containerLinkClass, long containerLinkId, boolean forceDelete) throws ServerSideException, InventoryException {
         if (bem == null || mem == null)
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
         
-        try {
-            if (!mem.isSubClass("GenericSDHContainerLink", containerLinkClass)) //NOI18N
-                    throw new ServerSideException(Level.WARNING, "Class %s is not subclass of GenericSDHContainerLink");
-            
-            //The container could carry a tributary link (easy!) or carry more containers inside, in which case, we need to dig one more level.
-            //There's a special case, where the container has no relationships to containers nor to tributary links, those are the empty structured VC4XX
-            List<RemoteBusinessObjectLight> tributaryLinks = bem.getSpecialAttribute(containerLinkClass, containerLinkId, RELATIONSHIP_SDHDELIVERS);
-            
-            if (!tributaryLinks.isEmpty())
-                //This will delete both the tributary link and the container
-                deleteSDHTributaryLink(tributaryLinks.get(0).getClassName(), tributaryLinks.get(0).getId(), forceDelete);
-            else {
-                List<RemoteBusinessObjectLight> containerLinks = bem.getSpecialAttribute(containerLinkClass, containerLinkId, RELATIONSHIP_SDHCONTAINS);
-                if (!containerLinks.isEmpty()) {
-                    for (RemoteBusinessObjectLight containerLink : containerLinks)
-                        deleteSDHContainerLink(containerLink.getClassName(), containerLink.getId(), forceDelete);
-                } else
-                    bem.deleteObject(containerLinkClass, containerLinkId, forceDelete);
-            }
-            
-        } catch(Exception ex){
-            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        if (!mem.isSubClass("GenericSDHContainerLink", containerLinkClass)) //NOI18N
+                throw new ServerSideException("Class %s is not subclass of GenericSDHContainerLink");
+
+        //The container could carry a tributary link (easy!) or carry more containers inside, in which case, we need to dig one more level.
+        //There's a special case, where the container has no relationships to containers nor to tributary links, those are the empty structured VC4XX
+        List<RemoteBusinessObjectLight> tributaryLinks = bem.getSpecialAttribute(containerLinkClass, containerLinkId, RELATIONSHIP_SDHDELIVERS);
+
+        if (!tributaryLinks.isEmpty())
+            //This will delete both the tributary link and the container
+            deleteSDHTributaryLink(tributaryLinks.get(0).getClassName(), tributaryLinks.get(0).getId(), forceDelete);
+        else {
+            List<RemoteBusinessObjectLight> containerLinks = bem.getSpecialAttribute(containerLinkClass, containerLinkId, RELATIONSHIP_SDHCONTAINS);
+            if (!containerLinks.isEmpty()) {
+                for (RemoteBusinessObjectLight containerLink : containerLinks)
+                    deleteSDHContainerLink(containerLink.getClassName(), containerLink.getId(), forceDelete);
+            } else
+                bem.deleteObject(containerLinkClass, containerLinkId, forceDelete);
         }
     }
     /**
@@ -391,28 +383,25 @@ public class SDHModule extends GenericCommercialModule {
      * @param tributaryLinkClass The class of the tributary link
      * @param tributaryLinkId the id of the tributary link
      * @param forceDelete Ignore the existing relationships
-     * @throws ServerSideException If something goes wrong
+     * @throws ServerSideException If some high level thing goes wrong
+     * @throws InventoryException  If some low level thing goes wrong
      */
-    public void deleteSDHTributaryLink(String tributaryLinkClass, long tributaryLinkId, boolean forceDelete) throws ServerSideException {
+    public void deleteSDHTributaryLink(String tributaryLinkClass, long tributaryLinkId, boolean forceDelete) throws ServerSideException, InventoryException {
         if (bem == null || mem == null)
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
         
-        try {
-            if (!mem.isSubClass("GenericSDHTributaryLink", tributaryLinkClass)) //NOI18N
-                    throw new ServerSideException(Level.SEVERE, "Class %s is not subclass of GenericSDHTributaryLink");
-            
-            //There should be only one
-            List<RemoteBusinessObjectLight> containers = bem.getSpecialAttribute(tributaryLinkClass, tributaryLinkId, RELATIONSHIP_SDHDELIVERS);
-            
-            //A tributary link has always a container assigned that should be removed as well
-            for (RemoteBusinessObjectLight container : containers)
-                bem.deleteObject(container.getClassName(), container.getId(), forceDelete);
-            
-            bem.deleteObject(tributaryLinkClass, tributaryLinkId, forceDelete);
-            
-        } catch(Exception ex){
-            throw new ServerSideException(Level.SEVERE, ex.getMessage());
-        }
+        
+        if (!mem.isSubClass("GenericSDHTributaryLink", tributaryLinkClass)) //NOI18N
+                throw new ServerSideException("Class %s is not subclass of GenericSDHTributaryLink");
+
+        //There should be only one
+        List<RemoteBusinessObjectLight> containers = bem.getSpecialAttribute(tributaryLinkClass, tributaryLinkId, RELATIONSHIP_SDHDELIVERS);
+
+        //A tributary link has always a container assigned that should be removed as well
+        for (RemoteBusinessObjectLight container : containers)
+            bem.deleteObject(container.getClassName(), container.getId(), forceDelete);
+
+        bem.deleteObject(tributaryLinkClass, tributaryLinkId, forceDelete);
     }
     
     /**
@@ -474,7 +463,7 @@ public class SDHModule extends GenericCommercialModule {
      * @throws ObjectNotFoundException
      * @throws MetadataObjectNotFoundException 
      */
-    public List<SDHContainerLinkDefinition> getSDHContainersInTransportLink(String transportLinkClass, long transportLinkId) 
+    public List<SDHContainerLinkDefinition> getSDHTransportLinkStructure(String transportLinkClass, long transportLinkId) 
             throws NotAuthorizedException, IllegalArgumentException, ObjectNotFoundException, MetadataObjectNotFoundException {
         
         if (!mem.isSubClass("GenericSDHTransportLink", transportLinkClass))
@@ -496,6 +485,36 @@ public class SDHModule extends GenericCommercialModule {
             
             List<SDHPosition> position = new ArrayList<>();
             position.add(new SDHPosition(transportLinkClass, transportLinkId, (Integer)container.getProperties().get("sdhPosition")));
+            
+            containers.add(new SDHContainerLinkDefinition(container.getObject(), !relatedLinks.isEmpty(), position)); //an unstructured container would have just one SDHDELIVERS relationship
+                                                                                                                      //Note that the "positions" array here is filled ONLY with the position used in this particular transport link and does not represents the whole path
+        }
+        
+        return containers;
+    }
+    
+    public List<SDHContainerLinkDefinition> getSDHContainerLinkStructure(String containerLinkClass, long containerLinkId) 
+            throws NotAuthorizedException, IllegalArgumentException, ObjectNotFoundException, MetadataObjectNotFoundException {
+        
+        if (!mem.isSubClass("GenericSDHContainerLink", containerLinkClass))
+                throw new IllegalArgumentException(String.format("Class %s is not a GenericSDHContainerLink", containerLinkClass));
+        
+        ArrayList<SDHContainerLinkDefinition> containers = new ArrayList<>();
+        
+        List<AnnotatedRemoteBusinessObjectLight> relatedContainers = bem.getAnnotatedSpecialAttribute(containerLinkClass, 
+                containerLinkId, RELATIONSHIP_SDHCONTAINS);
+        
+        for (AnnotatedRemoteBusinessObjectLight container : relatedContainers) {
+            List<RemoteBusinessObjectLight> relatedLinks = bem.getSpecialAttribute(container.getObject().getClassName(), 
+                    container.getObject().getId(), RELATIONSHIP_SDHCONTAINS);
+                                   
+            if (!container.getProperties().containsKey("sdhPosition"))
+                throw new MetadataObjectNotFoundException(String.
+                        format("The container %s (id %s) is related to the transport link with id %s, but no position is specified", 
+                                container.getObject().getName(), container.getObject().getId(), containerLinkId));
+            
+            List<SDHPosition> position = new ArrayList<>();
+            position.add(new SDHPosition(containerLinkClass, containerLinkId, (Integer)container.getProperties().get("sdhPosition")));
             
             containers.add(new SDHContainerLinkDefinition(container.getObject(), !relatedLinks.isEmpty(), position)); //an unstructured container would have just one SDHDELIVERS relationship
                                                                                                                       //Note that the "positions" array here is filled ONLY with the position used in this particular transport link and does not represents the whole path

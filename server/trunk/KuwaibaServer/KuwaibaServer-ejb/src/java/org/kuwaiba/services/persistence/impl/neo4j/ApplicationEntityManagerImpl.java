@@ -16,6 +16,7 @@
 
 package org.kuwaiba.services.persistence.impl.neo4j;
 
+import com.neotropic.kuwaiba.modules.GenericCommercialModule;
 import com.ociweb.xml.StartTagWAX;
 import com.ociweb.xml.WAX;
 import java.io.BufferedReader;
@@ -26,6 +27,7 @@ import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -138,9 +140,14 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
      * Hashmap with the current sessions. The key is the username, the value is the respective session object
      */
     private HashMap<String, Session> sessions;
+    /**
+     * A library of all registered commercial modules
+     */
+    private HashMap<String, GenericCommercialModule> commercialModules;
     
     public ApplicationEntityManagerImpl() {
         this.cm = CacheManager.getInstance();
+        commercialModules = new HashMap<>();
         this.configuration = new Properties();
     }
 
@@ -1686,6 +1693,27 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             int type, ChangeDescriptor changeDescriptor) throws ApplicationObjectNotFoundException, ObjectNotFoundException {
         createObjectActivityLogEntry(userName, className, oid, type, changeDescriptor.getAffectedProperties(), changeDescriptor.getOldValues(), changeDescriptor.getNewValues(), changeDescriptor.getNotes());
     }
+    
+    //Comercial modules
+
+    @Override
+    public void registerCommercialModule(GenericCommercialModule module) throws NotAuthorizedException {
+        if (module.getName() != null)
+            commercialModules.put(module.getName(), module);
+        else
+            throw new IllegalArgumentException("A module can not have an empty name");
+    }
+
+    @Override
+    public GenericCommercialModule getCommercialModule(String moduleName) throws NotAuthorizedException {
+        return commercialModules.get(moduleName);
+    }
+
+    @Override
+    public Collection<GenericCommercialModule> getCommercialModules() throws NotAuthorizedException {
+        return commercialModules.values();
+    }
+    
 
     // Helpers
     /**

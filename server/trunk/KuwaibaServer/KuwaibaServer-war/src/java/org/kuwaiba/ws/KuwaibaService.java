@@ -16,9 +16,8 @@
 
 package org.kuwaiba.ws;
 
+import com.neotropic.kuwaiba.modules.sdh.SDHModule;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.jws.WebMethod;
@@ -74,16 +73,16 @@ public class KuwaibaService {
     @WebMethod(operationName = "createSession")
     public RemoteSession createSession(@WebParam(name = "username") String username,
             @WebParam(name = "password") String password) throws Exception{
-        try{
+        try {
             String remoteAddress = getIPAddress();
             return wsBean.createSession(username, password, remoteAddress);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createSession: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     /**
@@ -96,13 +95,13 @@ public class KuwaibaService {
         try{
             String remoteAddress = getIPAddress();
             wsBean.closeSession(sessionId, remoteAddress);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in closeSession: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -119,12 +118,12 @@ public class KuwaibaService {
         {
             return wsBean.getUsers(getIPAddress(), sessionId);
         } catch(Exception e){
-            Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getUsers: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -140,12 +139,12 @@ public class KuwaibaService {
         {
             return wsBean.getGroups(getIPAddress(), sessionId);
         } catch(Exception e){
-            Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getGroups: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -176,12 +175,12 @@ public class KuwaibaService {
         {
             return wsBean.createUser(username, password, firstName, lastName, enabled, privileges, groups, getIPAddress(), sessionId);
         } catch(Exception e){
-            Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createUser: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -213,12 +212,12 @@ public class KuwaibaService {
         {
             wsBean.setUserProperties(oid, username, password, firstName, lastName, enabled, privileges, groups, getIPAddress(), sessionId);
         } catch(Exception e){
-            Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in setUserProperties: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -243,12 +242,12 @@ public class KuwaibaService {
         {
             return wsBean.createGroup(groupName, description, privileges, users, getIPAddress(), sessionId);
         } catch(Exception e){
-            Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createGroup: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -273,12 +272,12 @@ public class KuwaibaService {
         {
             wsBean.setGroupProperties(oid, groupName, description, privileges, users, getIPAddress(), sessionId);
         } catch(Exception e){
-            Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in setGroupProperties: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -291,16 +290,15 @@ public class KuwaibaService {
     @WebMethod(operationName = "deleteUsers")
     public void deleteUsers(@WebParam(name = "oids")long[] oids,
             @WebParam(name = "sessionId")String sessionId) throws Exception {
-        try
-        {
+        try {
             wsBean.deleteUsers(oids, getIPAddress(), sessionId);
         } catch(Exception e){
-            Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteUsers: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -313,16 +311,15 @@ public class KuwaibaService {
     @WebMethod(operationName = "deleteGroups")
     public void deleteGroups(@WebParam(name = "oids")long[] oids,
             @WebParam(name = "sessionId")String sessionId) throws Exception {
-        try
-        {
+        try {
             wsBean.deleteGroups(oids, getIPAddress(), sessionId);
         } catch(Exception e){
-            Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteGroups: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -342,13 +339,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return wsBean.getObjectRelatedView(oid, objectClass, viewId, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getObjectRelatedView: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -370,13 +367,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return wsBean.getObjectRelatedViews(oid, objectClass, viewType, limit, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getObjectRelatedViews: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -394,13 +391,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return wsBean.getGeneralViews(viewType, limit, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getGeneralViews: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -414,15 +411,15 @@ public class KuwaibaService {
     @WebMethod(operationName = "getGeneralView")
     public ViewInfo getGeneralView(@WebParam(name = "viewId")long viewId,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
-        try{
+        try {
             return wsBean.getGeneralView(viewId, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getGeneralView: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -448,15 +445,15 @@ public class KuwaibaService {
             @WebParam(name = "structure")byte[] structure,
             @WebParam(name = "background")byte[] background,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
-        try{
+        try {
             return wsBean.createObjectRelatedView(objectId, objectClass, name, description, viewType, structure, background, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createObjectRelatedView: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -480,13 +477,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return wsBean.createGeneralView(viewType, name, description, structure, background, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createGeneralView: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -508,15 +505,15 @@ public class KuwaibaService {
             @WebParam(name = "viewName")String viewName, @WebParam(name = "viewDescription")String viewDescription,
             @WebParam(name = "structure")byte[] structure,
             @WebParam(name = "background")byte[] background, @WebParam(name = "sessionId")String sessionId) throws Exception{
-        try{
+        try {
             wsBean.updateObjectRelatedView(objectOid, objectClass, viewId, viewName, viewDescription, structure, background, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in updateObjectRelatedView: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -536,13 +533,13 @@ public class KuwaibaService {
             @WebParam(name = "structure")byte[] structure, @WebParam(name = "background")byte[] background, @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             wsBean.updateGeneralView(viewId, viewName, viewDescription, structure, background, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in updateGeneralView: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     /**
@@ -556,13 +553,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             wsBean.deleteGeneralView(oids, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteGeneralView: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -584,13 +581,13 @@ public class KuwaibaService {
         try
         {
             return wsBean.createListTypeItem(className, name, displayName, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createListTypeItem: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
 
     }
@@ -612,13 +609,13 @@ public class KuwaibaService {
 
         try{
             wsBean.deleteListTypeItem(className, oid, releaseRelationships, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteListTypeItem: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
 
     }
@@ -636,13 +633,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId") String sessionId) throws Exception{
         try{
             return wsBean.getListTypeItems(className, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getListTypeItems: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
 
     }
@@ -659,13 +656,13 @@ public class KuwaibaService {
         try
         {
             return wsBean.getInstanceableListTypes(getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getInstanceableListTypes: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -683,13 +680,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return wsBean.executeQuery(query, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in executeQuery: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -711,13 +708,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return wsBean.createQuery(queryName, ownerOid, queryStructure, description, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createQuery: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -740,13 +737,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             wsBean.saveQuery(queryOid, queryName, ownerOid, queryStructure, description, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in saveQuery: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -761,13 +758,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             wsBean.deleteQuery(queryOid, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteQuery: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -783,13 +780,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return wsBean.getQueries(showPublic, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getQueries: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -805,13 +802,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return wsBean.getQuery(queryOid, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getQuery: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -827,13 +824,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return wsBean.getClassHierarchy(showAll, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getClassHierarchy: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -858,13 +855,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return wsBean.createPool(parentId, name, description, instancesOfClass, getIPAddress(),  sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createPool: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -888,13 +885,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return wsBean.createPoolItem(poolId, className, attributeNames, attributeValues, templateId, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createPoolItem: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -909,13 +906,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             wsBean.deletePools(ids, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deletePools: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -936,13 +933,13 @@ public class KuwaibaService {
             String sessionId) throws Exception{
         try{
             return wsBean.getPools(limit, parentId, className, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getPoolsForParentWithId: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -960,13 +957,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId") String sessionId) throws Exception{
         try{
             return wsBean.getPools(limit, className, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getPools: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -984,13 +981,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return wsBean.getPoolItems(poolId, limit, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getPoolItems: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -1014,13 +1011,13 @@ public class KuwaibaService {
         try{
             RemoteObjectLight[] res = wsBean.getObjectChildren(oid,objectClassId, maxResults, getIPAddress(), sessionId);
             return res;
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getObjectChildrenForClassWithId: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -1041,13 +1038,13 @@ public class KuwaibaService {
         try{
             RemoteObjectLight[] res = wsBean.getObjectChildren(objectClassName, oid, maxResults, getIPAddress(), sessionId);
             return res;
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getObjectChildren: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -1068,13 +1065,13 @@ public class KuwaibaService {
         try{
             RemoteObjectLight[] res = wsBean.getSiblings(objectClassName, oid, maxResults, getIPAddress(), sessionId);
             return res;
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getSiblings: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -1097,13 +1094,13 @@ public class KuwaibaService {
         try{
             RemoteObject[] res = wsBean.getChildrenOfClass(parentOid,parentClass,childrenClass, maxResults, getIPAddress(), sessionId);
             return res;
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getChildrenOfClass: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -1125,13 +1122,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return wsBean.getChildrenOfClassLight(parentOid,parentClass,childrenClass,maxResults, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getChildrenOfClassLight: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -1150,13 +1147,13 @@ public class KuwaibaService {
 
         try{
             return wsBean.getObject(objectClass, oid, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getobject: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -1174,13 +1171,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return wsBean.getObjectLight(objectClass, oid, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getObjectLight: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -1198,13 +1195,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return wsBean.getObjectsOfClassLight(className, maxResults, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getObjectsOfClassLight: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -1222,13 +1219,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return wsBean.getParent(objectClass, oid, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getParent: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -1238,13 +1235,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return wsBean.getParents(objectClass, oid, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getParents: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -1263,13 +1260,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return wsBean.getSpecialAttributes(objectClass, oid, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getSpecialAttributes: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -1289,13 +1286,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return wsBean.getParentOfClass(objectClass, oid, parentClass, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getParentOfClass: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -1316,13 +1313,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return wsBean.getSpecialAttribute(objectClass, oid, attributeName, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getSpecialAttribute: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -1332,13 +1329,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId") String sessionId) throws Exception {
         try{
             return wsBean.getObjectSpecialChildren(objectClass, objectId, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getObjectSpecialChildren: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -1359,13 +1356,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             wsBean.updateObject(className,oid,attributeNames, attributeValues, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in updateObject: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -1391,13 +1388,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return wsBean.createObject(className,parentObjectClassName, parentOid,attributeNames,attributeValues, templateId, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createObject: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -1425,13 +1422,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return wsBean.createSpecialObject(className,parentObjectClassName, parentOid,attributeNames,attributeValues, templateId, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createSpecialObject: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -1450,13 +1447,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             wsBean.deleteObjects(classNames,oids, releaseRelationships, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteObjects: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -1477,13 +1474,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             wsBean.moveObjects(targetClass,targetOid, objectClasses, objectOids, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in moveObjects: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -1508,13 +1505,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return wsBean.copyObjects(targetClass,targetOid, objectClasses, objectOids, recursive, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in copyObjects: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     /**
@@ -1540,13 +1537,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             wsBean.connectMirrorPort(aObjectClass, aObjectId, bObjectClass, bObjectId, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in connectMirrorPort: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -1564,13 +1561,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             wsBean.releaseMirrorPort(objectClass, objectId, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in releaseMirrorPort: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -1605,13 +1602,13 @@ public class KuwaibaService {
         try{
             return wsBean.createPhysicalConnection(aObjectClass, aObjectId,bObjectClass, bObjectId,
                    parentClass, parentId, attributeNames, attributeValues, connectionClass, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createPhysicalConnection: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -1633,13 +1630,13 @@ public class KuwaibaService {
         try{
             return wsBean.createBulkPhysicalConnections(connectionClass, numberOfChildren,
                    parentClass, parentId, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createBulkPhysicalConnections: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -1656,13 +1653,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return wsBean.getConnectionEndpoints(connectionClass, connectionId, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getConnectionEndpoints: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -1680,13 +1677,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return wsBean.getPhysicalPath(objectClass, objectId, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getPhysicalPath: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     } 
     
@@ -1710,13 +1707,13 @@ public class KuwaibaService {
                 throw new Exception("The array sizes don't match");
             
             wsBean.connectPhysicalLinks(sideAClassNames, sideAIds, linksClassNames, linksIds, sideBClassNames, sideBIds, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in connectPhysicalLinks: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -1734,19 +1731,19 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             wsBean.deletePhysicalConnection(objectClass, objectId, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deletePhysicalConnection: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
     //Services manager
     /**
-     * @deprecated 
+     * @deprecated Use associateObjectsToService instead
      * Associates an object (a resource) to an existing service
      * @param objectClass Object class
      * @param objectId Object id
@@ -1764,13 +1761,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception {
         try{
             wsBean.associateObjectToService(objectClass, objectId, serviceClass, serviceId, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in associateObjectToService: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -1792,13 +1789,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception {
         try{
             wsBean.associateObjectsToService(objectClass, objectId, serviceClass, serviceId, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in associateObjectsToService: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -1818,13 +1815,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception {
         try{
             wsBean.releaseObjectFromService(serviceClass, serviceId, targetId, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in releaseObjectFromService: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -1843,13 +1840,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception {
         try{
             return wsBean.getServiceResources(serviceClass, serviceId, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getServiceResources: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -1869,15 +1866,14 @@ public class KuwaibaService {
             @WebParam(name = "attributeValues")String[] attributeValues,
             @WebParam(name = "sessionId")String sessionId) throws Exception {
         try{
-            System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
             return wsBean.createCustomer(customerClass, attributes, attributeValues, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createCustomer: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -1902,13 +1898,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception {
         try{
             return wsBean.createService(serviceClass, customerClass, customerId, attributes, attributeValues, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createService: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -1926,13 +1922,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return wsBean.getServices(customerClass, customerId, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getServices: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -1954,13 +1950,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception {
         try{
             return wsBean.getBusinessObjectAuditTrail (objectClass, objectId, limit, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getObjectAuditTrail: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -1979,13 +1975,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception {
         try{
             return wsBean.getGeneralActivityAuditTrail (page, limit, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getActivityAuditTrail: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -2005,13 +2001,13 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             wsBean.getApplicationObjectAuditTrail (objectClass, objectId, limit, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getApplicationObjectAuditTrail: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -2054,12 +2050,12 @@ public class KuwaibaService {
         try{
             if (icon != null){
                 if (icon.length > Constants.MAX_ICON_SIZE){
-                    throw new ServerSideException(Level.WARNING, String.format("The uploaded file exceeds the max file size (%s)", Constants.MAX_BACKGROUND_SIZE));
+                    throw new ServerSideException(String.format("The uploaded file exceeds the max file size (%s)", Constants.MAX_BACKGROUND_SIZE));
                 }
             }
             if (smallIcon != null){
                 if (smallIcon.length > Constants.MAX_ICON_SIZE){
-                    throw new ServerSideException(Level.WARNING, String.format("The uploaded file exceeds the max file size (%s)", Constants.MAX_BACKGROUND_SIZE));
+                    throw new ServerSideException(String.format("The uploaded file exceeds the max file size (%s)", Constants.MAX_BACKGROUND_SIZE));
                 }
             }
             ClassInfo ci = new ClassInfo();
@@ -2077,13 +2073,13 @@ public class KuwaibaService {
 
             return wsBean.createClass(ci, getIPAddress(), sessionId);
 
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createClass: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -2121,11 +2117,11 @@ public class KuwaibaService {
         {
             if (icon != null){
                 if (icon.length > Constants.MAX_ICON_SIZE)
-                    throw new ServerSideException(Level.WARNING, String.format("The file exceeds the file size limits (%s)", Constants.MAX_BACKGROUND_SIZE));
+                    throw new ServerSideException(String.format("The file exceeds the file size limits (%s)", Constants.MAX_BACKGROUND_SIZE));
             }
             if (smallIcon != null){
                 if (smallIcon.length > Constants.MAX_ICON_SIZE)
-                    throw new ServerSideException(Level.WARNING, String.format("The file exceeds the file size limits (%s)", Constants.MAX_BACKGROUND_SIZE));
+                    throw new ServerSideException(String.format("The file exceeds the file size limits (%s)", Constants.MAX_BACKGROUND_SIZE));
             }
             ClassInfo ci = new ClassInfo();
             ci.setId(classId);
@@ -2142,13 +2138,13 @@ public class KuwaibaService {
 
             wsBean.setClassProperties(ci, getIPAddress(), sessionId);
 
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in setClassProperty: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -2167,13 +2163,13 @@ public class KuwaibaService {
     String sessionId) throws Exception {
         try {
             return wsBean.getAttribute(className, attributeName, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getAttribute: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -2192,13 +2188,13 @@ public class KuwaibaService {
         String sessionId) throws Exception{
         try {
             return wsBean.getAttribute(classId, attributeName, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getAttributeForClassWithId: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
    
@@ -2237,13 +2233,13 @@ public class KuwaibaService {
 
             wsBean.createAttribute(className, ai, getIPAddress(), sessionId);
 
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getAttributeForClassWithId: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -2282,13 +2278,13 @@ public class KuwaibaService {
 
             wsBean.createAttribute(ClassId, ai, getIPAddress(), sessionId);
 
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createAttributeForClassWithId: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -2327,13 +2323,13 @@ public class KuwaibaService {
             AttributeInfo ai = new AttributeInfo(attributeId, name, displayName, 
                     type, administrative, visible, readOnly, unique, description, noCopy);
             wsBean.setAttributeProperties(className, ai, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in setAttributeProperties: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -2372,13 +2368,13 @@ public class KuwaibaService {
             AttributeInfo ai = new AttributeInfo(attributeId, name, displayName, 
                     type, isAdministrative, isVisible, isReadOnly, isUnique, description, noCopy);
             wsBean.setAttributeProperties(classId, ai, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in setAttributePropertiesForClassWithId: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -2398,13 +2394,12 @@ public class KuwaibaService {
         try {
             wsBean.deleteAttribute(className, attributeName, getIPAddress(), sessionId);
         } catch(Exception e){
-            Level level = Level.SEVERE;
-            if (e instanceof ServerSideException){
-                level = ((ServerSideException)e).getLevel();
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteAttribute: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
         }
     }
 
@@ -2423,13 +2418,12 @@ public class KuwaibaService {
         try {
             wsBean.deleteAttribute(classId, attributeName, getIPAddress(), sessionId);
         } catch(Exception e){
-            Level level = Level.SEVERE;
-            if (e instanceof ServerSideException){
-                level = ((ServerSideException)e).getLevel();
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteAttributeForClassWithId: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
         }
     }
 
@@ -2448,12 +2442,12 @@ public class KuwaibaService {
         try {
             return wsBean.getClass(className, getIPAddress(), sessionId);
         } catch(Exception e){
-            Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getClass: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -2470,13 +2464,13 @@ public class KuwaibaService {
     String sessionId) throws Exception {
         try {
             return wsBean.getClass(classId, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getClassWithId: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -2498,13 +2492,13 @@ public class KuwaibaService {
         try
         {
             return wsBean.getSubClassesLight(className, includeAbstractClasses, includeSelf, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getSubclassesLight: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
 
     }
@@ -2527,15 +2521,14 @@ public class KuwaibaService {
         try
         {
             return wsBean.getSubClassesLightNoRecursive(className, includeAbstractClasses, includeSelf, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getSubClassesLightNoRecursive: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
-
     }
 
     /**
@@ -2554,12 +2547,12 @@ public class KuwaibaService {
         {
             return wsBean.getAllClasses(includeListTypes, getIPAddress(), sessionId);
         } catch(Exception e){
-            Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getAllClasses: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -2578,15 +2571,14 @@ public class KuwaibaService {
         try
         {
             return wsBean.getAllClassesLight(includeListTypes, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getAllClassesLight: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
-
     }
 
     /**
@@ -2603,13 +2595,13 @@ public class KuwaibaService {
 
         try {
             wsBean.deleteClass(className, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteClass: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -2627,13 +2619,13 @@ public class KuwaibaService {
 
         try {
             wsBean.deleteClass(classId, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteClassWithId: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -2652,13 +2644,13 @@ public class KuwaibaService {
 
         try {
             return wsBean.getPossibleChildren(parentClassName, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getPossibleChildren: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -2678,13 +2670,13 @@ public class KuwaibaService {
 
         try {
             return wsBean.getPossibleChildrenNoRecursive(parentClassName, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getPossibleChildrenNoRecursive: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -2703,13 +2695,13 @@ public class KuwaibaService {
 
         try {
             return wsBean.getSpecialPossibleChildren(parentClassName, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getSpecialPossibleChildren: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -2729,13 +2721,13 @@ public class KuwaibaService {
 
         try {
             wsBean.addPossibleChildren(parentClassId, newPossibleChildren, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in addPossibleChildrenForClassWithId: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -2755,13 +2747,13 @@ public class KuwaibaService {
             String sessionId) throws Exception {
         try {
             wsBean.addPossibleChildren(parentClassName, childrenToBeAdded, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in addPossibleChildren: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -2779,13 +2771,13 @@ public class KuwaibaService {
     String sessionId) throws Exception {
         try{
             wsBean.removePossibleChildren(parentClassId, childrenToBeRemoved, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in removePossibleChildrenForClassWithId: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
 
@@ -2805,17 +2797,22 @@ public class KuwaibaService {
             String sessionId) throws Exception {
         try{
             return wsBean.getUpstreamContainmentHierarchy(className, recursive, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getUpstreamContainmentHierarchy: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Utility methods. Click on the + sign on the left to edit the code.">/**
+
+    
+    // </editor-fold>
+    
     // <editor-fold defaultstate="collapsed" desc="Sync/ bulk load methods. Click on the + sign on the left to edit the code.">/**
     @WebMethod(operationName = "bulkUpload")
     public String bulkUpload(@WebParam(name = "file")
@@ -2825,13 +2822,13 @@ public class KuwaibaService {
         String sessionId) throws Exception {
         try{
             return wsBean.bulkUpload(file, commitSize, dataType, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in downloadBulkLoadLog: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     
@@ -2841,46 +2838,135 @@ public class KuwaibaService {
             String sessionId) throws Exception {
         try{
             return wsBean.downloadBulkLoadLog(fileName, getIPAddress(), sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in downloadBulkLoadLog: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
     // </editor-fold>
     
-    // <editor-fold defaultstate="collapsed" desc="Utility methods. Click on the + sign on the left to edit the code.">/**
-
-    /**
-     * Says if a given class is subclass of another. 
-     * @param className Name of the class to test
-     * @param subclassOf Name of the alleged super class
-     * @param sessionId Session token
-     * @return True if className is subclass of subclassOf and false otherwise. If className is equals to subclassOf, it will return true as well
-     * @throws Exception If something goes wrong
-     */
-    @WebMethod(operationName = "isSubclassOf")
-    public boolean isSubclassOf(@WebParam(name = "className") String className,
-            @WebParam(name = "subclassOf") String subclassOf,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
-        try{
-            String remoteAddress = getIPAddress();
-            return wsBean.isSubclassOf(className, subclassOf, remoteAddress, sessionId);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
+    // <editor-fold defaultstate="collapsed" desc="Commercial modules data methods">
+        // <editor-fold defaultstate="collapsed" desc="SDH Networks Module">
+    @WebMethod(operationName = "createSDHTransportLink")
+    public long createSDHTransportLink(@WebParam(name = "classNameEndpointA") String classNameEndpointA, 
+            @WebParam(name = "idEndpointA") long idEndpointA, 
+            @WebParam(name = "classNameEndpointB") String classNameEndpointB, 
+            @WebParam(name = "idEndpointB") long idEndpointB, 
+            @WebParam(name = "linkType") String linkType, 
+            @WebParam(name = "defaultName") String defaultName, 
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            return wsBean.createSDHTransportLink(classNameEndpointA, idEndpointA, classNameEndpointB, idEndpointB, linkType, defaultName, getIPAddress(), sessionId);
+        } catch(Exception e){
             if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(KuwaibaService.class.getName()).log(level,
-                    e.getClass().getSimpleName() + ": {0}", e.getMessage()); //NOI18N
-            throw e;
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createSDHTransportLink: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
         }
     }
+    
+    @WebMethod(operationName = "createSDHContainerLink")
+    public long createSDHContainerLink(@WebParam(name = "classNameEndpointA") String classNameEndpointA, 
+            @WebParam(name = "idEndpointA") long idEndpointA, 
+            @WebParam(name = "classNameEndpointB") String classNameEndpointB,
+            @WebParam(name = "idEndpointB") long idEndpointB,
+            @WebParam(name = "linkType") String linkType, 
+            @WebParam(name = "positions") List<SDHModule.SDHPosition> positions, 
+            @WebParam(name = "defaultName") String defaultName,
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            return wsBean.createSDHContainerLink(classNameEndpointA, idEndpointA, classNameEndpointB, idEndpointB, linkType, positions, defaultName, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createSDHContainerLink: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    @WebMethod(operationName = "createSDHTributaryLink")
+    public long createSDHTributaryLink(@WebParam(name = "classNameEndpointA") String classNameEndpointA, 
+            @WebParam(name = "idEndpointA") long idEndpointA, 
+            @WebParam(name = "classNameEndpointB") String classNameEndpointB, 
+            @WebParam(name = "idEndpointB") long idEndpointB, 
+            @WebParam(name = "linkType") String linkType, 
+            @WebParam(name = "positions") List<SDHModule.SDHPosition> positions, 
+            @WebParam(name = "defaultName") String defaultName, 
+            @WebParam(name = "sessionId")  String sessionId) throws ServerSideException {
+        try {
+            return wsBean.createSDHTributaryLink(classNameEndpointA, idEndpointA, classNameEndpointB, idEndpointB, linkType, positions, defaultName, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createSDHTributaryLink: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    @WebMethod(operationName = "deleteSDHTransportLink")
+    public void deleteSDHTransportLink(@WebParam(name = "transportLinkClass") String transportLinkClass, 
+            @WebParam(name = "transportLinkId") long transportLinkId, 
+            @WebParam(name = "forceDelete") boolean forceDelete, 
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            wsBean.deleteSDHTransportLink(transportLinkClass, transportLinkId, forceDelete, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteSDHTransportLink: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    @WebMethod(operationName = "deleteSDHContainerLink")
+    public void deleteSDHContainerLink(@WebParam(name = "containerLinkClass") String containerLinkClass, 
+            @WebParam(name = "containerLinkId") long containerLinkId, 
+            @WebParam(name = "forceDelete") boolean forceDelete, 
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            wsBean.deleteSDHContainerLink(containerLinkClass, containerLinkId, forceDelete, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteSDHContainerLink: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    @WebMethod(operationName = "deleteSDHTributaryLink")
+    public void deleteSDHTributaryLink(@WebParam(name = "tributaryLinkClass") String tributaryLinkClass, 
+            @WebParam(name = "tributaryLinkId") long tributaryLinkId, 
+            @WebParam(name = "forceDelete") boolean forceDelete, 
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            wsBean.deleteSDHTributaryLink(tributaryLinkClass, tributaryLinkId, forceDelete, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteSDHTributaryLink: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    
+        // </editor-fold>    
     // </editor-fold>
-    
-    
     // <editor-fold defaultstate="collapsed" desc="Helpers. Click on the + sign on the left to edit the code.">/**
     /**
      * Gets the IP address from the client issuing the request

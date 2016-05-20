@@ -110,7 +110,7 @@ public class PersistenceLayerFactory{
             throws InstantiationException, IllegalAccessException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException {
         try {
             Class myClass = (Class) Class.forName(
-                    "org.kuwaiba.services.persistence.impl.neo4j.BusinessEntityManagerImpl");
+                    "org.kuwaiba.services.persistence.impl.neo4j.telecom.BusinessEntityManagerImpl");
             
             Constructor bemConstructor = myClass.getConstructor(ConnectionManager.class, ApplicationEntityManager.class);
             return (BusinessEntityManager)bemConstructor.newInstance(connectionManager, aem);

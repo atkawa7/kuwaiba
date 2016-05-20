@@ -16,6 +16,8 @@
 
 package org.kuwaiba.apis.persistence.application;
 
+import com.neotropic.kuwaiba.modules.GenericCommercialModule;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
@@ -39,10 +41,7 @@ public interface ApplicationEntityManager {
      * String that identifies the class used for pools
      */
     public static final String CLASS_POOL = "Pool";
-    /**
-     * String that identifies the superclass of all the list types
-     */
-    public static final String CLASS_GENERICOBJECTLIST = "GenericObjectList";
+    
    
     /**
      * Gets current sessions
@@ -575,4 +574,23 @@ public interface ApplicationEntityManager {
     public void createObjectActivityLogEntry(String userName, String className, long oid,  
             int type, ChangeDescriptor changeDescriptor) throws ApplicationObjectNotFoundException, ObjectNotFoundException;
     
+    /**
+     * Registers a commercial module. Replaces an existing one if the name of provided one is already registered
+     * @param module The module to be registered
+     * @throws NotAuthorizedException If the user is not authorized to register commercial modules
+     */
+    public void registerCommercialModule(GenericCommercialModule module) throws NotAuthorizedException;
+    /**
+     * Gets a particular commercial module based on its name
+     * @param moduleName The module name
+     * @return The module. Null if the name could not be found
+     * @throws NotAuthorizedException If the user is not authorized to access a particular commercial module
+     */
+    public GenericCommercialModule getCommercialModule(String moduleName) throws NotAuthorizedException;
+    /**
+     * Gets a commercial module based on its name
+     * @return The module instance
+     * @throws NotAuthorizedException If the user is not authorized to access a particular commercial module
+     */
+    public Collection<GenericCommercialModule> getCommercialModules() throws NotAuthorizedException;
 }

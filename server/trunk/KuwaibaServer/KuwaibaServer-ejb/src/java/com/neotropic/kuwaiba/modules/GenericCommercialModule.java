@@ -20,15 +20,20 @@ import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 
 /**
- * This is the root class of all commercial modules
+ * All commercial modules should implement this interface
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public abstract class GenericCommercialModule {
+public interface GenericCommercialModule {
     /**
-     * Gets the module's name
+     * Gets the module's name. Must be unique, otherwise, the system will only take last one loaded at application's startup
      * @return The module's name
      */
-    public abstract String getName();
+    public String getName();
+    /**
+     * Gets the module description
+     * @return he module's description
+     */
+    public String getDescription();
     /**
      * Gets the module's version
      * @return The module's version

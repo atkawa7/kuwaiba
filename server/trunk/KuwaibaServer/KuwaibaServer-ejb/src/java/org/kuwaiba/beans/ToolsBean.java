@@ -16,7 +16,6 @@
 
 package org.kuwaiba.beans;
 
-import java.util.logging.Level;
 import javax.ejb.Stateless;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
@@ -40,10 +39,10 @@ public class ToolsBean implements ToolsBeanRemote {
             try {
                 PersistenceService.getInstance().getApplicationEntityManager().createUser("admin", "kuwaiba", "John", "Doe", true, null, null);
             }catch(InvalidArgumentException ie){
-                throw new ServerSideException(Level.SEVERE, ie.getMessage());
+                throw new ServerSideException(ie.getMessage());
             }
         } catch(InvalidArgumentException | IllegalStateException ex){
-            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(ex.getMessage());
         }
         
     }
@@ -58,7 +57,7 @@ public class ToolsBean implements ToolsBeanRemote {
         try{
             return PersistenceService.getInstance().getDataModelLoader().loadDataModel(dataModelFileAsByteArray);
         } catch (Exception ex) {
-            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(ex.getMessage());
         }        
     }
 }

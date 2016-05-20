@@ -16,8 +16,10 @@
 
 package org.kuwaiba.beans;
 
+import com.neotropic.kuwaiba.modules.sdh.SDHModule;
 import java.util.List;
 import javax.ejb.Remote;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.exceptions.NotAuthorizedException;
@@ -559,6 +561,36 @@ public interface WebserviceBeanRemote {
      * @throws ServerSideException 
      */
     public byte[] downloadBulkLoadLog(String fileName, String ipAddress, String sessionId) throws ServerSideException;
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Commercial modules data methods">
+        // <editor-fold defaultstate="collapsed" desc="SDH Networks Module">
+    public long createSDHTransportLink(String classNameEndpointA, long idEndpointA, 
+            String classNameEndpointB, long idEndpointB, String linkType, String defaultName, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public long createSDHContainerLink(String classNameEndpointA, long idEndpointA, 
+            String classNameEndpointB, long idEndpointB, String linkType, List<SDHModule.SDHPosition> positions, String defaultName, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public long createSDHTributaryLink(String classNameEndpointA, long idEndpointA, 
+            String classNameEndpointB, long idEndpointB, String linkType, List<SDHModule.SDHPosition> positions, String defaultName, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public void deleteSDHTransportLink(String transportLinkClass, long transportLinkId, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public void deleteSDHContainerLink(String containerLinkClass, long containerLinkId, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public void deleteSDHTributaryLink(String tributaryLinkClass, long tributaryLinkId, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public List<RemoteBusinessObjectLightList> findSDHRouteUsingTransportLinks(String communicationsEquipmentClassA, 
+                                            long  communicationsEquipmentIdA, String communicationsEquipmentClassB, 
+                                            long  communicationsEquipmentIB, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public List<RemoteBusinessObjectLightList> findSDHRouteUsingContainerLinks(String communicationsEquipmentClassA, 
+                                            long  communicationsEquipmentIdA, String communicationsEquipmentClassB, 
+                                            long  communicationsEquipmentIB, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public List<SDHModule.SDHContainerLinkDefinition> getSDHTransportLinkStructure(String transportLinkClass, long transportLinkId, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public List<SDHModule.SDHContainerLinkDefinition> getSDHContainerLinkStructure(String transportLinkClass, long transportLinkId, String ipAddress, String sessionId) throws ServerSideException;
+        // </editor-fold>    
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Help methods. Click on the + sign on the left to edit the code.">

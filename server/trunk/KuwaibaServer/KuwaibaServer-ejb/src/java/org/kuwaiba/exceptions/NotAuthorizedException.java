@@ -17,8 +17,6 @@
 
 package org.kuwaiba.exceptions;
 
-import java.util.logging.Level;
-
 /**
  * Should be thrown when an operation is not permitted due to privilege/authentication issues
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
@@ -26,7 +24,7 @@ import java.util.logging.Level;
 public class NotAuthorizedException extends ServerSideException{
 
     public NotAuthorizedException(String msg) {
-        super(Level.INFO, msg);
+        super(msg);
     }
 
 }

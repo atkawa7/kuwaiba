@@ -15,6 +15,9 @@
  */
 package org.kuwaiba.apis.persistence;
 
+import com.neotropic.kuwaiba.modules.GenericCommercialModule;
+import com.neotropic.kuwaiba.modules.mpls.MPLSModule;
+import com.neotropic.kuwaiba.modules.sdh.SDHModule;
 import java.util.Calendar;
 import java.util.Properties;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
@@ -58,17 +61,17 @@ public class PersistenceService {
         
         if (System.getSecurityManager() == null && Boolean.valueOf(configuration.getProperty("enableSecurityManager", "false")))
             System.setSecurityManager(new SecurityManager());
-        try{
-            System.out.println(String.format("[INFO] [KUWAIBA] [%s] Starting Persistence Service version %s", Calendar.getInstance().getTime(), Constants.PERSISTENCE_SERVICE_VERSION));
+        try {
+            System.out.println(String.format("[KUWAIBA] [%s] Starting Persistence Service version %s", Calendar.getInstance().getTime(), Constants.PERSISTENCE_SERVICE_VERSION));
             PersistenceLayerFactory plf = new PersistenceLayerFactory();
             connectionManager = plf.createConnectionManager();
             Properties connectionConfiguration = new Properties();
             connectionConfiguration.put("dbPath", configuration.getProperty("dbPath"));
             connectionManager.setConfiguration(connectionConfiguration); //NOI18N
-            System.out.println(String.format("[INFO] [KUWAIBA] [%s] Establishing connection to the database...", Calendar.getInstance().getTime()));
+            System.out.println(String.format("[KUWAIBA] [%s] Establishing connection to the database...", Calendar.getInstance().getTime()));
             connectionManager.openConnection();
-            System.out.println(String.format("[INFO] [KUWAIBA] [%s] Connection established", Calendar.getInstance().getTime()));
-            System.out.println(String.format("[INFO] [KUWAIBA] [%s] %s", Calendar.getInstance().getTime(), connectionManager.getConnectionDetails()));
+            System.out.println(String.format("[KUWAIBA] [%s] Connection established", Calendar.getInstance().getTime()));
+            System.out.println(String.format("[KUWAIBA] [%s] %s", Calendar.getInstance().getTime(), connectionManager.getConnectionDetails()));
             aem = plf.createApplicationEntityManager(connectionManager);
             Properties applicationConfiguration = new Properties();
             applicationConfiguration.put("backgroundsPath", configuration.getProperty("backgroundsPath"));
@@ -78,13 +81,22 @@ public class PersistenceService {
             dataModelLoader = new DataModelLoader(connectionManager, mem);
             //dataIntegrityService = new DataIntegrityService(connectionManager);
             //dataIntegrityService.checkIntegrity();
-            System.out.println(String.format("[INFO] [KUWAIBA] [%s] Detecting commercial modules...", Calendar.getInstance().getTime()));
-            System.out.println(String.format("[INFO] [KUWAIBA] [%s] Persistence Service is up and running", Calendar.getInstance().getTime()));
+            System.out.println(String.format("[KUWAIBA] [%s] Detecting commercial modules...", Calendar.getInstance().getTime()));
+            //Place here some fancy OSGi stuff instead of this horrid hardcoded list
+            aem.registerCommercialModule(new SDHModule());
+            aem.registerCommercialModule(new MPLSModule());
+            
+            for (GenericCommercialModule aModule : aem.getCommercialModules()) {
+                System.out.println(String.format("[KUWAIBA]   [%s]  %s %s by %s", Calendar.getInstance().getTime(), aModule.getName(), aModule.getVersion(), aModule.getVendor()));
+                aModule.configureModule(aem, mem, bem);
+            }
+
+            System.out.println(String.format("[KUWAIBA] [%s] Persistence Service is up and running", Calendar.getInstance().getTime()));
             state = EXECUTION_STATE.RUNNING;
         }catch(Exception e){
             if (connectionManager != null)
                 connectionManager.closeConnection();
-            System.out.println(String.format("[ERROR] [KUWAIBA] [%s] Persistence Service could not be started: %s", Calendar.getInstance().getTime(), e.getMessage()));
+            System.out.println(String.format("[KUWAIBA] [%s] Persistence Service could not be started: %s", Calendar.getInstance().getTime(), e.getMessage()));
             state = EXECUTION_STATE.STOPPED;
         }
     }
@@ -92,9 +104,9 @@ public class PersistenceService {
         if (state == EXECUTION_STATE.STOPPED)
             throw new IllegalStateException("Persistence Service can not be stopped because is not running");
         
-        System.out.println(String.format("[INFO] [KUWAIBA] [%s] Closing connection...", Calendar.getInstance().getTime()));
+        System.out.println(String.format("[KUWAIBA] [%s] Closing connection...", Calendar.getInstance().getTime()));
         connectionManager.closeConnection();
-        System.out.println(String.format("[INFO] [KUWAIBA] [%s] Connection closed", Calendar.getInstance().getTime()));
+        System.out.println(String.format("[KUWAIBA] [%s] Connection closed", Calendar.getInstance().getTime()));
         state = EXECUTION_STATE.STOPPED;
     }
     public void restart(){
