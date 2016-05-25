@@ -32,6 +32,8 @@ import java.util.Random;
 import java.util.Set;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.visual.actions.providers.AcceptActionProvider;
+import org.inventory.core.visual.actions.providers.SceneConnectProvider;
 import org.inventory.core.visual.export.ExportableScene;
 import org.inventory.core.visual.export.Layer;
 import org.inventory.core.visual.scene.AbstractNodeWidget;
@@ -41,9 +43,7 @@ import org.inventory.views.topology.scene.menus.IconMenu;
 import org.inventory.views.topology.scene.menus.LabelMenu;
 import org.inventory.views.topology.scene.menus.NodeMenu;
 import org.inventory.views.topology.scene.menus.PolygonMenu;
-import org.inventory.views.topology.scene.provider.AcceptActionProvider;
 import org.inventory.views.topology.scene.provider.LabelTextFieldEditor;
-import org.inventory.views.topology.scene.provider.SceneConnectProvider;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.netbeans.api.visual.anchor.PointShape;
@@ -68,7 +68,7 @@ import org.openide.util.lookup.ProxyLookup;
 public class TopologyViewScene extends GraphScene<Object, String> 
         implements PropertyChangeListener, Lookup.Provider, ExportableScene {
 
-     /**
+    /**
      * String for Selection tool
      */
     public final static String ACTION_SELECT = "selection"; //NOI18
@@ -221,7 +221,18 @@ public class TopologyViewScene extends GraphScene<Object, String>
                 myWidget.getActions(ACTION_SELECT).addAction(ActionFactory.createMoveAction());
                 myWidget.getActions(ACTION_SELECT).addAction(ActionFactory.createPopupMenuAction(nodeMenu));
                 
-                myWidget.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(edgesLayer, new SceneConnectProvider(this)));
+                myWidget.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(edgesLayer, new SceneConnectProvider(this) {
+                    
+                    @Override
+                    public void createConnection(Widget sourceWidget, Widget targetWidget) {
+                        Random randomGenerator = new Random();
+                        String edge = "topologyEdge" + randomGenerator.nextInt(1000);
+                        addEdge(edge);
+                        setEdgeSource(edge, findObject(sourceWidget));
+                        setEdgeTarget(edge, findObject(targetWidget));
+                        validate();
+                    }
+                }));
                 myWidget.getActions(ACTION_CONNECT).addAction(createSelectAction());
                 myWidget.getActions(ACTION_CONNECT).addAction(ActionFactory.createPopupMenuAction(nodeMenu));
                 
@@ -238,7 +249,18 @@ public class TopologyViewScene extends GraphScene<Object, String>
                 cloudWidget.setLabel(((LocalObjectLight)node).getName().substring(9));
                 cloudWidget.getActions().addAction (ActionFactory.createInplaceEditorAction (new LabelTextFieldEditor()));
                 cloudWidget.getActions(ACTION_SELECT).addAction(ActionFactory.createMoveAction());
-                cloudWidget.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(edgesLayer, new SceneConnectProvider(this)));
+                cloudWidget.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(edgesLayer, new SceneConnectProvider(this) {
+                    
+                    @Override
+                    public void createConnection(Widget sourceWidget, Widget targetWidget) {
+                        Random randomGenerator = new Random();
+                        String edge = "topologyEdge" + randomGenerator.nextInt(1000);
+                        addEdge(edge);
+                        setEdgeSource(edge, findObject(sourceWidget));
+                        setEdgeTarget(edge, findObject(targetWidget));
+                        validate();
+                    }
+                }));
                 cloudWidget.getActions().addAction(ActionFactory.createPopupMenuAction(iconMenu));
                 fireChangeEvent(new ActionEvent(node, SCENE_OBJECTADDED, "cloud-add-operation"));
                 return cloudWidget;

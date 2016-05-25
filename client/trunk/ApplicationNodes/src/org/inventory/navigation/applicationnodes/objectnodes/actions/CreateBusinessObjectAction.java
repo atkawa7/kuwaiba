@@ -76,17 +76,25 @@ public final class CreateBusinessObjectAction extends AbstractAction implements 
         else
             items = com.getPossibleChildren(((ObjectNode)node).getObject().getClassName(),false);
 
-        if (items.isEmpty())
+        if (items == null) {
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE,
+                com.getError());
             mnuPossibleChildren.setEnabled(false);
-        else
-            for(LocalClassMetadataLight item: items){
-                    JMenuItem smiChildren = new JMenuItem(item.getClassName());
-                    smiChildren.setName(item.getClassName());
-                    smiChildren.addActionListener(this);
-                    mnuPossibleChildren.add(smiChildren);
-            }
-		
-        MenuScroller.setScrollerFor(mnuPossibleChildren, 20, 100);
+        }
+        else {
+            if (items.isEmpty())
+                mnuPossibleChildren.setEnabled(false);
+            else
+                for(LocalClassMetadataLight item: items){
+                        JMenuItem smiChildren = new JMenuItem(item.getClassName());
+                        smiChildren.setName(item.getClassName());
+                        smiChildren.addActionListener(this);
+                        mnuPossibleChildren.add(smiChildren);
+                }
+
+            MenuScroller.setScrollerFor(mnuPossibleChildren, 20, 100);
+        }
+        
 		
         return mnuPossibleChildren;
     }

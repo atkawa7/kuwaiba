@@ -75,6 +75,10 @@ public class Constants {
      */
     public static final String CLASS_GENERICPHYSICALLINK = "GenericPhysicalLink";
     /**
+     * Root class of all communications equipment (GenericDataLinkLayerElement, GenericNetworkElement, etc)
+     */
+    public static final String CLASS_GENERICCOMMUNICATIONSELEMENT = "GenericCommunicationsElement";
+    /**
      * Class Rack
      */
     public static final String CLASS_RACK = "Rack";
@@ -241,6 +245,8 @@ public class Constants {
 
     /**
      * Returns the connection type class for a given connection class
+     * @param connectionClass The connection to be used
+     * @return The type of connection corresponding to that connection class
      */
     public static String getConnectionType(String connectionClass){
         if (connectionClass.equals(CLASS_ELECTRICALLINK))

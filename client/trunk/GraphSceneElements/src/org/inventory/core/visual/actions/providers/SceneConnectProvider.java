@@ -17,16 +17,13 @@
  * Microsystems, Inc. All Rights Reserved.
  */
 
-package org.inventory.views.topology.scene.provider;
+package org.inventory.core.visual.actions.providers;
 
 import java.awt.Point;
-import java.util.Random;
-import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.visual.scene.AbstractNodeWidget;
-import org.inventory.views.topology.scene.ObjectNodeWidget;
-import org.inventory.views.topology.scene.TopologyViewScene;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.ConnectorState;
+import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
 
@@ -34,36 +31,23 @@ import org.netbeans.api.visual.widget.Widget;
  * Action invoked when an element try to connect to other on the scene
  * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
  */
-public class SceneConnectProvider implements ConnectProvider {
+public abstract class SceneConnectProvider implements ConnectProvider {
 
-    private Object source = null;
-    private Object target = null;
-    
-    private TopologyViewScene scene;
+    private GraphScene scene;
 
-    public SceneConnectProvider(TopologyViewScene scene){
+    public SceneConnectProvider(GraphScene scene){
         this.scene=scene;
     }
 
     @Override
     public boolean isSourceWidget(Widget sourceWidget) {
-        if (sourceWidget instanceof ObjectNodeWidget || sourceWidget instanceof AbstractNodeWidget){
-            Object object = scene.findObject(sourceWidget);
-            source = scene.isNode(object) ? (LocalObjectLight)object : null;
-            return source != null;
-        }
-        return false;
+        return sourceWidget instanceof AbstractNodeWidget; 
     }
 
     @Override
     public ConnectorState isTargetWidget(Widget sourceWidget, Widget targetWidget) {
-        if (targetWidget instanceof ObjectNodeWidget || targetWidget instanceof AbstractNodeWidget){
-            Object object = scene.findObject(targetWidget);
-            target = scene.isNode(object) ? (LocalObjectLight)object : null;
-            if (target != null)
-                return ! source.equals(target) ? ConnectorState.ACCEPT : ConnectorState.REJECT_AND_STOP;
-            return object != null ? ConnectorState.REJECT_AND_STOP : ConnectorState.REJECT;
-        }
+        if (targetWidget instanceof AbstractNodeWidget)
+            return  ConnectorState.ACCEPT;
         return ConnectorState.REJECT;
     }
 
@@ -78,13 +62,6 @@ public class SceneConnectProvider implements ConnectProvider {
     }
 
     @Override
-    public void createConnection(Widget sourceWidget, Widget targetWidget) {
-        Random randomGenerator = new Random();
-        String edge = "topologyEdge"+randomGenerator.nextInt(1000);
-        scene.addEdge(edge);
-        scene.setEdgeSource(edge, source);
-        scene.setEdgeTarget(edge, target);
-        scene.validate();
-    }
+    public abstract void createConnection(Widget sourceWidget, Widget targetWidget);
 
 }

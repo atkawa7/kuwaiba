@@ -266,14 +266,14 @@ public class Utils {
      * This method receives two conjuncts and extract the elements that are not common among them
      * @param groupA
      * @param groupB
-     * @return An array of two positions with the remaining elements in the conjunct A and the second with the B's elements
+     * @return An array of two positions with the remaining elements in the set A and the second with the B's elements
      */
     public static Collection[] inverseIntersection(Collection groupA, Collection groupB){
         for (Object elementA : groupA){
             for (Object elementB : groupB){
                 if (elementA.equals(elementB)){
-                    List<Object> myGroupA = new ArrayList<Object>(groupA);
-                    List<Object> myGroupB = new ArrayList<Object>(groupB);
+                    List<Object> myGroupA = new ArrayList<>(groupA);
+                    List<Object> myGroupB = new ArrayList<>(groupB);
                     myGroupA.remove(elementA);
                     myGroupB.remove(elementB);
                     return inverseIntersection(myGroupA, myGroupB);

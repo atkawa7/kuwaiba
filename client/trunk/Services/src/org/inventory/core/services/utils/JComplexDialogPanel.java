@@ -30,7 +30,7 @@ import javax.swing.JPanel;
  * uses a BoxLayout.PAGE_AXIS layout, so the components should be provided in pair label-component
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class JComplexDialogPanel extends JPanel{
+public class JComplexDialogPanel extends JPanel {
 
     private HashMap<String, JComponent> components;
 

@@ -46,7 +46,7 @@ import org.openide.windows.WindowManager;
     dtd="-//org.inventory.views.topology//TopologyView//EN",
     autostore=false
 )
-public final class TopologyViewTopComponent extends TopComponent implements ActionListener, Provider, Refreshable{
+public final class TopologyViewTopComponent extends TopComponent implements ActionListener, Provider, Refreshable {
     private static TopologyViewTopComponent instance;
     /** 
      * path to the icon used by the component and its open action
@@ -100,8 +100,8 @@ public final class TopologyViewTopComponent extends TopComponent implements Acti
         btnDelete = new javax.swing.JButton();
         btnExport = new javax.swing.JButton();
         btnSelect = new javax.swing.JToggleButton();
-        btnShowNodesLabels = new javax.swing.JToggleButton();
         btnConnect = new javax.swing.JToggleButton();
+        btnShowNodesLabels = new javax.swing.JToggleButton();
         btnCloud = new javax.swing.JButton();
         btnFrame = new javax.swing.JButton();
         btnAddFreeLabel = new javax.swing.JButton();
@@ -184,19 +184,6 @@ public final class TopologyViewTopComponent extends TopComponent implements Acti
         });
         jToolBar1.add(btnSelect);
 
-        btnShowNodesLabels.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/topology/res/hide_node_labels.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnShowNodesLabels, org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnShowNodesLabels.text")); // NOI18N
-        btnShowNodesLabels.setEnabled(false);
-        btnShowNodesLabels.setFocusable(false);
-        btnShowNodesLabels.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnShowNodesLabels.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnShowNodesLabels.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnShowNodesLabelsActionPerformed(evt);
-            }
-        });
-        jToolBar1.add(btnShowNodesLabels);
-
         btnConnect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/topology/res/connect.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnConnect, org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnConnect.text")); // NOI18N
         btnConnect.setEnabled(false);
@@ -209,6 +196,19 @@ public final class TopologyViewTopComponent extends TopComponent implements Acti
             }
         });
         jToolBar1.add(btnConnect);
+
+        btnShowNodesLabels.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/topology/res/hide_node_labels.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnShowNodesLabels, org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnShowNodesLabels.text")); // NOI18N
+        btnShowNodesLabels.setEnabled(false);
+        btnShowNodesLabels.setFocusable(false);
+        btnShowNodesLabels.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnShowNodesLabels.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnShowNodesLabels.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnShowNodesLabelsActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(btnShowNodesLabels);
 
         btnCloud.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/topology/res/cloud.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnCloud, org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnCloud.text")); // NOI18N
@@ -250,7 +250,7 @@ public final class TopologyViewTopComponent extends TopComponent implements Acti
             .addComponent(pnlMainScrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 611, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
