@@ -16,7 +16,9 @@
 
 package org.kuwaiba.beans;
 
+import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHModule;
+import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1980,7 +1982,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     
     @Override
     public long createSDHContainerLink(String classNameEndpointA, long idEndpointA, 
-            String classNameEndpointB, long idEndpointB, String linkType, List<SDHModule.SDHPosition> positions, String defaultName, String ipAddress, String sessionId) throws ServerSideException {
+            String classNameEndpointB, long idEndpointB, String linkType, List<SDHPosition> positions, String defaultName, String ipAddress, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("createSDHContainerLink", ipAddress, sessionId);
             SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
@@ -1992,7 +1994,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
 
     @Override
     public long createSDHTributaryLink(String classNameEndpointA, long idEndpointA, 
-            String classNameEndpointB, long idEndpointB, String linkType, List<SDHModule.SDHPosition> positions, String defaultName, String ipAddress, String sessionId) throws ServerSideException {
+            String classNameEndpointB, long idEndpointB, String linkType, List<SDHPosition> positions, String defaultName, String ipAddress, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("createSDHTributaryLink", ipAddress, sessionId);
             SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
@@ -2062,7 +2064,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
     
     @Override
-    public List<SDHModule.SDHContainerLinkDefinition> getSDHTransportLinkStructure(String transportLinkClass, long transportLinkId, String ipAddress, String sessionId) 
+    public List<SDHContainerLinkDefinition> getSDHTransportLinkStructure(String transportLinkClass, long transportLinkId, String ipAddress, String sessionId) 
             throws ServerSideException {
         try {
             aem.validateCall("getSDHTransportLinkStructure", ipAddress, sessionId);
@@ -2074,7 +2076,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
     
     @Override
-    public List<SDHModule.SDHContainerLinkDefinition> getSDHContainerLinkStructure(String transportLinkClass, long transportLinkId, String ipAddress, String sessionId) 
+    public List<SDHContainerLinkDefinition> getSDHContainerLinkStructure(String transportLinkClass, long transportLinkId, String ipAddress, String sessionId) 
             throws ServerSideException {
         try {
             aem.validateCall("getSDHContainerLinkStructure", ipAddress, sessionId);

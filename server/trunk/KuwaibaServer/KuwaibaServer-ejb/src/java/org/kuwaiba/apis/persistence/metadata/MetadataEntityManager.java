@@ -56,9 +56,10 @@ public interface MetadataEntityManager {
      * @throws ApplicationObjectNotFoundException
      * @throws NotAuthorizedException the user has no privileges to execute this action
      * @throws MetadataObjectNotFoundException if there is not a class with de ClassName
+     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException if the requested class has instances
      */
     public void deleteClass(String className) 
-            throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
+            throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
      * Deletes a class metadata, its attributes and category relationships

@@ -16,7 +16,8 @@
 
 package org.kuwaiba.ws;
 
-import com.neotropic.kuwaiba.modules.sdh.SDHModule;
+import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
+import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -25,6 +26,7 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
 import org.kuwaiba.beans.WebserviceBeanRemote;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.util.Constants;
@@ -2810,7 +2812,21 @@ public class KuwaibaService {
 
     // <editor-fold defaultstate="collapsed" desc="Utility methods. Click on the + sign on the left to edit the code.">/**
 
-    
+    @WebMethod(operationName =  "isSubclassOf")
+    public boolean isSubClassOf(@WebParam(name = "className") String className, 
+                                @WebParam(name = "allegedParentClass") String allegedParentClass,
+                                @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            return wsBean.isSubclassOf(className, allegedParentClass, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in isSubClassOf: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Sync/ bulk load methods. Click on the + sign on the left to edit the code.">/**
@@ -2851,6 +2867,18 @@ public class KuwaibaService {
     
     // <editor-fold defaultstate="collapsed" desc="Commercial modules data methods">
         // <editor-fold defaultstate="collapsed" desc="SDH Networks Module">
+    /**
+     * Creates an SDH transport link (STMX)
+     * @param classNameEndpointA The class name of the endpoint A (some kind of port)
+     * @param idEndpointA Id of endpoint A
+     * @param classNameEndpointB  The class name of the endpoint Z (some kind of port)
+     * @param idEndpointB Id of endpoint Z
+     * @param linkType Type of link (STM1, STM4, STM16, STM256, etc)
+     * @param defaultName The default name of th
+     * @param sessionId Session token
+     * @return The id of the newly created transport link
+     * @throws ServerSideException In case something goes wrong with the creation process
+     */
     @WebMethod(operationName = "createSDHTransportLink")
     public long createSDHTransportLink(@WebParam(name = "classNameEndpointA") String classNameEndpointA, 
             @WebParam(name = "idEndpointA") long idEndpointA, 
@@ -2871,13 +2899,26 @@ public class KuwaibaService {
         }
     }
     
+    /**
+     * Creates an SDH container link (VCX). In practical terms, it's always a high order container, such a VC4XXX
+     * @param classNameEndpointA The class name of the endpoint A (a GenericCommunicationsEquipment)
+     * @param idEndpointA Id of endpoint A
+     * @param classNameEndpointB  The class name of the endpoint B (GenericCommunicationsEquipment)
+     * @param idEndpointB Id of endpoint B
+     * @param linkType Type of link (VC4, VC3, V12, etc. A VC12 alone doesn't make much sense, though)
+     * @param positions This param specifies the transport links and positions used by the container. For more details on how this works, please read the "SDH Model: Technical Design and Tools" document. Please note that is greatly advisable to provide them already sorted
+     * @param defaultName the name to be assigned to the new element. If null, an empty string will be used
+     * @param sessionId Sesion token
+     * @return The id of the newly created container link
+     * @throws ServerSideException In case something goes wrong with the creation process
+     */
     @WebMethod(operationName = "createSDHContainerLink")
     public long createSDHContainerLink(@WebParam(name = "classNameEndpointA") String classNameEndpointA, 
             @WebParam(name = "idEndpointA") long idEndpointA, 
             @WebParam(name = "classNameEndpointB") String classNameEndpointB,
             @WebParam(name = "idEndpointB") long idEndpointB,
             @WebParam(name = "linkType") String linkType, 
-            @WebParam(name = "positions") List<SDHModule.SDHPosition> positions, 
+            @WebParam(name = "positions") List<SDHPosition> positions, 
             @WebParam(name = "defaultName") String defaultName,
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try {
@@ -2892,13 +2933,26 @@ public class KuwaibaService {
         }
     }
     
+    /**
+     * Creates an SDH tributary link (VCXTributaryLink)
+     * @param classNameEndpointA The class name of the endpoint A (some kind of tributary port)
+     * @param idEndpointA Id of endpoint A
+     * @param classNameEndpointB  The class name of the endpoint B (some kind of tributary port)
+     * @param idEndpointB Id of endpoint B
+     * @param linkType Type of link (VC4TributaryLink, VC3TributaryLink, V12TributaryLink, etc)
+     * @param positions This param specifies the transport links and positions used by the container. For more details on how this works, please read the SDH Model: Technical Design and Tools document. Please note that is greatly advisable to provide them already sorted. Please note that creating a tributary link automatically creates a container link to deliver it
+     * @param defaultName the name to be assigned to the new element
+     * @param sessionId Session token
+     * @return The id of the newly created tributary link
+     * @throws ServerSideException In case something goes wrong with the creation process
+     */
     @WebMethod(operationName = "createSDHTributaryLink")
     public long createSDHTributaryLink(@WebParam(name = "classNameEndpointA") String classNameEndpointA, 
             @WebParam(name = "idEndpointA") long idEndpointA, 
             @WebParam(name = "classNameEndpointB") String classNameEndpointB, 
             @WebParam(name = "idEndpointB") long idEndpointB, 
             @WebParam(name = "linkType") String linkType, 
-            @WebParam(name = "positions") List<SDHModule.SDHPosition> positions, 
+            @WebParam(name = "positions") List<SDHPosition> positions, 
             @WebParam(name = "defaultName") String defaultName, 
             @WebParam(name = "sessionId")  String sessionId) throws ServerSideException {
         try {
@@ -2913,6 +2967,14 @@ public class KuwaibaService {
         }
     }
     
+    /**
+     * Deletes a transport link
+     * @param transportLinkClass Transport Link class
+     * @param transportLinkId Transport link id
+     * @param forceDelete Delete recursively all sdh elements transported by the transport link
+     * @param sessionId Session token
+     * @throws org.kuwaiba.exceptions.ServerSideException If something goes wrong
+     */
     @WebMethod(operationName = "deleteSDHTransportLink")
     public void deleteSDHTransportLink(@WebParam(name = "transportLinkClass") String transportLinkClass, 
             @WebParam(name = "transportLinkId") long transportLinkId, 
@@ -2930,6 +2992,14 @@ public class KuwaibaService {
         }
     }
     
+    /**
+     * Deletes a container link
+     * @param containerLinkClass Container link class
+     * @param containerLinkId Container class id
+     * @param forceDelete Delete recursively all sdh elements contained by the container link
+     * @throws ServerSideException If some high level thing goes wrong
+     * @throws InventoryException  If some low level thing goes wrong
+     */
     @WebMethod(operationName = "deleteSDHContainerLink")
     public void deleteSDHContainerLink(@WebParam(name = "containerLinkClass") String containerLinkClass, 
             @WebParam(name = "containerLinkId") long containerLinkId, 
@@ -2947,6 +3017,14 @@ public class KuwaibaService {
         }
     }
     
+    /**
+     * Deletes a tributary link and its corresponding container link
+     * @param tributaryLinkClass The class of the tributary link
+     * @param tributaryLinkId the id of the tributary link
+     * @param forceDelete Ignore the existing relationships
+     * @param sessionId Session token
+     * @throws ServerSideException If some high level thing goes wrong
+     */
     @WebMethod(operationName = "deleteSDHTributaryLink")
     public void deleteSDHTributaryLink(@WebParam(name = "tributaryLinkClass") String tributaryLinkClass, 
             @WebParam(name = "tributaryLinkId") long tributaryLinkId, 
@@ -2964,6 +3042,111 @@ public class KuwaibaService {
         }
     }
     
+    /**
+     * Finds a route between two GenericcommunicationsEquipment based on the TransportLinks network map (for more details on how this works, please read the SDH Model: Technical Design and Tools document)
+     * @param communicationsEquipmentClassA The class of one of the route endpoints
+     * @param communicationsEquipmentIdA The id of one of the route endpoints
+     * @param communicationsEquipmentClassB The class of the other route endpoint
+     * @param communicationsEquipmentIB The id of the other route endpoint
+     * @param sessionId Session token
+     * @return A sorted list of RemoteObjectLights containing the route. This list includes the transport links and the nodes in between, including the very endpoints
+     * @throws ServerSideException If something goes wrong
+     * 
+     */
+    @WebMethod(operationName = "findSDHRouteUsingTransportLinks")
+    public List<RemoteBusinessObjectLightList> findSDHRouteUsingTransportLinks(@WebParam(name = "communicationsEquipmentClassA") String communicationsEquipmentClassA, 
+                                            @WebParam(name = "communicationsEquipmentIdA") long  communicationsEquipmentIdA, 
+                                            @WebParam(name = "communicationsEquipmentClassB") String communicationsEquipmentClassB, 
+                                            @WebParam(name = "communicationsEquipmentIB") long  communicationsEquipmentIB, 
+                                            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            return wsBean.findSDHRouteUsingTransportLinks(communicationsEquipmentClassA, communicationsEquipmentIdA, communicationsEquipmentClassB, communicationsEquipmentIB, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in findSDHRouteUsingTransportLinks: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Finds a route between two GenericcommunicationsEquipment based on the ContainerLinks network map (for more details on how this works, please read the SDH Model: Technical Design and Tools document)
+     * @param communicationsEquipmentClassA The class of one of the route endpoints
+     * @param communicationsEquipmentIdA The id of one of the route endpoints
+     * @param communicationsEquipmentClassB The class of the other route endpoint
+     * @param communicationsEquipmentIB The id of the other route endpoint
+     * @param sessionId Session token
+     * @return A sorted list of RemoteObjectLights containing the route. This list includes the transport links and the nodes in between, including the very endpoints
+     * @throws ServerSideException If something goes wrong
+     * 
+     */
+    @WebMethod(operationName = "findSDHRouteUsingContainerLinks")
+    public List<RemoteBusinessObjectLightList> findSDHRouteUsingContainerLinks(@WebParam(name = "communicationsEquipmentClassA") String communicationsEquipmentClassA, 
+                                            @WebParam(name = "communicationsEquipmentIdA") long  communicationsEquipmentIdA, 
+                                            @WebParam(name = "communicationsEquipmentClassB") String communicationsEquipmentClassB, 
+                                            @WebParam(name = "communicationsEquipmentIB") long  communicationsEquipmentIB, 
+                                            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            return wsBean.findSDHRouteUsingContainerLinks(communicationsEquipmentClassA, communicationsEquipmentIdA, communicationsEquipmentClassB, communicationsEquipmentIB, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in findSDHRouteUsingContainerLinks: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Retrieves the container links within a transport link (e.g. the VC4XX in and STMX)
+     * @param transportLinkClass Transportlink's class
+     * @param transportLinkId Transportlink's id
+     * @param sessionId Session token
+     * @return The list of the containers that go through that transport link
+     * @throws ServerSideException If something gos wrong 
+     */
+    @WebMethod(operationName = "getSDHTransportLinkStructure")
+    public List<SDHContainerLinkDefinition> getSDHTransportLinkStructure(@WebParam(name = "transportLinkClass")String transportLinkClass, 
+            @WebParam(name = "transportLinkId")long transportLinkId, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getSDHTransportLinkStructure(transportLinkClass, transportLinkId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getSDHTransportLinkStructure: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Gets the internal structure of a container link. This is useful to provide information about the occupation of a link. This is only applicable to VC4XX
+     * @param containerLinkClass Container class
+     * @param containerLinkId Container Id
+     * @param sessionId Session token
+     * @return The list of containers contained in the container
+     * @throws ServerSideException If the user is not authorized to know the structure of a container link, if the container supplied is not subclass of GenericSDHHighOrderContainerLink, if the container could not be found or if the class could not be found
+     */
+    @WebMethod(operationName = "getSDHContainerLinkStructure")
+    public List<SDHContainerLinkDefinition> getSDHContainerLinkStructure(@WebParam(name = "containerLinkClass")String containerLinkClass, 
+            @WebParam(name = "containerLinkId")long containerLinkId, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getSDHTransportLinkStructure(containerLinkClass, containerLinkId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getSDHContainerLinkStructure: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
     
         // </editor-fold>    
     // </editor-fold>

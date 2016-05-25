@@ -104,7 +104,7 @@ public interface BusinessEntityManager {
      * @return the id of the newly created object
      */
     public long createPoolItem(long poolId, String className, String[] attributeNames, String[][] attributeValues, long templateId) 
-            throws ApplicationObjectNotFoundException, InvalidArgumentException, ArraySizeMismatchException, NotAuthorizedException;
+            throws ApplicationObjectNotFoundException, InvalidArgumentException, ArraySizeMismatchException, NotAuthorizedException, MetadataObjectNotFoundException;
     
     /**
      * Create massively objects related to their parent using a child_of_special relationship.
@@ -116,9 +116,11 @@ public interface BusinessEntityManager {
      * @throws MetadataObjectNotFoundException If any of the classes provided can't be found
      * @throws ObjectNotFoundException if the parent can not be found
      * @throws OperationNotPermittedException If due to business rules, the operation can't be performed
+     * @throws org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException
+     * @throws org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException
      */
     public long[] createBulkSpecialObjects(String objectClass, int numberOfChildren, String parentClass, long parentId)
-           throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, ApplicationObjectNotFoundException, NotAuthorizedException;
+           throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, ApplicationObjectNotFoundException, NotAuthorizedException, InvalidArgumentException;
     /**
      * Gets the detailed information about an object
      * @param className Object class name

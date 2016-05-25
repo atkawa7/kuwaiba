@@ -23,8 +23,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.namespace.QName;
@@ -56,7 +59,7 @@ public class XMLBackupReader {
         this.mem = mem;
     }
     
-    public void read(byte[] xmlDocument) throws Exception{
+    public void read(byte[] xmlDocument) throws XMLStreamException {
         QName hierarchyTag = new QName("hierarchy"); //NOI18N
         QName classTag = new QName("class"); //NOI18N
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
@@ -122,37 +125,30 @@ public class XMLBackupReader {
 
     // Returns the contents of the file in a byte array.
     public static byte[] getBytesFromFile(File file) throws IOException {
-        InputStream is = new FileInputStream(file);
-
+        byte[] bytes;
         // Get the size of the file
-        long length = file.length();
-
-        // You cannot create an array using a long type.
-        // It needs to be an int type.
-        // Before converting to an int type, check
-        // to ensure that file is not larger than Integer.MAX_VALUE.
-        if (length > Integer.MAX_VALUE) {
-            // File is too large
+        try (InputStream is = new FileInputStream(file)) {
+            // Get the size of the file
+            long length = file.length();
+            // You cannot create an array using a long type.
+            // It needs to be an int type.
+            // Before converting to an int type, check
+            // to ensure that file is not larger than Integer.MAX_VALUE.
+            if (length > Integer.MAX_VALUE) {
+                // File is too large
+            }   // Create the byte array to hold the data
+            bytes = new byte[(int) length];
+            // Read in the bytes
+            int offset = 0;
+            int numRead = 0;
+            while (offset < bytes.length
+                    && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
+                offset += numRead;
+            }   // Ensure all the bytes have been read in
+            if (offset < bytes.length) {
+                throw new IOException("Could not completely read file " + file.getName());
+            }
         }
-
-        // Create the byte array to hold the data
-        byte[] bytes = new byte[(int) length];
-
-        // Read in the bytes
-        int offset = 0;
-        int numRead = 0;
-        while (offset < bytes.length
-                && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
-            offset += numRead;
-        }
-
-        // Ensure all the bytes have been read in
-        if (offset < bytes.length) {
-            throw new IOException("Could not completely read file " + file.getName());
-        }
-
-        // Close the input stream and return bytes
-        is.close();
         return bytes;
     }
 
@@ -171,7 +167,6 @@ public class XMLBackupReader {
     {
         ClassMetadata clmt = new ClassMetadata();
         for (LocalClassWrapper lcw: listNodes) {
-
             clmt.setAbstract(Modifier.isAbstract(lcw.getJavaModifiers()));
             clmt.setCategory(lcw.getClassPackage());
             clmt.setColor(0);
@@ -187,10 +182,9 @@ public class XMLBackupReader {
             clmt.setSmallIcon(new byte[0]);
             clmt.setInDesign(false);
             
-            List<AttributeMetadata> attList = new ArrayList<>();
+            Set<AttributeMetadata> attList = new HashSet<>();
             
-            for (LocalAttributeWrapper law : lcw.getAttributes())
-            {
+            for (LocalAttributeWrapper law : lcw.getAttributes()) {
                 AttributeMetadata attr = new AttributeMetadata();
 
                 attr.setName(law.getName());
@@ -210,7 +204,7 @@ public class XMLBackupReader {
                     attList.add(attr);
             }
             clmt.setAttributes(attList);
-            try{
+            try {
                 mem.createClass(clmt);
             }catch (DatabaseException | MetadataObjectNotFoundException | InvalidArgumentException ex){
                 System.out.println(String.format("Class %s could not be created: %s", lcw.getName(), ex.getMessage()));

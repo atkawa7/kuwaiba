@@ -17,7 +17,9 @@
 package org.kuwaiba.apis.persistence.metadata;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 
@@ -25,7 +27,7 @@ import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
  * Contains the detailed metadata information about a class
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ClassMetadata extends ClassMetadataLight{
+public class ClassMetadata extends ClassMetadataLight {
     /**
      *  Indicates if the instances of this class are physical assets
      *  (in other words, if it's meaningful to have a count on them)
@@ -44,7 +46,7 @@ public class ClassMetadata extends ClassMetadataLight{
     /**
      *  Classmetada's attributes
      */
-    private List<AttributeMetadata> attributes;
+    private Set<AttributeMetadata> attributes;
     /**
      * List of possible children
      */
@@ -63,7 +65,7 @@ public class ClassMetadata extends ClassMetadataLight{
     private long creationDate;
 
     public ClassMetadata() {
-        attributes = new ArrayList<>();
+        attributes = new HashSet<>();
         possibleChildren = new ArrayList<>();
     }
     
@@ -92,11 +94,11 @@ public class ClassMetadata extends ClassMetadataLight{
         this.icon = icon;
     }
 
-    public List<AttributeMetadata> getAttributes() {
+    public Set<AttributeMetadata> getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(List<AttributeMetadata> attributes) {
+    public void setAttributes(Set<AttributeMetadata> attributes) {
         this.attributes = attributes;
     }
 

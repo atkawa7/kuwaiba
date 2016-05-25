@@ -22,7 +22,7 @@ import java.io.Serializable;
  * Contains the detailed metadata information about a class attribute
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class AttributeMetadata implements Serializable{
+public class AttributeMetadata implements Serializable {
 
     /**
      * Attribute's id
@@ -31,7 +31,7 @@ public class AttributeMetadata implements Serializable{
     /**
      * Attribute's name
      */
-    private String name;
+    private String name = ""; //Attribute name can not be null
     /**
      * Attribute's display name
      */
@@ -178,7 +178,9 @@ public class AttributeMetadata implements Serializable{
         if (!(obj instanceof AttributeMetadata))
             return false;
         
-        return this.getId() == ((AttributeMetadata)obj).getId();
+        AttributeMetadata theOtherAttribute = (AttributeMetadata)obj;
+        //null checka are avoided here because the attribute name can not be null
+        return this.getId() == theOtherAttribute.getId() || this.getName().equals(theOtherAttribute.getName());
     }
 
     @Override

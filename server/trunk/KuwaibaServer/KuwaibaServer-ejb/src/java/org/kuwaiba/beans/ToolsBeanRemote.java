@@ -17,6 +17,7 @@
 package org.kuwaiba.beans;
 
 import javax.ejb.Remote;
+import org.kuwaiba.exceptions.ServerSideException;
 
 /**
  * Misc management tools
@@ -40,8 +41,7 @@ public interface ToolsBeanRemote {
     /**
      * load the initial data model 
      * @param dataModelFileAsByteArray The file to be processed, uploaded by the user
-     * @return if the load was successful
-     * @throws Exception 
+     * @throws ServerSideException 
      */
-    public boolean loadDataModel(byte[] dataModelFileAsByteArray) throws Exception;
+    public void loadDataModel(byte[] dataModelFileAsByteArray) throws ServerSideException;
 }

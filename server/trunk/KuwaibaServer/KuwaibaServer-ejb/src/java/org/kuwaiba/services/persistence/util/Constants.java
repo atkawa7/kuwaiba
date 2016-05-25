@@ -219,7 +219,7 @@ public class Constants {
     /**
      * Class Generic Communications Equipment
      */
-    public static final String CLASS_GENERICCOMMUNICATIONSEQUIPMENT = "GenericCommunicationsEquipment";
+    public static final String CLASS_GENERICCOMMUNICATIONSELEMENT = "GenericCommunicationsElement";
     /**
      * Dummy root node name
      */

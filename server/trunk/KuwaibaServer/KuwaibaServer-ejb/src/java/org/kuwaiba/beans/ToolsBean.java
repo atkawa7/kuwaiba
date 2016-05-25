@@ -53,9 +53,9 @@ public class ToolsBean implements ToolsBeanRemote {
     }
     
     @Override
-    public boolean loadDataModel(byte[] dataModelFileAsByteArray) throws ServerSideException{
+    public void loadDataModel(byte[] dataModelFileAsByteArray) throws ServerSideException {
         try{
-            return PersistenceService.getInstance().getDataModelLoader().loadDataModel(dataModelFileAsByteArray);
+            PersistenceService.getInstance().getDataModelLoader().loadDataModel(dataModelFileAsByteArray);
         } catch (Exception ex) {
             throw new ServerSideException(ex.getMessage());
         }        

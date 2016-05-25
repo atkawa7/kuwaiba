@@ -15,7 +15,7 @@
  */
 package org.kuwaiba.ws.toserialize.metadata;
 
-import java.util.List;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
@@ -79,7 +79,7 @@ public class ClassInfo extends ClassInfoLight{
         super (myClass, validators);
         this._abstract = myClass.isAbstract();
         this.icon = myClass.getIcon();
-        List<AttributeMetadata> ar = myClass.getAttributes();
+        Set<AttributeMetadata> ar = myClass.getAttributes();
         this.attributeIds = new long[ar.size()];
         this.attributeNames = new String[ar.size()];
         this.attributeTypes = new String[this.attributeNames.length];

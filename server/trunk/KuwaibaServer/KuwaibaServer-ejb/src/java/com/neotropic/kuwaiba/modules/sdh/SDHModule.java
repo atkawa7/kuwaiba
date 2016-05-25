@@ -6,7 +6,6 @@
 package com.neotropic.kuwaiba.modules.sdh;
 
 import com.neotropic.kuwaiba.modules.GenericCommercialModule;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -163,11 +162,11 @@ public class SDHModule implements GenericCommercialModule {
             HashMap<String, List<String>> attributesToBeSet = new HashMap<>();
             attributesToBeSet.put(Constants.PROPERTY_NAME, Arrays.asList(new String[] { defaultName == null ? "" : defaultName }));
             
-            RemoteBusinessObject communicationsEquipmentA = bem.getParentOfClass(classNameEndpointA, idEndpointA, Constants.CLASS_GENERICCOMMUNICATIONSEQUIPMENT);
+            RemoteBusinessObject communicationsEquipmentA = bem.getParentOfClass(classNameEndpointA, idEndpointA, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
             if (communicationsEquipmentA == null)
                 throw new ServerSideException(String.format("The specified port (%s : %s) doesn't seem to be located in a communications equipment", classNameEndpointA, idEndpointA));
             
-            RemoteBusinessObject communicationsEquipmentB = bem.getParentOfClass(classNameEndpointB, idEndpointB, Constants.CLASS_GENERICCOMMUNICATIONSEQUIPMENT);
+            RemoteBusinessObject communicationsEquipmentB = bem.getParentOfClass(classNameEndpointB, idEndpointB, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
             if (communicationsEquipmentB == null)
                 throw new ServerSideException(String.format("The specified port (%s : %s) doesn't seem to be located in a communications equipment", classNameEndpointB, idEndpointB));
             
@@ -418,10 +417,10 @@ public class SDHModule implements GenericCommercialModule {
     public List<RemoteBusinessObjectLightList> findSDHRouteUsingTransportLinks(String communicationsEquipmentClassA, 
                                             long  communicationsEquipmentIdA, String communicationsEquipmentClassB, 
                                             long  communicationsEquipmentIB) throws ApplicationObjectNotFoundException, NotAuthorizedException, IllegalArgumentException {
-        if (!mem.isSubClass(Constants.CLASS_GENERICCOMMUNICATIONSEQUIPMENT, communicationsEquipmentClassA))
+        if (!mem.isSubClass(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, communicationsEquipmentClassA))
                 throw new IllegalArgumentException(String.format("Class %s is not a GenericCommunicationsEquipment", communicationsEquipmentClassA));
         
-        if (!mem.isSubClass(Constants.CLASS_GENERICCOMMUNICATIONSEQUIPMENT, communicationsEquipmentClassB))
+        if (!mem.isSubClass(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, communicationsEquipmentClassB))
                 throw new IllegalArgumentException(String.format("Class %s is not a GenericCommunicationsEquipment", communicationsEquipmentClassB));
         
         return bem.findRoutesThroughSpecialRelationships(communicationsEquipmentClassA, communicationsEquipmentIdA, communicationsEquipmentClassB, 
@@ -443,10 +442,10 @@ public class SDHModule implements GenericCommercialModule {
                                             long  communicationsEquipmentIdA, String communicationsEquipmentClassB, 
                                             long  communicationsEquipmentIB) throws ApplicationObjectNotFoundException, NotAuthorizedException, IllegalArgumentException {
         
-        if (!mem.isSubClass(Constants.CLASS_GENERICCOMMUNICATIONSEQUIPMENT, communicationsEquipmentClassA))
+        if (!mem.isSubClass(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, communicationsEquipmentClassA))
                 throw new IllegalArgumentException(String.format("Class %s is not a GenericCommunicationsEquipment", communicationsEquipmentClassA));
         
-        if (!mem.isSubClass(Constants.CLASS_GENERICCOMMUNICATIONSEQUIPMENT, communicationsEquipmentClassB))
+        if (!mem.isSubClass(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, communicationsEquipmentClassB))
                 throw new IllegalArgumentException(String.format("Class %s is not a GenericCommunicationsEquipment", communicationsEquipmentClassB));
         
         return bem.findRoutesThroughSpecialRelationships(communicationsEquipmentClassA, communicationsEquipmentIdA, communicationsEquipmentClassB, 
@@ -493,10 +492,20 @@ public class SDHModule implements GenericCommercialModule {
         return containers;
     }
     
+    /**
+     * Gets the internal structure of a container link. This is useful to provide information about the occupation of a link. This is only applicable to VC4XX
+     * @param containerLinkClass Container class
+     * @param containerLinkId Container Id
+     * @return The list of containers contained in the container
+     * @throws NotAuthorizedException If the user is not authorized to know the structure of a container link
+     * @throws IllegalArgumentException If the container supplied is not subclass of GenericSDHHighOrderContainerLink
+     * @throws ObjectNotFoundException If the container could not be found
+     * @throws MetadataObjectNotFoundException If the class could not be found
+     */
     public List<SDHContainerLinkDefinition> getSDHContainerLinkStructure(String containerLinkClass, long containerLinkId) 
             throws NotAuthorizedException, IllegalArgumentException, ObjectNotFoundException, MetadataObjectNotFoundException {
         
-        if (!mem.isSubClass("GenericSDHContainerLink", containerLinkClass))
+        if (!mem.isSubClass("GenericSDHHighOrderContainerLink", containerLinkClass))
                 throw new IllegalArgumentException(String.format("Class %s is not a GenericSDHContainerLink", containerLinkClass));
         
         ArrayList<SDHContainerLinkDefinition> containers = new ArrayList<>();
@@ -521,141 +530,5 @@ public class SDHModule implements GenericCommercialModule {
         }
         
         return containers;
-    }
-    
-    /**
-     * Helper classes
-     */
-    /**
-     * Instances of this class define a container
-     */
-    public class SDHContainerLinkDefinition implements Serializable {
-        /**
-         * Container object
-         */
-        private RemoteBusinessObjectLight container;
-        
-        /**
-         * Is this container structured?
-         */
-        private boolean structured;
-        /**
-         * The positions used by the container
-         */
-        private List<SDHPosition> positions;
-
-        public SDHContainerLinkDefinition(RemoteBusinessObjectLight container, boolean structured, List<SDHPosition> positions) {
-            this.container = container;
-            this.structured = structured;
-            this.positions = positions;
-        }       
-
-        public RemoteBusinessObjectLight getContainerName() {
-            return container;
-        }
-
-        public void setContainerName(RemoteBusinessObjectLight container) {
-            this.container = container;
-        }
-
-        public List<SDHPosition> getPositions() {
-            return positions;
-        }
-
-        public void setPositions(List<SDHPosition> positions) {
-            this.positions = positions;
-        }
-
-        public RemoteBusinessObjectLight getContainer() {
-            return container;
-        }
-
-        public boolean isStructured() {
-            return structured;
-        }        
-    }
-    
-    /**
-     * It's a simple class representing a single position used by a container within a transport link
-     */
-    public class SDHPosition implements Serializable {
-        /**
-         * Id of the connection being used (a TransportLink or a ContainerLink)
-         */
-        private long connectionId;
-        /**
-         * Id of the connection being used (a TransportLink or a ContainerLink)
-         */
-        private String connectionClass;
-        /**
-         * Actual position (STM timeslot or VC4 timeslot)
-         */
-        private int position;
-
-        public SDHPosition(String connectionClass, long connectionId, int position) {
-            this.connectionId = connectionId;
-            this.connectionClass = connectionClass;
-            this.position = position;
-        }
-
-        public long getLinkId() {
-            return connectionId;
-        }
-
-        public void setLinkId(long connectionId) {
-            this.connectionId = connectionId;
-        }
-
-        public String getLinkClass() {
-            return connectionClass;
-        }
-
-        public void setLinkClass(String linkClass) {
-            this.connectionClass = linkClass;
-        }
-
-        public int getPosition() {
-            return position;
-        }
-
-        public void setPosition(int position) {
-            this.position = position;
-        }
-    }
-    
-    /**
-     * Instances of this class define a tributary link
-     */
-    public class SDHTributaryLinkDefinition implements Serializable {
-        /**
-         * Link object
-         */
-        private RemoteBusinessObjectLight link;
-        
-        /**
-         * The positions used by the container
-         */
-        private List<SDHPosition> positions;
-
-        public SDHTributaryLinkDefinition(RemoteBusinessObjectLight link, List<SDHPosition> positions) {
-            this.link = link;
-            this.positions = positions;
-        }       
-
-        public RemoteBusinessObjectLight getContainerName() {
-            return link;
-        }
-
-        public void setContainerName(RemoteBusinessObjectLight link) {
-            this.link = link;
-        }
-
-        public List<SDHPosition> getPositions() {
-            return positions;
-        }
-
-        public void setPositions(List<SDHPosition> positions) {
-            this.positions = positions;
-        }
     }
 }

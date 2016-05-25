@@ -16,7 +16,9 @@
 
 package org.kuwaiba.beans;
 
+import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHModule;
+import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
 import java.util.List;
 import javax.ejb.Remote;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
@@ -568,10 +570,10 @@ public interface WebserviceBeanRemote {
             String classNameEndpointB, long idEndpointB, String linkType, String defaultName, String ipAddress, String sessionId) throws ServerSideException;
     
     public long createSDHContainerLink(String classNameEndpointA, long idEndpointA, 
-            String classNameEndpointB, long idEndpointB, String linkType, List<SDHModule.SDHPosition> positions, String defaultName, String ipAddress, String sessionId) throws ServerSideException;
+            String classNameEndpointB, long idEndpointB, String linkType, List<SDHPosition> positions, String defaultName, String ipAddress, String sessionId) throws ServerSideException;
     
     public long createSDHTributaryLink(String classNameEndpointA, long idEndpointA, 
-            String classNameEndpointB, long idEndpointB, String linkType, List<SDHModule.SDHPosition> positions, String defaultName, String ipAddress, String sessionId) throws ServerSideException;
+            String classNameEndpointB, long idEndpointB, String linkType, List<SDHPosition> positions, String defaultName, String ipAddress, String sessionId) throws ServerSideException;
     
     public void deleteSDHTransportLink(String transportLinkClass, long transportLinkId, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException;
     
@@ -587,9 +589,9 @@ public interface WebserviceBeanRemote {
                                             long  communicationsEquipmentIdA, String communicationsEquipmentClassB, 
                                             long  communicationsEquipmentIB, String ipAddress, String sessionId) throws ServerSideException;
     
-    public List<SDHModule.SDHContainerLinkDefinition> getSDHTransportLinkStructure(String transportLinkClass, long transportLinkId, String ipAddress, String sessionId) throws ServerSideException;
+    public List<SDHContainerLinkDefinition> getSDHTransportLinkStructure(String transportLinkClass, long transportLinkId, String ipAddress, String sessionId) throws ServerSideException;
     
-    public List<SDHModule.SDHContainerLinkDefinition> getSDHContainerLinkStructure(String transportLinkClass, long transportLinkId, String ipAddress, String sessionId) throws ServerSideException;
+    public List<SDHContainerLinkDefinition> getSDHContainerLinkStructure(String transportLinkClass, long transportLinkId, String ipAddress, String sessionId) throws ServerSideException;
         // </editor-fold>    
     // </editor-fold>
 

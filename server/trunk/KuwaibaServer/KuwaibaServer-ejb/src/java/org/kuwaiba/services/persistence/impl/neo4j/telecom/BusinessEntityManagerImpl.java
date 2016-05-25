@@ -16,7 +16,6 @@
 
 package org.kuwaiba.services.persistence.impl.neo4j.telecom;
 
-import com.sun.faces.util.CollectionsUtils;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,7 +25,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
@@ -110,8 +108,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             this.objectIndex = graphDb.index().forNodes(Constants.INDEX_OBJECTS);
             this.poolsIndex = graphDb.index().forNodes(Constants.INDEX_POOLS);
             this.specialNodesIndex = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES);
-        }catch(Exception ex) {
-            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "BEM constructor: {0}", ex.getMessage()); //NOI18N
         }
     }
 
@@ -164,9 +160,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                       
             tx.success();
             return newObject.getId();
-        }catch(Exception ex){
-            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "createObject: {0}", ex.getMessage()); //NOI18N
-            throw new RuntimeException(ex.getMessage());
         }
     }
     
@@ -176,46 +169,43 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, DatabaseException, ApplicationObjectNotFoundException, NotAuthorizedException {
 
         try (Transaction tx = graphDb.beginTx()) {
-                String[] splitCriteria = criteria.split(":");
-                if (splitCriteria.length != 2)
-                    throw new InvalidArgumentException("The criteria is not valid, two components expected (attributeName:attributeValue)", Level.INFO);
-                
-                if (splitCriteria[0].equals(Constants.PROPERTY_OID))
-                    return createObject(className, parentClassName, Long.parseLong(splitCriteria[1]), attributes, template);
-                
-                ClassMetadata parentClass = cm.getClass(parentClassName);
-                if (parentClass == null)
-                    throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", parentClassName));
-                
-                AttributeMetadata filterAttribute = parentClass.getAttribute(splitCriteria[0]);
-                
-                if (filterAttribute == null)
-                    throw new MetadataObjectNotFoundException(String.format("Attribute %s could not be found", splitCriteria[1]));
+            String[] splitCriteria = criteria.split(":");
+            if (splitCriteria.length != 2)
+                throw new InvalidArgumentException("The criteria is not valid, two components expected (attributeName:attributeValue)", Level.INFO);
 
-                if (!AttributeMetadata.isPrimitive(filterAttribute.getType()))
-                    throw new InvalidArgumentException(String.format(
-                            "The filter provided (%s) is not a primitive type. Non-primitive types are not supported as they typically don't uniquely identify an object", 
-                            splitCriteria[0]), Level.INFO);
-                
-                long parentOid = -1;
-                Node parentClassNode = classIndex.get(Constants.PROPERTY_NAME, parentClassName).getSingle();
-                Iterator<Relationship> instances = parentClassNode.getRelationships(RelTypes.INSTANCE_OF).iterator();
-                
-                while (instances.hasNext()){
-                    Node possibleParentNode = instances.next().getStartNode();                   
-                    if (possibleParentNode.getProperty(splitCriteria[0]).toString().equals(splitCriteria[1])) {
-                        parentOid = possibleParentNode.getId();
-                        break;
-                    }
+            if (splitCriteria[0].equals(Constants.PROPERTY_OID))
+                return createObject(className, parentClassName, Long.parseLong(splitCriteria[1]), attributes, template);
+
+            ClassMetadata parentClass = cm.getClass(parentClassName);
+            if (parentClass == null)
+                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", parentClassName));
+
+            AttributeMetadata filterAttribute = parentClass.getAttribute(splitCriteria[0]);
+
+            if (filterAttribute == null)
+                throw new MetadataObjectNotFoundException(String.format("Attribute %s could not be found", splitCriteria[1]));
+
+            if (!AttributeMetadata.isPrimitive(filterAttribute.getType()))
+                throw new InvalidArgumentException(String.format(
+                        "The filter provided (%s) is not a primitive type. Non-primitive types are not supported as they typically don't uniquely identify an object", 
+                        splitCriteria[0]), Level.INFO);
+
+            long parentOid = -1;
+            Node parentClassNode = classIndex.get(Constants.PROPERTY_NAME, parentClassName).getSingle();
+            Iterator<Relationship> instances = parentClassNode.getRelationships(RelTypes.INSTANCE_OF).iterator();
+
+            while (instances.hasNext()){
+                Node possibleParentNode = instances.next().getStartNode();                   
+                if (possibleParentNode.getProperty(splitCriteria[0]).toString().equals(splitCriteria[1])) {
+                    parentOid = possibleParentNode.getId();
+                    break;
                 }
-                if (parentOid != -1)
-                    return createObject(className, parentClassName, parentOid, attributes, template);
+            }
+            if (parentOid != -1)
+                return createObject(className, parentClassName, parentOid, attributes, template);
 
-                throw new InvalidArgumentException(String.format("A parent with %s %s of class %s could not be found", 
-                        splitCriteria[0], splitCriteria[1], parentClassName), Level.INFO);
-            }catch(Exception ex){
-            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "createObject: {0}", ex.getMessage()); //NOI18N
-            throw new RuntimeException(ex.getMessage());
+            throw new InvalidArgumentException(String.format("A parent with %s %s of class %s could not be found", 
+                    splitCriteria[0], splitCriteria[1], parentClassName), Level.INFO);
         }
     }
     
@@ -260,28 +250,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                        
             tx.success();
             return newObject.getId();
-        }catch(Exception ex){
-            Logger.getLogger(getClass().getName()).log(Level.INFO, "createSpecialObject: {0}", ex.getMessage()); //NOI18N
-            throw new RuntimeException(ex.getMessage());
         }
     }
     
-    /**
-     * Creates an object inside a pool
-     * @param poolId Parent pool id. 
-     * @param attributeNames Attributes to be set
-     * @param attributeValues Attribute values to be set
-     * @param templateId Template used to create the object, if applicable. -1 for none
-     * @throws ApplicationObjectNotFoundException If the parent pool can't be found
-     * @throws InvalidArgumentException If any of the attributes or its type is invalid
-     * @return the id of the newly created object
-     * @throws org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException If the arrays provided have different sizes
-     * @throws org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException If creating pool items is not allowed
-     */
     @Override
     public long createPoolItem(long poolId, String className, String[] attributeNames, 
     String[][] attributeValues, long templateId) 
-            throws ApplicationObjectNotFoundException, InvalidArgumentException, ArraySizeMismatchException, NotAuthorizedException {
+            throws ApplicationObjectNotFoundException, InvalidArgumentException, ArraySizeMismatchException, MetadataObjectNotFoundException, NotAuthorizedException {
         
         if (attributeNames != null && attributeValues != null){
             if (attributeNames.length != attributeValues.length)
@@ -317,15 +292,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             tx.success();
             return newObject.getId();
 
-        }catch(Exception ex){
-            Logger.getLogger(getClass().getName()).log(Level.INFO, "createPoolItem: {0}", ex.getMessage()); //NOI18N
-            throw new RuntimeException(ex.getMessage());
         }
     }
 
     @Override
     public long[] createBulkSpecialObjects(String className, int numberOfObjects, String parentClassName, long parentId) 
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, ApplicationObjectNotFoundException, NotAuthorizedException, InvalidArgumentException {
         
         ClassMetadata myClass= cm.getClass(className);
         if (myClass == null)
@@ -375,9 +347,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             
             tx.success();
             return res;
-        }catch(Exception ex){
-            Logger.getLogger(getClass().getName()).log(Level.INFO, "createSpecialObject: {0}", ex.getMessage()); //NOI18N
-            throw new RuntimeException(ex.getMessage());
         }
     }
 
@@ -461,8 +430,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 else
                     parents.add(Util.createRemoteObjectLightFromNode(node));
             }
-        }catch(Exception ex){
-            throw new RuntimeException(ex.getMessage());
         }
         return parents;
     }
@@ -510,9 +477,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 }
             }
             tx.success();
-        }catch(Exception ex){
-            Logger.getLogger(getClass().getName()).log(Level.INFO, "deleteObject: {0}", ex.getMessage()); //NOI18N
-            throw new RuntimeException(ex.getMessage());
         }
     }
 
@@ -630,9 +594,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 rel.setProperty(property, properties.get(property));
             
             tx.success();
-        }catch(Exception ex){
-            Logger.getLogger(getClass().getName()).log(Level.INFO, "createSpecialRelationship: {0}", ex.getMessage()); //NOI18N
-            throw new RuntimeException(ex.getMessage());
         }
     }
     
@@ -648,9 +609,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     rel.delete();
             }
             tx.success();
-        }catch(Exception ex){
-            Logger.getLogger(getClass().getName()).log(Level.INFO, "releaseSpecialRelationship: {0}", ex.getMessage()); //NOI18N
-            throw new RuntimeException(ex.getMessage());
         }
     }
     
@@ -666,9 +624,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     rel.delete();
             }
             tx.success();
-        }catch(Exception ex){
-            Logger.getLogger(getClass().getName()).log(Level.INFO, "releaseSpecialRelationship: {0}", ex.getMessage()); //NOI18N
-            throw new RuntimeException(ex.getMessage());
         }
     }
 
@@ -708,9 +663,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 }
             }
             tx.success();
-        }catch(Exception ex){
-            Logger.getLogger(getClass().getName()).log(Level.INFO, "moveObjects: {0}", ex.getMessage()); //NOI18N
-            throw new RuntimeException(ex.getMessage());
         }
     }
 
@@ -743,9 +695,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             }
             tx.success();
             return res;
-        }catch(Exception ex){
-            Logger.getLogger(getClass().getName()).log(Level.INFO, "copyObjects: {0}", ex.getMessage()); //NOI18N
-            throw new RuntimeException(ex.getMessage());
         }        
     }
 
@@ -782,8 +731,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 }
             }
             return res;
-        }catch (Exception ex){
-            throw new RuntimeException (ex.getMessage());
         }
     }
     
@@ -814,9 +761,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 }
             }
             return res;
-        }catch(Exception ex){
-            Logger.getLogger(getClass().getName()).log(Level.INFO, "getObjectChildren: {0}", ex.getMessage()); //NOI18N
-            throw new RuntimeException(ex.getMessage());
         }
     }
     
@@ -848,8 +792,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 res.add(new RemoteBusinessObjectLight(child.getId(), (String)child.getProperty(Constants.PROPERTY_NAME), Util.getClassName(child)));
             }
             return res;
-        }catch(Exception ex){
-            throw new RuntimeException(ex.getMessage());
         }
     }
     
@@ -1248,7 +1190,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             throws InvalidArgumentException, MetadataObjectNotFoundException {
  
         if (classToMap.isAbstract())
-                throw new InvalidArgumentException(String.format("Can not create objects from abstract classes (%s)", classToMap.getName()), Level.OFF);
+            throw new InvalidArgumentException(String.format("Can not create objects from abstract classes (%s)", classToMap.getName()), Level.OFF);
         
         Node newObject = graphDb.createNode();
         newObject.setProperty(Constants.PROPERTY_NAME, ""); //The default value is an empty string 

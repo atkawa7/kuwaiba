@@ -34,8 +34,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.Privilege;
@@ -77,7 +79,7 @@ public class Util {
     public static Object getRealValue(String value, String type) throws InvalidArgumentException {
         if (value == null)
             return null;
-        try{
+        try {
             if(type.equals("String"))
                 return value;
             else
@@ -100,7 +102,7 @@ public class Util {
                                         return Timestamp.valueOf(value);
                                     else
                                         throw new InvalidArgumentException(String.format("Type %s not found",type),Level.WARNING);
-        }catch (Exception e){
+        }catch (NumberFormatException | InvalidArgumentException e){
             throw new InvalidArgumentException(String.format("Can not convert value %s to a type %s", value, type), Level.WARNING);
         }
     }
@@ -308,7 +310,7 @@ public class Util {
     public static ClassMetadata createClassMetadataFromNode(Node classNode)
     {
         ClassMetadata myClass = new ClassMetadata();
-        List<AttributeMetadata> listAttributes = new ArrayList();
+        Set<AttributeMetadata> listAttributes = new HashSet<>();
 
         myClass.setName((String)classNode.getProperty(Constants.PROPERTY_NAME));
         Iterable<Label> labels = classNode.getLabels();

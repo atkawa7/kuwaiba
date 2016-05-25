@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.stream.XMLStreamException;
 import org.kuwaiba.apis.persistence.ConnectionManager;
 import org.kuwaiba.apis.persistence.application.Privilege;
 import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
@@ -55,21 +56,14 @@ public class DataModelLoader {
         this.mem = mem;
     }
         
-    public boolean loadDataModel(byte[] dataModelAsByteArray) throws IOException, Exception{
-        try 
-        {                   
+    public void loadDataModel(byte[] dataModelAsByteArray) throws IOException, XMLStreamException, DatabaseException {
             XMLBackupReader reader = new XMLBackupReader(mem);
             reader.read(dataModelAsByteArray);
             createDummyRoot();
             createGroupsRootNode();
             createActivityLogRootNodes();
-            return reader.load();
-        } catch (IOException ex) {
-            Logger.getLogger(DataModelLoader.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (Exception ex) {
-            Logger.getLogger(DataModelLoader.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return false;
+            reader.load();
+ 
     }
     
     public void createDummyRoot() throws DatabaseException
