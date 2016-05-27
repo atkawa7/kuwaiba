@@ -49,7 +49,9 @@ import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.services.persistence.util.Util;
 import org.kuwaiba.util.ChangeDescriptor;
 import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Path;
 import org.neo4j.graphdb.Relationship;
@@ -441,7 +443,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 if (objectNode.hasRelationship(Direction.OUTGOING, RelTypes.CHILD_OF)){
                     Node parentNode = objectNode.getSingleRelationship(RelTypes.CHILD_OF, Direction.OUTGOING).getEndNode();
 
-                    if (parentNode.hasRelationship(RelTypes.DUMMY_ROOT))
+                    Label label = DynamicLabel.label(Constants.LABEL_ROOT);
+                    if (parentNode.hasLabel(label) && Constants.NODE_DUMMYROOT.equals(parentNode.getProperty(Constants.PROPERTY_NAME)))
                         return null;
                     else {
                         String thisNodeClass = Util.getClassName(parentNode);
