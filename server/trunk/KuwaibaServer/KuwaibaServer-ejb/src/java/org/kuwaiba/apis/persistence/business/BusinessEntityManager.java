@@ -490,19 +490,6 @@ public interface BusinessEntityManager {
      */
     public boolean hasSpecialRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships) 
             throws ObjectNotFoundException, MetadataObjectNotFoundException, NotAuthorizedException;
-
-    /**
-     * Sets the display name of a special relationship used in a model
-     * @param relationshipName The name of the relationship the display name is going to be set
-     * @param relationshipDisplayName The display name
-     */
-    public void setSpecialRelationshipDisplayName(String relationshipName, String relationshipDisplayName);
-    /**
-     * Returns the display name of a special relationship. The display name is useful to improve the way the relationship is displayed on trees and other modules
-     * @param relationshipName The name of the relationship
-     * @return The display name for the relationship name provided. If it can not be found, the relationship name is returned instead
-     */
-    public String getSpecialRelationshipDisplayName(String relationshipName);
     
     /**
      * Finds all possible routes between two given inventory objects

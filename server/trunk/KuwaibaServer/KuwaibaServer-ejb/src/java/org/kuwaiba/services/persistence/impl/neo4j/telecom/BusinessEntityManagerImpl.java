@@ -89,10 +89,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      * Reference to the CacheManager
      */
     private CacheManager cm;
-    /**
-     * This hash contains the display name of the special relationship used in the different models
-     */
-    private HashMap<String, String> relationshipDisplayNames;
 
     private BusinessEntityManagerImpl() {
         cm = CacheManager.getInstance();
@@ -101,7 +97,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     public BusinessEntityManagerImpl(ConnectionManager cmn, ApplicationEntityManager aem) {
         this();
         this.graphDb = (GraphDatabaseService)cmn.getConnectionHandler();
-        this.relationshipDisplayNames = new HashMap<>();
         try(Transaction tx = graphDb.beginTx())
         {
             this.classIndex = graphDb.index().forNodes(Constants.INDEX_CLASS);
@@ -586,8 +581,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             Node nodeB = getInstanceOfClass(bObjectClass, bObjectId);
             Relationship rel = nodeA.createRelationshipTo(nodeB, RelTypes.RELATED_TO_SPECIAL);
             rel.setProperty(Constants.PROPERTY_NAME, name);
-            String relationshipDisplayName = relationshipDisplayNames.get(name);
-            rel.setProperty(Constants.PROPERTY_DISPLAY_NAME, relationshipDisplayName == null ? name : relationshipDisplayName);
             
             //Custom properties
             for (String property : properties.keySet())
@@ -1072,18 +1065,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             }
         }
         return path;
-    }
-    
-    
-    @Override
-    public void setSpecialRelationshipDisplayName(String relationshipName, String relationshipDisplayName) {
-        relationshipDisplayNames.put(relationshipName, relationshipDisplayName);
-    }
-    
-    @Override
-    public String getSpecialRelationshipDisplayName(String relationshipName) {
-        String displayName = relationshipDisplayNames.get(relationshipName);
-        return displayName == null ? relationshipName : displayName;
     }
 
     @Override

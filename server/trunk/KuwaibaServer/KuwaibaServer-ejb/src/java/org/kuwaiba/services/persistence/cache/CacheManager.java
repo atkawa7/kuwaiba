@@ -221,9 +221,8 @@ public class CacheManager {
       * @param allegedParentClass Possible super class
       * @param className Class to be evaluated
       * @return is className subClass of allegedParentClass?
-      * @throws MetadataObjectNotFoundException If the class can not be found
       */
-    public boolean isSubClass(String allegedParentClass, String className) throws MetadataObjectNotFoundException{
+    public boolean isSubClass(String allegedParentClass, String className) {
 
         if (className == null)
             return false;
@@ -231,7 +230,7 @@ public class CacheManager {
         ClassMetadata currentClass = getClass(className);
 
         if (currentClass == null)
-            throw new MetadataObjectNotFoundException(String.format("Can not find a class with id %s", className));
+            return false;
 
         if (allegedParentClass.equals(className))
             return true;

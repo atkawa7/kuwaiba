@@ -125,15 +125,15 @@ public class SDHModule implements GenericCommercialModule {
         this.bem = bem;
         
         //Registers the display names
-        this.bem.setSpecialRelationshipDisplayName(RELATIONSHIP_SDHTLENDPOINTA, "SDH Transport Link A Side");
-        this.bem.setSpecialRelationshipDisplayName(RELATIONSHIP_SDHTLENDPOINTB, "SDH Transport Link B Side");
-        this.bem.setSpecialRelationshipDisplayName(RELATIONSHIP_SDHTRANSPORTLINK, "SDH Transport Link Connecting To");
-        this.bem.setSpecialRelationshipDisplayName(RELATIONSHIP_SDHCONTAINERLINK, "SDH Conatainer Link Connecting To");
-        this.bem.setSpecialRelationshipDisplayName(RELATIONSHIP_SDHTTLENDPOINTA, "SDH Tributary Link A Side");
-        this.bem.setSpecialRelationshipDisplayName(RELATIONSHIP_SDHTTLENDPOINTB, "SDH Tributary Link B Side");
-        this.bem.setSpecialRelationshipDisplayName(RELATIONSHIP_SDHTRANSPORTS, "Transported SDH Container Links");
-        this.bem.setSpecialRelationshipDisplayName(RELATIONSHIP_SDHCONTAINS, "Contained SDH Container Links");
-        this.bem.setSpecialRelationshipDisplayName(RELATIONSHIP_SDHDELIVERS, "Delivered SDH Tributary Links");
+        this.mem.setSpecialRelationshipDisplayName(RELATIONSHIP_SDHTLENDPOINTA, "SDH Transport Link A Side");
+        this.mem.setSpecialRelationshipDisplayName(RELATIONSHIP_SDHTLENDPOINTB, "SDH Transport Link B Side");
+        this.mem.setSpecialRelationshipDisplayName(RELATIONSHIP_SDHTRANSPORTLINK, "SDH Transport Link Connecting To");
+        this.mem.setSpecialRelationshipDisplayName(RELATIONSHIP_SDHCONTAINERLINK, "SDH Container Link Connecting To");
+        this.mem.setSpecialRelationshipDisplayName(RELATIONSHIP_SDHTTLENDPOINTA, "SDH Tributary Link A Side");
+        this.mem.setSpecialRelationshipDisplayName(RELATIONSHIP_SDHTTLENDPOINTB, "SDH Tributary Link B Side");
+        this.mem.setSpecialRelationshipDisplayName(RELATIONSHIP_SDHTRANSPORTS, "Transported SDH Container Links");
+        this.mem.setSpecialRelationshipDisplayName(RELATIONSHIP_SDHCONTAINS, "Contained SDH Container Links");
+        this.mem.setSpecialRelationshipDisplayName(RELATIONSHIP_SDHDELIVERS, "Delivered SDH Tributary Links");
     }
     
     //The actual methods
@@ -141,8 +141,8 @@ public class SDHModule implements GenericCommercialModule {
      * Creates an SDH transport link (STMX)
      * @param classNameEndpointA The class name of the endpoint A (some kind of port)
      * @param idEndpointA Id of endpoint A
-     * @param classNameEndpointB  The class name of the endpoint Z (some kind of port)
-     * @param idEndpointB Id of endpoint Z
+     * @param classNameEndpointB  The class name of the endpoint B (some kind of port)
+     * @param idEndpointB Id of endpoint B
      * @param linkType Type of link (STM1, STM4, STM16, STM256, etc)
      * @param defaultName The default name of the element
      * @return The id of the newly created transport link
@@ -157,7 +157,7 @@ public class SDHModule implements GenericCommercialModule {
         long newConnectionId = -1;
         try {
             if (!mem.isSubClass("GenericSDHTransportLink", linkType)) //NOI18N
-                throw new ServerSideException("Class %s is not subclass of GenericSDHTransportLink");
+                throw new ServerSideException(String.format("Class %s is not subclass of GenericSDHTransportLink", linkType));
 
             HashMap<String, List<String>> attributesToBeSet = new HashMap<>();
             attributesToBeSet.put(Constants.PROPERTY_NAME, Arrays.asList(new String[] { defaultName == null ? "" : defaultName }));

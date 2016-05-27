@@ -75,6 +75,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
      * Reference to the CacheManager
      */
     private CacheManager cm;
+    /**
+     * This hash contains the display name of the special relationship used in the different models
+     */
+    private HashMap<String, String> relationshipDisplayNames;
 
     private MetadataEntityManagerImpl() {
         cm = CacheManager.getInstance();
@@ -90,6 +94,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         this();
         this.aem = aem;
         graphDb = (GraphDatabaseService) cmn.getConnectionHandler();
+        this.relationshipDisplayNames = new HashMap<>();
         try(Transaction tx = graphDb.beginTx()) {
             classIndex = graphDb.index().forNodes(Constants.INDEX_CLASS);
             this.specialNodesIndex = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES);
@@ -1124,16 +1129,23 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         }
         return res;
     }
+    
+    @Override
+    public void setSpecialRelationshipDisplayName(String relationshipName, String relationshipDisplayName) {
+        relationshipDisplayNames.put(relationshipName, relationshipDisplayName);
+    }
+    
+    @Override
+    public String getSpecialRelationshipDisplayName(String relationshipName) {
+        String displayName = relationshipDisplayNames.get(relationshipName);
+        return displayName == null ? relationshipName : displayName;
+    }
      
     @Override
     public boolean isSubClass(String allegedParent, String classToBeEvaluated) 
             throws NotAuthorizedException
     {
-        try {
-            return cm.isSubClass(allegedParent, classToBeEvaluated);
-        } catch (MetadataObjectNotFoundException ex) {
-            return false;
-        }
+        return cm.isSubClass(allegedParent, classToBeEvaluated);
     }
     
     /**

@@ -54,6 +54,7 @@ import org.kuwaiba.apis.persistence.application.ViewObject;
 import org.kuwaiba.apis.persistence.application.ViewObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
+import org.kuwaiba.apis.persistence.exceptions.UnsupportedPropertyException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.apis.persistence.metadata.GenericObjectList;
@@ -516,8 +517,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             cm.putGroup(Util.createGroupProfileFromNode(groupNode));
             tx.success();
-        }catch(Exception ex){
-            Logger.getLogger("setGroupProperties: " + ex.getMessage()); //NOI18N
         }
     }
 
@@ -545,8 +544,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             }
             
             tx.success();
-        }catch(Exception ex){
-            Logger.getLogger("deleteUsers: " + ex.getMessage()); //NOI18N
         }
     }
 
@@ -572,8 +569,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 }
                 tx.success();
             }
-        }catch(Exception ex){
-            Logger.getLogger("deleteGroups: " + ex.getMessage()); //NOI18N
         }
     }
 
@@ -712,7 +707,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         if (objectClass == null)
             throw new InvalidArgumentException("The root object can not be related to any view", Level.INFO);
         
-        long id = 0;
+        long id;
         try(Transaction tx = graphDb.beginTx()) {
             Node instance = getInstanceOfClass(objectClass, oid);
             Node viewNode = graphDb.createNode();
@@ -741,8 +736,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
             tx.success();
             id = viewNode.getId();
-        }catch (Exception ex){
-            Logger.getLogger("createObjectRelatedView: " + ex.getMessage()); //NOI18N
         }
         return id;
     }
@@ -775,9 +768,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             generalViewsIndex.add(newView, Constants.PROPERTY_ID, newView.getId());
             tx.success();
             return newView.getId();
-        }catch (Exception ex){
-            Logger.getLogger("createGeneralView: "+ ex.getMessage()); //NOI18N
-            throw new RuntimeException(ex.getMessage());
         }
     }
 
@@ -850,9 +840,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             return new ChangeDescriptor(affectedProperties, oldValues, newValues, null);
             
-        }catch(Exception ex) {
-            Logger.getLogger("updateObjectRelatedView: "+ ex.getMessage()); //NOI18N
-            throw new RuntimeException(ex.getMessage());
         }
     }
 
@@ -913,9 +900,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 gView.delete();
             }
             tx.success();
-        }catch (Exception ex){
-            Logger.getLogger("updateObjectRelatedView: "+ ex.getMessage()); //NOI18N
-            throw new RuntimeException(ex.getMessage());
         }
     }
 
@@ -1066,9 +1050,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             tx.success();
             return queryNode.getId();
 
-        }catch(Exception ex){
-            Logger.getLogger("createQuery: " + ex.getMessage()); //NOI18N
-            throw new RuntimeException(ex.getMessage());
         }
     }
 
@@ -1104,9 +1085,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             else
                 queryNode.setProperty(CompactQuery.PROPERTY_IS_PUBLIC, true);
             tx.success();
-        }catch(Exception ex){
-            Logger.getLogger("saveQuery: " + ex.getMessage()); //NOI18N
-            throw new RuntimeException(ex.getMessage());
         }
     }
 
@@ -1127,9 +1105,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             queryIndex.remove(queryNode);
             queryNode.delete();
             tx.success();
-        }catch(Exception ex){
-            Logger.getLogger("deleteQuery: " + ex.getMessage()); //NOI18N
-            throw new RuntimeException(ex.getMessage());
         }
     }
 
@@ -1229,19 +1204,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     //Pools
-    /**
-     * Creates a pool
-     * @param parentId Parent id. -1 for none
-     * @param name Pool name
-     * @param description Pool description
-     * @param instancesOfClass What kind of elements can be contained in this pool
-     * @return the id of the new pool
-     * @throws MetadataObjectNotFoundException
-     * @throws InvalidArgumentException 
-     */
     @Override
     public long createPool(long parentId, String name, String description, String instancesOfClass)
-            throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
+            throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException, NotAuthorizedException {
         try(Transaction tx = graphDb.beginTx())
         {
             Node parentNode = null;
@@ -1268,14 +1233,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             poolsIndex.putIfAbsent(poolNode, Constants.PROPERTY_ID, poolNode.getId());
             tx.success();
             return poolNode.getId();
-        }catch(Exception ex){
-            Logger.getLogger("createPool: " + ex.getMessage()); //NOI18N
-            throw new RuntimeException(ex.getMessage());
         }
     }
     
     @Override
-    public void deletePools(long[] ids) throws NotAuthorizedException, InvalidArgumentException {
+    public void deletePools(long[] ids) throws NotAuthorizedException, InvalidArgumentException, OperationNotPermittedException {
         try(Transaction tx = graphDb.beginTx()) {
             for (long id : ids){
                 Node poolNode = poolsIndex.get(Constants.PROPERTY_ID, id).getSingle();
@@ -1296,17 +1258,19 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                      
                     if(objectNode.hasProperty(Constants.PROPERTY_CLASS_NAME) && objectNode.getProperty(Constants.PROPERTY_CLASS_NAME).equals(Constants.CLASS_GENERICSERVICE))
                         poolsToBeDeleted.add(objectNode.getId());
-                    else{
-                        String className = Util.getObjectClassName(objectNode);
-                        if (toBeDeleted.get(className) == null) 
-                            toBeDeleted.put(className, new long[]{objectNode.getId()});
-                        else{
-                            long[] objectIds = toBeDeleted.get(className);
-                            long[] newObjectIds = new long[objectIds.length+1];
-                            System.arraycopy(objectIds, 0, newObjectIds, 0, objectIds.length);
-                            newObjectIds[objectIds.length]=objectNode.getId();
-                            toBeDeleted.put(className, newObjectIds);
-                        }
+                    else {
+                        try {
+                            String className = Util.getObjectClassName(objectNode);
+                            if (toBeDeleted.get(className) == null) 
+                                toBeDeleted.put(className, new long[]{objectNode.getId()});
+                            else{
+                                long[] objectIds = toBeDeleted.get(className);
+                                long[] newObjectIds = new long[objectIds.length+1];
+                                System.arraycopy(objectIds, 0, newObjectIds, 0, objectIds.length);
+                                newObjectIds[objectIds.length]=objectNode.getId();
+                                toBeDeleted.put(className, newObjectIds);
+                            }
+                        } catch(UnsupportedPropertyException | MetadataObjectNotFoundException ex) {} //This shouldn't happen, so just ignore it
                     }
                 }
                 
@@ -1315,8 +1279,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                         if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, className))
                             throw new OperationNotPermittedException(className, String.format("Class %s is not a business-related class", className));
 
-                        Node instance = getInstanceOfClass(className, oid);
-                        Util.deleteObject(instance, false);
+                        try {
+                            Node instance = getInstanceOfClass(className, oid);
+                            Util.deleteObject(instance, false);
+                        } catch (MetadataObjectNotFoundException | ObjectNotFoundException ex) {} //This should not happen, so just ignore it
                     }
                 }
 
@@ -1335,9 +1301,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             }
             
             tx.success();
-        }catch(Exception ex){
-            Logger.getLogger("deletePools: " + ex.getMessage()); //NOI18N
-            throw new RuntimeException(ex.getMessage());
         }
     }
 
@@ -1473,12 +1436,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         }
     }
     
-    /**
-     * Retrieves the list of activity log entries
-     * @param page current page
-     * @param limit limit of results per page. 0 to retrieve them all
-     * @return The list of activity log entries
-     */
     @Override
     public List<ActivityLogEntry> getGeneralActivityAuditTrail(int page, int limit) 
             throws NotAuthorizedException {        
@@ -1823,7 +1780,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     readJoins(l,join);
             }
         }
-        if(className != null || className.equals(""))
+        if(className != null && className.equals(""))
             l.add(className);
         return className;
     }

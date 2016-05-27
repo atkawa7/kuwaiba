@@ -28,6 +28,7 @@ import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
+import org.kuwaiba.apis.persistence.exceptions.UnsupportedPropertyException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.util.ChangeDescriptor;
 
@@ -416,6 +417,7 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException If instancesOfClass is not a valid subclass of InventoryObject
      * @throws InvalidArgumentException If the owner doesn't exist
      * @throws ObjectNotFoundException If the parent can not be found
+     * @throws org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException If the user is not authorized to create pools
      */
     public long createPool(long parentId, String name, String description, String instancesOfClass) 
             throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException, NotAuthorizedException;
@@ -424,8 +426,10 @@ public interface ApplicationEntityManager {
      * Deletes a set of pools
      * @param ids the list of ids from the objects to be deleted
      * @throws InvalidArgumentException If any of the pools to be deleted couldn't be found
+     * @throws org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException If any of the objects in the pool can not be deleted because it's not a business related instance (it's more a security restriction)
+     * @throws org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException If the user is not authorized to delete pools
      */
-    public void deletePools(long[] ids) throws InvalidArgumentException, NotAuthorizedException;
+    public void deletePools(long[] ids) throws InvalidArgumentException, OperationNotPermittedException, NotAuthorizedException;
    
     /**
      * Gets the available pools for a specific parent id
