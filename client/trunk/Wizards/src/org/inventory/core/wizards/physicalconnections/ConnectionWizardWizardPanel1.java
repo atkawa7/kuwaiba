@@ -36,7 +36,7 @@ import org.openide.util.LookupListener;
  * Connection wizard panel 1
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ConnectionWizardWizardPanel1 implements WizardDescriptor.ValidatingPanel{
+public class ConnectionWizardWizardPanel1 implements WizardDescriptor.ValidatingPanel {
 
     /**
      * The visual component that displays this panel. If you need to access the
@@ -50,7 +50,7 @@ public class ConnectionWizardWizardPanel1 implements WizardDescriptor.Validating
     private Lookup.Result bResult;
     private int wizardType;
     private CommunicationsStub com = CommunicationsStub.getInstance();
-    private String errorStr="";
+    private String errorStr = "";
 
     ConnectionWizardWizardPanel1(LocalObjectLight aSide, LocalObjectLight bSide) {
         component = new ConnectionWizardVisualPanel1(aSide, bSide);
@@ -200,7 +200,7 @@ public class ConnectionWizardWizardPanel1 implements WizardDescriptor.Validating
         return true;
     }
     
-    private final Set<ChangeListener> listeners = new HashSet<ChangeListener>(1); // or can use ChangeSupport in NB 6.0
+    private final Set<ChangeListener> listeners = new HashSet<>(1); // or can use ChangeSupport in NB 6.0
 
     @Override
     public final void addChangeListener(ChangeListener l) {
@@ -218,7 +218,7 @@ public class ConnectionWizardWizardPanel1 implements WizardDescriptor.Validating
     protected final void fireChangeEvent() {
         Iterator<ChangeListener> it;
         synchronized (listeners) {
-            it = new HashSet<ChangeListener>(listeners).iterator();
+            it = new HashSet<>(listeners).iterator();
         }
         ChangeEvent ev = new ChangeEvent(this);
         while (it.hasNext()) 

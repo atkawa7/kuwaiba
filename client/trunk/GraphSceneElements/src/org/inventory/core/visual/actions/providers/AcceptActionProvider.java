@@ -31,7 +31,7 @@ import org.openide.util.Exceptions;
 
 /**
  * This provider should check if a given type of object can be dropped on the scene
- * @author gir
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class AcceptActionProvider implements AcceptProvider {
 
@@ -39,7 +39,7 @@ public class AcceptActionProvider implements AcceptProvider {
     /**
      * Only subclasses of this class will be allowed to be dropped on the scene
      */
-    private String filter;
+    private String filterClass;
     
     public AcceptActionProvider(GraphScene scene) {
         this.scene = scene;
@@ -48,22 +48,22 @@ public class AcceptActionProvider implements AcceptProvider {
     /**
      * This constructor allows to specify the instances of what classes (as in inventory classes) can be dropped where
      * @param scene The related scene
-     * @param filter The class name of the instances allowed to be dropped here. It'd be useful to use a root, abstract class such as InventoryObject or GenericSomething
+     * @param filterClass The class name of the instances allowed to be dropped here. It'd be useful to use a root, abstract class such as InventoryObject or GenericSomething
      */
-    public AcceptActionProvider(GraphScene scene, String filter) {
+    public AcceptActionProvider(GraphScene scene, String filterClass) {
         this (scene);
-        this.filter = filter;
+        this.filterClass = filterClass;
     }
    
 
     @Override
     public ConnectorState isAcceptable(Widget widget, Point point, Transferable transferable) {
         if (transferable.isDataFlavorSupported(LocalObjectLight.DATA_FLAVOR)) {
-            if (filter == null)
-                return ConnectorState.REJECT_AND_STOP;
+            if (filterClass == null)
+                return ConnectorState.ACCEPT;
             try {
                 LocalObjectLight objectToBeDropped = (LocalObjectLight) transferable.getTransferData(LocalObjectLight.DATA_FLAVOR);
-                if (CommunicationsStub.getInstance().isSubclassOf(objectToBeDropped.getClassName(), filter))
+                if (CommunicationsStub.getInstance().isSubclassOf(objectToBeDropped.getClassName(), filterClass))
                     return ConnectorState.ACCEPT;
             } catch (UnsupportedFlavorException | IOException ex) {
                 if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_INFO || Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_FINE)

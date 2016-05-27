@@ -75,6 +75,7 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
     public void initCustomComponents() {
         em = new ExplorerManager();
         scene = new SDHModuleScene();
+        scene.setActiveTool(SDHModuleScene.ACTION_SELECT);
         configObject = Lookup.getDefault().lookup(SDHConfigurationObject.class);
         configObject.setProperty("connectionType", SDHConnectionWizard.Connections.CONNECTION_TRANSPORTLINK);
         add(scene.createView());
@@ -267,6 +268,7 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
                 case JOptionPane.NO_OPTION:
                     scene.clear();
                     saved = false;
+                    enableButtons(true);
                     //tvsrv.setTvId(-1);
                     break;
                 case JOptionPane.YES_OPTION:

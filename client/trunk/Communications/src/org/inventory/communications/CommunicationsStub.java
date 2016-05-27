@@ -51,6 +51,7 @@ import org.kuwaiba.wsclient.RemoteObjectLightArray;
 import org.kuwaiba.wsclient.RemoteObjectSpecialRelationships;
 import org.kuwaiba.wsclient.RemoteQueryLight;
 import org.kuwaiba.wsclient.ResultRecord;
+import org.kuwaiba.wsclient.ServerSideException_Exception;
 import org.kuwaiba.wsclient.StringArray;
 import org.kuwaiba.wsclient.TransientQuery;
 import org.kuwaiba.wsclient.UserInfo;
@@ -109,7 +110,6 @@ public class CommunicationsStub {
     
     /**
      * This method closes the current session
-     * @return Success or failure
      */
     public void closeSession(){
         try{
@@ -1903,8 +1903,8 @@ public class CommunicationsStub {
         }
     }// </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Services methods. Click on the + sign on the left to edit the code.">
-// </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Service methods">
+    // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Pools methods. Click on the + sign on the left to edit the code.">
     /**
@@ -2039,4 +2039,19 @@ public class CommunicationsStub {
         }
     }
     // </editor-fold>    
+    
+    // <editor-fold defaultstate="collapsed" desc="Commercial Modules">
+    public LocalObjectLight createSDHTransportLink(LocalObjectLight endpointA, LocalObjectLight endpointB, String transportLinkType, String defaultName){
+        
+        try { 
+            long newObjectId = service.createSDHTransportLink(endpointA.getClassName(),
+                    endpointA.getOid(), endpointB.getClassName(), endpointB.getOid(), transportLinkType, defaultName, session.getSessionId());
+            return new LocalObjectLight(newObjectId, defaultName, transportLinkType);
+        } catch (ServerSideException_Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+        
+    }
+    // </editor-fold>
 }

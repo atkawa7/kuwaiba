@@ -16,7 +16,6 @@
 
 package org.inventory.core.services.utils;
 
-import javax.swing.ActionMap;
 import javax.swing.JPanel;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerManager.Provider;

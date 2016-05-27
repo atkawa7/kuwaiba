@@ -84,7 +84,12 @@ public class SDHModuleScene extends GraphScene<LocalObjectLight, LocalObjectLigh
                         SDHConnectionWizard wizard = new SDHConnectionWizard();
                         LocalObjectLight sourceObject = (LocalObjectLight)findObject(sourceWidget);
                         LocalObjectLight targetObject = (LocalObjectLight)findObject(targetWidget);
-                        wizard.start(sourceObject, targetObject);
+                        LocalObjectLight newConnection = wizard.run(sourceObject, targetObject);
+                        if (newConnection != null) {
+                            AbstractConnectionWidget newConnectionWidget = (AbstractConnectionWidget)addEdge(newConnection);
+                            newConnectionWidget.setSourceAnchor(AnchorFactory.createRectangularAnchor(sourceWidget));
+                            newConnectionWidget.setTargetAnchor(AnchorFactory.createRectangularAnchor(targetWidget));
+                        }
                     }
                 }));
         newNode.getActions(ACTION_CONNECT).addAction(createSelectAction());
