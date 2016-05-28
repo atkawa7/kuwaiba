@@ -18,7 +18,7 @@ package org.inventory.core.visual.export.filters;
 
 import java.io.IOException;
 import javax.swing.JPanel;
-import org.inventory.core.visual.export.ExportableScene;
+import org.inventory.core.visual.scene.AbstractScene;
 
 /**
  * All scene export filters must implement this interface
@@ -39,7 +39,7 @@ public abstract class SceneExportFilter {
      * The export action
      * @throws 
      */
-    public abstract void export(ExportableScene scene, String fileName) throws IOException;
+    public abstract void export(AbstractScene scene, String fileName) throws IOException;
     /**
      * The settings panel
      * @return 

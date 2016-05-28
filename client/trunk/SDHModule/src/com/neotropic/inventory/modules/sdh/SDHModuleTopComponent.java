@@ -75,6 +75,7 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
     public void initCustomComponents() {
         em = new ExplorerManager();
         scene = new SDHModuleScene();
+        service = new SDHModuleService(scene);
         scene.setActiveTool(SDHModuleScene.ACTION_SELECT);
         configObject = Lookup.getDefault().lookup(SDHConfigurationObject.class);
         configObject.setProperty("connectionType", SDHConnectionWizard.Connections.CONNECTION_TRANSPORTLINK);
@@ -135,7 +136,6 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
 
         btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/neotropic/inventory/modules/sdh/res/save.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnSave, org.openide.util.NbBundle.getMessage(SDHModuleTopComponent.class, "SDHModuleTopComponent.btnSave.text")); // NOI18N
-        btnSave.setEnabled(false);
         btnSave.setFocusable(false);
         btnSave.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnSave.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -148,7 +148,6 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
 
         btnDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/neotropic/inventory/modules/sdh/res/delete.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnDelete, org.openide.util.NbBundle.getMessage(SDHModuleTopComponent.class, "SDHModuleTopComponent.btnDelete.text")); // NOI18N
-        btnDelete.setEnabled(false);
         btnDelete.setFocusable(false);
         btnDelete.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnDelete.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -161,7 +160,6 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
 
         btnExport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/neotropic/inventory/modules/sdh/res/export.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnExport, org.openide.util.NbBundle.getMessage(SDHModuleTopComponent.class, "SDHModuleTopComponent.btnExport.text")); // NOI18N
-        btnExport.setEnabled(false);
         btnExport.setFocusable(false);
         btnExport.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnExport.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -173,8 +171,8 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
         barTools.add(btnExport);
 
         btnSelect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/neotropic/inventory/modules/sdh/res/select.png"))); // NOI18N
+        btnSelect.setSelected(true);
         org.openide.awt.Mnemonics.setLocalizedText(btnSelect, org.openide.util.NbBundle.getMessage(SDHModuleTopComponent.class, "SDHModuleTopComponent.btnSelect.text")); // NOI18N
-        btnSelect.setEnabled(false);
         btnSelect.setFocusable(false);
         btnSelect.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnSelect.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -187,7 +185,6 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
 
         btnConnect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/neotropic/inventory/modules/sdh/res/connect.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnConnect, org.openide.util.NbBundle.getMessage(SDHModuleTopComponent.class, "SDHModuleTopComponent.btnConnect.text")); // NOI18N
-        btnConnect.setEnabled(false);
         btnConnect.setFocusable(false);
         btnConnect.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnConnect.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -200,7 +197,6 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
 
         btnShowNodesLabels.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/neotropic/inventory/modules/sdh/res/hide_node_labels.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnShowNodesLabels, org.openide.util.NbBundle.getMessage(SDHModuleTopComponent.class, "SDHModuleTopComponent.btnShowNodesLabels.text")); // NOI18N
-        btnShowNodesLabels.setEnabled(false);
         btnShowNodesLabels.setFocusable(false);
         btnShowNodesLabels.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnShowNodesLabels.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -216,7 +212,6 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
         btnTransportLink.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/neotropic/inventory/modules/sdh/res/btnTransportLink.png"))); // NOI18N
         btnTransportLink.setSelected(true);
         org.openide.awt.Mnemonics.setLocalizedText(btnTransportLink, org.openide.util.NbBundle.getMessage(SDHModuleTopComponent.class, "SDHModuleTopComponent.btnTransportLink.text")); // NOI18N
-        btnTransportLink.setEnabled(false);
         btnTransportLink.setFocusable(false);
         btnTransportLink.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnTransportLink.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -230,7 +225,6 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
         btnGrpConections.add(btnContainerLink);
         btnContainerLink.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/neotropic/inventory/modules/sdh/res/btnContainerLink.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnContainerLink, org.openide.util.NbBundle.getMessage(SDHModuleTopComponent.class, "SDHModuleTopComponent.btnContainerLink.text")); // NOI18N
-        btnContainerLink.setEnabled(false);
         btnContainerLink.setFocusable(false);
         btnContainerLink.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnContainerLink.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -244,7 +238,6 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
         btnGrpConections.add(btnTributaryLink);
         btnTributaryLink.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/neotropic/inventory/modules/sdh/res/btnTributaryLink.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnTributaryLink, org.openide.util.NbBundle.getMessage(SDHModuleTopComponent.class, "SDHModuleTopComponent.btnTributaryLink.text")); // NOI18N
-        btnTributaryLink.setEnabled(false);
         btnTributaryLink.setFocusable(false);
         btnTributaryLink.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnTributaryLink.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -260,24 +253,22 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
-        if (scene.getNodes().isEmpty())
-            enableButtons(true);
-        else {
+        if (!saved) {
             switch (JOptionPane.showConfirmDialog(this, "This topology has not been saved, do you want to save it?",
                 "Confirmation", JOptionPane.YES_NO_CANCEL_OPTION)){
                 case JOptionPane.NO_OPTION:
                     scene.clear();
                     saved = false;
                     enableButtons(true);
-                    //tvsrv.setTvId(-1);
+                    service.setView(null);
                     break;
                 case JOptionPane.YES_OPTION:
                     btnSaveActionPerformed(new ActionEvent(this, 0, "close"));
                     break;
                 case JOptionPane.CANCEL_OPTION:
-                    break;
             }
         }
+        
     }//GEN-LAST:event_btnNewActionPerformed
 
     private void btnOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenActionPerformed

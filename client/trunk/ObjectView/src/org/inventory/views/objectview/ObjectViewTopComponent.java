@@ -433,8 +433,8 @@ public final class ObjectViewTopComponent extends TopComponent
                     "Information", JOptionPane.INFORMATION_MESSAGE);
         else{
             service.getViewBuilder().getScene().setNewLineColor(Color.ORANGE);
-            service.getViewBuilder().getScene().getConnectProvider().setConnectionClass(Constants.CLASS_ELECTRICALLINK);
-            service.getViewBuilder().getScene().getConnectProvider().setWizardType(PhysicalConnectionProvider.WIZARD_LINK);
+            ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setConnectionClass(Constants.CLASS_ELECTRICALLINK);
+            ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setWizardType(PhysicalConnectionProvider.WIZARD_LINK);
         }
     }//GEN-LAST:event_btnElectricalLinkActionPerformed
 
@@ -444,8 +444,8 @@ public final class ObjectViewTopComponent extends TopComponent
                     "Information", JOptionPane.INFORMATION_MESSAGE);
         else{
             service.getViewBuilder().getScene().setNewLineColor(Color.GREEN);
-            service.getViewBuilder().getScene().getConnectProvider().setConnectionClass(Constants.CLASS_OPTICALLINK);
-            service.getViewBuilder().getScene().getConnectProvider().setWizardType(PhysicalConnectionProvider.WIZARD_LINK);
+            ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setConnectionClass(Constants.CLASS_OPTICALLINK);
+            ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setWizardType(PhysicalConnectionProvider.WIZARD_LINK);
         }
     }//GEN-LAST:event_btnOpticalLinkActionPerformed
 
@@ -455,8 +455,8 @@ public final class ObjectViewTopComponent extends TopComponent
                     "Information", JOptionPane.INFORMATION_MESSAGE);
         else{
             service.getViewBuilder().getScene().setNewLineColor(Color.MAGENTA);
-            service.getViewBuilder().getScene().getConnectProvider().setConnectionClass(Constants.CLASS_WIRELESSLINK);
-            service.getViewBuilder().getScene().getConnectProvider().setWizardType(PhysicalConnectionProvider.WIZARD_LINK);
+            ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setConnectionClass(Constants.CLASS_WIRELESSLINK);
+            ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setWizardType(PhysicalConnectionProvider.WIZARD_LINK);
         }
     }//GEN-LAST:event_btnWirelessLinkActionPerformed
 
@@ -466,8 +466,8 @@ public final class ObjectViewTopComponent extends TopComponent
                     "Information", JOptionPane.INFORMATION_MESSAGE);
         else{
             service.getViewBuilder().getScene().setNewLineColor(Color.RED);
-            service.getViewBuilder().getScene().getConnectProvider().setConnectionClass(Constants.CLASS_WIRECONTAINER);
-            service.getViewBuilder().getScene().getConnectProvider().setWizardType(PhysicalConnectionProvider.WIZARD_CONTAINER);
+            ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setConnectionClass(Constants.CLASS_WIRECONTAINER);
+            ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setWizardType(PhysicalConnectionProvider.WIZARD_CONTAINER);
         }
     }//GEN-LAST:event_btnWireContainerActionPerformed
 
@@ -477,8 +477,8 @@ public final class ObjectViewTopComponent extends TopComponent
                     "Information", JOptionPane.INFORMATION_MESSAGE);
         else{
             service.getViewBuilder().getScene().setNewLineColor(Color.BLUE);
-            service.getViewBuilder().getScene().getConnectProvider().setConnectionClass(Constants.CLASS_WIRELESSCONTAINER);
-            service.getViewBuilder().getScene().getConnectProvider().setWizardType(PhysicalConnectionProvider.WIZARD_CONTAINER);
+            ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setConnectionClass(Constants.CLASS_WIRELESSCONTAINER);
+            ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setWizardType(PhysicalConnectionProvider.WIZARD_CONTAINER);
         }
     }//GEN-LAST:event_btnWirelessContainerActionPerformed
 

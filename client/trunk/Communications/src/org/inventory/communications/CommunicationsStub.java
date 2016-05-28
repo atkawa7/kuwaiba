@@ -142,6 +142,8 @@ public class CommunicationsStub {
 
     /**
      * Retrieves an object children providing the object class id
+     * @param oid object's id
+     * @param objectClassId object's class id
      * @return an array of local objects representing the object's children. Null in a problem occurs during the execution
      */
     public List<LocalObjectLight> getObjectChildren(long oid, long objectClassId){

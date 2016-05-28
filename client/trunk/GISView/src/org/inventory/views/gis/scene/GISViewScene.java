@@ -113,15 +113,15 @@ public class GISViewScene extends AbstractScene<LocalObjectLight, LocalObjectLig
         connectionProvider = new PhysicalConnectionProvider();
         
         mapLayer = new LayerWidget(this);
-        nodesLayer = new LayerWidget(this);
-        edgesLayer = new LayerWidget(this);
+        nodeLayer = new LayerWidget(this);
+        edgeLayer = new LayerWidget(this);
         interactionLayer = new LayerWidget(this);
         labelsLayer = new LayerWidget(this);
         //polygonsLayer = new LayerWidget(this);
 
         addChild(mapLayer);
-        addChild(edgesLayer);
-        addChild(nodesLayer);
+        addChild(edgeLayer);
+        addChild(nodeLayer);
         addChild(labelsLayer);
         addChild(interactionLayer);
         
@@ -144,14 +144,14 @@ public class GISViewScene extends AbstractScene<LocalObjectLight, LocalObjectLig
         myWidget.getActions(AbstractScene.ACTION_SELECT).addAction(ActionFactory.createMoveAction());
         myWidget.getActions(AbstractScene.ACTION_CONNECT).addAction(ActionFactory.createConnectAction(interactionLayer, connectionProvider));
         myWidget.getActions().addAction(ActionFactory.createPopupMenuAction(defaultPopupMenuProvider));
-        nodesLayer.addChild(myWidget);
+        nodeLayer.addChild(myWidget);
         return myWidget;
     }
 
     @Override
     protected Widget attachEdgeWidget(LocalObjectLight edge) {
         GeoPositionedConnectionWidget myWidget =  new GeoPositionedConnectionWidget(this, edge);
-        edgesLayer.addChild(myWidget);
+        edgeLayer.addChild(myWidget);
         myWidget.getActions().addAction(createSelectAction());
         myWidget.getActions().addAction(ActionFactory.createAddRemoveControlPointAction());
         myWidget.getActions().addAction(ActionFactory.createMoveControlPointAction(ActionFactory.createFreeMoveControlPointProvider()));
@@ -185,11 +185,11 @@ public class GISViewScene extends AbstractScene<LocalObjectLight, LocalObjectLig
         int deltaX = map.getCenter().x - lastXPosition;
         int deltaY = map.getCenter().y - lastYPosition;
         
-        for (Widget node : nodesLayer.getChildren())
+        for (Widget node : nodeLayer.getChildren())
             node.setPreferredLocation(new Point(node.getLocation().x - 
                     deltaX, node.getLocation().y - deltaY));
 
-        for (Widget connection : edgesLayer.getChildren()){
+        for (Widget connection : edgeLayer.getChildren()){
             List<Point> controlPoints = ((AbstractConnectionWidget)connection).getControlPoints();
             for (int i = 1; i < controlPoints.size() - 1; i++) {
                 controlPoints.get(i).x -= deltaX;
@@ -208,12 +208,12 @@ public class GISViewScene extends AbstractScene<LocalObjectLight, LocalObjectLig
      */
     public void zoom() {
         
-        for (Widget node : nodesLayer.getChildren()){
+        for (Widget node : nodeLayer.getChildren()){
             Coordinate geoPosition = getLastPosition(node.getLocation().x, node.getLocation().y);
             Point newLocation = map.getMapPosition(geoPosition, false);
             node.setPreferredLocation(newLocation);
         }
-        for (Widget connection : edgesLayer.getChildren()){
+        for (Widget connection : edgeLayer.getChildren()){
             for (Point controlPoint : ((AbstractConnectionWidget)connection).getControlPoints()){
                 Coordinate geoPosition = getLastPosition(controlPoint.x, controlPoint.y);
                 Point newLocation = map.getMapPosition(geoPosition.getLat(), geoPosition.getLon(), true);
@@ -259,7 +259,7 @@ public class GISViewScene extends AbstractScene<LocalObjectLight, LocalObjectLig
         mainTag.start("center").attr("x", map.getPosition().
                 getLon()).attr("y", map.getPosition().getLat()).end();
         StartTagWAX nodesTag = mainTag.start("nodes");
-        for (Widget nodeWidget : nodesLayer.getChildren()){
+        for (Widget nodeWidget : nodeLayer.getChildren()){
             Coordinate geoPosition = map.getPosition(nodeWidget.getPreferredLocation());
             nodesTag.start("node").attr("x", geoPosition.getLon()).
             attr("y", geoPosition.getLat()).
@@ -269,7 +269,7 @@ public class GISViewScene extends AbstractScene<LocalObjectLight, LocalObjectLig
         nodesTag.end();
 
         StartTagWAX edgesTag = mainTag.start("edges");
-        for (Widget edgeWidget : edgesLayer.getChildren()){
+        for (Widget edgeWidget : edgeLayer.getChildren()){
             StartTagWAX edgeTag = edgesTag.start("edge");
             edgeTag.attr("id", ((GeoPositionedConnectionWidget)edgeWidget).getObject().getOid());
             edgeTag.attr("class", ((GeoPositionedConnectionWidget)edgeWidget).getObject().getClassName());
@@ -339,7 +339,7 @@ public class GISViewScene extends AbstractScene<LocalObjectLight, LocalObjectLig
             if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_FINE)
                 System.out.println("Before --> Revalidating scene dependencies \n Map bounds: " + getComponent().getBounds());
             getComponent().setBounds(getScene().getView().getParent().getBounds());            
-            nodesLayer.setPreferredBounds(getComponent().getBounds());
+            nodeLayer.setPreferredBounds(getComponent().getBounds());
             labelsLayer.setPreferredBounds(getComponent().getBounds());
             getScene().validate();
             if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_FINE)

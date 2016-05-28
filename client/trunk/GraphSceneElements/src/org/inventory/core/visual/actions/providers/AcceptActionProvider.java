@@ -15,7 +15,9 @@
  */
 package org.inventory.core.visual.actions.providers;
 
+import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
@@ -48,7 +50,7 @@ public class AcceptActionProvider implements AcceptProvider {
     /**
      * This constructor allows to specify the instances of what classes (as in inventory classes) can be dropped where
      * @param scene The related scene
-     * @param filterClass The class name of the instances allowed to be dropped here. It'd be useful to use a root, abstract class such as InventoryObject or GenericSomething
+     * @param filterClass The class name of the instances allowed to be dropped here. It'd be useful to use a root, abstract class such as InventoryObject or GenericSomething. Null (or using the other constructor) will allow any inventory object to be added to the scene
      */
     public AcceptActionProvider(GraphScene scene, String filterClass) {
         this (scene);
@@ -80,10 +82,10 @@ public class AcceptActionProvider implements AcceptProvider {
                 
             if (!scene.isNode(droppedObject)){
                 Widget newNode = scene.addNode(droppedObject);
+                newNode.setPreferredBounds(new Rectangle(10, 10));
                 newNode.setPreferredLocation(point);
-                scene.repaint();
             }else
-                JOptionPane.showMessageDialog(null, "The view already contains this object","Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "The view already contains this object", "Error", JOptionPane.ERROR_MESSAGE);
         } catch (UnsupportedFlavorException | IOException ex) {
             if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_INFO || Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_FINE)
                 Exceptions.printStackTrace(ex);

@@ -27,9 +27,9 @@ import java.util.Set;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.communications.util.Utils;
-import org.inventory.core.visual.export.ExportableScene;
 import org.inventory.core.visual.export.Layer;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.PopupMenuProvider;
 import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.model.ObjectSceneEvent;
@@ -38,7 +38,6 @@ import org.netbeans.api.visual.model.ObjectSceneListener;
 import org.netbeans.api.visual.model.ObjectState;
 import org.netbeans.api.visual.widget.ImageWidget;
 import org.netbeans.api.visual.widget.LayerWidget;
-import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
@@ -49,9 +48,10 @@ import org.openide.util.lookup.ProxyLookup;
  * Root class to all GraphScenes
  * TODO: This should inherit from ObjectScene
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @param <N> The class of the business object behind the nodes
+ * @param <E> The class of the business object behind the edges
  */
-public abstract class AbstractScene <N, E> extends GraphScene<N, E> 
-        implements ExportableScene {
+public abstract class AbstractScene<N, E> extends GraphScene<N, E> {
     /**
      * Constant to represent the selection tool
      */
@@ -95,11 +95,11 @@ public abstract class AbstractScene <N, E> extends GraphScene<N, E>
     /**
      * Used to hold the nodes
      */
-    protected LayerWidget nodesLayer;
+    protected LayerWidget nodeLayer;
     /**
      * Used to hold the connections
      */
-    protected LayerWidget edgesLayer;
+    protected LayerWidget edgeLayer;
     /**
      * Used to hold misc messages
      */
@@ -115,7 +115,7 @@ public abstract class AbstractScene <N, E> extends GraphScene<N, E>
     /**
      * Change listeners
      */
-    private ArrayList<ActionListener> changeListeners = new ArrayList<ActionListener>();
+    private ArrayList<ActionListener> changeListeners = new ArrayList<>();
 
     public AbstractScene() {
         setActiveTool(ACTION_SELECT);
@@ -126,17 +126,7 @@ public abstract class AbstractScene <N, E> extends GraphScene<N, E>
         if (getView() != null)
             getView().repaint();
     }
-       
-    @Override
-    public Scene getExportable(){
-        return this;
-    }
-    
-    @Override
-    public Layer[] getLayers(){
-        return null;
-    }
-    
+           
     public void initSelectionListener(){
         addObjectSceneListener(new ObjectSceneListener() {
             @Override
@@ -276,7 +266,7 @@ public abstract class AbstractScene <N, E> extends GraphScene<N, E>
      * Get the active connect provider. Null if supportsConnections returns false.
      * @return 
      */
-    public abstract PhysicalConnectionProvider getConnectProvider();
+    public abstract ConnectProvider getConnectProvider();
     /**
      * Does this view support connections
      * @return 

@@ -31,6 +31,7 @@ import org.inventory.core.visual.scene.AbstractNodeWidget;
 import org.inventory.core.visual.actions.CustomAddRemoveControlPointAction;
 import org.inventory.core.visual.actions.CustomMoveAction;
 import org.netbeans.api.visual.action.ActionFactory;
+import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.router.RouterFactory;
 import org.netbeans.api.visual.widget.LayerWidget;
@@ -65,14 +66,14 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
     public ChildrenViewScene () {
         interactionLayer = new LayerWidget(this);
         backgroundLayer = new LayerWidget(this);
-        nodesLayer = new LayerWidget(this);
-        edgesLayer = new LayerWidget(this);
+        nodeLayer = new LayerWidget(this);
+        edgeLayer = new LayerWidget(this);
         labelsLayer = new LayerWidget(this);
         myConnectionProvider = new PhysicalConnectionProvider();
         
         addChild(backgroundLayer);
-        addChild(edgesLayer);
-        addChild(nodesLayer);
+        addChild(edgeLayer);
+        addChild(nodeLayer);
         addChild(labelsLayer);
 	addChild(interactionLayer);
         
@@ -100,7 +101,7 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
         widget.getActions(ACTION_SELECT).addAction(createSelectAction());
         widget.getActions(ACTION_SELECT).addAction(moveAction);
         widget.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(interactionLayer, myConnectionProvider));
-        nodesLayer.addChild(widget);
+        nodeLayer.addChild(widget);
         return widget;
     }
 
@@ -115,7 +116,7 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
         widget.setEndPointShape(PointShape.SQUARE_FILLED_BIG);
         widget.setRouter(RouterFactory.createFreeRouter());
         if (newLineColor != null) widget.setLineColor(newLineColor);
-        edgesLayer.addChild(widget);
+        edgeLayer.addChild(widget);
         return widget;
     }
 
@@ -134,15 +135,15 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
     }
 
     public LayerWidget getNodesLayer(){
-        return nodesLayer;
+        return nodeLayer;
     }
 
     public LayerWidget getEdgesLayer(){
-        return edgesLayer;
+        return edgeLayer;
     }
    
     @Override
-    public PhysicalConnectionProvider getConnectProvider(){
+    public ConnectProvider getConnectProvider(){
         return this.myConnectionProvider;
     }
 
@@ -161,7 +162,7 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
         //TODO: Get the class name from some else
         mainTag.start("class").text("DefaultView").end();
         StartTagWAX nodesTag = mainTag.start("nodes");
-        for (Widget nodeWidget : nodesLayer.getChildren())
+        for (Widget nodeWidget : nodeLayer.getChildren())
             nodesTag.start("node").attr("x", nodeWidget.getPreferredLocation().x).
             attr("y", nodeWidget.getPreferredLocation().y).
             attr("class", ((AbstractNodeWidget)nodeWidget).getObject().getClassName()).
@@ -169,7 +170,7 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
         nodesTag.end();
 
         StartTagWAX edgesTag = mainTag.start("edges");
-        for (Widget edgeWidget : edgesLayer.getChildren()){
+        for (Widget edgeWidget : edgeLayer.getChildren()){
             StartTagWAX edgeTag = edgesTag.start("edge");
             edgeTag.attr("id", ((AbstractConnectionWidget)edgeWidget).getObject().getOid());
             edgeTag.attr("class", ((AbstractConnectionWidget)edgeWidget).getObject().getClassName());

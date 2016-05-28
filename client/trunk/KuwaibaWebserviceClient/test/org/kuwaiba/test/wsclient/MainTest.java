@@ -14,8 +14,8 @@ import java.util.logging.Logger;
 import org.kuwaiba.test.wsclient.fixtures.Containment;
 import org.kuwaiba.test.wsclient.fixtures.ListTypes;
 import org.kuwaiba.wsclient.Exception_Exception;
-import org.kuwaiba.wsclient.Kuwaiba;
 import org.kuwaiba.wsclient.KuwaibaService;
+import org.kuwaiba.wsclient.KuwaibaService_Service;
 import org.kuwaiba.wsclient.RemoteSession;
 import org.kuwaiba.wsclient.StringArray;
 
@@ -25,7 +25,7 @@ import org.kuwaiba.wsclient.StringArray;
  */
 public class MainTest {
         private static RemoteSession session = null;
-        private static Kuwaiba port = null;
+        private static KuwaibaService port = null;
         private static Containment c = new Containment();
         private static ListTypes lt = new ListTypes();
         private static int objectCount = 0;
@@ -35,8 +35,7 @@ public class MainTest {
         try{
             System.out.println("Starting at: " + Calendar.getInstance().getTime());
             URL serverURL = new URL("http", "localhost", 8080,"/kuwaiba/KuwaibaService?wsdl"); //NOI18n
-            KuwaibaService service = new KuwaibaService(serverURL);
-            port = service.getKuwaibaServicePort();
+            port = new KuwaibaService_Service(serverURL).getKuwaibaServicePort();
             session = port.createSession("admin", "kuwaiba");
 
             System.out.println("Generating a containment hierarchy...");

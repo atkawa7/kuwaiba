@@ -446,12 +446,13 @@ public final class TopologyViewTopComponent extends TopComponent implements Acti
     @Override
     public void componentOpened() {
         toggleButtons(false);
-        scene.addActionListener(this);
+        scene.addChangeListener(this);
     }
 
     @Override
     public void componentClosed() {
         scene.clear();
+        scene.removeAllListeners();
         tvsrv.setViewProperties(new Object[2]);
         tvsrv.setTvId(0);
     }

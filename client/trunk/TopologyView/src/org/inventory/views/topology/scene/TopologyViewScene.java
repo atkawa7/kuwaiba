@@ -22,21 +22,18 @@ import java.awt.BasicStroke;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.visual.actions.providers.AcceptActionProvider;
 import org.inventory.core.visual.actions.providers.SceneConnectProvider;
-import org.inventory.core.visual.export.ExportableScene;
-import org.inventory.core.visual.export.Layer;
 import org.inventory.core.visual.scene.AbstractNodeWidget;
+import org.inventory.core.visual.scene.AbstractScene;
+import org.inventory.core.visual.scene.PhysicalConnectionProvider;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.views.topology.scene.menus.ConnectionMenu;
 import org.inventory.views.topology.scene.menus.IconMenu;
@@ -47,14 +44,12 @@ import org.inventory.views.topology.scene.provider.LabelTextFieldEditor;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.netbeans.api.visual.anchor.PointShape;
-import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.model.ObjectSceneEvent;
 import org.netbeans.api.visual.model.ObjectSceneEventType;
 import org.netbeans.api.visual.model.ObjectSceneListener;
 import org.netbeans.api.visual.model.ObjectState;
 import org.netbeans.api.visual.router.RouterFactory;
 import org.netbeans.api.visual.widget.LayerWidget;
-import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
@@ -65,17 +60,9 @@ import org.openide.util.lookup.ProxyLookup;
  * Scene used by the TopologyView component
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class TopologyViewScene extends GraphScene<Object, String> 
-        implements PropertyChangeListener, Lookup.Provider, ExportableScene {
+public class TopologyViewScene extends AbstractScene<Object, String> 
+        implements PropertyChangeListener, Lookup.Provider {
 
-    /**
-     * String for Selection tool
-     */
-    public final static String ACTION_SELECT = "selection"; //NOI18
-    /**
-     * String for Connect tool
-     */
-    public final static String ACTION_CONNECT = "connect"; //NOI18
     /**
      * Path to cloud icon
      */
@@ -101,17 +88,9 @@ public class TopologyViewScene extends GraphScene<Object, String>
      */
     private final static String FORMAT_VERSION = "1.0";
     /**
-     * Layer to contain the nodes (poles, cabinets, etc)
-     */
-    private LayerWidget nodesLayer;
-    /**
      * Layer to contain the icons(clouds, etc)
      */
     private LayerWidget iconsLayer;
-    /**
-     * Layer to contain the connections (containers, links, etc)
-     */
-    private LayerWidget edgesLayer;
     /**
      * Layer to contain additional labels (free text)
      */
@@ -149,10 +128,7 @@ public class TopologyViewScene extends GraphScene<Object, String>
      * Random to name the labels,frames and clouds
      */
     private Random randomGenerator;
-    /**
-     * Action listeners
-     */    
-    private List<ActionListener> listeners;
+    
     public final static int SCENE_OBJECTADDED = 1;
     /**
      * Default notifier
@@ -162,8 +138,8 @@ public class TopologyViewScene extends GraphScene<Object, String>
     public TopologyViewScene(NotificationUtil notifier) {
         getActions().addAction(ActionFactory.createAcceptAction(new AcceptActionProvider(this)));
 
-        nodesLayer = new LayerWidget(this);
-        edgesLayer = new LayerWidget(this);
+        nodeLayer = new LayerWidget(this);
+        edgeLayer = new LayerWidget(this);
         freeLabelsLayer = new LayerWidget(this);
         framesLayer =  new LayerWidget(this);
         iconsLayer = new LayerWidget(this);
@@ -177,8 +153,8 @@ public class TopologyViewScene extends GraphScene<Object, String>
 
         
         addChild(framesLayer);
-        addChild(edgesLayer);
-        addChild(nodesLayer);
+        addChild(edgeLayer);
+        addChild(nodeLayer);
         addChild(freeLabelsLayer);
         addChild(iconsLayer);
         
@@ -221,7 +197,7 @@ public class TopologyViewScene extends GraphScene<Object, String>
                 myWidget.getActions(ACTION_SELECT).addAction(ActionFactory.createMoveAction());
                 myWidget.getActions(ACTION_SELECT).addAction(ActionFactory.createPopupMenuAction(nodeMenu));
                 
-                myWidget.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(edgesLayer, new SceneConnectProvider(this) {
+                myWidget.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(edgeLayer, new SceneConnectProvider(this) {
                     
                     @Override
                     public void createConnection(Widget sourceWidget, Widget targetWidget) {
@@ -238,7 +214,7 @@ public class TopologyViewScene extends GraphScene<Object, String>
                 
                 fireChangeEvent(new ActionEvent(node, SCENE_OBJECTADDED, "lol-add-operation"));
                 
-                nodesLayer.addChild(myWidget);
+                nodeLayer.addChild(myWidget);
                 return myWidget;
             }
             else{
@@ -249,7 +225,7 @@ public class TopologyViewScene extends GraphScene<Object, String>
                 cloudWidget.setLabel(((LocalObjectLight)node).getName().substring(9));
                 cloudWidget.getActions().addAction (ActionFactory.createInplaceEditorAction (new LabelTextFieldEditor()));
                 cloudWidget.getActions(ACTION_SELECT).addAction(ActionFactory.createMoveAction());
-                cloudWidget.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(edgesLayer, new SceneConnectProvider(this) {
+                cloudWidget.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(edgeLayer, new SceneConnectProvider(this) {
                     
                     @Override
                     public void createConnection(Widget sourceWidget, Widget targetWidget) {
@@ -292,7 +268,7 @@ public class TopologyViewScene extends GraphScene<Object, String>
     @Override
     protected Widget attachEdgeWidget(String edge) {
         ObjectConnectionWidget myWidget =  new ObjectConnectionWidget(this, edge);
-        edgesLayer.addChild(myWidget);
+        edgeLayer.addChild(myWidget);
         myWidget.getActions().addAction(ActionFactory.createPopupMenuAction(connectionMenu));
         myWidget.getActions().addAction(createSelectAction());
         myWidget.getActions().addAction(ActionFactory.createAddRemoveControlPointAction());
@@ -331,13 +307,18 @@ public class TopologyViewScene extends GraphScene<Object, String>
     }
 
     @Override
-    public Scene getExportable() {
-        return this;
+    public PhysicalConnectionProvider getConnectProvider() {
+       return null;
     }
 
     @Override
-    public Layer[] getLayers() {
-        return null;
+    public boolean supportsConnections() {
+        return false;
+    }
+
+    @Override
+    public boolean supportsBackgrounds() {
+        return false;
     }
 
     /**
@@ -379,17 +360,8 @@ public class TopologyViewScene extends GraphScene<Object, String>
         this.repaint();
     }
    
-    public void clear(){
-        while (!getNodes().isEmpty())
-            removeNode(getNodes().iterator().next());
-        while (!getEdges().isEmpty())
-            removeEdge(getEdges().iterator().next());
-        validate();
-        
-    }
-
     public LayerWidget getNodesLayer() {
-        return nodesLayer;
+        return nodeLayer;
     }
 
     public LayerWidget getIconLayer() {
@@ -400,6 +372,7 @@ public class TopologyViewScene extends GraphScene<Object, String>
      * Export the scene to XML
      * @return a byte array
      */
+    @Override
     public byte[] getAsXML() {
         ByteArrayOutputStream bas = new ByteArrayOutputStream();
         WAX xmlWriter = new WAX(bas);
@@ -408,7 +381,7 @@ public class TopologyViewScene extends GraphScene<Object, String>
         mainTag.start("class").text("TopologyView").end();
         //nodes
         StartTagWAX nodesTag = mainTag.start("nodes");
-        for (Widget nodeWidget : nodesLayer.getChildren())
+        for (Widget nodeWidget : nodeLayer.getChildren())
             nodesTag.start("node").attr("x", nodeWidget.getPreferredLocation().getX()).
             attr("y", nodeWidget.getPreferredLocation().getY()).
             attr("class", ((AbstractNodeWidget)nodeWidget).getObject().getClassName()).
@@ -426,7 +399,7 @@ public class TopologyViewScene extends GraphScene<Object, String>
         iconsTag.end();
         //edges
         StartTagWAX edgesTag = mainTag.start("edges");
-        for (Widget edgeWidget : edgesLayer.getChildren()){
+        for (Widget edgeWidget : edgeLayer.getChildren()){
             StartTagWAX edgeTag = edgesTag.start("edge");
             edgeTag.attr("id", "");
             edgeTag.attr("class", "");
@@ -495,33 +468,13 @@ public class TopologyViewScene extends GraphScene<Object, String>
         return bas.toByteArray();
     }
     
-    /**
-     * To listen for scene changes implementing the observer design pattern
-     * @param listener
-     */
-    public void addActionListener(ActionListener listener){
-        if (listeners == null)
-            listeners = new ArrayList<ActionListener>();
-        listeners.add(listener);
-    }
-
-    public void removeActionListener(ActionListener listener){
-        if (listeners == null)
-            return;
-        listeners.remove(listener);
-    }
-    
-    public void fireChangeEvent(ActionEvent ev){
-        for (ActionListener listener : listeners)
-            listener.actionPerformed(ev);
-    }
-    
     public NotificationUtil getNotifier() {
         return notifier;
     }
     
+    @Override
     public void toggleLabels(boolean visible) {
-        for (Widget aWidget : nodesLayer.getChildren()) 
+        for (Widget aWidget : nodeLayer.getChildren()) 
             ((AbstractNodeWidget)aWidget).showLabel(visible);
         
         if (getView() != null)

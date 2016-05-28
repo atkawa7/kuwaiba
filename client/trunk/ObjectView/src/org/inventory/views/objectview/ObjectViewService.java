@@ -18,6 +18,7 @@ package org.inventory.views.objectview;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.visual.scene.PhysicalConnectionProvider;
 import org.inventory.views.objectview.scene.AbstractViewBuilder;
 import org.inventory.views.objectview.scene.ChildrenViewBuilder;
 import org.openide.util.Lookup;
@@ -128,7 +129,7 @@ public class ObjectViewService implements LookupListener {
     private void setCurrentObject(LocalObjectLight currentObject) {
         this.currentObject = currentObject;
         if (viewBuilder.getScene().supportsConnections())
-            viewBuilder.getScene().getConnectProvider().setCurrentParentObject(currentObject);
+            ((PhysicalConnectionProvider)viewBuilder.getScene().getConnectProvider()).setCurrentParentObject(currentObject);
     }
 
     public ObjectViewTopComponent getComponent(){
