@@ -413,7 +413,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         List<RemoteBusinessObjectLight> parents =  new ArrayList<>();
       
         String cypherQuery = "START n=node({oid})" +
-                             "MATCH n-[:" + RelTypes.CHILD_OF.toString() + "|"+RelTypes.CHILD_OF_SPECIAL.toString() + "*]->m " +
+                             "MATCH n-[:" + RelTypes.CHILD_OF.toString() + "|" + RelTypes.CHILD_OF_SPECIAL.toString() + "*]->m " +
                              "RETURN m as parents";
       
         Map<String, Object> params = new HashMap<>();
@@ -443,12 +443,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 if (objectNode.hasRelationship(Direction.OUTGOING, RelTypes.CHILD_OF)){
                     Node parentNode = objectNode.getSingleRelationship(RelTypes.CHILD_OF, Direction.OUTGOING).getEndNode();
 
-                    Label label = DynamicLabel.label(Constants.LABEL_ROOT);
+                    Label label = DynamicLabel.label(Constants.LABEL_ROOT); //If the parent node is the dummy root, just return null
                     if (parentNode.hasLabel(label) && Constants.NODE_DUMMYROOT.equals(parentNode.getProperty(Constants.PROPERTY_NAME)))
                         return null;
                     else {
                         String thisNodeClass = Util.getClassName(parentNode);
-                        if (cm.isSubClass(thisNodeClass, parentClass))
+                        if (cm.isSubClass(parentClass, thisNodeClass))
                             return Util.createRemoteObjectFromNode(parentNode, cm.getClass(thisNodeClass));
                         objectNode = parentNode;
                         continue;
