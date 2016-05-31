@@ -154,6 +154,11 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
         mainTag.end().close();
         return bas.toByteArray();
     }
+    
+    @Override
+    public void render(byte[] structure) throws IllegalArgumentException {
+
+    }
 
     @Override
     public ConnectProvider getConnectProvider() {

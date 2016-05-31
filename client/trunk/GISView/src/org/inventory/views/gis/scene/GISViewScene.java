@@ -293,6 +293,11 @@ public class GISViewScene extends AbstractScene<LocalObjectLight, LocalObjectLig
 
         return bas.toByteArray();
     }
+    
+    @Override
+    public void render(byte[] structure) {
+        //TODO: Render here, not in the service
+    }
         
     /**
      * A convenience method cloning the behavior of JMapviewer.getPosition, but using

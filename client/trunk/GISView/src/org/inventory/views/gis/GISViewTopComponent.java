@@ -443,7 +443,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void btnOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenActionPerformed
-        List<LocalObjectViewLight> views = CommunicationsStub.getInstance().getGeneralViews(LocalObjectViewLight.TYPE_GIS);
+        List<LocalObjectViewLight> views = CommunicationsStub.getInstance().getGeneralViews("GISModuleView");
         if (views == null)
             JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError(), "Error", JOptionPane.ERROR_MESSAGE);
         else{

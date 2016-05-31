@@ -31,7 +31,7 @@ import org.inventory.communications.core.views.LocalObjectViewLight;
  * List of available topologies
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class TopologyListPanel extends JPanel implements ListSelectionListener{
+public class TopologyListPanel extends JPanel implements ListSelectionListener {
 
     private LocalObjectViewLight[] elements;
 

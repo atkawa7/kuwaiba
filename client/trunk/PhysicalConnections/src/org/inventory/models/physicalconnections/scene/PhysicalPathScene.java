@@ -95,6 +95,11 @@ public class PhysicalPathScene  extends AbstractScene <LocalObjectLight, LocalOb
         //For now
         return null;
     }
+    
+    @Override
+    public void render(byte[] structure) throws IllegalArgumentException {
+        //Render here, not in the service
+    }
 
     @Override
     public PhysicalConnectionProvider getConnectProvider() {

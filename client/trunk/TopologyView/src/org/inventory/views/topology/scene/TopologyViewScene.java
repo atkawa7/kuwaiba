@@ -468,6 +468,11 @@ public class TopologyViewScene extends AbstractScene<Object, String>
         return bas.toByteArray();
     }
     
+    @Override
+    public void render(byte[] structure) throws IllegalArgumentException {
+        //TODO: Render the view here instead of in the service
+    }
+    
     public NotificationUtil getNotifier() {
         return notifier;
     }

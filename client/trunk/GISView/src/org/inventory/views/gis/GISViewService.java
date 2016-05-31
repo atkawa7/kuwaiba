@@ -28,7 +28,6 @@ import javax.xml.stream.XMLStreamReader;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.views.LocalObjectView;
-import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.communications.util.Utils;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -210,9 +209,9 @@ public class GISViewService {
     void saveView(String nameInTxt, String descriptionInTxt) {
         if (currentView == null){
             byte[] structure = scene.getAsXML();
-            long viewId = com.createGeneralView(LocalObjectViewLight.TYPE_GIS, nameInTxt, descriptionInTxt, structure, null);
+            long viewId = com.createGeneralView("GISModuleView", nameInTxt, descriptionInTxt, structure, null);
             if (viewId != -1){
-                currentView = new LocalObjectView(viewId, nameInTxt, descriptionInTxt, LocalObjectViewLight.TYPE_GIS, structure, null);
+                currentView = new LocalObjectView(viewId, nameInTxt, descriptionInTxt, "GISModuleView", structure, null);
                 gvtc.getNotifier().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "View created successfully");
             }else
                 gvtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());

@@ -27,7 +27,6 @@ import java.util.Set;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.communications.util.Utils;
-import org.inventory.core.visual.export.Layer;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.PopupMenuProvider;
@@ -262,6 +261,13 @@ public abstract class AbstractScene<N, E> extends GraphScene<N, E> {
      * @return XML document as a byte arrays
      */
     public abstract byte[] getAsXML();
+    
+    /**
+     * Renders a view. That is, reads its structure and renders its content
+     * @param structure The XML structure as an byte array (which is actually a dump of the stored xml file)
+     * @throws IllegalArgumentException If the XML has an unexpected format or value
+     */
+    public abstract void render(byte[] structure) throws IllegalArgumentException;
     /**
      * Get the active connect provider. Null if supportsConnections returns false.
      * @return 

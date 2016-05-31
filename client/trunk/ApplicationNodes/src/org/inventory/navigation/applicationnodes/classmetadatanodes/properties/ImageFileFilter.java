@@ -49,13 +49,10 @@ public class ImageFileFilter extends FileFilter {
             return true;
 
         String extension = getExtension(f);
-        if (extension != null) {
-            if(extension.equals(gif) || extension.equals(jpeg) || extension.equals(jpg) ||
-                extension.equals(png)) 
-                    return true;
-            else 
-                return false;
-        }
+        if (extension != null)
+            return extension.equals(gif) || extension.equals(jpeg) || extension.equals(jpg) ||
+                    extension.equals(png);
+        
         return false;
     }
 

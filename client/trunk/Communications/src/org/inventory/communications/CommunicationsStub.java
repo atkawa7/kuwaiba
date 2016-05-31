@@ -1748,7 +1748,8 @@ public class CommunicationsStub {
     public LocalObjectView getObjectRelatedView(long oid, String objectClass, long viewId){
         try{
             ViewInfo view = service.getObjectRelatedView(oid, objectClass, viewId, session.getSessionId());
-            return new LocalObjectView(view.getId(), view.getName(), view.getDescription(), view.getType(), view.getStructure(), view.getBackground());
+            //*******************************************************************+
+            return new LocalObjectView(view.getId(), view.getName(), view.getDescription(), "", view.getStructure(), view.getBackground());
         }catch(Exception ex){
             this.error =  ex.getMessage();
             return null;
@@ -1764,9 +1765,11 @@ public class CommunicationsStub {
     public List<LocalObjectViewLight> getObjectRelatedViews(long oid, String objectClass){
         try{
             List<ViewInfoLight> views = service.getObjectRelatedViews(oid, objectClass, -1, 10, session.getSessionId());
-            List<LocalObjectViewLight> res = new ArrayList<LocalObjectViewLight>();
+            List<LocalObjectViewLight> res = new ArrayList<>();
+            
+            //*******************************************************************+
             for (ViewInfoLight view : views)
-                res.add(new LocalObjectViewLight(view.getId(), view.getName(), view.getDescription(), view.getType()));
+                res.add(new LocalObjectViewLight(view.getId(), view.getName(), view.getDescription(), ""));
             return res;
         }catch(Exception ex){
             this.error =  ex.getMessage();
@@ -1776,16 +1779,16 @@ public class CommunicationsStub {
 
     /**
      * Retrieves the list of views not related to a given object like GIS, topological views
-     * @param viewType Type of view to be retrieved. The implementor must defined what are the possible admitted values
-     * @return a list of object with the minimum information about the view (id, class and name)
-     * @throws InvalidArgumentException if the viewType is not a valid value
+     * @param viewClass Type of view to be retrieved. The possible values depend on the module creating general views
+     * @return a list of object with the minimum information about the view (id, class and name). Null if something went wrong
      */
-    public List<LocalObjectViewLight> getGeneralViews(int viewType){
+    public List<LocalObjectViewLight> getGeneralViews(String viewClass) {
         try{
-            List<ViewInfoLight> views = service.getGeneralViews(viewType, -1, session.getSessionId());
+            List<ViewInfoLight> views = service.getGeneralViews(viewClass, -1, session.getSessionId());
             List<LocalObjectViewLight> res = new ArrayList<>();
             for (ViewInfoLight view : views)
-                res.add(new LocalObjectViewLight(view.getId(), view.getName(), view.getDescription(), view.getType()));
+                //*******************************************************************+
+                res.add(new LocalObjectViewLight(view.getId(), view.getName(), view.getDescription(), ""));
             return res;
         }catch(Exception ex){
             this.error =  ex.getMessage();
@@ -1801,7 +1804,8 @@ public class CommunicationsStub {
     public LocalObjectView getGeneralView(long viewId) {
         try{
             ViewInfo view = service.getGeneralView(viewId, session.getSessionId());
-            return new LocalObjectView(view.getId(), view.getName(), view.getDescription(), view.getType(), view.getStructure(), view.getBackground());
+            //*******************************************************************+
+            return new LocalObjectView(view.getId(), view.getName(), view.getDescription(), "", view.getStructure(), view.getBackground());
         }catch(Exception ex){
             this.error =  ex.getMessage();
             return null;
@@ -1830,17 +1834,16 @@ public class CommunicationsStub {
 
     /**
      * Creates a view not related to a particular object
-     * @param view id
-     * @param viewType
+     * @param viewClass The class of the new view
      * @param name view name
      * @param description view description
      * @param structure XML document specifying the view structure (nodes, edges, control points)
      * @param background Background image
      * @return the new object id
      */
-    public long createGeneralView(int viewType, String name, String description, byte[] structure, byte[] background){
+    public long createGeneralView(String viewClass, String name, String description, byte[] structure, byte[] background){
         try{
-            return service.createGeneralView(viewType, name, description, structure, background, session.getSessionId());
+            return service.createGeneralView(viewClass, name, description, structure, background, session.getSessionId());
         }catch(Exception ex){
             this.error =  ex.getMessage();
             return -1;

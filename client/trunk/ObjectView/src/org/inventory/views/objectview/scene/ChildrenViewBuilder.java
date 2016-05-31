@@ -289,7 +289,7 @@ public class ChildrenViewBuilder implements AbstractViewBuilder {
             long viewId = com.createObjectRelatedView(service.getCurrentObject().getOid(),
                     service.getCurrentObject().getClassName(), null, null,0, viewStructure, scene.getBackgroundImage());
             if (viewId != -1) //Success
-                currentView = new LocalObjectView(viewId, null, null, 0, viewStructure, scene.getBackgroundImage());
+                currentView = new LocalObjectView(viewId, "ObjectViewModule", null, null, viewStructure, scene.getBackgroundImage());
             else{
                 service.getComponent().getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             }

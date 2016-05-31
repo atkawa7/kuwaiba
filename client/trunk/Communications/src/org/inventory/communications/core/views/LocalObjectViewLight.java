@@ -26,22 +26,6 @@ public class LocalObjectViewLight {
      * Id for a default view
      */
     public static final int TYPE_DEFAULT = 0;
-    /**
-     * Id for a view used for racks
-     */
-    public static final int TYPE_RACK = 1;
-    /**
-     * Id for a view used in equipment with slots and boards
-     */
-    public static final int TYPE_EQUIPMENT = 2;
-    /**
-     * A GIS view
-     */
-    public static final int TYPE_GIS = 3;
-    /**
-     * A Topology view
-     */
-    public static final int TYPE_TOPOLOGY = 4;
 
     /**
      * View id
@@ -56,15 +40,15 @@ public class LocalObjectViewLight {
      */
     protected String description;
     /**
-     * View type
+     * View class
      */
-    protected int type;
+    protected String className;
 
-    public LocalObjectViewLight(long id, String name, String description, int type) {
+    public LocalObjectViewLight(long id, String name, String description, String className) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.type = type;
+        this.className = className;
     }
 
     public long getId() {
@@ -91,12 +75,12 @@ public class LocalObjectViewLight {
         this.description = description;
     }
 
-    public int getType() {
-        return type;
+    public String getClassName() {
+        return className;
     }
 
-    public void setType(int type) {
-        this.type = type;
+    public void setType(String className) {
+        this.className = className;
     }
 
     @Override

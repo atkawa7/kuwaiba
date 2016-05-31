@@ -192,6 +192,11 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
     }
 
     @Override
+    public void render(byte[] structure) throws IllegalArgumentException {
+        //TODO: Change the view builder for an implementation of this method
+    }
+    
+    @Override
     public boolean supportsConnections() {
         return true;
     }

@@ -103,7 +103,7 @@ public class TopologyViewService implements LookupListener {
         byte[] background = null;
         if(tvId == 0){
             try{
-                tvId = com.createGeneralView(LocalObjectViewLight.TYPE_TOPOLOGY, (String)viewProperties[0], (String)viewProperties[1], viewStructure, background);
+                tvId = com.createGeneralView("TopologyModuleView", (String)viewProperties[0], (String)viewProperties[1], viewStructure, background); //NOI18N
                 tvtc.getNotifier().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Topology created successfully");
             }catch(Exception ex){
                 tvtc.getNotifier().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE, com.getError());
@@ -118,7 +118,7 @@ public class TopologyViewService implements LookupListener {
     }
 
     public LocalObjectViewLight[] getTopologyViews(){
-        List<LocalObjectViewLight> res = com.getGeneralViews(LocalObjectViewLight.TYPE_TOPOLOGY);
+        List<LocalObjectViewLight> res = com.getGeneralViews("TopologyModuleView"); //NOI18N
         if(res == null){
             tvtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             return null;

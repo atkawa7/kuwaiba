@@ -114,6 +114,11 @@ public class RackViewScene extends AbstractScene<LocalObject, LocalObject> {
     //Not needed
     @Override
     public byte[] getAsXML() {return null;}
+    
+    @Override
+    public void render(byte[] structure) throws IllegalArgumentException {
+        //TODO: Render the view here instead of in the service
+    }
 
     @Override
     public PhysicalConnectionProvider getConnectProvider() {

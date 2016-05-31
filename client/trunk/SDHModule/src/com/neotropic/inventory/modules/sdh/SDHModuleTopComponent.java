@@ -13,12 +13,17 @@ package com.neotropic.inventory.modules.sdh;
 import com.neotropic.inventory.modules.sdh.scene.SDHModuleScene;
 import com.neotropic.inventory.modules.sdh.wizard.SDHConnectionWizard;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.image.ImageFilter;
+import java.util.List;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.core.services.api.behaviors.Refreshable;
+import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.core.visual.export.ExportScenePanel;
+import org.inventory.core.visual.export.filters.ImageFilter;
 import org.inventory.core.visual.export.filters.SceneExportFilter;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.DialogDescriptor;
@@ -62,7 +67,6 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
     private SDHModuleScene scene;
     private SDHModuleService service;
     private SDHConfigurationObject configObject;
-    private boolean saved;
 
     public SDHModuleTopComponent() {
         initComponents();
@@ -253,92 +257,98 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
-        if (!saved) {
+        if (!(boolean)configObject.getProperty("saved")) {
             switch (JOptionPane.showConfirmDialog(this, "This topology has not been saved, do you want to save it?",
                 "Confirmation", JOptionPane.YES_NO_CANCEL_OPTION)){
+                case JOptionPane.YES_OPTION:
+                    btnSaveActionPerformed(new ActionEvent(this, 0, "close"));
+                    return;
+                case JOptionPane.CANCEL_OPTION:
+                    return;
                 case JOptionPane.NO_OPTION:
-                    scene.clear();
-                    saved = false;
-                    enableButtons(true);
-                    service.setView(null);
-                    break;
+            }
+        }
+        scene.clear();
+        enableButtons(true);
+        service.setView(null);
+    }//GEN-LAST:event_btnNewActionPerformed
+
+    private void btnOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenActionPerformed
+        if (!(boolean)configObject.getProperty("saved")) {
+            switch (JOptionPane.showConfirmDialog(this, "This topology has not been saved, do you want to save it?",
+                "Confirmation", JOptionPane.YES_NO_CANCEL_OPTION)){
                 case JOptionPane.YES_OPTION:
                     btnSaveActionPerformed(new ActionEvent(this, 0, "close"));
                     break;
                 case JOptionPane.CANCEL_OPTION:
+                    return;
             }
         }
         
-    }//GEN-LAST:event_btnNewActionPerformed
-
-    private void btnOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenActionPerformed
-//        if (!checkForUnsavedView(true))
-//            return;
-//        LocalObjectViewLight[] topologyViews = tvsrv.getTopologyViews();
-//
-//        final TopologyListPanel tlp = new TopologyListPanel(topologyViews);
-//        DialogDescriptor dd = new DialogDescriptor(tlp, "Choose a view", true, new ActionListener(){
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                if (e.getSource() == DialogDescriptor.OK_OPTION){
-//                    if (tlp.getSelectedView() != null){
-//                        tvsrv.loadTopologyView(tlp.getSelectedView());
-//                        enableButtons(true);
-//                        if(btnConnect.isSelected())
-//                        btnConnect.setSelected(false);
-//                    }
-//                    else
-//                    JOptionPane.showConfirmDialog(null, "Select a view, please","Error", JOptionPane.ERROR_MESSAGE);
-//                }
-//                tlp.releaseListeners();
-//            }
-//        });
-//        DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
+        List<LocalObjectViewLight> views = service.getViews();
+        JComboBox<LocalObjectViewLight> lstViews = new JComboBox<>(views.toArray(new LocalObjectViewLight[0]));
+        lstViews.setName("lstViews"); //NOI18N
+        JComplexDialogPanel viewsDialog = new JComplexDialogPanel(new String[] {"Available view"}, new JComponent[] { lstViews });
+                
+        if(JOptionPane.showConfirmDialog(null, viewsDialog, "Choose a view", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+            LocalObjectViewLight selectedView = (LocalObjectViewLight)((JComboBox)viewsDialog.getComponent("lstViews")).getSelectedItem();
+            if (selectedView != null) {
+                LocalObjectView actualView = service.loadView(selectedView.getId());
+                if (actualView != null) {
+                    service.setView(actualView);
+                    scene.render(actualView.getStructure());
+                    enableButtons(true);
+                    btnConnect.setSelected(false);
+                }
+            }
+        }        
     }//GEN-LAST:event_btnOpenActionPerformed
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-//        if (!validateTopology())
-//            return;
-//        if(!scene.getNodes().isEmpty()){
-//            final CreateTopologyPanel cqp = new CreateTopologyPanel((String)tvsrv.getViewProperties()[0],
-//                (String)tvsrv.getViewProperties()[1]);
-//            DialogDescriptor dd = new DialogDescriptor(cqp,
-//                "Set view settings", true, new ActionListener() {
-//                    @Override
-//                    public void actionPerformed(ActionEvent e){
-//                        if (e.getSource() == DialogDescriptor.OK_OPTION){
-//                            tvsrv.setViewProperties(cqp.getValues());
-//                            tvsrv.saveView();
-//                            saved = true;
-//                        }
-//                    }
-//                });
-//                DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
-//            }else{
-//                tvsrv.saveView();
-//                saved = true;
-//            }
+        if (scene.getNodes().isEmpty())
+            JOptionPane.showMessageDialog(null, "The view is empty, it won't be saved", "New View", JOptionPane.INFORMATION_MESSAGE);
+        else {
+            JTextField txtViewName = new JTextField();
+            txtViewName.setName("txtViewName");
+            
+            JTextField txtViewDescription = new JTextField();
+            txtViewName.setName("txtViewDescription");
+            
+            JComplexDialogPanel saveDialog = new JComplexDialogPanel(new String[] {"View name", "View Description"}, new JComponent[] { txtViewName, txtViewDescription });
+
+            if(JOptionPane.showConfirmDialog(null, saveDialog, "View details", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+                //It's a new view
+                if (service.getView() == null)
+                    service.setView(new LocalObjectView(-1, SDHModuleService.VIEW_CLASS, 
+                            ((JTextField)saveDialog.getComponent("txtViewName")).getText(), 
+                            ((JTextField)saveDialog.getComponent("txtViewDescription")).getText(), scene.getAsXML(), null));
+                else {
+                    service.getView().setName(((JTextField)saveDialog.getComponent("txtViewName")).getText());
+                    service.getView().setDescription(((JTextField)saveDialog.getComponent("txtViewDescription")).getText());
+                }
+                service.saveCurrentView();
+            }            
+        }
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-//        if (JOptionPane.showConfirmDialog(this, "Are you sure you want to delete the current topology?",
-//            "Delete saved view",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
-//        tvsrv.deleteView();
-//        scene.clear();
-//        tvsrv.setTvId(0);
-//        enableButtons(false);
-//        btnSelectActionPerformed(evt);
-//        }
+        if (JOptionPane.showConfirmDialog(this, "Are you sure you want to delete the current topology?",
+            "Delete saved view",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
+            service.deleteView();
+            scene.clear();
+            service.setView(null);
+            btnSelectActionPerformed(evt);
+        }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportActionPerformed
-//        ExportScenePanel exportPanel = new ExportScenePanel(new SceneExportFilter[WIDTH]{ImageFilter.getInstance()}, scene);
-//        DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export options",true, exportPanel);
-//        DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
+        ExportScenePanel exportPanel = new ExportScenePanel(new SceneExportFilter[]{ ImageFilter.getInstance() }, scene);
+        DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export options",true, exportPanel);
+        DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
     }//GEN-LAST:event_btnExportActionPerformed
 
     private void btnSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelectActionPerformed
-        btnConnect.setSelected(false);
+        btnConnect.setSelected(true);
         scene.setActiveTool(SDHModuleScene.ACTION_SELECT);
     }//GEN-LAST:event_btnSelectActionPerformed
 
@@ -388,6 +398,21 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
     @Override
     public void componentClosed() {
         // TODO add custom code on component closing
+    }
+    
+    @Override
+    public String getDisplayName() {
+        String unformattedDisplayName;
+        if (service.getView() == null || service.getView().getId() == -1)
+            unformattedDisplayName = "<No View>";
+        else
+            unformattedDisplayName = service.getView().getName();
+        
+        
+        if((boolean)configObject.getProperty("saved"))
+            return unformattedDisplayName;
+        else
+            return String.format("<b>%s</b>", unformattedDisplayName);
     }
 
     void writeProperties(java.util.Properties p) {

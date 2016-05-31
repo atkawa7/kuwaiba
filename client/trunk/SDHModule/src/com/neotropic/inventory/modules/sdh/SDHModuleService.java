@@ -11,34 +11,83 @@
 package com.neotropic.inventory.modules.sdh;
 
 import com.neotropic.inventory.modules.sdh.scene.SDHModuleScene;
+import com.neotropic.inventory.modules.sdh.wizard.SDHConnectionWizard;
+import java.util.Collections;
+import java.util.List;
+import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalObjectViewLight;
+import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.openide.util.Lookup;
 
 /**
  * The service associated to this module
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class SDHModuleService {
-    private LocalObjectViewLight view;
+    public static String VIEW_CLASS = "SDHModuleView";
+    private LocalObjectView view;
     private SDHModuleScene scene;
+    private CommunicationsStub com = CommunicationsStub.getInstance();
 
     public SDHModuleService(SDHModuleScene scene) {
         this.scene = scene;
     }
     
-    public void setView(LocalObjectViewLight view) {
-        this.view = view;
-    }
-    
-    public LocalObjectViewLight getView() {
+    public LocalObjectView getView() {
         return view;
     }
     
-    public void saveCurrentView() {
+    public void setView(LocalObjectView view) {
+        this.view = view;
     }
     
-    public void openView(LocalObjectViewLight aView) {
+    public List<LocalObjectViewLight> getViews() {
+        List<LocalObjectViewLight> views = com.getGeneralViews(VIEW_CLASS);
+        if (views == null) {
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+            return Collections.EMPTY_LIST;
+        }
+        
+        return views;
     }
     
-    public void deleteView(LocalObjectViewLight aView) {
+    public LocalObjectView loadView(long viewId) {
+        return view;
+    }
+    
+    public boolean saveCurrentView() {
+        if (view == null || view.getId() == -1) { //New view
+            long newViewId = com.createGeneralView(VIEW_CLASS, view.getName(), view.getDescription(), scene.getAsXML(), null);
+            if (newViewId == -1) {
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+                return false;
+            }
+            else {
+                view = new LocalObjectView(newViewId, VIEW_CLASS, view.getName(), view.getDescription(), scene.getAsXML(), null);
+                SDHConfigurationObject configObject = Lookup.getDefault().lookup(SDHConfigurationObject.class);
+                configObject.setProperty("saved", true);
+                return true;
+            }
+        }
+        else {
+            if (com.updateGeneralView(view.getId(), view.getName(), view.getDescription(), scene.getAsXML(), null)) {
+                SDHConfigurationObject configObject = Lookup.getDefault().lookup(SDHConfigurationObject.class);
+                configObject.setProperty("saved", true);
+                return true;
+            } else {
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+                return false;
+            }
+        }
+    }
+    
+    public boolean deleteView() {
+        if (com.deleteGeneralViews(new long[] {view.getId()})) {
+            view = null;
+            return true;
+        }
+        NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+        return false;
     }
 }

@@ -47,8 +47,8 @@ public class LocalObjectView extends LocalObjectViewLight {
      */
     protected boolean dirty = false;
 
-    public LocalObjectView(long id, String name, String description, int viewType, byte[] viewStructure, byte[] background) {
-        super (id, name, description, viewType);
+    public LocalObjectView(long id, String className, String name, String description, byte[] viewStructure, byte[] background) {
+        super (id, name, description, className);
         this.background = Utils.getImageFromByteArray(background);
         this.structure = viewStructure;
     }
