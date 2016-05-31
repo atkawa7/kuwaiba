@@ -268,6 +268,14 @@ public abstract class AbstractScene<N, E> extends GraphScene<N, E> {
      * @throws IllegalArgumentException If the XML has an unexpected format or value
      */
     public abstract void render(byte[] structure) throws IllegalArgumentException;
+    
+    /**
+     * Calculates the connection color. This calculation depends on the implementor, and it's usually based on the class of the connection object
+     * @param theConnection The object representing the connection
+     * @return The color corresponding on the connection. Black should be the default value
+     */
+    public abstract Color getConnectionColor (LocalObjectLight theConnection);
+    
     /**
      * Get the active connect provider. Null if supportsConnections returns false.
      * @return 

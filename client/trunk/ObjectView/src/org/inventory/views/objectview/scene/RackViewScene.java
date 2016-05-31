@@ -18,6 +18,7 @@ package org.inventory.views.objectview.scene;
 import java.awt.Color;
 import java.awt.Dimension;
 import org.inventory.communications.core.LocalObject;
+import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.core.visual.scene.PhysicalConnectionProvider;
@@ -122,6 +123,11 @@ public class RackViewScene extends AbstractScene<LocalObject, LocalObject> {
 
     @Override
     public PhysicalConnectionProvider getConnectProvider() {
+        return null;
+    }
+    
+    @Override
+    public Color getConnectionColor(LocalObjectLight theConnection) {
         return null;
     }
 

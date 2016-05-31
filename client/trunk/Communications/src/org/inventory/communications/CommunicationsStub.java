@@ -1748,8 +1748,7 @@ public class CommunicationsStub {
     public LocalObjectView getObjectRelatedView(long oid, String objectClass, long viewId){
         try{
             ViewInfo view = service.getObjectRelatedView(oid, objectClass, viewId, session.getSessionId());
-            //*******************************************************************+
-            return new LocalObjectView(view.getId(), view.getName(), view.getDescription(), "", view.getStructure(), view.getBackground());
+            return new LocalObjectView(view.getId(), view.getName(), view.getDescription(), view.getClassName(), view.getStructure(), view.getBackground());
         }catch(Exception ex){
             this.error =  ex.getMessage();
             return null;
@@ -1767,9 +1766,8 @@ public class CommunicationsStub {
             List<ViewInfoLight> views = service.getObjectRelatedViews(oid, objectClass, -1, 10, session.getSessionId());
             List<LocalObjectViewLight> res = new ArrayList<>();
             
-            //*******************************************************************+
             for (ViewInfoLight view : views)
-                res.add(new LocalObjectViewLight(view.getId(), view.getName(), view.getDescription(), ""));
+                res.add(new LocalObjectViewLight(view.getId(), view.getName(), view.getDescription(), view.getClassName()));
             return res;
         }catch(Exception ex){
             this.error =  ex.getMessage();
@@ -1787,8 +1785,7 @@ public class CommunicationsStub {
             List<ViewInfoLight> views = service.getGeneralViews(viewClass, -1, session.getSessionId());
             List<LocalObjectViewLight> res = new ArrayList<>();
             for (ViewInfoLight view : views)
-                //*******************************************************************+
-                res.add(new LocalObjectViewLight(view.getId(), view.getName(), view.getDescription(), ""));
+                res.add(new LocalObjectViewLight(view.getId(), view.getName(), view.getDescription(), view.getClassName()));
             return res;
         }catch(Exception ex){
             this.error =  ex.getMessage();
@@ -1804,8 +1801,7 @@ public class CommunicationsStub {
     public LocalObjectView getGeneralView(long viewId) {
         try{
             ViewInfo view = service.getGeneralView(viewId, session.getSessionId());
-            //*******************************************************************+
-            return new LocalObjectView(view.getId(), view.getName(), view.getDescription(), "", view.getStructure(), view.getBackground());
+            return new LocalObjectView(view.getId(), view.getName(), view.getDescription(), view.getClassName(), view.getStructure(), view.getBackground());
         }catch(Exception ex){
             this.error =  ex.getMessage();
             return null;
@@ -1818,14 +1814,14 @@ public class CommunicationsStub {
      * @param objectClass object class
      * @param name view name
      * @param description view description
-     * @param viewType view type (See class ViewObject for details about the supported types)
+     * @param viewClassName view type (The supported values are provided per each module creating object related views)
      * @param structure XML document with the view structure (see http://sourceforge.net/apps/mediawiki/kuwaiba/index.php?title=XML_Documents#To_Save_Object_Views for details about the supported format)
      * @param background background image
      * @return the new object id
      */
-    public long createObjectRelatedView(long oid, String objectClass, String name, String description, int viewType, byte[] structure, byte[] background){
+    public long createObjectRelatedView(long oid, String objectClass, String name, String description, String viewClassName, byte[] structure, byte[] background){
         try{
-            return service.createObjectRelatedView(oid, objectClass, name, description, viewType, structure, background, session.getSessionId());
+            return service.createObjectRelatedView(oid, objectClass, name, description, viewClassName, structure, background, session.getSessionId());
         }catch(Exception ex){
             this.error =  ex.getMessage();
             return -1;

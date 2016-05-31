@@ -11,7 +11,6 @@
 package com.neotropic.inventory.modules.sdh;
 
 import com.neotropic.inventory.modules.sdh.scene.SDHModuleScene;
-import com.neotropic.inventory.modules.sdh.wizard.SDHConnectionWizard;
 import java.util.Collections;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
@@ -53,7 +52,10 @@ public class SDHModuleService {
     }
     
     public LocalObjectView loadView(long viewId) {
-        return view;
+        LocalObjectView theView = com.getGeneralView(viewId);
+        if (theView == null)
+            NotificationUtil.getInstance().showSimplePopup("Load view", NotificationUtil.ERROR_MESSAGE, com.getError());
+        return theView;
     }
     
     public boolean saveCurrentView() {

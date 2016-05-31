@@ -20,6 +20,7 @@ import org.inventory.core.visual.scene.AbstractConnectionWidget;
 import com.ociweb.xml.StartTagWAX;
 import com.ociweb.xml.WAX;
 import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
@@ -297,6 +298,12 @@ public class GISViewScene extends AbstractScene<LocalObjectLight, LocalObjectLig
     @Override
     public void render(byte[] structure) {
         //TODO: Render here, not in the service
+    }
+    
+    @Override
+    public Color getConnectionColor(LocalObjectLight theConnection) {
+        //TODO: Calculate the connection color here instead of in Utils
+        return null;
     }
         
     /**

@@ -287,7 +287,7 @@ public class ChildrenViewBuilder implements AbstractViewBuilder {
         byte[] viewStructure = scene.getAsXML();
         if (currentView == null){
             long viewId = com.createObjectRelatedView(service.getCurrentObject().getOid(),
-                    service.getCurrentObject().getClassName(), null, null,0, viewStructure, scene.getBackgroundImage());
+                    service.getCurrentObject().getClassName(), null, null, "PlainChildrenView", viewStructure, scene.getBackgroundImage()); //NOI18N
             if (viewId != -1) //Success
                 currentView = new LocalObjectView(viewId, "ObjectViewModule", null, null, viewStructure, scene.getBackgroundImage());
             else{

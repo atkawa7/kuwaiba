@@ -2,7 +2,9 @@
 
 <Form version="1.4" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <NonVisualComponents>
-    <Component class="javax.swing.ButtonGroup" name="btnGrpConections">
+    <Component class="javax.swing.ButtonGroup" name="btnGrpConnections">
+    </Component>
+    <Component class="javax.swing.ButtonGroup" name="btnGrpTools">
     </Component>
   </NonVisualComponents>
   <AuxValues>
@@ -114,6 +116,9 @@
         </Component>
         <Component class="javax.swing.JToggleButton" name="btnSelect">
           <Properties>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="btnGrpTools"/>
+            </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/com/neotropic/inventory/modules/sdh/res/select.png"/>
             </Property>
@@ -131,6 +136,9 @@
         </Component>
         <Component class="javax.swing.JToggleButton" name="btnConnect">
           <Properties>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="btnGrpTools"/>
+            </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/com/neotropic/inventory/modules/sdh/res/connect.png"/>
             </Property>
@@ -166,7 +174,7 @@
         <Component class="javax.swing.JToggleButton" name="btnTransportLink">
           <Properties>
             <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
-              <ComponentRef name="btnGrpConections"/>
+              <ComponentRef name="btnGrpConnections"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/com/neotropic/inventory/modules/sdh/res/btnTransportLink.png"/>
@@ -186,7 +194,7 @@
         <Component class="javax.swing.JToggleButton" name="btnContainerLink">
           <Properties>
             <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
-              <ComponentRef name="btnGrpConections"/>
+              <ComponentRef name="btnGrpConnections"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/com/neotropic/inventory/modules/sdh/res/btnContainerLink.png"/>
@@ -205,7 +213,7 @@
         <Component class="javax.swing.JToggleButton" name="btnTributaryLink">
           <Properties>
             <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
-              <ComponentRef name="btnGrpConections"/>
+              <ComponentRef name="btnGrpConnections"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/com/neotropic/inventory/modules/sdh/res/btnTributaryLink.png"/>

@@ -19,6 +19,7 @@ package org.inventory.views.topology.scene;
 import com.ociweb.xml.StartTagWAX;
 import com.ociweb.xml.WAX;
 import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -309,6 +310,12 @@ public class TopologyViewScene extends AbstractScene<Object, String>
     @Override
     public PhysicalConnectionProvider getConnectProvider() {
        return null;
+    }
+    
+    @Override
+    public Color getConnectionColor(LocalObjectLight theConnection) {
+        //TODO: Calculate the connection color here instead of in Utils
+        return null;
     }
 
     @Override

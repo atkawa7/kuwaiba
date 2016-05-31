@@ -787,7 +787,7 @@
 <xs:complexType name="viewInfoLight">
 <xs:sequence>
 <xs:element name="id" type="xs:long"/>
-<xs:element name="type" type="xs:int"/>
+<xs:element name="className" type="xs:string" minOccurs="0"/>
 <xs:element name="name" type="xs:string" minOccurs="0"/>
 <xs:element name="description" type="xs:string" minOccurs="0"/>
 </xs:sequence>
@@ -1024,7 +1024,7 @@
 <xs:element name="objectClass" type="xs:string" minOccurs="0"/>
 <xs:element name="name" type="xs:string" minOccurs="0"/>
 <xs:element name="description" type="xs:string" minOccurs="0"/>
-<xs:element name="viewType" type="xs:int"/>
+<xs:element name="viewClassName" type="xs:string" minOccurs="0"/>
 <xs:element name="structure" type="xs:base64Binary" nillable="true" minOccurs="0"/>
 <xs:element name="background" type="xs:base64Binary" nillable="true" minOccurs="0"/>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>

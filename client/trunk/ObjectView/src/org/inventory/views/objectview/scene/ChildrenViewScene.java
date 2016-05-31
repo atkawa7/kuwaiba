@@ -19,6 +19,7 @@ package org.inventory.views.objectview.scene;
 import org.inventory.core.visual.scene.PhysicalConnectionProvider;
 import com.ociweb.xml.StartTagWAX;
 import com.ociweb.xml.WAX;
+import java.awt.Color;
 import java.awt.Point;
 import java.io.ByteArrayOutputStream;
 import org.inventory.communications.core.LocalObjectLight;
@@ -194,6 +195,12 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
     @Override
     public void render(byte[] structure) throws IllegalArgumentException {
         //TODO: Change the view builder for an implementation of this method
+    }
+    
+    @Override
+    public Color getConnectionColor(LocalObjectLight theConnection) {
+        //TODO: Calculate the connection color here instead of in Utils
+        return null;
     }
     
     @Override

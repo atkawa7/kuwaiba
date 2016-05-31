@@ -21,6 +21,7 @@ import javax.swing.JTextField;
 import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.core.services.api.behaviors.Refreshable;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.core.visual.export.ExportScenePanel;
 import org.inventory.core.visual.export.filters.ImageFilter;
@@ -78,11 +79,13 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
     
     public void initCustomComponents() {
         em = new ExplorerManager();
+        configObject = Lookup.getDefault().lookup(SDHConfigurationObject.class);
+        configObject.setProperty("connectionType", SDHConnectionWizard.Connections.CONNECTION_TRANSPORTLINK);
+        configObject.setProperty("saved", true);
         scene = new SDHModuleScene();
         service = new SDHModuleService(scene);
         scene.setActiveTool(SDHModuleScene.ACTION_SELECT);
-        configObject = Lookup.getDefault().lookup(SDHConfigurationObject.class);
-        configObject.setProperty("connectionType", SDHConnectionWizard.Connections.CONNECTION_TRANSPORTLINK);
+        
         add(scene.createView());
     }
 
@@ -94,7 +97,8 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        btnGrpConections = new javax.swing.ButtonGroup();
+        btnGrpConnections = new javax.swing.ButtonGroup();
+        btnGrpTools = new javax.swing.ButtonGroup();
         barTools = new javax.swing.JToolBar();
         btnNew = new javax.swing.JButton();
         btnOpen = new javax.swing.JButton();
@@ -174,6 +178,7 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
         });
         barTools.add(btnExport);
 
+        btnGrpTools.add(btnSelect);
         btnSelect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/neotropic/inventory/modules/sdh/res/select.png"))); // NOI18N
         btnSelect.setSelected(true);
         org.openide.awt.Mnemonics.setLocalizedText(btnSelect, org.openide.util.NbBundle.getMessage(SDHModuleTopComponent.class, "SDHModuleTopComponent.btnSelect.text")); // NOI18N
@@ -187,6 +192,7 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
         });
         barTools.add(btnSelect);
 
+        btnGrpTools.add(btnConnect);
         btnConnect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/neotropic/inventory/modules/sdh/res/connect.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnConnect, org.openide.util.NbBundle.getMessage(SDHModuleTopComponent.class, "SDHModuleTopComponent.btnConnect.text")); // NOI18N
         btnConnect.setFocusable(false);
@@ -212,7 +218,7 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
         barTools.add(btnShowNodesLabels);
         barTools.add(sepConnections);
 
-        btnGrpConections.add(btnTransportLink);
+        btnGrpConnections.add(btnTransportLink);
         btnTransportLink.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/neotropic/inventory/modules/sdh/res/btnTransportLink.png"))); // NOI18N
         btnTransportLink.setSelected(true);
         org.openide.awt.Mnemonics.setLocalizedText(btnTransportLink, org.openide.util.NbBundle.getMessage(SDHModuleTopComponent.class, "SDHModuleTopComponent.btnTransportLink.text")); // NOI18N
@@ -226,7 +232,7 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
         });
         barTools.add(btnTransportLink);
 
-        btnGrpConections.add(btnContainerLink);
+        btnGrpConnections.add(btnContainerLink);
         btnContainerLink.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/neotropic/inventory/modules/sdh/res/btnContainerLink.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnContainerLink, org.openide.util.NbBundle.getMessage(SDHModuleTopComponent.class, "SDHModuleTopComponent.btnContainerLink.text")); // NOI18N
         btnContainerLink.setFocusable(false);
@@ -239,7 +245,7 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
         });
         barTools.add(btnContainerLink);
 
-        btnGrpConections.add(btnTributaryLink);
+        btnGrpConnections.add(btnTributaryLink);
         btnTributaryLink.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/neotropic/inventory/modules/sdh/res/btnTributaryLink.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnTributaryLink, org.openide.util.NbBundle.getMessage(SDHModuleTopComponent.class, "SDHModuleTopComponent.btnTributaryLink.text")); // NOI18N
         btnTributaryLink.setFocusable(false);
@@ -288,17 +294,19 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
         List<LocalObjectViewLight> views = service.getViews();
         JComboBox<LocalObjectViewLight> lstViews = new JComboBox<>(views.toArray(new LocalObjectViewLight[0]));
         lstViews.setName("lstViews"); //NOI18N
-        JComplexDialogPanel viewsDialog = new JComplexDialogPanel(new String[] {"Available view"}, new JComponent[] { lstViews });
+        JComplexDialogPanel viewsDialog = new JComplexDialogPanel(new String[] {"Available views"}, new JComponent[] { lstViews });
                 
         if(JOptionPane.showConfirmDialog(null, viewsDialog, "Choose a view", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             LocalObjectViewLight selectedView = (LocalObjectViewLight)((JComboBox)viewsDialog.getComponent("lstViews")).getSelectedItem();
             if (selectedView != null) {
                 LocalObjectView actualView = service.loadView(selectedView.getId());
                 if (actualView != null) {
+                    scene.clear();
                     service.setView(actualView);
                     scene.render(actualView.getStructure());
                     enableButtons(true);
                     btnConnect.setSelected(false);
+                    setDisplayName(getDisplayName());
                 }
             }
         }        
@@ -310,9 +318,16 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
         else {
             JTextField txtViewName = new JTextField();
             txtViewName.setName("txtViewName");
+            txtViewName.setColumns(25);
             
             JTextField txtViewDescription = new JTextField();
-            txtViewName.setName("txtViewDescription");
+            txtViewDescription.setName("txtViewDescription");
+            txtViewDescription.setColumns(25);
+            
+            if (service.getView() != null) {
+                txtViewName.setText(service.getView().getName());
+                txtViewDescription.setText(service.getView().getDescription());
+            }
             
             JComplexDialogPanel saveDialog = new JComplexDialogPanel(new String[] {"View name", "View Description"}, new JComponent[] { txtViewName, txtViewDescription });
 
@@ -326,7 +341,10 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
                     service.getView().setName(((JTextField)saveDialog.getComponent("txtViewName")).getText());
                     service.getView().setDescription(((JTextField)saveDialog.getComponent("txtViewDescription")).getText());
                 }
-                service.saveCurrentView();
+                if (service.saveCurrentView()) {
+                    NotificationUtil.getInstance().showSimplePopup("Save view", NotificationUtil.INFO_MESSAGE, "View saved successfully");
+                    setDisplayName(getDisplayName());
+                }
             }            
         }
     }//GEN-LAST:event_btnSaveActionPerformed
@@ -348,8 +366,8 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
     }//GEN-LAST:event_btnExportActionPerformed
 
     private void btnSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelectActionPerformed
-        btnConnect.setSelected(true);
-        scene.setActiveTool(SDHModuleScene.ACTION_SELECT);
+        if(!btnSelect.isSelected())
+            scene.setActiveTool(SDHModuleScene.ACTION_SELECT);
     }//GEN-LAST:event_btnSelectActionPerformed
 
     private void btnShowNodesLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowNodesLabelsActionPerformed
@@ -357,8 +375,8 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
     }//GEN-LAST:event_btnShowNodesLabelsActionPerformed
 
     private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
-        btnSelect.setSelected(false);
-        scene.setActiveTool(SDHModuleScene.ACTION_CONNECT);
+        if(!btnConnect.isSelected())
+            scene.setActiveTool(SDHModuleScene.ACTION_CONNECT);
     }//GEN-LAST:event_btnConnectActionPerformed
 
     private void btnTransportLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTransportLinkActionPerformed
@@ -379,7 +397,8 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
     private javax.swing.JToggleButton btnContainerLink;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnExport;
-    private javax.swing.ButtonGroup btnGrpConections;
+    private javax.swing.ButtonGroup btnGrpConnections;
+    private javax.swing.ButtonGroup btnGrpTools;
     private javax.swing.JButton btnNew;
     private javax.swing.JButton btnOpen;
     private javax.swing.JButton btnSave;
@@ -404,15 +423,17 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
     public String getDisplayName() {
         String unformattedDisplayName;
         if (service.getView() == null || service.getView().getId() == -1)
-            unformattedDisplayName = "<No View>";
+            return "<No View>";
         else
-            unformattedDisplayName = service.getView().getName();
-        
-        
+            return service.getView().getName();
+    }
+    
+    @Override
+    public String getHtmlDisplayName() {
         if((boolean)configObject.getProperty("saved"))
-            return unformattedDisplayName;
+            return getDisplayName();
         else
-            return String.format("<b>%s</b>", unformattedDisplayName);
+            return String.format("<b>%s*</b>", getDisplayName());
     }
 
     void writeProperties(java.util.Properties p) {
