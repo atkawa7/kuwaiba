@@ -1581,12 +1581,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public long createGeneralView(int viewType, String name, String description, byte[] structure, byte[] background, String ipAddress, String sessionId) throws ServerSideException{
+    public long createGeneralView(String viewClass, String name, String description, byte[] structure, byte[] background, String ipAddress, String sessionId) throws ServerSideException{
         if (aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateCall("createGeneralView", ipAddress, sessionId);
-            return aem.createGeneralView(viewType, name, description, structure, background);
+            return aem.createGeneralView(viewClass, name, description, structure, background);
         } catch (InventoryException ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
@@ -1641,14 +1641,14 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(e.getMessage());
         }
     }
-
+   
     @Override
-    public ViewInfoLight[] getGeneralViews(int viewType, int limit, String ipAddress, String sessionId) throws ServerSideException {
+    public ViewInfoLight[] getGeneralViews(String viewClassName, int limit, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateCall("getGeneralViews", ipAddress, sessionId);
-            List<ViewObjectLight> views = aem.getGeneralViews(viewType, limit);
+            List<ViewObjectLight> views = aem.getGeneralViews(viewClassName, limit);
             ViewInfoLight[] res = new ViewInfoLight[views.size()];
             for (int i = 0; i < views.size(); i++)
                 res[i] = new ViewInfoLight(views.get(i));

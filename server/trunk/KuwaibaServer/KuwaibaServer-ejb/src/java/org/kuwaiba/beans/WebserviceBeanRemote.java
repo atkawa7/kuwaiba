@@ -442,12 +442,12 @@ public interface WebserviceBeanRemote {
     public ViewInfoLight[] getObjectRelatedViews(long oid, String objectClass, int viewType, int limit, String ipAddress, String sessionId) throws ServerSideException;
 
     public ViewInfo getGeneralView(long viewId, String ipAddress, String sessionId) throws ServerSideException;
-
-    public ViewInfoLight[] getGeneralViews(int viewType, int limit, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public ViewInfoLight[] getGeneralViews(String viewClassName, int limit, String ipAddress, String sessionId) throws ServerSideException;
 
     public long createObjectRelatedView(long objectId, String objectClass, String name, String description, int viewType, byte[] structure, byte[] background, String ipAddress, String sessionId) throws ServerSideException;
 
-    public long createGeneralView(int viewType, String name, String description, byte[] structure, byte[] background, String ipAddress, String sessionId) throws ServerSideException;
+    public long createGeneralView(String viewClass, String name, String description, byte[] structure, byte[] background, String ipAddress, String sessionId) throws ServerSideException;
 
     public void updateObjectRelatedView(long objectOid, String objectClass, long viewId, String viewName, String viewDescription, byte[] structure, byte[] background, String ipAddress, String sessionId) throws ServerSideException;
 
@@ -598,4 +598,5 @@ public interface WebserviceBeanRemote {
     // <editor-fold defaultstate="collapsed" desc="Help methods. Click on the + sign on the left to edit the code.">
     public boolean isSubclassOf(String className, String subclassOf, String remoteAddress, String sessionId) throws ServerSideException;
     // </editor-fold>
+
 }

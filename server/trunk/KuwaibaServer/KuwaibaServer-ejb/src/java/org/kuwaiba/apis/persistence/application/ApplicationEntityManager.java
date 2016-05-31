@@ -28,7 +28,6 @@ import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
-import org.kuwaiba.apis.persistence.exceptions.UnsupportedPropertyException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.util.ChangeDescriptor;
 
@@ -241,16 +240,16 @@ public interface ApplicationEntityManager {
      */
     public List<ViewObjectLight> getObjectRelatedViews(long oid, String objectClass, int limit)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException;
-
+  
     /**
-     * Retrieves the list of views not related to a given object like GIS, topological views
-     * @param viewType Type of view to be retrieved. The implementor must defined what are the possible admitted values
-     * @param limit maximum
-     * @return a list of object with the minimum information about the view (id, class and name)
-     * @throws InvalidArgumentException if the viewType is not a valid value
+     * Allows to retrieve a list of views of a certain type, specifying their class
+     * @param viewClassName The class name
+     * @param limit The limit of results. -1 for all
+     * @return The list of views
+     * @throws InvalidArgumentException If the view class does not exist
+     * @throws NotAuthorizedException If the user is not allowed to query for general views
      */
-    public List<ViewObjectLight> getGeneralViews(int viewType, int limit)
-            throws InvalidArgumentException, NotAuthorizedException;
+    public List<ViewObjectLight> getGeneralViews(String viewClassName, int limit) throws InvalidArgumentException, NotAuthorizedException;;
 
     /**
      * Returns a view of those that are not related to a particular object (i.e.: GIS views)
@@ -279,15 +278,16 @@ public interface ApplicationEntityManager {
 
     /**
      * Creates a view not related to a particular object
-     * @param view id
-     * @param viewType
+     * @param viewClass View class
      * @param name view name
      * @param description view description
      * @param structure XML document specifying the view structure (nodes, edges, control points)
      * @param background Background image
+     * @return The id of the newly created view
      * @throws InvalidArgumentException if the view type is invalid
+     * @throws org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException If the user is not allowed to create general views
      */
-    public long createGeneralView(int viewType, String name, String description, byte[] structure, byte[] background)
+    public long createGeneralView(String viewClass, String name, String description, byte[] structure, byte[] background)
             throws InvalidArgumentException, NotAuthorizedException;
 
     /**
@@ -597,4 +597,6 @@ public interface ApplicationEntityManager {
      * @throws NotAuthorizedException If the user is not authorized to access a particular commercial module
      */
     public Collection<GenericCommercialModule> getCommercialModules() throws NotAuthorizedException;
+
+    
 }

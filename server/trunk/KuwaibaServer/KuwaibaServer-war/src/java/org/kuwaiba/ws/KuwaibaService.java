@@ -381,18 +381,18 @@ public class KuwaibaService {
 
     /**
      * Gets all views that are not related to a particular object
-     * @param viewType View type. Used to filter. Use 0 retrieve all
-     * @param limit Max number if reaults
+     * @param viewClass View class. Used to filter
+     * @param limit Max number if results
      * @param sessionId Session token
      * @return A list of views
      * @throws Exception Exception Generic exception encapsulating any possible error raised at runtime 
      */
     @WebMethod(operationName = "getGeneralViews")
-    public ViewInfoLight[] getGeneralViews(@WebParam(name = "viewType")int viewType,
+    public ViewInfoLight[] getGeneralViews(@WebParam(name = "viewClass")String viewClass,
             @WebParam(name = "limit")int limit,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
-            return wsBean.getGeneralViews(viewType, limit, getIPAddress(), sessionId);
+            return wsBean.getGeneralViews(viewClass, limit, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -461,7 +461,7 @@ public class KuwaibaService {
     
     /**
      * Creates a general view (a view that is not associated to any object)
-     * @param viewType View type
+     * @param viewClass View class
      * @param name View name
      * @param description Description
      * @param structure Structure
@@ -471,14 +471,14 @@ public class KuwaibaService {
      * @throws Exception Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "createGeneralView")
-    public long createGeneralView(@WebParam(name = "viewType")int viewType,
+    public long createGeneralView(@WebParam(name = "viewClass")String viewClass,
             @WebParam(name = "name")String name,
             @WebParam(name = "description")String description,
             @WebParam(name = "structure")byte[] structure,
             @WebParam(name = "background")byte[] background,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
-            return wsBean.createGeneralView(viewType, name, description, structure, background, getIPAddress(), sessionId);
+            return wsBean.createGeneralView(viewClass, name, description, structure, background, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -2997,8 +2997,8 @@ public class KuwaibaService {
      * @param containerLinkClass Container link class
      * @param containerLinkId Container class id
      * @param forceDelete Delete recursively all sdh elements contained by the container link
+     * @param sessionId Session token
      * @throws ServerSideException If some high level thing goes wrong
-     * @throws InventoryException  If some low level thing goes wrong
      */
     @WebMethod(operationName = "deleteSDHContainerLink")
     public void deleteSDHContainerLink(@WebParam(name = "containerLinkClass") String containerLinkClass, 

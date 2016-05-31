@@ -741,14 +741,14 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public long createGeneralView(int viewType, String name, String description, byte[] structure, byte[] background)
+    public long createGeneralView(String viewClass, String name, String description, byte[] structure, byte[] background)
             throws InvalidArgumentException, NotAuthorizedException {
         
         try(Transaction tx = graphDb.beginTx()) {
             
             Node newView = graphDb.createNode();
 
-            newView.setProperty(Constants.PROPERTY_TYPE, viewType);
+            newView.setProperty(Constants.PROPERTY_CLASS_NAME, viewClass);
             if (name != null)
                 newView.setProperty(Constants.PROPERTY_NAME, name);
             if (description != null)
@@ -757,7 +757,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 newView.setProperty(Constants.PROPERTY_STRUCTURE, structure);
             if (background != null){
                 try{
-                    String fileName = "view-" + newView.getId() + "-" + viewType;
+                    String fileName = "view-" + newView.getId() + "-" + viewClass;
                     Util.saveFile(configuration.getProperty("backgroundsPath", DEFAULT_BACKGROUNDS_PATH), fileName, background);
                     newView.setProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME, fileName);
                 }catch(Exception ex){
@@ -961,27 +961,25 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public List<ViewObjectLight> getGeneralViews(int viewType, int limit) 
+    public List<ViewObjectLight> getGeneralViews(String viewClass, int limit) 
             throws InvalidArgumentException, NotAuthorizedException 
     {
         String cypherQuery = "START gView=node:"+ Constants.INDEX_GENERAL_VIEWS +"('id:*')";
-        if (viewType != -1)
-            cypherQuery += " WHERE gView."+Constants.PROPERTY_TYPE+"="+viewType;
+        cypherQuery += " WHERE gView." + Constants.PROPERTY_CLASS_NAME + "=" + viewClass;
 
         cypherQuery += " RETURN gView";
 
         if (limit != -1)
             cypherQuery += " LIMIT "+limit;
     
-        try(Transaction tx = graphDb.beginTx())
-        {
+        try(Transaction tx = graphDb.beginTx()) {
             Result result = graphDb.execute(cypherQuery);
             Iterator<Node> gViews = result.columnAs("gView");
             List<ViewObjectLight> myRes = new ArrayList<>();
             while (gViews.hasNext()){
                 Node gView = gViews.next();
                 ViewObjectLight aView = new ViewObjectLight(gView.getId(), (String)gView.getProperty(Constants.PROPERTY_NAME),
-                        (String)gView.getProperty(Constants.PROPERTY_DESCRIPTION), (Integer)gView.getProperty(Constants.PROPERTY_TYPE));
+                        (String)gView.getProperty(Constants.PROPERTY_DESCRIPTION), (Integer)gView.getProperty(Constants.PROPERTY_CLASS_NAME));
                 if (gView.hasProperty(Constants.PROPERTY_NAME));
                     aView.setName((String)gView.getProperty(Constants.PROPERTY_NAME));
                 if (gView.hasProperty(Constants.PROPERTY_DESCRIPTION));
