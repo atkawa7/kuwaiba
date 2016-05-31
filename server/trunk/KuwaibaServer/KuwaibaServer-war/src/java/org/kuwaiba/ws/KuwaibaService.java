@@ -431,7 +431,7 @@ public class KuwaibaService {
      * @param objectClass Object class
      * @param name View name
      * @param description View description
-     * @param viewType View type
+     * @param viewClassName View class name
      * @param structure Structure (as an XML document)
      * @param background Background
      * @param sessionId Session id
@@ -443,12 +443,12 @@ public class KuwaibaService {
             @WebParam(name = "objectClass")String objectClass,
             @WebParam(name = "name")String name,
             @WebParam(name = "description")String description,
-            @WebParam(name = "viewType")int viewType,
+            @WebParam(name = "viewClassName")String viewClassName,
             @WebParam(name = "structure")byte[] structure,
             @WebParam(name = "background")byte[] background,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try {
-            return wsBean.createObjectRelatedView(objectId, objectClass, name, description, viewType, structure, background, getIPAddress(), sessionId);
+            return wsBean.createObjectRelatedView(objectId, objectClass, name, description, viewClassName, structure, background, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;

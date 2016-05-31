@@ -1568,12 +1568,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
 
     @Override   
     public long createObjectRelatedView(long objectId, String objectClass, String name, 
-        String description, int viewType, byte[] structure, byte[] background, String ipAddress, String sessionId) throws ServerSideException{
+        String description, String viewClassName, byte[] structure, byte[] background, String ipAddress, String sessionId) throws ServerSideException{
         if (aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateCall("createObjectRelatedView", ipAddress, sessionId);
-            return aem.createObjectRelatedView(objectId, objectClass, name, description, viewType, structure, background);
+            return aem.createObjectRelatedView(objectId, objectClass, name, description, viewClassName, structure, background);
         } catch (InventoryException ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());

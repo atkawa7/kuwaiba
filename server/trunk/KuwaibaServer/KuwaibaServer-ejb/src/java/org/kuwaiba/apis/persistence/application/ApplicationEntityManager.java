@@ -265,7 +265,7 @@ public interface ApplicationEntityManager {
      * @param objectClass object class
      * @param name view name
      * @param description view description
-     * @param viewType view type (See class ViewObject for details about the supported types)
+     * @param viewClassName view class name (See class ViewObject for details about the supported types)
      * @param structure XML document with the view structure (see http://sourceforge.net/apps/mediawiki/kuwaiba/index.php?title=XML_Documents#To_Save_Object_Views for details about the supported format)
      * @param background background image
      * @throws ObjectNotFoundException if the object can not be found
@@ -273,7 +273,7 @@ public interface ApplicationEntityManager {
      * @throws InvalidArgumentException if the view type is not supported
      */
     public long createObjectRelatedView(long oid, String objectClass, String name, String description, 
-            int viewType, byte[] structure, byte[] background)
+            String viewClassName, byte[] structure, byte[] background)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException;
 
     /**

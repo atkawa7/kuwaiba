@@ -36,15 +36,15 @@ public class ViewObjectLight implements Serializable {
      */
     private String description;
     /**
-     * ViewObject type (Supported types are documented at the business domain level)
+     * ViewObject class name (Supported types are documented at the business domain level)
      */
-    private int viewType;
+    private String viewClassName;
 
-    public ViewObjectLight(long id, String name, String description, int viewType) {
+    public ViewObjectLight(long id, String name, String description, String viewClassName) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.viewType = viewType;
+        this.viewClassName = viewClassName;
     }
 
     public String getDescription() {
@@ -71,11 +71,11 @@ public class ViewObjectLight implements Serializable {
         this.name = name;
     }
 
-    public int getViewType() {
-        return viewType;
+    public String getViewClassName() {
+        return viewClassName;
     }
 
-    public void setViewType(int viewType) {
-        this.viewType = viewType;
+    public void setViewType(String viewClassName) {
+        this.viewClassName = viewClassName;
     }
 }

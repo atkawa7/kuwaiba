@@ -700,7 +700,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public long createObjectRelatedView(long oid, String objectClass, String name, String description, int viewType, 
+    public long createObjectRelatedView(long oid, String objectClass, String name, String description, String viewClassName, 
         byte[] structure, byte[] background) 
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
         
@@ -711,7 +711,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         try(Transaction tx = graphDb.beginTx()) {
             Node instance = getInstanceOfClass(objectClass, oid);
             Node viewNode = graphDb.createNode();
-            viewNode.setProperty(Constants.PROPERTY_TYPE, viewType);
+            viewNode.setProperty(Constants.PROPERTY_CLASS_NAME, viewClassName);
             instance.createRelationshipTo(viewNode, RelTypes.HAS_VIEW);
 
             if (name != null)
@@ -722,7 +722,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
             if (background != null){
                 try{
-                    String fileName = "view-" + oid + "-" + viewNode.getId() + "-" + viewType;
+                    String fileName = "view-" + oid + "-" + viewNode.getId() + "-" + viewClassName;
                     Util.saveFile(configuration.getProperty("backgroundsPath", DEFAULT_BACKGROUNDS_PATH), fileName, background);
                     viewNode.setProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME, fileName);
                 }catch(Exception ex){
@@ -813,7 +813,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 viewNode.setProperty(Constants.PROPERTY_DESCRIPTION, description);
             }
 
-            String fileName = "view-" + oid + "-" + viewId + "-" + viewNode.getProperty(Constants.PROPERTY_TYPE);
+            String fileName = "view-" + oid + "-" + viewId + "-" + viewNode.getProperty(Constants.PROPERTY_CLASS_NAME);
             if (background != null){
                 try{
                     affectedProperties += " " + Constants.PROPERTY_BACKGROUND;
@@ -870,7 +870,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (background != null){
                 if (background.length != 0){
                     try{
-                        String fileName = "view-" + oid + "-" + gView.getProperty(Constants.PROPERTY_TYPE);
+                        String fileName = "view-" + oid + "-" + gView.getProperty(Constants.PROPERTY_CLASS_NAME);
                         Util.saveFile(configuration.getProperty("backgroundsPath", DEFAULT_BACKGROUNDS_PATH), fileName, background);
                         gView.setProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME, fileName);
                         affectedProperty += " " + Constants.PROPERTY_BACKGROUND;
@@ -916,7 +916,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     ViewObject res = new ViewObject(viewId,
                             viewNode.hasProperty(Constants.PROPERTY_NAME) ? (String)viewNode.getProperty(Constants.PROPERTY_NAME) : null,
                             viewNode.hasProperty(Constants.PROPERTY_DESCRIPTION) ? (String)viewNode.getProperty(Constants.PROPERTY_DESCRIPTION) : null,
-                            (Integer)viewNode.getProperty(Constants.PROPERTY_TYPE));
+                            (String)viewNode.getProperty(Constants.PROPERTY_CLASS_NAME));
                     if (viewNode.hasProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME)){
                         String fileName = (String)viewNode.getProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME);
                         byte[] background = null;
@@ -954,7 +954,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 res.add(new ViewObjectLight(viewNode.getId(), 
                         viewNode.hasProperty(Constants.PROPERTY_NAME) ? (String)viewNode.getProperty(Constants.PROPERTY_NAME) : null,
                         viewNode.hasProperty(Constants.PROPERTY_DESCRIPTION) ? (String)viewNode.getProperty(Constants.PROPERTY_DESCRIPTION) : null,
-                        (Integer)viewNode.getProperty(Constants.PROPERTY_TYPE)));
+                        (String)viewNode.getProperty(Constants.PROPERTY_CLASS_NAME)));
             }
             return res;
         }
@@ -964,13 +964,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public List<ViewObjectLight> getGeneralViews(String viewClass, int limit) 
             throws InvalidArgumentException, NotAuthorizedException 
     {
-        String cypherQuery = "START gView=node:"+ Constants.INDEX_GENERAL_VIEWS +"('id:*')";
-        cypherQuery += " WHERE gView." + Constants.PROPERTY_CLASS_NAME + "=" + viewClass;
+        String cypherQuery = "START gView=node:"+ Constants.INDEX_GENERAL_VIEWS  + "('id:*')";
+        cypherQuery += " WHERE gView." + Constants.PROPERTY_CLASS_NAME + "='" + viewClass + "'";
 
         cypherQuery += " RETURN gView";
 
         if (limit != -1)
-            cypherQuery += " LIMIT "+limit;
+            cypherQuery += " LIMIT " + limit;
     
         try(Transaction tx = graphDb.beginTx()) {
             Result result = graphDb.execute(cypherQuery);
@@ -979,7 +979,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             while (gViews.hasNext()){
                 Node gView = gViews.next();
                 ViewObjectLight aView = new ViewObjectLight(gView.getId(), (String)gView.getProperty(Constants.PROPERTY_NAME),
-                        (String)gView.getProperty(Constants.PROPERTY_DESCRIPTION), (Integer)gView.getProperty(Constants.PROPERTY_CLASS_NAME));
+                        (String)gView.getProperty(Constants.PROPERTY_DESCRIPTION), (String)gView.getProperty(Constants.PROPERTY_CLASS_NAME));
                 if (gView.hasProperty(Constants.PROPERTY_NAME));
                     aView.setName((String)gView.getProperty(Constants.PROPERTY_NAME));
                 if (gView.hasProperty(Constants.PROPERTY_DESCRIPTION));
@@ -1003,7 +1003,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             ViewObject aView = new ViewObject(gView.getId(),
                     gView.hasProperty(Constants.PROPERTY_NAME) ? (String)gView.getProperty(Constants.PROPERTY_NAME) : null,
                     gView.hasProperty(Constants.PROPERTY_DESCRIPTION) ? (String)gView.getProperty(Constants.PROPERTY_DESCRIPTION) : null,
-                    (Integer)gView.getProperty(Constants.PROPERTY_TYPE));
+                    (String)gView.getProperty(Constants.PROPERTY_CLASS_NAME));
             if (gView.hasProperty(Constants.PROPERTY_STRUCTURE))
                 aView.setStructure((byte[])gView.getProperty(Constants.PROPERTY_STRUCTURE));
             if (gView.hasProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME)){

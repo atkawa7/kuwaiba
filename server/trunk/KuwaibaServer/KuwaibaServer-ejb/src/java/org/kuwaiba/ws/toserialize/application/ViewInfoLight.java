@@ -33,9 +33,9 @@ public class ViewInfoLight implements Serializable {
      */
     private long id;
     /**
-     * View type
+     * View class
      */
-    private int type;
+    private String className;
     /**
      * View name
      */
@@ -50,7 +50,7 @@ public class ViewInfoLight implements Serializable {
 
     public ViewInfoLight(ViewObjectLight myView) {
         this.id = myView.getId();
-        this.type = myView.getViewType();
+        this.className = myView.getViewClassName();
         this.name = myView.getName();
         this.description = myView.getDescription();
     }
@@ -79,11 +79,11 @@ public class ViewInfoLight implements Serializable {
         this.name = name;
     }
 
-    public int getType() {
-        return type;
+    public String getViewClassName() {
+        return className;
     }
 
-    public void setType(int type) {
-        this.type = type;
+    public void setType(String className) {
+        this.className = className;
     }
 }
