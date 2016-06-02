@@ -3053,19 +3053,19 @@ public class KuwaibaService {
      * @throws ServerSideException If something goes wrong
      * 
      */
-    @WebMethod(operationName = "findSDHRouteUsingTransportLinks")
-    public List<RemoteBusinessObjectLightList> findSDHRouteUsingTransportLinks(@WebParam(name = "communicationsEquipmentClassA") String communicationsEquipmentClassA, 
+    @WebMethod(operationName = "findSDHRoutesUsingTransportLinks")
+    public List<RemoteBusinessObjectLightList> findSDHRoutesUsingTransportLinks(@WebParam(name = "communicationsEquipmentClassA") String communicationsEquipmentClassA, 
                                             @WebParam(name = "communicationsEquipmentIdA") long  communicationsEquipmentIdA, 
                                             @WebParam(name = "communicationsEquipmentClassB") String communicationsEquipmentClassB, 
                                             @WebParam(name = "communicationsEquipmentIB") long  communicationsEquipmentIB, 
                                             @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try {
-            return wsBean.findSDHRouteUsingTransportLinks(communicationsEquipmentClassA, communicationsEquipmentIdA, communicationsEquipmentClassB, communicationsEquipmentIB, getIPAddress(), sessionId);
+            return wsBean.findSDHRoutesUsingTransportLinks(communicationsEquipmentClassA, communicationsEquipmentIdA, communicationsEquipmentClassB, communicationsEquipmentIB, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in findSDHRouteUsingTransportLinks: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in findSDHRoutesUsingTransportLinks: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
@@ -3082,19 +3082,19 @@ public class KuwaibaService {
      * @throws ServerSideException If something goes wrong
      * 
      */
-    @WebMethod(operationName = "findSDHRouteUsingContainerLinks")
-    public List<RemoteBusinessObjectLightList> findSDHRouteUsingContainerLinks(@WebParam(name = "communicationsEquipmentClassA") String communicationsEquipmentClassA, 
+    @WebMethod(operationName = "findSDHRoutesUsingContainerLinks")
+    public List<RemoteBusinessObjectLightList> findSDHRoutesUsingContainerLinks(@WebParam(name = "communicationsEquipmentClassA") String communicationsEquipmentClassA, 
                                             @WebParam(name = "communicationsEquipmentIdA") long  communicationsEquipmentIdA, 
                                             @WebParam(name = "communicationsEquipmentClassB") String communicationsEquipmentClassB, 
                                             @WebParam(name = "communicationsEquipmentIB") long  communicationsEquipmentIB, 
                                             @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try {
-            return wsBean.findSDHRouteUsingContainerLinks(communicationsEquipmentClassA, communicationsEquipmentIdA, communicationsEquipmentClassB, communicationsEquipmentIB, getIPAddress(), sessionId);
+            return wsBean.findSDHRoutesUsingContainerLinks(communicationsEquipmentClassA, communicationsEquipmentIdA, communicationsEquipmentClassB, communicationsEquipmentIB, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in findSDHRouteUsingContainerLinks: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in findSDHRoutesUsingContainerLinks: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }

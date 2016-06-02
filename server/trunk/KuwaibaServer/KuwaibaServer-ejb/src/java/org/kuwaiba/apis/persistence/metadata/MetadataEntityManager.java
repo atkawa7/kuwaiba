@@ -45,10 +45,11 @@ public interface MetadataEntityManager {
      * @param newClassDefinition the new class definition 
      * @throws ApplicationObjectNotFoundException
      * @throws NotAuthorizedException the user has no privileges to execute this action
-     * @throws MetadataObjectNotFoundException 
+     * @throws MetadataObjectNotFoundException If the class could no be found
+     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If the name has invalid characters, the new name is empty or if that name already exists
      */
     public void setClassProperties(ClassMetadata newClassDefinition) 
-            throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
+            throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
      * Deletes a class metadata, its attributes and category relationships

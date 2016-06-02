@@ -15,11 +15,31 @@
  */
 package org.kuwaiba.apis.persistence.business;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+
 
 /**
  * This class represents a list of RemoteBusinessObjectLight list. It's basically a wrapper for ArrayList&lt;RemoteBusinessbjectLight&gt; 
- * It's used only to improve code readability
+ * It's used only to improve code readability. This class extended from ArrayList of RemoteBusinessObjectLight at the beginning, but JAX-WS just refused to treat it as a List
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class RemoteBusinessObjectLightList extends ArrayList<RemoteBusinessObjectLight> {}
+@XmlAccessorType(XmlAccessType.FIELD)
+public class RemoteBusinessObjectLightList implements  Serializable {
+    private List<RemoteBusinessObjectLight> list;
+
+    public RemoteBusinessObjectLightList() {
+        list = new ArrayList<>();
+    }
+    
+    public boolean add(RemoteBusinessObjectLight element) {
+        return list.add(element);
+    }
+    
+    public boolean remove(RemoteBusinessObjectLight element) {
+        return list.remove(element);
+    }
+}

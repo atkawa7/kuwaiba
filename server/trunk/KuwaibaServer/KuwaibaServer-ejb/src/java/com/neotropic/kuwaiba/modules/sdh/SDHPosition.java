@@ -6,11 +6,14 @@
 package com.neotropic.kuwaiba.modules.sdh;
 
 import java.io.Serializable;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
  * It's a simple class representing a single position used by a container within a transport link
  * @author Charles Edward Bedon Cortazar<charles.bedon@kuwaiba.org>
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 public class SDHPosition implements Serializable {
     /**
      * Id of the connection being used (a TransportLink or a ContainerLink)

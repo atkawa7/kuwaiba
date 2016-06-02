@@ -1074,10 +1074,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     public List<RemoteBusinessObjectLightList> findRoutesThroughSpecialRelationships(String objectAClassName, 
             long objectAId, String objectBClassName, long objectBId, String relationshipName) {
         List<RemoteBusinessObjectLightList> paths = new ArrayList<>();
-        String cypherQuery = String.format("START o = id(%s) " +
-                             "MATCH path = o-[r:%s*{name:'%s'}]-id(%s) " +
-                             "WHERE all(x in nodes(path) where 1 = size (filter(y in nodes(path) where x = y))) " +
-                             "RETURN nodes(path), length(path) as l order by l", objectAId, RelTypes.RELATED_TO_SPECIAL, relationshipName, objectBId);
+        String cypherQuery = String.format("MATCH path = a-[r:%s*1..10{name:\"%s\"}]-b " +
+                            "WHERE id(a) = %s AND id(b) = %s AND all(x in nodes(path) where 1 = size (filter(y in nodes(path) where x = y))) " +
+                            "RETURN nodes(path) as path LIMIT 10", RelTypes.RELATED_TO_SPECIAL, relationshipName, objectAId, objectBId);
                                 
         try (Transaction tx = graphDb.beginTx()){
            
@@ -1100,7 +1099,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      * Helpers
      */
     /**
-     * Boiler-plate code. Gets a particular instance given the class name and the oid. Callers must handle assocaited ransactions
+     * Boiler-plate code. Gets a particular instance given the class name and the oid. Callers must handle associated transactions
      * @param className object class name
      * @param oid object id
      * @return a Node representing the entity

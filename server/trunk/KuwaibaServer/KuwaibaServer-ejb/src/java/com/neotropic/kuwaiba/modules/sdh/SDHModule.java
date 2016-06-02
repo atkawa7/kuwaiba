@@ -414,7 +414,7 @@ public class SDHModule implements GenericCommercialModule {
      * @throws org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException
      * 
      */
-    public List<RemoteBusinessObjectLightList> findSDHRouteUsingTransportLinks(String communicationsEquipmentClassA, 
+    public List<RemoteBusinessObjectLightList> findSDHRoutesUsingTransportLinks(String communicationsEquipmentClassA, 
                                             long  communicationsEquipmentIdA, String communicationsEquipmentClassB, 
                                             long  communicationsEquipmentIB) throws ApplicationObjectNotFoundException, NotAuthorizedException, IllegalArgumentException {
         if (!mem.isSubClass(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, communicationsEquipmentClassA))
@@ -438,7 +438,7 @@ public class SDHModule implements GenericCommercialModule {
      * @throws org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException
      * 
      */
-    public List<RemoteBusinessObjectLightList> findSDHRouteUsingContainerLinks(String communicationsEquipmentClassA, 
+    public List<RemoteBusinessObjectLightList> findSDHRoutesUsingContainerLinks(String communicationsEquipmentClassA, 
                                             long  communicationsEquipmentIdA, String communicationsEquipmentClassB, 
                                             long  communicationsEquipmentIB) throws ApplicationObjectNotFoundException, NotAuthorizedException, IllegalArgumentException {
         

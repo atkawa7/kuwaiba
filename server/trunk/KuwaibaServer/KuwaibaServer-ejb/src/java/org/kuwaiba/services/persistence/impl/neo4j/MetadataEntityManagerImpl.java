@@ -111,7 +111,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         if (classDefinition.getName() == null)
             throw new InvalidArgumentException("Class name can not be null", Level.INFO);
             
-        if (!classDefinition.getName().matches("^[a-zA-Z0-9_]*$"))
+        if (!classDefinition.getName().matches("^[a-zA-Z0-9_-]*$"))
             throw new InvalidArgumentException(String.format("Class %s contains invalid characters", classDefinition.getName()), Level.INFO);
         
         if(classDefinition.getName().isEmpty())
@@ -207,7 +207,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
 
     @Override
     public void setClassProperties (ClassMetadata newClassDefinition) 
-            throws MetadataObjectNotFoundException, NotAuthorizedException 
+            throws MetadataObjectNotFoundException, NotAuthorizedException, InvalidArgumentException 
     {
         try (Transaction tx = graphDb.beginTx())
         {
@@ -222,7 +222,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 if(newClassDefinition.getName().isEmpty())
                     throw new InvalidArgumentException("Class name can not be an empty string", Level.INFO);
                 
-                if (!newClassDefinition.getName().matches("^[a-zA-Z0-9_]*$"))
+                if (!newClassDefinition.getName().matches("^[a-zA-Z0-9_-]*$"))
                     throw new InvalidArgumentException(String.format("Class name %s contains invalid characters", newClassDefinition.getName()), Level.INFO);
                 
                 if (classIndex.get(Constants.PROPERTY_NAME, newClassDefinition.getName()).getSingle() != null)
@@ -259,9 +259,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             tx.success();
             cm.removeClass(formerName);
             cm.putClass(Util.createClassMetadataFromNode(classMetadata));
-        }catch(Exception ex){
-            Logger.getLogger("setClassProperties: " + ex.getMessage()); //NOI18N
-            throw new RuntimeException(ex.getMessage());
         }
     }
   
@@ -343,7 +340,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             buildContainmentCache();
             tx.success();
             cm.removeClass(className);
-            
         }
     }
    
@@ -1015,8 +1011,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, (String)parentNode.getProperty(Constants.PROPERTY_NAME)))
                     throw new InvalidArgumentException(
                             String.format("%s is not a business class, thus can not be added to the containment hierarchy", (String)parentNode.getProperty(Constants.PROPERTY_NAME)), Level.INFO);
-            }
-            else{
+            } else {
                 parentNode = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
 
                 if(!(Constants.NODE_DUMMYROOT).equals((String)parentNode.getProperty(Constants.PROPERTY_NAME)))
