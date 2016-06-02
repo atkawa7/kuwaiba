@@ -32,6 +32,7 @@
                 </dependency>
             </module-dependencies>
             <public-packages>
+                <package>com.neotropic.inventory.modules.sdh</package>
                 <package>org.inventory.communications</package>
                 <package>org.inventory.communications.core</package>
                 <package>org.inventory.communications.core.caching</package>

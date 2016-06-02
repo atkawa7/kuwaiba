@@ -16,6 +16,7 @@ import com.ociweb.xml.WAX;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ import org.inventory.core.visual.actions.providers.SceneConnectProvider;
 import org.inventory.core.visual.scene.AbstractConnectionWidget;
 import org.inventory.core.visual.scene.AbstractNodeWidget;
 import org.inventory.core.visual.scene.AbstractScene;
+import static org.inventory.core.visual.scene.AbstractScene.SCENE_CHANGE;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.anchor.AnchorFactory;
@@ -43,6 +45,7 @@ import org.netbeans.api.visual.router.RouterFactory;
 import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Widget;
+import org.openide.util.Exceptions;
 
 /**
  * This is the scene used in the SDH Module
@@ -76,13 +79,18 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
                         LocalObjectLight sourceObject = (LocalObjectLight)findObject(sourceWidget);
                         LocalObjectLight targetObject = (LocalObjectLight)findObject(targetWidget);
                         LocalObjectLight newConnection = wizard.run(sourceObject, targetObject);
+                        
                         if (newConnection != null) {
-                            AbstractConnectionWidget newConnectionWidget = (AbstractConnectionWidget)addEdge(newConnection);
-                            newConnectionWidget.setSourceAnchor(AnchorFactory.createCircularAnchor(sourceWidget, 5));
-                            setEdgeSource(newConnection, sourceObject);
-                            newConnectionWidget.setTargetAnchor(AnchorFactory.createCircularAnchor(targetWidget, 5));
-                            setEdgeTarget(newConnection, targetObject);
-                            newConnectionWidget.setLineColor(getConnectionColor(newConnection));
+                            //Only create edges in the scene if the connection if a TransportLink
+                            if (CommunicationsStub.getInstance().isSubclassOf(newConnection.getClassName(), "GenericSDHTransportLink")) {
+                                AbstractConnectionWidget newConnectionWidget = (AbstractConnectionWidget)addEdge(newConnection);
+                                newConnectionWidget.setSourceAnchor(AnchorFactory.createCircularAnchor(sourceWidget, 5));
+                                setEdgeSource(newConnection, sourceObject);
+                                newConnectionWidget.setTargetAnchor(AnchorFactory.createCircularAnchor(targetWidget, 5));
+                                setEdgeTarget(newConnection, targetObject);
+                                newConnectionWidget.setLineColor(getConnectionColor(newConnection));
+                                fireChangeEvent(new ActionEvent(this, SCENE_CHANGE, "attachEdge")); //NOI18N
+                            }
                         }
                     }
                 };
@@ -111,7 +119,6 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
         newEdge.setRouter(RouterFactory.createFreeRouter());
         edgeLayer.addChild(newEdge);
         return newEdge;
-        
     }
 
     @Override
@@ -251,7 +258,7 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
             NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.ERROR_MESSAGE, "The view seems corrupted and could not be loaded");
             clear();
             if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_FINE)
-                ex.printStackTrace();
+                Exceptions.printStackTrace(ex);
         }
     }
 

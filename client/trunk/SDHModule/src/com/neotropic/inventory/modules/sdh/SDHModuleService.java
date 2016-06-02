@@ -24,9 +24,30 @@ import org.openide.util.Lookup;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class SDHModuleService {
-    public static String VIEW_CLASS = "SDHModuleView";
+    /**
+     * Class to identify all views made using the SDH module
+     */
+    public static String CLASS_VIEW = "SDHModuleView";
+    /**
+     * Root of all equipment that can be connected using SDH links
+     */
+    public static String CLASS_GENERICEQUIPMENT = "GenericCommunicationsElement";
+    /**
+     * Root of all transport links
+     */
+    public static String CLASS_GENERICSDHTRANSPORTLINK = "GenericSDHTransportLink";
+    
+    /**
+     * Reference to the currently edited view. If its id is -1 or if it is null, the view is new and unsaved
+     */
     private LocalObjectView view;
+    /**
+     * Reference to the scene to be displayed
+     */
     private SDHModuleScene scene;
+    /**
+     * reference to the communications module
+     */
     private CommunicationsStub com = CommunicationsStub.getInstance();
 
     public SDHModuleService(SDHModuleScene scene) {
@@ -42,7 +63,7 @@ public class SDHModuleService {
     }
     
     public List<LocalObjectViewLight> getViews() {
-        List<LocalObjectViewLight> views = com.getGeneralViews(VIEW_CLASS);
+        List<LocalObjectViewLight> views = com.getGeneralViews(CLASS_VIEW);
         if (views == null) {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             return Collections.EMPTY_LIST;
@@ -60,13 +81,13 @@ public class SDHModuleService {
     
     public boolean saveCurrentView() {
         if (view == null || view.getId() == -1) { //New view
-            long newViewId = com.createGeneralView(VIEW_CLASS, view.getName(), view.getDescription(), scene.getAsXML(), null);
+            long newViewId = com.createGeneralView(CLASS_VIEW, view.getName(), view.getDescription(), scene.getAsXML(), null);
             if (newViewId == -1) {
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
                 return false;
             }
             else {
-                view = new LocalObjectView(newViewId, VIEW_CLASS, view.getName(), view.getDescription(), scene.getAsXML(), null);
+                view = new LocalObjectView(newViewId, CLASS_VIEW, view.getName(), view.getDescription(), scene.getAsXML(), null);
                 SDHConfigurationObject configObject = Lookup.getDefault().lookup(SDHConfigurationObject.class);
                 configObject.setProperty("saved", true);
                 return true;

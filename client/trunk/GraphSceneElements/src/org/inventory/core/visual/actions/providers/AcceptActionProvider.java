@@ -15,19 +15,19 @@
  */
 package org.inventory.core.visual.actions.providers;
 
-import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.event.ActionEvent;
 import java.io.IOException;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
+import org.inventory.core.visual.scene.AbstractScene;
 import org.netbeans.api.visual.action.AcceptProvider;
 import org.netbeans.api.visual.action.ConnectorState;
-import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Exceptions;
 
@@ -37,13 +37,13 @@ import org.openide.util.Exceptions;
  */
 public class AcceptActionProvider implements AcceptProvider {
 
-    private GraphScene scene;
+    private AbstractScene scene;
     /**
      * Only subclasses of this class will be allowed to be dropped on the scene
      */
     private String filterClass;
     
-    public AcceptActionProvider(GraphScene scene) {
+    public AcceptActionProvider(AbstractScene scene) {
         this.scene = scene;
     }
     
@@ -52,7 +52,7 @@ public class AcceptActionProvider implements AcceptProvider {
      * @param scene The related scene
      * @param filterClass The class name of the instances allowed to be dropped here. It'd be useful to use a root, abstract class such as InventoryObject or GenericSomething. Null (or using the other constructor) will allow any inventory object to be added to the scene
      */
-    public AcceptActionProvider(GraphScene scene, String filterClass) {
+    public AcceptActionProvider(AbstractScene scene, String filterClass) {
         this (scene);
         this.filterClass = filterClass;
     }
@@ -84,7 +84,8 @@ public class AcceptActionProvider implements AcceptProvider {
                 Widget newNode = scene.addNode(droppedObject);
                 newNode.setPreferredBounds(new Rectangle(10, 10));
                 newNode.setPreferredLocation(point);
-            }else
+                scene.fireChangeEvent(new ActionEvent(this, AbstractScene.SCENE_CHANGE, "attachNode")); //NOI18N
+            } else
                 JOptionPane.showMessageDialog(null, "The view already contains this object", "Error", JOptionPane.ERROR_MESSAGE);
         } catch (UnsupportedFlavorException | IOException ex) {
             if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_INFO || Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_FINE)

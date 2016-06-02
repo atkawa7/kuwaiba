@@ -15,6 +15,8 @@
  */
 package org.inventory.communications;
 
+import com.neotropic.inventory.modules.sdh.LocalSDHContainerLinkDefinition;
+import com.neotropic.inventory.modules.sdh.LocalSDHPosition;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +31,7 @@ import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalObjectLightList;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.core.LocalUserGroupObject;
 import org.inventory.communications.core.LocalUserObject;
@@ -45,12 +48,16 @@ import org.kuwaiba.wsclient.ClassInfoLight;
 import org.kuwaiba.wsclient.GroupInfo;
 import org.kuwaiba.wsclient.KuwaibaService;
 import org.kuwaiba.wsclient.KuwaibaService_Service;
+import org.kuwaiba.wsclient.RemoteBusinessObjectLight;
+import org.kuwaiba.wsclient.RemoteBusinessObjectLightList;
 import org.kuwaiba.wsclient.RemoteObject;
 import org.kuwaiba.wsclient.RemoteObjectLight;
 import org.kuwaiba.wsclient.RemoteObjectLightArray;
 import org.kuwaiba.wsclient.RemoteObjectSpecialRelationships;
 import org.kuwaiba.wsclient.RemoteQueryLight;
 import org.kuwaiba.wsclient.ResultRecord;
+import org.kuwaiba.wsclient.SdhContainerLinkDefinition;
+import org.kuwaiba.wsclient.SdhPosition;
 import org.kuwaiba.wsclient.ServerSideException_Exception;
 import org.kuwaiba.wsclient.StringArray;
 import org.kuwaiba.wsclient.TransientQuery;
@@ -1801,7 +1808,7 @@ public class CommunicationsStub {
     public LocalObjectView getGeneralView(long viewId) {
         try{
             ViewInfo view = service.getGeneralView(viewId, session.getSessionId());
-            return new LocalObjectView(view.getId(), view.getName(), view.getDescription(), view.getClassName(), view.getStructure(), view.getBackground());
+            return new LocalObjectView(view.getId(), view.getClassName(), view.getName(), view.getDescription(), view.getStructure(), view.getBackground());
         }catch(Exception ex){
             this.error =  ex.getMessage();
             return null;
@@ -2054,5 +2061,44 @@ public class CommunicationsStub {
         }
         
     }
+    
+    public List<LocalObjectLightList> findRoutesUsingTransportLinks(LocalObjectLight aSide, LocalObjectLight bSide) {
+        try {
+            List<RemoteBusinessObjectLightList> routes = service.findSDHRoutesUsingTransportLinks(aSide.getClassName(), aSide.getOid(), bSide.getClassName(), bSide.getOid(), session.getSessionId());
+            List<LocalObjectLightList> res = new ArrayList<>();
+            for (RemoteBusinessObjectLightList route : routes) 
+                res.add(new LocalObjectLightList(route));
+            
+            return res;
+        } catch (ServerSideException_Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    public List<LocalSDHContainerLinkDefinition> getSDHTransportLinkStructure(String transportLinkClass, long transportLinkId) {
+        try {
+            List<SdhContainerLinkDefinition> transportLinkStructure = service.getSDHTransportLinkStructure(transportLinkClass, transportLinkId, session.getSessionId());
+            List<LocalSDHContainerLinkDefinition> res = new ArrayList<>();
+            
+            for (SdhContainerLinkDefinition aContainerDefinition : transportLinkStructure) {
+                RemoteBusinessObjectLight container = aContainerDefinition.getContainer();
+                List<LocalSDHPosition> positions = new ArrayList<>();
+                
+                for (SdhPosition aRemotePosition : aContainerDefinition.getPositions()) 
+                    positions.add(new LocalSDHPosition(aRemotePosition.getConnectionClass(), aRemotePosition.getConnectionId(), aRemotePosition.getPosition()));
+                
+                LocalSDHContainerLinkDefinition aLocalContainerDefinition = 
+                        new LocalSDHContainerLinkDefinition(new LocalObjectLight(container.getId(), container.getName(), container.getClassName()), 
+                                aContainerDefinition.isStructured(), positions);
+                res.add(aLocalContainerDefinition);
+            }            
+            return res;
+        } catch (ServerSideException_Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
     // </editor-fold>
 }

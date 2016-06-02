@@ -194,13 +194,13 @@
 
 <xs:element name="executeQueryResponse" type="tns:executeQueryResponse"/>
 
-<xs:element name="findSDHRouteUsingContainerLinks" type="tns:findSDHRouteUsingContainerLinks"/>
+<xs:element name="findSDHRoutesUsingContainerLinks" type="tns:findSDHRoutesUsingContainerLinks"/>
 
-<xs:element name="findSDHRouteUsingContainerLinksResponse" type="tns:findSDHRouteUsingContainerLinksResponse"/>
+<xs:element name="findSDHRoutesUsingContainerLinksResponse" type="tns:findSDHRoutesUsingContainerLinksResponse"/>
 
-<xs:element name="findSDHRouteUsingTransportLinks" type="tns:findSDHRouteUsingTransportLinks"/>
+<xs:element name="findSDHRoutesUsingTransportLinks" type="tns:findSDHRoutesUsingTransportLinks"/>
 
-<xs:element name="findSDHRouteUsingTransportLinksResponse" type="tns:findSDHRouteUsingTransportLinksResponse"/>
+<xs:element name="findSDHRoutesUsingTransportLinksResponse" type="tns:findSDHRoutesUsingTransportLinksResponse"/>
 
 <xs:element name="getAllClasses" type="tns:getAllClasses"/>
 
@@ -664,6 +664,18 @@
 <xs:sequence/>
 </xs:complexType>
 
+<xs:complexType name="deletePhysicalConnection">
+<xs:sequence>
+<xs:element name="objectClass" type="xs:string" minOccurs="0"/>
+<xs:element name="objectId" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deletePhysicalConnectionResponse">
+<xs:sequence/>
+</xs:complexType>
+
 <xs:complexType name="copyObjects">
 <xs:sequence>
 <xs:element name="targetClass" type="xs:string" minOccurs="0"/>
@@ -679,18 +691,6 @@
 <xs:sequence>
 <xs:element name="return" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="deletePhysicalConnection">
-<xs:sequence>
-<xs:element name="objectClass" type="xs:string" minOccurs="0"/>
-<xs:element name="objectId" type="xs:long"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="deletePhysicalConnectionResponse">
-<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="releaseObjectFromService">
@@ -859,6 +859,36 @@
 <xs:complexType name="getAllClassesLightResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:classInfoLight" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="findSDHRoutesUsingTransportLinks">
+<xs:sequence>
+<xs:element name="communicationsEquipmentClassA" type="xs:string" minOccurs="0"/>
+<xs:element name="communicationsEquipmentIdA" type="xs:long"/>
+<xs:element name="communicationsEquipmentClassB" type="xs:string" minOccurs="0"/>
+<xs:element name="communicationsEquipmentIB" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="findSDHRoutesUsingTransportLinksResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteBusinessObjectLightList" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="remoteBusinessObjectLightList">
+<xs:sequence>
+<xs:element name="list" type="tns:remoteBusinessObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="remoteBusinessObjectLight">
+<xs:sequence>
+<xs:element name="className" type="xs:string" minOccurs="0"/>
+<xs:element name="id" type="xs:long"/>
+<xs:element name="name" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -1066,8 +1096,8 @@
 
 <xs:complexType name="sdhPosition">
 <xs:sequence>
-<xs:element name="linkClass" type="xs:string" minOccurs="0"/>
-<xs:element name="linkId" type="xs:long"/>
+<xs:element name="connectionId" type="xs:long"/>
+<xs:element name="connectionClass" type="xs:string" minOccurs="0"/>
 <xs:element name="position" type="xs:int"/>
 </xs:sequence>
 </xs:complexType>
@@ -1296,50 +1326,6 @@
 <xs:sequence>
 <xs:element name="return" type="tns:remoteObjectLight" minOccurs="0"/>
 </xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="findSDHRouteUsingTransportLinks">
-<xs:sequence>
-<xs:element name="communicationsEquipmentClassA" type="xs:string" minOccurs="0"/>
-<xs:element name="communicationsEquipmentIdA" type="xs:long"/>
-<xs:element name="communicationsEquipmentClassB" type="xs:string" minOccurs="0"/>
-<xs:element name="communicationsEquipmentIB" type="xs:long"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="findSDHRouteUsingTransportLinksResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:remoteBusinessObjectLightList" minOccurs="0" maxOccurs="unbounded"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="remoteBusinessObjectLightList">
-<xs:complexContent>
-<xs:extension base="tns:arrayList">
-<xs:sequence/>
-</xs:extension>
-</xs:complexContent>
-</xs:complexType>
-
-<xs:complexType name="arrayList">
-<xs:complexContent>
-<xs:extension base="tns:abstractList">
-<xs:sequence/>
-</xs:extension>
-</xs:complexContent>
-</xs:complexType>
-
-<xs:complexType name="abstractList" abstract="true">
-<xs:complexContent>
-<xs:extension base="tns:abstractCollection">
-<xs:sequence/>
-</xs:extension>
-</xs:complexContent>
-</xs:complexType>
-
-<xs:complexType name="abstractCollection" abstract="true">
-<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="createSDHTransportLink">
@@ -1593,16 +1579,9 @@
 
 <xs:complexType name="sdhContainerLinkDefinition">
 <xs:sequence>
-<xs:element name="containerName" type="tns:remoteBusinessObjectLight" minOccurs="0"/>
+<xs:element name="container" type="tns:remoteBusinessObjectLight" minOccurs="0"/>
+<xs:element name="structured" type="xs:boolean"/>
 <xs:element name="positions" type="tns:sdhPosition" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="remoteBusinessObjectLight">
-<xs:sequence>
-<xs:element name="className" type="xs:string" minOccurs="0"/>
-<xs:element name="id" type="xs:long"/>
-<xs:element name="name" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -1673,6 +1652,22 @@
 
 <xs:complexType name="releaseMirrorPortResponse">
 <xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="findSDHRoutesUsingContainerLinks">
+<xs:sequence>
+<xs:element name="communicationsEquipmentClassA" type="xs:string" minOccurs="0"/>
+<xs:element name="communicationsEquipmentIdA" type="xs:long"/>
+<xs:element name="communicationsEquipmentClassB" type="xs:string" minOccurs="0"/>
+<xs:element name="communicationsEquipmentIB" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="findSDHRoutesUsingContainerLinksResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteBusinessObjectLightList" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="deleteGeneralView">
@@ -1916,24 +1911,6 @@
 <xs:sequence/>
 </xs:complexType>
 
-<xs:complexType name="createSpecialObject">
-<xs:sequence>
-<xs:element name="className" type="xs:string" minOccurs="0"/>
-<xs:element name="parentObjectClassName" type="xs:string" minOccurs="0"/>
-<xs:element name="parentOid" type="xs:long"/>
-<xs:element name="attributeNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element name="attributeValues" type="ns1:stringArray" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element name="templateId" type="xs:long"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="createSpecialObjectResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:long"/>
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="getGroups">
 <xs:sequence>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
@@ -1957,6 +1934,24 @@
 </xs:sequence>
 </xs:extension>
 </xs:complexContent>
+</xs:complexType>
+
+<xs:complexType name="createSpecialObject">
+<xs:sequence>
+<xs:element name="className" type="xs:string" minOccurs="0"/>
+<xs:element name="parentObjectClassName" type="xs:string" minOccurs="0"/>
+<xs:element name="parentOid" type="xs:long"/>
+<xs:element name="attributeNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="attributeValues" type="ns1:stringArray" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="templateId" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createSpecialObjectResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:long"/>
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="getChildrenOfClass">
@@ -2359,22 +2354,6 @@
 
 <xs:complexType name="setUserPropertiesResponse">
 <xs:sequence/>
-</xs:complexType>
-
-<xs:complexType name="findSDHRouteUsingContainerLinks">
-<xs:sequence>
-<xs:element name="communicationsEquipmentClassA" type="xs:string" minOccurs="0"/>
-<xs:element name="communicationsEquipmentIdA" type="xs:long"/>
-<xs:element name="communicationsEquipmentClassB" type="xs:string" minOccurs="0"/>
-<xs:element name="communicationsEquipmentIB" type="xs:long"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="findSDHRouteUsingContainerLinksResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:remoteBusinessObjectLightList" minOccurs="0" maxOccurs="unbounded"/>
-</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="remoteObjectLightArray" final="#all">

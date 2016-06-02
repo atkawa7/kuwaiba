@@ -13,6 +13,7 @@ package com.neotropic.inventory.modules.sdh;
 import com.neotropic.inventory.modules.sdh.scene.SDHModuleScene;
 import com.neotropic.inventory.modules.sdh.wizard.SDHConnectionWizard;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -61,7 +62,7 @@ import org.openide.util.NbBundle.Messages;
     "CTL_SDHModuleTopComponent=SDH Module",
     "HINT_SDHModuleTopComponent=SDHModule"
 })
-public final class SDHModuleTopComponent extends TopComponent implements ExplorerManager.Provider, Refreshable {
+public final class SDHModuleTopComponent extends TopComponent implements ExplorerManager.Provider, Refreshable, ActionListener {
     
     private static final String ICON_PATH = "com/neotropic/inventory/modules/sdh/res/icon.png";
     private ExplorerManager em;
@@ -306,7 +307,7 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
                     scene.render(actualView.getStructure());
                     enableButtons(true);
                     btnConnect.setSelected(false);
-                    setDisplayName(getDisplayName());
+                    setHtmlDisplayName(getDisplayName());
                 }
             }
         }        
@@ -334,7 +335,7 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
             if(JOptionPane.showConfirmDialog(null, saveDialog, "View details", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
                 //It's a new view
                 if (service.getView() == null)
-                    service.setView(new LocalObjectView(-1, SDHModuleService.VIEW_CLASS, 
+                    service.setView(new LocalObjectView(-1, SDHModuleService.CLASS_VIEW, 
                             ((JTextField)saveDialog.getComponent("txtViewName")).getText(), 
                             ((JTextField)saveDialog.getComponent("txtViewDescription")).getText(), scene.getAsXML(), null));
                 else {
@@ -343,7 +344,7 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
                 }
                 if (service.saveCurrentView()) {
                     NotificationUtil.getInstance().showSimplePopup("Save view", NotificationUtil.INFO_MESSAGE, "View saved successfully");
-                    setDisplayName(getDisplayName());
+                    setHtmlDisplayName(getDisplayName());
                 }
             }            
         }
@@ -366,8 +367,7 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
     }//GEN-LAST:event_btnExportActionPerformed
 
     private void btnSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelectActionPerformed
-        if(!btnSelect.isSelected())
-            scene.setActiveTool(SDHModuleScene.ACTION_SELECT);
+        scene.setActiveTool(SDHModuleScene.ACTION_SELECT);
     }//GEN-LAST:event_btnSelectActionPerformed
 
     private void btnShowNodesLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowNodesLabelsActionPerformed
@@ -375,8 +375,7 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
     }//GEN-LAST:event_btnShowNodesLabelsActionPerformed
 
     private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
-        if(!btnConnect.isSelected())
-            scene.setActiveTool(SDHModuleScene.ACTION_CONNECT);
+        scene.setActiveTool(SDHModuleScene.ACTION_CONNECT);
     }//GEN-LAST:event_btnConnectActionPerformed
 
     private void btnTransportLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTransportLinkActionPerformed
@@ -411,19 +410,27 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
-        // TODO add custom code on component opening
+        scene.addChangeListener(this);
     }
 
     @Override
     public void componentClosed() {
-        // TODO add custom code on component closing
+        scene.removeAllListeners();
+        if (!(boolean)configObject.getProperty("saved")) {
+            switch (JOptionPane.showConfirmDialog(this, "This topology has not been saved, do you want to save it?",
+                "Confirmation", JOptionPane.YES_NO_OPTION)){
+                case JOptionPane.YES_OPTION:
+                    btnSaveActionPerformed(new ActionEvent(this, 0, "close"));
+            }
+        }
+        scene.clear();
+        service.setView(null);
     }
     
     @Override
     public String getDisplayName() {
-        String unformattedDisplayName;
         if (service.getView() == null || service.getView().getId() == -1)
-            return "<No View>";
+            return "Unnamed View";
         else
             return service.getView().getName();
     }
@@ -433,7 +440,7 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
         if((boolean)configObject.getProperty("saved"))
             return getDisplayName();
         else
-            return String.format("<b>%s*</b>", getDisplayName());
+            return String.format("<html><b>%s*</b></html>", getDisplayName());
     }
 
     void writeProperties(java.util.Properties p) {
@@ -469,5 +476,12 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
     @Override
     public void refresh() {
         //TODO
+    }
+
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        configObject.setProperty("saved", false);
+        setHtmlDisplayName(String.format("<html><b>%s*</b></html>", getDisplayName()));
     }
 }

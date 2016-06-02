@@ -114,7 +114,7 @@ public abstract class AbstractScene<N, E> extends GraphScene<N, E> {
     /**
      * Change listeners
      */
-    private ArrayList<ActionListener> changeListeners = new ArrayList<>();
+    protected ArrayList<ActionListener> changeListeners = new ArrayList<>();
 
     public AbstractScene() {
         setActiveTool(ACTION_SELECT);
