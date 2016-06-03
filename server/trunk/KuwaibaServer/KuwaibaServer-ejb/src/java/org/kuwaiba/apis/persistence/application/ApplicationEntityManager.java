@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
@@ -436,18 +437,30 @@ public interface ApplicationEntityManager {
      * @param limit
      * @param parentId
      * @param className
-     * @param ipAddress
-     * @param sessionId
      * @return
      * @throws NotAuthorizedException 
+     * @throws org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException 
      */
     public List<RemoteBusinessObjectLight> getPools(int limit, long parentId, String className) throws NotAuthorizedException, ObjectNotFoundException;
     /**
-     * Gets the available pools
+     * Gets all the available pools
      * @param limit Maximum number of pool records to be returned. -1 to return all
+     * @param className
      * @return The list of pools as RemoteBusinessObjectLight instances
+     * @throws org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException
      */
     public List<RemoteBusinessObjectLight> getPools(int limit, String className) throws NotAuthorizedException;
+    
+    /**
+     * Gets a pool by  it's id plus name
+     * @param parentId parent id
+     * @param poolId pool's id
+     * @param poolName pool's name
+     * @param className kind of elements contained in the pool
+     * @return the pool object
+     * @throws NotAuthorizedException 
+     */
+    public RemoteBusinessObjectLight getPool(long parentId, long poolId, String poolName) throws NotAuthorizedException;
     
     /**
      * Gets the list of objects into a pool

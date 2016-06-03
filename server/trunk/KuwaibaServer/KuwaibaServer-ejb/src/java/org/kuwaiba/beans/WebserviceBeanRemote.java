@@ -21,6 +21,7 @@ import com.neotropic.kuwaiba.modules.sdh.SDHModule;
 import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
 import java.util.List;
 import javax.ejb.Remote;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
@@ -527,6 +528,8 @@ public interface WebserviceBeanRemote {
 
     public void deletePools(long[] ids, String ipAddress, String sessionId) throws ServerSideException;
     
+    public RemoteObjectLight getPool(long parentId, long poolId, String poolName, String ipAddress, String sessionId) throws ServerSideException;
+    
     public RemoteObjectLight[] getPools(int limit, long parentId, String className, String ipAddress, String sessionId) throws ServerSideException;
     
     public RemoteObjectLight[] getPools(int limit, String className, String ipAddress, String sessionId) throws ServerSideException;
@@ -592,7 +595,19 @@ public interface WebserviceBeanRemote {
     public List<SDHContainerLinkDefinition> getSDHTransportLinkStructure(String transportLinkClass, long transportLinkId, String ipAddress, String sessionId) throws ServerSideException;
     
     public List<SDHContainerLinkDefinition> getSDHContainerLinkStructure(String transportLinkClass, long transportLinkId, String ipAddress, String sessionId) throws ServerSideException;
-        // </editor-fold>    
+        // </editor-fold>   
+    
+        // <editor-fold defaultstate="collapsed" desc="IP Administration manager module">
+        public RemoteObjectLight[] getDefaultIPAMRootNodes(String ipAddress, String sessionId) throws ServerSideException;
+        public long createPoolofSubnets(long parentId, String subnetPoolName, 
+                String subnetPoolDescription, int type, String ipAddress, 
+                String sessionId) throws ServerSideException;
+        public long createSubnet() throws ServerSideException;
+        public void updateSubnet() throws ServerSideException;
+        public void deleteSubnet() throws ServerSideException;
+        public void relateIP() throws ServerSideException;
+        public void releaseIP() throws ServerSideException;
+        // </editor-fold>
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Help methods. Click on the + sign on the left to edit the code.">

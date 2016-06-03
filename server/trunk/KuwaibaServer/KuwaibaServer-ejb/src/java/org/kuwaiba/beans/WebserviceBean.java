@@ -16,6 +16,7 @@
 
 package org.kuwaiba.beans;
 
+import com.neotropic.kuwaiba.modules.ipam.IPAMModule;
 import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHModule;
 import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
@@ -1852,6 +1853,18 @@ public class WebserviceBean implements WebserviceBeanRemote {
         }
     }
     
+    public RemoteObjectLight getPool(long parentId, long poolId, String poolName, String ipAddress, String sessionId) throws ServerSideException{
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("getPools", ipAddress, sessionId);
+            return new RemoteObjectLight(aem.getPool(parentId, poolId, poolName));
+        } catch (InventoryException ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(ex.getMessage());
+        }   
+    }
+    
     @Override
     public RemoteObjectLight[] getPools(int limit, long parentId, String className, String ipAddress, String sessionId) throws ServerSideException{
         if (aem == null)
@@ -2087,7 +2100,57 @@ public class WebserviceBean implements WebserviceBeanRemote {
         }
     }
         // </editor-fold>    
+    
+    // <editor-fold defaultstate="collapsed" desc="IP Administration Manager Module">
+    @Override
+    public RemoteObjectLight[] getDefaultIPAMRootNodes(String ipAddress, String sessionId) throws ServerSideException{
+        try {
+            aem.validateCall("createFolder", ipAddress, sessionId);
+            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+            return RemoteObjectLight.toRemoteObjectLightArray(ipamModule.getDefaultIPAMRootNodes());
+            
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    @Override
+    public long createPoolofSubnets(long parentId, String subnetPoolName, 
+            String subnetPoolDescription, int type, String ipAddress, 
+            String sessionId) throws ServerSideException{
+        try {
+            aem.validateCall("createFolder", ipAddress, sessionId);
+            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+            return ipamModule.createPoolofSubnets(parentId, subnetPoolName, subnetPoolDescription, type);
+            
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public long createSubnet() throws ServerSideException{
+        return 0;
+    }
+
+    @Override
+    public void updateSubnet() throws ServerSideException{
+    }
+
+    @Override
+    public void deleteSubnet() throws ServerSideException{
+    }
+
+    @Override
+    public void relateIP() throws ServerSideException{
+    }
+
+    @Override
+    public void releaseIP() throws ServerSideException{
+    }
+        // </editor-fold>
     // </editor-fold>
+    
+    
 
     // <editor-fold defaultstate="collapsed" desc="Helper methods. Click on the + sign on the left to edit the code.">
     protected final void connect(){

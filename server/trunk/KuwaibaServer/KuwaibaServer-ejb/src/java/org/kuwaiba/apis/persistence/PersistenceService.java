@@ -16,6 +16,7 @@
 package org.kuwaiba.apis.persistence;
 
 import com.neotropic.kuwaiba.modules.GenericCommercialModule;
+import com.neotropic.kuwaiba.modules.ipam.IPAMModule;
 import com.neotropic.kuwaiba.modules.mpls.MPLSModule;
 import com.neotropic.kuwaiba.modules.sdh.SDHModule;
 import java.util.Calendar;
@@ -83,6 +84,7 @@ public class PersistenceService {
             //dataIntegrityService.checkIntegrity();
             System.out.println(String.format("[KUWAIBA] [%s] Detecting commercial modules...", Calendar.getInstance().getTime()));
             //Place here some fancy OSGi stuff instead of this horrid hardcoded list
+            aem.registerCommercialModule(new IPAMModule());
             aem.registerCommercialModule(new SDHModule());
             aem.registerCommercialModule(new MPLSModule());
             

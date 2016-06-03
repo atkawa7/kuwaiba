@@ -217,6 +217,10 @@ public class Constants {
      */
     public static final String CLASS_GENERICCUSTOMER = "GenericCustomer"; //NOI18N
     /**
+     * Class Subnet
+     */
+    public static final String CLASS_SUBNET = "Subnet"; //NOI18N
+    /**
      * Class Generic Communications Equipment
      */
     public static final String CLASS_GENERICCOMMUNICATIONSELEMENT = "GenericCommunicationsElement";
@@ -224,6 +228,14 @@ public class Constants {
      * Dummy root node name
      */
     public static final String NODE_DUMMYROOT = "DummyRoot"; //NOI18N
+    /**
+     * IPv4 root node name
+     */
+    public static final String NODE_IPV4ROOT = "IPv4Root"; //NOI18N
+    /**
+     * IPv6 root node name
+     */
+    public static final String NODE_IPV6ROOT = "IPv6Root"; //NOI18N
     /**
      * General activity log root node name
      */

@@ -60,10 +60,44 @@ public class DataModelLoader {
             XMLBackupReader reader = new XMLBackupReader(mem);
             reader.read(dataModelAsByteArray);
             createDummyRoot();
+            createIPAMRoots();
             createGroupsRootNode();
             createActivityLogRootNodes();
             reader.load();
- 
+    }
+    
+    public void createIPAMRoots() throws DatabaseException{
+        try (Transaction tx = graphDb.beginTx())
+        {
+            Node IPv4RootNode = specialNodes.get(Constants.PROPERTY_NAME, Constants.NODE_IPV4ROOT).getSingle();
+            Node IPv6RootNode = specialNodes.get(Constants.PROPERTY_NAME, Constants.NODE_IPV6ROOT).getSingle();
+            if(IPv4RootNode == null) 
+            {
+                Label label = DynamicLabel.label(Constants.LABEL_ROOT);
+                IPv4RootNode = graphDb.createNode(label);
+                IPv4RootNode.setProperty(Constants.PROPERTY_NAME, Constants.NODE_IPV4ROOT);
+                IPv4RootNode.setProperty(Constants.PROPERTY_DISPLAY_NAME, Constants.NODE_IPV4ROOT);
+                IPv4RootNode.setProperty(Constants.PROPERTY_CLASS_NAME, Constants.CLASS_SUBNET);
+                IPv4RootNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
+                
+                graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).putIfAbsent(IPv4RootNode, Constants.PROPERTY_NAME, Constants.NODE_IPV4ROOT);
+                tx.success();
+            }
+            if(IPv6RootNode == null) 
+            {
+                Label label = DynamicLabel.label(Constants.LABEL_ROOT);
+                IPv6RootNode = graphDb.createNode(label);
+                IPv6RootNode.setProperty(Constants.PROPERTY_NAME, Constants.NODE_IPV6ROOT);
+                IPv6RootNode.setProperty(Constants.PROPERTY_DISPLAY_NAME, Constants.NODE_IPV6ROOT);
+                IPv6RootNode.setProperty(Constants.PROPERTY_CLASS_NAME, Constants.CLASS_SUBNET);
+                IPv6RootNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
+                
+                graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).putIfAbsent(IPv6RootNode, Constants.PROPERTY_NAME, Constants.NODE_IPV6ROOT);
+                tx.success();
+            }
+        }catch(Exception ex) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "createIPAMRoots: {0}", ex.getMessage()); //NOI18N
+        }
     }
     
     public void createDummyRoot() throws DatabaseException

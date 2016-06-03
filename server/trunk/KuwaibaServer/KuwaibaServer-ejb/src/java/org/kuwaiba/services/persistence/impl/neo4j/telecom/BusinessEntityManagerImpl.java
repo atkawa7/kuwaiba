@@ -84,6 +84,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      */
     private Index<Node> poolsIndex;
     /**
+     * Subnets index
+     */
+    private Index<Node> subnetsIndex;
+    /**
      * Special nodes index
      */
     private Index<Node> specialNodesIndex;
@@ -105,6 +109,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             this.objectIndex = graphDb.index().forNodes(Constants.INDEX_OBJECTS);
             this.poolsIndex = graphDb.index().forNodes(Constants.INDEX_POOLS);
             this.specialNodesIndex = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES);
+            this.subnetsIndex = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES);
         }
     }
 
