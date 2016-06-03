@@ -31,7 +31,7 @@ import org.openide.util.ImageUtilities;
  */
 public class CustomersPoolNode extends PoolNode{
 
-    private static final Image icon = ImageUtilities.loadImage("org/kuwaiba/management/services/res/customersPool.png");
+    private static final Image ICON = ImageUtilities.loadImage("org/kuwaiba/management/services/res/customersPool.png");
     
     public CustomersPoolNode(LocalObjectLight customer) {
         super(customer);
@@ -54,7 +54,7 @@ public class CustomersPoolNode extends PoolNode{
    
     @Override
     public Image getIcon(int i){
-        return icon;
+        return ICON;
     }
 
     @Override

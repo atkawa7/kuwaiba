@@ -21,6 +21,7 @@ import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.pools.PoolNode;
@@ -100,7 +101,7 @@ public class CreateServiceAction extends GenericObjectNodeAction implements Pres
     @Override
     public JMenuItem getPopupPresenter() {
         LocalClassMetadataLight[] serviceClasses = CommunicationsStub.getInstance().
-                getLightSubclasses("GenericService", false, false);
+                getLightSubclasses(Constants.CLASS_GENERICSERVICE, false, false);
         JMenuItem menu = new JMenu(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATE_SERVICE"));
         
         for (LocalClassMetadataLight serviceClass : serviceClasses){
