@@ -42,6 +42,7 @@ import org.inventory.communications.core.queries.LocalResultRecord;
 import org.inventory.communications.core.queries.LocalTransientQuery;
 import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalObjectViewLight;
+import org.inventory.communications.util.Constants;
 import org.kuwaiba.wsclient.ApplicationLogEntry;
 import org.kuwaiba.wsclient.ClassInfo;
 import org.kuwaiba.wsclient.ClassInfoLight;
@@ -1917,6 +1918,7 @@ public class CommunicationsStub {
     // <editor-fold defaultstate="collapsed" desc="Pools methods. Click on the + sign on the left to edit the code.">
     /**
      * Creates a pool
+     * @param parentId the Parent id if parentId is -1 it means it has no parent.
      * @param name Pool name
      * @param description Pool description
      * @param className What kind of objects can this pool contain?
@@ -1979,6 +1981,8 @@ public class CommunicationsStub {
     
     /**
      * Returns the list of pools available for a specific parent
+     * @param parentId
+     * @param className
      * @return The list of pools
      */
     public List<LocalObjectLight> getPools(long parentId, String className) {
@@ -2001,6 +2005,7 @@ public class CommunicationsStub {
     
     /**
      * Returns the list of pools available
+     * @param className
      * @return The list of pools
      */
     public List<LocalObjectLight> getPools(String className) {
@@ -2019,7 +2024,46 @@ public class CommunicationsStub {
             this.error =  ex.getMessage();
             return null;
         }
-    }// </editor-fold>
+    }
+    
+    public LocalObjectLight getPool(long parentId, long poolId, String poolName) {
+        try{
+            RemoteObjectLight rol = service.getPool(parentId, poolId, poolName, this.session.getSessionId());
+            return new LocalObjectLight(rol.getOid(), rol.getName(), rol.getClassName());
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    
+    public List<LocalObjectLight> getDefaultIPAMRootNodes(){
+        try{
+            List <RemoteObjectLight> poolRoots = service.getDefaultIPAMRootNodes(this.session.getSessionId());
+            List <LocalObjectLight> res = new ArrayList<>();
+            
+            for (RemoteObjectLight rol : poolRoots){
+                HashMap<String, Integer> validators = new HashMap<>();
+                for (Validator validator : rol.getValidators())
+                    validators.put(validator.getLabel(), validator.getValue());
+                res.add(new LocalObjectLight(rol.getClassName(), rol.getName(), rol.getOid(), validators));
+            }
+            return res;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+     public LocalObjectLight createPoolofSubnets(long parentId, String subnetPoolName, 
+            String subnetPoolDescription, int type) {
+         try{
+             long objectId = service.createPoolofSubnets(parentId, subnetPoolName, subnetPoolDescription, type, this.session.getSessionId());
+             return new LocalObjectLight(objectId, subnetPoolName, Constants.CLASS_SUBNET);
+         }catch(Exception ex){
+            this.error = ex.getMessage();
+            return null;
+        }
+     }
+    // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Sync/bulk load data methods. Click on the + sign on the left to edit the code.">
     /**

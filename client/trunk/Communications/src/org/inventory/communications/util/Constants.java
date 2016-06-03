@@ -87,6 +87,18 @@ public class Constants {
      */
     public static final String CLASS_USER = "User";
     /**
+     * Name for class subnet is this constant used in the IPAM  module
+     */
+    public static final String CLASS_SUBNET = "Subnet";
+    /**
+     * Name for class Location owner this constant is used in the IPAM  module
+     */
+    public static final String CLASS_LOCATIONOWNER = "LocationOwner";
+    /**
+     * Name for class VLAN this constant is used in the IPAM  module
+     */
+    public static final String CLASS_VLAN = "VLAN";
+    /**
      * Default type for a new attribute
      */
     public static final String DEFAULT_ATTRIBUTE_TYPE = "String";
