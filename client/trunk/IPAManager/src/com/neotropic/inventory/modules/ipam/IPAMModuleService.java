@@ -13,24 +13,27 @@ package com.neotropic.inventory.modules.ipam;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 
 /**
  *
  * @author adrian
  */
-public class IPAMMouduleService {
+public class IPAMModuleService {
     
     private CommunicationsStub com;
-    private IPAMmoduleTopComponentTopComponent ipamtc;
+    private IPAMModuleTopComponentTopComponent ipamtc;
 
-    IPAMMouduleService(IPAMmoduleTopComponentTopComponent ipamtc) {
+    IPAMModuleService(IPAMModuleTopComponentTopComponent ipamtc) {
         this.ipamtc = ipamtc;
         com = CommunicationsStub.getInstance();
     }
     
     public LocalObjectLight[] getRootChildren(){
-        List<LocalObjectLight> rootChildren = com.getPools(null);
+        //por ahora dejemos esto aqui pero el que se encarga de enviar las cosas
+        //filtradas es el modulo ipam en el server.
+        List<LocalObjectLight> rootChildren = com.getPools(-1, Constants.CLASS_SUBNET);
         if(rootChildren != null)
             return rootChildren.toArray(new LocalObjectLight[0]);
         else{
