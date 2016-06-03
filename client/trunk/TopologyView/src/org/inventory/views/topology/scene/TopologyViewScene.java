@@ -30,7 +30,7 @@ import java.util.Random;
 import java.util.Set;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.core.visual.actions.providers.AcceptActionProvider;
+import org.inventory.core.visual.actions.providers.CustomAcceptActionProvider;
 import org.inventory.core.visual.actions.providers.SceneConnectProvider;
 import org.inventory.core.visual.scene.AbstractNodeWidget;
 import org.inventory.core.visual.scene.AbstractScene;
@@ -137,7 +137,7 @@ public class TopologyViewScene extends AbstractScene<Object, String>
     private NotificationUtil notifier;
 
     public TopologyViewScene(NotificationUtil notifier) {
-        getActions().addAction(ActionFactory.createAcceptAction(new AcceptActionProvider(this)));
+        getActions().addAction(ActionFactory.createAcceptAction(new CustomAcceptActionProvider(this)));
 
         nodeLayer = new LayerWidget(this);
         edgeLayer = new LayerWidget(this);
@@ -182,7 +182,7 @@ public class TopologyViewScene extends AbstractScene<Object, String>
             public void focusChanged(ObjectSceneEvent event, Object previousFocusedObject, Object newFocusedObject) {}
         }, ObjectSceneEventType.OBJECT_SELECTION_CHANGED);
         //Actions
-        getActions().addAction(ActionFactory.createAcceptAction(new AcceptActionProvider(this)));
+        getActions().addAction(ActionFactory.createAcceptAction(new CustomAcceptActionProvider(this)));
 
         setActiveTool(ACTION_SELECT);
         this.notifier = notifier;
@@ -198,7 +198,7 @@ public class TopologyViewScene extends AbstractScene<Object, String>
                 myWidget.getActions(ACTION_SELECT).addAction(ActionFactory.createMoveAction());
                 myWidget.getActions(ACTION_SELECT).addAction(ActionFactory.createPopupMenuAction(nodeMenu));
                 
-                myWidget.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(edgeLayer, new SceneConnectProvider(this) {
+                myWidget.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(edgeLayer, new SceneConnectProvider() {
                     
                     @Override
                     public void createConnection(Widget sourceWidget, Widget targetWidget) {
@@ -226,7 +226,7 @@ public class TopologyViewScene extends AbstractScene<Object, String>
                 cloudWidget.setLabel(((LocalObjectLight)node).getName().substring(9));
                 cloudWidget.getActions().addAction (ActionFactory.createInplaceEditorAction (new LabelTextFieldEditor()));
                 cloudWidget.getActions(ACTION_SELECT).addAction(ActionFactory.createMoveAction());
-                cloudWidget.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(edgeLayer, new SceneConnectProvider(this) {
+                cloudWidget.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(edgeLayer, new SceneConnectProvider() {
                     
                     @Override
                     public void createConnection(Widget sourceWidget, Widget targetWidget) {
@@ -391,8 +391,8 @@ public class TopologyViewScene extends AbstractScene<Object, String>
         for (Widget nodeWidget : nodeLayer.getChildren())
             nodesTag.start("node").attr("x", nodeWidget.getPreferredLocation().getX()).
             attr("y", nodeWidget.getPreferredLocation().getY()).
-            attr("class", ((AbstractNodeWidget)nodeWidget).getObject().getClassName()).
-            text(Long.toString(((AbstractNodeWidget)nodeWidget).getObject().getOid())).end();
+            attr("class", ((AbstractNodeWidget)nodeWidget).getNode().getObject().getClassName()).
+            text(Long.toString(((AbstractNodeWidget)nodeWidget).getNode().getObject().getOid())).end();
         nodesTag.end();
         //free icons
             StartTagWAX iconsTag = mainTag.start("icons");
@@ -413,12 +413,12 @@ public class TopologyViewScene extends AbstractScene<Object, String>
             edgeTag.attr("name", ((ObjectConnectionWidget)edgeWidget).getName());
             
             if(((ObjectConnectionWidget)edgeWidget).getSourceAnchor().getRelatedWidget() instanceof AbstractNodeWidget)
-                edgeTag.attr("aside", ((AbstractNodeWidget)((ObjectConnectionWidget)edgeWidget).getSourceAnchor().getRelatedWidget()).getObject().getOid());
+                edgeTag.attr("aside", ((AbstractNodeWidget)((ObjectConnectionWidget)edgeWidget).getSourceAnchor().getRelatedWidget()).getNode().getObject().getOid());
             else
                 edgeTag.attr("aside", ((ObjectNodeWidget)((ObjectConnectionWidget)edgeWidget).getSourceAnchor().getRelatedWidget()).getObject().getOid());
             
             if(((ObjectConnectionWidget)edgeWidget).getTargetAnchor().getRelatedWidget() instanceof AbstractNodeWidget)
-                edgeTag.attr("bside", ((AbstractNodeWidget)((ObjectConnectionWidget)edgeWidget).getTargetAnchor().getRelatedWidget()).getObject().getOid());
+                edgeTag.attr("bside", ((AbstractNodeWidget)((ObjectConnectionWidget)edgeWidget).getTargetAnchor().getRelatedWidget()).getNode().getObject().getOid());
             else
                 edgeTag.attr("bside", ((ObjectNodeWidget)((ObjectConnectionWidget)edgeWidget).getTargetAnchor().getRelatedWidget()).getObject().getOid());
 

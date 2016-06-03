@@ -16,12 +16,39 @@
 
 package org.inventory.core.visual.scene;
 
+import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.netbeans.api.visual.widget.Scene;
+import org.netbeans.api.visual.widget.Widget;
+import org.openide.util.Lookup;
+import org.openide.util.lookup.Lookups;
 
 /**
  * Any widget that can be selected and its wrapped object exposed via the property sheet should implement this interface
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public interface SelectableWidget {
-    public ObjectNode getNode();
+public abstract class SelectableNodeWidget extends Widget {
+    protected ObjectNode node;
+    private Lookup lookup;
+    
+    public SelectableNodeWidget(Scene scene, LocalObjectLight businessObject) {
+        super(scene);
+        node = new ObjectNode(businessObject);
+        lookup = Lookups.singleton(node);
+    }
+    
+    public ObjectNode getNode() {
+        return node;
+    }
+    
+    public void setNode(ObjectNode node) {
+        this.node = node;
+        lookup = Lookups.singleton(node);
+        setToolTipText(node.getObject().toString());
+    }
+    
+    @Override
+    public Lookup getLookup() {
+        return lookup;
+    }
 }

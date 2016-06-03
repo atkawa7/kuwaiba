@@ -16,7 +16,6 @@
 package org.inventory.core.visual.actions.providers;
 
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
@@ -35,7 +34,7 @@ import org.openide.util.Exceptions;
  * This provider should check if a given type of object can be dropped on the scene
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class AcceptActionProvider implements AcceptProvider {
+public class CustomAcceptActionProvider implements AcceptProvider {
 
     private AbstractScene scene;
     /**
@@ -43,7 +42,7 @@ public class AcceptActionProvider implements AcceptProvider {
      */
     private String filterClass;
     
-    public AcceptActionProvider(AbstractScene scene) {
+    public CustomAcceptActionProvider(AbstractScene scene) {
         this.scene = scene;
     }
     
@@ -52,7 +51,7 @@ public class AcceptActionProvider implements AcceptProvider {
      * @param scene The related scene
      * @param filterClass The class name of the instances allowed to be dropped here. It'd be useful to use a root, abstract class such as InventoryObject or GenericSomething. Null (or using the other constructor) will allow any inventory object to be added to the scene
      */
-    public AcceptActionProvider(AbstractScene scene, String filterClass) {
+    public CustomAcceptActionProvider(AbstractScene scene, String filterClass) {
         this (scene);
         this.filterClass = filterClass;
     }
@@ -81,9 +80,11 @@ public class AcceptActionProvider implements AcceptProvider {
             LocalObjectLight droppedObject = (LocalObjectLight) transferable.getTransferData(LocalObjectLight.DATA_FLAVOR);
                 
             if (!scene.isNode(droppedObject)){
-                Widget newNode = scene.addNode(droppedObject);
-                newNode.setPreferredBounds(new Rectangle(10, 10));
-                newNode.setPreferredLocation(point);
+                Widget newNode = scene.addNode(droppedObject);                               
+                scene.validate();
+                newNode.setPreferredLocation(new Point(point.x - newNode.getBounds().width / 2, point.y)); //A position correction is needed
+                                                                                                           //because the widget is positioned using the top left corner, not the center
+                                                                                                           //Since getBounds is called AFTER validating the scene, its value is never null
                 scene.fireChangeEvent(new ActionEvent(this, AbstractScene.SCENE_CHANGE, "attachNode")); //NOI18N
             } else
                 JOptionPane.showMessageDialog(null, "The view already contains this object", "Error", JOptionPane.ERROR_MESSAGE);

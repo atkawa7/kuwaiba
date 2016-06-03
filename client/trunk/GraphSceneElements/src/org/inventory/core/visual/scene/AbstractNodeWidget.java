@@ -19,32 +19,21 @@ import java.awt.Color;
 import java.awt.Dimension;
 import javax.swing.BorderFactory;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.netbeans.api.visual.layout.LayoutFactory;
 import org.netbeans.api.visual.model.ObjectState;
 import org.netbeans.api.visual.widget.LabelWidget;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
-import org.openide.util.Lookup;
-import org.openide.util.lookup.Lookups;
 
 /**
  * Root to all widgets representing and object node
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class AbstractNodeWidget extends Widget implements SelectableWidget {
+public class AbstractNodeWidget extends SelectableNodeWidget {
     /**
      * Default widget size
      */
     public static final Dimension DEFAULT_DIMENSION = new Dimension(10, 10);
-    /**
-     * Widget's lookup
-     */
-    private Lookup lookup;
-    /**
-     * Object node. The wrapped object will be referenced here
-     */
-    private ObjectNode node;
     /**
      * The label
      */
@@ -60,8 +49,7 @@ public class AbstractNodeWidget extends Widget implements SelectableWidget {
      * @param object object represented by this widget
      */
     public AbstractNodeWidget(Scene scene, LocalObjectLight object) {
-        super(scene);
-        this.node = new ObjectNode(object);
+        super(scene, object);
         this.squareWidget = new Widget(scene);
         this.labelWidget = new LabelWidget(scene);
         
@@ -78,34 +66,12 @@ public class AbstractNodeWidget extends Widget implements SelectableWidget {
         addChild(labelWidget);
         
         setToolTipText(object.toString());
-        this.lookup = Lookups.singleton(object);
         createActions(AbstractScene.ACTION_SELECT);
         createActions(AbstractScene.ACTION_CONNECT);
-    }
-
-    /**
-     * Convenience method to get the wrapped object
-     * @return The wrapped object
-     */
-    public LocalObjectLight getObject() {
-        return node.getObject();
-    }
-
-    /**
-     * Convenience method to set the wrapped object
-     * @param object the new object
-     */
-    public void setObject(LocalObjectLight object) {
-        this.node = new ObjectNode(object);
     }
     
     public void showLabel(boolean shouldShow) {
         labelWidget.setVisible(shouldShow);
-    }
-    
-    @Override
-    public Lookup getLookup(){
-        return lookup;
     }
     
     /**
@@ -119,10 +85,5 @@ public class AbstractNodeWidget extends Widget implements SelectableWidget {
             labelWidget.setBorder(BorderFactory.createLineBorder(Color.RED));
         else
             labelWidget.setBorder(BorderFactory.createEmptyBorder());
-    }
-
-    @Override
-    public ObjectNode getNode() {
-        return node;
     }   
 }

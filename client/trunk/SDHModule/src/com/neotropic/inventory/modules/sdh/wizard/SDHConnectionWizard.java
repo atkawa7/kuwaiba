@@ -11,6 +11,7 @@
 package com.neotropic.inventory.modules.sdh.wizard;
 
 import com.neotropic.inventory.modules.sdh.LocalSDHContainerLinkDefinition;
+import com.neotropic.inventory.modules.sdh.LocalSDHPosition;
 import com.neotropic.inventory.modules.sdh.SDHConfigurationObject;
 import com.neotropic.inventory.modules.sdh.SDHModuleService;
 import java.awt.BorderLayout;
@@ -56,8 +57,13 @@ import org.openide.util.Lookup;
  */
 public class SDHConnectionWizard {
     private CommunicationsStub com = CommunicationsStub.getInstance();
+    private LocalObjectLight equipmentA;
+    private LocalObjectLight equipmentB;
 
     public LocalObjectLight run(LocalObjectLight equipmentA, LocalObjectLight equipmentB) {
+        this.equipmentA = equipmentA;
+        this.equipmentB = equipmentB;
+        
         SDHConfigurationObject configObject = Lookup.getDefault().lookup(SDHConfigurationObject.class);
         WizardDescriptor wizardDescriptor;
         switch ((Connections)configObject.getProperty("connectionType")) { //There's a different set of steps depending on what we're gonna create
@@ -98,21 +104,20 @@ public class SDHConnectionWizard {
 
                 dialog.setVisible(true);
                 dialog.toFront();
-                return null;
                 //The thread will be blocked either Cancel or Finish is clicked
-//                if (wizardDescriptor.getValue() == WizardDescriptor.FINISH_OPTION) {
-//                    LocalObjectLight sourcePort = (LocalObjectLight)wizardDescriptor.getProperty("sourcePort");
-//                    LocalObjectLight targetPort = (LocalObjectLight)wizardDescriptor.getProperty("targetPort");
-//                    LocalClassMetadataLight connectionType = (LocalClassMetadataLight)wizardDescriptor.getProperty("connectionType");
-//                    String connectionName = (String)wizardDescriptor.getProperty("connectionName");
-//                    LocalObjectLight newTransportLink = com.createSDHTransportLink(sourcePort, targetPort, connectionType.getClassName(), connectionName);
-//                    if (newTransportLink == null) {
-//                        NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
-//                        return null;
-//                    } else 
-//                        return newTransportLink;
-//                } else
-//                    return null;
+                if (wizardDescriptor.getValue() == WizardDescriptor.FINISH_OPTION) {
+                    LocalClassMetadataLight connectionType = (LocalClassMetadataLight)wizardDescriptor.getProperty("connectionType");
+                    String connectionName = (String)wizardDescriptor.getProperty("connectionName");
+                    List<LocalSDHPosition> positions = (List<LocalSDHPosition>)wizardDescriptor.getProperty("positions");
+                    LocalObjectLight newContainerLink = com.createSDHContainerLink(equipmentA, equipmentB, connectionType.getClassName(), positions, connectionName);
+                    if (newContainerLink == null)
+                        NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+                    else {
+                        NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Container successfully created");
+                        return newContainerLink;
+                    }
+                }
+                return null;
         }  
     }
     
@@ -352,12 +357,14 @@ public class SDHConnectionWizard {
         private JPanel thePanel;
         private JList<HopDefinition> lstContainerDefinition;
         private JLabel lblInstructions;
-        private String connectionName;
         private LocalClassMetadataLight connectionType;
         private ChooseRouteStep.Route route;
         
         @Override
         public void validate() throws WizardValidationException {
+            if (lstContainerDefinition.getModel().getSize() == 0)
+                throw new WizardValidationException(thePanel, "The route can not be empty", null);
+            
             for (int i = 0; i < lstContainerDefinition.getModel().getSize(); i++) {
                 if (lstContainerDefinition.getModel().getElementAt(i).position == -1)
                     throw new WizardValidationException(thePanel, "You have to select position for every segment of the route", null);
@@ -376,7 +383,6 @@ public class SDHConnectionWizard {
 
         @Override
         public void readSettings(Object settings) {
-            connectionName = (String)((WizardDescriptor)settings).getProperty("connectionName");
             connectionType = (LocalClassMetadataLight)((WizardDescriptor)settings).getProperty("connectionType");
             route = (ChooseRouteStep.Route)((WizardDescriptor)settings).getProperty("route");
             
@@ -397,6 +403,12 @@ public class SDHConnectionWizard {
 
         @Override
         public void storeSettings(Object settings) {
+            List<LocalSDHPosition> positions = new ArrayList<>();
+            for (int i = 0; i < lstContainerDefinition.getModel().getSize(); i++) {
+                HopDefinition aHop = lstContainerDefinition.getModel().getElementAt(i);
+                positions.add(new LocalSDHPosition(aHop.transportLink.getClassName(), aHop.transportLink.getOid(), aHop.position));
+            }
+            ((WizardDescriptor)settings).putProperty("positions", positions);
         }
 
         @Override
@@ -484,8 +496,8 @@ public class SDHConnectionWizard {
                         if (!adjacentPositions.isEmpty())
                             numberOfAdjacentPositions = Math.abs(Integer.valueOf(adjacentPositions)) - 1; //Minus one, because we've already filled the first position
                                                                                                           //Absolute value, because the concatenated containers class names are like "VC4-A_NUMBER"
-                        for (int j = position + 1; j < position + numberOfAdjacentPositions; j++)
-                            availablePositions[j - 1] = new AvailablePosition(j, aContainerDefinition.getContainer());
+                        for (int j = position; j < position + numberOfAdjacentPositions; j++)
+                            availablePositions[j] = new AvailablePosition(j + 1, aContainerDefinition.getContainer());
                         
                     } catch (NumberFormatException ex) {
                         JOptionPane.showMessageDialog(null, "The ContainerLink class name does not allow to calculate the total number of concatenated positions", "Error", JOptionPane.ERROR_MESSAGE);

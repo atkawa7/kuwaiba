@@ -1,20 +1,17 @@
-/*
- * The contents of this file are subject to the terms of the Common Development
- * and Distribution License (the License). You may not use this file except in
- * compliance with the License.
+/**
+ *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
  *
- * You can obtain a copy of the License at http://www.netbeans.org/cddl.html
- * or http://www.netbeans.org/cddl.txt.
+ *  Licensed under the EPL License, Version 1.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * When distributing Covered Code, include this CDDL Header Notice in each file
- * and include the License file at http://www.netbeans.org/cddl.txt.
- * If applicable, add the following below the CDDL Header, with the fields
- * enclosed by brackets [] replaced by your own identifying information:
- * "Portions Copyrighted [year] [name of copyright owner]"
+ *       http://www.eclipse.org/legal/epl-v10.html
  *
- * The Original Software is NetBeans. The Initial Developer of the Original
- * Software is Sun Microsystems, Inc. Portions Copyright 1997-2007 Sun
- * Microsystems, Inc. All Rights Reserved.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.inventory.core.visual.actions.providers;
@@ -23,21 +20,14 @@ import java.awt.Point;
 import org.inventory.core.visual.scene.AbstractNodeWidget;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.ConnectorState;
-import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
- * Action invoked when an element try to connect to other on the scene
+ * A general purpose provider that allows to connect AbstractNodeWidgets. Subclasses must implement the createConnection method according to their needs
  * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
  */
 public abstract class SceneConnectProvider implements ConnectProvider {
-
-    private GraphScene scene;
-
-    public SceneConnectProvider(GraphScene scene){
-        this.scene=scene;
-    }
 
     @Override
     public boolean isSourceWidget(Widget sourceWidget) {

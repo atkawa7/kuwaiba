@@ -31,14 +31,18 @@ import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.core.visual.actions.providers.AcceptActionProvider;
+import org.inventory.core.visual.actions.CustomAddRemoveControlPointAction;
+import org.inventory.core.visual.actions.CustomMoveControlPointAction;
+import org.inventory.core.visual.actions.providers.CustomAcceptActionProvider;
+import org.inventory.core.visual.actions.providers.CustomMoveProvider;
+import org.inventory.core.visual.actions.providers.CustomSelectProvider;
 import org.inventory.core.visual.actions.providers.SceneConnectProvider;
 import org.inventory.core.visual.scene.AbstractConnectionWidget;
 import org.inventory.core.visual.scene.AbstractNodeWidget;
 import org.inventory.core.visual.scene.AbstractScene;
-import static org.inventory.core.visual.scene.AbstractScene.SCENE_CHANGE;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
+import org.netbeans.api.visual.action.WidgetAction;
 import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.router.RouterFactory;
@@ -62,57 +66,56 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
      * Connect provider
      */
     private SceneConnectProvider connectProvider;
+    /**
+     * Custom move provider
+     */
+    private CustomMoveProvider moveProvider;
+    /**
+     * Custom add/remove control point action
+     */
+    private CustomAddRemoveControlPointAction addRemoveControlPointAction;
+    /**
+     * Custom move control point action
+     */
+    private CustomMoveControlPointAction moveControlPointAction;
+    /**
+     * Custom select provider
+     */
+    private WidgetAction selectAction;
 
     public SDHModuleScene() {
-        getActions().addAction(ActionFactory.createAcceptAction(new AcceptActionProvider(this, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT)));
+        getActions().addAction(ActionFactory.createAcceptAction(new CustomAcceptActionProvider(this, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT)));
 
         nodeLayer = new LayerWidget(this);
         edgeLayer = new LayerWidget(this);
         
         addChild(edgeLayer);
         addChild(nodeLayer);
+        moveProvider = new CustomMoveProvider(this);
+        selectAction = ActionFactory.createSelectAction(new CustomSelectProvider(this), true);
+        addRemoveControlPointAction = new CustomAddRemoveControlPointAction(this);
+        moveControlPointAction = new CustomMoveControlPointAction(this);
         
-        connectProvider = new SceneConnectProvider(this) {
-                    @Override
-                    public void createConnection(Widget sourceWidget, Widget targetWidget) {
-                        SDHConnectionWizard wizard = new SDHConnectionWizard();
-                        LocalObjectLight sourceObject = (LocalObjectLight)findObject(sourceWidget);
-                        LocalObjectLight targetObject = (LocalObjectLight)findObject(targetWidget);
-                        LocalObjectLight newConnection = wizard.run(sourceObject, targetObject);
-                        
-                        if (newConnection != null) {
-                            //Only create edges in the scene if the connection if a TransportLink
-                            if (CommunicationsStub.getInstance().isSubclassOf(newConnection.getClassName(), "GenericSDHTransportLink")) {
-                                AbstractConnectionWidget newConnectionWidget = (AbstractConnectionWidget)addEdge(newConnection);
-                                newConnectionWidget.setSourceAnchor(AnchorFactory.createCircularAnchor(sourceWidget, 5));
-                                setEdgeSource(newConnection, sourceObject);
-                                newConnectionWidget.setTargetAnchor(AnchorFactory.createCircularAnchor(targetWidget, 5));
-                                setEdgeTarget(newConnection, targetObject);
-                                newConnectionWidget.setLineColor(getConnectionColor(newConnection));
-                                fireChangeEvent(new ActionEvent(this, SCENE_CHANGE, "attachEdge")); //NOI18N
-                            }
-                        }
-                    }
-                };
+        connectProvider = new SDHModuleConnectProvider();
     }
 
     @Override
     protected Widget attachNodeWidget(LocalObjectLight node) {        
         Widget newNode = new AbstractNodeWidget(this, node);
         nodeLayer.addChild(newNode);
-        newNode.getActions(ACTION_SELECT).addAction(createSelectAction());
-        newNode.getActions(ACTION_SELECT).addAction(ActionFactory.createMoveAction());
+        newNode.getActions(ACTION_SELECT).addAction(selectAction);
+        newNode.getActions(ACTION_SELECT).addAction(ActionFactory.createMoveAction(moveProvider, moveProvider));
         newNode.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(edgeLayer, connectProvider));
-        newNode.getActions(ACTION_CONNECT).addAction(createSelectAction());
+        newNode.getActions(ACTION_CONNECT).addAction(selectAction);
         return newNode;
     }
 
     @Override
     protected Widget attachEdgeWidget(LocalObjectLight edge) {
         AbstractConnectionWidget newEdge = new AbstractConnectionWidget(this, edge);
-        newEdge.getActions().addAction(createSelectAction());
-        newEdge.getActions().addAction(ActionFactory.createAddRemoveControlPointAction());
-        newEdge.getActions().addAction(ActionFactory.createMoveControlPointAction(ActionFactory.createFreeMoveControlPointProvider()));
+        newEdge.getActions().addAction(selectAction);
+        newEdge.getActions().addAction(addRemoveControlPointAction);
+        newEdge.getActions().addAction(moveControlPointAction);
         newEdge.setStroke(new BasicStroke(1));
         newEdge.setControlPointShape(PointShape.SQUARE_FILLED_BIG);
         newEdge.setEndPointShape(PointShape.SQUARE_FILLED_BIG);
@@ -155,15 +158,15 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
         for (Widget nodeWidget : nodeLayer.getChildren())
             nodesTag.start("node").attr("x", nodeWidget.getPreferredLocation().x).
             attr("y", nodeWidget.getPreferredLocation().y).
-            attr("class", ((AbstractNodeWidget)nodeWidget).getObject().getClassName()).
-            text(String.valueOf(((AbstractNodeWidget)nodeWidget).getObject().getOid()) ).end();
+            attr("class", ((AbstractNodeWidget)nodeWidget).getNode().getObject().getClassName()).
+            text(String.valueOf(((AbstractNodeWidget)nodeWidget).getNode().getObject().getOid())).end();
         nodesTag.end();
 
         StartTagWAX edgesTag = mainTag.start("edges");
         for (Widget edgeWidget : edgeLayer.getChildren()) {
             StartTagWAX edgeTag = edgesTag.start("edge");
-            edgeTag.attr("id", ((AbstractConnectionWidget)edgeWidget).getObject().getOid());
-            edgeTag.attr("class", ((AbstractConnectionWidget)edgeWidget).getObject().getClassName());
+            edgeTag.attr("id", ((AbstractConnectionWidget)edgeWidget).getNode().getObject().getOid());
+            edgeTag.attr("class", ((AbstractConnectionWidget)edgeWidget).getNode().getObject().getClassName());
             
             LocalObjectLight edgeObject = (LocalObjectLight)findObject(edgeWidget);
             
@@ -204,7 +207,6 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
                         if (lol != null){
                             Widget widget = addNode(lol);
                             widget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
-                            widget.setBackground(CommunicationsStub.getInstance().getMetaForClass(objectClass, false).getColor());
                         }
                         else
                             NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.INFO_MESSAGE, String.format("Equipment of class %s and id %s could not be found and was removed from the view", objectClass, objectId));
@@ -228,9 +230,7 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
                                 else {
                                     ConnectionWidget newEdge = (AbstractConnectionWidget)addEdge(container);
                                     newEdge.setLineColor(getConnectionColor(container));
-                                    newEdge.setSourceAnchor(AnchorFactory.createCircularAnchor(aSideWidget, 5));
                                     setEdgeSource(container, aSideObject);
-                                    newEdge.setTargetAnchor(AnchorFactory.createCircularAnchor(bSideWidget, 5));
                                     setEdgeTarget(container, bSideObject);
                                     List<Point> localControlPoints = new ArrayList<>();
                                     while(true){
@@ -285,5 +285,29 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
             return Color.BLACK;
         
         return connectionClassMetadata.getColor() == null ? Color.BLACK : connectionClassMetadata.getColor();
+    }
+    
+    /**
+     * Own implementation of a connection provider
+     */
+    private class SDHModuleConnectProvider extends SceneConnectProvider {
+        @Override
+        public void createConnection(Widget sourceWidget, Widget targetWidget) {
+            SDHConnectionWizard wizard = new SDHConnectionWizard();
+            LocalObjectLight sourceObject = (LocalObjectLight)findObject(sourceWidget);
+            LocalObjectLight targetObject = (LocalObjectLight)findObject(targetWidget);
+            LocalObjectLight newConnection = wizard.run(sourceObject, targetObject);
+
+            if (newConnection != null) {
+                //Only create edges in the scene if the connection if a TransportLink
+                if (CommunicationsStub.getInstance().isSubclassOf(newConnection.getClassName(), "GenericSDHTransportLink")) {
+                    AbstractConnectionWidget newConnectionWidget = (AbstractConnectionWidget)addEdge(newConnection);
+                    setEdgeSource(newConnection, sourceObject);
+                    setEdgeTarget(newConnection, targetObject);
+                    newConnectionWidget.setLineColor(getConnectionColor(newConnection));
+                    fireChangeEvent(new ActionEvent(this, SCENE_CHANGE, "attachEdge")); //NOI18N
+                }
+            }
+        }
     }
 }

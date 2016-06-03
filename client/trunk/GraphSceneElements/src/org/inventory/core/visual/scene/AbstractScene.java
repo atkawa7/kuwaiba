@@ -27,7 +27,6 @@ import java.util.Set;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.communications.util.Utils;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.PopupMenuProvider;
 import org.netbeans.api.visual.graph.GraphScene;
@@ -40,7 +39,6 @@ import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
-import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ProxyLookup;
 
 /**
@@ -110,13 +108,14 @@ public abstract class AbstractScene<N, E> extends GraphScene<N, E> {
     /**
      * Scene lookup
      */
-    private SceneLookup lookup = new SceneLookup(Lookup.EMPTY);
+    private SceneLookup lookup;
     /**
      * Change listeners
      */
     protected ArrayList<ActionListener> changeListeners = new ArrayList<>();
 
     public AbstractScene() {
+        this.lookup = new SceneLookup();
         setActiveTool(ACTION_SELECT);
     }
     
@@ -136,8 +135,10 @@ public abstract class AbstractScene<N, E> extends GraphScene<N, E> {
             public void objectStateChanged(ObjectSceneEvent event, Object changedObject, ObjectState previousState, ObjectState newState) {}
             @Override
             public void selectionChanged(ObjectSceneEvent event, Set<Object> previousSelection, Set<Object> newSelection) {
-                if (newSelection.size() == 1)
-                    lookup.updateLookup((LocalObjectLight)newSelection.iterator().next());
+                if (newSelection.size() == 1) {
+                    Widget theWidget = findWidget(newSelection.iterator().next());
+                    lookup.updateLookup(theWidget);
+                }
             }
             @Override
             public void highlightingChanged(ObjectSceneEvent event, Set<Object> previousHighlighting, Set<Object> newHighlighting) {}
@@ -216,6 +217,7 @@ public abstract class AbstractScene<N, E> extends GraphScene<N, E> {
         if (labelsLayer != null)
             labelsLayer.removeChildren();
         validate();
+        repaint();
     }
     
     @Override
@@ -294,19 +296,12 @@ public abstract class AbstractScene<N, E> extends GraphScene<N, E> {
     
     
     /**
-     * Helper class to let us launch a lookup event every time a widget is selected
+     * This lookup lets us launch a lookup event every time a widget is selected
      */
-    private class SceneLookup extends ProxyLookup {
+    public class SceneLookup extends ProxyLookup {
 
-        public SceneLookup(Lookup aLookup) {
-            super(aLookup);
-        }
-        public SceneLookup(LocalObjectLight object) {
-            updateLookup(object);
-        }
-
-        public final void updateLookup(LocalObjectLight object){
-            setLookups(Lookups.singleton(new ObjectNode(object)));
+        public final void updateLookup(Widget aWidget){
+            this.setLookups(aWidget.getLookup());
         }
     }
 }

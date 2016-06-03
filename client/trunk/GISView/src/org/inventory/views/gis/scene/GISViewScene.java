@@ -264,18 +264,18 @@ public class GISViewScene extends AbstractScene<LocalObjectLight, LocalObjectLig
             Coordinate geoPosition = map.getPosition(nodeWidget.getPreferredLocation());
             nodesTag.start("node").attr("x", geoPosition.getLon()).
             attr("y", geoPosition.getLat()).
-            attr("class", ((GeoPositionedNodeWidget)nodeWidget).getObject().getClassName()).
-            text(String.valueOf(((GeoPositionedNodeWidget)nodeWidget).getObject().getOid())).end();
+            attr("class", ((GeoPositionedNodeWidget)nodeWidget).getNode().getObject().getClassName()).
+            text(String.valueOf(((GeoPositionedNodeWidget)nodeWidget).getNode().getObject().getOid())).end();
         }
         nodesTag.end();
 
         StartTagWAX edgesTag = mainTag.start("edges");
         for (Widget edgeWidget : edgeLayer.getChildren()){
             StartTagWAX edgeTag = edgesTag.start("edge");
-            edgeTag.attr("id", ((GeoPositionedConnectionWidget)edgeWidget).getObject().getOid());
-            edgeTag.attr("class", ((GeoPositionedConnectionWidget)edgeWidget).getObject().getClassName());
-            edgeTag.attr("aside", ((GeoPositionedNodeWidget)((AbstractConnectionWidget)edgeWidget).getSourceAnchor().getRelatedWidget()).getObject().getOid());
-            edgeTag.attr("bside", ((GeoPositionedNodeWidget)((AbstractConnectionWidget)edgeWidget).getTargetAnchor().getRelatedWidget()).getObject().getOid());
+            edgeTag.attr("id", ((GeoPositionedConnectionWidget)edgeWidget).getNode().getObject().getOid());
+            edgeTag.attr("class", ((GeoPositionedConnectionWidget)edgeWidget).getNode().getObject().getClassName());
+            edgeTag.attr("aside", ((GeoPositionedNodeWidget)((AbstractConnectionWidget)edgeWidget).getSourceAnchor().getRelatedWidget()).getNode().getObject().getOid());
+            edgeTag.attr("bside", ((GeoPositionedNodeWidget)((AbstractConnectionWidget)edgeWidget).getTargetAnchor().getRelatedWidget()).getNode().getObject().getOid());
             for (Point point : ((ConnectionWidget)edgeWidget).getControlPoints()){
                 Coordinate geoPosition = map.getPosition(point);
                 edgeTag.start("controlpoint").attr("x", geoPosition.getLon()).attr("y", geoPosition.getLat()).end();

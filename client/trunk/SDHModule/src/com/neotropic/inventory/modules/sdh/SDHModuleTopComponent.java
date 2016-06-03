@@ -80,11 +80,15 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
     
     public void initCustomComponents() {
         em = new ExplorerManager();
+        scene = new SDHModuleScene();
+        service = new SDHModuleService(scene);
+        
+        associateLookup(scene.getLookup());
+        
         configObject = Lookup.getDefault().lookup(SDHConfigurationObject.class);
         configObject.setProperty("connectionType", SDHConnectionWizard.Connections.CONNECTION_TRANSPORTLINK);
         configObject.setProperty("saved", true);
-        scene = new SDHModuleScene();
-        service = new SDHModuleService(scene);
+        
         scene.setActiveTool(SDHModuleScene.ACTION_SELECT);
         
         add(scene.createView());
@@ -278,6 +282,8 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
         scene.clear();
         enableButtons(true);
         service.setView(null);
+        configObject.setProperty("saved", true);
+        setHtmlDisplayName(getDisplayName());
     }//GEN-LAST:event_btnNewActionPerformed
 
     private void btnOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenActionPerformed
@@ -307,6 +313,7 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
                     scene.render(actualView.getStructure());
                     enableButtons(true);
                     btnConnect.setSelected(false);
+                    configObject.setProperty("saved", true);
                     setHtmlDisplayName(getDisplayName());
                 }
             }
@@ -352,11 +359,15 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         if (JOptionPane.showConfirmDialog(this, "Are you sure you want to delete the current topology?",
-            "Delete saved view",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
-            service.deleteView();
+            "Delete saved view",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             scene.clear();
+            if (service.getView() != null && service.getView().getId() != -1) {
+                service.deleteView();
+                btnSelectActionPerformed(evt);
+            }
             service.setView(null);
-            btnSelectActionPerformed(evt);
+            configObject.setProperty("saved", true);
+            setHtmlDisplayName(getDisplayName());
         }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
@@ -475,7 +486,9 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
 
     @Override
     public void refresh() {
-        //TODO
+        byte[] currentViewAsXML = scene.getAsXML();
+        scene.clear();
+        scene.render(currentViewAsXML);
     }
 
 

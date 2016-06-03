@@ -2059,7 +2059,30 @@ public class CommunicationsStub {
             this.error = ex.getMessage();
             return null;
         }
+    }
+    
+    public LocalObjectLight createSDHContainerLink(LocalObjectLight equipmentA, LocalObjectLight equipmentB, 
+            String containerLinkType, List<LocalSDHPosition> positions, String defaultName){
         
+        try { 
+            List<SdhPosition> remotepositions = new ArrayList<>();
+            
+            for (LocalSDHPosition aLocalPosition : positions) {
+                SdhPosition aRemotePosition = new SdhPosition();
+                aRemotePosition.setConnectionClass(aLocalPosition.getLinkClass());
+                aRemotePosition.setConnectionId(aLocalPosition.getLinkId());
+                aRemotePosition.setPosition(aLocalPosition.getPosition());
+                remotepositions.add(aRemotePosition);
+            }
+            
+            long newObjectId = service.createSDHContainerLink(equipmentA.getClassName(),
+                    equipmentA.getOid(), equipmentB.getClassName(), equipmentB.getOid(), 
+                    containerLinkType, remotepositions, defaultName, session.getSessionId());
+            return new LocalObjectLight(newObjectId, defaultName, containerLinkType);
+        } catch (ServerSideException_Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
     }
     
     public List<LocalObjectLightList> findRoutesUsingTransportLinks(LocalObjectLight aSide, LocalObjectLight bSide) {

@@ -82,7 +82,7 @@ public class TagLabelWidget extends LabelWidget implements Widget.Dependency {
         setBorder(DEFAULT_BORDER);
         setFont(DEFAULT_SMALL_FONT);
         this.position = BOTTOM;
-        setLabel(widget.getObject().toString());
+        setLabel(widget.getNode().getObject().toString());
     }
 
     public TagLabelWidget(Scene scene, AbstractNodeWidget widget, 

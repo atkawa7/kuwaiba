@@ -109,7 +109,7 @@ public final class CustomMoveControlPointAction extends WidgetAction.LockedAdapt
         WidgetAction.State state = move(widget, event.getPoint()) ? WidgetAction.State.CONSUMED : WidgetAction.State.REJECTED;
         movingWidget = null;
         if (state == WidgetAction.State.CONSUMED)
-            scene.fireChangeEvent(new ActionEvent(scene, AbstractScene.SCENE_CHANGE, "move-control-point")); //NOI18N
+            scene.fireChangeEvent(new ActionEvent(scene, AbstractScene.SCENE_CHANGE, "moveControlPoint")); //NOI18N
         return state;
     }
 

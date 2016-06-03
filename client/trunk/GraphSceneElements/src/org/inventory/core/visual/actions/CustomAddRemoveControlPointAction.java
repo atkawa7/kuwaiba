@@ -78,7 +78,7 @@ public class CustomAddRemoveControlPointAction extends WidgetAction.Adapter {
         if(event.getButton() == MouseEvent.BUTTON1 && event.getClickCount() == 2  &&  
                 widget instanceof ConnectionWidget) {
             addRemoveControlPoint ((ConnectionWidget) widget, event.getPoint ());
-            scene.fireChangeEvent(new ActionEvent(scene, AbstractScene.SCENE_CHANGE, "add-remove-control-point")); //NOI18N
+            scene.fireChangeEvent(new ActionEvent(scene, AbstractScene.SCENE_CHANGE, "addRemoveControlPoint")); //NOI18N
             return State.CONSUMED;
         }
         return State.REJECTED;
@@ -90,7 +90,7 @@ public class CustomAddRemoveControlPointAction extends WidgetAction.Adapter {
      * @param localLocation the local location
      */
     private void addRemoveControlPoint (ConnectionWidget widget, Point localLocation) {
-        ArrayList<Point> list = new ArrayList<Point> (widget.getControlPoints ());
+        ArrayList<Point> list = new ArrayList<> (widget.getControlPoints ());
         if (!removeControlPoint (localLocation, list, deleteSensitivity)) {
             Point exPoint = null;
             int index = 0;

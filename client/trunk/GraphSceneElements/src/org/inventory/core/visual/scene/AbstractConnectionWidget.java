@@ -17,37 +17,15 @@
 package org.inventory.core.visual.scene;
 
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
-import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.Scene;
 
 /**
  * A connection widget representing a link or a container
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class AbstractConnectionWidget extends ConnectionWidget implements SelectableWidget {
-    /**
-     * A node representing the wrapped object.
-     */
-    private ObjectNode node;
-
+public class AbstractConnectionWidget extends SelectableConnectionWidget {
     public AbstractConnectionWidget(Scene scene, LocalObjectLight object) {
-        super(scene);
-        this.node = new ObjectNode(object);
-        setToolTipText(object.toString());
+        super(scene, object);
         createActions(AbstractScene.ACTION_SELECT);
-    }
-
-    public LocalObjectLight getObject() {
-        return node.getObject();
-    }
-
-    public void setObject(LocalObjectLight object) {
-        this.node = new ObjectNode(object);
-    }
-
-    @Override
-    public ObjectNode getNode() {
-        return node;
     }
 }

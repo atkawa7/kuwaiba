@@ -91,8 +91,8 @@ public class PhysicalConnectionProvider implements ConnectProvider {
     @Override
     public void createConnection(Widget sourceWidget, Widget targetWidget) {
 
-        ConnectionWizard myWizard = new ConnectionWizard(wizardType,((AbstractNodeWidget)sourceWidget).getObject(),
-                ((AbstractNodeWidget)targetWidget).getObject(), connectionClass,
+        ConnectionWizard myWizard = new ConnectionWizard(wizardType,((AbstractNodeWidget)sourceWidget).getNode().getObject(),
+                ((AbstractNodeWidget)targetWidget).getNode().getObject(), connectionClass,
                 currentParentObject);
         
         myWizard.show();

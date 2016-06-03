@@ -166,23 +166,23 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
         for (Widget nodeWidget : nodeLayer.getChildren())
             nodesTag.start("node").attr("x", nodeWidget.getPreferredLocation().x).
             attr("y", nodeWidget.getPreferredLocation().y).
-            attr("class", ((AbstractNodeWidget)nodeWidget).getObject().getClassName()).
-            text(String.valueOf(((AbstractNodeWidget)nodeWidget).getObject().getOid()) ).end();
+            attr("class", ((AbstractNodeWidget)nodeWidget).getNode().getObject().getClassName()).
+            text(String.valueOf(((AbstractNodeWidget)nodeWidget).getNode().getObject().getOid()) ).end();
         nodesTag.end();
 
         StartTagWAX edgesTag = mainTag.start("edges");
         for (Widget edgeWidget : edgeLayer.getChildren()){
             StartTagWAX edgeTag = edgesTag.start("edge");
-            edgeTag.attr("id", ((AbstractConnectionWidget)edgeWidget).getObject().getOid());
-            edgeTag.attr("class", ((AbstractConnectionWidget)edgeWidget).getObject().getClassName());
+            edgeTag.attr("id", ((AbstractConnectionWidget)edgeWidget).getNode().getObject().getOid());
+            edgeTag.attr("class", ((AbstractConnectionWidget)edgeWidget).getNode().getObject().getClassName());
             //I haven't managed to find out why sometimes the view gets screwed. This is a dirty
             //"solution", but I expect to solve it once we rewrite this module
             if (((AbstractConnectionWidget)edgeWidget).getSourceAnchor() == null)
                 continue;
-            edgeTag.attr("aside", ((AbstractNodeWidget)((AbstractConnectionWidget)edgeWidget).getSourceAnchor().getRelatedWidget()).getObject().getOid());
+            edgeTag.attr("aside", ((AbstractNodeWidget)((AbstractConnectionWidget)edgeWidget).getSourceAnchor().getRelatedWidget()).getNode().getObject().getOid());
             if (((AbstractConnectionWidget)edgeWidget).getTargetAnchor() == null)
                 continue;
-            edgeTag.attr("bside", ((AbstractNodeWidget)((AbstractConnectionWidget)edgeWidget).getTargetAnchor().getRelatedWidget()).getObject().getOid());
+            edgeTag.attr("bside", ((AbstractNodeWidget)((AbstractConnectionWidget)edgeWidget).getTargetAnchor().getRelatedWidget()).getNode().getObject().getOid());
             for (Point point : ((AbstractConnectionWidget)edgeWidget).getControlPoints())
                 edgeTag.start("controlpoint").attr("x", point.x).attr("y", point.y).end();
             edgeTag.end();
