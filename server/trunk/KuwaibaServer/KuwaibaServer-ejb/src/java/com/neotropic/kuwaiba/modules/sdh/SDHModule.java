@@ -223,8 +223,8 @@ public class SDHModule implements GenericCommercialModule {
             if (!mem.isSubClass("GenericSDHContainerLink", linkType)) //NOI18N
                 throw new ServerSideException("Class %s is not subclass of GenericSDHContainerLink");
 
-            if (!mem.isSubClass("GenericCommunicationsEquipment", classNameEndpointA) || !mem.isSubClass("GenericCommunicationsEquipment", classNameEndpointB))
-                throw new ServerSideException("The endpoints must be subclasses of GenericCommunicationsEquipment");
+            if (!mem.isSubClass("GenericCommunicationsElement", classNameEndpointA) || !mem.isSubClass("GenericCommunicationsElement", classNameEndpointB))
+                throw new ServerSideException("The endpoints must be subclasses of GenericCommunicationsElement");
                 
             HashMap<String, List<String>> attributesToBeSet = new HashMap<>();
             attributesToBeSet.put(Constants.PROPERTY_NAME, Arrays.asList(new String[] { defaultName == null ? "" : defaultName }));

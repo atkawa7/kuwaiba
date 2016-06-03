@@ -28,6 +28,8 @@ public class SDHPosition implements Serializable {
      */
     private int position;
 
+    public SDHPosition() {    } //Required by JAX-WS
+    
     public SDHPosition(String connectionClass, long connectionId, int position) {
         this.connectionId = connectionId;
         this.connectionClass = connectionClass;
