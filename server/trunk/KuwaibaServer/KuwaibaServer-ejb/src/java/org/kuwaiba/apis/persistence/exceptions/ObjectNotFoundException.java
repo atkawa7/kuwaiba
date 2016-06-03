@@ -15,8 +15,6 @@
  */
 package org.kuwaiba.apis.persistence.exceptions;
 
-import java.util.logging.Level;
-
 /**
  * Thrown if you're trying to access to a non existing object
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
@@ -26,6 +24,6 @@ public class ObjectNotFoundException extends InventoryException{
     public ObjectNotFoundException(String objectClass, Long oid) {
         super(java.util.ResourceBundle.getBundle("org/kuwaiba/Bundle").
                 getString("LBL_NOSUCHOBJECT")+(objectClass == null ? "" : objectClass)+" "+java.util.
-                ResourceBundle.getBundle("org/kuwaiba/Bundle").getString("LBL_WHICHID")+oid,Level.WARNING);
+                ResourceBundle.getBundle("org/kuwaiba/Bundle").getString("LBL_WHICHID") + oid);
     }
 }

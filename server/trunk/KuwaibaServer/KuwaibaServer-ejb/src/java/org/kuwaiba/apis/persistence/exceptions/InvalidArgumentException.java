@@ -16,16 +16,14 @@
 
 package org.kuwaiba.apis.persistence.exceptions;
 
-import java.util.logging.Level;
-
 /**
  * Wrapper for IllegalArgumentException to permit to set the severity
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class InvalidArgumentException extends InventoryException{
+public class InvalidArgumentException extends InventoryException {
 
-    public InvalidArgumentException(String msg, Level level) {
-        super(msg,level);
+    public InvalidArgumentException(String msg) {
+        super(msg);
     }
 
 }

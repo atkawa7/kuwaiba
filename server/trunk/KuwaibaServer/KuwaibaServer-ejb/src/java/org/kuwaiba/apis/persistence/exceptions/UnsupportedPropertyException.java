@@ -17,7 +17,6 @@
 package org.kuwaiba.apis.persistence.exceptions;
 
 import java.util.ResourceBundle;
-import java.util.logging.Level;
 
 /**
  * Thrown when a certain property is not known or currently supported
@@ -27,7 +26,7 @@ public class UnsupportedPropertyException extends InventoryException{
 
     public UnsupportedPropertyException(String propertyName) {
         super(ResourceBundle.getBundle("org/kuwaiba/internationalization/Bundle").
-                getString("LBL_UNSUPPORTEDPROPERTY")+propertyName, Level.SEVERE);
+                getString("LBL_UNSUPPORTEDPROPERTY") + propertyName);
     }
 
 }

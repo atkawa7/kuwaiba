@@ -109,17 +109,17 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     public long createClass(ClassMetadata classDefinition) throws MetadataObjectNotFoundException, DatabaseException, InvalidArgumentException {
         long id;
         if (classDefinition.getName() == null)
-            throw new InvalidArgumentException("Class name can not be null", Level.INFO);
+            throw new InvalidArgumentException("Class name can not be null");
             
         if (!classDefinition.getName().matches("^[a-zA-Z0-9_-]*$"))
-            throw new InvalidArgumentException(String.format("Class %s contains invalid characters", classDefinition.getName()), Level.INFO);
+            throw new InvalidArgumentException(String.format("Class %s contains invalid characters", classDefinition.getName()));
         
         if(classDefinition.getName().isEmpty())
-                    throw new InvalidArgumentException("Class name can not be an empty string", Level.INFO);
+                    throw new InvalidArgumentException("Class name can not be an empty string");
         
         try (Transaction tx = graphDb.beginTx()) {
             if (classIndex.get(Constants.PROPERTY_NAME, classDefinition.getName()).getSingle() != null)
-                throw new InvalidArgumentException(String.format("Class %s already exists", classDefinition.getName()), Level.INFO);
+                throw new InvalidArgumentException(String.format("Class %s already exists", classDefinition.getName()));
             
             Label label = DynamicLabel.label(Constants.LABEL_CLASS);
             Label categoryLabel = DynamicLabel.label(classDefinition.getCategory() == null ? "org.kuwaiba.entity.undefined" : classDefinition.getCategory());
@@ -220,13 +220,13 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             
             if(newClassDefinition.getName() != null){
                 if(newClassDefinition.getName().isEmpty())
-                    throw new InvalidArgumentException("Class name can not be an empty string", Level.INFO);
+                    throw new InvalidArgumentException("Class name can not be an empty string");
                 
                 if (!newClassDefinition.getName().matches("^[a-zA-Z0-9_-]*$"))
-                    throw new InvalidArgumentException(String.format("Class name %s contains invalid characters", newClassDefinition.getName()), Level.INFO);
+                    throw new InvalidArgumentException(String.format("Class name %s contains invalid characters", newClassDefinition.getName()));
                 
                 if (classIndex.get(Constants.PROPERTY_NAME, newClassDefinition.getName()).getSingle() != null)
-                   throw new InvalidArgumentException(String.format("Class %s already exists", newClassDefinition.getName()), Level.INFO);
+                   throw new InvalidArgumentException(String.format("Class %s already exists", newClassDefinition.getName()));
                 
                 classIndex.remove(classMetadata, Constants.PROPERTY_NAME);
                 classMetadata.setProperty(Constants.PROPERTY_NAME, newClassDefinition.getName());
@@ -278,14 +278,14 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             
             if (!(Boolean)node.getProperty(Constants.PROPERTY_CUSTOM))
                 throw new InvalidArgumentException(String.format(
-                        "Core classes can not be deleted"), Level.SEVERE);
+                        "Core classes can not be deleted"));
             if (node.hasRelationship(RelTypes.INSTANCE_OF))
                 throw new InvalidArgumentException(String.format(
-                        "Class %s has instances and can not be deleted", node.getProperty(Constants.PROPERTY_NAME)), Level.SEVERE);
+                        "Class %s has instances and can not be deleted", node.getProperty(Constants.PROPERTY_NAME)));
             
             if (node.hasRelationship(Direction.INCOMING, RelTypes.EXTENDS))
                 throw new InvalidArgumentException(String.format(
-                        "Class %s has subclasses and can not be deleted", node.getProperty(Constants.PROPERTY_NAME)), Level.SEVERE);
+                        "Class %s has subclasses and can not be deleted", node.getProperty(Constants.PROPERTY_NAME)));
             
             //Deletes the attribute nodes and their relationships to the class node
             Iterable<Relationship> attRelationships = node.getRelationships(RelTypes.HAS_ATTRIBUTE);
@@ -318,11 +318,11 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                        
             if (node.hasRelationship(RelTypes.INSTANCE_OF))
                 throw new InvalidArgumentException(String.format(
-                        "The class with name %s has instances and can not be deleted", className), Level.SEVERE);
+                        "The class with name %s has instances and can not be deleted", className));
             
             if (node.hasRelationship(Direction.INCOMING, RelTypes.EXTENDS))
                 throw new InvalidArgumentException(String.format(
-                        "The class with name %s has subclasses and can not be deleted", className), Level.SEVERE);
+                        "The class with name %s has subclasses and can not be deleted", className));
             
             //Deletes the attribute nodes and their relationships to the class node
             Iterable<Relationship> attRelationships = node.getRelationships(RelTypes.HAS_ATTRIBUTE);
@@ -563,10 +563,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException 
     {
         if (attributeDefinition.getName() == null || attributeDefinition.getName().isEmpty())
-            throw new InvalidArgumentException("Attribute name can not be null or an empty string", Level.INFO);
+            throw new InvalidArgumentException("Attribute name can not be null or an empty string");
         
         if (!attributeDefinition.getName().matches("^[a-zA-Z0-9_]*$"))
-            throw new InvalidArgumentException(String.format("Attribute %s contains invalid characters", attributeDefinition.getName()), Level.INFO);
+            throw new InvalidArgumentException(String.format("Attribute %s contains invalid characters", attributeDefinition.getName()));
         
         try (Transaction tx = graphDb.beginTx())
         {
@@ -666,13 +666,13 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     String currentAttributeName = (String)attrNode.getProperty(Constants.PROPERTY_NAME);
 
                     if (currentAttributeName.equals(Constants.PROPERTY_CREATION_DATE))
-                        throw new InvalidArgumentException("Attribute \"creationDate\" can not be modified", Level.INFO);
+                        throw new InvalidArgumentException("Attribute \"creationDate\" can not be modified");
 
                     if(newAttributeDefinition.getName() != null){
                         if (currentAttributeName.equals(Constants.PROPERTY_NAME))
-                            throw new InvalidArgumentException("Attribute \"name\" can not be renamed", Level.INFO);
+                            throw new InvalidArgumentException("Attribute \"name\" can not be renamed");
                         if (!newAttributeDefinition.getName().matches("^[a-zA-Z0-9_]*$"))
-                            throw new InvalidArgumentException(String.format("Attribute %s contains invalid characters", newAttributeDefinition.getName()), Level.INFO);
+                            throw new InvalidArgumentException(String.format("Attribute %s contains invalid characters", newAttributeDefinition.getName()));
                         
                         Util.changeAttributeName(classNode, currentAttributeName, newAttributeDefinition.getName());
                     }
@@ -682,7 +682,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_DISPLAY_NAME, newAttributeDefinition.getDisplayName());
                     if(newAttributeDefinition.getType() != null){
                         if (currentAttributeName.equals(Constants.PROPERTY_NAME))
-                            throw new InvalidArgumentException("Attribute \"name\" can only be a String", Level.INFO);
+                            throw new InvalidArgumentException("Attribute \"name\" can only be a String");
                         if (AttributeMetadata.isPrimitive((String)attrNode.getProperty(Constants.PROPERTY_TYPE)))
                             Util.changeAttributeTypeIfPrimitive(classNode, currentAttributeName, newAttributeDefinition.getType());
                         else
@@ -725,13 +725,13 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     String currentAttributeName = (String)attrNode.getProperty(Constants.PROPERTY_NAME);
 
                     if (currentAttributeName.equals(Constants.PROPERTY_CREATION_DATE))
-                        throw new InvalidArgumentException("Attribute \"creationDate\" can not be modified", Level.INFO);
+                        throw new InvalidArgumentException("Attribute \"creationDate\" can not be modified");
 
                     if(newAttributeDefinition.getName() != null){
                         if (currentAttributeName.equals(Constants.PROPERTY_NAME))
-                            throw new InvalidArgumentException("Attribute \"name\" can not be renamed", Level.INFO);
+                            throw new InvalidArgumentException("Attribute \"name\" can not be renamed");
                         if (!newAttributeDefinition.getName().matches("^[a-zA-Z0-9_]*$"))
-                            throw new InvalidArgumentException(String.format("Attribute %s contains invalid characters", newAttributeDefinition.getName()), Level.INFO);
+                            throw new InvalidArgumentException(String.format("Attribute %s contains invalid characters", newAttributeDefinition.getName()));
 
                         Util.changeAttributeName(classNode, currentAttributeName, newAttributeDefinition.getName());
                     }
@@ -741,7 +741,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_DISPLAY_NAME, newAttributeDefinition.getDisplayName());
                     if(newAttributeDefinition.getType() != null){
                         if (currentAttributeName.equals(Constants.PROPERTY_NAME))
-                            throw new InvalidArgumentException("Attribute \"name\" can only be a String", Level.INFO);
+                            throw new InvalidArgumentException("Attribute \"name\" can only be a String");
                         if (AttributeMetadata.isPrimitive((String)attrNode.getProperty(Constants.PROPERTY_TYPE)))
                             Util.changeAttributeTypeIfPrimitive(classNode, currentAttributeName, newAttributeDefinition.getType());
                         else
@@ -773,10 +773,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException 
     {
         if (attributeName.equals(Constants.PROPERTY_NAME))
-            throw new InvalidArgumentException("Attribute \"name\" can not be deleted", Level.INFO);
+            throw new InvalidArgumentException("Attribute \"name\" can not be deleted");
         
         if (attributeName.equals(Constants.PROPERTY_CREATION_DATE))
-            throw new InvalidArgumentException("Attribute \"creationDate\" can not be deleted", Level.INFO);
+            throw new InvalidArgumentException("Attribute \"creationDate\" can not be deleted");
         
         try(Transaction tx = graphDb.beginTx()) {
             Node classNode = classIndex.get(Constants.PROPERTY_NAME, attributeName).getSingle();
@@ -805,10 +805,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException 
     {
         if (attributeName.equals(Constants.PROPERTY_CREATION_DATE))
-            throw new InvalidArgumentException("Attribute \"creationDate\" can not be deleted", Level.INFO);
+            throw new InvalidArgumentException("Attribute \"creationDate\" can not be deleted");
         
         if (attributeName.equals(Constants.PROPERTY_NAME))
-            throw new InvalidArgumentException("Attribute \"name\" can not be deleted", Level.INFO);
+            throw new InvalidArgumentException("Attribute \"name\" can not be deleted");
         
         try (Transaction tx = graphDb.beginTx()) {
             Node classNode = classIndex.get(Constants.PROPERTY_ID, classId).getSingle();
@@ -951,7 +951,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                             "Can not find a class with id %1s", parentClassId));
                 if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, (String)parentNode.getProperty(Constants.PROPERTY_NAME)))
                     throw new InvalidArgumentException(
-                            String.format("%s is not a business class, thus can not be added to the containment hierarchy", (String)parentNode.getProperty(Constants.PROPERTY_NAME)), Level.INFO);
+                            String.format("%s is not a business class, thus can not be added to the containment hierarchy", (String)parentNode.getProperty(Constants.PROPERTY_NAME)));
             }else
                 parentNode = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
 
@@ -966,20 +966,20 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 
                 if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, (String)childNode.getProperty(Constants.PROPERTY_NAME)))
                     throw new InvalidArgumentException(
-                            String.format("%s is not a business class, thus can not be added to the containment hierarchy", (String)childNode.getProperty(Constants.PROPERTY_NAME)), Level.INFO);
+                            String.format("%s is not a business class, thus can not be added to the containment hierarchy", (String)childNode.getProperty(Constants.PROPERTY_NAME)));
                 
                 if ((Boolean)childNode.getProperty(Constants.PROPERTY_ABSTRACT)){
                    for (Node subclassNode : Util.getAllSubclasses(childNode)){
                        for (ClassMetadataLight possibleChild : currentPossibleChildren){
                             if (possibleChild.getId() == subclassNode.getId())
-                                throw new InvalidArgumentException(String.format("A subclass of %s is already a possible child for instances of %s", (String)childNode.getProperty(Constants.PROPERTY_NAME), (String)parentNode.getProperty(Constants.PROPERTY_NAME)), Level.INFO);
+                                throw new InvalidArgumentException(String.format("A subclass of %s is already a possible child for instances of %s", (String)childNode.getProperty(Constants.PROPERTY_NAME), (String)parentNode.getProperty(Constants.PROPERTY_NAME)));
                        }
                    }
                 }
                 else{
                     for (ClassMetadataLight possibleChild : currentPossibleChildren){
                         if (possibleChild.getId() == childNode.getId())
-                            throw new InvalidArgumentException(String.format("Class %s is already a possible child for instances of %s", (String)childNode.getProperty(Constants.PROPERTY_NAME), (String)parentNode.getProperty(Constants.PROPERTY_NAME)), Level.INFO);
+                            throw new InvalidArgumentException(String.format("Class %s is already a possible child for instances of %s", (String)childNode.getProperty(Constants.PROPERTY_NAME), (String)parentNode.getProperty(Constants.PROPERTY_NAME)));
                     }
                 }
                 parentNode.createRelationshipTo(childNode, RelTypes.POSSIBLE_CHILD);
@@ -1010,7 +1010,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 
                 if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, (String)parentNode.getProperty(Constants.PROPERTY_NAME)))
                     throw new InvalidArgumentException(
-                            String.format("%s is not a business class, thus can not be added to the containment hierarchy", (String)parentNode.getProperty(Constants.PROPERTY_NAME)), Level.INFO);
+                            String.format("%s is not a business class, thus can not be added to the containment hierarchy", (String)parentNode.getProperty(Constants.PROPERTY_NAME)));
             } else {
                 parentNode = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
 
@@ -1027,20 +1027,20 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 
                 if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, (String)childNode.getProperty(Constants.PROPERTY_NAME)))
                     throw new InvalidArgumentException(
-                            String.format("%s is not a business class, thus can not be added to the containment hierarchy", (String)childNode.getProperty(Constants.PROPERTY_NAME)), Level.INFO);
+                            String.format("%s is not a business class, thus can not be added to the containment hierarchy", (String)childNode.getProperty(Constants.PROPERTY_NAME)));
                 
                 if ((Boolean)childNode.getProperty(Constants.PROPERTY_ABSTRACT)){
                    for (Node subclassNode : Util.getAllSubclasses(childNode)){
                        for (ClassMetadataLight possibleChild : currentPossibleChildren){
                             if (possibleChild.getId() == subclassNode.getId())
-                                throw new InvalidArgumentException(String.format("A subclass of %s is already a possible child for instances of %s", (String)childNode.getProperty(Constants.PROPERTY_NAME), (String)parentNode.getProperty(Constants.PROPERTY_NAME)), Level.INFO);
+                                throw new InvalidArgumentException(String.format("A subclass of %s is already a possible child for instances of %s", (String)childNode.getProperty(Constants.PROPERTY_NAME), (String)parentNode.getProperty(Constants.PROPERTY_NAME)));
                        }
                    }
                 }
                 else {
                     for (ClassMetadataLight possibleChild : currentPossibleChildren){
                         if (possibleChild.getId() == childNode.getId())
-                            throw new InvalidArgumentException(String.format("Class %s is already a possible child for instances of %s", (String)childNode.getProperty(Constants.PROPERTY_NAME), (String)parentNode.getProperty(Constants.PROPERTY_NAME)), Level.INFO);
+                            throw new InvalidArgumentException(String.format("Class %s is already a possible child for instances of %s", (String)childNode.getProperty(Constants.PROPERTY_NAME), (String)parentNode.getProperty(Constants.PROPERTY_NAME)));
                     }
                 }
                 parentNode.createRelationshipTo(childNode, RelTypes.POSSIBLE_CHILD);
@@ -1137,9 +1137,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     }
      
     @Override
-    public boolean isSubClass(String allegedParent, String classToBeEvaluated) 
-            throws NotAuthorizedException
-    {
+    public boolean isSubClass(String allegedParent, String classToBeEvaluated) {
         return cm.isSubClass(allegedParent, classToBeEvaluated);
     }
     

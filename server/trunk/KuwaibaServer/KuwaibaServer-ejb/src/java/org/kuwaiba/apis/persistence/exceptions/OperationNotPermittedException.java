@@ -16,8 +16,6 @@
 
 package org.kuwaiba.apis.persistence.exceptions;
 
-import java.util.logging.Level;
-
 /**
  * Thrown when a certain operation can't be performed because a system restriction or illegal state
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
@@ -25,7 +23,7 @@ import java.util.logging.Level;
 public class OperationNotPermittedException extends InventoryException{
 
     public OperationNotPermittedException(String operationName, String reason) {
-        super(reason, Level.WARNING);
+        super(reason);
     }
 
 }

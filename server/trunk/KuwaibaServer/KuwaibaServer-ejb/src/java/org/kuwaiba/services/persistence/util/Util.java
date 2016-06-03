@@ -38,7 +38,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.Privilege;
 import org.kuwaiba.apis.persistence.application.UserProfile;
@@ -101,9 +100,9 @@ public class Util {
                                     if(type.equals("Timestamp"))
                                         return Timestamp.valueOf(value);
                                     else
-                                        throw new InvalidArgumentException(String.format("Type %s not found",type),Level.WARNING);
+                                        throw new InvalidArgumentException(String.format("Type %s not found",type));
         }catch (NumberFormatException | InvalidArgumentException e){
-            throw new InvalidArgumentException(String.format("Can not convert value %s to a type %s", value, type), Level.WARNING);
+            throw new InvalidArgumentException(String.format("Can not convert value %s to a type %s", value, type));
         }
     }
 
@@ -427,7 +426,7 @@ public class Util {
             while(relationships.hasNext()){
                 Relationship relationship = relationships.next();
                 if (!relationship.hasProperty(Constants.PROPERTY_NAME))
-                    throw new InvalidArgumentException(String.format("The object with id %s is malformed", instance.getId()), Level.SEVERE);
+                    throw new InvalidArgumentException(String.format("The object with id %s is malformed", instance.getId()));
 
                 String attributeName = (String)relationship.getProperty(Constants.PROPERTY_NAME);
                 for (AttributeMetadata myAtt : myClass.getAttributes()){
@@ -619,7 +618,7 @@ public class Util {
      * yyyy-MM-DD, if does not exists it return an empty string.
      * @param objectNode
      * @param className
-     * @param visibleAttribute
+     * @param attribute
      * @return
      */
     public static String getAttributeFromNode(Node objectNode, String attribute){
@@ -704,10 +703,10 @@ public class Util {
        
     public static void createAttribute(Node classNode, AttributeMetadata attributeDefinition) throws InvalidArgumentException {
         if (attributeDefinition.getName() == null || attributeDefinition.getName().isEmpty())
-            throw new InvalidArgumentException("Attribute name can not be null or an empty string", Level.INFO);
+            throw new InvalidArgumentException("Attribute name can not be null or an empty string");
         
-        if (!attributeDefinition.getName().matches("^[a-zA-Z0-9_]*$"))
-            throw new InvalidArgumentException(String.format("Attribute %s contains invalid characters", attributeDefinition.getName()), Level.INFO);
+        if (!attributeDefinition.getName().matches("^[a-zA-Z0-9_-]*$"))
+            throw new InvalidArgumentException(String.format("Attribute %s contains invalid characters", attributeDefinition.getName()));
 
         final TraversalDescription UPDATE_TRAVERSAL = classNode.getGraphDatabase().traversalDescription().
                     breadthFirst().
@@ -718,7 +717,7 @@ public class Util {
             for(Relationship rel : p.endNode().getRelationships(RelTypes.HAS_ATTRIBUTE)){
                 if (rel.getEndNode().getProperty(Constants.PROPERTY_NAME).equals(attributeDefinition.getName()))
                     throw new InvalidArgumentException(String.format("Class %s already has an attribute named %s", 
-                            currentClassName, attributeDefinition.getName()), Level.INFO);
+                            currentClassName, attributeDefinition.getName()));
                 
             }
             Label label = DynamicLabel.label(Constants.LABEL_ATTRIBUTE);

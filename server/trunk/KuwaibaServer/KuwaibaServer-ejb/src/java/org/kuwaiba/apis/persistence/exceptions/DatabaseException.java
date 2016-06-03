@@ -16,8 +16,6 @@
 
 package org.kuwaiba.apis.persistence.exceptions;
 
-import java.util.logging.Level;
-
 /**
  * Thrown when an inconsistency in the database structure is detected
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
@@ -25,7 +23,7 @@ import java.util.logging.Level;
 public class DatabaseException extends InventoryException{
 
     public DatabaseException(String msg) {
-        super(msg, Level.SEVERE);
+        super(msg);
     }
 
 }

@@ -15,8 +15,6 @@
  */
 package org.kuwaiba.apis.persistence.exceptions;
 
-import java.util.logging.Level;
-
 /**
  * Raised when is not 
  * @author Adrián Fernando Martínez Molina <adrian.martinez@kuwaiba.org>
@@ -24,6 +22,6 @@ import java.util.logging.Level;
 public class NotAuthorizedException extends InventoryException{
     
     public NotAuthorizedException(String msg) {
-        super(msg, Level.INFO);
+        super(msg);
     }
 }

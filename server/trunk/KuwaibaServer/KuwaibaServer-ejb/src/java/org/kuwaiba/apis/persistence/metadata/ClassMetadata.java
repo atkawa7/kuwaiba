@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 
 /**
@@ -170,6 +169,6 @@ public class ClassMetadata extends ClassMetadataLight {
             if (eachAttribute.getName().equals(attributeName))
                 return eachAttribute.getType();
         }
-        throw new InvalidArgumentException("Attribute cannot be found in this class", Level.WARNING);
+        throw new InvalidArgumentException("Attribute cannot be found in this class");
     }
 }

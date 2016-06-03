@@ -1967,13 +1967,8 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public boolean isSubclassOf(String className, String subclassOf, String remoteAddress, String sessionId) throws ServerSideException {
-        try {
+    public boolean isSubclassOf(String className, String subclassOf, String remoteAddress, String sessionId) {
             return mem.isSubClass(subclassOf, className);
-        } catch (org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(ex.getMessage());
-        }
     }
     
     

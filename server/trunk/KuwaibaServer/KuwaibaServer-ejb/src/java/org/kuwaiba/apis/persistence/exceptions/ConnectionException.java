@@ -16,8 +16,6 @@
 
 package org.kuwaiba.apis.persistence.exceptions;
 
-import java.util.logging.Level;
-
 /**
  * Wrapper for any possible problem when establishing a connection t the selected backend
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
@@ -25,7 +23,7 @@ import java.util.logging.Level;
 public class ConnectionException extends InventoryException{
 
     public ConnectionException(String msg) {
-        super(msg, Level.SEVERE);
+        super(msg);
     }
 
 }

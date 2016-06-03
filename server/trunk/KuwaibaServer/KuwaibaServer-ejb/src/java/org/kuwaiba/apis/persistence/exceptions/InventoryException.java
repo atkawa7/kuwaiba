@@ -17,26 +17,15 @@
 
 package org.kuwaiba.apis.persistence.exceptions;
 
-import java.util.logging.Level;
-
 /**
  * Root class for all custom exceptions in this package
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public abstract class InventoryException extends Exception{
-    private Level level;
 
-    public InventoryException(String msg, Level level) {
+    public InventoryException() {    }
+    
+    public InventoryException(String msg) {
         super (msg);
-        this.level = level;
     }
-
-    public Level getLevel() {
-        return level;
-    }
-
-    public void setLevel(Level level) {
-        this.level = level;
-    }
-
 }

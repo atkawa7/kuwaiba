@@ -19,6 +19,7 @@ import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
@@ -310,7 +311,7 @@ public class SDHModule implements GenericCommercialModule {
                 HashMap<String, Object> positionAsAproperty = new HashMap<>();
                 positionAsAproperty.put("sdhPosition", position.getPosition());
                 bem.createSpecialRelationship(position.getLinkClass(), position.getLinkId(), 
-                        linkType, newContainerLinkId, RELATIONSHIP_SDHCONTAINS, false, positionAsAproperty);
+                        containerLinkType, newContainerLinkId, RELATIONSHIP_SDHCONTAINS, false, positionAsAproperty);
             }
             
             return newTributaryLinkId;
@@ -337,8 +338,9 @@ public class SDHModule implements GenericCommercialModule {
      * @param transportLinkId Transport link id
      * @param forceDelete Delete recursively all sdh elements transported by the transport link
      * @throws org.kuwaiba.exceptions.ServerSideException If something goes wrong
+     * @throws org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException If the user is not authorized to delete transport links
      */
-    public void deleteSDHTransportLink(String transportLinkClass, long transportLinkId, boolean forceDelete) throws ServerSideException, InventoryException {
+    public void deleteSDHTransportLink(String transportLinkClass, long transportLinkId, boolean forceDelete) throws ServerSideException, NotAuthorizedException {
         if (bem == null || mem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         
@@ -416,12 +418,12 @@ public class SDHModule implements GenericCommercialModule {
      */
     public List<RemoteBusinessObjectLightList> findSDHRoutesUsingTransportLinks(String communicationsEquipmentClassA, 
                                             long  communicationsEquipmentIdA, String communicationsEquipmentClassB, 
-                                            long  communicationsEquipmentIB) throws ApplicationObjectNotFoundException, NotAuthorizedException, IllegalArgumentException {
+                                            long  communicationsEquipmentIB) throws ApplicationObjectNotFoundException, NotAuthorizedException, InvalidArgumentException {
         if (!mem.isSubClass(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, communicationsEquipmentClassA))
-                throw new IllegalArgumentException(String.format("Class %s is not a GenericCommunicationsEquipment", communicationsEquipmentClassA));
+                throw new InvalidArgumentException(String.format("Class %s is not a GenericCommunicationsEquipment", communicationsEquipmentClassA));
         
         if (!mem.isSubClass(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, communicationsEquipmentClassB))
-                throw new IllegalArgumentException(String.format("Class %s is not a GenericCommunicationsEquipment", communicationsEquipmentClassB));
+                throw new InvalidArgumentException(String.format("Class %s is not a GenericCommunicationsEquipment", communicationsEquipmentClassB));
         
         return bem.findRoutesThroughSpecialRelationships(communicationsEquipmentClassA, communicationsEquipmentIdA, communicationsEquipmentClassB, 
                         communicationsEquipmentIB, RELATIONSHIP_SDHTRANSPORTLINK);
@@ -440,13 +442,13 @@ public class SDHModule implements GenericCommercialModule {
      */
     public List<RemoteBusinessObjectLightList> findSDHRoutesUsingContainerLinks(String communicationsEquipmentClassA, 
                                             long  communicationsEquipmentIdA, String communicationsEquipmentClassB, 
-                                            long  communicationsEquipmentIB) throws ApplicationObjectNotFoundException, NotAuthorizedException, IllegalArgumentException {
+                                            long  communicationsEquipmentIB) throws ApplicationObjectNotFoundException, NotAuthorizedException, InvalidArgumentException {
         
         if (!mem.isSubClass(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, communicationsEquipmentClassA))
-                throw new IllegalArgumentException(String.format("Class %s is not a GenericCommunicationsEquipment", communicationsEquipmentClassA));
+                throw new InvalidArgumentException(String.format("Class %s is not a GenericCommunicationsEquipment", communicationsEquipmentClassA));
         
         if (!mem.isSubClass(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, communicationsEquipmentClassB))
-                throw new IllegalArgumentException(String.format("Class %s is not a GenericCommunicationsEquipment", communicationsEquipmentClassB));
+                throw new InvalidArgumentException(String.format("Class %s is not a GenericCommunicationsEquipment", communicationsEquipmentClassB));
         
         return bem.findRoutesThroughSpecialRelationships(communicationsEquipmentClassA, communicationsEquipmentIdA, communicationsEquipmentClassB, 
                         communicationsEquipmentIB, RELATIONSHIP_SDHCONTAINERLINK);
@@ -458,15 +460,15 @@ public class SDHModule implements GenericCommercialModule {
      * @param transportLinkId Transportlink's id
      * @return The list of the containers that go through that transport link
      * @throws NotAuthorizedException if the user is nt authorized to inquire about the structure of a transport link
-     * @throws IllegalArgumentException I
+     * @throws InvalidArgumentException I
      * @throws ObjectNotFoundException
      * @throws MetadataObjectNotFoundException 
      */
     public List<SDHContainerLinkDefinition> getSDHTransportLinkStructure(String transportLinkClass, long transportLinkId) 
-            throws NotAuthorizedException, IllegalArgumentException, ObjectNotFoundException, MetadataObjectNotFoundException {
+            throws NotAuthorizedException, InvalidArgumentException, ObjectNotFoundException, MetadataObjectNotFoundException {
         
         if (!mem.isSubClass("GenericSDHTransportLink", transportLinkClass))
-                throw new IllegalArgumentException(String.format("Class %s is not a GenericSDHTransportLink", transportLinkClass));
+                throw new InvalidArgumentException(String.format("Class %s is not a GenericSDHTransportLink", transportLinkClass));
         
         ArrayList<SDHContainerLinkDefinition> containers = new ArrayList<>();
         
@@ -498,15 +500,15 @@ public class SDHModule implements GenericCommercialModule {
      * @param containerLinkId Container Id
      * @return The list of containers contained in the container
      * @throws NotAuthorizedException If the user is not authorized to know the structure of a container link
-     * @throws IllegalArgumentException If the container supplied is not subclass of GenericSDHHighOrderContainerLink
+     * @throws InvalidArgumentException If the container supplied is not subclass of GenericSDHHighOrderContainerLink
      * @throws ObjectNotFoundException If the container could not be found
      * @throws MetadataObjectNotFoundException If the class could not be found
      */
     public List<SDHContainerLinkDefinition> getSDHContainerLinkStructure(String containerLinkClass, long containerLinkId) 
-            throws NotAuthorizedException, IllegalArgumentException, ObjectNotFoundException, MetadataObjectNotFoundException {
+            throws NotAuthorizedException, InvalidArgumentException, ObjectNotFoundException, MetadataObjectNotFoundException {
         
         if (!mem.isSubClass("GenericSDHHighOrderContainerLink", containerLinkClass))
-                throw new IllegalArgumentException(String.format("Class %s is not a GenericSDHContainerLink", containerLinkClass));
+                throw new InvalidArgumentException(String.format("Class %s is not a GenericSDHContainerLink", containerLinkClass));
         
         ArrayList<SDHContainerLinkDefinition> containers = new ArrayList<>();
         

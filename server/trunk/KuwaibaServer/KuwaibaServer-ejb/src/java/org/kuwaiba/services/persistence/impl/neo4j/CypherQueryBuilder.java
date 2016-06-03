@@ -18,7 +18,6 @@ package org.kuwaiba.services.persistence.impl.neo4j;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.kuwaiba.apis.persistence.application.ExtendedQuery;
@@ -260,12 +259,11 @@ public class CypherQueryBuilder {
             cypherQuery = cypherQuery.concat(" RETURN ".concat(_return));
 
             cypherQuery = cypherQuery.concat(" ORDER BY instance.name ASC");
-            if(query.getPage()>0)
+            if(query.getPage() > 0)
                 cypherQuery = cypherQuery.concat(" skip 0 limit 10");//NOI18N
 
             readVissibleAttributes(query);
             executeQuery(classNode, cypherQuery);
-            tx.success();
         }
     }
 

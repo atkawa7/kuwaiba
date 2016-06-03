@@ -3155,7 +3155,7 @@ public class KuwaibaService {
             @WebParam(name = "containerLinkId")long containerLinkId, 
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
-            return wsBean.getSDHTransportLinkStructure(containerLinkClass, containerLinkId, getIPAddress(), sessionId);
+            return wsBean.getSDHContainerLinkStructure(containerLinkClass, containerLinkId, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;

@@ -188,24 +188,24 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             throws InvalidArgumentException, NotAuthorizedException, NotAuthorizedException 
     {
         if (userName == null)
-            throw new InvalidArgumentException("User name can not be null", Level.INFO);
+            throw new InvalidArgumentException("User name can not be null");
         
         if (userName.trim().equals(""))
-            throw new InvalidArgumentException("User name can not be an empty string", Level.INFO);
+            throw new InvalidArgumentException("User name can not be an empty string");
         
         if (!userName.matches("^[a-zA-Z0-9_]*$"))
-            throw new InvalidArgumentException(String.format("Class %s contains invalid characters", userName), Level.INFO);
+            throw new InvalidArgumentException(String.format("Class %s contains invalid characters", userName));
         
         if (password == null)
-            throw new InvalidArgumentException("Password can not be null", Level.INFO);
+            throw new InvalidArgumentException("Password can not be null");
        
         if (password.trim().equals(""))
-            throw new InvalidArgumentException("Password can not be an empty string", Level.INFO);
+            throw new InvalidArgumentException("Password can not be an empty string");
         
         try(Transaction tx = graphDb.beginTx()) {
             Node storedUser = userIndex.get(Constants.PROPERTY_NAME,userName).getSingle();
             if (storedUser != null)
-                throw new InvalidArgumentException(String.format("User name %s already exists", userName), Level.WARNING);
+                throw new InvalidArgumentException(String.format("User name %s already exists", userName));
             
             Label label = DynamicLabel.label(Constants.INDEX_USERS);
             Node newUserNode = graphDb.createNode(label);
@@ -231,7 +231,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     
                     else{
                         tx.failure();
-                        throw new InvalidArgumentException(String.format("Group with id %s can not be found",groupId), Level.OFF);
+                        throw new InvalidArgumentException(String.format("Group with id %s can not be found",groupId));
                     }
                 }
             }
@@ -257,18 +257,18 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
             if(userName != null){
                 if (userName.trim().equals(""))
-                    throw new InvalidArgumentException("User name can not be an empty string", Level.INFO);
+                    throw new InvalidArgumentException("User name can not be an empty string");
 
                 if (!userName.matches("^[a-zA-Z0-9_.]*$"))
-                    throw new InvalidArgumentException(String.format("The user name %s contains invalid characters", userName), Level.INFO);
+                    throw new InvalidArgumentException(String.format("The user name %s contains invalid characters", userName));
 
                 Node storedUser = userIndex.get(Constants.PROPERTY_NAME, userName).getSingle();
                 if (storedUser != null)
-                    throw new InvalidArgumentException(String.format("User name %s already exists", userName), Level.WARNING);
+                    throw new InvalidArgumentException(String.format("User name %s already exists", userName));
             }
             if(password != null){
                 if (password.trim().isEmpty())
-                    throw new InvalidArgumentException("Password can't be an empty string", Level.INFO);
+                    throw new InvalidArgumentException("Password can't be an empty string");
             }
         
             if (userName != null){
@@ -303,7 +303,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                         privilegeNode.createRelationshipTo(userNode, RelTypes.HAS_PRIVILEGE);
                     else{
                         tx.failure();
-                        throw new InvalidArgumentException(String.format("Privilege with coded %s can not be found",privilegeCode), Level.OFF);
+                        throw new InvalidArgumentException(String.format("Privilege with coded %s can not be found",privilegeCode));
                     }
                 }
             }
@@ -325,18 +325,18 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if(newUserName != null)
             {
                 if (newUserName.isEmpty())
-                    throw new InvalidArgumentException("User name can not be an empty string", Level.INFO);
+                    throw new InvalidArgumentException("User name can not be an empty string");
 
                 Node storedUser = userIndex.get(Constants.PROPERTY_NAME, newUserName).getSingle();
                 if (storedUser != null)
-                    throw new InvalidArgumentException(String.format("User name %s already exists", newUserName), Level.WARNING);
+                    throw new InvalidArgumentException(String.format("User name %s already exists", newUserName));
 
                 if (!newUserName.matches("^[a-zA-Z0-9_.]*$"))
-                    throw new InvalidArgumentException(String.format("The user name %s contains invalid characters", newUserName), Level.INFO);
+                    throw new InvalidArgumentException(String.format("The user name %s contains invalid characters", newUserName));
             }
             if(password != null){
                 if (password.trim().isEmpty())
-                    throw new InvalidArgumentException("Password can't be an empty string", Level.INFO);
+                    throw new InvalidArgumentException("Password can't be an empty string");
             }
         
             if (newUserName != null){
@@ -371,7 +371,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                         privilegeNode.createRelationshipTo(userNode, RelTypes.HAS_PRIVILEGE);
                     else{
                         tx.failure();
-                        throw new InvalidArgumentException(String.format("Privilege with coded %s can not be found",privilegeCode), Level.OFF);
+                        throw new InvalidArgumentException(String.format("Privilege with coded %s can not be found",privilegeCode));
                     }
                 }
             }
@@ -386,17 +386,17 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             throws InvalidArgumentException, NotAuthorizedException 
     {
         if (groupName == null)
-            throw new InvalidArgumentException("Group name can not be null", Level.INFO);
+            throw new InvalidArgumentException("Group name can not be null");
         if (groupName.isEmpty())
-            throw new InvalidArgumentException("Group name can not be an empty string", Level.INFO);
+            throw new InvalidArgumentException("Group name can not be an empty string");
         if (!groupName.matches("^[a-zA-Z0-9_]*$"))
-            throw new InvalidArgumentException(String.format("Class %s contains invalid characters", groupName), Level.INFO);
+            throw new InvalidArgumentException(String.format("Class %s contains invalid characters", groupName));
         
         try (Transaction tx = graphDb.beginTx())
         {
             Node storedGroup = groupIndex.get(Constants.PROPERTY_NAME,groupName).getSingle();
             if (storedGroup != null)
-                throw new InvalidArgumentException(String.format("Group %s already exists", groupName), Level.WARNING);
+                throw new InvalidArgumentException(String.format("Group %s already exists", groupName));
 
             Label label = DynamicLabel.label(Constants.INDEX_GROUPS);
             Node newGroupNode = graphDb.createNode(label);
@@ -412,7 +412,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                         userNode.createRelationshipTo(newGroupNode, RelTypes.BELONGS_TO_GROUP);
                     else{
                         tx.failure();
-                        throw new InvalidArgumentException(String.format("User with id %s can not be found",userId), Level.OFF);
+                        throw new InvalidArgumentException(String.format("User with id %s can not be found",userId));
                     }
                 }
             }
@@ -423,7 +423,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                         privilegeNode.createRelationshipTo(newGroupNode, RelTypes.HAS_PRIVILEGE);
                     else{
                         tx.failure();
-                        throw new InvalidArgumentException(String.format("Privilege with coded %s can not be found",privilegeCode), Level.OFF);
+                        throw new InvalidArgumentException(String.format("Privilege with coded %s can not be found",privilegeCode));
                     }
                 }
             }
@@ -476,13 +476,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             if(groupName != null){
                 if (groupName.isEmpty())
-                    throw new InvalidArgumentException("Group name can not be an empty string", Level.INFO);
+                    throw new InvalidArgumentException("Group name can not be an empty string");
                 if (!groupName.matches("^[a-zA-Z0-9_]*$"))
-                    throw new InvalidArgumentException(String.format("Class %s contains invalid characters", groupName), Level.INFO);
+                    throw new InvalidArgumentException(String.format("Class %s contains invalid characters", groupName));
 
                 Node storedGroup = groupIndex.get(Constants.PROPERTY_NAME, groupName).getSingle();
                     if (storedGroup != null)
-                        throw new InvalidArgumentException(String.format("The group name %1s is already in use", groupName), Level.WARNING);
+                        throw new InvalidArgumentException(String.format("The group name %1s is already in use", groupName));
                 groupIndex.remove(groupNode, Constants.PROPERTY_NAME, (String)groupNode.getProperty(Constants.PROPERTY_NAME));
                 cm.removeGroup((String)groupNode.getProperty(Constants.PROPERTY_NAME));
                 groupNode.setProperty(Constants.PROPERTY_NAME, groupName);
@@ -511,7 +511,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     if(privilegeNode != null)
                         privilegeNode.createRelationshipTo(groupNode, RelTypes.HAS_PRIVILEGE);
                     else
-                        throw new InvalidArgumentException(String.format("Privilege with coded %s can not be found",privilegeCode), Level.OFF);
+                        throw new InvalidArgumentException(String.format("Privilege with coded %s can not be found",privilegeCode));
                 }
             }
             
@@ -577,7 +577,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
         
         if (listTypeName == null)
-           throw new InvalidArgumentException("Item name and class name can not be null", Level.INFO);
+           throw new InvalidArgumentException("Item name and class name can not be null");
         GenericObjectList listType = cm.getListType(listTypeName);
         if(listType!=null){
             RemoteBusinessObjectLight rol = new RemoteBusinessObject(listType.getId(), listType.getClassName(), "");
@@ -593,7 +593,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             throws MetadataObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, NotAuthorizedException 
    {               
        if (name == null || className == null)
-           throw new InvalidArgumentException("Item name and class name can not be null", Level.INFO);
+           throw new InvalidArgumentException("Item name and class name can not be null");
        
        ClassMetadata myClass= cm.getClass(className);
        try(Transaction tx = graphDb.beginTx()) {
@@ -607,7 +607,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
              }      
 
             if (!cm.isSubClass(Constants.CLASS_GENERICOBJECTLIST, className))
-                 throw new InvalidArgumentException(String.format("Class %s is not a list type", className), Level.WARNING);
+                 throw new InvalidArgumentException(String.format("Class %s is not a list type", className));
 
             if (myClass.isInDesign())
                  throw new OperationNotPermittedException("Create List Type Item", "Can not create instances of classes marked as isDesign");
@@ -635,7 +635,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         try(Transaction tx = graphDb.beginTx())
         {
             if (!cm.isSubClass(Constants.CLASS_GENERICOBJECTLIST, className))
-                throw new InvalidArgumentException(String.format("Class %s is not a list type", className), Level.WARNING);
+                throw new InvalidArgumentException(String.format("Class %s is not a list type", className));
 
             Node instance = getInstanceOfClass(className, oid);
             Util.deleteObject(instance, realeaseRelationships);
@@ -655,7 +655,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %s",className));
 
             if (!Util.isSubClass(Constants.CLASS_GENERICOBJECTLIST, classNode))
-                throw new InvalidArgumentException(String.format("Class %s is not a list type", className), Level.WARNING);
+                throw new InvalidArgumentException(String.format("Class %s is not a list type", className));
 
             Iterable<Relationship> childrenAsRelationships = classNode.getRelationships(RelTypes.INSTANCE_OF);
             Iterator<Relationship> relationships = childrenAsRelationships.iterator();
@@ -705,7 +705,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
         
         if (objectClass == null)
-            throw new InvalidArgumentException("The root object can not be related to any view", Level.INFO);
+            throw new InvalidArgumentException("The root object can not be related to any view");
         
         long id;
         try(Transaction tx = graphDb.beginTx()) {
@@ -727,7 +727,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     viewNode.setProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME, fileName);
                 }catch(Exception ex){
                     throw new InvalidArgumentException(String.format("Background image for view %s could not be saved: %s",
-                            oid, ex.getMessage()), Level.SEVERE);
+                            oid, ex.getMessage()));
                 }
             }
 
@@ -762,7 +762,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     newView.setProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME, fileName);
                 }catch(Exception ex){
                     throw new InvalidArgumentException(String.format("Background image for view %s couldn't be saved: %s", 
-                            newView.getId(), ex.getMessage()), Level.SEVERE);
+                            newView.getId(), ex.getMessage()));
                 }
             }
             generalViewsIndex.add(newView, Constants.PROPERTY_ID, newView.getId());
@@ -777,7 +777,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
         
         if (objectClass == null)
-            throw new InvalidArgumentException("The root object does not have any view", Level.INFO);
+            throw new InvalidArgumentException("The root object does not have any view");
         
         
         try(Transaction tx = graphDb.beginTx()) {
@@ -821,7 +821,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     viewNode.setProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME, fileName);
                 }catch(Exception ex){
                     throw new InvalidArgumentException(String.format("Background image for view %s couldn't be saved: %s",
-                            oid, ex.getMessage()), Level.SEVERE);
+                            oid, ex.getMessage()));
                 }
             }
             else {
@@ -830,7 +830,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                         new File(configuration.getProperty("backgroundsPath", DEFAULT_BACKGROUNDS_PATH) + "/" + fileName).delete();
                     }catch(Exception ex){
                         throw new InvalidArgumentException(String.format("View background %s couldn't be deleted: %s", 
-                                configuration.getProperty("backgroundsPath", DEFAULT_BACKGROUNDS_PATH) + "/" + fileName, ex.getMessage()), Level.SEVERE);
+                                configuration.getProperty("backgroundsPath", DEFAULT_BACKGROUNDS_PATH) + "/" + fileName, ex.getMessage()));
                     }
                     viewNode.removeProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME);
                     affectedProperties += " " + Constants.PROPERTY_BACKGROUND;
@@ -876,7 +876,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                         affectedProperty += " " + Constants.PROPERTY_BACKGROUND;
                     }catch(Exception ex){
                         throw new InvalidArgumentException(String.format("Background image for view %s couldn't be saved: %s",
-                                oid, ex.getMessage()), Level.SEVERE);
+                                oid, ex.getMessage()));
                     }
                 }
             }else {
@@ -1242,7 +1242,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             for (long id : ids){
                 Node poolNode = poolsIndex.get(Constants.PROPERTY_ID, id).getSingle();
                 if (poolNode == null)
-                    throw new InvalidArgumentException(String.format("A pool with id %s does not exist", id),Level.INFO);
+                    throw new InvalidArgumentException(String.format("A pool with id %s does not exist", id));
 
                 //Let's delete the objects inside, if possible
                 HashMap<String, long[]> toBeDeleted = new HashMap<>();
@@ -1458,7 +1458,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         try(Transaction tx = graphDb.beginTx()) {
             if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, objectClass))
                 throw new InvalidArgumentException(String.format("Class %s is not subclass of %s",
-                        objectClass, Constants.CLASS_INVENTORYOBJECT), Level.INFO);
+                        objectClass, Constants.CLASS_INVENTORYOBJECT));
             Node instanceNode = getInstanceOfClass(objectClass, objectId);
             List<ActivityLogEntry> log = new ArrayList<>();
             int i = 0;
@@ -1826,7 +1826,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     readJoins(l,join);
             }
         }
-        if(className != null && className.equals(""))
+        if(className != null || className.isEmpty())
             l.add(className);
         return className;
     }

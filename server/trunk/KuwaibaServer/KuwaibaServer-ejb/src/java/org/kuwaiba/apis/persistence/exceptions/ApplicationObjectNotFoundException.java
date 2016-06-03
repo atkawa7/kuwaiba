@@ -16,14 +16,12 @@
 
 package org.kuwaiba.apis.persistence.exceptions;
 
-import java.util.logging.Level;
-
 /**
  * Thrown if an application object cannot be found (an instance of User, Group or View)
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ApplicationObjectNotFoundException extends InventoryException{
     public ApplicationObjectNotFoundException(String msg) {
-        super(msg, Level.WARNING);
+        super(msg);
     }
 }

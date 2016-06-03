@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
@@ -173,7 +172,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         try (Transaction tx = graphDb.beginTx()) {
             String[] splitCriteria = criteria.split(":");
             if (splitCriteria.length != 2)
-                throw new InvalidArgumentException("The criteria is not valid, two components expected (attributeName:attributeValue)", Level.INFO);
+                throw new InvalidArgumentException("The criteria is not valid, two components expected (attributeName:attributeValue)");
 
             if (splitCriteria[0].equals(Constants.PROPERTY_OID))
                 return createObject(className, parentClassName, Long.parseLong(splitCriteria[1]), attributes, template);
@@ -190,7 +189,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             if (!AttributeMetadata.isPrimitive(filterAttribute.getType()))
                 throw new InvalidArgumentException(String.format(
                         "The filter provided (%s) is not a primitive type. Non-primitive types are not supported as they typically don't uniquely identify an object", 
-                        splitCriteria[0]), Level.INFO);
+                        splitCriteria[0]));
 
             long parentOid = -1;
             Node parentClassNode = classIndex.get(Constants.PROPERTY_NAME, parentClassName).getSingle();
@@ -207,7 +206,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 return createObject(className, parentClassName, parentOid, attributes, template);
 
             throw new InvalidArgumentException(String.format("A parent with %s %s of class %s could not be found", 
-                    splitCriteria[0], splitCriteria[1], parentClassName), Level.INFO);
+                    splitCriteria[0], splitCriteria[1], parentClassName));
         }
     }
     
@@ -272,7 +271,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 throw new ApplicationObjectNotFoundException(String.format("Pool with id %s can not be found", poolId));
             
             if (!pool.hasProperty(Constants.PROPERTY_CLASS_NAME))
-                throw new InvalidArgumentException("This pool has not set his class name attribute", Level.INFO);
+                throw new InvalidArgumentException("This pool has not set his class name attribute");
             
             Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
             if (classNode == null)
@@ -281,7 +280,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             ClassMetadata classMetadata = cm.getClass(className);
             
             if (!cm.isSubClass((String)pool.getProperty(Constants.PROPERTY_CLASS_NAME), className))
-                throw new InvalidArgumentException(String.format("Class %s is not subclass of %s", className, (String)pool.getProperty(Constants.PROPERTY_CLASS_NAME)), Level.OFF);
+                throw new InvalidArgumentException(String.format("Class %s is not subclass of %s", className, (String)pool.getProperty(Constants.PROPERTY_CLASS_NAME)));
             
             HashMap<String, List<String>> attributes = new HashMap<>();
             if (attributeNames != null && attributeValues != null){
@@ -526,7 +525,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                         }
                     } else { //If the attribute is not a primitive type, then it's a relationship
                         if (!cm.getClass(myClass.getType(attributeName)).isListType())
-                            throw new InvalidArgumentException(String.format("Class %s is not a list type", myClass.getType(attributeName)), Level.WARNING);
+                            throw new InvalidArgumentException(String.format("Class %s is not a list type", myClass.getType(attributeName)));
 
                         //Release all previous relationships
                         oldValues += " "; //Two empty, separation spaces
@@ -552,7 +551,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     }
                 } else
                     throw new InvalidArgumentException(
-                            String.format("The attribute %s does not exist in class %s", attributeName, className), Level.WARNING);
+                            String.format("The attribute %s does not exist in class %s", attributeName, className));
             }
             tx.success();
             return new ChangeDescriptor(affectedProperties.trim(), oldValues.trim(), newValues.trim(), String.valueOf(oid));
@@ -1178,7 +1177,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             throws InvalidArgumentException, MetadataObjectNotFoundException {
  
         if (classToMap.isAbstract())
-            throw new InvalidArgumentException(String.format("Can not create objects from abstract classes (%s)", classToMap.getName()), Level.OFF);
+            throw new InvalidArgumentException(String.format("Can not create objects from abstract classes (%s)", classToMap.getName()));
         
         Node newObject = graphDb.createNode();
         newObject.setProperty(Constants.PROPERTY_NAME, ""); //The default value is an empty string 
@@ -1197,17 +1196,17 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                         //If it's not a primitive type, maybe it's a relationship
 
                             if (!cm.isSubClass(Constants.CLASS_GENERICOBJECTLIST, attributeType))
-                                throw new InvalidArgumentException(String.format("Type %s is not a primitive nor a list type", attributeName), Level.WARNING);
+                                throw new InvalidArgumentException(String.format("Type %s is not a primitive nor a list type", attributeName));
 
                             Node listTypeNode = classIndex.get(Constants.PROPERTY_NAME, attributeType).getSingle();
 
                             if (listTypeNode == null)
-                                throw new InvalidArgumentException(String.format("Class %s could not be found as list type", attributeType), Level.INFO);
+                                throw new InvalidArgumentException(String.format("Class %s could not be found as list type", attributeType));
 
                             List<Node> listTypeNodes = Util.getRealValue(attributes.get(attributeName), listTypeNode);
 
                             if (listTypeNodes.isEmpty())
-                                throw new InvalidArgumentException(String.format("At least one of the list type items could not be found. Check attribute definition for %s", attributeName), Level.INFO);
+                                throw new InvalidArgumentException(String.format("At least one of the list type items could not be found. Check attribute definition for %s", attributeName));
 
                             //Create the new relationships
                             for (Node item : listTypeNodes){

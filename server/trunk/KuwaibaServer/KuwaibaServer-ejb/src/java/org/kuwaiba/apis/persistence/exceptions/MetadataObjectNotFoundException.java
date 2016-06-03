@@ -16,14 +16,12 @@
 
 package org.kuwaiba.apis.persistence.exceptions;
 
-import java.util.logging.Level;
-
 /**
  * Thrown if a metadata object cannot be found (an instance of ClassMetadata, AttributeMatadata, InterfaceMetadata or categoryMetadata)
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class MetadataObjectNotFoundException extends InventoryException{
     public MetadataObjectNotFoundException(String msg) {
-        super(msg, Level.SEVERE);
+        super(msg);
     }
 }

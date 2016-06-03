@@ -16,9 +16,6 @@
 
 package org.kuwaiba.apis.persistence.exceptions;
 
-import java.util.Formatter;
-import java.util.logging.Level;
-
 /**
  * This exception is raised when a pair attribute type - attribute value is not valid
  * (i.e. type Integer, value "aaaaa")
@@ -28,8 +25,8 @@ public class WrongMappingException extends InventoryException{
 
     public WrongMappingException(String className, String attributeName,
             String attributeType, String attributeValue) {
-        super (new Formatter().format("Value %s can't mapped into type %s for attribute %s in class %s",
-                attributeValue, attributeType,attributeName,className).toString(), Level.SEVERE);
+        super (String.format("Value %s can't mapped into type %s for attribute %s in class %s",
+                attributeValue, attributeType, attributeName, className));
     }
 
 }

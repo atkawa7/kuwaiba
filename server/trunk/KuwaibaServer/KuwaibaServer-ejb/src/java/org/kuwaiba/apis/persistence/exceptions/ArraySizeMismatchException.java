@@ -16,8 +16,6 @@
 
 package org.kuwaiba.apis.persistence.exceptions;
 
-import java.util.logging.Level;
-
 /**
  * Thrown when the size of two (or more arrays) does not match, but should
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
@@ -25,11 +23,11 @@ import java.util.logging.Level;
 public class ArraySizeMismatchException extends InventoryException {
 
     public ArraySizeMismatchException(String... arrayNames) {
-        super("",Level.SEVERE); //NOI18N
-        String arrays="";
+        String arrays = "";
         for (String arrayName: arrayNames)
-            arrays+=arrayName+',';
-        initCause(new Throwable("The following arrays does not have the same lenght: "+arrays.substring(0, arrays.length() - 1)));
+            arrays += arrayName+',';
+        
+        initCause(new Throwable("The following arrays does not have the same lenght: " + arrays.substring(0, arrays.length() - 1)));
     }
 
 }
