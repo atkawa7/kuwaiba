@@ -20,20 +20,12 @@ import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
 import com.neotropic.inventory.modules.ipam.nodes.actions.CreateSubnetAction;
 import com.neotropic.inventory.modules.ipam.nodes.actions.CreateSubnetPoolAction;
-import com.neotropic.inventory.modules.ipam.nodes.properties.ListTypeProperty;
-import com.neotropic.inventory.modules.ipam.nodes.properties.NativeTypeProperty;
+import com.neotropic.inventory.modules.ipam.nodes.actions.DeleteSubnetPoolAction;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.List;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalAttributeMetadata;
-import org.inventory.communications.core.LocalClassMetadata;
-import org.inventory.communications.core.LocalObject;
-import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.util.Constants;
-import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.nodes.AbstractNode;
-import org.openide.nodes.PropertySupport;
 import org.openide.nodes.Sheet;
 import org.openide.util.ImageUtilities;
 import org.openide.util.lookup.Lookups;
@@ -61,7 +53,8 @@ public class SubnetPoolNode extends AbstractNode implements PropertyChangeListen
     public Action[] getActions(boolean context){
         return new Action[]{
             new CreateSubnetAction(this), 
-            new CreateSubnetPoolAction(this)
+            new CreateSubnetPoolAction(this),
+            new DeleteSubnetPoolAction(this)
         };
     }
          

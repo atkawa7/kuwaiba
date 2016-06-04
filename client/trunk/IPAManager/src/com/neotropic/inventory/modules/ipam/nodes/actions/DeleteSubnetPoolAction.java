@@ -1,37 +1,27 @@
-/**
- * Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
- *
- * Licensed under the EPL License, Version 1.0 (the "License"); you may not use
- * this file except in compliance with the License. You may obtain a copy of the
- * License at
- *
+/*
+ * Copyright (c) 2016 adrian.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Contributors:
+ *    adrian - initial API and implementation and/or initial documentation
  */
 package com.neotropic.inventory.modules.ipam.nodes.actions;
 
-import com.neotropic.inventory.modules.ipam.nodes.SubnetNode;
+import com.neotropic.inventory.modules.ipam.nodes.SubnetPoolNode;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.AbstractAction;
-import static javax.swing.Action.NAME;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.nodes.Node;
 
-
 /**
  *
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author adrian
  */
-public class DeleteSubnetAction extends AbstractAction{
-
+public class DeleteSubnetPoolAction extends AbstractAction{
     /**
      * Reference to the communications stub singleton
      */
@@ -39,9 +29,9 @@ public class DeleteSubnetAction extends AbstractAction{
     /**
      * Reference to the root node;
      */
-    private SubnetNode node;
+    private SubnetPoolNode node;
 
-    public DeleteSubnetAction(SubnetNode pn){
+    public DeleteSubnetPoolAction(SubnetPoolNode pn){
         putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_DELETE"));
         com = CommunicationsStub.getInstance();
         this.node = pn;
@@ -49,9 +39,7 @@ public class DeleteSubnetAction extends AbstractAction{
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        List<Long> ids = new ArrayList<>();
-        ids.add(node.getSubnet().getOid());
-        if (com.deleteSubnet(ids)){
+        if (com.deleteSubnetPool(node.getSubnetPool().getOid())){
             node.getParentNode().getChildren().remove(new Node[]{node});
             NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
                     java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_DELETION_TEXT_OK"));

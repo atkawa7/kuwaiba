@@ -18,6 +18,7 @@ package com.neotropic.inventory.modules.ipam.nodes.actions;
 import com.neotropic.inventory.modules.ipam.nodes.SubnetNode;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
+import static javax.swing.Action.NAME;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.nodes.Node;
@@ -26,7 +27,7 @@ import org.openide.nodes.Node;
  *
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class ReleaseIPaddressAction extends AbstractAction {
+public class RelateIPAddressAction extends AbstractAction{
     /**
      * Reference to the communications stub singleton
      */
@@ -36,25 +37,20 @@ public class ReleaseIPaddressAction extends AbstractAction {
      */
     private SubnetNode node;
 
-    public ReleaseIPaddressAction(SubnetNode pn){
-        putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELEASE_IP"));
+    public RelateIPAddressAction(SubnetNode pn){
+        putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELATE_IP"));
         com = CommunicationsStub.getInstance();
         this.node = pn;
     }
-
+    
     @Override
     public void actionPerformed(ActionEvent e) {
-//        if (com.releaseIP(node.getSubnet().getOid())){
+//        if (com.relateIP(node.getSubnet().getOid())){
 //            node.getParentNode().getChildren().remove(new Node[]{node});
 //            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
-//                    java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_DELETION_TEXT_OK"));
+//                    java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELATION_IP_OK"));
 //        }
 //        else
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
     }
-    
-    
-
-  
-    
 }
