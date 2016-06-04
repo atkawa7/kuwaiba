@@ -18,7 +18,6 @@ package com.neotropic.inventory.modules.ipam.nodes;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
@@ -40,14 +39,14 @@ public class SubnetPoolChildren extends Children.Array{
     @Override
     public void addNotify(){
         collapsed = false;
-        List<LocalObjectLight> pools = CommunicationsStub.getInstance().getPools(subnetPool.getOid(), Constants.CLASS_SUBNET);
+        List<LocalObjectLight> pools = CommunicationsStub.getInstance().getSubnetPools(subnetPool.getOid());
         if (pools == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else{
             for (LocalObjectLight item : pools)
                 add(new Node[]{new SubnetPoolNode(item)});
         }
-        List<LocalObjectLight> subnets = CommunicationsStub.getInstance().getPoolItems(subnetPool.getOid());
+        List<LocalObjectLight> subnets = CommunicationsStub.getInstance().getSubnets(subnetPool.getOid());
         if (pools == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else{

@@ -28,16 +28,14 @@ import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import com.neotropic.inventory.modules.ipam.nodes.SubnetNode;
+import com.neotropic.inventory.modules.ipam.nodes.SubnetPoolChildren;
 import com.neotropic.inventory.modules.ipam.nodes.SubnetPoolNode;
 import java.awt.Dimension;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import javax.swing.JMenuItem;
+import org.inventory.communications.core.LocalAttributeMetadata;
+import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalObject;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
-import org.inventory.navigation.applicationnodes.pools.PoolChildren;
 
 
 /**
@@ -49,10 +47,9 @@ public class CreateSubnetAction extends AbstractAction{
      * Reference to the communications stub singleton
      */
     private CommunicationsStub com;
-    private SubnetEngine subnetEngine;
     private SubnetPoolNode subnetPoolNode;
     private SubnetNode subnetNode;
-
+    
     public CreateSubnetAction(SubnetPoolNode subnetPoolNode) {
         putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_NEW_SUBNET"));
         com = CommunicationsStub.getInstance();
@@ -60,7 +57,6 @@ public class CreateSubnetAction extends AbstractAction{
     }
     
     public CreateSubnetAction(SubnetNode subnetNode) {
-        subnetEngine = new SubnetEngine();
         putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_NEW_SUBNET"));
         com = CommunicationsStub.getInstance();
         this.subnetNode = subnetNode;
@@ -102,41 +98,35 @@ public class CreateSubnetAction extends AbstractAction{
                 java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_NEW_SUBNET"),
                 JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION){
+
+            String[] attributeNames = new String[5];
+            String[] attributeValues = new String[5];
             
-            //if(!subnetEngine.isIPAddress(txtName.getText()))
-//                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, "The ip is wrong");
-            long id = 0;
-            LocalObjectLight subnet = subnetPoolNode.getSubnetPool();
-            List<LocalObjectLight> pools = com.getPools(Constants.CLASS_SUBNET);
+            SubnetEngine subnetEngine = new SubnetEngine();
+            subnetEngine.calculateSubnets(txtName.getText());
+            List<String> subnets = subnetEngine.getSubnets();
             
-            LocalObjectLight newObject = com.createPoolItem(subnet.getOid(), Constants.CLASS_SUBNET);
-            LocalObject objectInfo = com.getObjectInfo(Constants.CLASS_SUBNET, newObject.getOid());
-            objectInfo.setName(txtName.getText());
-            //VLAN
-            //owner
-            //networkIP
-            //broadcastIP
-            //hosts
-            //device
-            //service
-            System.out.println("asdasd");
-//            LocalObjectLight newObject = com.createPoolItem(subnetNode.getSubnet().getOid(), ((JMenuItem)e.getSource()).getName());
-//
-//            
-            if (newObject == null)
+            attributeNames[0] = Constants.PROPERTY_NAME;
+            attributeValues[0] = txtName.getText();
+            attributeNames[1] = Constants.PROPERTY_DESCRIPTION;
+            attributeValues[1] = txtDescription.getText();
+            attributeNames[2] = Constants.PROPERTY_BROADCASTIP;
+            attributeValues[2] = subnets.get(subnets.size()-1);
+            attributeNames[3] = Constants.PROPERTY_NETWORKIP;
+            attributeValues[3] = subnets.get(0);
+            attributeNames[4] = Constants.PROPERTY_HOSTS;
+            attributeValues[4] = Integer.toString(subnetEngine.calculateNumberOfHosts());
+            
+            LocalObjectLight newSubnet = com.createSubnet(subnetPoolNode.getSubnetPool().getOid(), 
+                    new LocalObject(Constants.CLASS_SUBNET, 0, attributeNames, attributeValues));
+
+            if (newSubnet == null)
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             else{
-                if (!((SubnetChildren)subnetPoolNode.getChildren()).isCollapsed())
-                    subnetPoolNode.getChildren().add(new SubnetNode[]{new SubnetNode(newObject)});
-                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATED"));
+                if (!((SubnetPoolChildren)subnetPoolNode.getChildren()).isCollapsed())
+                    subnetPoolNode.getChildren().add(new SubnetNode[]{new SubnetNode(newSubnet)});
+                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_CREATED"));
             }
-            
-            
-            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
-                    java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_CREATED"));
         }
-    }
-    
-
-    
+    }    
 }

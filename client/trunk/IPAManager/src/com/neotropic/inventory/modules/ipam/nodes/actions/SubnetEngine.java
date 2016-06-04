@@ -27,7 +27,7 @@ public class SubnetEngine {
     public SubnetEngine() {
         ipAddress = "";
         mapSubnets = new HashMap();
-        subnets = new ArrayList<String>();
+        subnets = new ArrayList<>();
     }
     
     public void calculateSubnets(String ipCIDR){
@@ -159,12 +159,12 @@ public class SubnetEngine {
         return segments;
     }
         
-    public void calculateNumberOfHosts(){
+    public int calculateNumberOfHosts(){
         int n = 32-maskBits;
-        numberOfHosts = (int)(Math.pow(2, n)-2);
+        return (int)(Math.pow(2, n)-2);
     }
     
-    public boolean isIPAddress(String ipAddress){
+    public static boolean isIPAddress(String ipAddress){
         String ipv4Regex = "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/([0-9]|[1-2][0-9]|3[0-2]))$";
         String ipv6Regex = "^s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:)))(%.+)?s*(\\/(d|dd|1[0-1]d|12[0-8]))$";
         Pattern ipv4Pattern = Pattern.compile(ipv4Regex);
@@ -174,7 +174,7 @@ public class SubnetEngine {
         return ipv4.matches() || ipv6.matches();
     }
     
-    public boolean isHostname(String hostname){
+    public static boolean isHostname(String hostname){
         String hostnameRegex = "^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9-]*[a-zA-Z0-9]).)*([A-Za-z]|[A-Za-z][A-Za-z0-9-]*[A-Za-z0-9])$";
         Pattern hostnamePattern = Pattern.compile(hostnameRegex);
         Matcher mhostname = hostnamePattern.matcher(hostname);

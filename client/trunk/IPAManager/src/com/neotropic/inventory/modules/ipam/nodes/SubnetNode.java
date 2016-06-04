@@ -20,7 +20,6 @@ import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
 import com.neotropic.inventory.modules.ipam.nodes.actions.CreateSubnetAction;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
-import org.openide.nodes.Children;
 import org.openide.nodes.Sheet;
 import org.openide.util.ImageUtilities;
 
@@ -35,8 +34,9 @@ public class SubnetNode extends ObjectNode{
     
     private LocalObjectLight subnet;
 
-    public SubnetNode(LocalObjectLight lol) {
-        super(lol);
+    public SubnetNode(LocalObjectLight subnet) {
+        super(subnet);
+        this.subnet = subnet;
     }
     
     @Override
@@ -63,6 +63,11 @@ public class SubnetNode extends ObjectNode{
     @Override
     protected Sheet createSheet(){
         return Sheet.createDefault();
+    }
+    
+    @Override
+    public boolean canRename() {
+        return false;
     }
 
     public LocalObjectLight getSubnet() {
