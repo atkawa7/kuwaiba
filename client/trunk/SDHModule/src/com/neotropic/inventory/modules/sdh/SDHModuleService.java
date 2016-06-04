@@ -33,10 +33,29 @@ public class SDHModuleService {
      */
     public static String CLASS_GENERICEQUIPMENT = "GenericCommunicationsElement";
     /**
+     * Root of all SDH (and over SDH) services
+     */
+    public static String CLASS_GENERICSDHSERVICE = "GenericSDHService";
+    /**
+     * Class representing a VC12
+     */
+    public static final String CLASS_VC12 = "VC12";
+    /**
+     * Class representing a VC3
+     */
+    public static final String CLASS_VC3 = "VC3";
+    /**
+     * Class representing a VC4
+     */
+    public static final String CLASS_VC4 = "VC4";
+    /**
      * Root of all transport links
      */
     public static String CLASS_GENERICSDHTRANSPORTLINK = "GenericSDHTransportLink";
-    
+    /**
+     * Root of all transport links
+     */
+    public static String CLASS_GENERICSDHCONTAINERLINK = "GenericSDHContainerLink";
     /**
      * Reference to the currently edited view. If its id is -1 or if it is null, the view is new and unsaved
      */

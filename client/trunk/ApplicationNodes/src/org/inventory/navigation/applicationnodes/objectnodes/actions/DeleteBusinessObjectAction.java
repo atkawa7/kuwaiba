@@ -49,9 +49,9 @@ public final class DeleteBusinessObjectAction extends CallbackSystemAction {
             if (!selectedNodes.hasNext())
                 return;
             
-            ArrayList<String> classNames = new ArrayList<String>();
-            ArrayList<Long> oids = new ArrayList<Long>();
-            HashSet<Node> parents = new HashSet<Node>();
+            ArrayList<String> classNames = new ArrayList<>();
+            ArrayList<Long> oids = new ArrayList<>();
+            HashSet<Node> parents = new HashSet<>();
             
             while (selectedNodes.hasNext()) {
                 ObjectNode selectedNode = (ObjectNode)selectedNodes.next();

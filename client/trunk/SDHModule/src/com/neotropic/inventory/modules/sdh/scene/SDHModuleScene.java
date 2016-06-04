@@ -308,6 +308,8 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
                     fireChangeEvent(new ActionEvent(this, SCENE_CHANGE, "attachEdge")); //NOI18N
                 }
             }
+            validate();
+            repaint();
         }
     }
 }
