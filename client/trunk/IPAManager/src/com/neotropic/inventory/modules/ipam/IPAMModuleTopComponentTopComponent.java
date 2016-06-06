@@ -18,6 +18,7 @@ import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.explorer.ExplorerManager;
+import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
 import org.openide.nodes.Node;
 import org.openide.windows.TopComponent;
@@ -62,6 +63,7 @@ public final class IPAMModuleTopComponentTopComponent extends TopComponent imple
 
     public void initCustomComponents(){
         ipams = new IPAMModuleService(this);
+        associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
         treeView = new BeanTreeView();
         treeView.setRootVisible(false);
         add(treeView);
