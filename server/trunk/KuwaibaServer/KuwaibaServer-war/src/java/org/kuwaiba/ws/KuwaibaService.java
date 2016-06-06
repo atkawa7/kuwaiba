@@ -26,7 +26,6 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
 import org.kuwaiba.beans.WebserviceBeanRemote;
 import org.kuwaiba.exceptions.ServerSideException;
@@ -3169,20 +3168,55 @@ public class KuwaibaService {
         // </editor-fold>    
     
         // <editor-fold defaultstate="collapsed" desc="IPAM Module"> 
-    @WebMethod(operationName = "getDefaultIPAMRootNodes")
-    public RemoteObjectLight[] getDefaultIPAMRootNodes(
-            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
-        try {
-            return wsBean.getDefaultIPAMRootNodes(getIPAddress(), sessionId);
+    
+    /**
+     * Retrieves all the subnet pools
+     * @param limit limit
+     * @param parentId parent id
+     * @param sessionId the session id
+     * @return a set of subnet pools
+     * @throws Exception 
+     */
+    @WebMethod(operationName = "getSubnetPools")
+    public RemoteObjectLight[] getSubnetPools(@WebParam(name = "limit")
+            int limit, @WebParam(name = "parentId") long parentId,
+            @WebParam(name = "sessionId") String sessionId) throws Exception{
+        try{
+            return wsBean.getSubnetPools(limit, parentId, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in getDefaultIPAMRootNodes: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in getSubnetPools: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
     }
+    
+    /**
+     * Retrieves the subnets of a same pool of subnets
+     * @param poolId subnet pool id
+     * @param limit limit of returned subnets
+     * @param sessionId
+     * @return a set of subnets
+     * @throws Exception 
+     */
+    @WebMethod(operationName = "getSubnets")
+    public RemoteObjectLight[] getSubnets(@WebParam(name = "poolId")long poolId,
+            @WebParam(name = "limit")int limit,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            return wsBean.getSubnets(poolId, limit, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getSubnets: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
     /**
      * Create a pool of subnets
      * @param parentId
@@ -3211,8 +3245,71 @@ public class KuwaibaService {
             }
         }
     }
+    
+    @WebMethod(operationName = "createSubnet")
+    public long createSubnet(@WebParam(name = "poolId")long poolId,
+            @WebParam(name = "attributeNames")String[] attributeNames,
+            @WebParam(name = "attributeValues")String[][] attributeValues,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            return wsBean.createSubnet(poolId, attributeNames, attributeValues, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createSubnet: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Deletes a set of subnet pools
+     * @param ids Pools to be deleted
+     * @param sessionId Session identifier
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "deleteSubnetPools")
+    public void deleteSubnetPools(@WebParam(name = "ids")long[] ids,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            wsBean.deleteSubnetPools(ids, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteSubnetPools: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+     /**
+     * Delete a set of subnets. Note that this method must be used only for Subnet objects
+     * @param oids object id from the objects to be deleted
+     * @param releaseRelationships Should the deletion be forced, deleting all the relationships?
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "deleteSubnets")
+    public void deleteSubnets(
+            @WebParam(name = "oid")long[] oids,
+            @WebParam(name = "releaseRelationships") boolean releaseRelationships,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            wsBean.deleteSubnets(oids, releaseRelationships, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteSubnets: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
         //</editor-fold>
     // </editor-fold>
+    
     // <editor-fold defaultstate="collapsed" desc="Helpers. Click on the + sign on the left to edit the code.">/**
     /**
      * Gets the IP address from the client issuing the request
