@@ -567,7 +567,8 @@ public interface WebserviceBeanRemote {
      */
     public byte[] downloadBulkLoadLog(String fileName, String ipAddress, String sessionId) throws ServerSideException;
     // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="Commercial modules data methods">
+    
+// <editor-fold defaultstate="collapsed" desc="Commercial modules data methods">
         // <editor-fold defaultstate="collapsed" desc="SDH Networks Module">
     public long createSDHTransportLink(String classNameEndpointA, long idEndpointA, 
             String classNameEndpointB, long idEndpointB, String linkType, String defaultName, String ipAddress, String sessionId) throws ServerSideException;
@@ -598,13 +599,16 @@ public interface WebserviceBeanRemote {
         // </editor-fold>   
     
         // <editor-fold defaultstate="collapsed" desc="IP Administration manager module">
-        public RemoteObjectLight[] getDefaultIPAMRootNodes(String ipAddress, String sessionId) throws ServerSideException;
+        public RemoteObjectLight[] getSubnetPools(int limit, long parentId, String ipAddress, String sessionId) throws ServerSideException;
+        public RemoteObjectLight[] getSubnets(long poolId, int limit, String ipAddress, String sessionId) throws ServerSideException;
         public long createPoolofSubnets(long parentId, String subnetPoolName, 
                 String subnetPoolDescription, int type, String ipAddress, 
                 String sessionId) throws ServerSideException;
-        public long createSubnet() throws ServerSideException;
+        public long createSubnet(long poolId, String attributeNames[], 
+            String attributeValues[][], String ipAddress, String sessionId) throws ServerSideException;
         public void updateSubnet() throws ServerSideException;
-        public void deleteSubnet() throws ServerSideException;
+        public void deleteSubnets(long[] ids, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
+        public void deleteSubnetPools(long[] ids, String ipAddress, String sessionId) throws ServerSideException;
         public void relateIP() throws ServerSideException;
         public void releaseIP() throws ServerSideException;
         // </editor-fold>

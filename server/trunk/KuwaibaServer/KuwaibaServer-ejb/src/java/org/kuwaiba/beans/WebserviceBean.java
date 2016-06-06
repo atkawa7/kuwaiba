@@ -2096,26 +2096,13 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
         // </editor-fold>    
     
-    // <editor-fold defaultstate="collapsed" desc="IP Administration Manager Module">
+        // <editor-fold defaultstate="collapsed" desc="IP Administration Manager Module">
     @Override
-    public RemoteObjectLight[] getDefaultIPAMRootNodes(String ipAddress, String sessionId) throws ServerSideException{
+    public RemoteObjectLight[] getSubnetPools(int limit, long parentId, String ipAddress, String sessionId) throws ServerSideException{
         try {
             aem.validateCall("createFolder", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            return RemoteObjectLight.toRemoteObjectLightArray(ipamModule.getDefaultIPAMRootNodes());
-            
-        } catch (InventoryException ex) {
-            throw new ServerSideException(ex.getMessage());
-        }
-    }
-    @Override
-    public long createPoolofSubnets(long parentId, String subnetPoolName, 
-            String subnetPoolDescription, int type, String ipAddress, 
-            String sessionId) throws ServerSideException{
-        try {
-            aem.validateCall("createFolder", ipAddress, sessionId);
-            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            return ipamModule.createPoolofSubnets(parentId, subnetPoolName, subnetPoolDescription, type);
+            return RemoteObjectLight.toRemoteObjectLightArray(ipamModule.getSubnetPools(limit, parentId));
             
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -2123,16 +2110,70 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
     
     @Override
-    public long createSubnet() throws ServerSideException{
-        return 0;
+    public RemoteObjectLight[] getSubnets(long poolId, int limit, String ipAddress, String sessionId) throws ServerSideException{
+        try {
+            aem.validateCall("createFolder", ipAddress, sessionId);
+            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+            return RemoteObjectLight.toRemoteObjectLightArray(ipamModule.getSubnets(limit, poolId));
+            
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
     }
-
+    
+    @Override
+    public long createPoolofSubnets(long parentId, String subnetPoolName, 
+            String subnetPoolDescription, int type, String ipAddress, 
+            String sessionId) throws ServerSideException{
+        try {
+            aem.validateCall("createPoolofSubnets", ipAddress, sessionId);
+            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+            return ipamModule.createSubnetsPool(parentId, subnetPoolName, subnetPoolDescription, type);
+            
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public long createSubnet(long poolId, String attributeNames[], 
+            String attributeValues[][], String ipAddress, String sessionId) throws ServerSideException{
+        try {
+            aem.validateCall("CreateSubnet", ipAddress, sessionId);
+            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+            return ipamModule.createSubnet(poolId, attributeNames, attributeValues);
+        } catch (InventoryException ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
     @Override
     public void updateSubnet() throws ServerSideException{
     }
 
     @Override
-    public void deleteSubnet() throws ServerSideException{
+    public void deleteSubnets(long[] ids, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException{
+        try {
+            aem.validateCall("DeleteSubnet", ipAddress, sessionId);
+            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+            ipamModule.deleteSubnets(ids, releaseRelationships);
+        } catch (InventoryException ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void deleteSubnetPools(long[] ids, String ipAddress, String sessionId) throws ServerSideException{
+        try {
+            aem.validateCall("deleteSubnetPools", ipAddress, sessionId);
+            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+            ipamModule.deleteSubnetPools(ids);
+        } catch (InventoryException ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(ex.getMessage());
+        }
     }
 
     @Override
@@ -2145,8 +2186,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
         // </editor-fold>
     // </editor-fold>
     
-    
-
     // <editor-fold defaultstate="collapsed" desc="Helper methods. Click on the + sign on the left to edit the code.">
     protected final void connect(){
         try {

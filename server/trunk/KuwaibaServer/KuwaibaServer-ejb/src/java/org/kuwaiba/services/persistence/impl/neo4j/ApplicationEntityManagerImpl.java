@@ -1210,8 +1210,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             Node parentNode = null;
             if (parentId != -1){
                 parentNode = poolsIndex.get(Constants.PROPERTY_ID, parentId).getSingle();
-                if (parentNode == null)
-                    throw new ObjectNotFoundException("N/A", parentId);
+                if (parentNode == null){
+                    parentNode = objectIndex.get(Constants.PROPERTY_ID, parentId).getSingle();
+                    if (parentNode == null)
+                        throw new ObjectNotFoundException("N/A", parentId);
+                }
             }
             
             Node poolNode =  graphDb.createNode();

@@ -257,7 +257,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     @Override
     public long createPoolItem(long poolId, String className, String[] attributeNames, 
     String[][] attributeValues, long templateId) 
-            throws ApplicationObjectNotFoundException, InvalidArgumentException, ArraySizeMismatchException, MetadataObjectNotFoundException, NotAuthorizedException {
+            throws ApplicationObjectNotFoundException, InvalidArgumentException, 
+            ArraySizeMismatchException, MetadataObjectNotFoundException, NotAuthorizedException {
         
         if (attributeNames != null && attributeValues != null){
             if (attributeNames.length != attributeValues.length)

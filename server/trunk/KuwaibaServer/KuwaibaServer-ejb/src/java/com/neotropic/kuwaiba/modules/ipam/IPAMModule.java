@@ -6,17 +6,20 @@
 package com.neotropic.kuwaiba.modules.ipam;
 
 import com.neotropic.kuwaiba.modules.GenericCommercialModule;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.services.persistence.util.Constants;
@@ -121,30 +124,46 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws ObjectNotFoundException
      * @throws NotAuthorizedException 
      */
-    public long createPoolofSubnets(long parentId, String subnetPoolName, String subnetPoolDescription, int type) throws ServerSideException, MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException, NotAuthorizedException{
+    public long createSubnetsPool(long parentId, String subnetPoolName, String subnetPoolDescription, int type) throws ServerSideException, MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException, NotAuthorizedException{
         if (aem == null)
            throw new ServerSideException("Can't reach the backend. Contact your administrator");
 
         return aem.createPool(parentId, subnetPoolName, subnetPoolDescription, Constants.CLASS_SUBNET);
     }
     
-    public List<RemoteBusinessObjectLight> getSubnetPools(long parentId, String className) throws NotAuthorizedException, ObjectNotFoundException{
-        return aem.getPools(-1, parentId, className);
+    public List<RemoteBusinessObjectLight> getSubnetPools(int limit, long parentId) throws NotAuthorizedException, ObjectNotFoundException{
+        return aem.getPools(limit, parentId, Constants.CLASS_SUBNET);
     }
    
-    public List<RemoteBusinessObjectLight> getSubnets(long subnetPoolId) throws ApplicationObjectNotFoundException, NotAuthorizedException{
-        return aem.getPoolItems(subnetPoolId, -1);
+    public List<RemoteBusinessObjectLight> getSubnets(int limit, long subnetPoolId) throws ApplicationObjectNotFoundException, NotAuthorizedException{
+        return aem.getPoolItems(subnetPoolId, limit);
     }
     
-    private void createSubnet(String CIDR, HashMap<String,List<String>> attributes){
+    public long createSubnet(long parentId, String[] attributeNames, 
+            String[][] attributeValues) throws ApplicationObjectNotFoundException, 
+            InvalidArgumentException, ArraySizeMismatchException, NotAuthorizedException, 
+            MetadataObjectNotFoundException
+    {
+        return bem.createPoolItem(parentId, Constants.CLASS_SUBNET, attributeNames, attributeValues, 0);
+
     }
-    private void updateSubnet(long subnetId, HashMap<String,List<String>> attributes){
+    private void updateSubnet(long subnetId, String[] attributeNames, 
+            String[][] attributeValues){
     }
-    private void deleteSubnet(long[] subnetsId){
+    public void deleteSubnets(long[] ids, boolean releaseRelationships) throws ObjectNotFoundException, 
+            MetadataObjectNotFoundException, OperationNotPermittedException, NotAuthorizedException
+    {
+        if(ids != null)
+            bem.deleteObject(Constants.CLASS_SUBNET, ids[0], releaseRelationships);
     }
+    
+    public void deleteSubnetPools(long[] subnetsId) throws InvalidArgumentException, OperationNotPermittedException, NotAuthorizedException{
+        aem.deletePools(subnetsId);
+    }
+    
     private void relateIP(String IP, long deviceId){
+        
     }
     private void releaseIP(long deviceId){
     }
-    
 }
