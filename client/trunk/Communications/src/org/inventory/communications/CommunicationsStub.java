@@ -1160,12 +1160,12 @@ public class CommunicationsStub {
                 String[] linksClassNames, Long[] linksIds, String[] sideBClassNames, 
                 Long[] sideBIds) {
         try{
-            List<String> sideAClassNamesList = new ArrayList<String>();
-            List<String> linksClassNamesList = new ArrayList<String>();
-            List<String> sideBClassNamesList = new ArrayList<String>();
-            List<Long> sideAIdsList = new ArrayList<Long>();
-            List<Long> linksIdsList = new ArrayList<Long>();
-            List<Long> sideBIdsList = new ArrayList<Long>();
+            List<String> sideAClassNamesList = new ArrayList<>();
+            List<String> linksClassNamesList = new ArrayList<>();
+            List<String> sideBClassNamesList = new ArrayList<>();
+            List<Long> sideAIdsList = new ArrayList<>();
+            List<Long> linksIdsList = new ArrayList<>();
+            List<Long> sideBIdsList = new ArrayList<>();
             sideAClassNamesList.addAll(Arrays.asList(sideAClassNames));
             linksClassNamesList.addAll(Arrays.asList(linksClassNames));
             sideBClassNamesList.addAll(Arrays.asList(sideBClassNames));
@@ -1184,8 +1184,8 @@ public class CommunicationsStub {
     //Service Manager
     public boolean associateObjectsToService(String[] objectClass, Long [] objectId, String serviceClass, long serviceId){
         try{
-            List<String> objectsClassList = new ArrayList<String>();
-            List<Long> objectsIdList = new ArrayList<Long>();
+            List<String> objectsClassList = new ArrayList<>();
+            List<Long> objectsIdList = new ArrayList<>();
             objectsClassList.addAll(Arrays.asList(objectClass));
             objectsIdList.addAll(Arrays.asList(objectId));
             service.associateObjectsToService(objectsClassList, objectsIdList, serviceClass, serviceId, session.getSessionId());
@@ -2036,9 +2036,9 @@ public class CommunicationsStub {
         }
     }
     
-    public List<LocalObjectLight> getDefaultIPAMRootNodes(){
+    public List<LocalObjectLight> getSubnetPools(long parentId){
         try{
-            List <RemoteObjectLight> poolRoots = service.getDefaultIPAMRootNodes(this.session.getSessionId());
+            List <RemoteObjectLight> poolRoots = service.getSubnetPools(-1, parentId, this.session.getSessionId());
             List <LocalObjectLight> res = new ArrayList<>();
             
             for (RemoteObjectLight rol : poolRoots){
@@ -2053,7 +2053,27 @@ public class CommunicationsStub {
             return null;
         }
     }
-     public LocalObjectLight createPoolofSubnets(long parentId, String subnetPoolName, 
+    
+    public List<LocalObjectLight> getSubnets(long oid) {
+        try {
+            List<RemoteObjectLight> items = service.getSubnets(oid, -1, this.session.getSessionId());
+            List<LocalObjectLight> res = new ArrayList<>();
+
+            for (RemoteObjectLight rol : items) {
+                HashMap<String, Integer> validators = new HashMap<>();
+                for (Validator validator : rol.getValidators())
+                    validators.put(validator.getLabel(), validator.getValue());
+                res.add(new LocalObjectLight(rol.getClassName(), rol.getName(), rol.getOid(), validators));
+            }
+
+            return res;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    public LocalObjectLight createPoolofSubnets(long parentId, String subnetPoolName, 
             String subnetPoolDescription, int type) {
          try{
              long objectId = service.createPoolofSubnets(parentId, subnetPoolName, subnetPoolDescription, type, this.session.getSessionId());
@@ -2062,7 +2082,51 @@ public class CommunicationsStub {
             this.error = ex.getMessage();
             return null;
         }
-     }
+    }
+    
+    public boolean deleteSubnet(List<Long> oids){
+        try{
+            service.deleteSubnets(oids, false, this.session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    public boolean deleteSubnetPool(long id){
+        try{
+            service.deleteSubnetPools(Arrays.asList(id), this.session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+        
+    public LocalObjectLight createSubnet(long poolId, LocalObject obj){
+        try {
+            List<String> attributeNames = new ArrayList<>();
+            List<StringArray> attributeValues = new ArrayList<>();
+
+            for (String key : obj.getAttributes().keySet()){
+                StringArray value = new StringArray();
+                attributeNames.add(key);
+                if (obj.getAttribute(key) instanceof List){
+                    for (long itemId : (List<Long>)obj.getAttribute(key))
+                        value.getItem().add(String.valueOf(itemId));
+                }else
+                    value.getItem().add(obj.getAttribute(key).toString());
+                attributeValues.add(value);
+            }
+            
+            long objectId  = service.createSubnet(poolId, attributeNames, attributeValues, this.session.getSessionId());
+            return new LocalObjectLight(objectId, obj.getName(), Constants.CLASS_SUBNET);
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Sync/bulk load data methods. Click on the + sign on the left to edit the code.">
@@ -2204,7 +2268,6 @@ public class CommunicationsStub {
             return null;
         }
     }
-    
     public List<LocalSDHContainerLinkDefinition> getSDHContainerLinkStructure(String containerLinkClass, long containerLinkId) {
         try {
             List<SdhContainerLinkDefinition> containerLinkStructure = service.getSDHContainerLinkStructure(containerLinkClass, containerLinkId, session.getSessionId());

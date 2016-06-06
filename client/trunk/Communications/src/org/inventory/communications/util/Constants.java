@@ -221,6 +221,18 @@ public class Constants {
      */
     public static final String PROPERTY_POSITION = "position";
     /**
+     * Property network IP  in a subnet
+     */
+    public static final String PROPERTY_NETWORKIP = "networkIp";
+    /**
+     * Property broadcast IP in a subnet
+     */
+    public static final String PROPERTY_BROADCASTIP = "broadcastIp";
+    /**
+     * Property maximum number of hosts in a subnet
+     */
+    public static final String PROPERTY_HOSTS = "hosts";
+    /**
      * Generic classes
      */
     public static final String CLASS_GENERICCONNECTION="GenericConnection";
