@@ -94,6 +94,10 @@
 
 <xs:element name="createPoolResponse" type="tns:createPoolResponse"/>
 
+<xs:element name="createPoolofSubnets" type="tns:createPoolofSubnets"/>
+
+<xs:element name="createPoolofSubnetsResponse" type="tns:createPoolofSubnetsResponse"/>
+
 <xs:element name="createQuery" type="tns:createQuery"/>
 
 <xs:element name="createQueryResponse" type="tns:createQueryResponse"/>
@@ -121,6 +125,10 @@
 <xs:element name="createSpecialObject" type="tns:createSpecialObject"/>
 
 <xs:element name="createSpecialObjectResponse" type="tns:createSpecialObjectResponse"/>
+
+<xs:element name="createSubnet" type="tns:createSubnet"/>
+
+<xs:element name="createSubnetResponse" type="tns:createSubnetResponse"/>
 
 <xs:element name="createUser" type="tns:createUser"/>
 
@@ -181,6 +189,14 @@
 <xs:element name="deleteSDHTributaryLink" type="tns:deleteSDHTributaryLink"/>
 
 <xs:element name="deleteSDHTributaryLinkResponse" type="tns:deleteSDHTributaryLinkResponse"/>
+
+<xs:element name="deleteSubnetPools" type="tns:deleteSubnetPools"/>
+
+<xs:element name="deleteSubnetPoolsResponse" type="tns:deleteSubnetPoolsResponse"/>
+
+<xs:element name="deleteSubnets" type="tns:deleteSubnets"/>
+
+<xs:element name="deleteSubnetsResponse" type="tns:deleteSubnetsResponse"/>
 
 <xs:element name="deleteUsers" type="tns:deleteUsers"/>
 
@@ -322,9 +338,13 @@
 
 <xs:element name="getPhysicalPathResponse" type="tns:getPhysicalPathResponse"/>
 
+<xs:element name="getPool" type="tns:getPool"/>
+
 <xs:element name="getPoolItems" type="tns:getPoolItems"/>
 
 <xs:element name="getPoolItemsResponse" type="tns:getPoolItemsResponse"/>
+
+<xs:element name="getPoolResponse" type="tns:getPoolResponse"/>
 
 <xs:element name="getPools" type="tns:getPools"/>
 
@@ -389,6 +409,14 @@
 <xs:element name="getSubClassesLightNoRecursiveResponse" type="tns:getSubClassesLightNoRecursiveResponse"/>
 
 <xs:element name="getSubClassesLightResponse" type="tns:getSubClassesLightResponse"/>
+
+<xs:element name="getSubnetPools" type="tns:getSubnetPools"/>
+
+<xs:element name="getSubnetPoolsResponse" type="tns:getSubnetPoolsResponse"/>
+
+<xs:element name="getSubnets" type="tns:getSubnets"/>
+
+<xs:element name="getSubnetsResponse" type="tns:getSubnetsResponse"/>
 
 <xs:element name="getUpstreamContainmentHierarchy" type="tns:getUpstreamContainmentHierarchy"/>
 
@@ -664,18 +692,6 @@
 <xs:sequence/>
 </xs:complexType>
 
-<xs:complexType name="deletePhysicalConnection">
-<xs:sequence>
-<xs:element name="objectClass" type="xs:string" minOccurs="0"/>
-<xs:element name="objectId" type="xs:long"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="deletePhysicalConnectionResponse">
-<xs:sequence/>
-</xs:complexType>
-
 <xs:complexType name="copyObjects">
 <xs:sequence>
 <xs:element name="targetClass" type="xs:string" minOccurs="0"/>
@@ -690,6 +706,34 @@
 <xs:complexType name="copyObjectsResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deletePhysicalConnection">
+<xs:sequence>
+<xs:element name="objectClass" type="xs:string" minOccurs="0"/>
+<xs:element name="objectId" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deletePhysicalConnectionResponse">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="createPoolofSubnets">
+<xs:sequence>
+<xs:element name="parentId" type="xs:long"/>
+<xs:element name="subnetPoolName" type="xs:string" minOccurs="0"/>
+<xs:element name="subnetPoolDescription" type="xs:string" minOccurs="0"/>
+<xs:element name="type" type="xs:int"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createPoolofSubnetsResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:long"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -1067,6 +1111,20 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="getSubnetPools">
+<xs:sequence>
+<xs:element name="limit" type="xs:int"/>
+<xs:element name="parentId" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getSubnetPoolsResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="updateObject">
 <xs:sequence>
 <xs:element name="className" type="xs:string" minOccurs="0"/>
@@ -1298,6 +1356,18 @@
 <xs:sequence>
 <xs:element name="return" type="tns:classInfoLight" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteSubnets">
+<xs:sequence>
+<xs:element name="oid" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="releaseRelationships" type="xs:boolean"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteSubnetsResponse">
+<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="getServiceResources">
@@ -1711,6 +1781,21 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="getPool">
+<xs:sequence>
+<xs:element name="parentId" type="xs:long"/>
+<xs:element name="poolId" type="xs:long"/>
+<xs:element name="poolName" type="xs:string" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getPoolResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObjectLight" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="createBulkPhysicalConnections">
 <xs:sequence>
 <xs:element name="connectionClass" type="xs:string" minOccurs="0"/>
@@ -1754,6 +1839,17 @@
 <xs:sequence>
 <xs:element name="return" type="xs:long"/>
 </xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteSubnetPools">
+<xs:sequence>
+<xs:element name="ids" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteSubnetPoolsResponse">
+<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="getClassHierarchy">
@@ -2241,6 +2337,35 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="getSubnets">
+<xs:sequence>
+<xs:element name="poolId" type="xs:long"/>
+<xs:element name="limit" type="xs:int"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getSubnetsResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createSubnet">
+<xs:sequence>
+<xs:element name="poolId" type="xs:long"/>
+<xs:element name="attributeNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="attributeValues" type="ns1:stringArray" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createSubnetResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:long"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="createAttribute">
 <xs:sequence>
 <xs:element name="className" type="xs:string" minOccurs="0"/>
@@ -2290,22 +2415,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="createQuery">
-<xs:sequence>
-<xs:element name="queryName" type="xs:string" minOccurs="0"/>
-<xs:element name="ownerOid" type="xs:long"/>
-<xs:element name="queryStructure" type="xs:base64Binary" nillable="true" minOccurs="0"/>
-<xs:element name="description" type="xs:string" minOccurs="0"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="createQueryResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:long"/>
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="createAttributeForClassWithId">
 <xs:sequence>
 <xs:element name="classId" type="xs:long"/>
@@ -2324,6 +2433,22 @@
 
 <xs:complexType name="createAttributeForClassWithIdResponse">
 <xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="createQuery">
+<xs:sequence>
+<xs:element name="queryName" type="xs:string" minOccurs="0"/>
+<xs:element name="ownerOid" type="xs:long"/>
+<xs:element name="queryStructure" type="xs:base64Binary" nillable="true" minOccurs="0"/>
+<xs:element name="description" type="xs:string" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createQueryResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:long"/>
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="addPossibleChildrenForClassWithId">

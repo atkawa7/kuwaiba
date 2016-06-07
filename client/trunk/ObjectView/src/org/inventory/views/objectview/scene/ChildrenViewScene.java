@@ -33,6 +33,7 @@ import org.inventory.core.visual.actions.CustomAddRemoveControlPointAction;
 import org.inventory.core.visual.actions.CustomMoveAction;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
+import org.netbeans.api.visual.action.PopupMenuProvider;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.router.RouterFactory;
 import org.netbeans.api.visual.widget.LayerWidget;
@@ -62,6 +63,10 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
      * Default move widget action (shared by all connection widgets)
      */
     private CustomMoveAction moveAction = new CustomMoveAction(this);
+    /**
+     * Popup provider for all nodes and connections
+     */
+    private PopupMenuProvider defaultPopupMenuProvider;
     
     
     public ChildrenViewScene () {

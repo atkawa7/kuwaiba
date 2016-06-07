@@ -28,7 +28,6 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.communications.util.Utils;
 import org.netbeans.api.visual.action.ConnectProvider;
-import org.netbeans.api.visual.action.PopupMenuProvider;
 import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.model.ObjectSceneEvent;
 import org.netbeans.api.visual.model.ObjectSceneEventType;
@@ -101,10 +100,6 @@ public abstract class AbstractScene<N, E> extends GraphScene<N, E> {
      * Used to hold misc messages
      */
     protected LayerWidget labelsLayer;
-    /**
-     * Shared popup menu for widgets
-     */
-    protected PopupMenuProvider defaultPopupMenuProvider;
     /**
      * Scene lookup
      */

@@ -2292,5 +2292,34 @@ public class CommunicationsStub {
         }
     }
     
+    public boolean deleteSDHTransportLink(String transportLinkClass, long transportLinkId) {
+        try {
+            service.deleteSDHTransportLink(transportLinkClass, transportLinkId, true, session.getSessionId());
+            return true;
+        } catch (ServerSideException_Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    public boolean deleteSDHContainerLink(String containerLinkClass, long containerLinkId) {
+        try {
+            service.deleteSDHContainerLink(containerLinkClass, containerLinkId, true, session.getSessionId());
+            return true;
+        } catch (ServerSideException_Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    public boolean deleteSDHTributaryLink(String tributaryLinkClass, long tributaryLinkId) {
+        try {
+            service.deleteSDHTributaryLink(tributaryLinkClass, tributaryLinkId, true, session.getSessionId());
+            return true;
+        } catch (ServerSideException_Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
     // </editor-fold>
 }

@@ -35,6 +35,7 @@ import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.core.visual.scene.PhysicalConnectionProvider;
 import org.inventory.views.gis.scene.providers.AcceptActionProvider;
 import org.netbeans.api.visual.action.ActionFactory;
+import org.netbeans.api.visual.action.PopupMenuProvider;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.router.RouterFactory;
 import org.netbeans.api.visual.widget.ComponentWidget;
@@ -91,7 +92,11 @@ public class GISViewScene extends AbstractScene<LocalObjectLight, LocalObjectLig
     /**
      * Local connect provider
      */
-    private PhysicalConnectionProvider connectionProvider; 
+    private PhysicalConnectionProvider connectionProvider;
+    /**
+     * Popup provider for all nodes and connections
+     */
+    private PopupMenuProvider defaultPopupMenuProvider;
 
     public GISViewScene(JMapViewer map) {
         super();

@@ -10,6 +10,7 @@
  */
 package com.neotropic.inventory.modules.sdh.scene;
 
+import com.neotropic.inventory.modules.sdh.actions.SDHModuleActions;
 import com.neotropic.inventory.modules.sdh.wizard.SDHConnectionWizard;
 import com.ociweb.xml.StartTagWAX;
 import com.ociweb.xml.WAX;
@@ -82,12 +83,18 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
      * Custom select provider
      */
     private WidgetAction selectAction;
+    /**
+     * Reference to the action factory used to assign actions to the nodes and connections
+     */
+    private SDHModuleActions moduleActions;
 
     public SDHModuleScene() {
         getActions().addAction(ActionFactory.createAcceptAction(new CustomAcceptActionProvider(this, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT)));
 
         nodeLayer = new LayerWidget(this);
         edgeLayer = new LayerWidget(this);
+        
+        moduleActions = new SDHModuleActions(this);
         
         addChild(edgeLayer);
         addChild(nodeLayer);
@@ -105,8 +112,9 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
         nodeLayer.addChild(newNode);
         newNode.getActions(ACTION_SELECT).addAction(selectAction);
         newNode.getActions(ACTION_SELECT).addAction(ActionFactory.createMoveAction(moveProvider, moveProvider));
-        newNode.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(edgeLayer, connectProvider));
         newNode.getActions(ACTION_CONNECT).addAction(selectAction);
+        newNode.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(edgeLayer, connectProvider));
+        newNode.getActions().addAction(ActionFactory.createPopupMenuAction(moduleActions.createMenuForNode()));
         return newNode;
     }
 
@@ -120,6 +128,7 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
         newEdge.setControlPointShape(PointShape.SQUARE_FILLED_BIG);
         newEdge.setEndPointShape(PointShape.SQUARE_FILLED_BIG);
         newEdge.setRouter(RouterFactory.createFreeRouter());
+        newEdge.getActions().addAction(ActionFactory.createPopupMenuAction(moduleActions.createMenuForConnection()));
         edgeLayer.addChild(newEdge);
         return newEdge;
     }

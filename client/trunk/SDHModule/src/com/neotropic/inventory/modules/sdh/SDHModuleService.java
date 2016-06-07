@@ -132,4 +132,30 @@ public class SDHModuleService {
         NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         return false;
     }
+    
+    /**
+     * Calculates a link capacity based on the class name
+     * @param connectionClass The class of the link to be evaluated
+     * @param linkType 1 for transport links (whose prefix must always be STM) and 2 for container links (whose prefix must always be VC4)
+     * @return The maximum number of timeslots in a container or transport link
+     */
+    public static int calculateCapacity(String connectionClass, LinkType linkType) {
+        switch (linkType) {
+            case TYPE_TRANSPORTLINK:
+                String positionsToBeOccupied = connectionClass.replace("STM", "");
+                return Integer.valueOf(positionsToBeOccupied);
+            case TYPE_CONTAINERLINK:
+                positionsToBeOccupied = connectionClass.replace("VC4", "");
+                if (!positionsToBeOccupied.isEmpty())
+                    return Math.abs(Integer.valueOf(positionsToBeOccupied));
+                return 1;
+            default: //Should not happened
+                throw new IllegalArgumentException("Invalid link type");
+        }
+    }
+    
+    public enum LinkType{
+        TYPE_TRANSPORTLINK,
+        TYPE_CONTAINERLINK
+    }
 }

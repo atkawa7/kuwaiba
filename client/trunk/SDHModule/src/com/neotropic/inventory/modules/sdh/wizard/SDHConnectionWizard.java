@@ -473,10 +473,7 @@ public class SDHConnectionWizard {
                         //First we need to check if the selected container can fit into the transportlink, that is, if there are
                         //enough contiguous positions if the container is a concatenated one
                         try {
-                            int numberOfPositionsToBeOccupied = 1;
-                            String positionsToBeOccupied = connectionType.getClassName().replace("VC4", "");
-                            if (!positionsToBeOccupied.isEmpty())
-                                numberOfPositionsToBeOccupied = Math.abs(Integer.valueOf(positionsToBeOccupied));
+                            int numberOfPositionsToBeOccupied = SDHModuleService.calculateCapacity(connectionType.getClassName(), SDHModuleService.LinkType.TYPE_CONTAINERLINK);
                             
                             if (numberOfPositions - selectedIndex < numberOfPositionsToBeOccupied)
                                 JOptionPane.showMessageDialog(null, "There are not enough positions to transport the concatenated container", "Error", JOptionPane.ERROR_MESSAGE);
@@ -513,7 +510,7 @@ public class SDHConnectionWizard {
         public AvailablePosition[] buildAvailablePositionsList(LocalObjectLight transportLink, 
                 List<LocalSDHContainerLinkDefinition> transportLinkStructure){
             try {
-                int numberOfVC4 = Integer.valueOf(transportLink.getClassName().replace("STM", "")); //NOI18N
+                int numberOfVC4 = SDHModuleService.calculateCapacity(transportLink.getClassName(), SDHModuleService.LinkType.TYPE_TRANSPORTLINK);
                 AvailablePosition[] availablePositions = new AvailablePosition[numberOfVC4];
                 
                 //First, we fill the positions we know for sure that are being used
