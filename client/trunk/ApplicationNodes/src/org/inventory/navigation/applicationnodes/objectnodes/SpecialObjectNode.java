@@ -24,6 +24,7 @@ import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteBusin
 import org.inventory.navigation.applicationnodes.objectnodes.actions.EditObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.RefreshObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
+import org.openide.actions.OpenLocalExplorerAction;
 import org.openide.util.Lookup;
 import org.openide.util.actions.SystemAction;
 
@@ -34,6 +35,7 @@ import org.openide.util.actions.SystemAction;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class SpecialObjectNode extends ObjectNode {
+    
     public SpecialObjectNode(LocalObjectLight anObject) {
         super(anObject);
         setChildren(new SpecialChildren());
@@ -41,13 +43,14 @@ public class SpecialObjectNode extends ObjectNode {
     
     @Override
     public Action[] getActions(boolean context) {
-        ArrayList<Action> actions = new ArrayList<Action>();
+        ArrayList<Action> actions = new ArrayList<>();
         actions.add(new CreateSpecialBusinessObjectAction(this));
         actions.add(refreshAction == null ? refreshAction = new RefreshObjectAction(this) : refreshAction);
         actions.add(editAction == null ? editAction = new EditObjectAction(this) : editAction);
         actions.add(SystemAction.get(DeleteBusinessObjectAction.class));
+        actions.add(explorerAction);
         actions.add(null); //Separator
-                for (GenericObjectNodeAction action : Lookup.getDefault().lookupAll(GenericObjectNodeAction.class)){
+        for (GenericObjectNodeAction action : Lookup.getDefault().lookupAll(GenericObjectNodeAction.class)){
             if (action.getValidator() == null){
                 action.setObject(object);
                 actions.add(action);

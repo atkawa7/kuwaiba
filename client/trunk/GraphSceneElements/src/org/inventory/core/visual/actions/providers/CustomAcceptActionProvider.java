@@ -59,19 +59,22 @@ public class CustomAcceptActionProvider implements AcceptProvider {
 
     @Override
     public ConnectorState isAcceptable(Widget widget, Point point, Transferable transferable) {
-        if (transferable.isDataFlavorSupported(LocalObjectLight.DATA_FLAVOR)) {
-            if (filterClass == null)
-                return ConnectorState.ACCEPT;
-            try {
-                LocalObjectLight objectToBeDropped = (LocalObjectLight) transferable.getTransferData(LocalObjectLight.DATA_FLAVOR);
-                if (CommunicationsStub.getInstance().isSubclassOf(objectToBeDropped.getClassName(), filterClass))
-                    return ConnectorState.ACCEPT;
-            } catch (UnsupportedFlavorException | IOException ex) {
-                if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_INFO || Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_FINE)
-                    Exceptions.printStackTrace(ex); 
-            }
-        }
-        return ConnectorState.REJECT_AND_STOP;
+        return ConnectorState.ACCEPT;
+//      This will be commented out until we cache properly the data model. This method is called as long as the mouse is over the scene, thus
+//        spawning N calls to the method isSubClassOf
+//        if (transferable.isDataFlavorSupported(LocalObjectLight.DATA_FLAVOR)) {
+//            if (filterClass == null)
+//                return ConnectorState.ACCEPT;
+//            try {
+//                LocalObjectLight objectToBeDropped = (LocalObjectLight) transferable.getTransferData(LocalObjectLight.DATA_FLAVOR);
+//                if (CommunicationsStub.getInstance().isSubclassOf(objectToBeDropped.getClassName(), filterClass))
+//                    return ConnectorState.ACCEPT;
+//            } catch (UnsupportedFlavorException | IOException ex) {
+//                if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_INFO || Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_FINE)
+//                    Exceptions.printStackTrace(ex); 
+//            }
+//        }
+//        return ConnectorState.REJECT_AND_STOP;
     }
 
     @Override
@@ -80,12 +83,19 @@ public class CustomAcceptActionProvider implements AcceptProvider {
             LocalObjectLight droppedObject = (LocalObjectLight) transferable.getTransferData(LocalObjectLight.DATA_FLAVOR);
                 
             if (!scene.isNode(droppedObject)){
-                Widget newNode = scene.addNode(droppedObject);                               
-                scene.validate();
-                newNode.setPreferredLocation(new Point(point.x - newNode.getBounds().width / 2, point.y)); //A position correction is needed
-                                                                                                           //because the widget is positioned using the top left corner, not the center
-                                                                                                           //Since getBounds is called AFTER validating the scene, its value is never null
-                scene.fireChangeEvent(new ActionEvent(this, AbstractScene.SCENE_CHANGE, "attachNode")); //NOI18N
+                
+                if (!CommunicationsStub.getInstance().isSubclassOf(droppedObject.getClassName(), filterClass))
+                    JOptionPane.showMessageDialog(null, "Only GenericCommunicationsElements are allowed in this view", "Information", JOptionPane.INFORMATION_MESSAGE);
+                else {
+                    Widget newNode = scene.addNode(droppedObject); 
+                    //validate is called here, otherwise, the widget won't be able to resolve its bounds and the next line will raise a NullPointerException
+                    scene.validate();
+                    newNode.setPreferredLocation(new Point(point.x - newNode.getBounds().width / 2, point.y)); //A position correction is needed
+                                                                                                               //because the widget is positioned using the top left corner, not the center
+                                                                                                               //Since getBounds is called AFTER validating the scene, its value is never null
+                    scene.fireChangeEvent(new ActionEvent(this, AbstractScene.SCENE_CHANGE, "attachNode")); //NOI18N
+                    
+                }
             } else
                 JOptionPane.showMessageDialog(null, "The view already contains this object", "Error", JOptionPane.ERROR_MESSAGE);
         } catch (UnsupportedFlavorException | IOException ex) {

@@ -216,8 +216,8 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
             return true;
         
         List<LocalObjectLight> children = com.getObjectChildren(object.getOid(), com.getMetaForClass(object.getClassName(), false).getOid());
-        List<Node> toBeDeleted = new ArrayList<Node>(Arrays.asList(getChildren().getNodes()));
-        List<LocalObjectLight> toBeAdded = new ArrayList<LocalObjectLight>(children);
+        List<Node> toBeDeleted = new ArrayList<>(Arrays.asList(getChildren().getNodes()));
+        List<LocalObjectLight> toBeAdded = new ArrayList<>(children);
         for (Node child : getChildren().getNodes()) {
             for (LocalObjectLight myChild : children) {
                 if (((ObjectNode) child).getObject().equals(myChild)) {
@@ -240,17 +240,18 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
     //then called everytime
     @Override
     public Action[] getActions(boolean context) {
-        List<Action> actions = new ArrayList<Action>();
-        actions.add(createAction == null ? createAction = new CreateBusinessObjectAction(this) : createAction);
-        actions.add(refreshAction == null ? refreshAction = new RefreshObjectAction(this) : refreshAction);
-        actions.add(editAction == null ? editAction = new EditObjectAction(this) : editAction);
-        actions.add(null); //Separator
-        if (!isLeaf()) {
+        List<Action> actions = new ArrayList<>();
+        if (getParentNode() != null) {
+            actions.add(createAction == null ? createAction = new CreateBusinessObjectAction(this) : createAction);
             actions.add(SystemAction.get(CopyAction.class));
             actions.add(SystemAction.get(CutAction.class));
             actions.add(SystemAction.get(PasteAction.class));
+        }        
+        actions.add(refreshAction == null ? refreshAction = new RefreshObjectAction(this) : refreshAction);
+        actions.add(editAction == null ? editAction = new EditObjectAction(this) : editAction);
+        actions.add(null); //Separator
+        if (getParentNode() != null) {
             actions.add(SystemAction.get(DeleteBusinessObjectAction.class));
-            actions.add(explorerAction);
             actions.add(null); //Separator
         }
         for (GenericObjectNodeAction action : Lookup.getDefault().lookupAll(GenericObjectNodeAction.class)) {
@@ -265,6 +266,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
             }
         }
         actions.add(null); //Separator
+        actions.add(explorerAction);
         actions.add(showObjectIdAction == null ? showObjectIdAction = new ShowObjectIdAction(object.getOid(), object.getClassName()) : showObjectIdAction);
         return actions.toArray(new Action[]{});
     }

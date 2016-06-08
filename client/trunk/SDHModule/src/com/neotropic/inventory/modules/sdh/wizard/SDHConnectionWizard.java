@@ -92,7 +92,7 @@ public class SDHConnectionWizard {
             case CONNECTION_CONTAINERLINK:
                 wizardDescriptor = new WizardDescriptor(new WizardDescriptor.Panel[] {
                     new ConnectionGeneralInfoStep((Connections)configObject.getProperty("connectionType")),
-                    new ChooseRouteBasedOnTransportLinksStep(equipmentA, equipmentB),
+                    new ChooseRouteStep(equipmentA, equipmentB),
                     new ChooseContainerLinkResourcesStep()});
                 
                 initWizardDescriptor(wizardDescriptor, new String[] { "Fill in the general information", "Choose the route", "Choose positions" });
@@ -117,7 +117,7 @@ public class SDHConnectionWizard {
             case CONNECTION_TRIBUTARYLINK:
                 wizardDescriptor = new WizardDescriptor(new WizardDescriptor.Panel[] {
                     new ConnectionGeneralInfoStep((Connections)configObject.getProperty("connectionType")),
-                    new ChooseRouteBasedOnContainerLinksStep(equipmentA, equipmentB),
+                    new ChooseRouteStep(equipmentA, equipmentB),
                     new ChooseTributaryLinkResourcesStep(),
                     new ChooseConnectionEndpointsStep(equipmentA, equipmentB),
                     new ChooseServiceStep(SDHModuleService.CLASS_GENERICSDHSERVICE)});
@@ -241,15 +241,17 @@ public class SDHConnectionWizard {
         }   
     }
     
-    private class ChooseRouteBasedOnTransportLinksStep implements WizardDescriptor.ValidatingPanel, ItemListener {
+    private class ChooseRouteStep implements WizardDescriptor.ValidatingPanel, ItemListener {
         private JPanel thePanel;
         private JComboBox<Route> lstRoutes;
         private JList<LocalObjectLight> lstRouteDetail;
         private JScrollPane pnlRouteDetailScroll;
         private LocalObjectLight endpointA;
         private LocalObjectLight endpointB;
-
-        public ChooseRouteBasedOnTransportLinksStep(LocalObjectLight endpointA, LocalObjectLight endpointB) {
+        private LocalClassMetadataLight connectionType;
+        private boolean valid;
+        
+        public ChooseRouteStep(LocalObjectLight endpointA, LocalObjectLight endpointB) {
             this.endpointA = endpointA;
             this.endpointB = endpointB;
         }
@@ -272,6 +274,7 @@ public class SDHConnectionWizard {
 
         @Override
         public void readSettings(Object settings) {
+            connectionType = (LocalClassMetadataLight)((WizardDescriptor)settings).getProperty("connectionType");
             initComponents();
         }
 
@@ -283,7 +286,7 @@ public class SDHConnectionWizard {
 
         @Override
         public boolean isValid() {
-            return true;
+            return valid;
         }
 
         @Override
@@ -293,18 +296,29 @@ public class SDHConnectionWizard {
         public void removeChangeListener(ChangeListener l) {}
         
         private void initComponents() {
-            List<LocalObjectLightList> routes = com.findRoutesUsingTransportLinks(endpointA, endpointB);
+            valid = true;
+            List<LocalObjectLightList> routes;
+            if (com.isSubclassOf(connectionType.getClassName(), SDHModuleService.CLASS_GENERICSDHHIGHORDERCONTAINERLINK) ||
+                    com.isSubclassOf(connectionType.getClassName(), SDHModuleService.CLASS_GENERICSDHHIGHORDERTRIBUTARYLINK))
+                routes = com.findRoutesUsingTransportLinks(endpointA, endpointB);
+            else
+                routes = com.findRoutesUsingContainerLinks(endpointA, endpointB);
+            
+            //The panel is created here, so it exists even in case of error
+            thePanel = new JPanel(new BorderLayout());
+            thePanel.setName("Choose a route");
+            
             if (routes == null) {
                 JOptionPane.showMessageDialog(null, com.getError(), "Error calculating routes", JOptionPane.ERROR_MESSAGE);
+                valid = false;
                 return;
             }
             
             if (routes.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "No routes were found between these equipment", "Route Calculation", JOptionPane.INFORMATION_MESSAGE);
+                valid  = false;
                 return;
             }
-            thePanel = new JPanel(new BorderLayout());
-            thePanel.setName("Choose a route");
             
             lstRoutes = new JComboBox<>();
             lstRouteDetail = new JList<>();
@@ -367,7 +381,7 @@ public class SDHConnectionWizard {
             public List<LocalObjectLight> getLinks() {
                 List<LocalObjectLight> res = new ArrayList<>();
                 for (LocalObjectLight hop : hops) {
-                    if (com.isSubclassOf(hop.getClassName(), SDHModuleService.CLASS_GENERICSDHTRANSPORTLINK))
+                    if (com.isSubclassOf(hop.getClassName(), SDHModuleService.CLASS_GENERICLOGICALCONNECTION))
                         res.add(hop);
                 }
                 return res;
@@ -389,7 +403,7 @@ public class SDHConnectionWizard {
         private JList<HopDefinition> lstContainerDefinition;
         private JLabel lblInstructions;
         private LocalClassMetadataLight connectionType;
-        private ChooseRouteBasedOnTransportLinksStep.Route route;
+        private ChooseRouteStep.Route route;
         
         @Override
         public void validate() throws WizardValidationException {
@@ -415,7 +429,7 @@ public class SDHConnectionWizard {
         @Override
         public void readSettings(Object settings) {
             connectionType = (LocalClassMetadataLight)((WizardDescriptor)settings).getProperty("connectionType");
-            route = (ChooseRouteBasedOnTransportLinksStep.Route)((WizardDescriptor)settings).getProperty("route");
+            route = (ChooseRouteStep.Route)((WizardDescriptor)settings).getProperty("route");
             
             List<HopDefinition> containerDefinition = new ArrayList<>();
             
@@ -437,7 +451,7 @@ public class SDHConnectionWizard {
             List<LocalSDHPosition> positions = new ArrayList<>();
             for (int i = 0; i < lstContainerDefinition.getModel().getSize(); i++) {
                 HopDefinition aHop = lstContainerDefinition.getModel().getElementAt(i);
-                positions.add(new LocalSDHPosition(aHop.transportLink.getClassName(), aHop.transportLink.getOid(), aHop.position));
+                positions.add(new LocalSDHPosition(aHop.getLink().getClassName(), aHop.getLink().getOid(), aHop.position));
             }
             ((WizardDescriptor)settings).putProperty("positions", positions);
         }
@@ -457,12 +471,12 @@ public class SDHConnectionWizard {
         public void mouseClicked(MouseEvent e) {
             if (e.getClickCount() == 2) { //Only act upon a double-click event
                 HopDefinition hop = lstContainerDefinition.getSelectedValue();
-                List<LocalSDHContainerLinkDefinition> transportLinkStructure = com.getSDHTransportLinkStructure(hop.transportLink.getClassName(), hop.transportLink.getOid());
+                List<LocalSDHContainerLinkDefinition> transportLinkStructure = com.getSDHTransportLinkStructure(hop.getLink().getClassName(), hop.getLink().getOid());
                 
                 if (transportLinkStructure == null) 
                     JOptionPane.showMessageDialog(null, com.getError(), "Error", JOptionPane.ERROR_MESSAGE);
                 else {
-                    JComboBox<AvailablePosition> lstAvailablePositions = new JComboBox<>(buildAvailablePositionsList(hop.transportLink, transportLinkStructure));
+                    JComboBox<AvailablePosition> lstAvailablePositions = new JComboBox<>(buildAvailablePositionsList(hop.getLink(), transportLinkStructure));
                     lstAvailablePositions.setName("lstAvailablePositions"); //NOI18N
                     JComplexDialogPanel pnlAvailablePositions = new JComplexDialogPanel(new String[] {"Available Positions"}, new JComponent[] {lstAvailablePositions});
 
@@ -508,7 +522,7 @@ public class SDHConnectionWizard {
         public void mouseExited(MouseEvent e) {}
         
         public AvailablePosition[] buildAvailablePositionsList(LocalObjectLight transportLink, 
-                List<LocalSDHContainerLinkDefinition> transportLinkStructure){
+                List<LocalSDHContainerLinkDefinition> transportLinkStructure) {
             try {
                 int numberOfVC4 = SDHModuleService.calculateCapacity(transportLink.getClassName(), SDHModuleService.LinkType.TYPE_TRANSPORTLINK);
                 AvailablePosition[] availablePositions = new AvailablePosition[numberOfVC4];
@@ -544,187 +558,14 @@ public class SDHConnectionWizard {
                 return new AvailablePosition[0];
             }
         }
-        
-        private class HopDefinition {
-            LocalObjectLight transportLink;
-            int position;
-
-            public HopDefinition(LocalObjectLight transportLink) {
-                this.transportLink = transportLink;
-                this.position = -1; //The default position is unset
-            }
-            
-            @Override
-            public String toString() {
-                return transportLink + " - " + (position == -1 ? "NA" : position); //NOI18N
-            }
-        }
-        
-        private class AvailablePosition {
-            private int position;
-            private LocalObjectLight container;
-
-            public AvailablePosition(int position, LocalObjectLight container) {
-                this.position = position;
-                this.container = container;
-            }            
-            
-            @Override
-            public String toString() {
-                return String.format("%s - %s", position, container == null ? "Free" : container.getName());
-            }
-        }
     }
-    
-    private class ChooseRouteBasedOnContainerLinksStep implements WizardDescriptor.ValidatingPanel, ItemListener {
-        private JPanel thePanel;
-        private JComboBox<Route> lstRoutes;
-        private JList<LocalObjectLight> lstRouteDetail;
-        private JScrollPane pnlRouteDetailScroll;
-        private LocalObjectLight endpointA;
-        private LocalObjectLight endpointB;
-
-        public ChooseRouteBasedOnContainerLinksStep(LocalObjectLight endpointA, LocalObjectLight endpointB) {
-            this.endpointA = endpointA;
-            this.endpointB = endpointB;
-        }
         
-        @Override
-        public void validate() throws WizardValidationException {
-            if (lstRoutes == null || lstRoutes.getSelectedItem() == null)
-                throw new WizardValidationException(thePanel, "No routes were found between these equipment", null);
-        }
-
-        @Override
-        public Component getComponent() {
-            return thePanel;
-        }
-
-        @Override
-        public HelpCtx getHelp() {
-            return null;
-        }
-
-        @Override
-        public void readSettings(Object settings) {
-            initComponents();
-        }
-
-        @Override
-        public void storeSettings(Object settings) {
-            lstRoutes.removeItemListener(this);
-            ((WizardDescriptor)settings).putProperty("route", lstRoutes.getSelectedItem());
-        }
-
-        @Override
-        public boolean isValid() {
-            return true;
-        }
-
-        @Override
-        public void addChangeListener(ChangeListener l) {}
-
-        @Override
-        public void removeChangeListener(ChangeListener l) {}
-        
-        private void initComponents() {
-            List<LocalObjectLightList> routes = com.findRoutesUsingContainerLinks(endpointA, endpointB);
-            if (routes == null) {
-                JOptionPane.showMessageDialog(null, com.getError(), "Error calculating routes", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            
-            if (routes.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "There are not high order containers connecting these equipment", "Route Calculation", JOptionPane.INFORMATION_MESSAGE);
-                return;
-            }
-            thePanel = new JPanel(new BorderLayout());
-            thePanel.setName("Choose a route");
-            
-            lstRoutes = new JComboBox<>();
-            lstRouteDetail = new JList<>();
-            
-            lstRoutes.addItemListener(this);
-            
-            pnlRouteDetailScroll = new JScrollPane(lstRouteDetail);
-            
-            int i = 1;
-            for (LocalObjectLightList route : routes) {
-                lstRoutes.addItem(new Route(String.format("Route %s", i), route));
-                i ++;
-            }
-            
-            if (!routes.isEmpty())
-                lstRouteDetail.setSelectedIndex(0);
-            
-            thePanel.add(lstRoutes, BorderLayout.NORTH);
-            thePanel.add(pnlRouteDetailScroll, BorderLayout.CENTER);
-        }
-
-        @Override
-        public void itemStateChanged(ItemEvent e) {
-            
-            Route selectedRoute = (Route)e.getItem();
-          
-            DefaultListModel<LocalObjectLight> listModel = new DefaultListModel<>();
-            
-            for (LocalObjectLight aHop : selectedRoute.getHops())
-                listModel.addElement(aHop);
-
-            lstRouteDetail.setModel(listModel);
-        }
-        
-        private final class Route {
-            String name;
-            List<LocalObjectLight> hops;
-            int numberOfHops;
-
-            public Route(String name, List<LocalObjectLight> hops) {
-                this.name = name;
-                this.hops = hops;
-                this.numberOfHops = getNodes().size() - 1; //Ignores the first node, because it's the start node
-            }
-
-            public String getName() {
-                return name;
-            }
-
-            public List<LocalObjectLight> getNodes() {
-                List<LocalObjectLight> res = new ArrayList<>();
-                for (LocalObjectLight hop : hops) {
-                    if (CommunicationsStub.getInstance().isSubclassOf(hop.getClassName(), SDHModuleService.CLASS_GENERICEQUIPMENT))
-                        res.add(hop);
-                }
-                return res;
-            }
-            
-
-            public List<LocalObjectLight> getLinks() {
-                List<LocalObjectLight> res = new ArrayList<>();
-                for (LocalObjectLight hop : hops) {
-                    if (CommunicationsStub.getInstance().isSubclassOf(hop.getClassName(), SDHModuleService.CLASS_GENERICSDHCONTAINERLINK))
-                        res.add(hop);
-                }
-                return res;
-            }
-            
-            public List<LocalObjectLight> getHops() {
-                return hops;
-            }
-            
-            @Override
-            public String toString() {
-                return String.format("%s - %s %s", name, numberOfHops, (numberOfHops == 1 ? "hop" : "hops"));
-            }
-        }
-    }
-    
     private class ChooseTributaryLinkResourcesStep implements WizardDescriptor.ValidatingPanel, MouseListener {
         private JPanel thePanel;
         private JList<HopDefinition> lstContainerDefinition;
         private JLabel lblInstructions;
         private LocalClassMetadataLight connectionType;
-        private ChooseRouteBasedOnContainerLinksStep.Route route;
+        private ChooseRouteStep.Route route;
         
         @Override
         public void validate() throws WizardValidationException {
@@ -750,7 +591,7 @@ public class SDHConnectionWizard {
         @Override
         public void readSettings(Object settings) {
             connectionType = (LocalClassMetadataLight)((WizardDescriptor)settings).getProperty("connectionType");
-            route = (ChooseRouteBasedOnContainerLinksStep.Route)((WizardDescriptor)settings).getProperty("route");
+            route = (ChooseRouteStep.Route)((WizardDescriptor)settings).getProperty("route");
             
             List<HopDefinition> containerDefinition = new ArrayList<>();
             
@@ -772,7 +613,7 @@ public class SDHConnectionWizard {
             List<LocalSDHPosition> positions = new ArrayList<>();
             for (int i = 0; i < lstContainerDefinition.getModel().getSize(); i++) {
                 HopDefinition aHop = lstContainerDefinition.getModel().getElementAt(i);
-                positions.add(new LocalSDHPosition(aHop.containerLink.getClassName(), aHop.containerLink.getOid(), aHop.position));
+                positions.add(new LocalSDHPosition(aHop.getLink().getClassName(), aHop.getLink().getOid(), aHop.position));
             }
             ((WizardDescriptor)settings).putProperty("positions", positions);
         }
@@ -792,12 +633,23 @@ public class SDHConnectionWizard {
         public void mouseClicked(MouseEvent e) {
             if (e.getClickCount() == 2) { //Only act upon a double-click event
                 HopDefinition hop = lstContainerDefinition.getSelectedValue();
-                List<LocalSDHContainerLinkDefinition> transportLinkStructure = com.getSDHContainerLinkStructure(hop.containerLink.getClassName(), hop.containerLink.getOid());
                 
-                if (transportLinkStructure == null) 
+                List<LocalSDHContainerLinkDefinition> structure;
+                
+                if (com.isSubclassOf(connectionType.getClassName(), SDHModuleService.CLASS_GENERICSDHHIGHORDERTRIBUTARYLINK))
+                    structure = com.getSDHTransportLinkStructure(hop.getLink().getClassName(), hop.getLink().getOid());
+                else
+                    structure = com.getSDHContainerLinkStructure(hop.getLink().getClassName(), hop.getLink().getOid());
+                
+                if (structure == null) 
                     JOptionPane.showMessageDialog(null, com.getError(), "Error", JOptionPane.ERROR_MESSAGE);
                 else {
-                    JComboBox<AvailablePosition> lstAvailablePositions = new JComboBox<>(buildAvailablePositionsList(hop.containerLink, transportLinkStructure));
+                    JComboBox<AvailablePosition> lstAvailablePositions;
+                    if (com.isSubclassOf(connectionType.getClassName(), SDHModuleService.CLASS_GENERICSDHHIGHORDERTRIBUTARYLINK))
+                        lstAvailablePositions = new JComboBox<>(buildAvailablePositionsListForTransportLinks(hop.getLink(), structure));
+                    else
+                        lstAvailablePositions = new JComboBox<>(buildAvailablePositionsListForContainers(hop.getLink(), structure));
+                    
                     lstAvailablePositions.setName("lstAvailablePositions"); //NOI18N
                     JComplexDialogPanel pnlAvailablePositions = new JComplexDialogPanel(new String[] {"Available Positions"}, new JComponent[] {lstAvailablePositions});
 
@@ -810,6 +662,7 @@ public class SDHConnectionWizard {
 
                         int numberOfPositionsToBeOccupied;
                         switch (connectionType.getClassName().replace("TributaryLink", "")) { //NOI18N
+                            case SDHModuleService.CLASS_VC4: //A VC4 occuoies only one position on a transport link
                             case SDHModuleService.CLASS_VC12:
                                 numberOfPositionsToBeOccupied = 1;
                                 break;
@@ -851,7 +704,7 @@ public class SDHConnectionWizard {
         @Override
         public void mouseExited(MouseEvent e) {}
         
-        public AvailablePosition[] buildAvailablePositionsList(LocalObjectLight containertLink, 
+        public AvailablePosition[] buildAvailablePositionsListForContainers(LocalObjectLight containertLink, 
                 List<LocalSDHContainerLinkDefinition> containertLinkStructure){
             try {
                 int numberOfPositions;
@@ -898,35 +751,44 @@ public class SDHConnectionWizard {
             }
         }
         
-        private class HopDefinition {
-            LocalObjectLight containerLink;
-            int position;
-
-            public HopDefinition(LocalObjectLight containerLink) {
-                this.containerLink = containerLink;
-                this.position = -1; //The default position is unset
-            }
-            
-            @Override
-            public String toString() {
-                return containerLink + " - " + (position == -1 ? "NA" : position); //NOI18N
+        public AvailablePosition[] buildAvailablePositionsListForTransportLinks(LocalObjectLight transportLink, 
+                List<LocalSDHContainerLinkDefinition> transportLinkStructure) {
+            try {
+                int numberOfVC4 = SDHModuleService.calculateCapacity(transportLink.getClassName(), SDHModuleService.LinkType.TYPE_TRANSPORTLINK);
+                AvailablePosition[] availablePositions = new AvailablePosition[numberOfVC4];
+                
+                //First, we fill the positions we know for sure that are being used
+                for (LocalSDHContainerLinkDefinition aContainerDefinition : transportLinkStructure) {
+                    int position = aContainerDefinition.getPositions().get(0).getPosition(); //This container definition has always only one position: The one used in this TransportLink
+                    availablePositions[position - 1] = new AvailablePosition(position, aContainerDefinition.getContainer());
+                    //A container might occupy more than one slot, if it's a concatenated circuit. Now, we will fill the adjacent which are also being used
+                    try {
+                        int numberOfAdjacentPositions = 0;
+                        String adjacentPositions = aContainerDefinition.getContainer().getClassName().replace("VC4", "");
+                        if (!adjacentPositions.isEmpty())
+                            numberOfAdjacentPositions = Math.abs(Integer.valueOf(adjacentPositions)) - 1; //Minus one, because we've already filled the first position
+                                                                                                          //Absolute value, because the concatenated containers class names are like "VC4-A_NUMBER"
+                        for (int j = position; j < position + numberOfAdjacentPositions; j++)
+                            availablePositions[j] = new AvailablePosition(j + 1, aContainerDefinition.getContainer());
+                        
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(null, "The ContainerLink class name does not allow to calculate the total number of concatenated positions", "Error", JOptionPane.ERROR_MESSAGE);
+                        return new AvailablePosition[0];
+                    }
+                }
+                
+                //Then we fill the rest (if any) with free slots
+                for (int i = 1; i <= numberOfVC4; i++) {
+                    if (availablePositions[i - 1] == null)
+                        availablePositions[i - 1] = new AvailablePosition(i, null);
+                }
+                return availablePositions;
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "The TransportLink class name does not allow to calculate the total number of positions", "Error", JOptionPane.ERROR_MESSAGE);
+                return new AvailablePosition[0];
             }
         }
         
-        private class AvailablePosition {
-            private int position;
-            private LocalObjectLight container;
-
-            public AvailablePosition(int position, LocalObjectLight container) {
-                this.position = position;
-                this.container = container;
-            }            
-            
-            @Override
-            public String toString() {
-                return String.format("%s - %s", position, container == null ? "Free" : container.getName());
-            }
-        }
     }
     
     private class ChooseConnectionEndpointsStep implements WizardDescriptor.ValidatingPanel {
@@ -1060,6 +922,50 @@ public class SDHConnectionWizard {
 
         @Override
         public void removeChangeListener(ChangeListener l) {}
+    }
+   
+    /**
+     * A class defining a hop in a possible route for a virtual circuit
+     */
+    public class HopDefinition {
+        LocalObjectLight link;
+        int position;
+
+        public HopDefinition(LocalObjectLight link) {
+            this.link = link;
+            this.position = -1; //The default position is unset
+        }
+
+        public LocalObjectLight getLink() {
+            return link;
+        }
+
+        public int getPosition() {
+            return position;
+        }
+        
+        @Override
+        public String toString() {
+            return link + " - " + (position == -1 ? "NA" : position); //NOI18N
+        }
+    }
+    
+    /**
+     * A class representing a position to be chosen from a container or tributary link when defining a circuit route
+     */
+    public class AvailablePosition {
+        private int position;
+        private LocalObjectLight container;
+
+        public AvailablePosition(int position, LocalObjectLight container) {
+            this.position = position;
+            this.container = container;
+        }            
+
+        @Override
+        public String toString() {
+            return String.format("%s - %s", position, container == null ? "Free" : container.getName());
+        }
     }
     
     public enum Connections {

@@ -49,13 +49,25 @@ public class SDHModuleService {
      */
     public static final String CLASS_VC4 = "VC4";
     /**
+     * Root of all logical connections
+     */
+    public static String CLASS_GENERICLOGICALCONNECTION = "GenericLogicalConnection";
+    /**
      * Root of all transport links
      */
     public static String CLASS_GENERICSDHTRANSPORTLINK = "GenericSDHTransportLink";
     /**
-     * Root of all transport links
+     * Root of all container links
      */
     public static String CLASS_GENERICSDHCONTAINERLINK = "GenericSDHContainerLink";
+    /**
+     * Root of all high order container links
+     */
+    public static String CLASS_GENERICSDHHIGHORDERCONTAINERLINK = "GenericSDHHighOrderContainerLink";
+    /**
+     * Root of all low order container links
+     */
+    public static String CLASS_GENERICSDHHIGHORDERTRIBUTARYLINK = "GenericSDHHighOrderTributaryLink";
     /**
      * Reference to the currently edited view. If its id is -1 or if it is null, the view is new and unsaved
      */

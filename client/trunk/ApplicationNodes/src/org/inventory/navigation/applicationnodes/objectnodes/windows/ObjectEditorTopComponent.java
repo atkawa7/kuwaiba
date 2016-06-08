@@ -41,7 +41,7 @@ public class ObjectEditorTopComponent extends TopComponent{
         this.node = node;
         this.setDisplayName(node.getDisplayName());
         setLayout(new BorderLayout());
-        add(editor,BorderLayout.CENTER);
+        add(editor);
         //This requires that CoreUI to be enable in the project
         Mode myMode = WindowManager.getDefault().findMode("properties");
         myMode.dockInto(this);
