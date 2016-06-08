@@ -992,24 +992,6 @@ public class KuwaibaService {
             }
         }
     }
-    
-    @WebMethod(operationName = "getPool")
-    public RemoteObjectLight getPool(
-            @WebParam(name = "parentId")long parentId,
-            @WebParam(name = "poolId")long poolId,
-            @WebParam(name = "poolName") String poolName,
-            @WebParam(name = "sessionId") String sessionId) throws Exception{
-        try{
-            return wsBean.getPool(parentId, poolId, poolName, getIPAddress(), sessionId);
-        } catch(Exception e){
-            if (e instanceof ServerSideException)
-                throw e;
-            else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in getPool: " + e.getMessage());
-                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
-            }
-        }
-    }
     //</editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Business Methods. Click on the + sign on the left to edit the code.">
@@ -1151,7 +1133,7 @@ public class KuwaibaService {
         }
     }
 
-     /**
+    /**
       * Gets the complete information about a given object (all its attributes)
       * @param objectClass Object class
       * @param oid Object id
@@ -3168,7 +3150,6 @@ public class KuwaibaService {
         // </editor-fold>    
     
         // <editor-fold defaultstate="collapsed" desc="IPAM Module"> 
-    
     /**
      * Retrieves all the subnet pools
      * @param limit limit
@@ -3228,14 +3209,14 @@ public class KuwaibaService {
      * @throws ServerSideException 
      */
     @WebMethod(operationName = "createPoolofSubnets")
-    public long createPoolofSubnets(
+    public long createSubnetPool(
             @WebParam(name = "parentId")long parentId, 
             @WebParam(name = "subnetPoolName")String subnetPoolName, 
             @WebParam(name = "subnetPoolDescription")String subnetPoolDescription, 
             @WebParam(name = "type")int type, 
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
-            return wsBean.createPoolofSubnets(parentId, subnetPoolName, subnetPoolDescription, type, getIPAddress(), sessionId);
+            return wsBean.createSubnetPool(parentId, subnetPoolName, subnetPoolDescription, type, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -3303,6 +3284,52 @@ public class KuwaibaService {
                 throw e;
             else {
                 System.out.println("[KUWAIBA] An unexpected error occurred in deleteSubnets: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    /**
+      * Gets the complete information about a given subnet (all its attributes)
+      * @param id Subnet id
+      * @param sessionId Session token
+      * @return a representation of the entity as a RemoteObject
+      * @throws Exception Generic exception encapsulating any possible error raised at runtime
+      */
+    @WebMethod(operationName = "getSubnet")
+    public RemoteObject getSubnet(
+            @WebParam(name = "id") long id,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            return wsBean.getSubnet(id, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getSubnet: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+      * Gets the complete information about a given subnet pool (all its attributes)
+      * @param id Subnet pool id
+      * @param sessionId Session token
+      * @return a representation of the entity as a RemoteObject
+      * @throws Exception Generic exception encapsulating any possible error raised at runtime
+      */
+    @WebMethod(operationName = "getSubnetPool")
+    public RemoteObject getSubnetPool(
+            @WebParam(name = "id") long id,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+
+        try{
+            return wsBean.getSubnetPool(id, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getSubnetPool: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
