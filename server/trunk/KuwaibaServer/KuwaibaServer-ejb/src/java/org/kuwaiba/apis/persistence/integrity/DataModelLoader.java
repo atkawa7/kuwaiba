@@ -76,6 +76,7 @@ public class DataModelLoader {
                 Label label = DynamicLabel.label(Constants.LABEL_ROOT);
                 IPv4RootNode = graphDb.createNode(label);
                 IPv4RootNode.setProperty(Constants.PROPERTY_NAME, Constants.NODE_IPV4ROOT);
+                IPv4RootNode.setProperty(Constants.PROPERTY_TYPE, Constants.IPV4_TYPE);
                 IPv4RootNode.setProperty(Constants.PROPERTY_DISPLAY_NAME, Constants.NODE_IPV4ROOT);
                 IPv4RootNode.setProperty(Constants.PROPERTY_CLASS_NAME, Constants.CLASS_SUBNET);
                 IPv4RootNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
@@ -88,6 +89,7 @@ public class DataModelLoader {
                 Label label = DynamicLabel.label(Constants.LABEL_ROOT);
                 IPv6RootNode = graphDb.createNode(label);
                 IPv6RootNode.setProperty(Constants.PROPERTY_NAME, Constants.NODE_IPV6ROOT);
+                IPv6RootNode.setProperty(Constants.PROPERTY_TYPE, Constants.IPV6_TYPE);
                 IPv6RootNode.setProperty(Constants.PROPERTY_DISPLAY_NAME, Constants.NODE_IPV6ROOT);
                 IPv6RootNode.setProperty(Constants.PROPERTY_CLASS_NAME, Constants.CLASS_SUBNET);
                 IPv6RootNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());

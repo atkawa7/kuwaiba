@@ -293,7 +293,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             newObject.createRelationshipTo(pool, RelTypes.CHILD_OF_SPECIAL).setProperty(Constants.PROPERTY_NAME, Constants.REL_PROPERTY_POOL);
             tx.success();
             return newObject.getId();
-
         }
     }
 
@@ -363,6 +362,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             return res;
         }
     }
+    
+    
 
     @Override
     public RemoteBusinessObjectLight getObjectLight(String className, long oid)

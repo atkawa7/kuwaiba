@@ -1819,7 +1819,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateCall("createPool", ipAddress, sessionId);
-            return aem.createPool(parentId, name, description, instancesOfClass);
+            return aem.createPool(parentId, name, description, instancesOfClass, 0);
         } catch (InventoryException ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
@@ -1851,18 +1851,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
-    }
-    
-    public RemoteObjectLight getPool(long parentId, long poolId, String poolName, String ipAddress, String sessionId) throws ServerSideException{
-        if (aem == null)
-            throw new ServerSideException("Can't reach the backend. Contact your administrator");
-        try {
-            aem.validateCall("getPools", ipAddress, sessionId);
-            return new RemoteObjectLight(aem.getPool(parentId, poolId, poolName));
-        } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
-            throw new ServerSideException(ex.getMessage());
-        }   
     }
     
     @Override
@@ -2097,10 +2085,35 @@ public class WebserviceBean implements WebserviceBeanRemote {
         // </editor-fold>    
     
         // <editor-fold defaultstate="collapsed" desc="IP Administration Manager Module">
+    
+    @Override
+    public RemoteObject getSubnet(long id, String ipAddress, String sessionId) throws ServerSideException{
+        try {
+            aem.validateCall("getSubnet", ipAddress, sessionId);
+            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+            return new RemoteObject(ipamModule.getSubnet(id));
+        } catch (InventoryException ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public RemoteObject getSubnetPool(long id, String ipAddress, String sessionId) throws ServerSideException{
+        try {
+            aem.validateCall("getSubnetPool", ipAddress, sessionId);
+            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+            return new RemoteObject(ipamModule.getSubnetPool(id));
+        } catch (InventoryException ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
     @Override
     public RemoteObjectLight[] getSubnetPools(int limit, long parentId, String ipAddress, String sessionId) throws ServerSideException{
         try {
-            aem.validateCall("createFolder", ipAddress, sessionId);
+            aem.validateCall("getSubnetPools", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
             return RemoteObjectLight.toRemoteObjectLightArray(ipamModule.getSubnetPools(limit, parentId));
             
@@ -2112,7 +2125,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     @Override
     public RemoteObjectLight[] getSubnets(long poolId, int limit, String ipAddress, String sessionId) throws ServerSideException{
         try {
-            aem.validateCall("createFolder", ipAddress, sessionId);
+            aem.validateCall("getSubnets", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
             return RemoteObjectLight.toRemoteObjectLightArray(ipamModule.getSubnets(limit, poolId));
             
@@ -2122,11 +2135,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
     
     @Override
-    public long createPoolofSubnets(long parentId, String subnetPoolName, 
+    public long createSubnetPool(long parentId, String subnetPoolName, 
             String subnetPoolDescription, int type, String ipAddress, 
             String sessionId) throws ServerSideException{
         try {
-            aem.validateCall("createPoolofSubnets", ipAddress, sessionId);
+            aem.validateCall("createSubnetPool", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
             return ipamModule.createSubnetsPool(parentId, subnetPoolName, subnetPoolDescription, type);
             

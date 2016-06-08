@@ -420,7 +420,7 @@ public interface ApplicationEntityManager {
      * @throws ObjectNotFoundException If the parent can not be found
      * @throws org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException If the user is not authorized to create pools
      */
-    public long createPool(long parentId, String name, String description, String instancesOfClass) 
+    public long createPool(long parentId, String name, String description, String instancesOfClass, int type) 
             throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException, NotAuthorizedException;
 
     /**
@@ -452,15 +452,13 @@ public interface ApplicationEntityManager {
     public List<RemoteBusinessObjectLight> getPools(int limit, String className) throws NotAuthorizedException;
     
     /**
-     * Gets a pool by  it's id plus name
-     * @param parentId parent id
-     * @param poolId pool's id
-     * @param poolName pool's name
+     * Gets a pool by  it's id 
      * @param className kind of elements contained in the pool
+     * @param poolId pool's id
      * @return the pool object
      * @throws NotAuthorizedException 
      */
-    public RemoteBusinessObjectLight getPool(long parentId, long poolId, String poolName) throws NotAuthorizedException;
+    public RemoteBusinessObject getPool(String className, long poolId) throws InvalidArgumentException, NotAuthorizedException;
     
     /**
      * Gets the list of objects into a pool

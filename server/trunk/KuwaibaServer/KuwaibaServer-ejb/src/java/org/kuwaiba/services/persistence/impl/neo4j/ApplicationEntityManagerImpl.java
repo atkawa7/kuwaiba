@@ -1203,7 +1203,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     //Pools
     @Override
-    public long createPool(long parentId, String name, String description, String instancesOfClass)
+    public long createPool(long parentId, String name, String description, String instancesOfClass, int type)
             throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException, NotAuthorizedException {
         try(Transaction tx = graphDb.beginTx())
         {
@@ -1216,12 +1216,17 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                         throw new ObjectNotFoundException("N/A", parentId);
                 }
             }
-            
+
             Node poolNode =  graphDb.createNode();
+
             if (name != null)
                 poolNode.setProperty(Constants.PROPERTY_NAME, name);
             if (description != null)
                 poolNode.setProperty(Constants.PROPERTY_DESCRIPTION, description);
+            if (type != 0){
+                if(type == 4 || type == 6)
+                poolNode.setProperty(Constants.PROPERTY_TYPE, type);
+            }
             
             ClassMetadata classMetadata = cm.getClass(instancesOfClass);
             if (classMetadata == null)
@@ -1403,15 +1408,17 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public RemoteBusinessObjectLight getPool(long parentId, long poolId, String poolName) throws NotAuthorizedException{
+    public RemoteBusinessObject getPool(String className, long poolId) throws InvalidArgumentException, NotAuthorizedException {
         try(Transaction tx = graphDb.beginTx()) 
         {
             Node pool = poolsIndex.get(Constants.PROPERTY_ID, poolId).getSingle();
+            ClassMetadata myClass = cm.getClass(className);
             
-            if(pool != null)
-                return new RemoteBusinessObjectLight(pool.getId(),
-                        pool.hasProperty(Constants.PROPERTY_NAME) ? (String)pool.getProperty(Constants.PROPERTY_NAME) : null,
-                        pool.hasProperty(Constants.PROPERTY_CLASS_NAME) ? (String)pool.getProperty(Constants.PROPERTY_CLASS_NAME) : null);
+            if(pool != null){
+                Node instance = poolsIndex.get(Constants.PROPERTY_ID, poolId).getSingle();
+                RemoteBusinessObject res = Util.createRemoteObjectFromNode(instance, myClass);
+                return res;
+            }
             else
                 return null;
         }

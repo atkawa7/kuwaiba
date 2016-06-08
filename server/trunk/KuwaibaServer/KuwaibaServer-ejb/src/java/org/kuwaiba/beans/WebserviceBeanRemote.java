@@ -528,8 +528,6 @@ public interface WebserviceBeanRemote {
 
     public void deletePools(long[] ids, String ipAddress, String sessionId) throws ServerSideException;
     
-    public RemoteObjectLight getPool(long parentId, long poolId, String poolName, String ipAddress, String sessionId) throws ServerSideException;
-    
     public RemoteObjectLight[] getPools(int limit, long parentId, String className, String ipAddress, String sessionId) throws ServerSideException;
     
     public RemoteObjectLight[] getPools(int limit, String className, String ipAddress, String sessionId) throws ServerSideException;
@@ -568,7 +566,7 @@ public interface WebserviceBeanRemote {
     public byte[] downloadBulkLoadLog(String fileName, String ipAddress, String sessionId) throws ServerSideException;
     // </editor-fold>
     
-// <editor-fold defaultstate="collapsed" desc="Commercial modules data methods">
+    // <editor-fold defaultstate="collapsed" desc="Commercial modules data methods">
         // <editor-fold defaultstate="collapsed" desc="SDH Networks Module">
     public long createSDHTransportLink(String classNameEndpointA, long idEndpointA, 
             String classNameEndpointB, long idEndpointB, String linkType, String defaultName, String ipAddress, String sessionId) throws ServerSideException;
@@ -601,7 +599,9 @@ public interface WebserviceBeanRemote {
         // <editor-fold defaultstate="collapsed" desc="IP Administration manager module">
         public RemoteObjectLight[] getSubnetPools(int limit, long parentId, String ipAddress, String sessionId) throws ServerSideException;
         public RemoteObjectLight[] getSubnets(long poolId, int limit, String ipAddress, String sessionId) throws ServerSideException;
-        public long createPoolofSubnets(long parentId, String subnetPoolName, 
+        public RemoteObject getSubnet(long id, String ipAddress, String sessionId) throws ServerSideException;
+        public RemoteObject getSubnetPool(long id, String ipAddress, String sessionId) throws ServerSideException;
+        public long createSubnetPool(long parentId, String subnetPoolName, 
                 String subnetPoolDescription, int type, String ipAddress, 
                 String sessionId) throws ServerSideException;
         public long createSubnet(long poolId, String attributeNames[], 

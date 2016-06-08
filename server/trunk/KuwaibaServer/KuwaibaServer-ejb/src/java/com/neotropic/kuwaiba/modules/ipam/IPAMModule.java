@@ -6,12 +6,14 @@
 package com.neotropic.kuwaiba.modules.ipam;
 
 import com.neotropic.kuwaiba.modules.GenericCommercialModule;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
@@ -20,6 +22,7 @@ import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
+import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.services.persistence.util.Constants;
@@ -123,19 +126,45 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws InvalidArgumentException
      * @throws ObjectNotFoundException
      * @throws NotAuthorizedException 
+     * @throws org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException 
+     * @throws org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException 
+     * @throws org.kuwaiba.apis.persistence.exceptions.WrongMappingException 
      */
-    public long createSubnetsPool(long parentId, String subnetPoolName, String subnetPoolDescription, int type) throws ServerSideException, MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException, NotAuthorizedException{
+    public long createSubnetsPool(long parentId, String subnetPoolName, 
+            String subnetPoolDescription, int type) throws ServerSideException, 
+            MetadataObjectNotFoundException, InvalidArgumentException, 
+            ObjectNotFoundException, NotAuthorizedException, ApplicationObjectNotFoundException, 
+            OperationNotPermittedException, WrongMappingException
+    {
         if (aem == null)
            throw new ServerSideException("Can't reach the backend. Contact your administrator");
-
-        return aem.createPool(parentId, subnetPoolName, subnetPoolDescription, Constants.CLASS_SUBNET);
+        return aem.createPool(parentId, subnetPoolName, subnetPoolDescription, Constants.CLASS_SUBNET, type);
     }
     
-    public List<RemoteBusinessObjectLight> getSubnetPools(int limit, long parentId) throws NotAuthorizedException, ObjectNotFoundException{
+    public RemoteBusinessObject getSubnet(long oid) throws MetadataObjectNotFoundException, 
+            ObjectNotFoundException, InvalidArgumentException, 
+            ApplicationObjectNotFoundException, NotAuthorizedException
+    {
+        return bem.getObject(Constants.CLASS_SUBNET, oid);
+    }
+    
+    public RemoteBusinessObject getSubnetPool(long oid) throws MetadataObjectNotFoundException, 
+            ObjectNotFoundException, InvalidArgumentException, 
+            ApplicationObjectNotFoundException, NotAuthorizedException
+    {
+        return aem.getPool(Constants.CLASS_SUBNET, oid);
+    }
+    
+    public List<RemoteBusinessObjectLight> getSubnetPools(int limit, 
+            long parentId) throws NotAuthorizedException, ObjectNotFoundException
+    {
         return aem.getPools(limit, parentId, Constants.CLASS_SUBNET);
     }
    
-    public List<RemoteBusinessObjectLight> getSubnets(int limit, long subnetPoolId) throws ApplicationObjectNotFoundException, NotAuthorizedException{
+    public List<RemoteBusinessObjectLight> getSubnets(int limit, 
+            long subnetPoolId) throws ApplicationObjectNotFoundException, 
+            NotAuthorizedException
+    {
         return aem.getPoolItems(subnetPoolId, limit);
     }
     
@@ -145,19 +174,22 @@ public class IPAMModule implements GenericCommercialModule{
             MetadataObjectNotFoundException
     {
         return bem.createPoolItem(parentId, Constants.CLASS_SUBNET, attributeNames, attributeValues, 0);
-
     }
     private void updateSubnet(long subnetId, String[] attributeNames, 
             String[][] attributeValues){
     }
-    public void deleteSubnets(long[] ids, boolean releaseRelationships) throws ObjectNotFoundException, 
-            MetadataObjectNotFoundException, OperationNotPermittedException, NotAuthorizedException
+    public void deleteSubnets(long[] ids, boolean releaseRelationships) 
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, 
+            OperationNotPermittedException, NotAuthorizedException
     {
         if(ids != null)
             bem.deleteObject(Constants.CLASS_SUBNET, ids[0], releaseRelationships);
     }
     
-    public void deleteSubnetPools(long[] subnetsId) throws InvalidArgumentException, OperationNotPermittedException, NotAuthorizedException{
+    public void deleteSubnetPools(long[] subnetsId) 
+            throws InvalidArgumentException, OperationNotPermittedException, 
+            NotAuthorizedException
+    {
         aem.deletePools(subnetsId);
     }
     
