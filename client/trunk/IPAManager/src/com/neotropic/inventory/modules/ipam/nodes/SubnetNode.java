@@ -19,6 +19,10 @@ import java.awt.Image;
 import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
 import com.neotropic.inventory.modules.ipam.nodes.actions.CreateSubnetAction;
+import com.neotropic.inventory.modules.ipam.nodes.actions.DeleteSubnetAction;
+import com.neotropic.inventory.modules.ipam.nodes.properties.SubnetProperty;
+import org.inventory.communications.core.LocalObject;
+import org.inventory.communications.util.Constants;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.openide.nodes.Sheet;
 import org.openide.util.ImageUtilities;
@@ -41,7 +45,9 @@ public class SubnetNode extends ObjectNode{
     
     @Override
     public Action[] getActions(boolean context){
-        return new Action[]{new CreateSubnetAction(this)};
+        return new Action[]{
+            new CreateSubnetAction(this), 
+            new DeleteSubnetAction(this)};
     }
     
     @Override
@@ -62,7 +68,34 @@ public class SubnetNode extends ObjectNode{
     
     @Override
     protected Sheet createSheet(){
-        return Sheet.createDefault();
+        LocalObject sp = com.getObjectInfo(Constants.CLASS_SUBNET, getSubnet().getOid());
+        sheet = Sheet.createDefault();
+        Sheet.Set generalPropertySet = Sheet.createPropertiesSet(); //General attributes category
+        
+        generalPropertySet.put(new SubnetProperty(Constants.PROPERTY_NAME, String.class, 
+                java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_NAME"),
+                "",sp.getName()));
+        
+        generalPropertySet.put(new SubnetProperty(Constants.PROPERTY_DESCRIPTION, String.class, 
+                java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_DESCRIPTION"),
+                "",sp.getAttribute(Constants.PROPERTY_DESCRIPTION)));
+        
+        generalPropertySet.put(new SubnetProperty(Constants.PROPERTY_NETWORKIP, String.class, 
+                java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_NETWORK_IP"),
+                "",sp.getAttribute(Constants.PROPERTY_NETWORKIP)));
+        
+        generalPropertySet.put(new SubnetProperty(Constants.PROPERTY_BROADCASTIP, String.class, 
+                java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_BROADCAST_IP"),
+                "",sp.getAttribute(Constants.PROPERTY_BROADCASTIP)));
+        
+        generalPropertySet.put(new SubnetProperty(Constants.PROPERTY_HOSTS, String.class, 
+                java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_HOSTS"),
+                "",sp.getAttribute(Constants.PROPERTY_HOSTS)));
+        
+        generalPropertySet.setName("1");
+        generalPropertySet.setDisplayName(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_GENERAL_ATTRIBUTES"));
+        sheet.put(generalPropertySet);
+        return sheet;
     }
     
     @Override

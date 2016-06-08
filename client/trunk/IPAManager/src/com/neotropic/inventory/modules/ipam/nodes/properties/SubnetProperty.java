@@ -15,6 +15,9 @@
  */
 package com.neotropic.inventory.modules.ipam.nodes.properties;
 
+import java.lang.reflect.InvocationTargetException;
+import org.openide.nodes.PropertySupport;
+
 
 
 
@@ -22,7 +25,19 @@ package com.neotropic.inventory.modules.ipam.nodes.properties;
  * Provides a property editor for the subnets in the IP Address manager
  * @author Adrian Martinez Molina <charles.bedon@kuwaiba.org>
  */
-public class SubnetProperty{
+public class SubnetProperty extends PropertySupport.ReadOnly{
+
+    private Object value;
+    
+    public SubnetProperty(String name, Class type, String displayName, String shortDescription, Object value) {
+        super(name, type, displayName, shortDescription);
+        this.value = value;
+    }
+
+    @Override
+    public Object getValue() throws IllegalAccessException, InvocationTargetException {
+        return value;
+    }
 
     
     

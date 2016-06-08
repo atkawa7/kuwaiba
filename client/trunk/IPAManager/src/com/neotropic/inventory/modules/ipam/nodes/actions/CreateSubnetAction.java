@@ -15,7 +15,7 @@
  */
 package com.neotropic.inventory.modules.ipam.nodes.actions;
 
-import com.neotropic.inventory.modules.ipam.nodes.SubnetChildren;
+import com.neotropic.inventory.modules.ipam.engine.SubnetEngine;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JComboBox;
@@ -31,11 +31,10 @@ import com.neotropic.inventory.modules.ipam.nodes.SubnetNode;
 import com.neotropic.inventory.modules.ipam.nodes.SubnetPoolChildren;
 import com.neotropic.inventory.modules.ipam.nodes.SubnetPoolNode;
 import java.awt.Dimension;
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import org.inventory.communications.core.LocalAttributeMetadata;
-import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalObject;
+import org.openide.util.Utilities;
 
 
 /**
@@ -64,15 +63,33 @@ public class CreateSubnetAction extends AbstractAction{
     
     @Override
     public void actionPerformed(ActionEvent e) {
+        Iterator selectedNodes = Utilities.actionsGlobalContext().lookupResult(SubnetPoolNode.class).allInstances().iterator();
+        String name = "";
+        long id = 0;
+        int type = 0;
+        
+        if (!selectedNodes.hasNext())
+            return;
+        
+         while (selectedNodes.hasNext()) {
+            SubnetPoolNode selectedNode = (SubnetPoolNode)selectedNodes.next();
+            name = selectedNode.getSubnetPool().getName();
+            id = selectedNode.getSubnetPool().getOid();
+        }
+        LocalObject subnetPool = com.getSubnetPool(id);
+        type = (int)subnetPool.getAttribute("type");
+         
         LocalObjectLight[] services = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_GENERICSERVICE);
         LocalObjectLight[] owners = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_LOCATIONOWNER);
         LocalObjectLight[] devices = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
         LocalObjectLight[] vlans = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_VLAN);
         
         JTextField txtName = new JTextField(), txtDescription =  new JTextField();
-        txtName.setPreferredSize(new Dimension(120, 18));
+        txtName.setPreferredSize(new Dimension(160, 18));
         txtName.setName("txtName"); //NOI18N
         txtDescription.setName("txtDescription");//NOI18N
+        txtDescription.setPreferredSize(new Dimension(160, 30));
+        javax.swing.JLabel lblError;
         
         JComboBox<LocalObjectLight> servicesList = new JComboBox<>(services);
         servicesList.setName("servicesList"); //NOI18N
@@ -86,12 +103,8 @@ public class CreateSubnetAction extends AbstractAction{
         JComplexDialogPanel pnlMyDialog = new JComplexDialogPanel(
                 new String[]{java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_NAME"),
                     java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_DESCRIPTION"),
-                    java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_SERVICES"),
-                    java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_OWNERS"),
-                    java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_DEVICES"),
-                    java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_VLANS"),
                 },
-                new JComponent []{txtName, txtDescription, servicesList, ownersList, devicesList, vlanList});
+                new JComponent []{txtName, txtDescription});
        
         if(JOptionPane.showConfirmDialog(null,
                 pnlMyDialog,
@@ -102,30 +115,54 @@ public class CreateSubnetAction extends AbstractAction{
             String[] attributeNames = new String[5];
             String[] attributeValues = new String[5];
             
-            SubnetEngine subnetEngine = new SubnetEngine();
-            subnetEngine.calculateSubnets(txtName.getText());
-            List<String> subnets = subnetEngine.getSubnets();
-            
             attributeNames[0] = Constants.PROPERTY_NAME;
-            attributeValues[0] = txtName.getText();
-            attributeNames[1] = Constants.PROPERTY_DESCRIPTION;
-            attributeValues[1] = txtDescription.getText();
-            attributeNames[2] = Constants.PROPERTY_BROADCASTIP;
-            attributeValues[2] = subnets.get(subnets.size()-1);
-            attributeNames[3] = Constants.PROPERTY_NETWORKIP;
-            attributeValues[3] = subnets.get(0);
-            attributeNames[4] = Constants.PROPERTY_HOSTS;
-            attributeValues[4] = Integer.toString(subnetEngine.calculateNumberOfHosts());
+                attributeValues[0] = txtName.getText();
+                attributeNames[1] = Constants.PROPERTY_DESCRIPTION;
+                attributeValues[1] = txtDescription.getText();
+                attributeNames[2] = Constants.PROPERTY_BROADCASTIP;
+                attributeNames[3] = Constants.PROPERTY_NETWORKIP;
+                attributeNames[4] = Constants.PROPERTY_HOSTS;
+                SubnetEngine subnetEngine = new SubnetEngine();
             
-            LocalObjectLight newSubnet = com.createSubnet(subnetPoolNode.getSubnetPool().getOid(), 
-                    new LocalObject(Constants.CLASS_SUBNET, 0, attributeNames, attributeValues));
-
-            if (newSubnet == null)
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+            String ipCIDR = txtName.getText();
+            int bits = 0;
+            if(type == 6){
+                if(txtName.getText().contains("/"));
+                String[] split = txtName.getText().split("/");
+                ipCIDR = split[0];
+                bits = Integer.parseInt(split[1]);
+            }
+            boolean isAnIPAddress = SubnetEngine.isIPAddress(ipCIDR);
+            if(!isAnIPAddress && bits > 0 && bits < 128)
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, 
+                        java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_INVALID_CIDR"));
+            
+            
             else{
-                if (!((SubnetPoolChildren)subnetPoolNode.getChildren()).isCollapsed())
-                    subnetPoolNode.getChildren().add(new SubnetNode[]{new SubnetNode(newSubnet)});
-                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_CREATED"));
+                if(type == 4){
+                    subnetEngine.calculateSubnets(txtName.getText());
+                    List<String> subnets = subnetEngine.getSubnets();
+                    attributeValues[2] = subnets.get(subnets.size()-1);
+                    attributeValues[3] = subnets.get(0);
+                    attributeValues[4] = Integer.toString(subnetEngine.calculateNumberOfHosts());
+                }
+                else if(type == 6){
+                    List<String> subnets = subnetEngine.calculateSubnetsIpv6(txtName.getText());
+                    attributeValues[2] = subnets.get(subnets.size()-1);
+                    attributeValues[3] = subnets.get(0);
+                    attributeValues[4] = Integer.toString(subnetEngine.calculateNumberOfHostsIpV6());
+                }
+
+                LocalObjectLight newSubnet = com.createSubnet(subnetPoolNode.getSubnetPool().getOid(), 
+                        new LocalObject(Constants.CLASS_SUBNET, 0, attributeNames, attributeValues));
+
+                if (newSubnet == null)
+                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+                else{
+                    if (!((SubnetPoolChildren)subnetPoolNode.getChildren()).isCollapsed())
+                        subnetPoolNode.getChildren().add(new SubnetNode[]{new SubnetNode(newSubnet)});
+                    NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_CREATED"));
+                }
             }
         }
     }    
