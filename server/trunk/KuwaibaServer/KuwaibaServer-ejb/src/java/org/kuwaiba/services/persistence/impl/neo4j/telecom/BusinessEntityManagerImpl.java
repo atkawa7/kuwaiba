@@ -369,8 +369,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
         
         //Perform benchmarks to see if accessing to the objects index is less expensive
-        try(Transaction tx = graphDb.beginTx())
-        {
+        try(Transaction tx = graphDb.beginTx()) {
             Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
             tx.success();
             if (classNode == null)
@@ -1238,7 +1237,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             newInstance.setProperty(property, templateObject.getProperty(property));
         for (Relationship rel : templateObject.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING))
             newInstance.createRelationshipTo(rel.getEndNode(), RelTypes.RELATED_TO).setProperty(Constants.PROPERTY_NAME, rel.getProperty(Constants.PROPERTY_NAME));
-
+        
+        objectIndex.putIfAbsent(newInstance, Constants.PROPERTY_ID, newInstance.getId());
         newInstance.createRelationshipTo(templateObject.getRelationships(RelTypes.INSTANCE_OF).iterator().next().getEndNode(), RelTypes.INSTANCE_OF);
 
         if (recursive){

@@ -45,6 +45,14 @@ public class SDHModule implements GenericCommercialModule {
     
     //Constants
     /**
+     * Root class of all high order tributary links (VC4)
+     */
+    public static String CLASS_GENERICSDHHIGHORDERTRIBUTARYLINK = "GenericSDHHighOrderTributaryLink";
+    /**
+     * Root class of all low order tributary links (VC12/VC3)
+     */
+    public static String CLASS_GENERICSDHLOWORDERTRIBUTARYLINK = "GenericSDHLowOrderTributaryLink";
+    /**
      * A side in a transport link
      */
     public static String RELATIONSHIP_SDHTLENDPOINTA = "sdhTLEndpointA";
@@ -307,11 +315,24 @@ public class SDHModule implements GenericCommercialModule {
             //Associate the link to the container
             bem.createSpecialRelationship(containerLinkType, newContainerLinkId, linkType, newTributaryLinkId, RELATIONSHIP_SDHDELIVERS, true);
             
+            //If the tributary link is a low level circuit (VC12/VC3), its transported by a container link, however, if it's a high level one,
+            //it's transported by a transport link. There's a different relationship dipending on the case
+            String relationship;
+            
+            if (mem.isSubClass(CLASS_GENERICSDHHIGHORDERTRIBUTARYLINK, linkType))
+                relationship = RELATIONSHIP_SDHTRANSPORTS;
+            else {
+                if (mem.isSubClass(CLASS_GENERICSDHLOWORDERTRIBUTARYLINK, linkType))
+                    relationship = RELATIONSHIP_SDHCONTAINS;
+                else
+                    throw new ServerSideException(String.format("Class %s does not appear to be either a high or low order tributary link", linkType));
+            }
+            
             for (SDHPosition position : positions) {
                 HashMap<String, Object> positionAsAproperty = new HashMap<>();
                 positionAsAproperty.put("sdhPosition", position.getPosition());
                 bem.createSpecialRelationship(position.getLinkClass(), position.getLinkId(), 
-                        containerLinkType, newContainerLinkId, RELATIONSHIP_SDHCONTAINS, false, positionAsAproperty);
+                        containerLinkType, newContainerLinkId, relationship, false, positionAsAproperty);
             }
             
             return newTributaryLinkId;
@@ -339,13 +360,21 @@ public class SDHModule implements GenericCommercialModule {
      * @param forceDelete Delete recursively all sdh elements transported by the transport link
      * @throws org.kuwaiba.exceptions.ServerSideException If something goes wrong
      * @throws org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException If the user is not authorized to delete transport links
+     * @throws InventoryException If the transport link could not be found
      */
-    public void deleteSDHTransportLink(String transportLinkClass, long transportLinkId, boolean forceDelete) throws ServerSideException, NotAuthorizedException {
+    public void deleteSDHTransportLink(String transportLinkClass, long transportLinkId, boolean forceDelete) throws ServerSideException, InventoryException, NotAuthorizedException {
         if (bem == null || mem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         
-        if (!mem.isSubClass("GenericSDHContainerLink", transportLinkClass)) //NOI18N
-                throw new ServerSideException("Class %s is not subclass of GenericSDHContainerLink");
+        if (!mem.isSubClass("GenericSDHTransportLink", transportLinkClass)) //NOI18N
+                throw new ServerSideException(String.format("Class %s is not subclass of GenericSDHContainerLink", transportLinkClass));
+        
+        List<RemoteBusinessObjectLight> containerLinks = bem.getSpecialAttribute(transportLinkClass, transportLinkId, RELATIONSHIP_SDHTRANSPORTS);
+        
+        for (RemoteBusinessObjectLight containerLink : containerLinks)
+            deleteSDHContainerLink(containerLink.getClassName(), containerLink.getId(), forceDelete);
+       
+        bem.deleteObject(transportLinkClass, transportLinkId, forceDelete);
         
     }
     /**
@@ -477,7 +506,7 @@ public class SDHModule implements GenericCommercialModule {
         
         for (AnnotatedRemoteBusinessObjectLight container : relatedContainers) {
             List<RemoteBusinessObjectLight> relatedLinks = bem.getSpecialAttribute(container.getObject().getClassName(), 
-                    container.getObject().getId(), RELATIONSHIP_SDHCONTAINS);
+                    container.getObject().getId(), RELATIONSHIP_SDHDELIVERS);
                                    
             if (!container.getProperties().containsKey("sdhPosition"))
                 throw new MetadataObjectNotFoundException(String.
