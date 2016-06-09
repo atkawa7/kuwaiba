@@ -90,7 +90,7 @@ public class SubnetEngine {
     }
     
     private List<String> segmentCalculation(String subnetSegment){
-        List<String> segments = new ArrayList<String>();
+        List<String> segments = new ArrayList<>();
         int bits = subnetSegment.length();
         int x = Integer.parseInt(subnetSegment, 2);
         while(true){
@@ -212,11 +212,11 @@ public class SubnetEngine {
         return binaryIPAddress;
     }
     
-    public List<String> calculateSubnetsIpv6(String ipCIDR){
+    public void calculateSubnetsIpv6(String ipCIDR){
         String[] splitedCIDR = ipCIDR.split("/");
         maskBits = Integer.parseInt(splitedCIDR[1]);
-        String ipv6 = splitedCIDR[0];
-        List<List<String>> ip = parseToBinaryIpv6(completeIPv6(ipv6));
+        ipAddress = splitedCIDR[0];
+        List<List<String>> ip = parseToBinaryIpv6(completeIPv6(ipAddress));
         List<String> segmentos = new ArrayList<>();
         List<List<String>> subnets = new ArrayList<>();
         int i = 0;
@@ -248,7 +248,7 @@ public class SubnetEngine {
             System.out.println("esto no se puede ome");
         List<String> calculation = segmentCalculation(maskPart);
         List<String> complement = complement(netPart, calculation);
-        return createIPv6(subnets, complement);
+        createIPv6(subnets, complement);
     }
     
     public String ipv6AsString(String[] ip){
@@ -287,25 +287,25 @@ public class SubnetEngine {
         List<Integer> binaryNetworkIp = segmentAnIP(netwrokIp);
         List<Integer> binarybroadcastIp = segmentAnIP(broadcastIp);
         List<Integer> binaryIp = segmentAnIP(ip);
+        boolean contains = false;
         for (int i = 0; i < binaryIp.size(); i++) {
-            if(Objects.equals(binaryIp.get(i), binaryNetworkIp.get(i)))
-                    continue;
-            else if((binaryIp.get(i) > binaryNetworkIp.get(i)) && (binaryIp.get(i) < binarybroadcastIp.get(i)))
-                    return true;
-            else 
-                return false;
+            if((binaryIp.get(i) >= binaryNetworkIp.get(i)) && (binaryIp.get(i) <= binarybroadcastIp.get(i)))
+                    contains = true;
+            else{ 
+                contains = false;
+                break;
+            }
         }
-        return false;
+        return contains;
     }
     
-    private List<String> createIPv6(List<List<String>> segments, List<String> complements){
+    private void createIPv6(List<List<String>> segments, List<String> complements){
         String ip = "";
         String[] nipAddress = {"0000", "0000", "0000", "0000", "0000", "0000", "0000", "0000"};
         String[] bipAddress = {"ffff", "ffff", "ffff", "ffff", "ffff", "ffff", "ffff", "ffff"};
         boolean flag = true;
         List<String> partialSubnets =  new ArrayList<>();
-        List<String> subnets =  new ArrayList<>();
-        
+
         for (List<String> segment : segments) {
             if(segment.size()>0){
                 for (String bits : segment) {
@@ -318,9 +318,9 @@ public class SubnetEngine {
             }
         }
         if(ip.length()>0){
-        if((ip.substring(ip.length()-2, ip.length()-1)).equals(":"))
+            if((ip.substring(ip.length()-2, ip.length()-1)).equals(":"))
                 ip = ip.substring(0, ip.length()-1);
-        }
+            }
         
         for (String string : complements)
             partialSubnets.add(ip+Integer.toString(Integer.parseInt(string, 2),16));               
@@ -351,12 +351,21 @@ public class SubnetEngine {
         for(int i = 0; i<bipAddress.length; i++)
             subnet += bipAddress[i]+":";
         subnets.add(subnet.substring(0, subnet.length()-1));
-        return subnets;
     }
     
     public static boolean isIPAddress(String ipAddress){
-        String ipv4Regex = "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/([0-9]|[1-2][0-9]|3[0-2]))$";
+        String ipv4Regex = "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$";
         String ipv6Regex = "^s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:)))(%.+)?s*";
+        Pattern ipv4Pattern = Pattern.compile(ipv4Regex);
+        Pattern ipv6Pattern = Pattern.compile(ipv6Regex);
+        Matcher ipv4 = ipv4Pattern.matcher(ipAddress);
+        Matcher ipv6 = ipv6Pattern.matcher(ipAddress);
+        return ipv4.matches() || ipv6.matches();
+    }
+    
+    public static boolean isCIDRFormat(String ipAddress){
+        String ipv4Regex = "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/([0-9]|[1-2][0-9]|3[0-2]))$";
+        String ipv6Regex = "^s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:)))(%.+)?s*(\\/([0-9]|[1-9][0-9]|1[0-1][0-9]|12[0-8]))?$";
         Pattern ipv4Pattern = Pattern.compile(ipv4Regex);
         Pattern ipv6Pattern = Pattern.compile(ipv6Regex);
         Matcher ipv4 = ipv4Pattern.matcher(ipAddress);
