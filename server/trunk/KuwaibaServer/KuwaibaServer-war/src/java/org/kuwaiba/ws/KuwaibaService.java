@@ -30,6 +30,7 @@ import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
 import org.kuwaiba.beans.WebserviceBeanRemote;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.util.Constants;
+import org.kuwaiba.ws.todeserialize.StringPair;
 import org.kuwaiba.ws.todeserialize.TransientQuery;
 import org.kuwaiba.ws.toserialize.application.ApplicationLogEntry;
 import org.kuwaiba.ws.toserialize.application.RemoteQuery;
@@ -37,6 +38,7 @@ import org.kuwaiba.ws.toserialize.application.RemoteQueryLight;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.ws.toserialize.application.ResultRecord;
 import org.kuwaiba.ws.toserialize.application.GroupInfo;
+import org.kuwaiba.ws.toserialize.application.ReportDescriptor;
 import org.kuwaiba.ws.toserialize.application.UserInfo;
 import org.kuwaiba.ws.toserialize.application.ViewInfo;
 import org.kuwaiba.ws.toserialize.application.ViewInfoLight;
@@ -2858,6 +2860,48 @@ public class KuwaibaService {
                 throw e;
             else {
                 System.out.println("[KUWAIBA] An unexpected error occurred in downloadBulkLoadLog: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Reporting methods">
+    /**
+     * 
+     * @param className The name of the class to check for reports against
+     * @param limit Limit of results. Use -1 to retrieve all
+     * @param sessionId Session token
+     * @return A list of objects with the basic information about the available reports
+     * @throws ServerSideException In case something goes wrong
+     */
+    @WebMethod(operationName = "getReportsForClass")
+    public ReportDescriptor[] getReportsForClass(@WebParam(name = "className") String className, 
+            @WebParam(name = "limit") int limit, 
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try{
+            return wsBean.getReportsForClass(className, limit, sessionId, getIPAddress());
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getReportsForClass: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    @WebMethod(operationName = "executeReport")
+    public byte[] executeReport(@WebParam(name = "reportId") long reportId, 
+            @WebParam(name = "arguments") List<StringPair> arguments, 
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try{
+            return wsBean.executeReport(reportId, arguments, sessionId, getIPAddress());
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in executeReport: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }

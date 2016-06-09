@@ -54,12 +54,14 @@ import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.sync.SyncManager;
 import org.kuwaiba.util.ChangeDescriptor;
 import org.kuwaiba.util.bre.TempBusinessRulesEngine;
+import org.kuwaiba.ws.todeserialize.StringPair;
 import org.kuwaiba.ws.todeserialize.TransientQuery;
 import org.kuwaiba.ws.toserialize.application.ApplicationLogEntry;
 import org.kuwaiba.ws.toserialize.application.GroupInfo;
 import org.kuwaiba.ws.toserialize.application.RemoteQuery;
 import org.kuwaiba.ws.toserialize.application.RemoteQueryLight;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.ws.toserialize.application.ReportDescriptor;
 import org.kuwaiba.ws.toserialize.application.ResultRecord;
 import org.kuwaiba.ws.toserialize.application.UserInfo;
 import org.kuwaiba.ws.toserialize.application.Validator;
@@ -1961,6 +1963,52 @@ public class WebserviceBean implements WebserviceBeanRemote {
     
     
     // </editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Reporting methods">
+    @Override
+    public ReportDescriptor[] getReportsForClass(String className, int limit, String ipAddress, String sessionId) throws ServerSideException {
+        //This is a dummy, hard-coded implementation. This will be changed in the short future
+        switch (className) {
+            case "Rack":
+                return new ReportDescriptor[] {
+                    new ReportDescriptor(1, "Rack Usage", className, "Shows the rack usage and the elements contained within")
+                    };
+            case "ODF":
+            case "DDF":
+                return new ReportDescriptor[] {
+                    new ReportDescriptor(2, "Frame Details", className, "Shows the distribution frame usage"),
+                    new ReportDescriptor(3, "Frame Usage", className, "Shows the distribution frame usage")
+                    
+                    };
+            case "GenericSDHTransportLink":
+                return new ReportDescriptor[] {
+                        new ReportDescriptor(4, "TransportLink Structure", className, "Shows the TransportLink Structure")
+                };
+            case "GenericSDHTributaryLink":
+                return new ReportDescriptor[] {
+                        new ReportDescriptor(5, "TributaryLink Resources", className, "Shows the resources used by a TributaryLink")
+                };
+            case "IPTransit":
+                 return new ReportDescriptor[] {
+                        new ReportDescriptor(6, "Service details", className, "Shows the resources used by the service and some of its attributes")
+                };
+            case "VPLSService":
+                return new ReportDescriptor[] {
+                        new ReportDescriptor(7, "Service details", className, "Shows the resources used by the service and some of its attributes")
+                };
+            case "Subnet":
+                return new ReportDescriptor[] {
+                        new ReportDescriptor(8, "Subnet details", className, "Shows the IPs created in that subnet and some of their attributes")
+                };
+        }
+        return new ReportDescriptor[0];
+    }
+
+    @Override
+    public byte[] executeReport(long reportId, List<StringPair> arguments, String ipAddress, String sessionId) throws ServerSideException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    //</editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Commercial modules data methods">
         // <editor-fold defaultstate="collapsed" desc="SDH Networks Module">
