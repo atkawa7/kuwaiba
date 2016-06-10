@@ -62,7 +62,7 @@ public class SubnetPoolNode extends AbstractNode implements PropertyChangeListen
          
     @Override
     public String getName(){
-        return subnetPool.getName() +" ["+subnetPool.getClassName()+"]";
+        return subnetPool.toString();
     }
  
      

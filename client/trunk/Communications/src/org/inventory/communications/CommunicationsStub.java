@@ -33,6 +33,7 @@ import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalObjectLightList;
 import org.inventory.communications.core.LocalObjectListItem;
+import org.inventory.communications.core.LocalReportDescriptor;
 import org.inventory.communications.core.LocalUserGroupObject;
 import org.inventory.communications.core.LocalUserObject;
 import org.inventory.communications.core.caching.Cache;
@@ -56,11 +57,13 @@ import org.kuwaiba.wsclient.RemoteObjectLight;
 import org.kuwaiba.wsclient.RemoteObjectLightArray;
 import org.kuwaiba.wsclient.RemoteObjectSpecialRelationships;
 import org.kuwaiba.wsclient.RemoteQueryLight;
+import org.kuwaiba.wsclient.ReportDescriptor;
 import org.kuwaiba.wsclient.ResultRecord;
 import org.kuwaiba.wsclient.SdhContainerLinkDefinition;
 import org.kuwaiba.wsclient.SdhPosition;
 import org.kuwaiba.wsclient.ServerSideException_Exception;
 import org.kuwaiba.wsclient.StringArray;
+import org.kuwaiba.wsclient.StringPair;
 import org.kuwaiba.wsclient.TransientQuery;
 import org.kuwaiba.wsclient.UserInfo;
 import org.kuwaiba.wsclient.Validator;
@@ -73,7 +76,7 @@ import org.kuwaiba.wsclient.ViewInfoLight;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class CommunicationsStub {
-    private static CommunicationsStub instance=null;
+    private static CommunicationsStub instance;
     private KuwaibaService service;
     private static URL serverURL = null;
     private String error = java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("LBL_NO_ERROR");
@@ -2027,6 +2030,51 @@ public class CommunicationsStub {
     }
     // </editor-fold>
     
+    //<editor-fold defaultstate="collapsed" desc="Reporting methods">
+    /**
+     * Retrieves the list of reports for a particular class
+     * @param className The class to evaluate
+     * @param limit The limit of results. Use -1 to retrieve all
+     * @return A list of report descriptors or null if something went wrong
+     */
+    public List<LocalReportDescriptor> getReportsForClass(String className, int limit) {
+        try {
+            List<ReportDescriptor> remoteDescriptors = service.getReportsForClass(className, limit, session.getSessionId());
+            List<LocalReportDescriptor> localDescriptors = new ArrayList<>();
+            for (ReportDescriptor aRemoteDescriptor : remoteDescriptors)
+                localDescriptors.add(new LocalReportDescriptor(aRemoteDescriptor.getClassName(), aRemoteDescriptor.getId(),
+                                                    aRemoteDescriptor.getName(), aRemoteDescriptor.getDescription()));
+            return localDescriptors;
+        }catch(Exception ex) {
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Executes a report
+     * @param reportId Report id
+     * @param arguments Arguments for this report as a key-value structure.
+     * @return the html structure to be rendered
+     */
+    public byte[] executeReport(long reportId, HashMap<String, Object> arguments) {
+        try {
+            List<StringPair> remoteArguments = new ArrayList<>();
+            
+            for (String key : arguments.keySet()) {
+                StringPair remoteArgument = new StringPair();
+                remoteArgument.setKey(key);
+                remoteArgument.setValue(String.valueOf(arguments.get(key)));
+                remoteArguments.add(remoteArgument);
+            }
+            return service.executeReport(reportId, remoteArguments, session.getSessionId());
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    //</editor-fold>
+    
     // <editor-fold defaultstate="collapsed" desc="Sync/bulk load data methods. Click on the + sign on the left to edit the code.">
     /**
      * Load data from a file 
@@ -2036,7 +2084,7 @@ public class CommunicationsStub {
      * @return 
      */
     public String loadDataFromFile(byte[] file, int commitSize, int classType){
-        try{
+        try {
             return  service.bulkUpload(file, commitSize, classType, this.session.getSessionId());
         }catch(Exception ex){
             this.error =  ex.getMessage();

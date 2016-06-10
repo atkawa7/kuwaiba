@@ -39,6 +39,6 @@ public class RootObjectNode extends AbstractNode {
 
     @Override
     public Action[] getActions(boolean context){
-        return new Action[]{new CreateBusinessObjectAction(this), null, SystemAction.get(PasteAction.class)};
+        return new Action[]{new CreateBusinessObjectAction(this)/*, null, SystemAction.get(PasteAction.class)*/};
     }
 }

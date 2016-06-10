@@ -38,7 +38,7 @@ import org.openide.util.NbBundle.Messages;
 )
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
 @ActionID(category = "Window", id = "com.neotropic.inventory.modules.ipam.IPAMModuleTopComponentTopComponent")
-@ActionReference(path = "Menu/Tools" /*, position = 333 */)
+@ActionReference(path = "Menu/Tools/Commercial" /*, position = 333 */)
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_IPAMModuleTopComponentAction",
         preferredID = "IPAMModuleTopComponentTopComponent"

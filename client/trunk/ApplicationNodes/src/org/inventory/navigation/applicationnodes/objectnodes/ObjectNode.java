@@ -38,6 +38,7 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.CreateBusinessObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteBusinessObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.EditObjectAction;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.ExecuteClassReportAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.RefreshObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
 import org.inventory.navigation.applicationnodes.objectnodes.properties.ListTypeProperty;
@@ -254,6 +255,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
             actions.add(SystemAction.get(DeleteBusinessObjectAction.class));
             actions.add(null); //Separator
         }
+        actions.add(new ExecuteClassReportAction());
         for (GenericObjectNodeAction action : Lookup.getDefault().lookupAll(GenericObjectNodeAction.class)) {
             if (action.getValidator() == null) {
                 action.setObject(object);
