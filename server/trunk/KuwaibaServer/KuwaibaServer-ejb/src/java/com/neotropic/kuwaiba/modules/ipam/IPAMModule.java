@@ -6,11 +6,7 @@
 package com.neotropic.kuwaiba.modules.ipam;
 
 import com.neotropic.kuwaiba.modules.GenericCommercialModule;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
@@ -74,7 +70,7 @@ public class IPAMModule implements GenericCommercialModule{
 
     @Override
     public String getDescription() {
-        return "IP address manager module";
+        return "IP Address Management Module";
     }
 
     @Override
@@ -84,7 +80,7 @@ public class IPAMModule implements GenericCommercialModule{
 
     @Override
     public String getVendor() {
-        return "neotropic";
+        return "Neotropic SAS";
     }
 
     @Override

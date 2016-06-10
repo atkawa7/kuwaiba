@@ -54,6 +54,7 @@ import org.kuwaiba.apis.persistence.application.ViewObject;
 import org.kuwaiba.apis.persistence.application.ViewObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectList;
 import org.kuwaiba.apis.persistence.exceptions.UnsupportedPropertyException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
@@ -1727,6 +1728,29 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         return commercialModules.values();
     }
     
+    @Override
+    public List<RemoteBusinessObjectList> executeCustomDbCode(String dbCode, String[] columns) throws NotAuthorizedException {
+        try (Transaction tx = graphDb.beginTx()) {
+        
+            Result theResult = graphDb.execute(dbCode);
+            List<RemoteBusinessObjectList> thePaths = new ArrayList<>();
+            
+            for (String aColumn : columns) {
+                Iterator<List<Node>> column = theResult.columnAs(aColumn);
+                try {
+                    for (List<Node> list : IteratorUtil.asIterable(column)){
+                        RemoteBusinessObjectList thePath = new RemoteBusinessObjectList();
+                        for (Node aNode : list)
+                            thePath.add(Util.createRemoteObjectFromNode(aNode));
+                        thePaths.add(thePath);
+                    }
+                } catch (InvalidArgumentException ex) {} //this should not happen
+            }
+            
+            return thePaths;
+        }
+    }
+    
 
     // Helpers
     /**
@@ -1845,24 +1869,23 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             throws MetadataObjectNotFoundException, ObjectNotFoundException, NotAuthorizedException
     {
         //Note that for this method, the caller should handle the transaction
-            //if any of the parameters is null, return the dummy root
-            if (className == null)
-                return specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
+        //if any of the parameters is null, return the dummy root
+        if (className == null)
+            return specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
 
-            Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
-            if (classNode == null)
-                throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
-            
-            Iterable<Relationship> iteratorInstances = classNode.getRelationships(RelTypes.INSTANCE_OF);
-            Iterator<Relationship> instances = iteratorInstances.iterator();
-            
-            while (instances.hasNext()){
-                Node otherSide = instances.next().getStartNode();
-                if (otherSide.getId() == oid)
-                    return otherSide;
-            }
-            throw new ObjectNotFoundException(className, oid);
-        //}
-    }
+        Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
+        if (classNode == null)
+            throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
+
+        Iterable<Relationship> iteratorInstances = classNode.getRelationships(RelTypes.INSTANCE_OF);
+        Iterator<Relationship> instances = iteratorInstances.iterator();
+
+        while (instances.hasNext()){
+            Node otherSide = instances.next().getStartNode();
+            if (otherSide.getId() == oid)
+                return otherSide;
+        }
+        throw new ObjectNotFoundException(className, oid);
+    }    
     //End of Helpers
 }

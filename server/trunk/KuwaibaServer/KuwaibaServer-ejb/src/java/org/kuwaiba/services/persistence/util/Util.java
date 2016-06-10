@@ -393,6 +393,12 @@ public class Util {
                 (String)instance.getProperty(Constants.PROPERTY_NAME), (String)classNode.getProperty(Constants.PROPERTY_NAME));
     }
     
+    public static RemoteBusinessObject createRemoteObjectFromNode (Node instance) throws InvalidArgumentException {
+        Node classNode = instance.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode();
+        ClassMetadata classMetadata = createClassMetadataFromNode(classNode);
+        return createRemoteObjectFromNode(instance, classMetadata);
+    }
+    
     /**
      * Builds a RemoteBusinessObject instance from a node representing a business object
      * @param instance
@@ -400,7 +406,7 @@ public class Util {
      * @return
      * @throws InvalidArgumentException if an attribute value can't be mapped into value
      */
-    public static RemoteBusinessObject createRemoteObjectFromNode(Node instance, ClassMetadata myClass) throws InvalidArgumentException{
+    public static RemoteBusinessObject createRemoteObjectFromNode(Node instance, ClassMetadata myClass) throws InvalidArgumentException {
         
         HashMap<String, List<String>> attributes = new HashMap<>();
 

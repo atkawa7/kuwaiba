@@ -37,8 +37,7 @@ public class RemoteBusinessObjectLight implements Serializable{
      */
     private String className;
 
-    protected RemoteBusinessObjectLight() {
-    }
+    protected RemoteBusinessObjectLight() {}
 
     public RemoteBusinessObjectLight(Long id, String name, String className) {
         this.id = id;
@@ -70,4 +69,8 @@ public class RemoteBusinessObjectLight implements Serializable{
         this.className = className;
     }
     
+    @Override
+    public String toString() {
+        return getName() + "[" + getClassName() + "]";
+    }
 }

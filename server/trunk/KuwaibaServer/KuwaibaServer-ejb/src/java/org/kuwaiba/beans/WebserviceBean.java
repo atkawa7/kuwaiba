@@ -21,6 +21,7 @@ import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHModule;
 import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -41,8 +42,10 @@ import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.application.ViewObject;
 import org.kuwaiba.apis.persistence.application.ViewObjectLight;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectList;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
@@ -50,6 +53,7 @@ import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.exceptions.NotAuthorizedException;
 import org.kuwaiba.exceptions.ServerSideException;
+import org.kuwaiba.services.persistence.impl.neo4j.RelTypes;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.sync.SyncManager;
 import org.kuwaiba.util.ChangeDescriptor;
@@ -137,7 +141,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             return mem.createClass(cm);
 
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1967,46 +1970,94 @@ public class WebserviceBean implements WebserviceBeanRemote {
     //<editor-fold defaultstate="collapsed" desc="Reporting methods">
     @Override
     public ReportDescriptor[] getReportsForClass(String className, int limit, String ipAddress, String sessionId) throws ServerSideException {
-        //This is a dummy, hard-coded implementation. This will be changed in the short future
-        switch (className) {
-            case "Rack":
-                return new ReportDescriptor[] {
-                    new ReportDescriptor(1, "Rack Usage", className, "Shows the rack usage and the elements contained within")
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            
+            aem.validateCall("getReportsForClass", ipAddress, sessionId); //NOI18N
+            
+            //This is a dummy, hard-coded implementation. This will be changed in the short future
+            switch (className) {
+                case "Rack":
+                    return new ReportDescriptor[] {
+                        new ReportDescriptor(1, "Rack Usage", className, "Shows the rack usage and the elements contained within")
+                        };
+                case "ODF":
+                case "DDF":
+                    return new ReportDescriptor[] {
+                        new ReportDescriptor(2, "Frame Details", className, "Shows the distribution frame usage"),
+                        new ReportDescriptor(3, "Frame Usage", className, "Shows the distribution frame usage")
+
+                        };
+                case "GenericSDHTransportLink":
+                    return new ReportDescriptor[] {
+                            new ReportDescriptor(4, "TransportLink Structure", className, "Shows the TransportLink Structure")
                     };
-            case "ODF":
-            case "DDF":
-                return new ReportDescriptor[] {
-                    new ReportDescriptor(2, "Frame Details", className, "Shows the distribution frame usage"),
-                    new ReportDescriptor(3, "Frame Usage", className, "Shows the distribution frame usage")
-                    
+                case "GenericSDHTributaryLink":
+                    return new ReportDescriptor[] {
+                            new ReportDescriptor(5, "TributaryLink Resources", className, "Shows the resources used by a TributaryLink")
                     };
-            case "GenericSDHTransportLink":
-                return new ReportDescriptor[] {
-                        new ReportDescriptor(4, "TransportLink Structure", className, "Shows the TransportLink Structure")
-                };
-            case "GenericSDHTributaryLink":
-                return new ReportDescriptor[] {
-                        new ReportDescriptor(5, "TributaryLink Resources", className, "Shows the resources used by a TributaryLink")
-                };
-            case "IPTransit":
-                 return new ReportDescriptor[] {
-                        new ReportDescriptor(6, "Service details", className, "Shows the resources used by the service and some of its attributes")
-                };
-            case "VPLSService":
-                return new ReportDescriptor[] {
-                        new ReportDescriptor(7, "Service details", className, "Shows the resources used by the service and some of its attributes")
-                };
-            case "Subnet":
-                return new ReportDescriptor[] {
-                        new ReportDescriptor(8, "Subnet details", className, "Shows the IPs created in that subnet and some of their attributes")
-                };
+                case "IPTransit":
+                     return new ReportDescriptor[] {
+                            new ReportDescriptor(6, "Service details", className, "Shows the resources used by the service and some of its attributes")
+                    };
+                case "VPLSService":
+                    return new ReportDescriptor[] {
+                            new ReportDescriptor(7, "Service details", className, "Shows the resources used by the service and some of its attributes")
+                    };
+                case "Subnet":
+                    return new ReportDescriptor[] {
+                            new ReportDescriptor(8, "Subnet details", className, "Shows the IPs created in that subnet and some of their attributes")
+                    };
+            }
+            return new ReportDescriptor[0];
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
         }
-        return new ReportDescriptor[0];
     }
 
     @Override
     public byte[] executeReport(long reportId, List<StringPair> arguments, String ipAddress, String sessionId) throws ServerSideException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("executeReport", ipAddress, sessionId); //NOI18N
+            switch ((int)reportId) {
+                case 1: //Rack usage
+                    String query = String.format("MATCH path = rack<-[:%s*1..2]-rackable " + 
+                            "WHERE id(rack) = %s " +
+                            "RETURN nodes(path) as rackables", RelTypes.CHILD_OF, StringPair.get(arguments, "rackId"));
+                    List<RemoteBusinessObjectList> rackables = aem.executeCustomDbCode(query, new String[] { "rackables" });
+                    
+                    //The warning rose while preparing the report
+                    String warnings = "";
+                    String textReport = "<!DOCTYPE html>\n" +
+                                            "<html lang=\"en\">\n" +
+                                            "  <head>\n" +
+                                            "    <meta charset=\"utf-8\">\n" +
+                                            "    <title>Rack Usage Report</title>\n" +
+                                            "  </head>\n" +
+                                            "  <body><center><h1>Rack Usage Report<h1></center>\n";
+                    
+                    if (!rackables.isEmpty()) {
+                        textReport += "<table><th>Name</th><th>Serial Number</th>\n";
+                        for (RemoteBusinessObjectList aPath : rackables) {
+                            RemoteBusinessObject leaf = aPath.getList().get(aPath.getList().size() - 1);
+                            textReport += "<tr><td>" + leaf.getAttributes().get("name") + "</td><td>" + leaf.getAttributes().get("serialNumber") + "</td></tr>";
+                        }
+                        
+                        textReport += "</table>\n";
+                    } else
+                        textReport += "<h1>No elements where found in this rack</h1>\n";
+                        
+                    textReport += "  </body>\n" +
+                                    "</html>";
+                    return textReport.getBytes(StandardCharsets.UTF_8);
+            }
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+        return null;
     }
     //</editor-fold>
     

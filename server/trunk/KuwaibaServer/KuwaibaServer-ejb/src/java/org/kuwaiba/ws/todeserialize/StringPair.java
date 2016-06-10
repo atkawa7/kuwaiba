@@ -17,6 +17,7 @@
 package org.kuwaiba.ws.todeserialize;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * A StringPair mimics the behavior of a HashSet<String, String> entry, but with a webservice-friendly implementation. A normal HashMap is 
@@ -58,5 +59,13 @@ public class StringPair implements Serializable {
 
     public void setValue(String value) {
         this.value = value;
+    }
+    
+    public static final String get(List<StringPair> listOfStringPairs, String key) {
+        for (StringPair pair : listOfStringPairs)
+            if (key.equals(pair.getKey()))
+                return pair.getValue();
+        
+        return null;
     }
 }

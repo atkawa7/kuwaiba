@@ -2880,7 +2880,7 @@ public class KuwaibaService {
             @WebParam(name = "limit") int limit, 
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try{
-            return wsBean.getReportsForClass(className, limit, sessionId, getIPAddress());
+            return wsBean.getReportsForClass(className, limit, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -2896,7 +2896,7 @@ public class KuwaibaService {
             @WebParam(name = "arguments") List<StringPair> arguments, 
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try{
-            return wsBean.executeReport(reportId, arguments, sessionId, getIPAddress());
+            return wsBean.executeReport(reportId, arguments, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;

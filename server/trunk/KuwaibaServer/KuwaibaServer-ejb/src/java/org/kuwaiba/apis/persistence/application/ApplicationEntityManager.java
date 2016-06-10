@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Properties;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectList;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
@@ -590,6 +591,16 @@ public interface ApplicationEntityManager {
             int type, ChangeDescriptor changeDescriptor) throws ApplicationObjectNotFoundException, ObjectNotFoundException;
     
     /**
+     * Allows to execute custom database queries. This method should not be used as it's only a temporary solution
+     * @param dbCode A string with the query
+     * @param columns The columns to be retrieved (this is a Neo4J-only thing)
+     * @return A table with results, that could also be interpreted as a multidimensional array with numerous paths
+     * @throws NotAuthorizedException If the user is not allowed to run arbitrary code on the database
+     * @deprecated Don't use it, instead, create a method in the corresponding entity manager instead of running code directly on the database
+     */
+    public List<RemoteBusinessObjectList> executeCustomDbCode(String dbCode, String[] columns) throws NotAuthorizedException;
+    
+    /**
      * Registers a commercial module. Replaces an existing one if the name of provided one is already registered
      * @param module The module to be registered
      * @throws NotAuthorizedException If the user is not authorized to register commercial modules
@@ -607,7 +618,5 @@ public interface ApplicationEntityManager {
      * @return The module instance
      * @throws NotAuthorizedException If the user is not authorized to access a particular commercial module
      */
-    public Collection<GenericCommercialModule> getCommercialModules() throws NotAuthorizedException;
-
-    
+    public Collection<GenericCommercialModule> getCommercialModules() throws NotAuthorizedException;    
 }
