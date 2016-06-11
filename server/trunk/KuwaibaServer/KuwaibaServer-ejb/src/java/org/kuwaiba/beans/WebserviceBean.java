@@ -2248,12 +2248,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
     
     @Override
-    public long createSubnet(long poolId, String attributeNames[], 
+    public long createSubnet(long id, String attributeNames[], 
             String attributeValues[][], String ipAddress, String sessionId) throws ServerSideException{
         try {
             aem.validateCall("CreateSubnet", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            return ipamModule.createSubnet(poolId, attributeNames, attributeValues);
+            return ipamModule.createSubnet(id, attributeNames, attributeValues);
         } catch (InventoryException ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
@@ -2289,11 +2289,103 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void relateIP() throws ServerSideException{
+    public long addIP(long id, String attributeNames[], String attributeValues[][], 
+            String ipAddress, String sessionId) throws ServerSideException{
+        try{
+            aem.validateCall("addIP", ipAddress, sessionId);
+            HashMap<String,List<String>> attributes = new HashMap<>();
+            for (int i = 0; i < attributeNames.length; i++)
+                attributes.put(attributeNames[i], Arrays.asList(attributeValues[i]));
+            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+            return ipamModule.addIP(id, attributes);
+        } catch (InventoryException ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(ex.getMessage());
+        }
     }
-
+    
     @Override
-    public void releaseIP() throws ServerSideException{
+    public void removeIP(long[] ids, boolean releaseRelationships, String ipAddress, 
+            String sessionId) throws ServerSideException{
+        try{
+            aem.validateCall("removeIP", ipAddress, sessionId);
+            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+            ipamModule.removeIP(ids, releaseRelationships);
+        } catch (InventoryException ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void relateIPtoDevice(long ipId, String deviceClass, long deviceId, String ipAddress, String sessionId) throws ServerSideException{
+        try{
+            aem.validateCall("relateIPtoDevice", ipAddress, sessionId);
+            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+            ipamModule.relateIPtoDevice(ipId, deviceClass, deviceId);
+        } catch (InventoryException ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void relateSubnetToVlan(long id, long vlanId, String ipAddress, String sessionId) throws ServerSideException{
+    try{
+            aem.validateCall("relateSubnetToVLAN", ipAddress, sessionId);
+            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+            ipamModule.relateSubnetToVLAN(id,vlanId);
+        } catch (InventoryException ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    @Override
+    public void releaseIPfromDevice(String deviceClass, long deviceId, long id, String ipAddress, String sessionId) throws ServerSideException{
+        try{
+            aem.validateCall("releaseIPfromDevice", ipAddress, sessionId);
+            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+            ipamModule.releaseIPfromDevice(deviceClass, deviceId, id);
+        } catch (InventoryException ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    @Override
+    public void releaseSubnetFromVlan(long vlanId, long id, String ipAddress, String sessionId) throws ServerSideException{
+        try{
+            aem.validateCall("releaseSubnetFromVLAN", ipAddress, sessionId);
+            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+            ipamModule.releaseSubnetFromVLAN(vlanId, id);
+        } catch (InventoryException ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public RemoteObjectLight[] getSubnetUsedIps(long id, int limit, String ipAddress, String sessionId) throws ServerSideException{
+        try{
+            aem.validateCall("getSubnetUsedIps", ipAddress, sessionId);
+            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+            ipamModule.getSubnetUsedIps(id);
+        } catch (InventoryException ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(ex.getMessage());
+        }
+        return null;
+    }
+    @Override
+    public boolean itOverlaps(String networkIp, String broadcastIp, String ipAddress, String sessionId) throws ServerSideException{
+        try{
+            aem.validateCall("itOverlaps", ipAddress, sessionId);
+            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+            ipamModule.itOverlaps(networkIp, broadcastIp);
+        } catch (InventoryException ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(ex.getMessage());
+        }
+        return true;
     }
         // </editor-fold>
     // </editor-fold>

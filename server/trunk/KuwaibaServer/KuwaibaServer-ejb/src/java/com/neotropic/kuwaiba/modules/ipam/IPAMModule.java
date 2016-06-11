@@ -6,6 +6,7 @@
 package com.neotropic.kuwaiba.modules.ipam;
 
 import com.neotropic.kuwaiba.modules.GenericCommercialModule;
+import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
@@ -13,12 +14,12 @@ import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
+import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
-import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.services.persistence.util.Constants;
@@ -122,15 +123,10 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws InvalidArgumentException
      * @throws ObjectNotFoundException
      * @throws NotAuthorizedException 
-     * @throws org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException 
-     * @throws org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException 
-     * @throws org.kuwaiba.apis.persistence.exceptions.WrongMappingException 
      */
     public long createSubnetsPool(long parentId, String subnetPoolName, 
             String subnetPoolDescription, int type) throws ServerSideException, 
-            MetadataObjectNotFoundException, InvalidArgumentException, 
-            ObjectNotFoundException, NotAuthorizedException, ApplicationObjectNotFoundException, 
-            OperationNotPermittedException, WrongMappingException
+            MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException, NotAuthorizedException 
     {
         if (aem == null)
            throw new ServerSideException("Can't reach the backend. Contact your administrator");
@@ -188,10 +184,66 @@ public class IPAMModule implements GenericCommercialModule{
     {
         aem.deletePools(subnetsId);
     }
+
+    public long addIP(long parentId, HashMap<String,List<String>> attributes) throws ApplicationObjectNotFoundException, 
+            InvalidArgumentException, ArraySizeMismatchException, NotAuthorizedException, 
+            MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, DatabaseException
+    {
+        return bem.createObject(Constants.CLASS_IP_ADDRESS, Constants.CLASS_SUBNET, parentId, attributes, 0);
+    }
     
-    private void relateIP(String IP, long deviceId){
+    public void removeIP(long[] ids, boolean releaseRelationships) 
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, 
+            OperationNotPermittedException, NotAuthorizedException
+    {
+        if(ids != null)
+            bem.deleteObject(Constants.CLASS_IP_ADDRESS, ids[0], releaseRelationships);
+    }
+    
+    public void relateIPtoDevice(long id, String deviceClass, long deviceId) throws ObjectNotFoundException,
+            OperationNotPermittedException, MetadataObjectNotFoundException{
+        bem.createSpecialRelationship(deviceClass, deviceId, Constants.CLASS_IP_ADDRESS, id, "uses", true);
+    }
+    
+    public void relateSubnetToVLAN(long id, long vlanId)
+        throws ObjectNotFoundException,
+            OperationNotPermittedException, MetadataObjectNotFoundException{
+        bem.createSpecialRelationship(Constants.CLASS_SUBNET, vlanId, Constants.CLASS_IP_ADDRESS, id, "uses", true);
+    }
+    public void releaseIPfromDevice(String deviceClass, long deviceId, long id)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException,
+            ApplicationObjectNotFoundException, NotAuthorizedException
+    {
+        bem.releaseSpecialRelationship(deviceClass, deviceId, id, "uses");
         
     }
-    private void releaseIP(long deviceId){
+    public void releaseSubnetFromVLAN(long vlanId,long id)throws ObjectNotFoundException, MetadataObjectNotFoundException,
+            ApplicationObjectNotFoundException, NotAuthorizedException
+    {
+        bem.releaseSpecialRelationship(Constants.CLASS_VLAN, vlanId, id, "uses");
+    }
+    /**
+     * retrieves the next free IP address in a subnet
+     * @param id subnet id
+     * @return the next free IP address in the subnet
+     * @throws ServerSideException 
+     */
+    public String getSubnetUsedIps(long id) throws MetadataObjectNotFoundException, 
+            ObjectNotFoundException, ApplicationObjectNotFoundException, 
+            NotAuthorizedException
+    {
+        bem.getObjectSpecialChildren(CLASS_SUBNET, id);
+        return null;
+    }
+    /**
+     * checks if the new subnet overlaps with the created subnets
+     * @param networkIp
+     * @param broadcastIp
+     * @param ipAddress
+     * @param sessionId
+     * @return true if overlaps, false of not
+     */
+    public boolean itOverlaps(String networkIp, String broadcastIp){
+        return false;
     }
 }

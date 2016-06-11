@@ -225,9 +225,17 @@ public class Constants {
      */
     public static final String CLASS_GENERICCUSTOMER = "GenericCustomer"; //NOI18N
     /**
+     * IP Address
+     */
+    public static final String CLASS_IP_ADDRESS = "IPAddress"; //NOI18N
+    /**
      * Class Subnet
      */
     public static final String CLASS_SUBNET = "Subnet"; //NOI18N
+    /**
+     * Class VLAN
+     */
+    public static final String CLASS_VLAN = "VLAN"; //NOI18N
     /**
      * Class Generic Communications Equipment
      */
