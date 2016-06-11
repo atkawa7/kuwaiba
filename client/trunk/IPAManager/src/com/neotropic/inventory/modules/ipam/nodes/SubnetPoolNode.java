@@ -56,6 +56,7 @@ public class SubnetPoolNode extends AbstractNode implements PropertyChangeListen
         return new Action[]{
             new CreateSubnetAction(this), 
             new CreateSubnetPoolAction(this),
+            null,
             new DeleteSubnetPoolAction(this)
         };
     }

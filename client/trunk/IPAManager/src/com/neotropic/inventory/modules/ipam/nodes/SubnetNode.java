@@ -15,15 +15,18 @@
  */
 package com.neotropic.inventory.modules.ipam.nodes;
 
+import com.neotropic.inventory.modules.ipam.nodes.actions.AddIPAddressAction;
+import com.neotropic.inventory.modules.ipam.nodes.actions.CreateSubnetAction;
 import java.awt.Image;
 import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
-import com.neotropic.inventory.modules.ipam.nodes.actions.CreateSubnetAction;
 import com.neotropic.inventory.modules.ipam.nodes.actions.DeleteSubnetAction;
+import com.neotropic.inventory.modules.ipam.nodes.actions.RelateToVlanAction;
 import com.neotropic.inventory.modules.ipam.nodes.properties.SubnetProperty;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.util.Constants;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.kuwaiba.management.services.nodes.actions.RelateToServiceAction;
 import org.openide.nodes.Sheet;
 import org.openide.util.ImageUtilities;
 
@@ -46,8 +49,14 @@ public class SubnetNode extends ObjectNode{
     @Override
     public Action[] getActions(boolean context){
         return new Action[]{
-            new CreateSubnetAction(this), 
-            new DeleteSubnetAction(this)};
+            new AddIPAddressAction(this),
+            new CreateSubnetAction(this),
+            null,
+            new RelateToServiceAction(),
+            new RelateToVlanAction(this),
+            null,
+            new DeleteSubnetAction(this)
+        };
     }
     
     @Override
@@ -55,7 +64,6 @@ public class SubnetNode extends ObjectNode{
         return subnet.getName() +" ["+subnet.getClassName()+"]";
     }
  
-     
     @Override
     public Image getIcon(int i){
         return defaultIcon;
