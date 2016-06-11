@@ -3332,6 +3332,7 @@ public class KuwaibaService {
             }
         }
     }
+    
     /**
       * Gets the complete information about a given subnet (all its attributes)
       * @param id Subnet id
@@ -3374,6 +3375,203 @@ public class KuwaibaService {
                 throw e;
             else {
                 System.out.println("[KUWAIBA] An unexpected error occurred in getSubnetPool: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Adds an ip to a Subnet
+     * @param id ipAddres id
+     * @param attributeNames IP Address Attributes
+     * @param attributeValues IP Addres values
+     * @param sessionId
+     * @return the id of the new IP Address
+     * @throws Exception 
+     */
+    @WebMethod(operationName = "addIP")
+    public long addIP(@WebParam(name = "id")long id,
+            @WebParam(name = "attributeNames")String[] attributeNames,
+            @WebParam(name = "attributeValues")String[][] attributeValues,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            return wsBean.addIP(id, attributeNames, attributeValues, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in addIP: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Removes an IP Address from a subnets. Note that this method must be used only for Subnet objects
+     * @param oids object id from the objects to be deleted
+     * @param releaseRelationships Should the deletion be forced, deleting all the relationships?
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "removeIP")
+    public void removeIP(
+            @WebParam(name = "oid")long[] oids,
+            @WebParam(name = "releaseRelationships") boolean releaseRelationships,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            wsBean.removeIP(oids, releaseRelationships, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in removeIP: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    /**
+     * Retrieves the IP addresses of a subnet
+     * @param id subnet id
+     * @param limit limit of returned subnets
+     * @param sessionId
+     * @return a set of subnets
+     * @throws Exception 
+     */
+    @WebMethod(operationName = "getSubnetUsedIps")
+    public RemoteObjectLight[] getSubnetUsedIps(@WebParam(name = "id")long id,
+            @WebParam(name = "limit")int limit,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            return wsBean.getSubnetUsedIps(id, limit, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getSubnetUsedIps: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**releaseSubnetFromVlan
+     * Releases an subnet from a VLAN that is using it
+     * @param id Subnet id
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime    
+     */
+    @WebMethod(operationName = "releaseSubnetFromVlan")
+    public void releaseSubnetFromVlan (
+            @WebParam(name = "id")long id,
+            @WebParam(name = "vlanId")long vlanId,
+            @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try{
+            wsBean.releaseSubnetFromVlan(vlanId, id, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in releaseObjectFromService: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Associates a subnet to existing VLAN
+     * @param id Subnet id
+     * @param vlanId VLAN id
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime   
+     */
+    @WebMethod(operationName = "relateSubnetToVlan")
+    public void relateSubnetToVlan (
+            @WebParam(name = "id")long id,
+            @WebParam(name = "vlanId")long vlanId,
+            @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try{
+            wsBean.relateSubnetToVlan(id, vlanId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in relateSubnetToVlan: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Associates an IP address to device
+     * @param id IP address id
+     * @param deviceClass device class
+     * @param deviceId device id
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime   
+     */
+    @WebMethod(operationName = "relateIPtoDevice")
+    public void relateIPtoDevice (
+            @WebParam(name = "id")long id,
+            @WebParam(name = "deviceClassName")String deviceClassName,
+            @WebParam(name = "deviceId")long deviceId,
+            @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try{
+            wsBean.relateIPtoDevice(id, deviceClassName, deviceId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in relateIPtoDevice: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Checks if a new subnet overlaps with a existing one
+     * @param networkIp the network ip for the subnet
+     * @param broadcastIp the broadcast ip for the subnet
+     * @param sessionId Session token
+     * @return true if overlaps
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime   
+     */
+    @WebMethod(operationName = "itOverlaps")
+    public boolean itOverlaps (
+            @WebParam(name = "networkIp")String networkIp,
+            @WebParam(name = "broadcastIp")String broadcastIp,
+            @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try{
+            return wsBean.itOverlaps(networkIp, broadcastIp, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in itOverlaps: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Releases an subnet from a VLAN that is using it
+     * @param deviceClassName device class name
+     * @param deviceId device id
+     * @param id Subnet id
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime    
+     */
+    @WebMethod(operationName = "releaseIPFromDevice")
+    public void releaseIPFromDevice (
+            @WebParam(name = "deviceClassName")String deviceClassName,
+            @WebParam(name = "deviceId")long deviceId,
+            @WebParam(name = "id")long id,
+            @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try{
+            wsBean.releaseIPfromDevice(deviceClassName, deviceId, id, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in releaseIPFromDevice: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
