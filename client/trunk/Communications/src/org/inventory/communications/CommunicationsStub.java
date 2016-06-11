@@ -2390,5 +2390,84 @@ public class CommunicationsStub {
             return false;
         }
     }
+    
+    public LocalObjectLight addIP(long id, LocalObject obj){
+        try {
+            List<String> attributeNames = new ArrayList<>();
+            List<StringArray> attributeValues = new ArrayList<>();
+
+            for (String key : obj.getAttributes().keySet()){
+                StringArray value = new StringArray();
+                attributeNames.add(key);
+                if (obj.getAttribute(key) instanceof List){
+                    for (long itemId : (List<Long>)obj.getAttribute(key))
+                        value.getItem().add(String.valueOf(itemId));
+                }else
+                    value.getItem().add(obj.getAttribute(key).toString());
+                attributeValues.add(value);
+            }
+            
+            long objectId  = service.addIP(id, attributeNames, attributeValues, this.session.getSessionId());
+            return new LocalObjectLight(objectId, obj.getName(), Constants.CLASS_SUBNET);
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    
+    public boolean removeIP(List<Long> oids){
+        try{
+            service.removeIP(oids, false, this.session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    public boolean relateIPtoDevice(long id, String classDevice, long deviceId){
+        try{
+            service.relateIPtoDevice(id, classDevice, deviceId, this.session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    public boolean relateSubnetToVLAN(long id, long vlanId){
+        try{
+            service.relateSubnetToVlan(id, vlanId, this.session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    public boolean releaseIPfromDevice(String deviceClassName, long deviceId, long id){
+        try{
+            service.releaseIPFromDevice(deviceClassName, deviceId, id, this.session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    public boolean releaseSubnetFromVLAN(long vlanId, long id){
+        try{
+            service.releaseSubnetFromVlan(vlanId, id, this.session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        } 
+    }
+    
+    public List<LocalObjectLight> getIps(long id, int limit){
+        return null;
+    }
+    public boolean itOverlaps(String networkIp, String broadcastIp){
+        return false;
+    }
     // </editor-fold>
 }

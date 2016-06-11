@@ -29,7 +29,14 @@ public class Constants {
     public static final int DEBUG_LEVEL_FINE = 2;
     public static int DEBUG_LEVEL = DEBUG_LEVEL_INFO;
     //public static int DEBUG_LEVEL = DEBUG_LEVEL_DISABLED;
-    
+     /**
+     * IP address type for IPv4
+     */
+    public static final int IPV4_TYPE = 4;
+    /**
+     * IP address type for IPv6
+     */
+    public static final int IPV6_TYPE = 6;
     /**
      * Name of the validator to indicate if a given class is a container
      */
