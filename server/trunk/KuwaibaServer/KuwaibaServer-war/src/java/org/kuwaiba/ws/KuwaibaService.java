@@ -3252,7 +3252,7 @@ public class KuwaibaService {
      * @return
      * @throws ServerSideException 
      */
-    @WebMethod(operationName = "createPoolofSubnets")
+    @WebMethod(operationName = "createSubnetPool")
     public long createSubnetPool(
             @WebParam(name = "parentId")long parentId, 
             @WebParam(name = "subnetPoolName")String subnetPoolName, 
@@ -3265,7 +3265,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in createPoolofSubnets: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in createSubnetPool: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
@@ -3456,6 +3456,7 @@ public class KuwaibaService {
     /**releaseSubnetFromVlan
      * Releases an subnet from a VLAN that is using it
      * @param id Subnet id
+     * @param vlanId the VLAN id
      * @param sessionId Session token
      * @throws Exception Generic exception encapsulating any possible error raised at runtime    
      */
