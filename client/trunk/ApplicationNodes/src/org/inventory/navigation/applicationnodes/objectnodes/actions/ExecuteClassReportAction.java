@@ -15,10 +15,8 @@
  */
 package org.inventory.navigation.applicationnodes.objectnodes.actions;
 
-import java.awt.BorderLayout;
 import java.awt.Desktop;
 import java.awt.event.ActionEvent;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -27,17 +25,11 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
 import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalReportDescriptor;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.MenuScroller;
@@ -65,26 +57,35 @@ public final class ExecuteClassReportAction extends AbstractAction implements Pr
             return;
         }
         
+        LocalObjectLight theObject = ((ObjectNode)selectedNodes.next()).getObject();
+        
         JMenuItem mniReport = (JMenuItem)ev.getSource();
         HashMap<String, Object> arguments = new HashMap<>();
-        arguments.put("rackId", ((ObjectNode)selectedNodes.next()).getObject().getOid());
-        byte[] theReport = CommunicationsStub.getInstance().executeReport(Long.valueOf(mniReport.getName()), arguments);
+        arguments.put("rackId", theObject.getOid());
         
-        try (FileOutputStream faos = new FileOutputStream("/home/gir/report.html")) {
-            faos.write(theReport);
-        } catch (IOException ex) {
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());
-        }
+        byte[] theReport = CommunicationsStub.getInstance().executeReport(Long.valueOf(mniReport.getName()), arguments);
         
         if (theReport == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else {           
-            if(Desktop.isDesktopSupported()) 
+            try {
+                File tempFile = File.createTempFile("class_report_" + theObject.getClassName() + "_" + theObject.getOid(), ".html"); //NOI18N
+                
+                try (FileOutputStream faos = new FileOutputStream(tempFile)) {
+                    faos.write(theReport);
+                    faos.flush();
+                }
+                if(Desktop.isDesktopSupported()) 
                 try {
-                    Desktop.getDesktop().browse(new URI("file:///home/gir/report.html"));
+                    System.out.println(tempFile.getAbsolutePath());
+                    Desktop.getDesktop().browse(new URI("file://" + tempFile.getAbsolutePath()));
                 } catch (IOException | URISyntaxException ex) {
                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());
                 }
+                
+            } catch (IOException ex) {
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());
+            }            
         }
     }
 

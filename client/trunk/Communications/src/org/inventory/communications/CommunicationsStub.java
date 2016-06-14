@@ -2039,11 +2039,17 @@ public class CommunicationsStub {
      */
     public List<LocalReportDescriptor> getReportsForClass(String className, int limit) {
         try {
-            List<ReportDescriptor> remoteDescriptors = service.getReportsForClass(className, limit, session.getSessionId());
-            List<LocalReportDescriptor> localDescriptors = new ArrayList<>();
-            for (ReportDescriptor aRemoteDescriptor : remoteDescriptors)
-                localDescriptors.add(new LocalReportDescriptor(aRemoteDescriptor.getClassName(), aRemoteDescriptor.getId(),
+            
+            List<LocalReportDescriptor> localDescriptors = cache.getCachedReports(className);
+            
+            if (localDescriptors == null) {
+                List<ReportDescriptor> remoteDescriptors = service.getReportsForClass(className, limit, session.getSessionId());
+
+                for (ReportDescriptor aRemoteDescriptor : remoteDescriptors)
+                    localDescriptors.add(new LocalReportDescriptor(aRemoteDescriptor.getClassName(), aRemoteDescriptor.getId(),
                                                     aRemoteDescriptor.getName(), aRemoteDescriptor.getDescription()));
+                cache.addReport(className, localDescriptors);
+            }
             return localDescriptors;
         }catch(Exception ex) {
             this.error =  ex.getMessage();
