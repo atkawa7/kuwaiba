@@ -48,7 +48,7 @@ public class AddIPAddressAction extends GenericObjectNodeAction {
     private CommunicationsStub com;
     private SubnetNode subnetNode;
     private int maskBits;
-    private List<RemoteObjectLight> subnetUsedIps;
+    private List<LocalObjectLight> subnetUsedIps;
     
     public AddIPAddressAction() {
         putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_ADD_IP_ADDRESS"));
@@ -86,7 +86,7 @@ public class AddIPAddressAction extends GenericObjectNodeAction {
         String lastUsedIP ="";
         subnetUsedIps = com.getSubnetUsedIps(id);
         if(subnetUsedIps.size()>0)
-            lastUsedIP = ((RemoteObjectLight)subnetUsedIps.get(0)).getName();
+            lastUsedIP = ((LocalObjectLight)subnetUsedIps.get(0)).getName();
         else
             lastUsedIP = networkIp;
         
@@ -102,8 +102,6 @@ public class AddIPAddressAction extends GenericObjectNodeAction {
         }
         AddIPAddressFrame addIpFrame = new AddIPAddressFrame(id, networkIp, broadcastIp, type, nextIp);
         addIpFrame.setVisible(true);
-        
-        
     }
     
     
@@ -232,7 +230,7 @@ public class AddIPAddressAction extends GenericObjectNodeAction {
             
             if(SubnetEngine.isIPAddress(ipAddress)){
                 //looking for used IPs
-                for (RemoteObjectLight subnetUsedIp : subnetUsedIps) {
+                for (LocalObjectLight subnetUsedIp : subnetUsedIps) {
                     if(subnetUsedIp.getName().equals(ipAddress)){
                         isUsed = true;
                         break;
