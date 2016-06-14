@@ -265,6 +265,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             throw new ArraySizeMismatchException("attributeNames", "attributeValues");
         }
         
+        
         try(Transaction tx =graphDb.beginTx()) {
             Node pool = poolsIndex.get(Constants.PROPERTY_ID, poolId).getSingle();
             
@@ -291,6 +292,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             
             Node newObject = createObject(classNode, classMetadata, attributes, templateId);
             newObject.createRelationshipTo(pool, RelTypes.CHILD_OF_SPECIAL).setProperty(Constants.PROPERTY_NAME, Constants.REL_PROPERTY_POOL);
+            
             tx.success();
             return newObject.getId();
         }
@@ -716,6 +718,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 parentNode = getInstanceOfClass(className, oid);
             
             Iterable<Relationship> children = parentNode.getRelationships(RelTypes.CHILD_OF,Direction.INCOMING);
+            Iterator<Relationship> instances = children.iterator();
             List<RemoteBusinessObjectLight> res = new ArrayList<>();
 
             if (maxResults > 0){
@@ -726,8 +729,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     res.add(new RemoteBusinessObjectLight(child.getId(),(String)child.getProperty(Constants.PROPERTY_NAME), Util.getClassName(child)));
                 }
             }else{
-                while(children.iterator().hasNext()){
-                    Node child = children.iterator().next().getStartNode();
+                while(instances.hasNext()){
+                    Node child = instances.next().getStartNode();
                     res.add(new RemoteBusinessObjectLight(child.getId(),(String)child.getProperty(Constants.PROPERTY_NAME), Util.getClassName(child)));
                 }
             }

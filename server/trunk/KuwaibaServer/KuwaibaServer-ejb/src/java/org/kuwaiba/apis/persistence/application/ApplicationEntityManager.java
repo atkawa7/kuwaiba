@@ -415,6 +415,7 @@ public interface ApplicationEntityManager {
      * @param name Pool name
      * @param description Pool description
      * @param instancesOfClass What kind of objects can this pool contain? 
+     * @param type type of IPs addresses inside of the pool
      * @return The id of the new pool
      * @throws MetadataObjectNotFoundException If instancesOfClass is not a valid subclass of InventoryObject
      * @throws InvalidArgumentException If the owner doesn't exist
@@ -457,6 +458,7 @@ public interface ApplicationEntityManager {
      * @param className kind of elements contained in the pool
      * @param poolId pool's id
      * @return the pool object
+     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException
      * @throws NotAuthorizedException 
      */
     public RemoteBusinessObject getPool(String className, long poolId) throws InvalidArgumentException, NotAuthorizedException;

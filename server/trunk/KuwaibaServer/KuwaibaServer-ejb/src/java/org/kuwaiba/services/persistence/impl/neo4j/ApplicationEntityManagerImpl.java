@@ -1412,6 +1412,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public RemoteBusinessObject getPool(String className, long poolId) throws InvalidArgumentException, NotAuthorizedException {
         try(Transaction tx = graphDb.beginTx()) 
         {
+            
             Node pool = poolsIndex.get(Constants.PROPERTY_ID, poolId).getSingle();
             ClassMetadata myClass = cm.getClass(className);
             

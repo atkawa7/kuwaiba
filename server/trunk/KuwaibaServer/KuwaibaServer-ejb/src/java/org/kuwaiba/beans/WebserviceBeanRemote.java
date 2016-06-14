@@ -618,9 +618,9 @@ public interface WebserviceBeanRemote {
         public long addIP(long id, String attributeNames[], 
             String attributeValues[][], String ipAddress, String sessionId) throws ServerSideException;
         public void removeIP(long[] ids, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
-        public void relateIPtoDevice(long id, String deviceClass, long deviceId, String ipAddress, String sessionId) throws ServerSideException;
+        public void relateIPtoDevice(long id, String deviceClassName, long deviceId, String ipAddress, String sessionId) throws ServerSideException;
         public void relateSubnetToVlan(long id, long vlanId, String ipAddress, String sessionId) throws ServerSideException;
-        public void releaseIPfromDevice(String deviceClass, long deviceId, long id, String ipAddress, String sessionId) throws ServerSideException;
+        public void releaseIPfromDevice(String deviceClassName, long deviceId, long id, String ipAddress, String sessionId) throws ServerSideException;
         public void releaseSubnetFromVlan(long vlanId, long id, String ipAddress, String sessionId) throws ServerSideException;
         public RemoteObjectLight[] getSubnetUsedIps(long id, int limit, String ipAddress, String sessionId) throws ServerSideException;
         public boolean itOverlaps(String networkIp, String broadcastIp, String ipAddress, String sessionId) throws ServerSideException;

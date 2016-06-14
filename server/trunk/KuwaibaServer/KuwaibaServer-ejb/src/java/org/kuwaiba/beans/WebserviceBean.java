@@ -2318,11 +2318,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
     
     @Override
-    public void relateIPtoDevice(long ipId, String deviceClass, long deviceId, String ipAddress, String sessionId) throws ServerSideException{
+    public void relateIPtoDevice(long ipId, String deviceClassName, long deviceId, String ipAddress, String sessionId) throws ServerSideException{
         try{
             aem.validateCall("relateIPtoDevice", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            ipamModule.relateIPtoDevice(ipId, deviceClass, deviceId);
+            ipamModule.relateIPtoDevice(ipId, deviceClassName, deviceId);
         } catch (InventoryException ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
@@ -2341,11 +2341,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
         }
     }
     @Override
-    public void releaseIPfromDevice(String deviceClass, long deviceId, long id, String ipAddress, String sessionId) throws ServerSideException{
+    public void releaseIPfromDevice(String deviceClassName, long deviceId, long id, String ipAddress, String sessionId) throws ServerSideException{
         try{
             aem.validateCall("releaseIPfromDevice", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            ipamModule.releaseIPfromDevice(deviceClass, deviceId, id);
+            ipamModule.releaseIPfromDevice(deviceClassName, deviceId, id);
         } catch (InventoryException ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
@@ -2368,12 +2368,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try{
             aem.validateCall("getSubnetUsedIps", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            ipamModule.getSubnetUsedIps(id);
+            return RemoteObjectLight.toRemoteObjectLightArray(ipamModule.getSubnetUsedIps(id));
         } catch (InventoryException ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
-        return null;
     }
     @Override
     public boolean itOverlaps(String networkIp, String broadcastIp, String ipAddress, String sessionId) throws ServerSideException{

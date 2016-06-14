@@ -63,6 +63,16 @@ public class IPAMModule implements GenericCommercialModule{
      * to this pool
      */
     private static final String DEFAULT_IPV6_POOL = "ipv6 Pool";
+    /**
+     * This relationship is used to connect a GenericCommunicationElement with
+     * a subnet's IP address 
+     */
+    public static final String RELATIONSHIP_IPAMHASADDRESS = "ipamHasIpAddress";
+    
+    /**
+     * This relationship is used to connect a VLAN with a Subnet
+     */
+    public static final String RELATIONSHIP_IPAMBELONGSTOVLAN = "ipamBelongstoVlan";
     
     @Override
     public String getName() {
@@ -104,6 +114,10 @@ public class IPAMModule implements GenericCommercialModule{
         this.aem = aem;
         this.mem = mem;
         this.bem = bem;
+        
+        //Registers the display names
+        this.mem.setSpecialRelationshipDisplayName(RELATIONSHIP_IPAMBELONGSTOVLAN, "IPAM Subnet belong to a VLAN");
+        this.mem.setSpecialRelationshipDisplayName(RELATIONSHIP_IPAMHASADDRESS, "IPAM GenericCommunicationElement has an IP Address");
     }
     
     public List<RemoteBusinessObjectLight> getDefaultIPAMRootNodes() throws NotAuthorizedException, ObjectNotFoundException{
@@ -202,45 +216,45 @@ public class IPAMModule implements GenericCommercialModule{
     
     public void relateIPtoDevice(long id, String deviceClass, long deviceId) throws ObjectNotFoundException,
             OperationNotPermittedException, MetadataObjectNotFoundException{
-        bem.createSpecialRelationship(deviceClass, deviceId, Constants.CLASS_IP_ADDRESS, id, "uses", true);
+        bem.createSpecialRelationship(deviceClass, deviceId, Constants.CLASS_IP_ADDRESS, id, RELATIONSHIP_IPAMBELONGSTOVLAN, true);
     }
     
     public void relateSubnetToVLAN(long id, long vlanId)
         throws ObjectNotFoundException,
             OperationNotPermittedException, MetadataObjectNotFoundException{
-        bem.createSpecialRelationship(Constants.CLASS_SUBNET, vlanId, Constants.CLASS_IP_ADDRESS, id, "uses", true);
+        bem.createSpecialRelationship(Constants.CLASS_VLAN, vlanId, Constants.CLASS_SUBNET, id, RELATIONSHIP_IPAMBELONGSTOVLAN, true);
     }
     public void releaseIPfromDevice(String deviceClass, long deviceId, long id)
             throws ObjectNotFoundException, MetadataObjectNotFoundException,
             ApplicationObjectNotFoundException, NotAuthorizedException
     {
-        bem.releaseSpecialRelationship(deviceClass, deviceId, id, "uses");
+        bem.releaseSpecialRelationship(deviceClass, deviceId, id, RELATIONSHIP_IPAMBELONGSTOVLAN);
         
     }
     public void releaseSubnetFromVLAN(long vlanId,long id)throws ObjectNotFoundException, MetadataObjectNotFoundException,
             ApplicationObjectNotFoundException, NotAuthorizedException
     {
-        bem.releaseSpecialRelationship(Constants.CLASS_VLAN, vlanId, id, "uses");
+        bem.releaseSpecialRelationship(Constants.CLASS_VLAN, vlanId, id, RELATIONSHIP_IPAMBELONGSTOVLAN);
     }
     /**
      * retrieves the next free IP address in a subnet
      * @param id subnet id
-     * @return the next free IP address in the subnet
-     * @throws ServerSideException 
+     * @return the next free IP address in the subnet 
+     * @throws MetadataObjectNotFoundException 
+     * @throws ObjectNotFoundException 
+     * @throws ApplicationObjectNotFoundException 
+     * @throws NotAuthorizedException 
      */
-    public String getSubnetUsedIps(long id) throws MetadataObjectNotFoundException, 
+    public List<RemoteBusinessObjectLight> getSubnetUsedIps(long id) throws MetadataObjectNotFoundException, 
             ObjectNotFoundException, ApplicationObjectNotFoundException, 
             NotAuthorizedException
     {
-        bem.getObjectSpecialChildren(CLASS_SUBNET, id);
-        return null;
+        return bem.getObjectChildren(Constants.CLASS_SUBNET, id, 0);
     }
     /**
      * checks if the new subnet overlaps with the created subnets
      * @param networkIp
      * @param broadcastIp
-     * @param ipAddress
-     * @param sessionId
      * @return true if overlaps, false of not
      */
     public boolean itOverlaps(String networkIp, String broadcastIp){
