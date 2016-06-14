@@ -21,13 +21,16 @@ import static javax.swing.Action.NAME;
 import org.inventory.communications.CommunicationsStub;
 import com.neotropic.inventory.modules.ipam.nodes.SubnetPoolNode;
 import java.awt.Dimension;
+import java.util.Iterator;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
+import org.openide.util.Utilities;
 
 /**
  * This action allows to create a pool of subnets
@@ -50,6 +53,22 @@ public class CreateSubnetPoolAction extends GenericObjectNodeAction{
     
     @Override
     public void actionPerformed(ActionEvent e) {
+        Iterator selectedNodes = Utilities.actionsGlobalContext().lookupResult(SubnetPoolNode.class).allInstances().iterator();
+        String name = "";
+        long id = 0;
+        int type = 0;
+        boolean isSubnetPool = true;
+        if (!selectedNodes.hasNext()){
+            return;
+        }
+        
+        while (selectedNodes.hasNext()) {
+            SubnetPoolNode selectedNode = (SubnetPoolNode)selectedNodes.next();
+            name = selectedNode.getSubnetPool().getName();
+            id = selectedNode.getSubnetPool().getOid();
+        }
+
+        type = (int)com.getSubnetPool(id).getAttribute(Constants.PROPERTY_TYPE);
         JTextField txtName = new JTextField(), txtDescription =  new JTextField();
         txtName.setName("txtName"); //NOI18N
         txtName.setPreferredSize(new Dimension(120, 18));
@@ -65,9 +84,9 @@ public class CreateSubnetPoolAction extends GenericObjectNodeAction{
                 java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_NEW_FOLDER"),
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION){
             
-            LocalObjectLight newPool = com.createPoolofSubnets(subnetPoolNode.getSubnetPool().getOid(), 
+            LocalObjectLight newPool = com.createSubnetPool(subnetPoolNode.getSubnetPool().getOid(), 
                     ((JTextField)pnlMyDialog.getComponent("txtName")).getText(), 
-                    ((JTextField)pnlMyDialog.getComponent("txtDescription")).getText(), 4);
+                    ((JTextField)pnlMyDialog.getComponent("txtDescription")).getText(), type);
             
             if (newPool ==  null)
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());

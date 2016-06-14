@@ -24,10 +24,13 @@ import com.neotropic.inventory.modules.ipam.nodes.actions.DeleteSubnetPoolAction
 import com.neotropic.inventory.modules.ipam.nodes.properties.SubnetPoolProperty;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.util.Constants;
 import org.openide.nodes.AbstractNode;
+import org.openide.nodes.Node;
 import org.openide.nodes.Sheet;
 import org.openide.util.ImageUtilities;
 import org.openide.util.lookup.Lookups;
@@ -53,12 +56,17 @@ public class SubnetPoolNode extends AbstractNode implements PropertyChangeListen
     
     @Override
     public Action[] getActions(boolean context){
-        return new Action[]{
-            new CreateSubnetAction(this), 
-            new CreateSubnetPoolAction(this),
-            null,
-            new DeleteSubnetPoolAction(this)
-        };
+        List<Action> actions = new ArrayList<>();
+        
+        actions.add(new CreateSubnetAction(this));
+        actions.add(new CreateSubnetPoolAction(this));
+        actions.add(null);
+        if (!(getParentNode() instanceof IpamRootNode)) {
+            actions.add(new DeleteSubnetPoolAction(this));
+            actions.add(null); //Separator
+        }
+            
+        return actions.toArray(new Action[]{});
     }
          
     @Override

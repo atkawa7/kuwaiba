@@ -22,17 +22,19 @@ import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
 import com.neotropic.inventory.modules.ipam.nodes.actions.DeleteSubnetAction;
 import com.neotropic.inventory.modules.ipam.nodes.actions.RelateToVlanAction;
+import com.neotropic.inventory.modules.ipam.nodes.actions.ReleaseFromVlanAction;
 import com.neotropic.inventory.modules.ipam.nodes.properties.SubnetProperty;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.util.Constants;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.kuwaiba.management.services.nodes.actions.RelateToServiceAction;
+import org.kuwaiba.management.services.nodes.actions.ReleaseFromServiceAction;
 import org.openide.nodes.Sheet;
 import org.openide.util.ImageUtilities;
 
 /**
- *
- * @author adrian
+ * Represents a subnet 
+ * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
  */
 public class SubnetNode extends ObjectNode{
     
@@ -49,13 +51,15 @@ public class SubnetNode extends ObjectNode{
     @Override
     public Action[] getActions(boolean context){
         return new Action[]{
-            new AddIPAddressAction(this),
-            new CreateSubnetAction(this),
+            new AddIPAddressAction(),
             null,
             new RelateToServiceAction(),
-            new RelateToVlanAction(this),
+            new RelateToVlanAction(),
             null,
-            new DeleteSubnetAction(this)
+            new ReleaseFromVlanAction(),
+            new ReleaseFromServiceAction(),
+            null,
+            new DeleteSubnetAction()
         };
     }
     

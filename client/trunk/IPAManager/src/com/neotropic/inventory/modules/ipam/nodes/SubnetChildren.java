@@ -46,7 +46,10 @@ public class SubnetChildren extends Children.Array{
             for (LocalObjectLight item : items)
                 add(new Node[]{new SubnetNode(item)});
         }
+        List<LocalObjectLight> pools = CommunicationsStub.getInstance().getSubnetPools(subnet.getOid());
+        System.out.println("asdasd");
     }
+    
     
     public boolean isCollapsed() {
         return collapsed;

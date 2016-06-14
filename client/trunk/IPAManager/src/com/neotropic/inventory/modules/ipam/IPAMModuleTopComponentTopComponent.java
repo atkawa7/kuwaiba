@@ -33,7 +33,7 @@ import org.openide.util.NbBundle.Messages;
 )
 @TopComponent.Description(
         preferredID = "IPAMModuleTopComponentTopComponent",
-        iconBase="com/neotropic/inventory/modules/res/icon24.png", 
+        iconBase="com/neotropic/inventory/modules/res/icon.png", 
         persistenceType = TopComponent.PERSISTENCE_NEVER
 )
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)

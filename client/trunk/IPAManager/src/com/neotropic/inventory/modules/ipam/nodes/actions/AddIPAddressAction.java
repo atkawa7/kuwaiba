@@ -18,10 +18,11 @@ package com.neotropic.inventory.modules.ipam.nodes.actions;
 import com.neotropic.inventory.modules.ipam.engine.SubnetEngine;
 import com.neotropic.inventory.modules.ipam.nodes.SubnetNode;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import javax.swing.JFrame;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObject;
@@ -30,30 +31,35 @@ import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
+import org.kuwaiba.wsclient.RemoteObjectLight;
 import org.openide.util.Utilities;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
  * Allows to relate an IP of a subnet with a GenericNetworkElement
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class AddIPAddressAction extends GenericObjectNodeAction{
+@ServiceProvider(service=GenericObjectNodeAction.class)
+public class AddIPAddressAction extends GenericObjectNodeAction {
 
     /**
      * Reference to the communications stub singleton
      */
     private CommunicationsStub com;
-    
     private SubnetNode subnetNode;
+    private int maskBits;
+    private List<RemoteObjectLight> subnetUsedIps;
     
-    public AddIPAddressAction(SubnetNode subnetNode) {
+    public AddIPAddressAction() {
         putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_ADD_IP_ADDRESS"));
         com = CommunicationsStub.getInstance();
-        this.subnetNode = subnetNode;
+        maskBits = 32;
+        subnetUsedIps = new ArrayList<>();
     }
     
     @Override
     public String getValidator() {
-        return null;
+        return Constants.VALIDATOR_SUBNET;
     }
 
     @Override
@@ -65,9 +71,9 @@ public class AddIPAddressAction extends GenericObjectNodeAction{
             return;
         
         while (selectedNodes.hasNext()) {
-            SubnetNode selectedNode = (SubnetNode)selectedNodes.next();
-            name = selectedNode.getSubnet().getName();
-            id = selectedNode.getSubnet().getOid();
+            subnetNode = (SubnetNode)selectedNodes.next();
+            name = subnetNode.getSubnet().getName();
+            id = subnetNode.getSubnet().getOid();
         }
         LocalObject subnet = com.getSubnet(id);
         String networkIp = (String)subnet.getAttribute(Constants.PROPERTY_NETWORKIP);
@@ -75,14 +81,26 @@ public class AddIPAddressAction extends GenericObjectNodeAction{
         String cidr = subnet.getName();
         //hacer un metodo que me diga la ultima ip usada por el padre
         int type = (int)subnet.getAttribute(Constants.PROPERTY_TYPE);
-        int maskBits = 0;
+        
         String nextIp="";
+        String lastUsedIP ="";
+        subnetUsedIps = com.getSubnetUsedIps(id);
+        if(subnetUsedIps.size()>0)
+            lastUsedIP = ((RemoteObjectLight)subnetUsedIps.get(0)).getName();
+        else
+            lastUsedIP = networkIp;
+        
         if(type == Constants.IPV4_TYPE){
             String[] split = cidr.split("/");
             maskBits = Integer.parseInt(split[1]);
-            nextIp = SubnetEngine.nextIpv4(networkIp, broadcastIp, split[0], maskBits);
+            nextIp = SubnetEngine.nextIpv4(networkIp, broadcastIp, lastUsedIP, maskBits);
         }
-        AddIPAddressFrame addIpFrame = new AddIPAddressFrame(id, networkIp, broadcastIp, maskBits, nextIp);
+        else if(type == Constants.IPV6_TYPE){
+            String[] split = cidr.split("/");
+            maskBits = Integer.parseInt(split[1]);
+            nextIp = SubnetEngine.nextIpv6(networkIp, broadcastIp, lastUsedIP, maskBits);
+        }
+        AddIPAddressFrame addIpFrame = new AddIPAddressFrame(id, networkIp, broadcastIp, type, nextIp);
         addIpFrame.setVisible(true);
         
         
@@ -209,28 +227,37 @@ public class AddIPAddressAction extends GenericObjectNodeAction{
         private void btnAddSubnetActionPerformed(java.awt.event.ActionEvent evt) { 
             
             String ipAddress = txtIpAddress.getText();
+            boolean isUsed = false;
+            boolean itBelong = false;
             
             if(SubnetEngine.isIPAddress(ipAddress)){
-                if(type == Constants.IPV4_TYPE){
-                    if(SubnetEngine.belongsTo(networkIp, nextIp, ALLBITS))
-                    {
-                        lblError.setText("This IP is outside of the subnet");
-                        lblError.setVisible(true);
+                //looking for used IPs
+                for (RemoteObjectLight subnetUsedIp : subnetUsedIps) {
+                    if(subnetUsedIp.getName().equals(ipAddress)){
+                        isUsed = true;
+                        break;
                     }
+                }
+                
+                if(type == Constants.IPV4_TYPE){
+                    if(!SubnetEngine.belongsTo(networkIp, ipAddress, maskBits))
+                        itBelong = true;
                 }
                 else if (type == Constants.IPV6_TYPE){   
-                    if(SubnetEngine.belongsToIpv6(networkIp, nextIp, ALLBITS)){
-                        lblError.setText("This IP is outside of the subnet");
-                        lblError.setVisible(true);
-                    }
+                    if(!SubnetEngine.belongsToIpv6(networkIp, ipAddress, maskBits))
+                        itBelong = true;
                 }
-                else{    
+                    
+
+                if(!isUsed && !itBelong){    
                     lblError.setVisible(false);
-                    String[] attributeNames = new String[1];
-                    String[] attributeValues = new String[1];
+                    String[] attributeNames = new String[2];
+                    String[] attributeValues = new String[2];
 
                     attributeNames[0] = Constants.PROPERTY_NAME;
+                    attributeNames[1] = Constants.PROPERTY_DESCRIPTION;
                     attributeValues[0] = ipAddress;
+                    attributeValues[1] = txtDescription.getText();
 
                     LocalObjectLight addedIP = CommunicationsStub.getInstance().addIP(parentId, 
                             new LocalObject(Constants.CLASS_SUBNET, 0, attributeNames, attributeValues));
@@ -243,15 +270,17 @@ public class AddIPAddressAction extends GenericObjectNodeAction{
                     }
                     dispose();
                 }
+                else if(itBelong){
+                    lblError.setText("This IP is outside of the subnet");
+                    lblError.setVisible(true);
+                }
+                else if(isUsed){
+                    lblError.setText("This IP is in use");
+                    lblError.setVisible(true);  
+                }
             }
-            else{
+            else
                 lblError.setVisible(true);
-            }    
-        }   
-
-        public LocalObjectLight getNewSubnet() {
-            return newSubnet;
         }
     }
-    
 }

@@ -15,21 +15,22 @@
  */
 package com.neotropic.inventory.modules.ipam.nodes.actions;
 
-import com.neotropic.inventory.modules.ipam.nodes.IpNode;
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.util.actions.Presenter;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
  * Release an IP Address from a device
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
+@ServiceProvider(service=GenericObjectNodeAction.class)
 public class ReleaseFromDeviceAction extends GenericObjectNodeAction implements Presenter.Popup {
     
     @Override
@@ -44,14 +45,14 @@ public class ReleaseFromDeviceAction extends GenericObjectNodeAction implements 
 
     @Override
     public String getValidator() {
-        return null; //Enable this action for any object
+        return Constants.VALIDATOR_IP_ADDRESS;
     }
 
     @Override
     public JMenuItem getPopupPresenter() {
         JMenu mnuServices = new JMenu(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELEASE_DEVICE"));
         LocalObjectLight[] services = CommunicationsStub.getInstance().getSpecialAttribute(object.getClassName(), 
-                object.getOid(), "uses");
+                object.getOid(), Constants.RELATIONSHIP_IPAMHASADDRESS);
         
         if (services != null) {
         

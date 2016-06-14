@@ -18,19 +18,25 @@ package com.neotropic.inventory.modules.ipam.nodes.actions;
 import com.neotropic.inventory.modules.ipam.nodes.SubnetNode;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import javax.swing.AbstractAction;
 import static javax.swing.Action.NAME;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.util.Constants;
+import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.nodes.Node;
+import org.openide.util.Utilities;
+import org.openide.util.lookup.ServiceProvider;
 
 
 /**
  *
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class DeleteSubnetAction extends AbstractAction{
+@ServiceProvider(service=GenericObjectNodeAction.class)
+public class DeleteSubnetAction extends GenericObjectNodeAction{
 
     /**
      * Reference to the communications stub singleton
@@ -41,16 +47,26 @@ public class DeleteSubnetAction extends AbstractAction{
      */
     private SubnetNode node;
 
-    public DeleteSubnetAction(SubnetNode pn){
+    public DeleteSubnetAction(){
         putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_DELETE"));
         com = CommunicationsStub.getInstance();
-        this.node = pn;
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
+        
+        Iterator selectedNodes = Utilities.actionsGlobalContext().lookupResult(SubnetNode.class).allInstances().iterator();
+        String name = "";
+        long id = 0;
+        if (!selectedNodes.hasNext())
+            return;
         List<Long> ids = new ArrayList<>();
-        ids.add(node.getSubnet().getOid());
+        while (selectedNodes.hasNext()) {
+            node = (SubnetNode)selectedNodes.next();
+            ids.add(node.getSubnet().getOid());
+        }
+        
+        
         if (com.deleteSubnet(ids)){
             node.getParentNode().getChildren().remove(new Node[]{node});
             NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
@@ -58,6 +74,11 @@ public class DeleteSubnetAction extends AbstractAction{
         }
         else
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+    }
+
+    @Override
+    public String getValidator() {
+        return Constants.VALIDATOR_SUBNET;
     }
     
 }

@@ -16,26 +16,28 @@
 package com.neotropic.inventory.modules.ipam.nodes.actions;
 
 import com.neotropic.inventory.modules.ipam.windows.DevicesFrame;
-import com.neotropic.inventory.modules.ipam.nodes.IpNode;
 import java.awt.event.ActionEvent;
 import java.util.Collection;
 import java.util.Iterator;
-import javax.swing.AbstractAction;
 import static javax.swing.Action.NAME;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
+import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.util.Lookup;
 import org.openide.util.Utilities;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
- *
+ * Actions to relate an IP address to a generic communications element
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class RelateToDeviceAction extends AbstractAction{
+@ServiceProvider(service=GenericObjectNodeAction.class)
+public class RelateToDeviceAction extends GenericObjectNodeAction{
     
-    public RelateToDeviceAction(IpNode node){
+    
+    public RelateToDeviceAction(){
         putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELATE_IP"));
     }
     
@@ -58,5 +60,10 @@ public class RelateToDeviceAction extends AbstractAction{
             DevicesFrame frame = new DevicesFrame(selectedObjects, devices);
             frame.setVisible(true);
         }    
+    }
+
+    @Override
+    public String getValidator() {
+        return Constants.VALIDATOR_IP_ADDRESS;
     }
 }

@@ -61,8 +61,12 @@ public class SubnetEngine {
             }
             
             if(!subnetSegment.isEmpty()){
-                if(!netSegment.isEmpty() && Integer.parseInt(netSegment) == 0) //in case the of lower bits in front of the mask
-                    subnetSegment="0";
+                if(!netSegment.isEmpty() && Integer.parseInt(netSegment) == 0){ //in case the of lower bits in front of the mask
+                    int x = subnetSegment.length();
+                    subnetSegment = "";
+                    while(subnetSegment.length()<x)
+                        subnetSegment += "0";
+                }
                 for (String segement : complement(netSegment, segmentCalculation(subnetSegment))) 
                     listOf.add(Integer.toString(Integer.parseInt(segement,2)));
                 mapSubnets.put(segmentId, listOf);

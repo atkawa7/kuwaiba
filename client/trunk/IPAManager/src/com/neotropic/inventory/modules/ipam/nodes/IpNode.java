@@ -15,13 +15,8 @@
  */
 package com.neotropic.inventory.modules.ipam.nodes;
 
-import com.neotropic.inventory.modules.ipam.nodes.actions.RelateToDeviceAction;
-import java.awt.Image;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
-import org.openide.util.ImageUtilities;
-import javax.swing.Action;
-import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteBusinessObjectAction;
 
 
 /**
@@ -29,21 +24,14 @@ import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteBusin
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class IpNode extends ObjectNode{
-    
-    private static final String ICON_PATH="com/neotropic/inventory/modules/res/subnet-icon.png";
-    private static Image defaultIcon = ImageUtilities.loadImage(ICON_PATH);
-    
+
     public IpNode(LocalObjectLight lol) {
-        super(lol);
+        super(lol, true);
     }
     
-    @Override
-    public Action[] getActions(boolean context){
-        return new Action[]{
-            new RelateToDeviceAction(this), 
-            new DeleteBusinessObjectAction()
-        };
-    }
+//    public IpNode(LocalObjectLight lol) {
+//        super(lol, i);
+//    }
     
     @Override
     public boolean canRename() {

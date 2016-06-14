@@ -52,4 +52,9 @@ public class IpamRootNode extends AbstractNode{
         return getIcon(i);
     }
     
+   @Override
+    public String getName(){
+        return "IPvRootNode";
+    }
+    
 }

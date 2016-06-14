@@ -16,27 +16,34 @@
 package com.neotropic.inventory.modules.ipam.nodes.actions;
 
 
-import com.neotropic.inventory.modules.ipam.nodes.SubnetNode;
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
+import java.util.Iterator;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
- * Release a relation between a subnet and a vlan
+ * Release a relation between a subnet and a VLAN
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
+@ServiceProvider(service=GenericObjectNodeAction.class)
 public class ReleaseFromVlanAction  extends GenericObjectNodeAction implements Presenter.Popup {
+    
+    private long id;
+    
     
     @Override
     public void actionPerformed(ActionEvent e) {
         if (CommunicationsStub.getInstance().releaseSubnetFromVLAN( 
-                object.getOid(), Long.valueOf(((JMenuItem)e.getSource()).getName())))
+                id, Long.valueOf(((JMenuItem)e.getSource()).getName())))
             NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
                     java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_SUCCESS"));
         else
@@ -45,15 +52,27 @@ public class ReleaseFromVlanAction  extends GenericObjectNodeAction implements P
 
     @Override
     public String getValidator() {
-        return null; //Enable this action for any object
+        return Constants.VALIDATOR_SUBNET; //Enable this action for any object
     }
 
     @Override
     public JMenuItem getPopupPresenter() {
         JMenu mnuServices = new JMenu(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELEASE_VLAN"));
-        LocalObjectLight[] services = CommunicationsStub.getInstance().getSpecialAttribute(object.getClassName(), 
-                object.getOid(), "uses");
+        Iterator selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
+        String className = "";
         
+        if (!selectedNodes.hasNext())
+            return null;
+        
+        while (selectedNodes.hasNext()) {
+            ObjectNode selectedNode = (ObjectNode)selectedNodes.next();
+            className = selectedNode.getObject().getClassName();
+            id = selectedNode.getObject().getOid();
+        }
+        
+        LocalObjectLight[] services = CommunicationsStub.getInstance().getSpecialAttribute(className, 
+                id, Constants.RELATIONSHIP_IPAMBELONGSTOVLAN);
+
         if (services != null) {
         
             if (services.length == 0)

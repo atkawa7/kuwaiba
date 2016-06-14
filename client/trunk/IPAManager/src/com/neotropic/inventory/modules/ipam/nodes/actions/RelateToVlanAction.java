@@ -16,26 +16,27 @@
 package com.neotropic.inventory.modules.ipam.nodes.actions;
 
 import com.neotropic.inventory.modules.ipam.windows.VlansFrame;
-import com.neotropic.inventory.modules.ipam.nodes.SubnetNode;
 import java.awt.event.ActionEvent;
 import java.util.Collection;
 import java.util.Iterator;
-import javax.swing.AbstractAction;
 import static javax.swing.Action.NAME;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
+import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.util.Lookup;
 import org.openide.util.Utilities;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
  * Relates a subnet with a VLAN
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class RelateToVlanAction extends AbstractAction{
+@ServiceProvider(service=GenericObjectNodeAction.class)
+public class RelateToVlanAction extends GenericObjectNodeAction{
     
-    public RelateToVlanAction(SubnetNode subnetNode) {
+    public RelateToVlanAction() {
         putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELATE_VLAN"));
     }
     
@@ -59,5 +60,9 @@ public class RelateToVlanAction extends AbstractAction{
             frame.setVisible(true);
         }
     }
-    
+
+    @Override
+    public String getValidator() {
+        return Constants.VALIDATOR_SUBNET;
+    }
 }

@@ -32,6 +32,7 @@ import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import org.inventory.communications.core.LocalObject;
 import org.openide.util.Utilities;
 
@@ -76,7 +77,8 @@ public class CreateSubnetAction extends AbstractAction{
         }
 
         int type = (int)com.getSubnetPool(id).getAttribute(Constants.PROPERTY_TYPE);
-         
+
+
         CreateSubnetFrame subnetFrame = new CreateSubnetFrame(id, type);
         subnetFrame.setVisible(true);
     }    
@@ -92,7 +94,8 @@ public class CreateSubnetAction extends AbstractAction{
         private javax.swing.JLabel lblError;
         private javax.swing.JLabel lblIpAddress;
         private javax.swing.JPanel pnl;
-
+        private javax.swing.JCheckBox cbxCreateAllIps;
+        
         private int type;
         private long parentId;
         private LocalObjectLight newSubnet;
@@ -109,7 +112,7 @@ public class CreateSubnetAction extends AbstractAction{
         public final void initComponents(){
             setLayout(new BorderLayout());
             setTitle(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_ADD_SUBNET"));
-            setPreferredSize(new java.awt.Dimension(470, 170));
+            setPreferredSize(new java.awt.Dimension(470, 190));
             setLocationRelativeTo(null);
             pnl = new javax.swing.JPanel();
             btnAddSubnet = new javax.swing.JButton();
@@ -126,6 +129,7 @@ public class CreateSubnetAction extends AbstractAction{
             txtDescription = new javax.swing.JTextField();
             lblIpAddress = new javax.swing.JLabel();
             lblDescription = new javax.swing.JLabel();
+            cbxCreateAllIps = new javax.swing.JCheckBox();
             lblError = new javax.swing.JLabel();
             lblError.setVisible(false);
             btnAddSubnet.setText(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_ADD_SUBNET"));
@@ -147,48 +151,52 @@ public class CreateSubnetAction extends AbstractAction{
             lblError.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
             lblError.setForeground(new java.awt.Color(255, 51, 51));
             lblError.setText(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_INVALID_CIDR"));
-
+            cbxCreateAllIps.setText("Create all possible IPs");
+            
             javax.swing.GroupLayout pnlLayout = new javax.swing.GroupLayout(pnl);
-            pnl.setLayout(pnlLayout);
-            pnlLayout.setHorizontalGroup(
-                pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(pnlLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addGroup(pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(pnlLayout.createSequentialGroup()
-                            .addComponent(btnClose)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnAddSubnet))
-                        .addGroup(pnlLayout.createSequentialGroup()
-                            .addGroup(pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(lblIpAddress)
-                                .addComponent(lblDescription))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addGroup(pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(txtIpAddress)
-                                .addComponent(txtDescription)
-                                .addComponent(lblError, javax.swing.GroupLayout.DEFAULT_SIZE, 272, Short.MAX_VALUE))))
-                    .addContainerGap())
-            );
-            pnlLayout.setVerticalGroup(
-                pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlLayout.createSequentialGroup()
-                    .addGap(27, 27, 27)
-                    .addGroup(pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(lblIpAddress)
-                        .addComponent(txtIpAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGap(4, 4, 4)
-                    .addComponent(lblError)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addGroup(pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(lblDescription)
-                        .addComponent(txtDescription, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGap(18, 18, 18)
-                    .addGroup(pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+        pnl.setLayout(pnlLayout);
+        pnlLayout.setHorizontalGroup(
+            pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlLayout.createSequentialGroup()
                         .addComponent(btnClose)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(cbxCreateAllIps)
+                        .addGap(18, 18, 18)
                         .addComponent(btnAddSubnet))
-                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            );
+                    .addGroup(pnlLayout.createSequentialGroup()
+                        .addGroup(pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblIpAddress)
+                            .addComponent(lblDescription))
+                        .addGap(18, 18, 18)
+                        .addGroup(pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblError, javax.swing.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE)
+                            .addComponent(txtIpAddress)
+                            .addComponent(txtDescription))))
+                .addContainerGap())
+        );
+        pnlLayout.setVerticalGroup(
+            pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlLayout.createSequentialGroup()
+                .addGap(27, 27, 27)
+                .addGroup(pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(lblIpAddress)
+                    .addComponent(txtIpAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(4, 4, 4)
+                .addComponent(lblError)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblDescription)
+                    .addComponent(txtDescription, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnClose)
+                    .addComponent(btnAddSubnet)
+                    .addComponent(cbxCreateAllIps))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
             getContentPane().add(pnl, java.awt.BorderLayout.CENTER);
             pack();
@@ -197,6 +205,7 @@ public class CreateSubnetAction extends AbstractAction{
         private void btnAddSubnetActionPerformed(java.awt.event.ActionEvent evt) { 
             SubnetEngine subnetEngine = new SubnetEngine();
             String ipCIDR = txtIpAddress.getText();
+            boolean createIps = false;
             if(SubnetEngine.isCIDRFormat(ipCIDR)){
                 lblError.setVisible(false);
                 String[] attributeNames = new String[6];
@@ -227,9 +236,50 @@ public class CreateSubnetAction extends AbstractAction{
                     attributeValues[5] = Integer.toString(Constants.IPV6_TYPE);
                     attributeValues[0] = ipCIDR;
                 }
+                if(cbxCreateAllIps.isSelected()){
+                    int dialogButton = JOptionPane.YES_NO_OPTION;
+                    int dialogResult = JOptionPane.showConfirmDialog (null, 
+                                      "\nThis could be dangerous!!! \n"
+                                    + "\nIf the subnet has to many IP Addresses"
+                                    + "\nWould You Like to create all the possible ip address?","Warning!!",dialogButton);
+                    if(dialogResult == JOptionPane.YES_OPTION){
+                            createIps=true;
+                    }
+                }
+                
                 newSubnet = CommunicationsStub.getInstance().createSubnet(parentId, 
                             new LocalObject(Constants.CLASS_SUBNET, 0, attributeNames, attributeValues));
 
+                if(createIps){
+                    String[] ipAttributeNames = new String[1];
+                    String[] ipAttributeValues = new String[1];
+
+                    ipAttributeNames[0] = Constants.PROPERTY_NAME;
+                    //192.168.1.24/29
+                    String ip = attributeValues[3];
+                    LocalObjectLight addedIP = null;
+                    String[] split = ipCIDR.split("/");
+                    if(type == Constants.IPV4_TYPE){
+
+                        while(SubnetEngine.belongsTo(attributeValues[3], ip, Integer.parseInt(split[1]))){
+                            ip =  SubnetEngine.nextIpv4(attributeValues[3], attributeValues[2], ip, Integer.parseInt(split[1]));
+                            ipAttributeValues[0] = ip;
+                            addedIP = CommunicationsStub.getInstance().addIP(newSubnet.getOid(), 
+                            new LocalObject(Constants.CLASS_SUBNET, 0, ipAttributeNames, ipAttributeValues));
+
+                        }
+                    }
+
+                    else if(type == Constants.IPV6_TYPE){
+                        while(SubnetEngine.belongsToIpv6(attributeValues[3], ip, Integer.parseInt(split[1]))){
+                            ip =  SubnetEngine.nextIpv6(attributeValues[3], attributeValues[2], ip, Integer.parseInt(split[1]));
+                            ipAttributeValues[0] = ip;
+                            addedIP = CommunicationsStub.getInstance().addIP(newSubnet.getOid(), 
+                            new LocalObject(Constants.CLASS_SUBNET, 0, ipAttributeNames, ipAttributeValues));
+
+                        }
+                    }
+                }
                 if (newSubnet == null)
                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
                 else{
@@ -239,9 +289,8 @@ public class CreateSubnetAction extends AbstractAction{
                     }
                 dispose();
             }
-            else{
+            else
                 lblError.setVisible(true);
-            }    
         }   
 
         public LocalObjectLight getNewSubnet() {
