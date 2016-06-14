@@ -36,7 +36,6 @@ import org.inventory.core.services.utils.MenuScroller;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter;
-import org.openide.windows.TopComponent;
 
 /**
  * Shows the class reports available for the selected node (if any) and run any of them
@@ -61,7 +60,8 @@ public final class ExecuteClassReportAction extends AbstractAction implements Pr
         
         JMenuItem mniReport = (JMenuItem)ev.getSource();
         HashMap<String, Object> arguments = new HashMap<>();
-        arguments.put("rackId", theObject.getOid());
+        arguments.put("objectId", theObject.getOid());
+        arguments.put("objectClass", theObject.getClassName());
         
         byte[] theReport = CommunicationsStub.getInstance().executeReport(Long.valueOf(mniReport.getName()), arguments);
         

@@ -30,7 +30,6 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.util.Constants;
 import org.openide.nodes.AbstractNode;
-import org.openide.nodes.Node;
 import org.openide.nodes.Sheet;
 import org.openide.util.ImageUtilities;
 import org.openide.util.lookup.Lookups;

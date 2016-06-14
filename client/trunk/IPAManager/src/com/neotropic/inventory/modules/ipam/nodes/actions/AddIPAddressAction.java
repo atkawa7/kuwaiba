@@ -31,7 +31,6 @@ import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
-import org.kuwaiba.wsclient.RemoteObjectLight;
 import org.openide.util.Utilities;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -82,11 +81,11 @@ public class AddIPAddressAction extends GenericObjectNodeAction {
         //hacer un metodo que me diga la ultima ip usada por el padre
         int type = (int)subnet.getAttribute(Constants.PROPERTY_TYPE);
         
-        String nextIp="";
-        String lastUsedIP ="";
+        String nextIp = "";
+        String lastUsedIP;
         subnetUsedIps = com.getSubnetUsedIps(id);
-        if(subnetUsedIps.size()>0)
-            lastUsedIP = ((LocalObjectLight)subnetUsedIps.get(0)).getName();
+        if(!subnetUsedIps.isEmpty())
+            lastUsedIP = subnetUsedIps.get(0).getName();
         else
             lastUsedIP = networkIp;
         

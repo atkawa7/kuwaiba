@@ -2442,13 +2442,11 @@ public class CommunicationsStub {
     }
     
     public List<LocalObjectLight> getSubnetUsedIps(long id){
-        try{
-            List<RemoteObjectLight> subnetUsedIps = service.getSubnetUsedIps(id, 0, this.session.getSessionId());
-            List<LocalObjectLight> usedIps = new ArrayList<>();
-            for (RemoteObjectLight usedIp : subnetUsedIps) {
-                usedIps.add(new LocalObjectLight(usedIp.getOid(), usedIp.getName(), usedIp.getClassName()));
-            }
-            return usedIps;
+        try {
+            List<LocalObjectLight> res = new ArrayList<>();
+            for (RemoteObjectLight anIp : service.getSubnetUsedIps(id, 0, this.session.getSessionId())) 
+                res.add(new LocalObjectLight(anIp.getOid(), anIp.getName(), anIp.getClassName()));
+            return res;
         }catch(Exception ex){
             this.error = ex.getMessage();
         }
