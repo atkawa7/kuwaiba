@@ -409,43 +409,49 @@ public class Util {
     public static RemoteBusinessObject createRemoteObjectFromNode(Node instance, ClassMetadata myClass) throws InvalidArgumentException {
         
         HashMap<String, List<String>> attributes = new HashMap<>();
-
+        String name = "";
         
+        for (AttributeMetadata myAtt : myClass.getAttributes()){
+            //Only set the attributes existing in the current node. Please note that properties can't be null in
+            //Neo4J, so a null value is actually a non-existing relationship/value
+            if (instance.hasProperty(myAtt.getName())){
+               if (AttributeMetadata.isPrimitive(myAtt.getType())) {
+                   
+                   if (!myAtt.getType().equals("Binary")) {
+                        String value = String.valueOf(instance.getProperty(myAtt.getName()));
+                        
+                        if (Constants.PROPERTY_NAME.equals(myAtt.getName()))
+                            name = value;
+                        
+                        List<String> attributeValue = new ArrayList<>();
+                        attributeValue.add(value);
+                        attributes.put(myAtt.getName(),attributeValue);
+                    }
+                }
+            }
+        }
+
+        //Iterates through relationships and transform the into "plain" attributes
+        Iterable<Relationship> iterableRelationships = instance.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING);
+        Iterator<Relationship> relationships = iterableRelationships.iterator();
+
+        while(relationships.hasNext()){
+            Relationship relationship = relationships.next();
+            if (!relationship.hasProperty(Constants.PROPERTY_NAME))
+                throw new InvalidArgumentException(String.format("The object with id %s is malformed", instance.getId()));
+
+            String attributeName = (String)relationship.getProperty(Constants.PROPERTY_NAME);
             for (AttributeMetadata myAtt : myClass.getAttributes()){
-                //Only set the attributes existing in the current node. Please note that properties can't be null in
-                //Neo4J, so a null value is actually a non-existing relationship/value
-                if (instance.hasProperty(myAtt.getName())){
-                   if (AttributeMetadata.isPrimitive(myAtt.getType())) {
-                       if (!myAtt.getType().equals("Binary")) {
-                            List<String> attributeValue = new ArrayList<>();
-                            attributeValue.add(instance.getProperty(myAtt.getName()).toString());
-                            attributes.put(myAtt.getName(),attributeValue);
-                        }
-                    }
+                if (myAtt.getName().equals(attributeName)){
+                    if (attributes.get(attributeName)==null)
+                        attributes.put(attributeName, new ArrayList<String>());
+                    attributes.get(attributeName).add(String.valueOf(relationship.getEndNode().getId()));
                 }
             }
+        }
+        RemoteBusinessObject res = new RemoteBusinessObject(myClass.getName(), instance.getId(), name, attributes);
 
-            //Iterates through relationships and transform the into "plain" attributes
-            Iterable<Relationship> iterableRelationships = instance.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING);
-            Iterator<Relationship> relationships = iterableRelationships.iterator();
-
-            while(relationships.hasNext()){
-                Relationship relationship = relationships.next();
-                if (!relationship.hasProperty(Constants.PROPERTY_NAME))
-                    throw new InvalidArgumentException(String.format("The object with id %s is malformed", instance.getId()));
-
-                String attributeName = (String)relationship.getProperty(Constants.PROPERTY_NAME);
-                for (AttributeMetadata myAtt : myClass.getAttributes()){
-                    if (myAtt.getName().equals(attributeName)){
-                        if (attributes.get(attributeName)==null)
-                            attributes.put(attributeName, new ArrayList<String>());
-                        attributes.get(attributeName).add(String.valueOf(relationship.getEndNode().getId()));
-                    }
-                }
-            }
-            RemoteBusinessObject res = new RemoteBusinessObject(instance.getId(), myClass.getName(), attributes);
-            
-            return res;
+        return res;
         
     }
 

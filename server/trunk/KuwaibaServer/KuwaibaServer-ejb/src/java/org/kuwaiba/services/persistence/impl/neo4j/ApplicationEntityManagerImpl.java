@@ -1735,16 +1735,34 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         
             Result theResult = graphDb.execute(dbCode);
             List<RemoteBusinessObjectList> thePaths = new ArrayList<>();
+//            try {
+//                while (theResult.hasNext()) {
+//                    Map<String, Object> row = theResult.next();
+//                    Iterator<Map.Entry<String, Object>> iterator = row.entrySet().iterator();
+//                    RemoteBusinessObjectList thePath = new RemoteBusinessObjectList();
+//                    while (iterator.hasNext()) {
+//                        Map.Entry<String, Object> column = iterator.next();
+//                        thePath.add(Util.createRemoteObjectFromNode((Node)column.getValue()));
+//                    }
+//                    thePaths.add(thePath);
+//                }
+//            } catch (InvalidArgumentException ex) {} //this should not happen
             
             for (String aColumn : columns) {
-                Iterator<List<Node>> column = theResult.columnAs(aColumn);
+                Iterator<Node> column = theResult.columnAs(aColumn);
                 try {
-                    for (List<Node> list : IteratorUtil.asIterable(column)){
-                        RemoteBusinessObjectList thePath = new RemoteBusinessObjectList();
-                        for (Node aNode : list)
-                            thePath.add(Util.createRemoteObjectFromNode(aNode));
-                        thePaths.add(thePath);
-                    }
+                    RemoteBusinessObjectList thePath = new RemoteBusinessObjectList();
+                    while (column.hasNext())
+                        thePath.add(Util.createRemoteObjectFromNode(column.next()));
+                    thePaths.add(thePath);
+                    
+                    
+//                    for (List<Node> list : IteratorUtil.asIterable(column)){
+//                        RemoteBusinessObjectList thePath = new RemoteBusinessObjectList();
+//                        for (Node aNode : list)
+//                            thePath.add(Util.createRemoteObjectFromNode(aNode));
+//                        thePaths.add(thePath);
+//                    }
                 } catch (InvalidArgumentException ex) {} //this should not happen
             }
             

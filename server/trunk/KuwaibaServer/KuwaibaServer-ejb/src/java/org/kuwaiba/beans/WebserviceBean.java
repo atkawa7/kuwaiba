@@ -2024,35 +2024,141 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("executeReport", ipAddress, sessionId); //NOI18N
             switch ((int)reportId) {
                 case 1: //Rack usage
-                    String query = String.format("MATCH path = rack<-[:%s*1..2]-rackable " + 
-                            "WHERE id(rack) = %s " +
-                            "RETURN nodes(path) as rackables", RelTypes.CHILD_OF, StringPair.get(arguments, "rackId"));
-                    List<RemoteBusinessObjectList> rackables = aem.executeCustomDbCode(query, new String[] { "rackables" });
+                    RemoteBusinessObject theRack = bem.getObject("Rack", Long.valueOf(StringPair.get(arguments, "rackId")));
                     
-                    //The warning rose while preparing the report
-                    String warnings = "";
-                    String textReport = "<!DOCTYPE html>\n" +
+                    String query = String.format("MATCH (rack)<-[:%s*1..2]-(rackable) "
+                            + "WHERE id(rack) = %s "
+                            + "RETURN rackable as rackable", RelTypes.CHILD_OF, StringPair.get(arguments, "rackId"));
+                    List<RemoteBusinessObjectList> result = aem.executeCustomDbCode(query, new String[] { "rackable" });
+                    
+                    String rackUsageReportBody = "<!DOCTYPE html>\n" +
                                             "<html lang=\"en\">\n" +
                                             "  <head>\n" +
                                             "    <meta charset=\"utf-8\">\n" +
-                                            "    <title>Rack Usage Report</title>\n" +
+                                            "    <title>Rack Usage Report " + theRack.getName() + "</title>\n" +
+                                            "<style> " +
+                                            "   body {\n" +
+                                            "            font-family: Helvetica, Arial, sans-serif;\n" +
+                                            "            font-size: small;\n" +
+                                            "            padding: 5px 10px 5px 10px;\n" +
+                                            "   }\n" +
+                                            "   table {\n" +
+                                            "            border: hidden;\n" +
+                                            "            width: 100%;\n" +
+                                            "          }\n" +
+                                            "   th {\n" +
+                                            "            background-color: #B1D2F3;\n" +
+                                            "   }\n" +
+                                            "   td {\n" +
+                                            "            padding: 5px 5px 5px 5px;\n" +
+                                            "   }\n" +
+                                            "   div {\n" +
+                                            "            padding: 5px 5px 5px 5px;\n" +
+                                            "   }\n" +
+                                            "   div.warning {\n" +
+                                            "            background-color: #FFF3A2;\n" +
+                                            "            text-align: center;\n" +
+                                            "   }\n" +
+                                            "   div.error {\n" +
+                                            "            background-color: #FFD9C7;\n" +
+                                            "            text-align: center;\n" +
+                                            "   }\n" +
+                                            "   div.footer {\n" +
+                                            "            width: 100%;\n" +
+                                            "            text-align: center;\n" +
+                                            "            font-style: italic;\n" +
+                                            "            font-size: x-small;\n" +
+                                            "            color: #848484;\n" +
+                                            "   }\n" +
+                                            "   span.ok {\n" +
+                                            "            color: green;\n" +
+                                            "   }\n" +
+                                            "   span.warning {\n" +
+                                            "            color: orange;\n" +
+                                            "   }\n" +
+                                            "   span.error {\n" +
+                                            "            color: red;\n" +
+                                            "   }\n" +
+                                            "   td.generalInfoLabel {\n" +
+                                            "            background-color: #E8E8E8;\n" +
+                                            "            width: 20%;\n" +
+                                            "            font-weight: bold;\n" +
+                                            "   }\n" +
+                                            "   td.generalInfoValue {\n" +
+                                            "            background-color: white;\n" +
+                                            "   }\n" +
+                                            "   td.even {\n" +
+                                            "            background-color: #AAE033;\n" +
+                                            "   }\n" +
+                                            "   td.odd {\n" +
+                                            "            background-color: #D1F680;\n" +
+                                            "   }" +
+                                             "</style>\n" +
                                             "  </head>\n" +
-                                            "  <body><center><h1>Rack Usage Report<h1></center>\n";
+                                            "  <body><table><tr><td><h1>Rack Usage Report for " + theRack.getName() + "</h1></td><td><img src=\"http://afr-ix.com/wp-content/themes/twentyfourteen/images/afrix_logo.png\"/></td></tr></table>\n";
                     
-                    if (!rackables.isEmpty()) {
-                        textReport += "<table><th>Name</th><th>Serial Number</th>\n";
-                        for (RemoteBusinessObjectList aPath : rackables) {
-                            RemoteBusinessObject leaf = aPath.getList().get(aPath.getList().size() - 1);
-                            textReport += "<tr><td>" + leaf.getAttributes().get("name") + "</td><td>" + leaf.getAttributes().get("serialNumber") + "</td></tr>";
+                    int usedRackUnits = 0;
+                    int totalRackUnits = 0;
+                    float usedPercentage = 0;
+                    String equipmentList = "";
+                    String rackInfo = "";
+                    String rackLevelIndicator = "ok";
+                    
+                    
+                    List<RemoteBusinessObjectLight> parents = bem.getParents(theRack.getClassName(), theRack.getId());
+                    String location = "";
+
+                    for (int i = 0; i < parents.size() - 1; i ++)
+                        location += parents.get(i).toString() + " | ";
+
+                    totalRackUnits = theRack.getAttributes().get("rackUnits") == null ? 0 : Integer.valueOf(theRack.getAttributes().get("rackUnits").get(0));
+
+                    if (!result.get(0).getList().isEmpty()) {
+                        equipmentList += "<table><tr><th>Name</th><th>Serial Number</th><th>Rack Units</th><th>Operational State</th></tr>\n";
+                        int i = 0;
+                        for (RemoteBusinessObject leaf : result.get(0).getList()) { //This row should contain the equipment
+                            usedRackUnits += leaf.getAttributes().get("rackUnits") == null ? 0 : Integer.valueOf(leaf.getAttributes().get("rackUnits").get(0));
+
+                            String operationalState = leaf.getAttributes().get("state") == null ? "<span class=\"error\">Not Set</span>" : 
+                                    bem.getObjectLight("OperationalState", Long.valueOf(leaf.getAttributes().get("state").get(0))).toString();
+
+                            equipmentList += "<tr><td class=\"" + (i % 2 == 0 ? "even" : "odd") + "\">" + leaf + "</td>"
+                                    + "<td class=\"" + (i % 2 == 0 ? "even" : "odd") + "\">" + (leaf.getAttributes().get("serialNumber") == null ? "<span class=\"error\">Not Set</span>" : leaf.getAttributes().get("serialNumber").get(0)) + "</td>"
+                                    + "<td class=\"" + (i % 2 == 0 ? "even" : "odd") + "\">" + (leaf.getAttributes().get("rackUnits") == null ? "<span class=\"error\">Not Set</span>" : leaf.getAttributes().get("rackUnits").get(0)) + "</td>"
+                                    + "<td class=\"" + (i % 2 == 0 ? "even" : "odd") + "\">" + operationalState + "</td></tr>";
+                            i++;
                         }
-                        
-                        textReport += "</table>\n";
+                        usedPercentage = totalRackUnits == 0 ? 0 : usedRackUnits * 100 / totalRackUnits;
+
+                        if (usedPercentage > 50 && usedPercentage < 80)
+                            rackLevelIndicator = "warning";
+                        else
+                            if (usedPercentage > 80)
+                                rackLevelIndicator = "error";
+
+                        equipmentList += "</table>\n";
+
                     } else
-                        textReport += "<h1>No elements where found in this rack</h1>\n";
-                        
-                    textReport += "  </body>\n" +
-                                    "</html>";
-                    return textReport.getBytes(StandardCharsets.UTF_8);
+                        equipmentList += "<div class=\"warning\">No elements where found in this rack</div>\n";
+
+                    //General Info
+                    rackInfo += "<table>" +
+                        "<tr><td class=\"generalInfoLabel\">Name</td><td class=\"generalInfoValue\">" + theRack.getName() + "</td></tr>\n" +
+                        "<tr><td class=\"generalInfoLabel\">Serial Number</td><td class=\"generalInfoValue\">" + (theRack.getAttributes().get("serialNumber") == null ? "<span class=\"error\">Not Set</span>" : theRack.getAttributes().get("serialNumber").get(0)) + "</td></tr>\n" +
+                        "<tr><td class=\"generalInfoLabel\">Location</td><td class=\"generalInfoValue\">" + location  + "</td></tr>\n" +
+                        "<tr><td class=\"generalInfoLabel\">Total Rack Units</td><td class=\"generalInfoValue\">" + (totalRackUnits == 0 ? "<span class=\"error\">Not Set</span>" : totalRackUnits)  + "</td></tr>\n" +
+                        "<tr><td class=\"generalInfoLabel\">Used Rack Units</td><td class=\"generalInfoValue\">" + usedRackUnits + "</td></tr>\n" +
+                        "<tr><td class=\"generalInfoLabel\">Use Percentage</td><td class=\"generalInfoValue\"><span class=\"" + rackLevelIndicator + "\">" + usedPercentage + "&#37;</span></td></tr>\n"
+                        + "</table>";
+                    
+                    
+                    rackUsageReportBody += rackInfo;
+                    rackUsageReportBody += equipmentList;
+                    
+                    rackUsageReportBody += "  <div class=\"footer\">This report is powered by <a href=\"http://www.kuwaiba.org\">Kuwaiba Open Network Inventory</a></div></body>\n" +
+                                            "</html>";
+                    
+                    return rackUsageReportBody.getBytes(StandardCharsets.UTF_8);
             }
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());

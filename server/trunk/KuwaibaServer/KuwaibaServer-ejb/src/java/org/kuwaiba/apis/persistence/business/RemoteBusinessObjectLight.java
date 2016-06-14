@@ -22,7 +22,7 @@ import java.io.Serializable;
  * Contains a business object basic information
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class RemoteBusinessObjectLight implements Serializable{
+public class RemoteBusinessObjectLight implements Serializable {
 
     /**
      * Object's id
@@ -71,6 +71,6 @@ public class RemoteBusinessObjectLight implements Serializable{
     
     @Override
     public String toString() {
-        return getName() + "[" + getClassName() + "]";
+        return getName() + " [" + getClassName() + "]";
     }
 }
