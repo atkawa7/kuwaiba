@@ -58,6 +58,14 @@ public class Constants {
      */
     public static final String VALIDATOR_APPLICATION_ELEMENT = "applicationElement";
     /**
+     * All instances of classes tagged with this validator may be related to a ip address
+     */
+    public static final String VALIDATOR_IP_ADDRESS = "ipaddress";
+    /**
+     * All instances of classes tagged with this validator may be related to a subnet
+     */
+    public static final String VALIDATOR_SUBNET = "subnet";
+    /**
      * Name for the class InventoryObject
      */
     public static final String CLASS_INVENTORYOBJECT = "InventoryObject";
@@ -133,6 +141,16 @@ public class Constants {
      * Many to Many relationship (such as accountable persons for a given equipment)
      */
     public static final int MAPPING_MANYTOMANY = 6;
+    /**
+     * This relationship is used to connect a GenericCommunicationElement with
+     * a subnet's IP address 
+     */
+    public static final String RELATIONSHIP_IPAMHASADDRESS = "ipamHasIpAddress";
+    
+    /**
+     * This relationship is used to connect a VLAN with a Subnet
+     */
+    public static final String RELATIONSHIP_IPAMBELONGSTOVLAN = "ipamBelongstoVlan";
     
     /**
      * A fixed label to indicate a given node doesn't have a name set

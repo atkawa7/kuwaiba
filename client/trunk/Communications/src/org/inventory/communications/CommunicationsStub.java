@@ -2306,10 +2306,10 @@ public class CommunicationsStub {
         }
     }
     
-    public LocalObjectLight createPoolofSubnets(long parentId, String subnetPoolName, 
+    public LocalObjectLight createSubnetPool(long parentId, String subnetPoolName, 
             String subnetPoolDescription, int type) {
          try{
-             long objectId = service.createPoolofSubnets(parentId, subnetPoolName, subnetPoolDescription, type, this.session.getSessionId());
+             long objectId = service.createSubnetPool(parentId, subnetPoolName, subnetPoolDescription, type, this.session.getSessionId());
              return new LocalObjectLight(objectId, subnetPoolName, Constants.CLASS_SUBNET);
          }catch(Exception ex){
             this.error = ex.getMessage();
@@ -2433,6 +2433,15 @@ public class CommunicationsStub {
             this.error = ex.getMessage();
             return false;
         }
+    }
+    
+    public List<RemoteObjectLight> getSubnetUsedIps(long id){
+        try{
+            return service.getSubnetUsedIps(id, 0, this.session.getSessionId());
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+        }
+        return null;
     }
     
     public boolean relateSubnetToVLAN(long id, long vlanId){
