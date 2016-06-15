@@ -77,7 +77,6 @@ public final class ExecuteClassReportAction extends AbstractAction implements Pr
                 }
                 if(Desktop.isDesktopSupported()) 
                 try {
-                    System.out.println(tempFile.getAbsolutePath());
                     Desktop.getDesktop().browse(new URI("file://" + tempFile.getAbsolutePath()));
                 } catch (IOException | URISyntaxException ex) {
                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());

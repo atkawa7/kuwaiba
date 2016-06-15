@@ -2044,7 +2044,8 @@ public class CommunicationsStub {
             
             if (localDescriptors == null) {
                 List<ReportDescriptor> remoteDescriptors = service.getReportsForClass(className, limit, session.getSessionId());
-
+                localDescriptors = new ArrayList<>();
+                
                 for (ReportDescriptor aRemoteDescriptor : remoteDescriptors)
                     localDescriptors.add(new LocalReportDescriptor(aRemoteDescriptor.getClassName(), aRemoteDescriptor.getId(),
                                                     aRemoteDescriptor.getName(), aRemoteDescriptor.getDescription()));
