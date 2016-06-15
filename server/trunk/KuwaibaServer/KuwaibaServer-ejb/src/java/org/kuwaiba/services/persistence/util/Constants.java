@@ -241,6 +241,10 @@ public class Constants {
      */
     public static final String CLASS_GENERICCOMMUNICATIONSELEMENT = "GenericCommunicationsElement";
     /**
+     * Class GenericBox
+     */
+    public static final String CLASS_GENERICBOX = "GenericBox";
+    /**
      * Dummy root node name
      */
     public static final String NODE_DUMMYROOT = "DummyRoot"; //NOI18N

@@ -595,12 +595,11 @@ public interface ApplicationEntityManager {
     /**
      * Allows to execute custom database queries. This method should not be used as it's only a temporary solution
      * @param dbCode A string with the query
-     * @param columns The columns to be retrieved (this is a Neo4J-only thing)
      * @return A table with results, that could also be interpreted as a multidimensional array with numerous paths
      * @throws NotAuthorizedException If the user is not allowed to run arbitrary code on the database
      * @deprecated Don't use it, instead, create a method in the corresponding entity manager instead of running code directly on the database
      */
-    public List<RemoteBusinessObjectList> executeCustomDbCode(String dbCode, String[] columns) throws NotAuthorizedException;
+    public List<RemoteBusinessObjectList> executeCustomDbCode(String dbCode) throws NotAuthorizedException;
     
     /**
      * Registers a commercial module. Replaces an existing one if the name of provided one is already registered

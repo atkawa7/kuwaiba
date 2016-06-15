@@ -17,11 +17,11 @@
 package org.kuwaiba.beans;
 
 import com.neotropic.kuwaiba.modules.ipam.IPAMModule;
+import com.neotropic.kuwaiba.modules.reporting.Reports;
 import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHModule;
 import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -42,10 +42,8 @@ import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.application.ViewObject;
 import org.kuwaiba.apis.persistence.application.ViewObjectLight;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectList;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
@@ -53,7 +51,6 @@ import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.exceptions.NotAuthorizedException;
 import org.kuwaiba.exceptions.ServerSideException;
-import org.kuwaiba.services.persistence.impl.neo4j.RelTypes;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.sync.SyncManager;
 import org.kuwaiba.util.ChangeDescriptor;
@@ -1160,16 +1157,19 @@ public class WebserviceBean implements WebserviceBeanRemote {
         if (bem == null || aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         
-        if (attributeNames.length != attributeValues.length)
-            throw new ServerSideException("Attribute names and attribute values arrays sizes doesn't match");
-
-        HashMap<String, List<String>> attributes = new HashMap<>();
-        for (int i = 0; i < attributeValues.length; i++)
-            attributes.put(attributeNames[i], Arrays.asList(attributeValues[i]));
-
         long newConnectionId = -1;
+        
         try {
             aem.validateCall("createPhysicalConnection", ipAddress, sessionId);
+            if (attributeNames.length != attributeValues.length)
+                throw new ServerSideException("Attribute names and attribute values arrays sizes doesn't match");
+
+            HashMap<String, List<String>> attributes = new HashMap<>();
+            for (int i = 0; i < attributeValues.length; i++)
+                attributes.put(attributeNames[i], Arrays.asList(attributeValues[i]));
+
+            
+            
             if (!mem.isSubClass("GenericPhysicalConnection", connectionClass))
                 throw new ServerSideException("Class %s is not subclass of GenericPhysicalConnection");
 
@@ -1986,8 +1986,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 case "DDF":
                     return new ReportDescriptor[] {
                         new ReportDescriptor(2, "Frame Details", className, "Shows the distribution frame usage"),
-                        new ReportDescriptor(3, "Frame Usage", className, "Shows the distribution frame usage")
-
+                        //new ReportDescriptor(3, "Frame Usage", className, "Shows the distribution frame usage")
                         };
                 case "GenericSDHTransportLink":
                     return new ReportDescriptor[] {
@@ -2024,141 +2023,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("executeReport", ipAddress, sessionId); //NOI18N
             switch ((int)reportId) {
                 case 1: //Rack usage
-                    RemoteBusinessObject theRack = bem.getObject("Rack", Long.valueOf(StringPair.get(arguments, "rackId")));
-                    
-                    String query = String.format("MATCH (rack)<-[:%s*1..2]-(rackable) "
-                            + "WHERE id(rack) = %s "
-                            + "RETURN rackable as rackable", RelTypes.CHILD_OF, StringPair.get(arguments, "rackId"));
-                    List<RemoteBusinessObjectList> result = aem.executeCustomDbCode(query, new String[] { "rackable" });
-                    
-                    String rackUsageReportBody = "<!DOCTYPE html>\n" +
-                                            "<html lang=\"en\">\n" +
-                                            "  <head>\n" +
-                                            "    <meta charset=\"utf-8\">\n" +
-                                            "    <title>Rack Usage Report " + theRack.getName() + "</title>\n" +
-                                            "<style> " +
-                                            "   body {\n" +
-                                            "            font-family: Helvetica, Arial, sans-serif;\n" +
-                                            "            font-size: small;\n" +
-                                            "            padding: 5px 10px 5px 10px;\n" +
-                                            "   }\n" +
-                                            "   table {\n" +
-                                            "            border: hidden;\n" +
-                                            "            width: 100%;\n" +
-                                            "          }\n" +
-                                            "   th {\n" +
-                                            "            background-color: #B1D2F3;\n" +
-                                            "   }\n" +
-                                            "   td {\n" +
-                                            "            padding: 5px 5px 5px 5px;\n" +
-                                            "   }\n" +
-                                            "   div {\n" +
-                                            "            padding: 5px 5px 5px 5px;\n" +
-                                            "   }\n" +
-                                            "   div.warning {\n" +
-                                            "            background-color: #FFF3A2;\n" +
-                                            "            text-align: center;\n" +
-                                            "   }\n" +
-                                            "   div.error {\n" +
-                                            "            background-color: #FFD9C7;\n" +
-                                            "            text-align: center;\n" +
-                                            "   }\n" +
-                                            "   div.footer {\n" +
-                                            "            width: 100%;\n" +
-                                            "            text-align: center;\n" +
-                                            "            font-style: italic;\n" +
-                                            "            font-size: x-small;\n" +
-                                            "            color: #848484;\n" +
-                                            "   }\n" +
-                                            "   span.ok {\n" +
-                                            "            color: green;\n" +
-                                            "   }\n" +
-                                            "   span.warning {\n" +
-                                            "            color: orange;\n" +
-                                            "   }\n" +
-                                            "   span.error {\n" +
-                                            "            color: red;\n" +
-                                            "   }\n" +
-                                            "   td.generalInfoLabel {\n" +
-                                            "            background-color: #E8E8E8;\n" +
-                                            "            width: 20%;\n" +
-                                            "            font-weight: bold;\n" +
-                                            "   }\n" +
-                                            "   td.generalInfoValue {\n" +
-                                            "            background-color: white;\n" +
-                                            "   }\n" +
-                                            "   td.even {\n" +
-                                            "            background-color: #AAE033;\n" +
-                                            "   }\n" +
-                                            "   td.odd {\n" +
-                                            "            background-color: #D1F680;\n" +
-                                            "   }" +
-                                             "</style>\n" +
-                                            "  </head>\n" +
-                                            "  <body><table><tr><td><h1>Rack Usage Report for " + theRack.getName() + "</h1></td><td><img src=\"http://afr-ix.com/wp-content/themes/twentyfourteen/images/afrix_logo.png\"/></td></tr></table>\n";
-                    
-                    int usedRackUnits = 0;
-                    int totalRackUnits = 0;
-                    float usedPercentage = 0;
-                    String equipmentList = "";
-                    String rackInfo = "";
-                    String rackLevelIndicator = "ok";
-                    
-                    
-                    List<RemoteBusinessObjectLight> parents = bem.getParents(theRack.getClassName(), theRack.getId());
-                    String location = "";
-
-                    for (int i = 0; i < parents.size() - 1; i ++)
-                        location += parents.get(i).toString() + " | ";
-
-                    totalRackUnits = theRack.getAttributes().get("rackUnits") == null ? 0 : Integer.valueOf(theRack.getAttributes().get("rackUnits").get(0));
-
-                    if (!result.get(0).getList().isEmpty()) {
-                        equipmentList += "<table><tr><th>Name</th><th>Serial Number</th><th>Rack Units</th><th>Operational State</th></tr>\n";
-                        int i = 0;
-                        for (RemoteBusinessObject leaf : result.get(0).getList()) { //This row should contain the equipment
-                            usedRackUnits += leaf.getAttributes().get("rackUnits") == null ? 0 : Integer.valueOf(leaf.getAttributes().get("rackUnits").get(0));
-
-                            String operationalState = leaf.getAttributes().get("state") == null ? "<span class=\"error\">Not Set</span>" : 
-                                    bem.getObjectLight("OperationalState", Long.valueOf(leaf.getAttributes().get("state").get(0))).toString();
-
-                            equipmentList += "<tr><td class=\"" + (i % 2 == 0 ? "even" : "odd") + "\">" + leaf + "</td>"
-                                    + "<td class=\"" + (i % 2 == 0 ? "even" : "odd") + "\">" + (leaf.getAttributes().get("serialNumber") == null ? "<span class=\"error\">Not Set</span>" : leaf.getAttributes().get("serialNumber").get(0)) + "</td>"
-                                    + "<td class=\"" + (i % 2 == 0 ? "even" : "odd") + "\">" + (leaf.getAttributes().get("rackUnits") == null ? "<span class=\"error\">Not Set</span>" : leaf.getAttributes().get("rackUnits").get(0)) + "</td>"
-                                    + "<td class=\"" + (i % 2 == 0 ? "even" : "odd") + "\">" + operationalState + "</td></tr>";
-                            i++;
-                        }
-                        usedPercentage = totalRackUnits == 0 ? 0 : usedRackUnits * 100 / totalRackUnits;
-
-                        if (usedPercentage > 50 && usedPercentage < 80)
-                            rackLevelIndicator = "warning";
-                        else
-                            if (usedPercentage > 80)
-                                rackLevelIndicator = "error";
-
-                        equipmentList += "</table>\n";
-
-                    } else
-                        equipmentList += "<div class=\"warning\">No elements where found in this rack</div>\n";
-
-                    //General Info
-                    rackInfo += "<table>" +
-                        "<tr><td class=\"generalInfoLabel\">Name</td><td class=\"generalInfoValue\">" + theRack.getName() + "</td></tr>\n" +
-                        "<tr><td class=\"generalInfoLabel\">Serial Number</td><td class=\"generalInfoValue\">" + (theRack.getAttributes().get("serialNumber") == null ? "<span class=\"error\">Not Set</span>" : theRack.getAttributes().get("serialNumber").get(0)) + "</td></tr>\n" +
-                        "<tr><td class=\"generalInfoLabel\">Location</td><td class=\"generalInfoValue\">" + location  + "</td></tr>\n" +
-                        "<tr><td class=\"generalInfoLabel\">Total Rack Units</td><td class=\"generalInfoValue\">" + (totalRackUnits == 0 ? "<span class=\"error\">Not Set</span>" : totalRackUnits)  + "</td></tr>\n" +
-                        "<tr><td class=\"generalInfoLabel\">Used Rack Units</td><td class=\"generalInfoValue\">" + usedRackUnits + "</td></tr>\n" +
-                        "<tr><td class=\"generalInfoLabel\">Use Percentage</td><td class=\"generalInfoValue\"><span class=\"" + rackLevelIndicator + "\">" + usedPercentage + "&#37;</span></td></tr>\n"
-                        + "</table>";
-                    
-                    
-                    rackUsageReportBody += rackInfo;
-                    rackUsageReportBody += equipmentList;
-                    
-                    rackUsageReportBody += "  <div class=\"footer\">This report is powered by <a href=\"http://www.kuwaiba.org\">Kuwaiba Open Network Inventory</a></div></body>\n" +
-                                            "</html>";
-                    
-                    return rackUsageReportBody.getBytes(StandardCharsets.UTF_8);
+                    long rackId = Long.valueOf(StringPair.get(arguments, "objectId"));
+                    return Reports.buildRackUsageReport(bem, aem, rackId);
+                case 2: //ODF/DDF Report
+                    long frameId = Long.valueOf(StringPair.get(arguments, "objectId"));
+                    String frameClass = StringPair.get(arguments, "objectClass");
+                    return Reports.buildDistributionFrameDetailReport(bem, aem, frameClass, frameId);
             }
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());

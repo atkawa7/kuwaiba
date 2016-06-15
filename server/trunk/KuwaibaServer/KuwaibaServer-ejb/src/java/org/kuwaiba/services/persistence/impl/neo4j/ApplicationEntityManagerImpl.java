@@ -171,8 +171,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 GenericObjectList aListType = Util.createGenericObjectListFromNode(listTypeNode);
                 cm.putListType(aListType);
             }
-        }catch(Exception ex) {
-            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "AEM constructor: {0}", ex.getMessage()); //NOI18N
         }
         this.sessions = new HashMap<>();
     }
@@ -886,9 +884,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             }   
             tx.success();
             return new ChangeDescriptor(affectedProperty, oldValue, newValue ,null);
-        }catch (Exception ex){
-            Logger.getLogger("updateObjectRelatedView: "+ ex.getMessage()); //NOI18N
-            throw new RuntimeException(ex.getMessage());
         }
     }
 
@@ -1578,7 +1573,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
             for (Session aSession : sessions.values()){
                 if (aSession.getUser().getUserName().equals(userName)){
-                    Logger.getLogger("createSession").log(Level.INFO, String.format("An existing session for user %1s has been dropped", aSession.getUser().getUserName()));
+                    Logger.getLogger("createSession").log(Level.INFO, String.format("An existing session for user %s has been dropped", aSession.getUser().getUserName()));
                     sessions.remove(aSession.getToken());
                     break;
                 }
@@ -1730,41 +1725,25 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public List<RemoteBusinessObjectList> executeCustomDbCode(String dbCode, String[] columns) throws NotAuthorizedException {
+    public List<RemoteBusinessObjectList> executeCustomDbCode(String dbCode) throws NotAuthorizedException {
         try (Transaction tx = graphDb.beginTx()) {
         
             Result theResult = graphDb.execute(dbCode);
             List<RemoteBusinessObjectList> thePaths = new ArrayList<>();
-//            try {
-//                while (theResult.hasNext()) {
-//                    Map<String, Object> row = theResult.next();
-//                    Iterator<Map.Entry<String, Object>> iterator = row.entrySet().iterator();
-//                    RemoteBusinessObjectList thePath = new RemoteBusinessObjectList();
-//                    while (iterator.hasNext()) {
-//                        Map.Entry<String, Object> column = iterator.next();
-//                        thePath.add(Util.createRemoteObjectFromNode((Node)column.getValue()));
-//                    }
-//                    thePaths.add(thePath);
-//                }
-//            } catch (InvalidArgumentException ex) {} //this should not happen
             
-            for (String aColumn : columns) {
-                Iterator<Node> column = theResult.columnAs(aColumn);
-                try {
-                    RemoteBusinessObjectList thePath = new RemoteBusinessObjectList();
-                    while (column.hasNext())
-                        thePath.add(Util.createRemoteObjectFromNode(column.next()));
-                    thePaths.add(thePath);
-                    
-                    
-//                    for (List<Node> list : IteratorUtil.asIterable(column)){
-//                        RemoteBusinessObjectList thePath = new RemoteBusinessObjectList();
-//                        for (Node aNode : list)
-//                            thePath.add(Util.createRemoteObjectFromNode(aNode));
-//                        thePaths.add(thePath);
-//                    }
-                } catch (InvalidArgumentException ex) {} //this should not happen
-            }
+            for (int i = 0; i < theResult.columns().size(); i++)
+                thePaths.add(new RemoteBusinessObjectList());
+            
+            try {
+                while (theResult.hasNext()) {
+                    Map<String, Object> row = theResult.next();
+                    int i = 0;
+                    for (String column : row.keySet()) {
+                        thePaths.get(i).add(Util.createRemoteObjectFromNode((Node)row.get(column)));
+                        i ++;
+                    }
+                }
+            } catch (InvalidArgumentException ex) {} //this should not happen
             
             return thePaths;
         }
