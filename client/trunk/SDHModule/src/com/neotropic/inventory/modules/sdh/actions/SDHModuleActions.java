@@ -15,6 +15,8 @@ import com.neotropic.inventory.modules.sdh.SDHModuleService;
 import com.neotropic.inventory.modules.sdh.scene.SDHModuleScene;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import javax.swing.AbstractAction;
@@ -31,6 +33,7 @@ import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteBusinessObjectAction;
 import org.netbeans.api.visual.action.PopupMenuProvider;
 import org.netbeans.api.visual.widget.Widget;
+import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter;
 import org.openide.util.actions.SystemAction;
 import org.openide.windows.TopComponent;
@@ -76,7 +79,6 @@ public class SDHModuleActions {
                                 theMenu.add(new JSeparator());
                             else
                                 theMenu.add(action);
-                            //theMenu.add(showSDHConnectionsInGenericCommunicationsElementAction);
                         }
                         return theMenu;
                     }
@@ -92,24 +94,17 @@ public class SDHModuleActions {
             connectionMenu = new PopupMenuProvider() {
 
                 @Override
-                public JPopupMenu getPopupMenu(Widget widget, Point localLocation) {
-                    JPopupMenu theMenu = new JPopupMenu("Options");
-                    theMenu.add(removeSDHBusinessObjectFromViewAction);
-                    theMenu.add(deleteSDHConnectionAction);
-                    theMenu.add(showSDHContainersInTransportLinkAction);
-                    theMenu.add(new JSeparator());
+                public JPopupMenu getPopupMenu(Widget widget, Point localLocation) {                   
+                    List<Action> actions = new ArrayList<>();
+                    actions.add(removeSDHBusinessObjectFromViewAction);
+                    actions.add(deleteSDHConnectionAction);
+                    actions.add(showSDHContainersInTransportLinkAction);
+                    actions.add(null);
                     
                     AbstractConnectionWidget nodeWidget = (AbstractConnectionWidget)widget;
-                    for (Action action : nodeWidget.getNode().getActions(true)) {
-                        if (action instanceof Presenter.Popup) //For some reason, these kind of actions are not properly display, so we ignore them
-                            continue;
-                        if (action == null)
-                            theMenu.add(new JSeparator());
-                        else
-                            theMenu.add(action);
-                        //theMenu.add(showSDHConnectionsInGenericCommunicationsElementAction);
-                    }
-                    return theMenu;
+                    actions.addAll(Arrays.asList(nodeWidget.getNode().getActions(true)));
+                    
+                    return Utilities.actionsToPopup(actions.toArray(new Action[0]), scene.getView());                    
                 }
             };
         return connectionMenu;

@@ -250,12 +250,16 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
         }        
         actions.add(refreshAction == null ? refreshAction = new RefreshObjectAction(this) : refreshAction);
         actions.add(editAction == null ? editAction = new EditObjectAction(this) : editAction);
+        
         actions.add(null); //Separator
+        
         if (getParentNode() != null) {
             actions.add(SystemAction.get(DeleteBusinessObjectAction.class));
             actions.add(null); //Separator
         }
-        actions.add(new ExecuteClassReportAction());
+        
+        actions.add(ExecuteClassReportAction.createExecuteReportAction());
+        
         for (GenericObjectNodeAction action : Lookup.getDefault().lookupAll(GenericObjectNodeAction.class)) {
             if (action.getValidator() == null) {
                 action.setObject(object);

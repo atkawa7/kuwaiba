@@ -42,9 +42,16 @@ import org.openide.util.actions.Presenter;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public final class ExecuteClassReportAction extends AbstractAction implements Presenter.Popup {
-
-    public ExecuteClassReportAction() {
+    private static ExecuteClassReportAction instance;
+    
+    private ExecuteClassReportAction() {
         putValue(NAME, "Reports");
+    }
+    
+    public static ExecuteClassReportAction createExecuteReportAction() {
+        if (instance == null)
+            instance = new ExecuteClassReportAction();
+        return instance;
     }
     
     @Override
