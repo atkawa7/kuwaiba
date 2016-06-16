@@ -1725,23 +1725,20 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public List<RemoteBusinessObjectList> executeCustomDbCode(String dbCode) throws NotAuthorizedException {
+    public HashMap<String, RemoteBusinessObjectList> executeCustomDbCode(String dbCode) throws NotAuthorizedException {
         try (Transaction tx = graphDb.beginTx()) {
         
             Result theResult = graphDb.execute(dbCode);
-            List<RemoteBusinessObjectList> thePaths = new ArrayList<>();
+            HashMap<String, RemoteBusinessObjectList> thePaths = new HashMap<>();
             
-            for (int i = 0; i < theResult.columns().size(); i++)
-                thePaths.add(new RemoteBusinessObjectList());
+            for (String column : theResult.columns())
+                thePaths.put(column, new RemoteBusinessObjectList());
             
             try {
                 while (theResult.hasNext()) {
                     Map<String, Object> row = theResult.next();
-                    int i = 0;
-                    for (String column : row.keySet()) {
-                        thePaths.get(i).add(Util.createRemoteObjectFromNode((Node)row.get(column)));
-                        i ++;
-                    }
+                    for (String column : row.keySet()) 
+                        thePaths.get(column).add(Util.createRemoteObjectFromNode((Node)row.get(column)));
                 }
             } catch (InvalidArgumentException ex) {} //this should not happen
             

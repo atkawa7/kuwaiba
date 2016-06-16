@@ -516,7 +516,7 @@ public class SDHModule implements GenericCommercialModule {
             List<SDHPosition> position = new ArrayList<>();
             position.add(new SDHPosition(transportLinkClass, transportLinkId, (Integer)container.getProperties().get("sdhPosition")));
             
-            containers.add(new SDHContainerLinkDefinition(container.getObject(), !relatedLinks.isEmpty(), position)); //an unstructured container would have just one SDHDELIVERS relationship
+            containers.add(new SDHContainerLinkDefinition(container.getObject(), relatedLinks.isEmpty(), position)); //an unstructured container would have just one SDHDELIVERS relationship
                                                                                                                       //Note that the "positions" array here is filled ONLY with the position used in this particular transport link and does not represents the whole path
         }
         
@@ -561,5 +561,35 @@ public class SDHModule implements GenericCommercialModule {
         }
         
         return containers;
+    }
+    
+    /**
+     * Calculates a link capacity based on the class name
+     * @param connectionClass The class of the link to be evaluated
+     * @return The maximum number of timeslots in a transport link
+     */
+    public static int calculateTransportLinkCapacity(String connectionClass) {
+        try {
+            String positionsToBeOccupied = connectionClass.replace("STM", "");
+            return Integer.valueOf(positionsToBeOccupied);
+        } catch (NumberFormatException ex) {
+            return 0;
+        }
+    }
+    
+    /**
+     * Calculates a link capacity based on the class name
+     * @param connectionClass The class of the link to be evaluated
+     * @return The maximum number of timeslots in a container or transport link
+     */
+    public static int calculateContainerLinkCapacity(String connectionClass) {
+        try {
+             String positionsToBeOccupied = connectionClass.replace("VC4", "");
+             if (!positionsToBeOccupied.isEmpty())
+                 return Math.abs(Integer.valueOf(positionsToBeOccupied));
+             return 1;
+        } catch (NumberFormatException ex) {
+             return 0;
+        }  
     }
 }

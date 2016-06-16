@@ -1988,11 +1988,17 @@ public class WebserviceBean implements WebserviceBeanRemote {
                         new ReportDescriptor(2, "Frame Details", className, "Shows the distribution frame usage"),
                         //new ReportDescriptor(3, "Frame Usage", className, "Shows the distribution frame usage")
                         };
-                case "GenericSDHTransportLink":
+                case "STM1":
+                case "STM4":
+                case "STM16":
+                case "STM64":
+                case "STM256":
                     return new ReportDescriptor[] {
                             new ReportDescriptor(4, "TransportLink Structure", className, "Shows the TransportLink Structure")
                     };
-                case "GenericSDHTributaryLink":
+                case "VC12TributaryLink":
+                case "VC3TributaryLink":
+                case "VC4TributaryLink":
                     return new ReportDescriptor[] {
                             new ReportDescriptor(5, "TributaryLink Resources", className, "Shows the resources used by a TributaryLink")
                     };
@@ -2029,6 +2035,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
                     long frameId = Long.valueOf(StringPair.get(arguments, "objectId"));
                     String frameClass = StringPair.get(arguments, "objectClass");
                     return Reports.buildDistributionFrameDetailReport(bem, aem, frameClass, frameId);
+                case 4:
+                    long transportLinkId = Long.valueOf(StringPair.get(arguments, "objectId"));
+                    String transportLinkClass = StringPair.get(arguments, "objectClass");
+                    return Reports.buildTransportLinkUsageReport(bem, aem, transportLinkClass, transportLinkId);
             }
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());

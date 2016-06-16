@@ -5,7 +5,10 @@
  */
 package com.neotropic.kuwaiba.modules.reporting;
 
+import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
+import com.neotropic.kuwaiba.modules.sdh.SDHModule;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
@@ -30,8 +33,8 @@ public class Reports {
                     
         String query = String.format("MATCH (rack)<-[:%s*1..2]-(rackable)-[:%s]->(childClass)-[:%s*]->(superClass) "
                 + "WHERE id(rack) = %s AND (superClass.name=\"%s\" OR superClass.name=\"%s\") "
-                + "RETURN rackable as rackable", RelTypes.CHILD_OF, RelTypes.INSTANCE_OF, RelTypes.EXTENDS, rackId, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, Constants.CLASS_GENERICBOX);
-        List<RemoteBusinessObjectList> result = aem.executeCustomDbCode(query);
+                + "RETURN rackable", RelTypes.CHILD_OF, RelTypes.INSTANCE_OF, RelTypes.EXTENDS, rackId, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, Constants.CLASS_GENERICBOX);
+        HashMap<String, RemoteBusinessObjectList> result = aem.executeCustomDbCode(query);
 
         String rackUsageReportBody = "<!DOCTYPE html>\n" +
                                 "<html lang=\"en\">\n" +
@@ -55,19 +58,19 @@ public class Reports {
 
         totalRackUnits = theRack.getAttributes().get("rackUnits") == null ? 0 : Integer.valueOf(theRack.getAttributes().get("rackUnits").get(0));
 
-        if (!result.get(0).getList().isEmpty()) {
+        if (!result.get("rackable").getList().isEmpty()) {
             equipmentList += "<table><tr><th>Name</th><th>Serial Number</th><th>Rack Units</th><th>Operational State</th></tr>\n";
             int i = 0;
-            for (RemoteBusinessObject leaf : result.get(0).getList()) { //This row should contain the equipment
+            for (RemoteBusinessObject leaf : result.get("rackable").getList()) { //This row should contain the equipment
                 usedRackUnits += leaf.getAttributes().get("rackUnits") == null ? 0 : Integer.valueOf(leaf.getAttributes().get("rackUnits").get(0));
 
                 String operationalState = leaf.getAttributes().get("state") == null ? "<span class=\"error\">Not Set</span>" : 
                         bem.getObjectLight("OperationalState", Long.valueOf(leaf.getAttributes().get("state").get(0))).getName();
 
-                equipmentList += "<tr><td class=\"" + (i % 2 == 0 ? "even" : "odd") + "\">" + leaf + "</td>"
-                        + "<td class=\"" + (i % 2 == 0 ? "even" : "odd") + "\">" + (leaf.getAttributes().get("serialNumber") == null ? "<span class=\"error\">Not Set</span>" : leaf.getAttributes().get("serialNumber").get(0)) + "</td>"
-                        + "<td class=\"" + (i % 2 == 0 ? "even" : "odd") + "\">" + (leaf.getAttributes().get("rackUnits") == null ? "<span class=\"error\">Not Set</span>" : leaf.getAttributes().get("rackUnits").get(0)) + "</td>"
-                        + "<td class=\"" + (i % 2 == 0 ? "even" : "odd") + "\">" + operationalState + "</td></tr>";
+                equipmentList += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") + "\"><td>" + leaf + "</td>"
+                        + "<td>" + (leaf.getAttributes().get("serialNumber") == null ? "<span class=\"error\">Not Set</span>" : leaf.getAttributes().get("serialNumber").get(0)) + "</td>"
+                        + "<td>" + (leaf.getAttributes().get("rackUnits") == null ? "<span class=\"error\">Not Set</span>" : leaf.getAttributes().get("rackUnits").get(0)) + "</td>"
+                        + "<td>" + operationalState + "</td></tr>";
                 i++;
             }
             usedPercentage = totalRackUnits == 0 ? 0 : usedRackUnits * 100 / totalRackUnits;
@@ -133,12 +136,12 @@ public class Reports {
                                     RelTypes.INSTANCE_OF, RelTypes.EXTENDS, aPort.getId(), "endpointA", "endpointB", "endpointA", "endpointB", 
                                     Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, Constants.CLASS_GENERICBOX);
                 
-                List<RemoteBusinessObjectList> nextEquipmentResult = aem.executeCustomDbCode(query);
+                HashMap<String, RemoteBusinessObjectList> nextEquipmentResult = aem.executeCustomDbCode(query);
                 
-                if (nextEquipmentResult.get(0).getList().isEmpty())
+                if (nextEquipmentResult.get("equipment").getList().isEmpty())
                     connectedEquipmentString  = "Free";
                 else {
-                    connectedEquipmentString = "<b>" + nextEquipmentResult.get(0).getList().get(0) + "</b>:" + nextEquipmentResult.get(1).getList().get(0);
+                    connectedEquipmentString = "<b>" + nextEquipmentResult.get("equipment").getList().get(0) + "</b>:" + nextEquipmentResult.get("equipmentPort").getList().get(0).getName();
                     usedPorts ++;
                 }
                 
@@ -149,26 +152,26 @@ public class Reports {
                                 RelTypes.CHILD_OF_SPECIAL, RelTypes.INSTANCE_OF, RelTypes.EXTENDS, 
                                 aPort.getId(), "uses", Constants.CLASS_GENERICCUSTOMER);
                 
-                List<RemoteBusinessObjectList> serviceResult = aem.executeCustomDbCode(query);
+                HashMap<String, RemoteBusinessObjectList> serviceResult = aem.executeCustomDbCode(query);
                 
-                for (int j = 0; j < serviceResult.get(0).getList().size(); j++)
-                    serviceString += "<b>" + serviceResult.get(0).getList().get(j) + "</b> - " + serviceResult.get(1).getList().get(j) + "<br/>";
+                for (int j = 0; j < serviceResult.get("service").getList().size(); j++)
+                    serviceString += "<b>" + serviceResult.get("service").getList().get(j) + "</b> - " + serviceResult.get("customer").getList().get(j) + "<br/>";
                 
                 //Operational State
                 query = String.format("MATCH (framePort)-[relation:%s]->(listType) "
                         + "WHERE id(framePort) = %s AND relation.name=\"%s\" RETURN listType", RelTypes.RELATED_TO, aPort.getId(), "state");
                 
-                List<RemoteBusinessObjectList> operationalStateResult = aem.executeCustomDbCode(query);
+                HashMap<String, RemoteBusinessObjectList> operationalStateResult = aem.executeCustomDbCode(query);
                 
                 String operationalStateString = "<span class=\"error\">Not Set</span>";
                 
-                if (!operationalStateResult.get(0).getList().isEmpty())
-                    operationalStateString = operationalStateResult.get(0).getList().get(0).getName();
+                if (!operationalStateResult.get("listType").getList().isEmpty())
+                    operationalStateString = operationalStateResult.get("listType").getList().get(0).getName();
                 
-                portList += "<tr><td class=\"" + (i % 2 == 0 ? "even" : "odd") + "\">" + aPort.getName() + "</td>\n"
-                        + "<td class=\"" + (i % 2 == 0 ? "even" : "odd") + "\">" + operationalStateString + "</td>\n"
-                        + "<td class=\"" + (i % 2 == 0 ? "even" : "odd") + "\">" + connectedEquipmentString + "</td>\n"
-                        + "<td class=\"" + (i % 2 == 0 ? "even" : "odd") + "\">" + serviceString + "</td></tr>\n";
+                portList += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") + "\"><td>" + aPort.getName() + "</td>\n"
+                        + "<td>" + operationalStateString + "</td>\n"
+                        + "<td>" + connectedEquipmentString + "</td>\n"
+                        + "<td>" + serviceString + "</td></tr>\n";
                 i++;
             }
             portList += "</table>\n";
@@ -193,6 +196,72 @@ public class Reports {
         
         return frameUsageReportText.getBytes(StandardCharsets.UTF_8);
     }
+
+    public static byte[] buildTransportLinkUsageReport (BusinessEntityManager bem, ApplicationEntityManager aem, String transportLinkClass, long transportLinkId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+        String query = String.format("MATCH (transportLink)-[relation:%s]-(port)-[:%s*]->(equipment)-[:%s]->(class)-[:%s*]->(superClass) "
+                    + "WHERE id(transportLink) = %s AND superClass.name = \"%s\" AND (relation.name = \"%s\" OR relation.name = \"%s\")"
+                    + "RETURN transportLink, equipment, port",  RelTypes.RELATED_TO_SPECIAL, RelTypes.CHILD_OF, RelTypes.INSTANCE_OF, 
+                            RelTypes.EXTENDS, transportLinkId, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, 
+                            SDHModule.RELATIONSHIP_SDHTLENDPOINTA, SDHModule.RELATIONSHIP_SDHTLENDPOINTB);
+        HashMap<String, RemoteBusinessObjectList> theResult = aem.executeCustomDbCode(query);
+        
+        String title, transportLinkUsageReportText;
+        RemoteBusinessObject theTransportLink;
+        
+        if (theResult.get("transportLink").getList().isEmpty()) {
+            title = "Error";
+            transportLinkUsageReportText = getHeader(title);
+            transportLinkUsageReportText += "<div class=\"error\">No information about this transport link could be found</div>";
+        }
+        else {
+            theTransportLink = theResult.get("transportLink").getList().get(0);
+            title = "Transport Link Usage Report for " + theTransportLink.getName();
+            transportLinkUsageReportText = getHeader(title);
+            transportLinkUsageReportText += 
+                                "  <body><table><tr><td><h1>" + title + "</h1></td><td><img src=\"http://afr-ix.com/wp-content/themes/twentyfourteen/images/afrix_logo.png\"/></td></tr></table>\n";
+            
+            //General Info
+            transportLinkUsageReportText += "<table><tr><td class=\"generalInfoLabel\">Name</td><td class=\"generalInfoValue\">" + theTransportLink.getName() + "</td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">Type</td><td class=\"generalInfoValue\">" + theTransportLink.getClassName() + "</td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">Endpoint A</td><td class=\"generalInfoValue\"><b>" + theResult.get("equipment").getList().get(0) + "</b>:" + theResult.get("port").getList().get(0).getName() + "</td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">Endpoint B</td><td class=\"generalInfoValue\"><b>" + theResult.get("equipment").getList().get(1) + "</b>:" + theResult.get("port").getList().get(1).getName() + "</td></tr></table>";
+            
+            //Structure
+            String transportLinkStructure;
+            SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
+            List<SDHContainerLinkDefinition> sdhTransportLinkStructure = sdhModule.getSDHTransportLinkStructure(transportLinkClass, transportLinkId);
+            int totalLinkCapacity = SDHModule.calculateTransportLinkCapacity(transportLinkClass);
+            if (totalLinkCapacity == 0)
+                transportLinkStructure = "<div class=\"error\">The transport link class does not allow automatic capacity calculation</div>";
+            else {
+                transportLinkStructure = "<table><tr><th>Position</th><th>Container Name</th><th>Structured</th></tr>\n";
+                SDHContainerLinkDefinition[] allContainers = new SDHContainerLinkDefinition[totalLinkCapacity];
+                for (SDHContainerLinkDefinition containerDefinition : sdhTransportLinkStructure) {
+                    int firstPosition = containerDefinition.getPositions().get(0).getPosition();
+                    //Handles concatenated containers
+                    allContainers[firstPosition - 1] = containerDefinition;
+                    int adjacentPositions = SDHModule.calculateContainerLinkCapacity(containerDefinition.getContainer().getClassName()) - 1;
+                    for (int i = firstPosition; i < firstPosition + adjacentPositions; i ++ )
+                        allContainers[i] = containerDefinition;
+                }
+                
+                for (int i = 0; i < allContainers.length; i++) {
+                    if (allContainers[i] == null)
+                        transportLinkStructure += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") + "\"><td>" + (i + 1) + "</td><td>Free</td><td>NA</td></tr>";
+                    else
+                        transportLinkStructure += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") + "\"><td>" + (i + 1) + "</td><td>" + allContainers[i].getContainer() + "</td><td>" + (allContainers[i].isStructured() ? "Yes" : "No") + "</td></tr>";
+                }
+                
+                transportLinkStructure += "</table>";
+            }
+            transportLinkUsageReportText += transportLinkStructure;
+        }
+        
+        transportLinkUsageReportText += getFooter();
+        
+        return transportLinkUsageReportText.getBytes(StandardCharsets.UTF_8);
+    }
+
     //Helpers
     private static String getStyleSheet() {
         return "<style> " +
@@ -246,13 +315,28 @@ public class Reports {
                     "   td.generalInfoValue {\n" +
                     "            background-color: white;\n" +
                     "   }\n" +
-                    "   td.even {\n" +
+                    "   tr.even {\n" +
                     "            background-color: #AAE033;\n" +
                     "   }\n" +
-                    "   td.odd {\n" +
+                    "   tr.odd {\n" +
                     "            background-color: #D1F680;\n" +
                     "   }" +
                      "</style>\n";
+    }
+    
+    private static String getHeader(String title){
+        return "<!DOCTYPE html>\n" +
+                    "<html lang=\"en\">\n" +
+                    "  <head>\n" +
+                    "    <meta charset=\"utf-8\">\n" +
+                    "    <title>" + title + "</title>\n" +
+                    getStyleSheet() +
+                    "  </head>\n";
+    }
+    
+    private static String getFooter() {
+        return "  <div class=\"footer\">This report is powered by <a href=\"http://www.kuwaiba.org\">Kuwaiba Open Network Inventory</a></div></body>\n" +
+                                "</html>";
     }
     
     private static String formatLocation (List<RemoteBusinessObjectLight> containmentHierarchy) {

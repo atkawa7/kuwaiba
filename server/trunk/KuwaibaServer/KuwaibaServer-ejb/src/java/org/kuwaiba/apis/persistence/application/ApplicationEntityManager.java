@@ -599,7 +599,7 @@ public interface ApplicationEntityManager {
      * @throws NotAuthorizedException If the user is not allowed to run arbitrary code on the database
      * @deprecated Don't use it, instead, create a method in the corresponding entity manager instead of running code directly on the database
      */
-    public List<RemoteBusinessObjectList> executeCustomDbCode(String dbCode) throws NotAuthorizedException;
+    public HashMap<String, RemoteBusinessObjectList> executeCustomDbCode(String dbCode) throws NotAuthorizedException;
     
     /**
      * Registers a commercial module. Replaces an existing one if the name of provided one is already registered
