@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
+import org.kuwaiba.apis.persistence.business.AnnotatedRemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
@@ -261,7 +262,131 @@ public class Reports {
         
         return transportLinkUsageReportText.getBytes(StandardCharsets.UTF_8);
     }
+    
+    public static byte[] buildLowOrderTributaryLinkDetailReport (BusinessEntityManager bem, ApplicationEntityManager aem, String tributaryLinkClass, long tributaryLinkId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+        String query = String.format("MATCH (customerSuperClass)<-[:%s*]-(customerClass)<-[:%s]-(customer)<-[:%s*]-(service)-[relationA:%s]->(tributaryLink)-[relationB:%s]-(port)-[:%s*]->(equipment)-[:%s]->(class)-[:%s*]->(superClass) "
+                + "WHERE id(tributaryLink) = %s AND superClass.name=\"%s\" AND relationA.name = \"%s\" AND (relationB.name = \"%s\" OR relationB.name = \"%s\") AND customerSuperClass.name=\"%s\" RETURN tributaryLink, customer, service, port, equipment", 
+                    RelTypes.EXTENDS, RelTypes.INSTANCE_OF, RelTypes.CHILD_OF_SPECIAL, RelTypes.RELATED_TO_SPECIAL, RelTypes.RELATED_TO_SPECIAL, 
+                    RelTypes.CHILD_OF, RelTypes.INSTANCE_OF, RelTypes.EXTENDS, tributaryLinkId, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, "uses", 
+                    SDHModule.RELATIONSHIP_SDHTTLENDPOINTA, SDHModule.RELATIONSHIP_SDHTTLENDPOINTB, Constants.CLASS_GENERICCUSTOMER);
+        HashMap<String, RemoteBusinessObjectList> theResult = aem.executeCustomDbCode(query);
+        
+        String title, tributaryLinkUsageReportText;
+        RemoteBusinessObject theTributaryLink;
+        
+        if (theResult.get("tributaryLink").getList().isEmpty()) {
+            title = "Error";
+            tributaryLinkUsageReportText = getHeader(title);
+            tributaryLinkUsageReportText += "<div class=\"error\">No information about this tributary link could be found</div>";
+        }
+        else {
+            theTributaryLink = theResult.get("tributaryLink").getList().get(0);
+            title = "Tributary Link Details Report for " + theTributaryLink.getName();
+            tributaryLinkUsageReportText = getHeader(title);
+            tributaryLinkUsageReportText += 
+                                "  <body><table><tr><td><h1>" + title + "</h1></td><td><img src=\"http://afr-ix.com/wp-content/themes/twentyfourteen/images/afrix_logo.png\"/></td></tr></table>\n";
+            
+            //General Info
+            tributaryLinkUsageReportText += "<table><tr><td class=\"generalInfoLabel\">Name</td><td class=\"generalInfoValue\">" + theTributaryLink.getName() + "</td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">Type</td><td class=\"generalInfoValue\">" + theTributaryLink.getClassName() + "</td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">Endpoint A</td><td class=\"generalInfoValue\"><b>" + theResult.get("equipment").getList().get(0) + "</b>:" + theResult.get("port").getList().get(0).getName() + "</td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">Endpoint B</td><td class=\"generalInfoValue\"><b>" + theResult.get("equipment").getList().get(1) + "</b>:" + theResult.get("port").getList().get(1).getName() + "</td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">Service</td><td class=\"generalInfoValue\">" + theResult.get("service").getList().get(0).getName() + "</td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">Customer</td><td class=\"generalInfoValue\">" + theResult.get("customer").getList().get(0).getName() + "</td></tr></table>";
+        
+            //Used resources
+            List<RemoteBusinessObjectLight> container = bem.getSpecialAttribute(tributaryLinkClass, tributaryLinkId, SDHModule.RELATIONSHIP_SDHDELIVERS);
+            
+            String usedResources;
+            if (container.isEmpty())
+                usedResources = "<div class=\"error\">This tributary link seems malformed and does not have a path</div>";
+            else {
+                List<AnnotatedRemoteBusinessObjectLight> structured = bem.getAnnotatedSpecialAttribute(container.get(0).getClassName(), 
+                        container.get(0).getId(), SDHModule.RELATIONSHIP_SDHCONTAINS);
+                usedResources = "<table><tr><th>Structured Name</th><th>Structured Position</th><th>Transport Links</th></tr>";
+                int i = 0;
+                for (AnnotatedRemoteBusinessObjectLight aStructured : structured) {
+                    String transportLinksString = "";
+                    
+                    List<AnnotatedRemoteBusinessObjectLight> transportLinks = 
+                            bem.getAnnotatedSpecialAttribute(aStructured.getObject().getClassName(), aStructured.getObject().getId(), SDHModule.RELATIONSHIP_SDHTRANSPORTS);
+                    
+                    for (AnnotatedRemoteBusinessObjectLight transportLink : transportLinks)
+                        transportLinksString += transportLink.getProperties().get(SDHModule.PROPERTY_SDHPOSITION) + " - " + transportLink.getObject() + "<br/>";
+                    
+                    usedResources += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") +"\"><td>" + aStructured.getObject() + "</td>"
+                                    + "<td>" + aStructured.getProperties().get(SDHModule.PROPERTY_SDHPOSITION) +"</td>"
+                                    + "<td>" + transportLinksString + "</td></tr>";
+                    
+                    i ++;
+                }
+                usedResources += "</table>";
+            }
+            tributaryLinkUsageReportText += usedResources;
+        }
+        tributaryLinkUsageReportText += getFooter();
+        
+        return tributaryLinkUsageReportText.getBytes(StandardCharsets.UTF_8);
+    }
 
+    public static byte[] buildHighOrderTributaryLinkDetailReport (BusinessEntityManager bem, ApplicationEntityManager aem, String tributaryLinkClass, long tributaryLinkId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+        String query = String.format("MATCH (customerSuperClass)<-[:%s*]-(customerClass)<-[:%s]-(customer)<-[:%s*]-(service)-[relationA:%s]->(tributaryLink)-[relationB:%s]-(port)-[:%s*]->(equipment)-[:%s]->(class)-[:%s*]->(superClass) "
+                + "WHERE id(tributaryLink) = %s AND superClass.name=\"%s\" AND relationA.name = \"%s\" AND (relationB.name = \"%s\" OR relationB.name = \"%s\") AND customerSuperClass.name=\"%s\" RETURN tributaryLink, customer, service, port, equipment", 
+                    RelTypes.EXTENDS, RelTypes.INSTANCE_OF, RelTypes.CHILD_OF_SPECIAL, RelTypes.RELATED_TO_SPECIAL, RelTypes.RELATED_TO_SPECIAL, 
+                    RelTypes.CHILD_OF, RelTypes.INSTANCE_OF, RelTypes.EXTENDS, tributaryLinkId, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, "uses", 
+                    SDHModule.RELATIONSHIP_SDHTTLENDPOINTA, SDHModule.RELATIONSHIP_SDHTTLENDPOINTB, Constants.CLASS_GENERICCUSTOMER);
+        HashMap<String, RemoteBusinessObjectList> theResult = aem.executeCustomDbCode(query);
+        
+        String title, tributaryLinkUsageReportText;
+        RemoteBusinessObject theTributaryLink;
+        
+        if (theResult.get("tributaryLink").getList().isEmpty()) {
+            title = "Error";
+            tributaryLinkUsageReportText = getHeader(title);
+            tributaryLinkUsageReportText += "<div class=\"error\">No information about this tributary link could be found</div>";
+        }
+        else {
+            theTributaryLink = theResult.get("tributaryLink").getList().get(0);
+            title = "Tributary Link Details Report for " + theTributaryLink.getName();
+            tributaryLinkUsageReportText = getHeader(title);
+            tributaryLinkUsageReportText += 
+                                "  <body><table><tr><td><h1>" + title + "</h1></td><td><img src=\"http://afr-ix.com/wp-content/themes/twentyfourteen/images/afrix_logo.png\"/></td></tr></table>\n";
+            
+            //General Info
+            tributaryLinkUsageReportText += "<table><tr><td class=\"generalInfoLabel\">Name</td><td class=\"generalInfoValue\">" + theTributaryLink.getName() + "</td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">Type</td><td class=\"generalInfoValue\">" + theTributaryLink.getClassName() + "</td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">Endpoint A</td><td class=\"generalInfoValue\"><b>" + theResult.get("equipment").getList().get(0) + "</b>:" + theResult.get("port").getList().get(0).getName() + "</td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">Endpoint B</td><td class=\"generalInfoValue\"><b>" + theResult.get("equipment").getList().get(1) + "</b>:" + theResult.get("port").getList().get(1).getName() + "</td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">Service</td><td class=\"generalInfoValue\">" + theResult.get("service").getList().get(0).getName() + "</td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">Customer</td><td class=\"generalInfoValue\">" + theResult.get("customer").getList().get(0).getName() + "</td></tr></table>";
+        
+            //Used resources
+            List<RemoteBusinessObjectLight> container = bem.getSpecialAttribute(tributaryLinkClass, tributaryLinkId, SDHModule.RELATIONSHIP_SDHDELIVERS);
+            
+            String usedResources;
+            if (container.isEmpty())
+                usedResources = "<div class=\"error\">This tributary link seems malformed and does not have a path</div>";
+            else {
+                List<AnnotatedRemoteBusinessObjectLight> transportLinks = bem.getAnnotatedSpecialAttribute(container.get(0).getClassName(), 
+                        container.get(0).getId(), SDHModule.RELATIONSHIP_SDHTRANSPORTS);
+                usedResources = "<table><tr><th>Transport Link Name</th><th>Transport Link Position</th></tr>";
+               
+                String transportLinksString = "";
+                int i = 0;
+                for (AnnotatedRemoteBusinessObjectLight transportLink : transportLinks) {
+                    usedResources += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") +"\"><td>" + transportLink.getObject() + "</td>"
+                                    + "<td>" + transportLink.getProperties().get(SDHModule.PROPERTY_SDHPOSITION) +"</td></tr>";
+                    i ++;
+                }
+                usedResources += "</table>";
+            }
+            tributaryLinkUsageReportText += usedResources;
+        }
+        tributaryLinkUsageReportText += getFooter();
+        
+        return tributaryLinkUsageReportText.getBytes(StandardCharsets.UTF_8);
+    }
+    
     //Helpers
     private static String getStyleSheet() {
         return "<style> " +

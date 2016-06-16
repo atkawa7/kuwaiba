@@ -1998,21 +1998,24 @@ public class WebserviceBean implements WebserviceBeanRemote {
                     };
                 case "VC12TributaryLink":
                 case "VC3TributaryLink":
-                case "VC4TributaryLink":
                     return new ReportDescriptor[] {
                             new ReportDescriptor(5, "TributaryLink Resources", className, "Shows the resources used by a TributaryLink")
                     };
+                case "VC4TributaryLink":
+                    return new ReportDescriptor[] {
+                            new ReportDescriptor(6, "TributaryLink Resources", className, "Shows the resources used by a TributaryLink")
+                    };
                 case "IPTransit":
                      return new ReportDescriptor[] {
-                            new ReportDescriptor(6, "Service details", className, "Shows the resources used by the service and some of its attributes")
+                            new ReportDescriptor(7, "Service details", className, "Shows the resources used by the service and some of its attributes")
                     };
                 case "VPLSService":
                     return new ReportDescriptor[] {
-                            new ReportDescriptor(7, "Service details", className, "Shows the resources used by the service and some of its attributes")
+                            new ReportDescriptor(8, "Service details", className, "Shows the resources used by the service and some of its attributes")
                     };
                 case "Subnet":
                     return new ReportDescriptor[] {
-                            new ReportDescriptor(8, "Subnet details", className, "Shows the IPs created in that subnet and some of their attributes")
+                            new ReportDescriptor(9, "Subnet details", className, "Shows the IPs created in that subnet and some of their attributes")
                     };
             }
             return new ReportDescriptor[0];
@@ -2035,10 +2038,18 @@ public class WebserviceBean implements WebserviceBeanRemote {
                     long frameId = Long.valueOf(StringPair.get(arguments, "objectId"));
                     String frameClass = StringPair.get(arguments, "objectClass");
                     return Reports.buildDistributionFrameDetailReport(bem, aem, frameClass, frameId);
-                case 4:
+                case 4: //Transport link usage
                     long transportLinkId = Long.valueOf(StringPair.get(arguments, "objectId"));
                     String transportLinkClass = StringPair.get(arguments, "objectClass");
                     return Reports.buildTransportLinkUsageReport(bem, aem, transportLinkClass, transportLinkId);
+                case 5: //Tributary link details (VC12/VC3)
+                    long tributaryLinkId = Long.valueOf(StringPair.get(arguments, "objectId"));
+                    String tributaryLinkClass = StringPair.get(arguments, "objectClass");
+                    return Reports.buildLowOrderTributaryLinkDetailReport(bem, aem, tributaryLinkClass, tributaryLinkId);
+                case 6: //Tributary link details (VC4)
+                    tributaryLinkId = Long.valueOf(StringPair.get(arguments, "objectId"));
+                    tributaryLinkClass = StringPair.get(arguments, "objectClass");
+                    return Reports.buildHighOrderTributaryLinkDetailReport(bem, aem, tributaryLinkClass, tributaryLinkId);
             }
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
