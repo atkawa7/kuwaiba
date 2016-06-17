@@ -20,8 +20,6 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -84,8 +82,8 @@ public final class ExecuteClassReportAction extends AbstractAction implements Pr
                 }
                 if(Desktop.isDesktopSupported()) 
                 try {
-                    Desktop.getDesktop().browse(new URI("file://" + tempFile.getAbsolutePath()));
-                } catch (IOException | URISyntaxException ex) {
+                    Desktop.getDesktop().browse(Utilities.toURI(tempFile));
+                } catch (IOException ex) {
                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());
                 }
                 

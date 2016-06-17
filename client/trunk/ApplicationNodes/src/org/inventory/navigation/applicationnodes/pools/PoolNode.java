@@ -22,8 +22,6 @@ import java.io.IOException;
 import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.communications.core.caching.Cache;
-import org.inventory.communications.util.Utils;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
 import org.inventory.navigation.applicationnodes.pools.actions.DeletePoolAction;
@@ -54,7 +52,7 @@ public class PoolNode extends AbstractNode {
     
     @Override
     public String getName(){
-        return pool.getName() +" ["+pool.getClassName()+"]";
+        return pool.getName() +" [" + pool.getClassName() + "]";
     }
     
     @Override

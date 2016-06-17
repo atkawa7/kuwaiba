@@ -20,14 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteBusinessObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
 import org.kuwaiba.management.services.nodes.actions.CreateServiceAction;
 import org.kuwaiba.management.services.nodes.actions.CreateServicesPoolAction;
 import org.openide.util.ImageUtilities;
-import org.openide.util.Lookup;
 import org.openide.util.actions.SystemAction;
 
 /**
@@ -42,7 +40,6 @@ public class CustomerNode extends ObjectNode {
     
     private CreateServiceAction createServiceAction;
     private CreateServicesPoolAction createServicesPoolAction;
-    private NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
     
     public CustomerNode(LocalObjectLight customer) {
         super(customer);
@@ -52,7 +49,7 @@ public class CustomerNode extends ObjectNode {
     
     @Override
     public Action[] getActions(boolean context){
-        List<Action> actions = new ArrayList<Action>();
+        List<Action> actions = new ArrayList<>();
 
         actions.add(createServiceAction == null ? createServiceAction = new CreateServiceAction(this) : createServiceAction);
         if(createServicesPoolAction == null){
@@ -68,7 +65,6 @@ public class CustomerNode extends ObjectNode {
         actions.add(null); //Separator
         actions.add(showObjectIdAction == null ? showObjectIdAction = new ShowObjectIdAction(object.getOid(), object.getClassName()) : showObjectIdAction);
         return actions.toArray(new Action[]{});
-          
     }
 
     @Override

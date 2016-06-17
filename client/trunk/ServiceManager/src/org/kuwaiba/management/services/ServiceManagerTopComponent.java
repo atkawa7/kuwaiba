@@ -129,7 +129,6 @@ public final class ServiceManagerTopComponent extends TopComponent
 
     @Override
     public void refresh() {
-        //em.getRootContext().getChildren().remove(em.getRootContext().getChildren().getNodes());
         sms.setTreeRoot();
     }
 }
