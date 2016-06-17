@@ -311,7 +311,7 @@ public class IPAMModule implements GenericCommercialModule{
      */
     public void relateIPtoDevice(long id, String deviceClass, long deviceId) throws ObjectNotFoundException,
             OperationNotPermittedException, MetadataObjectNotFoundException{
-        bem.createSpecialRelationship(deviceClass, deviceId, Constants.CLASS_IP_ADDRESS, id, RELATIONSHIP_IPAMBELONGSTOVLAN, true);
+        bem.createSpecialRelationship(deviceClass, deviceId, Constants.CLASS_IP_ADDRESS, id, RELATIONSHIP_IPAMHASADDRESS, true);
     }
     
     /**
@@ -343,7 +343,7 @@ public class IPAMModule implements GenericCommercialModule{
             throws ObjectNotFoundException, MetadataObjectNotFoundException,
             ApplicationObjectNotFoundException, NotAuthorizedException
     {
-        bem.releaseSpecialRelationship(deviceClass, deviceId, id, RELATIONSHIP_IPAMBELONGSTOVLAN);
+        bem.releaseSpecialRelationship(deviceClass, deviceId, id, RELATIONSHIP_IPAMHASADDRESS);
         
     }
     
