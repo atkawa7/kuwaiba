@@ -39,7 +39,7 @@ import org.openide.util.datatransfer.PasteType;
  */
 public class PoolNode extends AbstractNode {
     
-    private static Image defaultIcon = ImageUtilities.loadImage("org/inventory/navigation/applicationnodes/res/pool.png");
+    private static Image defaultIcon = ImageUtilities.loadImage("org/inventory/navigation/applicationnodes/res/folder-icon.png");
     private NewPoolItemAction newPoolItemAction;
     private DeletePoolAction deletePoolAction;
     private ShowObjectIdAction showObjectIdAction;
