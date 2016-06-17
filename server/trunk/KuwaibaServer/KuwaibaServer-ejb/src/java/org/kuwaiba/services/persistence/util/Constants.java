@@ -245,6 +245,10 @@ public class Constants {
      */
     public static final String CLASS_GENERICBOX = "GenericBox";
     /**
+     * Class GenericBox
+     */
+    public static final String CLASS_GENERICDISTRIBUTIONFRAME = "GenericDistributionFrame";
+    /**
      * Dummy root node name
      */
     public static final String NODE_DUMMYROOT = "DummyRoot"; //NOI18N

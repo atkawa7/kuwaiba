@@ -286,11 +286,27 @@ public class Reports {
             tributaryLinkUsageReportText += 
                                 "  <body><table><tr><td><h1>" + title + "</h1></td><td><img src=\"http://afr-ix.com/wp-content/themes/twentyfourteen/images/afrix_logo.png\"/></td></tr></table>\n";
             
+            //Demarcation points
+            query = String.format("MATCH (tributaryLink)-[relationA:%s]-(equipmentPort)-[relationB:%s]-(physicalConnection)-[relationC:%s]-(nextEquipmentPort)-[:%s*]->(nextEquipment)-[:%s]->(class)-[:%s*]->(superClass) "
+                + "WHERE id(tributaryLink) = %s AND (relationA.name = \"%s\" OR relationA.name = \"%s\") "
+                    + "AND (relationB.name = \"%s\" OR relationB.name = \"%s\") "
+                    + "AND (relationC.name = \"%s\" OR relationC.name = \"%s\") "
+                    + "AND superClass.name=\"%s\" "
+                + "RETURN nextEquipmentPort, nextEquipment", RelTypes.RELATED_TO_SPECIAL, RelTypes.RELATED_TO_SPECIAL, RelTypes.RELATED_TO_SPECIAL, RelTypes.CHILD_OF, RelTypes.INSTANCE_OF, RelTypes.EXTENDS, 
+                                    tributaryLinkId, SDHModule.RELATIONSHIP_SDHTTLENDPOINTA, SDHModule.RELATIONSHIP_SDHTTLENDPOINTB,
+                                    "endpointA", "endpointB", "endpointA", "endpointB", Constants.CLASS_GENERICDISTRIBUTIONFRAME);
+            
+            HashMap<String, RemoteBusinessObjectList> demarcationPoints = aem.executeCustomDbCode(query);
+            String demarcationPointsAsSring = "";
+            for (int i = 0; i < demarcationPoints.get("nextEquipmentPort").getList().size(); i++)
+                demarcationPointsAsSring += "<b>" + demarcationPoints.get("nextEquipment").getList().get(i) + "</b>:" + demarcationPoints.get("nextEquipmentPort").getList().get(i) + "<br/>";
+            
             //General Info
             tributaryLinkUsageReportText += "<table><tr><td class=\"generalInfoLabel\">Name</td><td class=\"generalInfoValue\">" + theTributaryLink.getName() + "</td></tr>"
                     + "<tr><td class=\"generalInfoLabel\">Type</td><td class=\"generalInfoValue\">" + theTributaryLink.getClassName() + "</td></tr>"
                     + "<tr><td class=\"generalInfoLabel\">Endpoint A</td><td class=\"generalInfoValue\"><b>" + theResult.get("equipment").getList().get(0) + "</b>:" + theResult.get("port").getList().get(0).getName() + "</td></tr>"
                     + "<tr><td class=\"generalInfoLabel\">Endpoint B</td><td class=\"generalInfoValue\"><b>" + theResult.get("equipment").getList().get(1) + "</b>:" + theResult.get("port").getList().get(1).getName() + "</td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">Demarcation Points</td><td class=\"generalInfoValue\">" + demarcationPointsAsSring + "</td></tr>"
                     + "<tr><td class=\"generalInfoLabel\">Service</td><td class=\"generalInfoValue\">" + theResult.get("service").getList().get(0).getName() + "</td></tr>"
                     + "<tr><td class=\"generalInfoLabel\">Customer</td><td class=\"generalInfoValue\">" + theResult.get("customer").getList().get(0).getName() + "</td></tr></table>";
         
@@ -352,11 +368,27 @@ public class Reports {
             tributaryLinkUsageReportText += 
                                 "  <body><table><tr><td><h1>" + title + "</h1></td><td><img src=\"http://afr-ix.com/wp-content/themes/twentyfourteen/images/afrix_logo.png\"/></td></tr></table>\n";
             
+            //Demarcation points
+            query = String.format("MATCH (tributaryLink)-[relationA:%s]-(equipmentPort)-[relationB:%s]-(physicalConnection)-[relationC:%s]-(nextEquipmentPort)-[:%s*]->(nextEquipment)-[:%s]->(class)-[:%s*]->(superClass) "
+                + "WHERE id(tributaryLink) = %s AND (relationA.name = \"%s\" OR relationA.name = \"%s\") "
+                    + "AND (relationB.name = \"%s\" OR relationB.name = \"%s\") "
+                    + "AND (relationC.name = \"%s\" OR relationC.name = \"%s\") "
+                    + "AND superClass.name=\"%s\" "
+                + "RETURN nextEquipmentPort, nextEquipment", RelTypes.RELATED_TO_SPECIAL, RelTypes.RELATED_TO_SPECIAL, RelTypes.RELATED_TO_SPECIAL, RelTypes.CHILD_OF, RelTypes.INSTANCE_OF, RelTypes.EXTENDS, 
+                                    tributaryLinkId, SDHModule.RELATIONSHIP_SDHTTLENDPOINTA, SDHModule.RELATIONSHIP_SDHTTLENDPOINTB,
+                                    "endpointA", "endpointB", "endpointA", "endpointB", Constants.CLASS_GENERICDISTRIBUTIONFRAME);
+            
+            HashMap<String, RemoteBusinessObjectList> demarcationPoints = aem.executeCustomDbCode(query);
+            String demarcationPointsAsSring = "";
+            for (int i = 0; i < demarcationPoints.get("nextEquipmentPort").getList().size(); i++)
+                demarcationPointsAsSring += "<b>" + demarcationPoints.get("nextEquipment").getList().get(i) + "</b>:" + demarcationPoints.get("nextEquipmentPort").getList().get(i) + "<br/>";
+
             //General Info
             tributaryLinkUsageReportText += "<table><tr><td class=\"generalInfoLabel\">Name</td><td class=\"generalInfoValue\">" + theTributaryLink.getName() + "</td></tr>"
                     + "<tr><td class=\"generalInfoLabel\">Type</td><td class=\"generalInfoValue\">" + theTributaryLink.getClassName() + "</td></tr>"
                     + "<tr><td class=\"generalInfoLabel\">Endpoint A</td><td class=\"generalInfoValue\"><b>" + theResult.get("equipment").getList().get(0) + "</b>:" + theResult.get("port").getList().get(0).getName() + "</td></tr>"
                     + "<tr><td class=\"generalInfoLabel\">Endpoint B</td><td class=\"generalInfoValue\"><b>" + theResult.get("equipment").getList().get(1) + "</b>:" + theResult.get("port").getList().get(1).getName() + "</td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">Demarcation Points</td><td class=\"generalInfoValue\">" + demarcationPointsAsSring + "</td></tr>"
                     + "<tr><td class=\"generalInfoLabel\">Service</td><td class=\"generalInfoValue\">" + theResult.get("service").getList().get(0).getName() + "</td></tr>"
                     + "<tr><td class=\"generalInfoLabel\">Customer</td><td class=\"generalInfoValue\">" + theResult.get("customer").getList().get(0).getName() + "</td></tr></table>";
         
@@ -371,7 +403,6 @@ public class Reports {
                         container.get(0).getId(), SDHModule.RELATIONSHIP_SDHTRANSPORTS);
                 usedResources = "<table><tr><th>Transport Link Name</th><th>Transport Link Position</th></tr>";
                
-                String transportLinksString = "";
                 int i = 0;
                 for (AnnotatedRemoteBusinessObjectLight transportLink : transportLinks) {
                     usedResources += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") +"\"><td>" + transportLink.getObject() + "</td>"
