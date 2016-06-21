@@ -41,11 +41,11 @@ import org.inventory.communications.core.LocalObjectLight;
 public class VlansFrame extends JFrame{
     private JTextField txtField;
     private JScrollPane pnlScrollMain;
-    private JList lstAvailableVlans;
-    private LocalObjectLight[] selectedSubnets;
-    private LocalObjectLight[] vlans;
+    private JList<LocalObjectLight> lstAvailableVlans;
+    private List<LocalObjectLight> selectedSubnets;
+    private List<LocalObjectLight> vlans;
     
-    public VlansFrame(LocalObjectLight[] selectedSubnets, LocalObjectLight[] vlans) {
+    public VlansFrame(List<LocalObjectLight> selectedSubnets, List<LocalObjectLight> vlans) {
         this.selectedSubnets = selectedSubnets;
         this.vlans = vlans;
         setLayout(new BorderLayout());
@@ -58,7 +58,7 @@ public class VlansFrame extends JFrame{
                 
         JPanel pnlSearch = new JPanel();
         pnlSearch.setLayout(new GridLayout(1, 2));
-        lstAvailableVlans = new JList<>(vlans);
+        lstAvailableVlans = new JList<>(vlans.toArray(new LocalObjectLight[0]));
         lstAvailableVlans.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         pnlScrollMain = new JScrollPane();
         txtField = new JTextField();
@@ -111,17 +111,11 @@ public class VlansFrame extends JFrame{
         public void actionPerformed(ActionEvent e) {
             if (lstAvailableVlans.getSelectedValue() == null)
                 JOptionPane.showMessageDialog(null, "Select a service from the list");
-            else{
-                Long [] objectsId = new Long[selectedSubnets.length];
-                String [] objectsNames = new String[selectedSubnets.length];
-                for(int i=0; i<selectedSubnets.length; i++){
-                    objectsId [i] = selectedSubnets[i].getOid();
-                    objectsNames[i] = selectedSubnets[i].getName();
-                }
+            else {
                 if (CommunicationsStub.getInstance().relateSubnetToVLAN(
-                        objectsId[0], ((LocalObjectLight)lstAvailableVlans.getSelectedValue()).getOid())){
-                    JOptionPane.showMessageDialog(null, String.format("The %s subnet was related to VLAN %s", objectsNames[0], 
-                            ((LocalObjectLight)lstAvailableVlans.getSelectedValue()).getName()));
+                        selectedSubnets.get(0).getOid(), lstAvailableVlans.getSelectedValue().getOid())){
+                    JOptionPane.showMessageDialog(null, String.format("The %s subnet was related to VLAN %s", selectedSubnets.get(0).getName(), 
+                            lstAvailableVlans.getSelectedValue().getName()));
                         dispose();
                 }
                 else 

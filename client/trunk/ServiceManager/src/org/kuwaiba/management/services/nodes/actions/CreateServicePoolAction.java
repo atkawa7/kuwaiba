@@ -18,52 +18,45 @@ package org.kuwaiba.management.services.nodes.actions;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.util.Iterator;
+import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.kuwaiba.management.services.nodes.CustomerChildren;
 import org.kuwaiba.management.services.nodes.CustomerNode;
-import org.kuwaiba.management.services.nodes.ServiceManagerRootNode;
-import org.kuwaiba.management.services.nodes.ServicesPoolNode;
+import org.openide.util.Utilities;
 
 /**
  * Creates a new services pool
  * @author adrian martinez molina <adrian.martinez@kuwaiba.org>
  */
-public class CreateServicesPoolAction extends GenericObjectNodeAction {
+public class CreateServicePoolAction extends AbstractAction {
     /**
      * Reference to the communications stub singleton
      */
     private CommunicationsStub com;
-    /**
-     * Reference to the root node;
-     */
-    ServiceManagerRootNode rootNode;
-    /**
-     * Reference to a customer node;
-     */
-    CustomerNode customerNode;
-    
-    public CreateServicesPoolAction(ServiceManagerRootNode rootNode) {
-        this.rootNode = rootNode;
-        com = CommunicationsStub.getInstance();
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATE_SERVICES_POOL"));
-    }
-
-    public CreateServicesPoolAction(CustomerNode customerNode) {
-        this.customerNode =  customerNode;
+   
+  
+    public CreateServicePoolAction() {
         com = CommunicationsStub.getInstance();
         putValue(NAME, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATE_SERVICES_POOL"));
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
+        
+        Iterator<? extends CustomerNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(CustomerNode.class).allInstances().iterator();
+            
+        if (!selectedNodes.hasNext())
+            return;
+        
+        CustomerNode customerNode = selectedNodes.next();
+        
         JTextField txtName = new JTextField(), txtDescription =  new JTextField();
         txtName.setName("txtName"); //NOI18N
         txtName.setPreferredSize(new Dimension(120, 18));
@@ -83,18 +76,10 @@ public class CreateServicesPoolAction extends GenericObjectNodeAction {
                     
             if (newPool ==  null)
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
-            else{
-                if(object != null){
-                    if (!((CustomerChildren)customerNode.getChildren()).isCollapsed())
-                        customerNode.getChildren().add(new ServicesPoolNode[]{new ServicesPoolNode(newPool)});
-                    NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATED"));
-                }
+            else {
+                ((CustomerChildren)customerNode.getChildren()).refreshList();
+                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATED"));
             }
         }
-    }
-
-    @Override
-    public String getValidator() {
-        return null;
     }
 }

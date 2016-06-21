@@ -166,7 +166,7 @@ public class SDHConnectionWizard {
         wizardDescriptor.setTitle("SDH Connection Wizard");
     }
     
-    private class ConnectionGeneralInfoStep implements WizardDescriptor.ValidatingPanel {
+    private class ConnectionGeneralInfoStep implements WizardDescriptor.ValidatingPanel<WizardDescriptor> {
         private JComplexDialogPanel thePanel;
 
         public ConnectionGeneralInfoStep(Connections connection) {
@@ -213,12 +213,12 @@ public class SDHConnectionWizard {
         }
 
         @Override
-        public void readSettings(Object settings) {}
+        public void readSettings(WizardDescriptor settings) {}
 
         @Override
-        public void storeSettings(Object settings) {
-            ((WizardDescriptor)settings).putProperty("connectionName", ((JTextField)thePanel.getComponent("txtConnectionName")).getText());
-            ((WizardDescriptor)settings).putProperty("connectionType", ((JComboBox)thePanel.getComponent("lstConnectionTypes")).getSelectedItem());
+        public void storeSettings(WizardDescriptor settings) {
+            settings.putProperty("connectionName", ((JTextField)thePanel.getComponent("txtConnectionName")).getText());
+            settings.putProperty("connectionType", ((JComboBox)thePanel.getComponent("lstConnectionTypes")).getSelectedItem());
         }
 
         @Override
@@ -241,7 +241,7 @@ public class SDHConnectionWizard {
         }   
     }
     
-    private class ChooseRouteStep implements WizardDescriptor.ValidatingPanel, ItemListener {
+    private class ChooseRouteStep implements WizardDescriptor.ValidatingPanel<WizardDescriptor>, ItemListener {
         private JPanel thePanel;
         private JComboBox<Route> lstRoutes;
         private JList<LocalObjectLight> lstRouteDetail;
@@ -273,15 +273,15 @@ public class SDHConnectionWizard {
         }
 
         @Override
-        public void readSettings(Object settings) {
-            connectionType = (LocalClassMetadataLight)((WizardDescriptor)settings).getProperty("connectionType");
+        public void readSettings(WizardDescriptor settings) {
+            connectionType = (LocalClassMetadataLight)settings.getProperty("connectionType");
             initComponents();
         }
 
         @Override
-        public void storeSettings(Object settings) {
+        public void storeSettings(WizardDescriptor settings) {
             lstRoutes.removeItemListener(this);
-            ((WizardDescriptor)settings).putProperty("route", lstRoutes.getSelectedItem());
+            settings.putProperty("route", lstRoutes.getSelectedItem());
         }
 
         @Override
@@ -398,7 +398,7 @@ public class SDHConnectionWizard {
         }
     }
     
-    private class ChooseContainerLinkResourcesStep implements WizardDescriptor.ValidatingPanel, MouseListener {
+    private class ChooseContainerLinkResourcesStep implements WizardDescriptor.ValidatingPanel<WizardDescriptor>, MouseListener {
         private JPanel thePanel;
         private JList<HopDefinition> lstContainerDefinition;
         private JLabel lblInstructions;
@@ -427,9 +427,9 @@ public class SDHConnectionWizard {
         }
 
         @Override
-        public void readSettings(Object settings) {
-            connectionType = (LocalClassMetadataLight)((WizardDescriptor)settings).getProperty("connectionType");
-            route = (ChooseRouteStep.Route)((WizardDescriptor)settings).getProperty("route");
+        public void readSettings(WizardDescriptor settings) {
+            connectionType = (LocalClassMetadataLight)settings.getProperty("connectionType");
+            route = (ChooseRouteStep.Route)settings.getProperty("route");
             
             List<HopDefinition> containerDefinition = new ArrayList<>();
             
@@ -447,13 +447,13 @@ public class SDHConnectionWizard {
         }
 
         @Override
-        public void storeSettings(Object settings) {
+        public void storeSettings(WizardDescriptor settings) {
             List<LocalSDHPosition> positions = new ArrayList<>();
             for (int i = 0; i < lstContainerDefinition.getModel().getSize(); i++) {
                 HopDefinition aHop = lstContainerDefinition.getModel().getElementAt(i);
                 positions.add(new LocalSDHPosition(aHop.getLink().getClassName(), aHop.getLink().getOid(), aHop.position));
             }
-            ((WizardDescriptor)settings).putProperty("positions", positions);
+            settings.putProperty("positions", positions);
         }
 
         @Override
@@ -560,7 +560,7 @@ public class SDHConnectionWizard {
         }
     }
         
-    private class ChooseTributaryLinkResourcesStep implements WizardDescriptor.ValidatingPanel, MouseListener {
+    private class ChooseTributaryLinkResourcesStep implements WizardDescriptor.ValidatingPanel<WizardDescriptor>, MouseListener {
         private JPanel thePanel;
         private JList<HopDefinition> lstContainerDefinition;
         private JLabel lblInstructions;
@@ -589,9 +589,9 @@ public class SDHConnectionWizard {
         }
 
         @Override
-        public void readSettings(Object settings) {
-            connectionType = (LocalClassMetadataLight)((WizardDescriptor)settings).getProperty("connectionType");
-            route = (ChooseRouteStep.Route)((WizardDescriptor)settings).getProperty("route");
+        public void readSettings(WizardDescriptor settings) {
+            connectionType = (LocalClassMetadataLight)settings.getProperty("connectionType");
+            route = (ChooseRouteStep.Route)settings.getProperty("route");
             
             List<HopDefinition> containerDefinition = new ArrayList<>();
             
@@ -609,13 +609,13 @@ public class SDHConnectionWizard {
         }
 
         @Override
-        public void storeSettings(Object settings) {
+        public void storeSettings(WizardDescriptor settings) {
             List<LocalSDHPosition> positions = new ArrayList<>();
             for (int i = 0; i < lstContainerDefinition.getModel().getSize(); i++) {
                 HopDefinition aHop = lstContainerDefinition.getModel().getElementAt(i);
                 positions.add(new LocalSDHPosition(aHop.getLink().getClassName(), aHop.getLink().getOid(), aHop.position));
             }
-            ((WizardDescriptor)settings).putProperty("positions", positions);
+            settings.putProperty("positions", positions);
         }
 
         @Override
@@ -791,7 +791,7 @@ public class SDHConnectionWizard {
         
     }
     
-    private class ChooseConnectionEndpointsStep implements WizardDescriptor.ValidatingPanel {
+    private class ChooseConnectionEndpointsStep implements WizardDescriptor.ValidatingPanel<WizardDescriptor> {
         private ExplorablePanel pnlTreeASide;
         private ExplorablePanel pnlTreeBSide;
         private JPanel thePanel;
@@ -839,13 +839,13 @@ public class SDHConnectionWizard {
         }
 
         @Override
-        public void readSettings(Object settings) {
+        public void readSettings(WizardDescriptor settings) {
         }
 
         @Override
-        public void storeSettings(Object settings) {
-             ((WizardDescriptor)settings).putProperty("sourcePort", sourcePort);
-             ((WizardDescriptor)settings).putProperty("targetPort", targetPort);
+        public void storeSettings(WizardDescriptor settings) {
+             settings.putProperty("sourcePort", sourcePort);
+             settings.putProperty("targetPort", targetPort);
         }
 
         @Override
@@ -873,7 +873,7 @@ public class SDHConnectionWizard {
         }
     }
     
-    private class ChooseServiceStep implements WizardDescriptor.Panel{
+    private class ChooseServiceStep implements WizardDescriptor.Panel<WizardDescriptor> {
         private JPanel thePanel;
         private JList<LocalObjectLight> lstServices;
         private String serviceClass;
@@ -893,23 +893,23 @@ public class SDHConnectionWizard {
         }
 
         @Override
-        public void readSettings(Object settings) {
+        public void readSettings(WizardDescriptor settings) {
             thePanel = new JPanel(new BorderLayout());
             thePanel.setName("Select a service (optional)");
             
-            LocalObjectLight[] services = com.getObjectsOfClassLight(serviceClass);
+            List<LocalObjectLight> services = com.getObjectsOfClassLight(serviceClass);
             if (services == null)
                 JOptionPane.showMessageDialog(null, com.getError(), "Error", JOptionPane.ERROR_MESSAGE);
             else {
-                lstServices = new JList<>(services);
+                lstServices = new JList<>(services.toArray(new LocalObjectLight[0]));
                 thePanel.add(lstServices);
             }
         }
 
         @Override
-        public void storeSettings(Object settings) {
+        public void storeSettings(WizardDescriptor settings) {
             if (lstServices != null)
-                ((WizardDescriptor)settings).putProperty("service", lstServices.getSelectedValue()); //NOI18N
+                settings.putProperty("service", lstServices.getSelectedValue()); //NOI18N
         }
 
         @Override

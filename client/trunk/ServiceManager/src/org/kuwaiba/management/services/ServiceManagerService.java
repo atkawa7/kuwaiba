@@ -15,13 +15,6 @@
  */
 package org.kuwaiba.management.services;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.communications.util.Constants;
-import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.kuwaiba.management.services.nodes.ServiceManagerRootNode;
 
 /**
@@ -30,33 +23,14 @@ import org.kuwaiba.management.services.nodes.ServiceManagerRootNode;
  */
 public class ServiceManagerService {
     private ServiceManagerTopComponent smtc;
-    private CommunicationsStub com;
 
     public ServiceManagerService(ServiceManagerTopComponent smtc) {
         this.smtc = smtc;
-        this.com = CommunicationsStub.getInstance();
     }
     
     public void setTreeRoot(){
-        List<LocalObjectLight> customersPools = com.getPools(Constants.CLASS_GENERICCUSTOMER);
-        LocalObjectLight[] customers = com.getObjectsOfClassLight(Constants.CLASS_GENERICCUSTOMER);
-                
-        if (customers == null)
-            this.smtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
-        else{
-            List<LocalObjectLight> serviceManagerNodes = new ArrayList<LocalObjectLight>();
-            serviceManagerNodes.addAll(Arrays.asList(customers)); 
-            for (LocalObjectLight customersPool : customersPools){
-                List<LocalObjectLight> poolItems = com.getPoolItems(customersPool.getOid());
-                for(LocalObjectLight customer : customers){
-                    if(poolItems.contains(customer)){
-                        serviceManagerNodes.remove(customer);
-                    }
-                }
-                serviceManagerNodes.add(customersPool);
-            }
-            smtc.getExplorerManager().setRootContext(new ServiceManagerRootNode(serviceManagerNodes.toArray(new LocalObjectLight[serviceManagerNodes.size()])));
-        }
+        smtc.getExplorerManager().setRootContext(new ServiceManagerRootNode(
+                        new ServiceManagerRootNode.ServiceManagerRootChildren()));
     }
     
 }

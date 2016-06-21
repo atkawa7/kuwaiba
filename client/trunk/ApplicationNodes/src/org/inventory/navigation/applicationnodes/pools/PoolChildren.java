@@ -18,6 +18,7 @@ package org.inventory.navigation.applicationnodes.pools;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalPool;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.openide.nodes.Children;
@@ -27,12 +28,12 @@ import org.openide.nodes.Node;
  * Children for pool nodes
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class PoolChildren extends Children.Array{
+public class PoolChildren extends Children.Array {
 
-    private LocalObjectLight pool;
+    private LocalPool pool;
     private boolean collapsed;
     
-    public PoolChildren(LocalObjectLight pool) {
+    public PoolChildren(LocalPool pool) {
         this.pool = pool;
         collapsed = true;
     }

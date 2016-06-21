@@ -48,10 +48,10 @@ public class ServicesFrame extends JFrame{
     private JScrollPane pnlScrollMain;
     private JList lstAvailableServices;
     private LocalObjectLight[] selectedObjects;
-    private LocalObjectLight[] services;
+    private List<LocalObjectLight> services;
     
     
-    public ServicesFrame(LocalObjectLight[] selectedObjects, LocalObjectLight[] services) {
+    public ServicesFrame(LocalObjectLight[] selectedObjects, List<LocalObjectLight> services) {
         this.selectedObjects = selectedObjects;
         this.services = services;
         setLayout(new BorderLayout());
@@ -64,7 +64,7 @@ public class ServicesFrame extends JFrame{
                 
         JPanel pnlSearch = new JPanel();
         pnlSearch.setLayout(new GridLayout(1, 2));
-        lstAvailableServices = new JList<LocalObjectLight>(services);
+        lstAvailableServices = new JList<>(services.toArray(new LocalObjectLight[0]));
         lstAvailableServices.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         pnlScrollMain = new JScrollPane();
         txtField = new JTextField();
@@ -141,7 +141,7 @@ public class ServicesFrame extends JFrame{
     }
     
     public void servicesFilter(String text){
-        List<LocalObjectLight> filteredServices = new ArrayList<LocalObjectLight>();
+        List<LocalObjectLight> filteredServices = new ArrayList<>();
         for(LocalObjectLight service : services){
             if(service.getClassName().toLowerCase().contains(text.toLowerCase()) 
                     || service.getName().toLowerCase().contains(text.toLowerCase()))

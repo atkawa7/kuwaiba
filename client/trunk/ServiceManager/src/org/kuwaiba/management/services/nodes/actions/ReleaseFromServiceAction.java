@@ -16,12 +16,17 @@
 package org.kuwaiba.management.services.nodes.actions;
 
 import java.awt.event.ActionEvent;
+import java.util.Iterator;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.kuwaiba.management.services.nodes.ServiceChildren;
+import org.kuwaiba.management.services.nodes.ServiceNode;
+import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -34,11 +39,19 @@ public class ReleaseFromServiceAction extends GenericObjectNodeAction implements
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (CommunicationsStub.getInstance().releaseObjectFromService(object.getClassName(), 
-                object.getOid(), Long.valueOf(((JMenuItem)e.getSource()).getName())))
-            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Element released successfully");
-        else
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+        
+        Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
+            
+        while (selectedNodes.hasNext()) {
+            ObjectNode selectedNode = selectedNodes.next();
+            if (CommunicationsStub.getInstance().releaseObjectFromService(selectedNode.getObject().getClassName(), 
+                selectedNode.getObject().getOid(), Long.valueOf(((JMenuItem)e.getSource()).getName()))) {
+                if (selectedNode.getParentNode() instanceof ServiceNode)
+                    ((ServiceChildren)selectedNode.getParentNode().getChildren()).addNotify();
+                else
+                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            }
+        }            
     }
 
     @Override

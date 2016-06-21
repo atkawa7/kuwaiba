@@ -63,8 +63,8 @@ public class CreateSubnetAction extends AbstractAction{
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        Iterator selectedNodes = Utilities.actionsGlobalContext().lookupResult(SubnetPoolNode.class).allInstances().iterator();
-        String name = "";
+        Iterator<? extends SubnetPoolNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(SubnetPoolNode.class).allInstances().iterator();
+        String name;
         long id = 0;
         
         if (!selectedNodes.hasNext())

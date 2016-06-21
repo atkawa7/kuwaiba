@@ -17,8 +17,10 @@ package com.neotropic.inventory.modules.ipam.nodes.actions;
 
 import com.neotropic.inventory.modules.ipam.windows.VlansFrame;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import static javax.swing.Action.NAME;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
@@ -42,20 +44,21 @@ public class RelateToVlanAction extends GenericObjectNodeAction{
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        LocalObjectLight[] vlans = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_VLAN);
+        List<LocalObjectLight> vlans = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_VLAN);
         Lookup.Result<LocalObjectLight> selectedNodes = Utilities.actionsGlobalContext().lookupResult(LocalObjectLight.class);
         
         if (vlans ==  null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         
-        else{
-            Collection lookupResult = selectedNodes.allInstances();
-            LocalObjectLight[] selectedObjects = new LocalObjectLight[lookupResult.size()];
-            int i = 0;
-            for (Iterator it = lookupResult.iterator(); it.hasNext();) {
-                selectedObjects[i] = (LocalObjectLight)it.next();
-                i++;
-            }
+        else {
+            Collection<? extends LocalObjectLight> lookupResult = selectedNodes.allInstances();
+            List<LocalObjectLight> selectedObjects = new ArrayList<>();
+            
+            Iterator<? extends LocalObjectLight> iterator = lookupResult.iterator();
+            
+            while (iterator.hasNext())
+                selectedObjects.add((LocalObjectLight)iterator.next());
+            
             VlansFrame frame = new VlansFrame(selectedObjects, vlans);
             frame.setVisible(true);
         }

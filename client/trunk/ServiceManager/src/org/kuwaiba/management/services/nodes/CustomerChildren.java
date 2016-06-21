@@ -15,47 +15,51 @@
  */
 package org.kuwaiba.management.services.nodes;
 
+import java.util.Collections;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalPool;
+import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.nodes.Children;
+import org.openide.nodes.Node;
 
 /**
  * Node representing a customer
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class CustomerChildren extends Children.Array {
-    private LocalObjectLight customer;
-    private boolean collapsed;
+public class CustomerChildren extends Children.Keys<LocalPool> {
     
-    public CustomerChildren(LocalObjectLight customers) {
-        this.customer = customers;
-        collapsed = true;
-    }
-
-    @Override
+      @Override
     protected void addNotify() {
-        collapsed = false;
-        LocalObjectLight[] services = CommunicationsStub.getInstance().getServices(customer.getClassName(), customer.getOid());
-        
-        if (services == null)
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-        else{
-            for (LocalObjectLight service : services)
-                add(new ServiceNode[] {new ServiceNode(service)});
-        }
-        
-        List<LocalObjectLight> servicesPools = CommunicationsStub.getInstance().getPools(customer.getOid(), "GenericService");
-        if (servicesPools == null)
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-        else{
-            for (LocalObjectLight servicePool : servicesPools) 
-                add(new ServicesPoolNode[]{new ServicesPoolNode(servicePool)});
-        }
+        refreshList();
+    }
+    
+    @Override
+    public void removeNotify() {
+        setKeys(Collections.EMPTY_SET);
+    }
+    
+    @Override
+    protected Node[] createNodes(LocalPool key) {
+        return new Node[] { new ServicePoolNode(new LocalPool(key.getOid(), key.getName(), key.getClassName(), null))};
+  
     }
 
-    public boolean isCollapsed() {
-        return collapsed;
+    public void refreshList() {
+        LocalObjectLight customer = ((CustomerNode)this.getNode()).getObject();
+        
+        List<LocalPool> servicePools = CommunicationsStub.getInstance().getPools(customer.getOid(), Constants.CLASS_GENERICSERVICE);
+
+        if (servicePools == null) {
+            setKeys(Collections.EMPTY_LIST);
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, 
+                    CommunicationsStub.getInstance().getError());
+        }
+        else {
+            Collections.sort(servicePools);
+            setKeys(servicePools);
+        }
     }
 }

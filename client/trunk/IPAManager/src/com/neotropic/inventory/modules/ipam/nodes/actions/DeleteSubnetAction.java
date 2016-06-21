@@ -20,7 +20,6 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import javax.swing.AbstractAction;
 import static javax.swing.Action.NAME;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.util.Constants;
@@ -55,7 +54,7 @@ public class DeleteSubnetAction extends GenericObjectNodeAction{
     @Override
     public void actionPerformed(ActionEvent e) {
         
-        Iterator selectedNodes = Utilities.actionsGlobalContext().lookupResult(SubnetNode.class).allInstances().iterator();
+        Iterator<? extends SubnetNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(SubnetNode.class).allInstances().iterator();
         String name = "";
         long id = 0;
         if (!selectedNodes.hasNext())

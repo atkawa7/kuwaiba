@@ -15,31 +15,39 @@
  */
 package org.kuwaiba.management.services.nodes;
 
-import java.awt.Image;
+import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
-import org.openide.util.ImageUtilities;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
+import org.kuwaiba.management.services.nodes.actions.ServiceManagerActionFactory;
 
 /**
- * Node representing a customer
+ * Node representing a service
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ServiceNode extends ObjectNode {
-    private static Image icon = ImageUtilities.loadImage("org/kuwaiba/management/services/res/service.png");
+    //private static Image icon = ImageUtilities.loadImage("org/kuwaiba/management/services/res/service.png");
     
     public ServiceNode(LocalObjectLight service) {
         super(service);
-        setChildren(new ServiceChildren(service));
-        this.object = service;
-    }
-
-    @Override
-    public Image getIcon(int i){
-        return icon;
+        setChildren(new ServiceChildren());
     }
     
     @Override
-    public Image getOpenedIcon(int i){
-        return getIcon(i);
+    public Action[] getActions(boolean context) {
+        return new Action [] { 
+            ServiceManagerActionFactory.getDeleteServiceAction(),
+            showObjectIdAction == null ? showObjectIdAction = new ShowObjectIdAction(object.getOid(), object.getClassName()) : showObjectIdAction
+        };        
     }
+
+//    @Override
+//    public Image getIcon(int i){
+//        return icon;
+//    }
+//    
+//    @Override
+//    public Image getOpenedIcon(int i){
+//        return getIcon(i);
+//    }
 }

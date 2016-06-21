@@ -16,6 +16,7 @@
 package org.kuwaiba.management.software.nodes;
 
 import java.awt.Image;
+import java.util.List;
 import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
 import org.openide.nodes.AbstractNode;
@@ -29,7 +30,7 @@ import org.openide.util.ImageUtilities;
 public class SoftwareManagerRootNode extends AbstractNode {
     private Image icon;
   
-    public SoftwareManagerRootNode(LocalObjectLight[] softwareAssets) {
+    public SoftwareManagerRootNode(List<LocalObjectLight> softwareAssets) {
         super(new Children.Array());
         icon = ImageUtilities.loadImage("org/kuwaiba/management/software/res/root.png");
         setDisplayName("Root");

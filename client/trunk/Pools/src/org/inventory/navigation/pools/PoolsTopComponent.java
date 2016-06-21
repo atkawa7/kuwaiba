@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.logging.Logger;
 import javax.swing.ActionMap;
 import javax.swing.text.DefaultEditorKit;
-import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalPool;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
@@ -160,8 +160,8 @@ public final class PoolsTopComponent extends TopComponent implements ExplorerMan
         return em;
     }
 
-   public void setRoot(){
-        LocalObjectLight[] rootChildren = ps.getRootChildren();
+   public void setRoot() {
+        List<LocalPool> rootChildren = ps.getRootChildren();
         if (rootChildren != null)
             em.setRootContext(new PoolRootNode(rootChildren));
         else
@@ -171,7 +171,7 @@ public final class PoolsTopComponent extends TopComponent implements ExplorerMan
     @Override
     public void refresh() {
         if (em.getRootContext() instanceof RootObjectNode){
-            List<Node> toBeDeleted = new ArrayList<Node>();
+            List<Node> toBeDeleted = new ArrayList<>();
             for (Node child : em.getRootContext().getChildren().getNodes()){
                 if (!((ObjectNode)child).refresh())
                     toBeDeleted.add(child);

@@ -215,14 +215,14 @@ public class SubnetEngine {
                 bit = "0";
             s += bit;
             t++;
-            if(t==4){
-                t=0;
+            if(t == 4){
+                t = 0;
                 segment.add(s); 
-                s="";
+                s = "";
             }
             if(i%16 == 0){
                 binaryMask.add(segment);
-                segment = new ArrayList();
+                segment = new ArrayList<>();
             }
             
         }

@@ -32,7 +32,7 @@ import org.inventory.communications.util.Constants;
  */
 public class LocalObjectLight implements Transferable, Comparable<LocalObjectLight> { //This class does not implement Transferable because of
                                                                //LocalObjectLight interface extends from it
-    public static final DataFlavor DATA_FLAVOR =
+    public static DataFlavor DATA_FLAVOR =
             new DataFlavor(LocalObjectLight.class,"Object/LocalObjectLight");
     
     protected long oid;

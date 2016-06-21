@@ -21,7 +21,7 @@ import java.awt.dnd.DnDConstants;
 import java.io.IOException;
 import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalPool;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
 import org.inventory.navigation.applicationnodes.pools.actions.DeletePoolAction;
@@ -43,9 +43,9 @@ public class PoolNode extends AbstractNode {
     private NewPoolItemAction newPoolItemAction;
     private DeletePoolAction deletePoolAction;
     private ShowObjectIdAction showObjectIdAction;
-    private LocalObjectLight pool;
+    private LocalPool pool;
     
-    public PoolNode(LocalObjectLight pool) {
+    public PoolNode(LocalPool pool) {
         super(new PoolChildren(pool));
         this.pool = pool;
     }
@@ -80,7 +80,7 @@ public class PoolNode extends AbstractNode {
         return Sheet.createDefault();
     }
     
-    public LocalObjectLight getPool() {
+    public LocalPool getPool() {
         return pool;
     }
     

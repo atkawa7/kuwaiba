@@ -26,7 +26,7 @@ import org.openide.nodes.Node;
  * Deletes a pool
  * @author Charles Edward Bedon Cortazar <charles.bedon@neotropic.co>
  */
-public class DeletePoolAction extends AbstractAction{
+public class DeletePoolAction extends AbstractAction {
     /**
      * Reference to the communications stub singleton
      */

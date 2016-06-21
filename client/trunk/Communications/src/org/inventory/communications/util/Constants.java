@@ -114,6 +114,10 @@ public class Constants {
      */
     public static final String CLASS_VLAN = "VLAN";
     /**
+     * Not an actual class, but yet used by the service manager to identify a pool mapped to a LocalObjectLight
+     */
+    public static final String CLASS_POOL = "Pool";
+    /**
      * Default type for a new attribute
      */
     public static final String DEFAULT_ATTRIBUTE_TYPE = "String";

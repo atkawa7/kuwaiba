@@ -15,18 +15,11 @@
  */
 package org.kuwaiba.management.services.nodes;
 
-import java.awt.Image;
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
-import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteBusinessObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
-import org.kuwaiba.management.services.nodes.actions.CreateServiceAction;
-import org.kuwaiba.management.services.nodes.actions.CreateServicesPoolAction;
-import org.openide.util.ImageUtilities;
-import org.openide.util.actions.SystemAction;
+import org.kuwaiba.management.services.nodes.actions.ServiceManagerActionFactory;
 
 /**
  * Node representing a customer
@@ -34,46 +27,32 @@ import org.openide.util.actions.SystemAction;
  */
 public class CustomerNode extends ObjectNode {
     /**
-     * icon node
+     * Node icon
      */
-    private static Image icon = ImageUtilities.loadImage("org/kuwaiba/management/services/res/customer.png");
-    
-    private CreateServiceAction createServiceAction;
-    private CreateServicesPoolAction createServicesPoolAction;
+    //private static Image icon = ImageUtilities.loadImage("org/kuwaiba/management/services/res/customer.png");
     
     public CustomerNode(LocalObjectLight customer) {
         super(customer);
         this.object = customer;
-        setChildren(new CustomerChildren(customer));
+        setChildren(new CustomerChildren());
     }
     
     @Override
-    public Action[] getActions(boolean context){
-        List<Action> actions = new ArrayList<>();
-
-        actions.add(createServiceAction == null ? createServiceAction = new CreateServiceAction(this) : createServiceAction);
-        if(createServicesPoolAction == null){
-            createServicesPoolAction = new CreateServicesPoolAction(this);
-            createServicesPoolAction.setObject(object);
-            actions.add(createServicesPoolAction);
-        }
-        else
-            actions.add(createServicesPoolAction);
-        actions.add(SystemAction.get(DeleteBusinessObjectAction.class));
-        actions.add(null); //Separator
-        actions.add(explorerAction);
-        actions.add(null); //Separator
-        actions.add(showObjectIdAction == null ? showObjectIdAction = new ShowObjectIdAction(object.getOid(), object.getClassName()) : showObjectIdAction);
-        return actions.toArray(new Action[]{});
+    public Action[] getActions(boolean context) {
+        
+        return new Action [] { ServiceManagerActionFactory.getCreateServicePoolAction(),
+            ServiceManagerActionFactory.getDeleteCustomerAction(),
+            showObjectIdAction == null ? showObjectIdAction = new ShowObjectIdAction(object.getOid(), object.getClassName()) : showObjectIdAction
+        };        
     }
 
-    @Override
-    public Image getIcon(int i){
-        return icon;
-    }
-    
-    @Override
-    public Image getOpenedIcon(int i){
-        return getIcon(i);
-    }
+//    @Override
+//    public Image getIcon(int i){
+//        return icon;
+//    }
+//    
+//    @Override
+//    public Image getOpenedIcon(int i){
+//        return getIcon(i);
+//    }
 }

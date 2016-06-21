@@ -15,9 +15,10 @@
  */
 package org.inventory.navigation.pools;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalPool;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 
 /**
@@ -37,13 +38,13 @@ public class PoolsService {
         com = CommunicationsStub.getInstance();
     }
     
-    public LocalObjectLight[] getRootChildren(){
-        List<LocalObjectLight> rootChildren = com.getPools(null);
+    public List<LocalPool> getRootChildren(){
+        List<LocalPool> rootChildren = com.getPools(null);
         if(rootChildren != null)
-            return rootChildren.toArray(new LocalObjectLight[0]);
-        else{
+            return rootChildren;
+        else {
             pstc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
-            return new LocalObjectLight[0];
+            return new ArrayList<>();
         }
     }
 }

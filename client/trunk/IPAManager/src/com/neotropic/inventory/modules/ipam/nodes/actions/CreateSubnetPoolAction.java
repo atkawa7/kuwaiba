@@ -53,14 +53,14 @@ public class CreateSubnetPoolAction extends GenericObjectNodeAction{
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        Iterator selectedNodes = Utilities.actionsGlobalContext().lookupResult(SubnetPoolNode.class).allInstances().iterator();
+        Iterator<? extends SubnetPoolNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(SubnetPoolNode.class).allInstances().iterator();
         String name = "";
         long id = 0;
-        int type = 0;
-        boolean isSubnetPool = true;
-        if (!selectedNodes.hasNext()){
+        int type;
+        
+        if (!selectedNodes.hasNext())
             return;
-        }
+        
         
         while (selectedNodes.hasNext()) {
             SubnetPoolNode selectedNode = (SubnetPoolNode)selectedNodes.next();

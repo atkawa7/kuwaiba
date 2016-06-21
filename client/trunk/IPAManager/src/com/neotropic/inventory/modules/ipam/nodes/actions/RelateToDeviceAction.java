@@ -17,9 +17,10 @@ package com.neotropic.inventory.modules.ipam.nodes.actions;
 
 import com.neotropic.inventory.modules.ipam.windows.DevicesFrame;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import static javax.swing.Action.NAME;
+import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
@@ -43,20 +44,20 @@ public class RelateToDeviceAction extends GenericObjectNodeAction{
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        LocalObjectLight[] devices = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
+        List<LocalObjectLight> devices = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
         Lookup.Result<LocalObjectLight> selectedNodes = Utilities.actionsGlobalContext().lookupResult(LocalObjectLight.class);
         
         if (devices ==  null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         
         else{
-            Collection lookupResult = selectedNodes.allInstances();
-            LocalObjectLight[] selectedObjects = new LocalObjectLight[lookupResult.size()];
-            int i = 0;
-            for (Iterator it = lookupResult.iterator(); it.hasNext();) {
-                selectedObjects[i] = (LocalObjectLight)it.next();
-                i++;
-            }
+            Collection<? extends LocalObjectLight> lookupResult = selectedNodes.allInstances();
+            List<LocalObjectLight> selectedObjects = new ArrayList<>();
+            Iterator<? extends LocalObjectLight> iterator = lookupResult.iterator();
+            
+            while (iterator.hasNext())
+                selectedObjects.add((LocalObjectLight)iterator.next());
+
             DevicesFrame frame = new DevicesFrame(selectedObjects, devices);
             frame.setVisible(true);
         }    

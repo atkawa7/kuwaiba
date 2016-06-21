@@ -41,11 +41,11 @@ import org.inventory.communications.core.LocalObjectLight;
 public class DevicesFrame extends JFrame{
     private JTextField txtField;
     private JScrollPane pnlScrollMain;
-    private JList lstAvailableDevices;
-    private LocalObjectLight[] selectedIps;
-    private LocalObjectLight[] devices;
+    private JList<LocalObjectLight> lstAvailableDevices;
+    private List<LocalObjectLight> selectedIps;
+    private List<LocalObjectLight> devices;
     
-    public DevicesFrame(LocalObjectLight[] selectedIps, LocalObjectLight[] devices) {
+    public DevicesFrame(List<LocalObjectLight> selectedIps, List<LocalObjectLight> devices) {
         this.selectedIps = selectedIps;
         this.devices = devices;
         setLayout(new BorderLayout());
@@ -58,7 +58,7 @@ public class DevicesFrame extends JFrame{
                 
         JPanel pnlSearch = new JPanel();
         pnlSearch.setLayout(new GridLayout(1, 2));
-        lstAvailableDevices = new JList<>(devices);
+        lstAvailableDevices = new JList<>(devices.toArray(new LocalObjectLight[0]));
         lstAvailableDevices.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         pnlScrollMain = new JScrollPane();
         txtField = new JTextField();
@@ -110,19 +110,13 @@ public class DevicesFrame extends JFrame{
         public void actionPerformed(ActionEvent e) {
             if (lstAvailableDevices.getSelectedValue() == null)
                 JOptionPane.showMessageDialog(null, "Select a service from the list");
-            else{
-                Long [] objectsId = new Long[selectedIps.length];
-                String [] objectsName = new String[selectedIps.length];
-                for(int i=0; i<selectedIps.length; i++){
-                    objectsId [i] = selectedIps[i].getOid();
-                    objectsName[i] = selectedIps[i].getName();
-                }
+            else {                
                 
-                if (CommunicationsStub.getInstance().relateIPtoDevice(objectsId[0], 
-                        ((LocalObjectLight)lstAvailableDevices.getSelectedValue()).getClassName(),
-                        ((LocalObjectLight)lstAvailableDevices.getSelectedValue()).getOid())){
-                    JOptionPane.showMessageDialog(null, String.format("The IP: %s  was related to %s", 
-                            objectsName[0], ((LocalObjectLight)lstAvailableDevices.getSelectedValue()).getName()));
+                if (CommunicationsStub.getInstance().relateIPtoDevice(selectedIps.get(0).getOid(), 
+                        lstAvailableDevices.getSelectedValue().getClassName(),
+                        lstAvailableDevices.getSelectedValue().getOid())){
+                    JOptionPane.showMessageDialog(null, String.format("The IP %s  was related to %s", 
+                            selectedIps.get(0).getName(), lstAvailableDevices.getSelectedValue().getName()));
                         dispose();
                 }else 
                     JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError(), 

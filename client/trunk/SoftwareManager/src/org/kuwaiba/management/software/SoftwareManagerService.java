@@ -15,6 +15,7 @@
  */
 package org.kuwaiba.management.software;
 
+import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -34,7 +35,7 @@ public class SoftwareManagerService {
     }
     
     public void setTreeRoot(){
-        LocalObjectLight[] softwareAssets = com.getObjectsOfClassLight("GenericSoftwareAsset");
+        List<LocalObjectLight> softwareAssets = com.getObjectsOfClassLight("GenericSoftwareAsset");
         if (softwareAssets == null)
             this.smtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else

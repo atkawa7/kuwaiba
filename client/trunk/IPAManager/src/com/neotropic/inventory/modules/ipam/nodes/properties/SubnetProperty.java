@@ -18,9 +18,6 @@ package com.neotropic.inventory.modules.ipam.nodes.properties;
 import java.lang.reflect.InvocationTargetException;
 import org.openide.nodes.PropertySupport;
 
-
-
-
 /**
  * Provides a property editor for the subnets in the IP Address manager
  * @author Adrian Martinez Molina <charles.bedon@kuwaiba.org>

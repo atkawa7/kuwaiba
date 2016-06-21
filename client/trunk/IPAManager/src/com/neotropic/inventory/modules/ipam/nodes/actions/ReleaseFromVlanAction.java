@@ -58,7 +58,7 @@ public class ReleaseFromVlanAction  extends GenericObjectNodeAction implements P
     @Override
     public JMenuItem getPopupPresenter() {
         JMenu mnuServices = new JMenu(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELEASE_VLAN"));
-        Iterator selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
+        Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
         String className = "";
         
         if (!selectedNodes.hasNext())

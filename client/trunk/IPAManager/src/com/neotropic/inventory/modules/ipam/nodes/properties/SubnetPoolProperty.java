@@ -22,8 +22,7 @@ public class SubnetPoolProperty extends PropertySupport.ReadOnly {
     private Object value;
 
     public SubnetPoolProperty(String name, Class type, String displayName, 
-            String shortDescription, Object value) 
-    {
+            String shortDescription, Object value) {
         super(name, type, displayName, shortDescription);
         this.value = value;
     }

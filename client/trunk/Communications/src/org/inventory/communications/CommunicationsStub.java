@@ -33,6 +33,7 @@ import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalObjectLightList;
 import org.inventory.communications.core.LocalObjectListItem;
+import org.inventory.communications.core.LocalPool;
 import org.inventory.communications.core.LocalReportDescriptor;
 import org.inventory.communications.core.LocalUserGroupObject;
 import org.inventory.communications.core.LocalUserObject;
@@ -204,7 +205,7 @@ public class CommunicationsStub {
      * @return an array of local objects representing the object's children. Null in a problem occurs during the execution
      */
     public List<LocalObjectLight> getObjectChildren(long oid, String className) {
-        try{
+        try {
             List <RemoteObjectLight> children = service.getObjectChildren(className, oid, 0,this.session.getSessionId());
             List <LocalObjectLight> res = new ArrayList<>();
 
@@ -238,16 +239,13 @@ public class CommunicationsStub {
         }
     }
     
-    public LocalObjectLight[] getObjectsOfClassLight(String className){
+    public List<LocalObjectLight> getObjectsOfClassLight(String className){
         try{
             List <RemoteObjectLight> instances = service.getObjectsOfClassLight(className, 0, this.session.getSessionId());
-            LocalObjectLight[] res = new LocalObjectLight[instances.size()];
+            List<LocalObjectLight> res = new ArrayList<>();
 
-            int i = 0;
-            for (RemoteObjectLight rol : instances){
-                res[i] = new LocalObjectLight(rol.getOid(), rol.getName(), rol.getClassName());
-                i++;
-            }
+            for (RemoteObjectLight rol : instances)
+                res.add(new LocalObjectLight(rol.getOid(), rol.getName(), rol.getClassName()));
 
             return res;
         }catch(Exception ex){
@@ -1209,16 +1207,13 @@ public class CommunicationsStub {
         }
     }
     
-    public LocalObjectLight[] getServiceResources(String serviceClass, long serviceId){
+    public List<LocalObjectLight> getServiceResources(String serviceClass, long serviceId){
         try{
             List <RemoteObjectLight> instances = service.getServiceResources(serviceClass, serviceId, this.session.getSessionId());
-            LocalObjectLight[] res = new LocalObjectLight[instances.size()];
+            List<LocalObjectLight> res = new ArrayList<>();
 
-            int i = 0;
-            for (RemoteObjectLight rol : instances){
-                res[i] = new LocalObjectLight(rol.getOid(), rol.getName(), rol.getClassName());
-                i++;
-            }
+            for (RemoteObjectLight rol : instances)
+                res.add(new LocalObjectLight(rol.getOid(), rol.getName(), rol.getClassName()));
 
             return res;
         }catch(Exception ex){
@@ -1250,17 +1245,16 @@ public class CommunicationsStub {
         }
     }
     
-    public LocalObjectLight[] getServices(String customerClass, long customerId) {
-        try{
+    public List<LocalObjectLight> getServices(String customerClass, long customerId) {
+        try {
             List <RemoteObjectLight> instances = service.getServices(customerClass, customerId, this.session.getSessionId());
-            LocalObjectLight[] res = new LocalObjectLight[instances.size()];
+            List<LocalObjectLight> res = new ArrayList<>();
 
-            int i = 0;
-            for (RemoteObjectLight rol : instances){
-                res[i] = new LocalObjectLight(rol.getOid(), rol.getName(), rol.getClassName());
-                i++;
-            }
+            for (RemoteObjectLight rol : instances)
+                res.add(new LocalObjectLight(rol.getOid(), rol.getName(), rol.getClassName()));
+                
             return res;
+            
         }catch(Exception ex){
             this.error = ex.getMessage();
             return null;
@@ -1426,7 +1420,7 @@ public class CommunicationsStub {
             if (refreshMeta){
                 for (LocalClassMetadata lcm : cache.getMetadataIndex()){
                     ClassInfo cm = service.getClass(lcm.getClassName(),this.session.getSessionId());
-                    HashMap<String, Integer> validators = new HashMap<String, Integer>();
+                    HashMap<String, Integer> validators = new HashMap<>();
                     for (Validator validator : cm.getValidators())
                         validators.put(validator.getLabel(), validator.getValue());
             
@@ -1927,10 +1921,10 @@ public class CommunicationsStub {
      * @param className What kind of objects can this pool contain?
      * @return The newly created pool
      */
-    public LocalObjectLight createPool(long parentId, String name, String description, String className){
+    public LocalPool createPool(long parentId, String name, String description, String className){
         try{
             long objectId  = service.createPool(parentId, name, description, className,session.getSessionId());
-            return new LocalObjectLight(objectId, name, className);
+            return new LocalPool(objectId, name, className, null);
         }catch(Exception ex){
             this.error =  ex.getMessage();
             return null;
@@ -1988,16 +1982,16 @@ public class CommunicationsStub {
      * @param className
      * @return The list of pools
      */
-    public List<LocalObjectLight> getPools(long parentId, String className) {
+    public List<LocalPool> getPools(long parentId, String className) {
         try{
             List <RemoteObjectLight> children = service.getPoolsForParentWithId(-1, parentId, className, this.session.getSessionId());
-            List <LocalObjectLight> res = new ArrayList<>();
+            List <LocalPool> res = new ArrayList<>();
 
             for (RemoteObjectLight rol : children){
                 HashMap<String, Integer> validators = new HashMap<>();
                 for (Validator validator : rol.getValidators())
                     validators.put(validator.getLabel(), validator.getValue());
-                res.add(new LocalObjectLight(rol.getClassName(), rol.getName(), rol.getOid(), validators));
+                res.add(new LocalPool(rol.getOid(), rol.getName(), rol.getClassName(), null));
             }
             return res;
         }catch(Exception ex){
@@ -2011,16 +2005,16 @@ public class CommunicationsStub {
      * @param className
      * @return The list of pools
      */
-    public List<LocalObjectLight> getPools(String className) {
+    public List<LocalPool> getPools(String className) {
         try{
             List <RemoteObjectLight> children = service.getPools(-1, className, this.session.getSessionId());
-            List <LocalObjectLight> res = new ArrayList<>();
+            List <LocalPool> res = new ArrayList<>();
 
             for (RemoteObjectLight rol : children){
                 HashMap<String, Integer> validators = new HashMap<>();
                 for (Validator validator : rol.getValidators())
                     validators.put(validator.getLabel(), validator.getValue());
-                res.add(new LocalObjectLight(rol.getClassName(), rol.getName(), rol.getOid(), validators));
+                res.add(new LocalPool(rol.getOid(), rol.getName(), rol.getClassName(), null));
             }
             return res;
         }catch(Exception ex){
@@ -2454,9 +2448,9 @@ public class CommunicationsStub {
         return null;
     }
     
-    public boolean relateSubnetToVLAN(long id, long vlanId){
+    public boolean relateSubnetToVLAN(long subnetId, long vlanId){
         try{
-            service.relateSubnetToVlan(id, vlanId, this.session.getSessionId());
+            service.relateSubnetToVlan(subnetId, vlanId, this.session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = ex.getMessage();
