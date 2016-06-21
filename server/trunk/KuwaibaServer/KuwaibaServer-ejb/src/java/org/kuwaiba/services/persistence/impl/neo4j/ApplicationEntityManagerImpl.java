@@ -1364,7 +1364,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                         }
                     }
                 }
-
                 return pools;
             }
         }
@@ -1395,8 +1394,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 }
                 else{
                     if(!Constants.CLASS_GENERICCUSTOMER.equals(node.getProperty(Constants.PROPERTY_CLASS_NAME)) &&
-                       !Constants.CLASS_GENERICSERVICE.equals(node.getProperty(Constants.PROPERTY_CLASS_NAME)))
-                        pools.add(rbol);
+                       !Constants.CLASS_GENERICSERVICE.equals(node.getProperty(Constants.PROPERTY_CLASS_NAME)) &&
+                       !Constants.CLASS_SUBNET.equals(node.getProperty(Constants.PROPERTY_CLASS_NAME)))
+                       pools.add(rbol);
                 }
             }
             return pools;

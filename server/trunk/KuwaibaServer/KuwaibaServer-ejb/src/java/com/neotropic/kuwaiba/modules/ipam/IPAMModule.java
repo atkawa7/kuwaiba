@@ -72,7 +72,7 @@ public class IPAMModule implements GenericCommercialModule{
     /**
      * This relationship is used to connect a VLAN with a Subnet
      */
-    public static final String RELATIONSHIP_IPAMBELONGSTOVLAN = "ipamBelongstoVlan";
+    public static final String RELATIONSHIP_IPAMBELONGSTOVLAN = "ipamBelongsToVlan";
     
     @Override
     public String getName() {

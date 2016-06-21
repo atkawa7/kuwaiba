@@ -514,18 +514,23 @@ public class Reports {
         HashMap<String, List<String>> subnetAttributes = subnet.getAttributes();
         int hosts = Integer.parseInt(subnetAttributes.get("hosts").get(0));
         int usedIps = ips.size();
-        if(Integer.parseInt(subnetAttributes.get("type").get(0)) == 4 && ips.size() > hosts )
-            usedIps -= 2;
-            
+
         int freeIps = hosts - usedIps;
         
         String vlan = "", service="", title, subnetUsageReportText;
         List<RemoteBusinessObjectLight> vlans = bem.getSpecialAttribute(Constants.CLASS_SUBNET, subnetId, IPAMModule.RELATIONSHIP_IPAMBELONGSTOVLAN);
         List<RemoteBusinessObjectLight> services = bem.getSpecialAttribute(Constants.CLASS_SUBNET, subnetId, "uses");
-        if(!vlans.isEmpty())
-            vlan = vlans.get(0).getName();
+        
+        
+        if(!vlans.isEmpty()){
+            vlan = "<b>" + vlans.get(0).getName() + " ["+ vlans.get(0).getClassName()+ "]</b>->";
+            for (RemoteBusinessObjectLight vlanParent : bem.getParents(vlans.get(0).getClassName(), vlans.get(0).getId())) 
+                vlan += vlanParent.getName()+" ["+vlanParent.getClassName()+"]->";
+                    
+            vlan= vlan.substring(0, vlan.length()-2);
+        }    
         if(!services.isEmpty())
-            service = services.get(0).getName();
+            service = services.get(0).getName() + " ["+ services.get(0).getClassName()+ "]</b>->";
         
         if (subnet == null) {
             title = "Error";
@@ -538,8 +543,12 @@ public class Reports {
             subnetUsageReportText += 
                                 "  <body><table><tr><td><h1>" + title + "</h1></td><td><img src=\"http://afr-ix.com/wp-content/themes/twentyfourteen/images/afrix_logo.png\"/></td></tr></table>\n";
             
-            subnetUsageReportText += "<table><tr><td class=\"generalInfoLabel\">Network IP Addres</td><td class=\"generalInfoValue\"><b>" + subnetAttributes.get("networkIp").get(0) + "</b></td></tr>"
+            subnetUsageReportText += pieChartScript(usedIps, freeIps);
+
+            subnetUsageReportText += "<table><tr><td class=\"generalInfoLabel\">Network IP Addres</td><td class=\"generalInfoValue\"><b>" + subnetAttributes.get("networkIp").get(0) + "</b></td>"
+                    + "<td rowspan=\"8\"><div id=\"piechart\" style=\"width: 350px; height: 250px;\"></div></td></tr>"
                     + "<tr><td class=\"generalInfoLabel\">Broadcast IP Address</td><td class=\"generalInfoValue\"><b>" + subnetAttributes.get("broadcastIp").get(0) + "</b> </td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">Description </td><td class=\"generalInfoValue\"><b>" + subnetAttributes.get("description").get(0) + "</b> </td></tr>"
                     + "<tr><td class=\"generalInfoLabel\">Number of hosts</td><td class=\"generalInfoValue\">" + hosts + "</td></tr>"
                     + "<tr><td class=\"generalInfoLabel\">Used IPs</td><td class=\"generalInfoValue\">" + usedIps + " - <b>" + (usedIps*100)/hosts + "%</b></td></tr>"
                     + "<tr><td class=\"generalInfoLabel\">Free IPs</td><td class=\"generalInfoValue\">" + freeIps + " - <b>" + (freeIps*100)/hosts +"%</b></td></tr>"
@@ -551,34 +560,65 @@ public class Reports {
         if (ips.isEmpty())
             usedResources = "<div class=\"error\">This tributary link seems malformed and does not have a path</div>";
         else {
-            usedResources = "<table><tr><th>IP Address</th><th>device</th><th>service</th></tr>";
+            usedResources = "<table><tr><th>IP Address</th><th>Description</th><th>Host name</th><th>Ubication</th><th>service</th></tr>";
 
             int i = 0;
             for (RemoteBusinessObjectLight ip : ips) {
                 String device = "";
                 service = "";
+                
                 List<RemoteBusinessObjectLight> ipDevices = bem.getSpecialAttribute(Constants.CLASS_IP_ADDRESS, ip.getId(), IPAMModule.RELATIONSHIP_IPAMHASADDRESS);
-                if(!ipDevices.isEmpty())
-                    device = ipDevices.get(0).getName();
+                String ubication = "";
+                if(!ipDevices.isEmpty()){
+                    device = ipDevices.get(0).getName() + " [" + ipDevices.get(0).getClassName()+"]";
+                    List<RemoteBusinessObjectLight> parents = bem.getParents(ipDevices.get(0).getClassName(), ipDevices.get(0).getId());
+                    for (RemoteBusinessObjectLight parent : parents) 
+                        ubication += parent.getName()+" ["+parent.getClassName()+"]->";
+                    
+                    ubication= ubication.substring(0, ubication.length()-2);
+                }
                 
                 List<RemoteBusinessObjectLight> ipServices = bem.getSpecialAttribute(Constants.CLASS_IP_ADDRESS, ip.getId(), "uses");
                 if(!ipServices.isEmpty())
-                    service = ipServices.get(0).getName();
+                    service = ipServices.get(0).getName() + "[" +  ipServices.get(0).getClassName() + "]";
                 
-                RemoteBusinessObject ipAddress = bem.getObject(Constants.CLASS_IP_ADDRESS, ip.getId());
+                RemoteBusinessObject ipO = bem.getObject(Constants.CLASS_IP_ADDRESS, ip.getId());
+                HashMap<String, List<String>> attributes = ipO.getAttributes();
+                
                 usedResources += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") +"\"><td>" + ip.getName() + "</td>"
+                              + "<td>" + attributes.get("description").get(0) +"</td>"
                               + "<td>" + device +"</td>"
+                              + "<td>" + ubication +"</td>"
                               + "<td>" + service +"</td></tr>";
                 i ++;
             }
             usedResources += "</table>";
         }
-            
         
         subnetUsageReportText += usedResources;
         subnetUsageReportText += getFooter();
         
         return subnetUsageReportText.getBytes(StandardCharsets.UTF_8);
+    }
+    
+    private static String pieChartScript(int usedIps, int freeIps){
+        String script = "\n<script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>\n" +
+                        "    <script type=\"text/javascript\">\n" +
+                        "      google.charts.load('current', {'packages':['corechart']});\n" +
+                        "      google.charts.setOnLoadCallback(drawChart);\n" +
+                        "      function drawChart() {\n" +
+                        "        var data = google.visualization.arrayToDataTable\n" +
+                        "                      ([\n"+
+                        "                      ['IP', 'Usage %'],\n" +
+                        "                      ['Used'," + usedIps + "],\n"+
+                        "                      ['Free'," + freeIps + "]\n" +
+                        "                   ])\n"+
+                        "        var options = {title: 'Subnet Usage'};\n"+
+                        "        var chart = new google.visualization.PieChart(document.getElementById('piechart'));\n"+
+                        "        chart.draw(data, options);\n"+
+                        "       }\n"+
+                        "</script>\n";
+        return script;
     }
     
 }
