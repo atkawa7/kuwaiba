@@ -572,7 +572,8 @@ public interface WebserviceBeanRemote {
     public byte[] executeReport(long reportId, List<StringPair> arguments, String ipAddress, String sessionId) throws ServerSideException;
     
     // </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Commercial modules data methods">
+    
+    // <editor-fold defaultstate="collapsed" desc="Commercial modules data methods">
         // <editor-fold defaultstate="collapsed" desc="SDH Networks Module">
     public long createSDHTransportLink(String classNameEndpointA, long idEndpointA, 
             String classNameEndpointB, long idEndpointB, String linkType, String defaultName, String ipAddress, String sessionId) throws ServerSideException;

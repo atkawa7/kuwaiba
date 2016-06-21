@@ -2050,6 +2050,8 @@ public class WebserviceBean implements WebserviceBeanRemote {
                     tributaryLinkId = Long.valueOf(StringPair.get(arguments, "objectId"));
                     tributaryLinkClass = StringPair.get(arguments, "objectClass");
                     return Reports.buildHighOrderTributaryLinkDetailReport(bem, aem, tributaryLinkClass, tributaryLinkId);
+                case 9: //Subnet usage
+                    return Reports.subnetUsageReport(bem, aem, Long.valueOf(StringPair.get(arguments, "objectId")));
             }
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
