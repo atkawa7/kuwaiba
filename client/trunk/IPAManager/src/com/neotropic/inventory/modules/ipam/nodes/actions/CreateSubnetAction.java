@@ -239,9 +239,9 @@ public class CreateSubnetAction extends AbstractAction{
                 if(cbxCreateAllIps.isSelected()){
                     int dialogButton = JOptionPane.YES_NO_OPTION;
                     int dialogResult = JOptionPane.showConfirmDialog (null, 
-                                      "\nThis could be dangerous!!! \n"
-                                    + "\nIf the subnet has to many IP Addresses"
-                                    + "\nWould You Like to create all the possible ip address?","Warning!!",dialogButton);
+                                      "\nThis could be dangerous!!!"
+                                    + "\nIf the subnet has to many IP Addresses\n"
+                                    + "\nWould You like to create all the possible ip address?","Warning!!",dialogButton);
                     if(dialogResult == JOptionPane.YES_OPTION){
                             createIps=true;
                     }
@@ -251,32 +251,38 @@ public class CreateSubnetAction extends AbstractAction{
                             new LocalObject(Constants.CLASS_SUBNET, 0, attributeNames, attributeValues));
 
                 if(createIps){
-                    String[] ipAttributeNames = new String[1];
-                    String[] ipAttributeValues = new String[1];
+                    String[] ipAttributeNames = new String[2];
+                    String[] ipAttributeValues = new String[2];
 
                     ipAttributeNames[0] = Constants.PROPERTY_NAME;
-                    //192.168.1.24/29
-                    String ip = attributeValues[3];
+                    ipAttributeNames[1] = Constants.PROPERTY_DESCRIPTION;
+                    
                     LocalObjectLight addedIP = null;
                     String[] split = ipCIDR.split("/");
+                    String ip = SubnetEngine.nextIpv4(attributeValues[3], attributeValues[2], attributeValues[3], Integer.parseInt(split[1]));
                     if(type == Constants.IPV4_TYPE){
 
                         while(SubnetEngine.belongsTo(attributeValues[3], ip, Integer.parseInt(split[1]))){
                             ip =  SubnetEngine.nextIpv4(attributeValues[3], attributeValues[2], ip, Integer.parseInt(split[1]));
                             ipAttributeValues[0] = ip;
+                            ipAttributeValues[1] = "";
                             addedIP = CommunicationsStub.getInstance().addIP(newSubnet.getOid(), 
                             new LocalObject(Constants.CLASS_SUBNET, 0, ipAttributeNames, ipAttributeValues));
-
+                            if(ip.equals(attributeValues[2]))
+                                break;
                         }
                     }
 
                     else if(type == Constants.IPV6_TYPE){
+                        ip = SubnetEngine.nextIpv6(attributeValues[3], attributeValues[2], attributeValues[3], Integer.parseInt(split[1]));
                         while(SubnetEngine.belongsToIpv6(attributeValues[3], ip, Integer.parseInt(split[1]))){
                             ip =  SubnetEngine.nextIpv6(attributeValues[3], attributeValues[2], ip, Integer.parseInt(split[1]));
                             ipAttributeValues[0] = ip;
+                            ipAttributeValues[1] = "";
                             addedIP = CommunicationsStub.getInstance().addIP(newSubnet.getOid(), 
                             new LocalObject(Constants.CLASS_SUBNET, 0, ipAttributeNames, ipAttributeValues));
-
+                            if(ip.equals(attributeValues[2]))
+                                break;
                         }
                     }
                 }

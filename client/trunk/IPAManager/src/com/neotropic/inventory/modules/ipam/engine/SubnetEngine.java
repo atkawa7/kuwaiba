@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -127,13 +126,19 @@ public class SubnetEngine {
      * @return a list of all the possible subnet combinations for every segment
      */
     private List<String> complement(String segment, List<String> complement){
-        List<String> complements = new ArrayList<String>();
+        List<String> complements = new ArrayList<>();
         String first = segment;
         for (String bits : complement) 
             complements.add(first+bits);
         return complements;
     }
     
+    /**
+     * Parse to binary an IPv4 address
+     * @param address an IPv4 address
+     * @param bitSize 
+     * @return 
+     */
     private static List<List<String>> parseToBinary(String address, int bitSize){
         List<String> binaryAddress = new ArrayList<>();
         List<String> singleSegment = new ArrayList<>();
@@ -173,7 +178,7 @@ public class SubnetEngine {
     }
     
     /**
-     * Creates an ipv4 mask with the number of bits for the mask
+     * Creates an IPv4 mask with the number of bits for the mask
      * @param maskBits number of bits
      * @return a list fo list with the IP mask
      */
@@ -256,7 +261,12 @@ public class SubnetEngine {
         }
         return ipAddress;
     }
-    
+
+    /**
+     * Parse an IPv6 to binary format
+     * @param ip the IPv6 address
+     * @return List for every segment of the IP address
+     */
     private static List<List<String>> parseToBinaryIpv6(String[] ip){
         List<List<String>> binaryIPAddress = new ArrayList<>();
         for (String segment : ip) {
@@ -283,8 +293,8 @@ public class SubnetEngine {
         maskBits = Integer.parseInt(splitedCIDR[1]);
         ipAddress = splitedCIDR[0];
         List<List<String>> ip = parseToBinaryIpv6(completeIPv6(ipAddress));
-        List<String> segmentos = new ArrayList<>();
-        List<List<String>> subnets = new ArrayList<>();
+        List<String> segmentos;
+        List<List<String>> temSubnets = new ArrayList<>();
         int i = 0;
         boolean flag = false;
         String netPart = "";
@@ -306,15 +316,13 @@ public class SubnetEngine {
                     break;
                 segmentos.add(segment);
             } 
-            subnets.add(segmentos);
+            temSubnets.add(segmentos);
             if(flag)
                 break;
         }
-        if(maskPart.length()==4 && !maskPart.contentEquals("0000"))
-            System.out.println("esto no se puede ome");
         List<String> calculation = segmentCalculation(maskPart);
         List<String> complement = complement(netPart, calculation);
-        createIPv6(subnets, complement);
+        createIPv6(temSubnets, complement);
     }
     
     public String ipv6AsString(String[] ip){
@@ -478,8 +486,7 @@ public class SubnetEngine {
         Pattern pCeros = Pattern.compile(regex);
                 
         String ceros = "";
-        String[] splitedIp = ip.split(":");
-        for (String segment : splitedIp) {
+        for (String segment : ip.split(":")) {
             segment = Integer.toString(Integer.parseInt(segment,16),16);
             if(segment.equals("0"))
                 ceros+=segment;
@@ -527,7 +534,7 @@ public class SubnetEngine {
      */
     public static String nextIpv4(String networkIp, String broadCastIp,  String ip, int maskBits){
         String[] splitedIp = ip.split("\\.");
-        String[] splitedBroadcastIp = broadCastIp.split("\\.");
+        //String[] splitedBroadcastIp = broadCastIp.split("\\.");
         for(int i = splitedIp.length-1; i>0; i--) {
             if(belongsTo(networkIp, ip, maskBits)){
                 int bit = Integer.parseInt(splitedIp[i]);
@@ -558,7 +565,6 @@ public class SubnetEngine {
      */
     public static String nextIpv6(String networkIp, String broadCastIp, String ip, int maskBit){
         String[] splitedIp = completeIPv6(ip);
-        String[] splitedBroadcastIp = broadCastIp.split(":");
         
         String nextIp = "";
         for(int i = splitedIp.length-1; i>=0; i--) {
@@ -628,9 +634,6 @@ public class SubnetEngine {
         List<List<String>> binaryIp = parseToBinaryIpv6(completeIPv6(ip));
         List<List<String>> binaryNetworkIp = parseToBinaryIpv6(completeIPv6(networkIp));
         List<List<String>> binaryMask = createIpv6Mask(maskBits);
-        System.out.println(binaryIp);
-        System.out.println(binaryNetworkIp);
-        System.out.println(binaryMask);
         int bit = 0;
         boolean flag = false;
         for (int i = 0; i<binaryIp.size(); i++) {

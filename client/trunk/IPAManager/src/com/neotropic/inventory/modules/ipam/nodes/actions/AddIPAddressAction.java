@@ -226,6 +226,8 @@ public class AddIPAddressAction extends GenericObjectNodeAction {
             String ipAddress = txtIpAddress.getText();
             boolean isUsed = false;
             boolean itBelong = false;
+            boolean isNetworIp = false;
+            boolean isBroadcastIp = false;
             
             if(SubnetEngine.isIPAddress(ipAddress)){
                 //looking for used IPs
@@ -244,9 +246,13 @@ public class AddIPAddressAction extends GenericObjectNodeAction {
                     if(!SubnetEngine.belongsToIpv6(networkIp, ipAddress, maskBits))
                         itBelong = true;
                 }
-                    
+                if(ipAddress.equals(networkIp))
+                    isNetworIp = true;
+                
+                if(ipAddress.equals(broadcastIp))
+                    isBroadcastIp = true;
 
-                if(!isUsed && !itBelong){    
+                if(!isUsed && !itBelong && !isBroadcastIp && ! isNetworIp){    
                     lblError.setVisible(false);
                     String[] attributeNames = new String[2];
                     String[] attributeValues = new String[2];
@@ -273,6 +279,14 @@ public class AddIPAddressAction extends GenericObjectNodeAction {
                 }
                 else if(isUsed){
                     lblError.setText("This IP is in use");
+                    lblError.setVisible(true);  
+                }
+                else if(isNetworIp){
+                    lblError.setText("The network IP can be used");
+                    lblError.setVisible(true);  
+                }
+                else if(isBroadcastIp){
+                    lblError.setText("The broadcast IP can be used");
                     lblError.setVisible(true);  
                 }
             }
