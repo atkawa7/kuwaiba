@@ -37,8 +37,8 @@ public interface BusinessEntityManager {
     /**
      * Creates a new inventory object
      * @param className Name of the class which this object will be instantiated from
-     * @param parentClassName Parent object class name
-     * @param parentOid Parent's oid
+     * @param parentClassName Parent object class name. If null, the parent will be the DummyRoot node
+     * @param parentOid Parent's oid. If -1, the parent will be the DummyRoot node
      * @param attributes Attributes to be set by default in the new object. It's a HashMap where the keys are the attribute names and the values, the values for such attributes.
      * Note that binary type attributes can't be set here.
      * @param template Template id to be used to create the current object. Template values can be

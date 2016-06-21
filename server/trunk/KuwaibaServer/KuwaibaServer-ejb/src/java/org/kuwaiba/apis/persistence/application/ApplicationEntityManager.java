@@ -110,7 +110,7 @@ public interface ApplicationEntityManager {
      * @throws NotAuthorizedException 
      */
      public long createGroup(String groupName, String description, long[]
-            privileges, long[] users)//)
+            privileges, long[] users)
             throws InvalidArgumentException, NotAuthorizedException;
 
     /**

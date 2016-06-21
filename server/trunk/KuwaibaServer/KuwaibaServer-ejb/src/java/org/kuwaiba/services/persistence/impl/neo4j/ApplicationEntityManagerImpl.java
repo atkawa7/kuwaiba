@@ -9,7 +9,7 @@
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expregss or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
@@ -69,6 +69,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Path;
+import org.neo4j.graphdb.QueryExecutionException;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
@@ -1203,16 +1204,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException, NotAuthorizedException {
         try(Transaction tx = graphDb.beginTx())
         {
-            Node parentNode = null;
-            if (parentId != -1){
-                parentNode = poolsIndex.get(Constants.PROPERTY_ID, parentId).getSingle();
-                if (parentNode == null){
-                    parentNode = objectIndex.get(Constants.PROPERTY_ID, parentId).getSingle();
-                    if (parentNode == null)
-                        throw new ObjectNotFoundException("N/A", parentId);
-                }
-            }
-
             Node poolNode =  graphDb.createNode();
 
             if (name != null)
@@ -1221,7 +1212,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 poolNode.setProperty(Constants.PROPERTY_DESCRIPTION, description);
             if (type != 0){
                 if(type == 4 || type == 6)
-                poolNode.setProperty(Constants.PROPERTY_TYPE, type);
+                    poolNode.setProperty(Constants.PROPERTY_TYPE, type);
             }
             
             ClassMetadata classMetadata = cm.getClass(instancesOfClass);
@@ -1230,8 +1221,17 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             poolNode.setProperty(Constants.PROPERTY_CLASS_NAME, instancesOfClass);
             
-            if (parentNode != null)
-                poolNode.createRelationshipTo(parentNode, RelTypes.CHILD_OF_SPECIAL).setProperty(Constants.PROPERTY_NAME, Constants.REL_PROPERTY_POOL);
+            if (parentId != -1) { //A pool might be child of another pool or an inventory object
+                Node parentNode = poolsIndex.get(Constants.PROPERTY_ID, parentId).getSingle();
+                if (parentNode == null){
+                    parentNode = objectIndex.get(Constants.PROPERTY_ID, parentId).getSingle();
+                    if (parentNode == null)
+                        throw new ObjectNotFoundException("N/A", parentId);
+                    else
+                        poolNode.createRelationshipTo(parentNode, RelTypes.CHILD_OF_SPECIAL).setProperty(Constants.PROPERTY_NAME, Constants.REL_PROPERTY_POOL);
+                }
+            }
+            
                         
             poolsIndex.putIfAbsent(poolNode, Constants.PROPERTY_ID, poolNode.getId());
             
@@ -1336,10 +1336,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 return pools;
             }
             
-            else{
+            else {
                 Node parentNode = poolsIndex.get(Constants.PROPERTY_ID, parentId).getSingle();
-                    if (parentNode == null)
-                        throw new ObjectNotFoundException("Pool", parentId);
+                    if (parentNode == null) { //The pools may be children of another pool or an invenotry object
+                        parentNode = objectIndex.get(Constants.PROPERTY_ID, parentId).getSingle();
+                        if (parentNode == null)
+                            throw new ObjectNotFoundException(className, parentId);
+                    }
 
                 int i = 0;
                 for(Relationship rel: parentNode.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF_SPECIAL)){
@@ -1348,20 +1351,27 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                              break;
                         i++;
                     }
-                    if(((String)rel.getProperty(Constants.PROPERTY_NAME)).equals(Constants.REL_PROPERTY_POOL)){
-                        Node node = poolsIndex.get(Constants.PROPERTY_ID, rel.getStartNode().getId()).getSingle();
-                        //or it could be use this if 
-                        if(node != null){
-                            RemoteBusinessObjectLight rbol = new RemoteBusinessObjectLight(node.getId(),
-                            node.hasProperty(Constants.PROPERTY_NAME) ? (String)node.getProperty(Constants.PROPERTY_NAME) : null,
-                            node.hasProperty(Constants.PROPERTY_CLASS_NAME) ? (String)node.getProperty(Constants.PROPERTY_CLASS_NAME) : null);
-                            if(className != null && node.hasProperty(Constants.PROPERTY_CLASS_NAME)){
-                                if(className.equals(node.getProperty(Constants.PROPERTY_CLASS_NAME)))
-                                    pools.add(rbol);
+                    
+                    Node poolNode = rel.getStartNode();
+                    
+                    if (className == null) { //That is, return all pools
+                        RemoteBusinessObjectLight poolAsRemoteBusinessObject = new RemoteBusinessObjectLight(poolNode.getId(),
+                                poolNode.hasProperty(Constants.PROPERTY_NAME) ? (String)poolNode.getProperty(Constants.PROPERTY_NAME) : null,
+                                poolNode.hasProperty(Constants.PROPERTY_CLASS_NAME) ? (String)poolNode.getProperty(Constants.PROPERTY_CLASS_NAME) : null);
+                        pools.add(poolAsRemoteBusinessObject);
+                    } else { //We need only a specific type of pool
+                        String poolClassName = poolNode.hasProperty(Constants.PROPERTY_CLASS_NAME) ? 
+                                (String) poolNode.getProperty(Constants.PROPERTY_CLASS_NAME) : null;
+                        
+                        if (poolClassName != null) { //This should never happen, but just in case
+                            if (poolClassName.equals(className)) {
+                                RemoteBusinessObjectLight poolAsRemoteBusinessObject = new RemoteBusinessObjectLight(poolNode.getId(),
+                                    poolNode.hasProperty(Constants.PROPERTY_NAME) ? (String)poolNode.getProperty(Constants.PROPERTY_NAME) : null,
+                                    poolNode.hasProperty(Constants.PROPERTY_CLASS_NAME) ? (String)poolNode.getProperty(Constants.PROPERTY_CLASS_NAME) : null);
+                                pools.add(poolAsRemoteBusinessObject);
                             }
-                            else
-                                pools.add(rbol);
                         }
+                        
                     }
                 }
                 return pools;
@@ -1625,7 +1635,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     File readFile = new File(patchFile.getPath()+".ole");
                     patchFile.renameTo(readFile);
                     executedFiles++;
-                }  catch (Exception ex) {
+                }  catch (IOException | QueryExecutionException ex) {
                     throw new RuntimeException(ex.getMessage());
                 } finally {
                     try {
