@@ -26,6 +26,7 @@ import com.neotropic.inventory.modules.ipam.nodes.properties.SubnetProperty;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.util.Constants;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.ExecuteClassReportAction;
 import org.kuwaiba.management.services.nodes.actions.RelateToServiceAction;
 import org.kuwaiba.management.services.nodes.actions.ReleaseFromServiceAction;
 
@@ -58,6 +59,7 @@ public class SubnetNode extends ObjectNode {
             null,
             new ReleaseFromVlanAction(),
             new ReleaseFromServiceAction(),
+            ExecuteClassReportAction.createExecuteReportAction(),
             null,
             new DeleteSubnetAction()
         };

@@ -474,7 +474,7 @@ public class SubnetEngine {
      */
     public static String compressIpv6(String ip){
         List<String> ipSegments = new ArrayList<>();
-        String regex = "[0:]*";
+        String regex = "[0]*";
         Pattern pCeros = Pattern.compile(regex);
                 
         String ceros = "";
@@ -482,7 +482,7 @@ public class SubnetEngine {
         for (String segment : splitedIp) {
             segment = Integer.toString(Integer.parseInt(segment,16),16);
             if(segment.equals("0"))
-                ceros+=segment+":";
+                ceros+=segment;
             else{
                 if(!ceros.isEmpty()){
                     ipSegments.add(ceros);
@@ -494,23 +494,24 @@ public class SubnetEngine {
         if(!ceros.isEmpty())
             ipSegments.add(ceros.substring(0,ceros.length()-1));
         
-        int f = 0;
-        int s = 0;
-        boolean flag = false;
+        int amountOfCeros = 0;
+        boolean flag = true;
+        int pos = 0;
         
         for (int i = 0; i<ipSegments.size(); i++) {
             if (pCeros.matcher(ipSegments.get(i)).matches()) {
-                if (!flag) {
-                    f = ipSegments.get(i).length();
-                    flag = true;
+                if(flag){
+                    amountOfCeros = ipSegments.get(i).length();
+                    flag =false;
+                    pos = i;
                 }
-                if(f <= ipSegments.get(i).length()){
-                    f = ipSegments.get(i).length();
-                    s = i;
+                else{
+                    if(ipSegments.get(i).length()> amountOfCeros)
+                        pos = i;
                 }
             }
         }
-        ipSegments.set(s, "");
+        ipSegments.set(pos, "");
         String compressedIp = "";
         for (String segement : ipSegments) {
             compressedIp += segement+":";
@@ -644,6 +645,10 @@ public class SubnetEngine {
                 for (int k = 1; k < maskIpSegment.get(j).length(); k++) {
                     int x = Integer.parseInt(maskIpSegment.get(j).substring(k-1,k),2) - Integer.parseInt(ipSegment.get(j).substring(k-1,k),2);
                     int y = Integer.parseInt(maskIpSegment.get(j).substring(k-1,k),2) - Integer.parseInt(networkIpSegment.get(j).substring(k-1,k),2);
+                    if(bit == maskBits){
+                        flag=true;
+                        break;
+                    }
                     if (x!= y)
                         return false;
                     bit++;
