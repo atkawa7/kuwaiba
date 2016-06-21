@@ -51,7 +51,7 @@ public class TempBusinessRulesEngine {
         possibleChildrenAccordingToModels.put("WirelessContainer", new String[]{"RadioLink"});
         possibleChildrenAccordingToModels.put("OpticalLink", new String[]{"Wavelength"});
         
-        subClassOfValidators = new HashMap<String, String>();
+        subClassOfValidators = new HashMap<>();
         subClassOfValidators.put("GenericPhysicalNode", "physicalNode");
         subClassOfValidators.put("GenericPort", "physicalEndpoint");
         subClassOfValidators.put("GenericPhysicalContainer", "physicalContainer");
