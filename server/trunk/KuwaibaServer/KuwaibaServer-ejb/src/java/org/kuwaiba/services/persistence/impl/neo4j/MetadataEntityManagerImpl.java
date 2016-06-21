@@ -912,29 +912,25 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     public List<ClassMetadataLight> getPossibleChildrenNoRecursive(String parentClassName) 
             throws MetadataObjectNotFoundException, NotAuthorizedException
     {
-        List<ClassMetadataLight> classMetadaListResult = new ArrayList<>();
-
-        String cypherQuery;
-        if (parentClassName == null || parentClassName.equals(Constants.NODE_DUMMYROOT)){
-            cypherQuery = "MATCH (n:root {name:\"" + Constants.NODE_DUMMYROOT + "\"})-[:POSSIBLE_CHILD]->directChild " +
-                          "RETURN directChild "+
-                          "ORDER BY directChild.name ASC ";
-        }else {
-            cypherQuery = "START parentClassNode=node:classes(name = {className}) " +
-                    "MATCH (parentClassNode:class)-[:POSSIBLE_CHILD]->(directChild) " +
-                    "RETURN directChild.name " +
-                    "ORDER BY directChild.name ASC";
-        }
-        Map<String, Object> params = new HashMap<>();
-        params.put(Constants.PROPERTY_CLASS_NAME, "className:" + parentClassName);//NOI18N
-        
         try (Transaction tx = graphDb.beginTx()) {
-            Result result = graphDb.execute(cypherQuery, params);
-            Iterator<Node> directPossibleChildren = result.columnAs("directChild");
-            for (Node node : IteratorUtil.asIterable(directPossibleChildren))
-                classMetadaListResult.add(Util.createClassMetadataFromNode(node));
+            Node parentNode;
+            
+            if (parentClassName == null || parentClassName.equals(Constants.NODE_DUMMYROOT))
+                parentNode = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
+            else
+                parentNode = classIndex.get(Constants.PROPERTY_NAME, parentClassName).getSingle();
+
+            Iterable<Relationship> relationships = parentNode.getRelationships(RelTypes.POSSIBLE_CHILD, Direction.OUTGOING);
+            
+            List<ClassMetadataLight> classMetadataListResult = new ArrayList<>();
+            
+            for (Relationship rel: relationships) {
+                    Node child = rel.getEndNode();
+                    classMetadataListResult.add(Util.createClassMetadataFromNode(child));
+            }
+            
+            return classMetadataListResult;
         }
-        return classMetadaListResult;
     }
 
     @Override
