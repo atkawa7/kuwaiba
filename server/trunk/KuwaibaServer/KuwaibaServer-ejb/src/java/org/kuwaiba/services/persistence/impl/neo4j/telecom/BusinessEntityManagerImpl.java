@@ -65,7 +65,10 @@ import org.neo4j.helpers.collection.IteratorUtil;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class BusinessEntityManagerImpl implements BusinessEntityManager {
-
+    /**
+     * Reference to the Application Entity Manager
+     */
+    private ApplicationEntityManager aem;
     /**
      * Reference to the db handler
      */
@@ -101,6 +104,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     public BusinessEntityManagerImpl(ConnectionManager cmn, ApplicationEntityManager aem) {
         this();
+        this.aem = aem;
         this.graphDb = (GraphDatabaseService)cmn.getConnectionHandler();
         try(Transaction tx = graphDb.beginTx())
         {
@@ -1046,36 +1050,25 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     //TODO DELETE. This is a business dependant method, should not be here. Don't use it
     @Override
     public List<RemoteBusinessObjectLight> getPhysicalPath(String objectClass, long objectId) throws ApplicationObjectNotFoundException, NotAuthorizedException{
-        Node lastNode = null;
-        List<RemoteBusinessObjectLight> path = new ArrayList<>();
-        String cypherQuery = "START o=node({oid}) " + 
-                             "MATCH path = o-[r:" + RelTypes.RELATED_TO_SPECIAL.toString() + "*]-c " +
-                             "WHERE all(rel in r where rel.name = 'mirror' or rel.name = 'endpointA' or rel.name = 'endpointB') "+
-                             "RETURN collect(distinct c) as path";
-        Map<String, Object> params = new HashMap<>();
-        params.put("oid", objectId);
-        try (Transaction tx = graphDb.beginTx()){
-           
-            Result result = graphDb.execute(cypherQuery, params);
-            Iterator<List<Node>> column = result.columnAs("path");
+        String cypherQuery = "MATCH path = (o)-[r:" + RelTypes.RELATED_TO_SPECIAL + "*]-(c)," + 
+                                    " (c)-[:" + RelTypes.INSTANCE_OF + "]->(class)-[:" + RelTypes.EXTENDS + "*]->(superclass) " +
+                             "WHERE id(o) = " + objectId + " AND all(rel in r where rel.name = 'mirror' or rel.name = 'endpointA' or rel.name = 'endpointB') AND superclass.name=\"" + Constants.CLASS_GENERICPORT + "\" " +
+                             "RETURN nodes(path) as path";
+        
+        List<RemoteBusinessObjectLight> res = new ArrayList<>();
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            Result theResult = graphDb.execute(cypherQuery);
             
-            for (List<Node> list : IteratorUtil.asIterable(column)){
-                if (list.isEmpty())
-                    return path;
-                lastNode = list.get(list.size()-1);
+            for (Object cell : IteratorUtil.asIterable(theResult.columnAs("path"))) {
+                Iterable<Node> nodes = (Iterable<Node>) cell;
+                for (Node aNode : nodes)
+                    res.add(Util.createRemoteObjectLightFromNode(aNode));
             }
-            params.clear();
-            params.put("oid", lastNode.getId());
             
-            result = graphDb.execute(cypherQuery, params);
-            column = result.columnAs("path");
-            path.add(Util.createRemoteObjectLightFromNode(lastNode));
-            for (List<Node> listOfNodes : IteratorUtil.asIterable(column)){
-                for(Node node : listOfNodes)
-                    path.add(Util.createRemoteObjectLightFromNode(node));
-            }
         }
-        return path;
+        
+        return res;
     }
 
     @Override

@@ -27,6 +27,7 @@ import javax.jws.WebService;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectList;
 import org.kuwaiba.beans.WebserviceBeanRemote;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.util.Constants;
@@ -3504,7 +3505,7 @@ public class KuwaibaService {
     /**
      * Associates an IP address to device
      * @param id IP address id
-     * @param deviceClass device class
+     * @param deviceClassName device class
      * @param deviceId device id
      * @param sessionId Session token
      * @throws Exception Generic exception encapsulating any possible error raised at runtime   

@@ -1311,7 +1311,17 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("getPhysicalPath", ipAddress, sessionId);
             if (!mem.isSubClass("GenericPort", objectClassName))
                 throw new ServerSideException(String.format("Class %s is not a port", objectClassName));
-            return RemoteObjectLight.toRemoteObjectLightArray(bem.getPhysicalPath(objectClassName, oid)); 
+            
+            List<RemoteBusinessObjectLight> thePath = bem.getPhysicalPath(objectClassName, oid); 
+            RemoteObjectLight[] res = new RemoteObjectLight[thePath.size()];
+            
+            int i = 0;
+            for (RemoteBusinessObjectLight aNode : thePath) {
+                res[i] = new RemoteObjectLight(aNode);
+                i++;
+            }
+            
+            return res;
 
         } catch (InventoryException ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
@@ -2017,6 +2027,13 @@ public class WebserviceBean implements WebserviceBeanRemote {
                     return new ReportDescriptor[] {
                             new ReportDescriptor(9, "Subnet details", className, "Shows the IPs created in that subnet and some of their attributes")
                     };
+                case "Country":
+                case "Continent":
+                case "City":
+                    return new ReportDescriptor[] {
+                            new ReportDescriptor(10, "Network Equipment", className, "Presents a list and details of all network equipment in a particular location"),
+                            /*new ReportDescriptor(11, "Racks and Distribution Frames", className, "Presents a list and details of all racks and distribution frames in that particular location")*/
+                    };
             }
             return new ReportDescriptor[0];
         } catch (InventoryException ex) {
@@ -2052,6 +2069,13 @@ public class WebserviceBean implements WebserviceBeanRemote {
                     return Reports.buildHighOrderTributaryLinkDetailReport(bem, aem, tributaryLinkClass, tributaryLinkId);
                 case 9: //Subnet usage
                     return Reports.subnetUsageReport(bem, aem, Long.valueOf(StringPair.get(arguments, "objectId")));
+                case 10:
+                    long locationId = Long.valueOf(StringPair.get(arguments, "objectId"));
+                    String locationClass = StringPair.get(arguments, "objectClass");
+                    return Reports.buildNetworkEquipmentInLocationReport(bem, aem, locationClass,locationId);
+                case 11:
+                    locationId = Long.valueOf(StringPair.get(arguments, "objectId"));
+                    return Reports.buildBoxesInLocationReport(bem, aem, locationId);
             }
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());

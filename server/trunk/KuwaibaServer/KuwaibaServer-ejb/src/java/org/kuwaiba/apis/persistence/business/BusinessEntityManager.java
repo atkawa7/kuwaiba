@@ -502,7 +502,7 @@ public interface BusinessEntityManager {
      */
     public List<RemoteBusinessObjectLightList> findRoutesThroughSpecialRelationships (String objectAClassName, long objectAId, String objectBClassName, long objectBId, String relationshipName);
     /**
-     * 
+     * Finds the physical path from one port to another
      * @param objectClass
      * @param objectId
      * @return

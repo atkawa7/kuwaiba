@@ -1756,6 +1756,26 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         }
     }
     
+    public HashMap<String, RemoteBusinessObjectList> executeCustomDbCodeSeq(String dbCode) throws NotAuthorizedException {
+        try (Transaction tx = graphDb.beginTx()) {
+        
+            Result theResult = graphDb.execute(dbCode);
+            HashMap<String, RemoteBusinessObjectList> thePaths = new HashMap<>();
+            
+            for (String column : theResult.columns())
+                thePaths.put(column, new RemoteBusinessObjectList());
+            
+            try {
+                while (theResult.hasNext()) {
+                    Map<String, Object> row = theResult.next();
+                    for (String column : row.keySet()) 
+                        thePaths.get(column).add(Util.createRemoteObjectFromNode((Node)row.get(column)));
+                }
+            } catch (InvalidArgumentException ex) {} //this should not happen
+            
+            return thePaths;
+        }
+    }    
 
     // Helpers
     /**

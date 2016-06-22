@@ -419,7 +419,149 @@ public class Reports {
         return tributaryLinkUsageReportText.getBytes(StandardCharsets.UTF_8);
     }
     
-    //Helpers
+    public static byte[] buildNetworkEquipmentInLocationReport(BusinessEntityManager bem, ApplicationEntityManager aem, String locationClass, long locationId) throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+        String query = String.format("MATCH (location)<-[:%s*]-(networkEquipment)-[:%s]->(class)-[:%s*]->(superclass) "
+                + "WHERE id(location) = %s AND superclass.name = \"%s\" "
+                + "RETURN networkEquipment", RelTypes.CHILD_OF, RelTypes.INSTANCE_OF, RelTypes.EXTENDS, 
+                                                            locationId, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
+        HashMap<String, RemoteBusinessObjectList> theResult = aem.executeCustomDbCode(query);
+        
+        String title, networkEquipmentInLocationReportText;
+        
+        RemoteBusinessObjectLight location = bem.getObjectLight(locationClass, locationId);
+            
+        title = "Network Equipment Report for " + location.getName();
+        networkEquipmentInLocationReportText = getHeader(title);
+        networkEquipmentInLocationReportText += 
+                            "  <body><table><tr><td><h1>" + title + "</h1></td><td><img src=\"http://afr-ix.com/wp-content/themes/twentyfourteen/images/afrix_logo.png\"/></td></tr></table>\n";
+
+        networkEquipmentInLocationReportText += "<table><tr><td class=\"generalInfoLabel\"><b>Name</b></td><td>" + location.getName() + "</td></tr>\n"
+                + "<tr><td class=\"generalInfoLabel\"><b>Type</b></td><td>" + location.getClassName() + "</td></tr>\n"
+                + "<tr><td class=\"generalInfoLabel\"><b>Location</b></td><td>" + formatLocation(bem.getParents(location.getClassName(), location.getId())) + "</td></tr>\n</table>\n";
+
+        if (theResult.get("networkEquipment").getList().isEmpty())
+            networkEquipmentInLocationReportText += "<div class=\"warning\">This location does not have any network equipment</div>";
+        else {
+            networkEquipmentInLocationReportText += "<table><tr><th>Name</th><th>Type</th><th>Serial Number</th><th>Location</th><th>Vendor</th><th>Operational State</th></tr>";
+            int i = 0;
+            for (RemoteBusinessObject networkEquipment : theResult.get("networkEquipment").getList()) {
+                networkEquipmentInLocationReportText += "<tr class=\"" + (i % 2 == 0 ? "even" :"odd") + "\">"
+                                                            + "<td>" + networkEquipment.getName() + "</td>"
+                                                            + "<td>" + networkEquipment.getClassName() + "</td>"
+                                                            + "<td>" + (networkEquipment.getAttributes().get("serialNumber") == null ? asError("Not Set") : networkEquipment.getAttributes().get("serialNumber").get(0)) + "</td>"
+                                                            + "<td>" + formatLocation(bem.getParents(networkEquipment.getClassName(), networkEquipment.getId())) + "</td>"
+                                                            + "<td>" + (networkEquipment.getAttributes().get("vendor") == null ? asError("Not Set") : bem.getObjectLight("EquipmentVendor", Long.valueOf(networkEquipment.getAttributes().get("vendor").get(0))).getName() ) + "</td>"
+                                                            + "<td>" + (networkEquipment.getAttributes().get("state") == null ? asError("Not Set") : bem.getObjectLight("OperationalState", Long.valueOf(networkEquipment.getAttributes().get("state").get(0))).getName() ) + "</td></tr>";
+                i ++;
+            }
+            networkEquipmentInLocationReportText += "</table>";
+        }
+        
+        
+        networkEquipmentInLocationReportText += getFooter();
+        
+        return networkEquipmentInLocationReportText.getBytes(StandardCharsets.UTF_8);
+    }
+
+    public static byte[] buildBoxesInLocationReport(BusinessEntityManager bem, ApplicationEntityManager aem, long locationId) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    public static byte[] subnetUsageReport(BusinessEntityManager bem, ApplicationEntityManager aem, long subnetId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+    
+        RemoteBusinessObject subnet = bem.getObject(Constants.CLASS_SUBNET, subnetId);
+        List<RemoteBusinessObjectLight> ips = bem.getObjectChildren(Constants.CLASS_SUBNET, subnetId, 0);
+        HashMap<String, List<String>> subnetAttributes = subnet.getAttributes();
+        int hosts = Integer.parseInt(subnetAttributes.get("hosts").get(0));
+        int usedIps = ips.size();
+
+        int freeIps = hosts - usedIps;
+        
+        String vlan = "", service="", title, subnetUsageReportText;
+        List<RemoteBusinessObjectLight> vlans = bem.getSpecialAttribute(Constants.CLASS_SUBNET, subnetId, IPAMModule.RELATIONSHIP_IPAMBELONGSTOVLAN);
+        List<RemoteBusinessObjectLight> services = bem.getSpecialAttribute(Constants.CLASS_SUBNET, subnetId, "uses");
+        
+        
+        if(!vlans.isEmpty()){
+            vlan = "<b>" + vlans.get(0).getName() + " ["+ vlans.get(0).getClassName()+ "]</b>->";
+            for (RemoteBusinessObjectLight vlanParent : bem.getParents(vlans.get(0).getClassName(), vlans.get(0).getId())) 
+                vlan += vlanParent.getName()+" ["+vlanParent.getClassName()+"]->";
+                    
+            vlan= vlan.substring(0, vlan.length()-2);
+        }    
+        if(!services.isEmpty())
+            service = services.get(0).getName() + " ["+ services.get(0).getClassName()+ "]</b>->";
+        
+        if (subnet == null) {
+            title = "Error";
+            subnetUsageReportText = getHeader(title);
+            subnetUsageReportText += "<div class=\"error\">No information about this subnet could be found</div>";
+        }
+        else {
+            title = "Subnet Usage Detail Report for " + subnet.getName();
+            subnetUsageReportText = getHeader(title);
+            subnetUsageReportText += 
+                                "  <body><table><tr><td><h1>" + title + "</h1></td><td><img src=\"http://afr-ix.com/wp-content/themes/twentyfourteen/images/afrix_logo.png\"/></td></tr></table>\n";
+            
+            subnetUsageReportText += pieChartScript(usedIps, freeIps);
+
+            subnetUsageReportText += "<table><tr><td class=\"generalInfoLabel\">Network IP Addres</td><td class=\"generalInfoValue\"><b>" + subnetAttributes.get("networkIp").get(0) + "</b></td>"
+                    + "<td rowspan=\"8\"><div id=\"piechart\" style=\"width: 350px; height: 250px;\"></div></td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">Broadcast IP Address</td><td class=\"generalInfoValue\"><b>" + subnetAttributes.get("broadcastIp").get(0) + "</b> </td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">Description </td><td class=\"generalInfoValue\"><b>" + subnetAttributes.get("description").get(0) + "</b> </td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">Number of hosts</td><td class=\"generalInfoValue\">" + hosts + "</td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">Used IPs</td><td class=\"generalInfoValue\">" + usedIps + " - <b>" + (usedIps*100)/hosts + "%</b></td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">Free IPs</td><td class=\"generalInfoValue\">" + freeIps + " - <b>" + (freeIps*100)/hosts +"%</b></td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">VLAN</td><td class=\"generalInfoValue\">" + vlan + "</td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">Service</td><td class=\"generalInfoValue\">" + service + "</td></tr></table>";
+        }
+        String usedResources; 
+        
+        if (ips.isEmpty())
+            usedResources = "<div class=\"error\">This tributary link seems malformed and does not have a path</div>";
+        else {
+            usedResources = "<table><tr><th>IP Address</th><th>Description</th><th>Host name</th><th>Location</th><th>Service</th></tr>";
+
+            int i = 0;
+            for (RemoteBusinessObjectLight ip : ips) {
+                String device = "";
+                service = "";
+                
+                List<RemoteBusinessObjectLight> ipDevices = bem.getSpecialAttribute(Constants.CLASS_IP_ADDRESS, ip.getId(), IPAMModule.RELATIONSHIP_IPAMHASADDRESS);
+                String ubication = "";
+                if(!ipDevices.isEmpty()){
+                    device = ipDevices.get(0).getName() + " [" + ipDevices.get(0).getClassName()+"]";
+                    List<RemoteBusinessObjectLight> parents = bem.getParents(ipDevices.get(0).getClassName(), ipDevices.get(0).getId());
+                    for (RemoteBusinessObjectLight parent : parents) 
+                        ubication += parent.getName()+" ["+parent.getClassName()+"]->";
+                    
+                    ubication= ubication.substring(0, ubication.length()-2);
+                }
+                
+                List<RemoteBusinessObjectLight> ipServices = bem.getSpecialAttribute(Constants.CLASS_IP_ADDRESS, ip.getId(), "uses");
+                if(!ipServices.isEmpty())
+                    service = ipServices.get(0).getName() + "[" +  ipServices.get(0).getClassName() + "]";
+                
+                RemoteBusinessObject ipO = bem.getObject(Constants.CLASS_IP_ADDRESS, ip.getId());
+                HashMap<String, List<String>> attributes = ipO.getAttributes();
+                
+                usedResources += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") +"\"><td>" + ip.getName() + "</td>"
+                              + "<td>" + attributes.get("description").get(0) +"</td>"
+                              + "<td>" + device +"</td>"
+                              + "<td>" + ubication +"</td>"
+                              + "<td>" + service +"</td></tr>";
+                i ++;
+            }
+            usedResources += "</table>";
+        }
+        
+        subnetUsageReportText += usedResources;
+        subnetUsageReportText += getFooter();
+        
+        return subnetUsageReportText.getBytes(StandardCharsets.UTF_8);
+    }
+    
+    //<editor-fold desc="Helpers" defaultstate="collapsed">
     private static String getStyleSheet() {
         return "<style> " +
                     "   body {\n" +
@@ -504,101 +646,16 @@ public class Reports {
         return location;
     }
     
-    public static byte[] subnetUsageReport(BusinessEntityManager bem, ApplicationEntityManager aem, long subnetId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+    private static String asOk(String text) {
+        return "<span class=\"ok\">" + text + "</span>";
+    }
     
-        //String query = "";
-        
-        //HashMap<String, RemoteBusinessObjectList> theResult = aem.executeCustomDbCode(query);
-        RemoteBusinessObject subnet = bem.getObject(Constants.CLASS_SUBNET, subnetId);
-        List<RemoteBusinessObjectLight> ips = bem.getObjectChildren(Constants.CLASS_SUBNET, subnetId, 0);
-        HashMap<String, List<String>> subnetAttributes = subnet.getAttributes();
-        int hosts = Integer.parseInt(subnetAttributes.get("hosts").get(0));
-        int usedIps = ips.size();
-
-        int freeIps = hosts - usedIps;
-        
-        String vlan = "", service="", title, subnetUsageReportText;
-        List<RemoteBusinessObjectLight> vlans = bem.getSpecialAttribute(Constants.CLASS_SUBNET, subnetId, IPAMModule.RELATIONSHIP_IPAMBELONGSTOVLAN);
-        List<RemoteBusinessObjectLight> services = bem.getSpecialAttribute(Constants.CLASS_SUBNET, subnetId, "uses");
-        
-        
-        if(!vlans.isEmpty()){
-            vlan = "<b>" + vlans.get(0).getName() + " ["+ vlans.get(0).getClassName()+ "]</b>->";
-            for (RemoteBusinessObjectLight vlanParent : bem.getParents(vlans.get(0).getClassName(), vlans.get(0).getId())) 
-                vlan += vlanParent.getName()+" ["+vlanParent.getClassName()+"]->";
-                    
-            vlan= vlan.substring(0, vlan.length()-2);
-        }    
-        if(!services.isEmpty())
-            service = services.get(0).getName() + " ["+ services.get(0).getClassName()+ "]</b>->";
-        
-        if (subnet == null) {
-            title = "Error";
-            subnetUsageReportText = getHeader(title);
-            subnetUsageReportText += "<div class=\"error\">No information about this subnet could be found</div>";
-        }
-        else {
-            title = "Subnet Usage Detail Report for " + subnet.getName();
-            subnetUsageReportText = getHeader(title);
-            subnetUsageReportText += 
-                                "  <body><table><tr><td><h1>" + title + "</h1></td><td><img src=\"http://afr-ix.com/wp-content/themes/twentyfourteen/images/afrix_logo.png\"/></td></tr></table>\n";
-            
-            subnetUsageReportText += pieChartScript(usedIps, freeIps);
-
-            subnetUsageReportText += "<table><tr><td class=\"generalInfoLabel\">Network IP Addres</td><td class=\"generalInfoValue\"><b>" + subnetAttributes.get("networkIp").get(0) + "</b></td>"
-                    + "<td rowspan=\"8\"><div id=\"piechart\" style=\"width: 350px; height: 250px;\"></div></td></tr>"
-                    + "<tr><td class=\"generalInfoLabel\">Broadcast IP Address</td><td class=\"generalInfoValue\"><b>" + subnetAttributes.get("broadcastIp").get(0) + "</b> </td></tr>"
-                    + "<tr><td class=\"generalInfoLabel\">Description </td><td class=\"generalInfoValue\"><b>" + subnetAttributes.get("description").get(0) + "</b> </td></tr>"
-                    + "<tr><td class=\"generalInfoLabel\">Number of hosts</td><td class=\"generalInfoValue\">" + hosts + "</td></tr>"
-                    + "<tr><td class=\"generalInfoLabel\">Used IPs</td><td class=\"generalInfoValue\">" + usedIps + " - <b>" + (usedIps*100)/hosts + "%</b></td></tr>"
-                    + "<tr><td class=\"generalInfoLabel\">Free IPs</td><td class=\"generalInfoValue\">" + freeIps + " - <b>" + (freeIps*100)/hosts +"%</b></td></tr>"
-                    + "<tr><td class=\"generalInfoLabel\">VLAN</td><td class=\"generalInfoValue\">" + vlan + "</td></tr>"
-                    + "<tr><td class=\"generalInfoLabel\">Service</td><td class=\"generalInfoValue\">" + service + "</td></tr></table>";
-        }
-        String usedResources; 
-        
-        if (ips.isEmpty())
-            usedResources = "<div class=\"error\">This tributary link seems malformed and does not have a path</div>";
-        else {
-            usedResources = "<table><tr><th>IP Address</th><th>Description</th><th>Host name</th><th>Ubication</th><th>service</th></tr>";
-
-            int i = 0;
-            for (RemoteBusinessObjectLight ip : ips) {
-                String device = "";
-                service = "";
-                
-                List<RemoteBusinessObjectLight> ipDevices = bem.getSpecialAttribute(Constants.CLASS_IP_ADDRESS, ip.getId(), IPAMModule.RELATIONSHIP_IPAMHASADDRESS);
-                String ubication = "";
-                if(!ipDevices.isEmpty()){
-                    device = ipDevices.get(0).getName() + " [" + ipDevices.get(0).getClassName()+"]";
-                    List<RemoteBusinessObjectLight> parents = bem.getParents(ipDevices.get(0).getClassName(), ipDevices.get(0).getId());
-                    for (RemoteBusinessObjectLight parent : parents) 
-                        ubication += parent.getName()+" ["+parent.getClassName()+"]->";
-                    
-                    ubication= ubication.substring(0, ubication.length()-2);
-                }
-                
-                List<RemoteBusinessObjectLight> ipServices = bem.getSpecialAttribute(Constants.CLASS_IP_ADDRESS, ip.getId(), "uses");
-                if(!ipServices.isEmpty())
-                    service = ipServices.get(0).getName() + "[" +  ipServices.get(0).getClassName() + "]";
-                
-                RemoteBusinessObject ipO = bem.getObject(Constants.CLASS_IP_ADDRESS, ip.getId());
-                HashMap<String, List<String>> attributes = ipO.getAttributes();
-                
-                usedResources += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") +"\"><td>" + ip.getName() + "</td>"
-                              + "<td>" + attributes.get("description").get(0) +"</td>"
-                              + "<td>" + device +"</td>"
-                              + "<td>" + ubication +"</td>"
-                              + "<td>" + service +"</td></tr>";
-                i ++;
-            }
-            usedResources += "</table>";
-        }
-        
-        subnetUsageReportText += usedResources;
-        subnetUsageReportText += getFooter();
-        
-        return subnetUsageReportText.getBytes(StandardCharsets.UTF_8);
+    private static String asWarning(String text) {
+        return "<span class=\"warning\">" + text + "</span>";
+    }
+    
+    private static String asError(String text) {
+        return "<span class=\"error\">" + text + "</span>";
     }
     
     private static String pieChartScript(int usedIps, int freeIps){
@@ -620,5 +677,5 @@ public class Reports {
                         "</script>\n";
         return script;
     }
-    
+    //</editor-fold> 
 }

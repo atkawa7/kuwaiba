@@ -249,6 +249,10 @@ public class Constants {
      */
     public static final String CLASS_GENERICDISTRIBUTIONFRAME = "GenericDistributionFrame";
     /**
+     * Class GenericPort
+     */
+    public static final String CLASS_GENERICPORT = "GenericPort";
+    /**
      * Dummy root node name
      */
     public static final String NODE_DUMMYROOT = "DummyRoot"; //NOI18N
