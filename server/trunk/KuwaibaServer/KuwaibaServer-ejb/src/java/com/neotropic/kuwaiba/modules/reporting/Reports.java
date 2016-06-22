@@ -483,14 +483,12 @@ public class Reports {
         
         
         if(!vlans.isEmpty()){
-            vlan = "<b>" + vlans.get(0).getName() + " ["+ vlans.get(0).getClassName()+ "]</b>->";
-            for (RemoteBusinessObjectLight vlanParent : bem.getParents(vlans.get(0).getClassName(), vlans.get(0).getId())) 
-                vlan += vlanParent.getName()+" ["+vlanParent.getClassName()+"]->";
-                    
-            vlan= vlan.substring(0, vlan.length()-2);
+            vlan = "<b>" + vlans.get(0).getName() + " ["+ vlans.get(0).getClassName()+ "]</b> |"+
+            formatLocation(bem.getParents(vlans.get(0).getClassName(), vlans.get(0).getId()));
+            
         }    
         if(!services.isEmpty())
-            service = services.get(0).getName() + " ["+ services.get(0).getClassName()+ "]</b>->";
+            service = services.get(0).getName() + " ["+ services.get(0).getClassName()+ "]";
         
         if (subnet == null) {
             title = "Error";
@@ -508,19 +506,19 @@ public class Reports {
             subnetUsageReportText += "<table><tr><td class=\"generalInfoLabel\">Network IP Addres</td><td class=\"generalInfoValue\"><b>" + subnetAttributes.get("networkIp").get(0) + "</b></td>"
                     + "<td rowspan=\"8\"><div id=\"piechart\" style=\"width: 350px; height: 250px;\"></div></td></tr>"
                     + "<tr><td class=\"generalInfoLabel\">Broadcast IP Address</td><td class=\"generalInfoValue\"><b>" + subnetAttributes.get("broadcastIp").get(0) + "</b> </td></tr>"
-                    + "<tr><td class=\"generalInfoLabel\">Description </td><td class=\"generalInfoValue\"><b>" + subnetAttributes.get("description").get(0) + "</b> </td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">Description </td><td class=\"generalInfoValue\">" + subnetAttributes.get("description").get(0) + "</td></tr>"
                     + "<tr><td class=\"generalInfoLabel\">Number of hosts</td><td class=\"generalInfoValue\">" + hosts + "</td></tr>"
-                    + "<tr><td class=\"generalInfoLabel\">Used IPs</td><td class=\"generalInfoValue\">" + usedIps + " - <b>" + (usedIps*100)/hosts + "%</b></td></tr>"
-                    + "<tr><td class=\"generalInfoLabel\">Free IPs</td><td class=\"generalInfoValue\">" + freeIps + " - <b>" + (freeIps*100)/hosts +"%</b></td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">Used IPs</td><td class=\"generalInfoValue\"><b>" + (usedIps*100)/hosts + "%</b> ("+ usedIps +")</td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">Free IPs</td><td class=\"generalInfoValue\"><b>" + (freeIps*100)/hosts +"%</b> ("+ freeIps +")</td></tr>"
                     + "<tr><td class=\"generalInfoLabel\">VLAN</td><td class=\"generalInfoValue\">" + vlan + "</td></tr>"
                     + "<tr><td class=\"generalInfoLabel\">Service</td><td class=\"generalInfoValue\">" + service + "</td></tr></table>";
         }
-        String usedResources; 
+        String ipAddresses; 
         
         if (ips.isEmpty())
-            usedResources = "<div class=\"error\">This tributary link seems malformed and does not have a path</div>";
+            ipAddresses = "<div class=\"error\">There are no IP addresses in use</div>";
         else {
-            usedResources = "<table><tr><th>IP Address</th><th>Description</th><th>Host name</th><th>Location</th><th>Service</th></tr>";
+            ipAddresses = "<table><tr><th>IP Address</th><th>Description</th><th>Host name</th><th>Location</th><th>Service</th></tr>";
 
             int i = 0;
             for (RemoteBusinessObjectLight ip : ips) {
@@ -528,14 +526,11 @@ public class Reports {
                 service = "";
                 
                 List<RemoteBusinessObjectLight> ipDevices = bem.getSpecialAttribute(Constants.CLASS_IP_ADDRESS, ip.getId(), IPAMModule.RELATIONSHIP_IPAMHASADDRESS);
-                String ubication = "";
+                String location = "";
                 if(!ipDevices.isEmpty()){
                     device = ipDevices.get(0).getName() + " [" + ipDevices.get(0).getClassName()+"]";
                     List<RemoteBusinessObjectLight> parents = bem.getParents(ipDevices.get(0).getClassName(), ipDevices.get(0).getId());
-                    for (RemoteBusinessObjectLight parent : parents) 
-                        ubication += parent.getName()+" ["+parent.getClassName()+"]->";
-                    
-                    ubication= ubication.substring(0, ubication.length()-2);
+                    location =  formatLocation(parents);
                 }
                 
                 List<RemoteBusinessObjectLight> ipServices = bem.getSpecialAttribute(Constants.CLASS_IP_ADDRESS, ip.getId(), "uses");
@@ -545,17 +540,17 @@ public class Reports {
                 RemoteBusinessObject ipO = bem.getObject(Constants.CLASS_IP_ADDRESS, ip.getId());
                 HashMap<String, List<String>> attributes = ipO.getAttributes();
                 
-                usedResources += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") +"\"><td>" + ip.getName() + "</td>"
+                ipAddresses += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") +"\"><td>" + ip.getName() + "</td>"
                               + "<td>" + attributes.get("description").get(0) +"</td>"
                               + "<td>" + device +"</td>"
-                              + "<td>" + ubication +"</td>"
+                              + "<td>" + location +"</td>"
                               + "<td>" + service +"</td></tr>";
                 i ++;
             }
-            usedResources += "</table>";
+            ipAddresses += "</table>";
         }
         
-        subnetUsageReportText += usedResources;
+        subnetUsageReportText += ipAddresses;
         subnetUsageReportText += getFooter();
         
         return subnetUsageReportText.getBytes(StandardCharsets.UTF_8);
