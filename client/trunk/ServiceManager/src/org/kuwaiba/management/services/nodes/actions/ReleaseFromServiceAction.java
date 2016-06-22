@@ -41,17 +41,22 @@ public class ReleaseFromServiceAction extends GenericObjectNodeAction implements
     public void actionPerformed(ActionEvent e) {
         
         Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
-            
+        
+        boolean success = true;
         while (selectedNodes.hasNext()) {
             ObjectNode selectedNode = selectedNodes.next();
             if (CommunicationsStub.getInstance().releaseObjectFromService(selectedNode.getObject().getClassName(), 
                 selectedNode.getObject().getOid(), Long.valueOf(((JMenuItem)e.getSource()).getName()))) {
                 if (selectedNode.getParentNode() instanceof ServiceNode)
                     ((ServiceChildren)selectedNode.getParentNode().getChildren()).addNotify();
-                else
-                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            } else {
+                success = false;
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             }
-        }            
+        }
+        
+        if (success)
+            NotificationUtil.getInstance().showSimplePopup("Sucess", NotificationUtil.INFO_MESSAGE, "The selected resources were released from the service");
     }
 
     @Override
@@ -61,9 +66,17 @@ public class ReleaseFromServiceAction extends GenericObjectNodeAction implements
 
     @Override
     public JMenuItem getPopupPresenter() {
+        
+        Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
+        
+        if (!selectedNodes.hasNext())
+            return null;
+        
+        ObjectNode selectedNode = selectedNodes.next(); //Uses the last selected only
+        
         JMenu mnuServices = new JMenu(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_RELEASE_ELEMENT"));
-        LocalObjectLight[] services = CommunicationsStub.getInstance().getSpecialAttribute(object.getClassName(), 
-                object.getOid(), "uses");
+        LocalObjectLight[] services = CommunicationsStub.getInstance().getSpecialAttribute(selectedNode.getObject().getClassName(), 
+                selectedNode.getObject().getOid(), "uses");
         
         if (services != null) {
         
