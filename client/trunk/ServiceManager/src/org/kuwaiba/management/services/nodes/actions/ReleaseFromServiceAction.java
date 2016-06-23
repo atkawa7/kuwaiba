@@ -17,6 +17,7 @@ package org.kuwaiba.management.services.nodes.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
+import java.util.List;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
@@ -75,12 +76,12 @@ public class ReleaseFromServiceAction extends GenericObjectNodeAction implements
         ObjectNode selectedNode = selectedNodes.next(); //Uses the last selected only
         
         JMenu mnuServices = new JMenu(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_RELEASE_ELEMENT"));
-        LocalObjectLight[] services = CommunicationsStub.getInstance().getSpecialAttribute(selectedNode.getObject().getClassName(), 
+        List<LocalObjectLight> services = CommunicationsStub.getInstance().getSpecialAttribute(selectedNode.getObject().getClassName(), 
                 selectedNode.getObject().getOid(), "uses");
         
         if (services != null) {
         
-            if (services.length == 0)
+            if (services.isEmpty())
                 mnuServices.setEnabled(false);
             else {
                 for (LocalObjectLight service : services){

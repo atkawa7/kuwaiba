@@ -20,6 +20,7 @@ import java.awt.Point;
 import org.inventory.core.visual.scene.AbstractNodeWidget;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.ConnectorState;
+import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
 
@@ -36,8 +37,13 @@ public abstract class SceneConnectProvider implements ConnectProvider {
 
     @Override
     public ConnectorState isTargetWidget(Widget sourceWidget, Widget targetWidget) {
-        if (targetWidget instanceof AbstractNodeWidget)
+        if (targetWidget instanceof AbstractNodeWidget) {
+            if(((GraphScene)sourceWidget.getScene()).findObject(targetWidget) ==
+                    ((GraphScene)sourceWidget.getScene()).findObject(sourceWidget)) //A widget can not connect to itself
+                return ConnectorState.REJECT;
             return  ConnectorState.ACCEPT;
+        }
+        
         return ConnectorState.REJECT;
     }
 

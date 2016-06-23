@@ -357,13 +357,13 @@ public class CommunicationsStub {
         }
     }
 
-    public LocalObjectLight[] getSpecialAttribute(String objectClass, long objectId, String attributeName){
+    public List<LocalObjectLight> getSpecialAttribute(String objectClass, long objectId, String attributeName){
         try{
 
             List<RemoteObjectLight> values = service.getSpecialAttribute(objectClass, objectId,attributeName, session.getSessionId());
-            LocalObjectLight[] res = new LocalObjectLight[values.size()];
-            for (int i = 0; i < values.size(); i++)
-                res[i]= new LocalObjectLight(values.get(i).getOid(), values.get(i).getName(), values.get(i).getClassName());
+            List<LocalObjectLight> res = new ArrayList<>();
+            for (RemoteObjectLight value : values)
+                res.add(new LocalObjectLight(value.getOid(), value.getName(), value.getClassName()));
 
             return res;
         }catch(Exception ex){
@@ -824,10 +824,10 @@ public class CommunicationsStub {
         }
     }
 
-    public LocalClassMetadataLight[] getLightSubclasses(String className, boolean includeAbstractSubClasses, boolean includeSelf) {
-        try{
+    public List<LocalClassMetadataLight> getLightSubclasses(String className, boolean includeAbstractSubClasses, boolean includeSelf) {
+        try {
             List<ClassInfoLight> subClasses = service.getSubClassesLight(className, includeAbstractSubClasses, includeSelf, session.getSessionId());
-            LocalClassMetadataLight[] res = new LocalClassMetadataLight[subClasses.size()];
+            List<LocalClassMetadataLight> res = new ArrayList<>();
 
             int i = 0;
             for (ClassInfoLight cil : subClasses){
@@ -835,13 +835,13 @@ public class CommunicationsStub {
                     for (Validator validator : cil.getValidators())
                         validators.put(validator.getLabel(), validator.getValue());
                     
-                res[i] = new LocalClassMetadataLight(cil.getId(),
+                res.add(new LocalClassMetadataLight(cil.getId(),
                                 cil.getClassName(),
                                 cil.getDisplayName(),
                                 cil.getParentClassName(),
                                 cil.isAbstract(),cil.isViewable(), cil.isListType(),
                                 cil.isCustom(), cil.isInDesign(),
-                                cil.getSmallIcon(), cil.getColor(), validators);
+                                cil.getSmallIcon(), cil.getColor(), validators));
                 i++;
             }
             return res;

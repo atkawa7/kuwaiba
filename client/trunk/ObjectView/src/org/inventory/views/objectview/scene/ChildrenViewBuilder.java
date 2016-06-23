@@ -237,17 +237,17 @@ public class ChildrenViewBuilder implements AbstractViewBuilder {
         //TODO: This algorithm to find the endpoints for a connection could be improved in many ways
         for (LocalObject container : myPhysicalConnections){
 
-            LocalObjectLight[] aSide = com.getSpecialAttribute(container.getClassName(), container.getOid(),"endpointA");
+            List<LocalObjectLight> aSide = com.getSpecialAttribute(container.getClassName(), container.getOid(),"endpointA");
             if (aSide == null)
                 return;
 
-            Widget aSideWidget = scene.findWidget(aSide[0]);
+            Widget aSideWidget = scene.findWidget(aSide.get(0));
 
-            LocalObjectLight[] bSide = com.getSpecialAttribute(container.getClassName(), container.getOid(),"endpointB");
+            List<LocalObjectLight> bSide = com.getSpecialAttribute(container.getClassName(), container.getOid(),"endpointB");
             if (bSide == null)
                 return;
 
-            Widget bSideWidget = scene.findWidget(bSide[0]);
+            Widget bSideWidget = scene.findWidget(bSide.get(0));
 
             ConnectionWidget newEdge = (ConnectionWidget)scene.addEdge(container);
             newEdge.setLineColor(Utils.getConnectionColor(container.getClassName()));

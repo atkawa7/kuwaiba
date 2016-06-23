@@ -18,6 +18,7 @@ package com.neotropic.inventory.modules.ipam.nodes.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
+import java.util.List;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
@@ -70,12 +71,12 @@ public class ReleaseFromVlanAction  extends GenericObjectNodeAction implements P
             id = selectedNode.getObject().getOid();
         }
         
-        LocalObjectLight[] services = CommunicationsStub.getInstance().getSpecialAttribute(className, 
+        List<LocalObjectLight> services = CommunicationsStub.getInstance().getSpecialAttribute(className, 
                 id, Constants.RELATIONSHIP_IPAMBELONGSTOVLAN);
 
         if (services != null) {
         
-            if (services.length == 0)
+            if (services.isEmpty())
                 mnuServices.setEnabled(false);
             else {
                 for (LocalObjectLight service : services){

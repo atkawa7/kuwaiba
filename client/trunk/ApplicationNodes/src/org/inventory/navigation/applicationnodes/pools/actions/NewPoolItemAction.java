@@ -16,6 +16,7 @@
 package org.inventory.navigation.applicationnodes.pools.actions;
 
 import java.awt.event.ActionEvent;
+import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -59,10 +60,9 @@ public class NewPoolItemAction extends AbstractAction implements Presenter.Popup
     public JMenuItem getPopupPresenter() {
         JMenu mnuPossibleChildren = new JMenu(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW"));
 
-        LocalClassMetadataLight[] items;
-        items = com.getLightSubclasses(poolNode.getPool().getClassName(), false, true);
+        List<LocalClassMetadataLight> items = com.getLightSubclasses(poolNode.getPool().getClassName(), false, true);
 
-            if (items.length == 0)
+            if (items.isEmpty())
                 mnuPossibleChildren.setEnabled(false);
             else
                 for(LocalClassMetadataLight item: items){

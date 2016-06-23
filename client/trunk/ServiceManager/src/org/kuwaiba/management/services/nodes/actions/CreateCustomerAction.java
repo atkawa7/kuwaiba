@@ -17,6 +17,7 @@ package org.kuwaiba.management.services.nodes.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
+import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -63,7 +64,7 @@ public class CreateCustomerAction extends AbstractAction implements Presenter.Po
   
     @Override
     public JMenuItem getPopupPresenter() {
-        LocalClassMetadataLight[] customerClasses = CommunicationsStub.getInstance().
+        List<LocalClassMetadataLight> customerClasses = CommunicationsStub.getInstance().
                 getLightSubclasses(Constants.CLASS_GENERICCUSTOMER, false, false);
         JMenuItem menu = new JMenu(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATE_CUSTOMER"));
         for (LocalClassMetadataLight customerClass : customerClasses){

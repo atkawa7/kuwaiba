@@ -16,6 +16,7 @@
 package com.neotropic.inventory.modules.ipam.nodes.actions;
 
 import java.awt.event.ActionEvent;
+import java.util.List;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
@@ -51,12 +52,12 @@ public class ReleaseFromDeviceAction extends GenericObjectNodeAction implements 
     @Override
     public JMenuItem getPopupPresenter() {
         JMenu mnuServices = new JMenu(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELEASE_DEVICE"));
-        LocalObjectLight[] services = CommunicationsStub.getInstance().getSpecialAttribute(object.getClassName(), 
+        List<LocalObjectLight> services = CommunicationsStub.getInstance().getSpecialAttribute(object.getClassName(), 
                 object.getOid(), Constants.RELATIONSHIP_IPAMHASADDRESS);
         
         if (services != null) {
         
-            if (services.length == 0)
+            if (services.isEmpty())
                 mnuServices.setEnabled(false);
             else {
                 for (LocalObjectLight service : services){

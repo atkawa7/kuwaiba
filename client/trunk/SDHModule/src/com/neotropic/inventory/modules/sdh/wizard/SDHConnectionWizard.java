@@ -174,7 +174,7 @@ public class SDHConnectionWizard {
             txtConnectionName.setName("txtConnectionName"); //NOI18N
             final JComboBox<LocalClassMetadataLight> lstConnectionTypes;
             
-            LocalClassMetadataLight[] connectionClasses;
+            List<LocalClassMetadataLight> connectionClasses;
             
             switch (connection) {
                 default:
@@ -192,7 +192,7 @@ public class SDHConnectionWizard {
             if (connectionClasses == null )
                 lstConnectionTypes = new JComboBox<>();
             else
-                lstConnectionTypes = new JComboBox<>(connectionClasses);
+                lstConnectionTypes = new JComboBox<>(connectionClasses.toArray(new LocalClassMetadataLight[0]));
             
             lstConnectionTypes.setName("lstConnectionTypes"); //NOI18N
             
