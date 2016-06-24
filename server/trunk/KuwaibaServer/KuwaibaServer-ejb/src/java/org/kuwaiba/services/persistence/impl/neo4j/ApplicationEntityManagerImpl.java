@@ -1414,20 +1414,19 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public RemoteBusinessObject getPool(String className, long poolId) throws InvalidArgumentException, NotAuthorizedException {
+    public RemoteBusinessObject getPool(long poolId) throws NotAuthorizedException, ApplicationObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx()) 
         {
+            Node poolNode = poolsIndex.get(Constants.PROPERTY_ID, poolId).getSingle();
             
-            Node pool = poolsIndex.get(Constants.PROPERTY_ID, poolId).getSingle();
-            ClassMetadata myClass = cm.getClass(className);
-            
-            if(pool != null){
-                Node instance = poolsIndex.get(Constants.PROPERTY_ID, poolId).getSingle();
-                RemoteBusinessObject res = Util.createRemoteObjectFromNode(instance, myClass);
+            if(poolNode != null) {
+                
+                RemoteBusinessObject res = new RemoteBusinessObject(poolId, poolNode.hasProperty(Constants.PROPERTY_NAME) ? (String)poolNode.getProperty(Constants.PROPERTY_NAME) : "", 
+                        poolNode.hasProperty(Constants.PROPERTY_CLASS_NAME) ? (String)poolNode.getProperty(Constants.PROPERTY_CLASS_NAME) : "");
                 return res;
             }
             else
-                return null;
+                throw new ApplicationObjectNotFoundException(String.format("Pool with id %s could not be found", poolId));
         }
     }
     

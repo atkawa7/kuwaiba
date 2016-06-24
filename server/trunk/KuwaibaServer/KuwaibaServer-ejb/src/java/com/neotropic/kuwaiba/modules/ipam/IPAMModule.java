@@ -178,7 +178,7 @@ public class IPAMModule implements GenericCommercialModule{
             ObjectNotFoundException, InvalidArgumentException, 
             ApplicationObjectNotFoundException, NotAuthorizedException
     {
-        return aem.getPool(Constants.CLASS_SUBNET, oid);
+        return aem.getPool(oid);
     }
     
     /**

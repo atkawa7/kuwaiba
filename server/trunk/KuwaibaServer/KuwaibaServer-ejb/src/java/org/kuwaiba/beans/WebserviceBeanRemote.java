@@ -21,7 +21,6 @@ import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
 import java.util.List;
 import javax.ejb.Remote;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectList;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.exceptions.NotAuthorizedException;
@@ -92,16 +91,14 @@ public interface WebserviceBeanRemote {
 
     /**
      * Deletes a classmetadata, its attributes and category relationships
-     * @param classId
-     * @return true if success
-     * @throws ClassNotFoundException if there is not a class with de ClassId
+     * @param className Class name
+     * @throws ServerSideException If something went wrong
      */
 
     public void deleteClass(String className, String ipAddress, String sessionId) throws ServerSideException;
 
     /**
      * Deletes a classmetadata, its attributes and category relationships
-     * @param classId
      */
     public void deleteClass(long classId, String ipAddress, String sessionId) throws ServerSideException;
 
@@ -326,6 +323,7 @@ public interface WebserviceBeanRemote {
     public RemoteObjectLight[] getObjectsOfClassLight(String className, int maxResults, String ipAddress, String sessionId) throws ServerSideException;
     public ClassInfoLight[] getInstanceableListTypes(String ipAddress, String sessionId) throws ServerSideException;
 
+    public void deleteObject(String className, long oid, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
     public void deleteObjects(String classNames[], long[] oids, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
 
     public void moveObjects(String targetClass, long targetOid, String[] objectClasses, long[] objectOids, String ipAddress, String sessionId) throws ServerSideException;

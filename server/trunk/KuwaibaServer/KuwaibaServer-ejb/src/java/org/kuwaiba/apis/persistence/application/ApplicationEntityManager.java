@@ -454,14 +454,13 @@ public interface ApplicationEntityManager {
     public List<RemoteBusinessObjectLight> getPools(int limit, String className) throws NotAuthorizedException;
     
     /**
-     * Gets a pool by  it's id 
-     * @param className kind of elements contained in the pool
+     * Gets a pool by its id 
      * @param poolId pool's id
-     * @return the pool object
-     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException
-     * @throws NotAuthorizedException 
+     * @return the pool as a RemoteBusinessObject
+     * @throws ApplicationObjectNotFoundException If the pool could not be found
+     * @throws NotAuthorizedException If the user is not authorized to retrieve a pool's info
      */
-    public RemoteBusinessObject getPool(String className, long poolId) throws InvalidArgumentException, NotAuthorizedException;
+    public RemoteBusinessObject getPool(long poolId) throws ApplicationObjectNotFoundException, NotAuthorizedException;
     
     /**
      * Gets the list of objects into a pool

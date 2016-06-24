@@ -1009,6 +1009,21 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
     
     @Override
+    public void deleteObject(String className, long oid, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException{
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        
+        try {
+            bem.deleteObject(className, oid, releaseRelationships);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                    ActivityLogEntry.ACTIVITY_TYPE_DELETE_INVENTORY_OBJECT, 
+                    String.format("Object with id %s of class %s deleted", className, oid));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
     public void deleteObjects(String[] classNames, long[] oids, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException{
         if (bem == null || aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
