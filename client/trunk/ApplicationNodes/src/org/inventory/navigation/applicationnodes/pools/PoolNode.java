@@ -18,18 +18,25 @@ package org.inventory.navigation.applicationnodes.pools;
 import java.awt.Image;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DnDConstants;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalPool;
+import org.inventory.communications.util.Constants;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
 import org.inventory.navigation.applicationnodes.pools.actions.DeletePoolAction;
 import org.inventory.navigation.applicationnodes.pools.actions.NewPoolItemAction;
+import org.inventory.navigation.applicationnodes.pools.properties.PoolNativeTypeProperty;
 import org.openide.actions.PasteAction;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.NodeTransfer;
+import org.openide.nodes.PropertySupport;
 import org.openide.nodes.Sheet;
+import org.openide.nodes.Sheet.Set;
 import org.openide.util.ImageUtilities;
 import org.openide.util.actions.SystemAction;
 import org.openide.util.datatransfer.PasteType;
@@ -37,23 +44,48 @@ import org.openide.util.datatransfer.PasteType;
  * Represents a pool (a set of objects of a certain kind)
  * @author Charles edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class PoolNode extends AbstractNode {
-    
-    private static Image defaultIcon = ImageUtilities.loadImage("org/inventory/navigation/applicationnodes/res/folder-icon.png");
+public class PoolNode extends AbstractNode implements PropertyChangeListener {
+    private static final Image defaultIcon = ImageUtilities.loadImage("org/inventory/navigation/applicationnodes/res/folder-icon.png");
     private NewPoolItemAction newPoolItemAction;
     private DeletePoolAction deletePoolAction;
     private ShowObjectIdAction showObjectIdAction;
     private LocalPool pool;
+    protected Sheet sheet;
     
     public PoolNode(LocalPool pool) {
         super(new PoolChildren(pool));
         this.pool = pool;
+        pool.addPropertyChangeListener(this);
+    }
+    
+    @Override
+    public void setName(String newName) {
+        if (CommunicationsStub.getInstance().setPoolProperties(pool.getOid(), newName, null)) {
+            pool.setName(newName);
+            if (getSheet() != null)
+                setSheet(createSheet());
+        }
+        else
+            NotificationUtil.getInstance().showSimplePopup("Error", 
+                    NotificationUtil.ERROR_MESSAGE, 
+                    CommunicationsStub.getInstance().getError());
+            
     }
     
     @Override
     public String getName(){
-        return pool.getName() +" [" + pool.getClassName() + "]";
+        return getEditableText();
     }
+
+    public String getEditableText() {
+        return pool.getName() == null ? "" : pool.getName();
+    }
+    
+    @Override
+    public String getDisplayName() {
+        return pool.toString();
+    }
+
     
     @Override
     public Action[] getActions(boolean context){
@@ -76,8 +108,37 @@ public class PoolNode extends AbstractNode {
     }
     
     @Override
-    protected Sheet createSheet(){
-        return Sheet.createDefault();
+    protected Sheet createSheet () {
+        sheet = Sheet.createDefault();
+        Set generalPropertySet = Sheet.createPropertiesSet(); // General attributes category
+        LocalPool lp = CommunicationsStub.getInstance().getPoolInfo(pool.getOid());
+        if (lp == null) {
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            return sheet;
+        }
+        pool.setName(lp.getName());
+        
+        PropertySupport.ReadWrite propertyClassName = new PoolNativeTypeProperty(
+                Constants.PROPERTY_CLASSNAME, 
+                String.class, Constants.PROPERTY_CLASSNAME, 
+                Constants.PROPERTY_CLASSNAME, this, lp.getClassName());
+        generalPropertySet.put(propertyClassName);
+        
+        PropertySupport.ReadWrite propertyName = new PoolNativeTypeProperty(
+                Constants.PROPERTY_NAME, String.class, Constants.PROPERTY_NAME, 
+                Constants.PROPERTY_NAME, this, lp.getName());
+        generalPropertySet.put(propertyName);
+        
+        PropertySupport.ReadWrite propertyDescription = new PoolNativeTypeProperty(
+                Constants.PROPERTY_DESCRIPTION, String.class, 
+                Constants.PROPERTY_DESCRIPTION, Constants.PROPERTY_DESCRIPTION, 
+                this, lp.getDescription());
+        generalPropertySet.put(propertyDescription);
+        
+        generalPropertySet.setName("1");
+        generalPropertySet.setDisplayName(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_GENERAL_ATTRIBUTES"));
+        sheet.put(generalPropertySet);
+        return sheet;
     }
     
     public LocalPool getPool() {
@@ -117,5 +178,37 @@ public class PoolNode extends AbstractNode {
                     return  null;
                 }
             };
+    }
+    
+    @Override
+    public boolean canRename() {
+        return true;
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getSource().equals(pool)) {
+            pool = (LocalPool) evt.getSource();
+            if (evt.getPropertyName().equals(Constants.PROPERTY_NAME)) {
+                setDisplayName(getDisplayName());
+                fireNameChange(null, pool.getName());
+            }
+        }
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof PoolNode) {
+            return ((PoolNode) obj).getPool().equals(this.getPool());
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + (this.pool != null ? this.pool.hashCode() : 0);
+        return hash;
     }
 }
