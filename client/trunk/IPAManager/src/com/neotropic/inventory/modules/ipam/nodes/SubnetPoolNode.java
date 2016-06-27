@@ -27,7 +27,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalObject;
+import org.inventory.communications.core.LocalPool;
 import org.inventory.communications.util.Constants;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Sheet;
@@ -86,7 +86,7 @@ public class SubnetPoolNode extends AbstractNode implements PropertyChangeListen
     
     @Override
     protected Sheet createSheet(){
-        LocalObject sp = com.getSubnetPool(getSubnetPool().getOid());
+        LocalPool sp = com.getSubnetPool(getSubnetPool().getOid());
         sheet = Sheet.createDefault();
         Sheet.Set generalPropertySet = Sheet.createPropertiesSet(); //General attributes category
         
@@ -96,7 +96,7 @@ public class SubnetPoolNode extends AbstractNode implements PropertyChangeListen
         
         generalPropertySet.put(new SubnetPoolProperty(Constants.PROPERTY_DESCRIPTION, String.class, 
                 java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_DESCRIPTION"),
-                "",sp.getAttribute(Constants.PROPERTY_DESCRIPTION)));
+                "",sp.getDescription()));
         
         
         generalPropertySet.setName("1");

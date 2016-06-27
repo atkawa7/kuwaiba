@@ -26,7 +26,6 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
@@ -68,7 +67,7 @@ public class CreateSubnetPoolAction extends GenericObjectNodeAction{
             id = selectedNode.getSubnetPool().getOid();
         }
 
-        type = (int)com.getSubnetPool(id).getAttribute(Constants.PROPERTY_TYPE);
+        type = (int)com.getSubnetPool(id).getType();
         JTextField txtName = new JTextField(), txtDescription =  new JTextField();
         txtName.setName("txtName"); //NOI18N
         txtName.setPreferredSize(new Dimension(120, 18));

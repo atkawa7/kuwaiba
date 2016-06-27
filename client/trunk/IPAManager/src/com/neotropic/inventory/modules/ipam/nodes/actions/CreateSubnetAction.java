@@ -76,7 +76,7 @@ public class CreateSubnetAction extends AbstractAction{
             id = selectedNode.getSubnetPool().getOid();
         }
 
-        int type = (int)com.getSubnetPool(id).getAttribute(Constants.PROPERTY_TYPE);
+        int type = (int)com.getSubnetPool(id).getType();
 
 
         CreateSubnetFrame subnetFrame = new CreateSubnetFrame(id, type);
