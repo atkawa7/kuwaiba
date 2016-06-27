@@ -460,7 +460,7 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException If the pool could not be found
      * @throws NotAuthorizedException If the user is not authorized to retrieve a pool's info
      */
-    public RemoteBusinessObject getPool(long poolId) throws ApplicationObjectNotFoundException, NotAuthorizedException;
+    public Pool getPool(long poolId) throws ApplicationObjectNotFoundException, NotAuthorizedException;
     
     /**
      * Gets the list of objects into a pool

@@ -23,6 +23,7 @@ import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.services.persistence.util.Constants;
+import org.kuwaiba.ws.toserialize.application.RemotePool;
 
 /**
  * IP address manager module
@@ -174,11 +175,11 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws ApplicationObjectNotFoundException
      * @throws NotAuthorizedException 
      */
-    public RemoteBusinessObject getSubnetPool(long oid) throws MetadataObjectNotFoundException, 
+    public RemotePool getSubnetPool(long oid) throws MetadataObjectNotFoundException, 
             ObjectNotFoundException, InvalidArgumentException, 
             ApplicationObjectNotFoundException, NotAuthorizedException
     {
-        return aem.getPool(oid);
+        return new RemotePool(aem.getPool(oid));
     }
     
     /**

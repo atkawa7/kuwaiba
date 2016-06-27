@@ -253,6 +253,10 @@ public class Constants {
      */
     public static final String CLASS_GENERICPORT = "GenericPort";
     /**
+     * Class Generic Contract
+     */
+    public static final String CLASS_GENERICCONTRACT = "GenericContract"; //NOI18N
+    /**
      * Dummy root node name
      */
     public static final String NODE_DUMMYROOT = "DummyRoot"; //NOI18N

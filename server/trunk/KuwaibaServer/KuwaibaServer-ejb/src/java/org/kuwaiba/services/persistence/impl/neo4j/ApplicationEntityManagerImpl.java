@@ -47,6 +47,7 @@ import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
 import org.kuwaiba.apis.persistence.application.CompactQuery;
 import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
+import org.kuwaiba.apis.persistence.application.Pool;
 import org.kuwaiba.apis.persistence.application.ResultRecord;
 import org.kuwaiba.apis.persistence.application.Session;
 import org.kuwaiba.apis.persistence.application.UserProfile;
@@ -1210,10 +1211,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 poolNode.setProperty(Constants.PROPERTY_NAME, name);
             if (description != null)
                 poolNode.setProperty(Constants.PROPERTY_DESCRIPTION, description);
-            if (type != 0){
-                if(type == 4 || type == 6)
+            if (type != 0)
                     poolNode.setProperty(Constants.PROPERTY_TYPE, type);
-            }
             
             ClassMetadata classMetadata = cm.getClass(instancesOfClass);
             if (classMetadata == null)
@@ -1414,16 +1413,28 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public RemoteBusinessObject getPool(long poolId) throws NotAuthorizedException, ApplicationObjectNotFoundException {
+    public Pool getPool(long poolId) throws NotAuthorizedException, ApplicationObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx()) 
         {
             Node poolNode = poolsIndex.get(Constants.PROPERTY_ID, poolId).getSingle();
             
             if(poolNode != null) {
                 
-                RemoteBusinessObject res = new RemoteBusinessObject(poolId, poolNode.hasProperty(Constants.PROPERTY_NAME) ? (String)poolNode.getProperty(Constants.PROPERTY_NAME) : "", 
-                        poolNode.hasProperty(Constants.PROPERTY_CLASS_NAME) ? (String)poolNode.getProperty(Constants.PROPERTY_CLASS_NAME) : "");
-                return res;
+                HashMap<String, List<String>> attributes = new HashMap<>();
+                
+                String name = poolNode.hasProperty(Constants.PROPERTY_NAME) ? 
+                                    (String)poolNode.getProperty(Constants.PROPERTY_NAME) : null;
+                
+                String description = poolNode.hasProperty(Constants.PROPERTY_DESCRIPTION) ? 
+                                    (String)poolNode.getProperty(Constants.PROPERTY_DESCRIPTION) : null;
+                
+                String className = poolNode.hasProperty(Constants.PROPERTY_CLASS_NAME) ? 
+                                    (String)poolNode.getProperty(Constants.PROPERTY_CLASS_NAME) : null;
+                
+                int type = poolNode.hasProperty(Constants.PROPERTY_TYPE) ? 
+                                    (int)poolNode.getProperty(Constants.PROPERTY_TYPE) : 0;
+                
+                return new Pool(poolId, name, description, className, type);
             }
             else
                 throw new ApplicationObjectNotFoundException(String.format("Pool with id %s could not be found", poolId));

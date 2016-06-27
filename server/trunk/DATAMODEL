@@ -187,3 +187,14 @@
 * Class GenericPhysicalLink does not have the attributes owner and operator anymore
 * Class SDHLink removed
 * Class SONETLink removed
+* Added classes GenericTransportLink, GenericContainerLink, GenericTributaryLink, GenericSDHTransportLink, 
+  GenericSDHContainerLink, GenericSDHTributaryLink, GenericSDHLowOrderContainerLink, GenericSDHHighOrderContainerLink, 
+  GenericSDHLowOrderTributaryLink, GenericSDHHighOrderTributaryLink, STM1, STM4, STM16, STM64, STM256, VC12, VC3, VC4, VC4-4, VC4-16, VC12TributaryLink, VC3TributaryLink, VC4TributaryLink
+* Added class EoSDHService, DIAService
+* Class IPService renamed to IPTransitService
+* New class GenericCommunicationsElement is now the parent of all other GenericXXXElement
+* Added class PortGroup
+* Added GenericSDHService
+* GenericSDHService is now the superclass of SDHService, EoSDHService and SONETService and PDHService
+* Added class GenericContract, now superclass of SLA, OLA and the new SupportContract
+* Added class SupportContract

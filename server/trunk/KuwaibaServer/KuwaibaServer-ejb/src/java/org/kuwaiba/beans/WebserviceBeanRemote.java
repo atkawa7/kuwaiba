@@ -29,6 +29,7 @@ import org.kuwaiba.ws.todeserialize.StringPair;
 import org.kuwaiba.ws.todeserialize.TransientQuery;
 import org.kuwaiba.ws.toserialize.application.ApplicationLogEntry;
 import org.kuwaiba.ws.toserialize.application.GroupInfo;
+import org.kuwaiba.ws.toserialize.application.RemotePool;
 import org.kuwaiba.ws.toserialize.application.RemoteQuery;
 import org.kuwaiba.ws.toserialize.application.RemoteQueryLight;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
@@ -69,95 +70,26 @@ public interface WebserviceBeanRemote {
 
     // <editor-fold defaultstate="collapsed" desc="Metadata methods. Click on the + sign on the left to edit the code.">
 
-    /**
-     * Creates a new class metadata entry
-     * @param classDefinition
-     * @param ipAddress
-     * @param sessionId
-     * @return
-     * @throws ServerSideException
-     */
     public long createClass(ClassInfo classDefinition, String ipAddress, String sessionId) throws ServerSideException;
-
-    /**
-     * Changes a classmetadata definition
-     * @param newClassDefinition
-     * @param ipAddress
-     * @param sessionId
-     * @throws org.kuwaiba.exceptions.ServerSideException
-     */
 
     public void setClassProperties (ClassInfo newClassDefinition, String ipAddress, String sessionId) throws ServerSideException;
 
-    /**
-     * Deletes a classmetadata, its attributes and category relationships
-     * @param className Class name
-     * @throws ServerSideException If something went wrong
-     */
-
     public void deleteClass(String className, String ipAddress, String sessionId) throws ServerSideException;
 
-    /**
-     * Deletes a classmetadata, its attributes and category relationships
-     */
     public void deleteClass(long classId, String ipAddress, String sessionId) throws ServerSideException;
 
-    /**
-     * Retrieves the simplified list of classes. This list won't include either
-     * those classes marked as dummy
-     * @param includeListTypes boolean to indicate if the list should include
-     * the subclasses of GenericObjectList
-     * @return the list of classes
-     * @throws ServerSideException EntityManagerNotAvailableException or something unexpected
-     */
     public List<ClassInfoLight> getAllClassesLight(boolean includeListTypes, String ipAddress, String sessionId) throws ServerSideException;
-    
-    /**
-     * Gets the subclasses of a given class
-     * @param className Class name
-     * @param includeAbstractClasses should the result include the abstract classes?
-     * @param includeSelf Should the list include the subclasses and the parent class?
-     * @param sessionId Session token
-     * @return The list of subclasses
-     * @throws Exception If the class can not be found
-     */
+
     public List<ClassInfoLight> getSubClassesLight(String className, boolean includeAbstractClasses,
             boolean includeSelf, String ipAddress, String sessionId) throws ServerSideException;
 
-    /**
-     * Gets the subclasses of a given class
-     * @param className Class name
-     * @param includeAbstractClasses should the result include the abstract classes?
-     * @param includeSelf Should the list include the subclasses and the parent class?
-     * @param sessionId Session token
-     * @return The list of subclasses
-     * @throws Exception If the class can not be found
-     */
     public List<ClassInfoLight> getSubClassesLightNoRecursive(String className, 
             boolean includeAbstractClasses, boolean includeSelf, String ipAddress, String sessionId) throws ServerSideException;
     
-    /**
-     * Retrieves all the class metadata except for classes marked as dummy
-     * @param includeListTypes boolean to indicate if the list should include
-     * the subclasses of GenericObjectList
-     * @return An array of classes
-     */
     public List<ClassInfo> getAllClasses(boolean includeListTypes, String ipAddress, String sessionId) throws ServerSideException;
 
-    /**
-     * Gets Metadata For Class id its attributes and Category
-     * @param className
-     * @return A ClassMetadata with the className
-     * @throws ClassNotFoundException there is no class with such className
-     */
     public ClassInfo getClass(String className, String ipAddress, String sessionId) throws ServerSideException;
 
-    /**
-     * Gets the metadata for a class, providing its id
-     * @param classId
-     * @return
-     * @throws Exception
-     */
     public ClassInfo getClass(long classId, String ipAddress, String sessionId) throws ServerSideException;
 
     /**
@@ -512,12 +444,6 @@ public interface WebserviceBeanRemote {
      */
     public RemoteQuery getQuery(long queryOid, String ipAddress, String sessionId) throws ServerSideException;
 
-    /**
-     * Get the whole class hierarchy as an XML document
-     * @param showAll
-     * @return The resulting XML document
-     * @throws ServerSideException
-     */
     public byte[] getClassHierarchy(boolean showAll, String ipAddress, String sessionId) throws ServerSideException;
 
     //Pools
@@ -526,6 +452,8 @@ public interface WebserviceBeanRemote {
     public long createPoolItem(long poolId, String className, String[] attributeNames, String[][] attributeValues, long templateId, String ipAddress, String sessionId) throws ServerSideException;
 
     public void deletePools(long[] ids, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public RemotePool getPool(long poolId, String ipAddress, String sessionId) throws ServerSideException;
     
     public RemoteObjectLight[] getPools(int limit, long parentId, String className, String ipAddress, String sessionId) throws ServerSideException;
     
@@ -606,7 +534,7 @@ public interface WebserviceBeanRemote {
         public RemoteObjectLight[] getSubnetPools(int limit, long parentId, String ipAddress, String sessionId) throws ServerSideException;
         public RemoteObjectLight[] getSubnets(long poolId, int limit, String ipAddress, String sessionId) throws ServerSideException;
         public RemoteObject getSubnet(long id, String ipAddress, String sessionId) throws ServerSideException;
-        public RemoteObject getSubnetPool(long id, String ipAddress, String sessionId) throws ServerSideException;
+        public RemotePool getSubnetPool(long id, String ipAddress, String sessionId) throws ServerSideException;
         public long createSubnetPool(long parentId, String subnetPoolName, 
                 String subnetPoolDescription, int type, String ipAddress, 
                 String sessionId) throws ServerSideException;
@@ -631,4 +559,9 @@ public interface WebserviceBeanRemote {
     public boolean isSubclassOf(String className, String subclassOf, String remoteAddress, String sessionId);
     // </editor-fold>
 
+    public void associateDevicesToContract(String[] deviceClass, long[] deviceId, 
+            String contractClass, long contractId, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public void releaseDeviceFromContract(String deviceClass, long deviceId, long contractId,
+            String ipAddress, String sessionId) throws ServerSideException;
 }

@@ -44,6 +44,7 @@ import org.kuwaiba.apis.persistence.application.ViewObjectLight;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
+import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
@@ -59,6 +60,7 @@ import org.kuwaiba.ws.todeserialize.StringPair;
 import org.kuwaiba.ws.todeserialize.TransientQuery;
 import org.kuwaiba.ws.toserialize.application.ApplicationLogEntry;
 import org.kuwaiba.ws.toserialize.application.GroupInfo;
+import org.kuwaiba.ws.toserialize.application.RemotePool;
 import org.kuwaiba.ws.toserialize.application.RemoteQuery;
 import org.kuwaiba.ws.toserialize.application.RemoteQueryLight;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
@@ -1547,7 +1549,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             long newUserId = aem.createUser(userName, password, firstName, lastName, enabled,  privileges, groups);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
-                    ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, String.format("New User ", userName));
+                    ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, String.format("New User %s", userName));
             
             return newUserId;
         } catch (InventoryException ex) {
@@ -1877,6 +1879,19 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.deletePools(ids);
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), ActivityLogEntry.ACTIVITY_TYPE_DELETE_APPLICATION_OBJECT, 
                     String.format("%s pools deleted", ids.length));
+        } catch (InventoryException ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public RemotePool getPool(long poolId, String ipAddress, String sessionId) throws ServerSideException{
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("getPool", ipAddress, sessionId);
+            return new RemotePool(aem.getPool(poolId));
         } catch (InventoryException ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
@@ -2236,11 +2251,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
     
     @Override
-    public RemoteObject getSubnetPool(long id, String ipAddress, String sessionId) throws ServerSideException{
+    public RemotePool getSubnetPool(long id, String ipAddress, String sessionId) throws ServerSideException{
         try {
             aem.validateCall("getSubnetPool", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            return new RemoteObject(ipamModule.getSubnetPool(id));
+            return ipamModule.getSubnetPool(id);
         } catch (InventoryException ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
@@ -2425,10 +2440,56 @@ public class WebserviceBean implements WebserviceBeanRemote {
         return true;
     }
         // </editor-fold>
+    @Override
+    public void associateDevicesToContract(String[] deviceClass, long[] deviceId, String contractClass, long contractId, 
+            String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        
+        if (deviceClass.length != deviceId.length)
+            throw new ServerSideException("The arrays provided have different lengths");
+        
+        try {
+            aem.validateCall("associateDevicesToContract", ipAddress, sessionId);
+            if (!mem.isSubClass(Constants.CLASS_GENERICCONTRACT, contractClass))
+                throw new ServerSideException(String.format("Class %s is not a contract", contractClass));
+            
+            boolean allEquipmentANetworkElement = true;
+            
+            for (int i = 0; i < deviceId.length; i++) {
+                if (!mem.isSubClass(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, deviceClass[i]))
+                    allEquipmentANetworkElement = false;
+                else
+                    bem.createSpecialRelationship(deviceClass[i], deviceId[i], contractClass, contractId, "contractHas", true);
+            }
+            
+            if (!allEquipmentANetworkElement)
+                throw new InvalidArgumentException("All non-network elements were ignored");
+            
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="Contract Manager">
+    @Override
+    public void releaseDeviceFromContract(String deviceClass, long deviceId, long contractId,
+            String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("releaseDeviceFromContract", ipAddress, sessionId);
+            bem.releaseSpecialRelationship(deviceClass, deviceId, contractId, "contractHas");
+        } catch (InventoryException ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
     // </editor-fold>
-    
+    // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Helper methods. Click on the + sign on the left to edit the code.">
-    protected final void connect(){
+    protected final void connect() {
         try {
             PersistenceService persistenceService = PersistenceService.getInstance();
             mem = persistenceService.getMetadataEntityManager();

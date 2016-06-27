@@ -27,7 +27,6 @@ import javax.jws.WebService;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectList;
 import org.kuwaiba.beans.WebserviceBeanRemote;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.util.Constants;
@@ -39,6 +38,7 @@ import org.kuwaiba.ws.toserialize.application.RemoteQueryLight;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.ws.toserialize.application.ResultRecord;
 import org.kuwaiba.ws.toserialize.application.GroupInfo;
+import org.kuwaiba.ws.toserialize.application.RemotePool;
 import org.kuwaiba.ws.toserialize.application.ReportDescriptor;
 import org.kuwaiba.ws.toserialize.application.UserInfo;
 import org.kuwaiba.ws.toserialize.application.ViewInfo;
@@ -949,6 +949,28 @@ public class KuwaibaService {
     }
     
     /**
+     * Retrieves information about a particular pool
+     * @param poolId The id of the pool
+     * @param sessionId The session token
+     * @return The pool object
+     * @throws Exception In case something goes wrong
+     */
+    @WebMethod(operationName = "getPool")
+    public RemotePool getPool(@WebParam(name = "poolId") long poolId,
+            @WebParam(name = "sessionId") String sessionId) throws Exception{
+        try{
+            return wsBean.getPool(poolId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getPool: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
      * Get a set of pools
      * @param limit Maximum number of pool records to be returned
      * @param className class type for the pools
@@ -1431,6 +1453,31 @@ public class KuwaibaService {
                 throw e;
             else {
                 System.out.println("[KUWAIBA] An unexpected error occurred in createSpecialObject: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Delete a set of objects. Note that this method must be used only for business objects (not metadata or application ones)
+     * @param className Objects class names
+     * @param oid object id from the objects to be deleted
+     * @param releaseRelationships Should the deletion be forced, deleting all the relationships?
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "deleteObject")
+    public void deleteObject(@WebParam(name = "className")String className,
+            @WebParam(name = "oid")long oid,
+            @WebParam(name = "releaseRelationships") boolean releaseRelationships,
+            @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try{
+            wsBean.deleteObject(className,oid, releaseRelationships, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteObjects: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
@@ -3359,18 +3406,18 @@ public class KuwaibaService {
     
     /**
       * Gets the complete information about a given subnet pool (all its attributes)
-      * @param id Subnet pool id
+      * @param subnetPoolId Subnet pool id
       * @param sessionId Session token
       * @return a representation of the entity as a RemoteObject
       * @throws Exception Generic exception encapsulating any possible error raised at runtime
       */
     @WebMethod(operationName = "getSubnetPool")
-    public RemoteObject getSubnetPool(
-            @WebParam(name = "id") long id,
+    public RemotePool getSubnetPool(
+            @WebParam(name = "subnetPoolId") long subnetPoolId,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
 
         try{
-            return wsBean.getSubnetPool(id, getIPAddress(), sessionId);
+            return wsBean.getSubnetPool(subnetPoolId, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -3579,6 +3626,54 @@ public class KuwaibaService {
         }
     }
         //</editor-fold>
+    
+        // <editor-fold defaultstate="collapsed" desc="Contract Manager">
+    /**
+     * Associates a list of devices (instances of a subclass of GenericCommunicationsElement) to an existing contract (most probably a support contract)
+     * @param deviceClass Device class
+     * @param deviceId Device id
+     * @param contractClass contract class
+     * @param contractId contract id
+     * @param sessionId Session token
+     * @throws Exception In case something goes wrong. A server side exception is a managed error, while a RunTimeException is something unexpected
+     */
+    @WebMethod(operationName = "associateDevicesToContract")
+    public void associateDevicesToContract (
+            @WebParam(name = "deviceClass")String[] deviceClass,
+            @WebParam(name = "deviceId")long[] deviceId,
+            @WebParam(name = "contractClass")String contractClass,
+            @WebParam(name = "contractId")long contractId,
+            @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try{
+            wsBean.associateDevicesToContract(deviceClass, deviceId, contractClass, contractId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in associateDevicesToContract: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }    
+    
+    @WebMethod(operationName = "releaseDeviceFromContract")
+    public void releaseDeviceFromContract (
+            @WebParam(name = "deviceClass")String deviceClass,
+            @WebParam(name = "deviceId")long deviceId,
+            @WebParam(name = "contractId")long contractId,
+            @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try{
+            wsBean.releaseDeviceFromContract(deviceClass, deviceId, contractId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in releaseDeviceFromContract: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }    
+        // </editor-fold>
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Helpers. Click on the + sign on the left to edit the code.">/**

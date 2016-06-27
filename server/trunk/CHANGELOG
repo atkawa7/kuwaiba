@@ -94,3 +94,6 @@
 * JSF 2.2 is used now to support the administration console
 * Added isSubclassOf method to the web service API
 * Open session, close session, create user, delete users methods have now audit trail entries
+* The general views are no longer referenced by type (an integer), but by class name (it's more intuitive to know how to retrieved them)
+* The way the exceptions are raised and caught changed. It's all handled at webservice level
+* Added preliminary support for commercial modules
