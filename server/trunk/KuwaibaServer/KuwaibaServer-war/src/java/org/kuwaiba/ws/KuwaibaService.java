@@ -995,6 +995,31 @@ public class KuwaibaService {
     }
     
     /**
+     * Update pool name and description
+     * @param poolId Pool Id
+     * @param name Pool name
+     * @param description Pool description
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "setPoolProperties")
+    public void setPoolProperties(@WebParam(name = "poolId") long poolId, 
+            @WebParam(name = "name") String name, 
+            @WebParam(name = "description") String description, 
+            @WebParam(name = "sessionId") String sessionId) throws Exception {
+        try {
+            wsBean.setPoolProperties(poolId, name, description, getIPAddress(), sessionId);
+        } catch (Exception e) {
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in setPoolProperties: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
      * Get the objects contained into a pool
      * @param poolId Parent pool id
      * @param limit limit of results. -1 to return all
