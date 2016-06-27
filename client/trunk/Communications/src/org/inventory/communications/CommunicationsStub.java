@@ -57,6 +57,7 @@ import org.kuwaiba.wsclient.RemoteObject;
 import org.kuwaiba.wsclient.RemoteObjectLight;
 import org.kuwaiba.wsclient.RemoteObjectLightArray;
 import org.kuwaiba.wsclient.RemoteObjectSpecialRelationships;
+import org.kuwaiba.wsclient.RemotePool;
 import org.kuwaiba.wsclient.RemoteQueryLight;
 import org.kuwaiba.wsclient.ReportDescriptor;
 import org.kuwaiba.wsclient.ResultRecord;
@@ -318,12 +319,12 @@ public class CommunicationsStub {
         }
     }
     
-    public LocalObjectLight[] getParents(String objectClass, long objectId) {
-        try{
-            List<RemoteObjectLight> values = service.getParents(objectClass, objectId, session.getSessionId());
-            LocalObjectLight[] res = new LocalObjectLight[values.size()];
-            for (int i = 0; i < values.size(); i++)
-                res[i]= new LocalObjectLight(values.get(i).getOid(), values.get(i).getName(), values.get(i).getClassName());
+    public List<LocalObjectLight> getParents(String objectClass, long objectId) {
+        try {
+            List<RemoteObjectLight> parents = service.getParents(objectClass, objectId, session.getSessionId());
+            List<LocalObjectLight> res = new ArrayList<>();
+            for (RemoteObjectLight aParent : parents)
+                res.add(new LocalObjectLight(aParent.getOid(), aParent.getName(), aParent.getClassName()));
 
             return res;
         }catch(Exception ex){
@@ -1001,13 +1002,29 @@ public class CommunicationsStub {
     }
 
     /**
-     * Deletes the given object
+     * Deletes a single object
+     * @param className Object class
+     * @param oid Object Id
+     * @return  True if the operation was successful, an exception if not
+     */
+    public boolean deleteObject(String className, long oid){
+        try {
+            service.deleteObject(className, oid, false, this.session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Deletes a set of objects
      * @param classNames Object classes
      * @param oids object ids
      * @return Success or failure
      */
     public boolean deleteObjects(List<String> classNames, List<Long> oids){
-        try{
+        try {
             service.deleteObjects(classNames, oids, false, this.session.getSessionId());
             return true;
         }catch(Exception ex){
@@ -1924,7 +1941,7 @@ public class CommunicationsStub {
     public LocalPool createPool(long parentId, String name, String description, String className){
         try{
             long objectId  = service.createPool(parentId, name, description, className,session.getSessionId());
-            return new LocalPool(objectId, name, className, null);
+            return new LocalPool(objectId, name, className, null, 0);
         }catch(Exception ex){
             this.error =  ex.getMessage();
             return null;
@@ -1991,7 +2008,7 @@ public class CommunicationsStub {
                 HashMap<String, Integer> validators = new HashMap<>();
                 for (Validator validator : rol.getValidators())
                     validators.put(validator.getLabel(), validator.getValue());
-                res.add(new LocalPool(rol.getOid(), rol.getName(), rol.getClassName(), null));
+                res.add(new LocalPool(rol.getOid(), rol.getName(), rol.getClassName(), null, 0));
             }
             return res;
         }catch(Exception ex){
@@ -2014,7 +2031,7 @@ public class CommunicationsStub {
                 HashMap<String, Integer> validators = new HashMap<>();
                 for (Validator validator : rol.getValidators())
                     validators.put(validator.getLabel(), validator.getValue());
-                res.add(new LocalPool(rol.getOid(), rol.getName(), rol.getClassName(), null));
+                res.add(new LocalPool(rol.getOid(), rol.getName(), rol.getClassName(), null, 0));
             }
             return res;
         }catch(Exception ex){
@@ -2104,6 +2121,7 @@ public class CommunicationsStub {
     // </editor-fold>    
     
     // <editor-fold defaultstate="collapsed" desc="Commercial Modules">
+        //<editor-fold defaultstate="collapsed" desc="SDH Module">
     public LocalObjectLight createSDHTransportLink(LocalObjectLight endpointA, LocalObjectLight endpointB, String transportLinkType, String defaultName){
         
         try { 
@@ -2238,8 +2256,8 @@ public class CommunicationsStub {
             return null;
         }
     }
-    
-    
+        // </editor-fold>
+        // <editor-fold defaultstate="collapsed" desc="IPAM Module">
     public List<LocalObjectLight> getSubnetPools(long parentId){
         try{
             List <RemoteObjectLight> poolRoots = service.getSubnetPools(-1, parentId, this.session.getSessionId());
@@ -2258,15 +2276,11 @@ public class CommunicationsStub {
         }
     }
     
-    public LocalObject getSubnetPool(long id){
-        try{
-            LocalClassMetadata lcmd = getMetaForClass(Constants.CLASS_SUBNET, false);
-            RemoteObject subnetPool = service.getSubnetPool(id,this.session.getSessionId());
-            List<List<String>> values = new ArrayList<>();
-            for (StringArray value : subnetPool.getValues())
-                values.add(value.getItem());
-            return new LocalObject(subnetPool.getClassName(), subnetPool.getOid(), 
-                    subnetPool.getAttributes(), values,lcmd);
+    public LocalPool getSubnetPool(long id){
+        try {
+            RemotePool subnetPool = service.getSubnetPool(id, this.session.getSessionId());
+            return new LocalPool(subnetPool.getId(), subnetPool.getName(), subnetPool.getClassName(), 
+                    subnetPool.getDescription(), subnetPool.getType());
         }catch(Exception ex){
             this.error = ex.getMessage();
             return null;
@@ -2482,5 +2496,23 @@ public class CommunicationsStub {
     public boolean itOverlaps(String networkIp, String broadcastIp){
         return false;
     }
+        // </editor-fold>
+    
+        // <editor-fold defaultstate="collapsed" desc="Contract manager">
+    public boolean associateDevicesToContract(String[] objectsClass, Long[] objectsId, String contractClass, long contractId) {
+        try {
+            List<String> objectsClassList = new ArrayList<>();
+            List<Long> objectsIdList = new ArrayList<>();
+            objectsClassList.addAll(Arrays.asList(objectsClass));
+            objectsIdList.addAll(Arrays.asList(objectsId));
+            service.associateDevicesToContract(objectsClassList, objectsIdList, contractClass, contractId, session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return false;
+        }
+    }
+        // </editor-fold>
     // </editor-fold>
+
 }

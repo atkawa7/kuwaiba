@@ -34,7 +34,7 @@ import org.openide.util.actions.Presenter;
  * Creates a new element in a pool
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class NewPoolItemAction extends AbstractAction implements Presenter.Popup{
+public class NewPoolItemAction extends AbstractAction implements Presenter.Popup {
     private PoolNode poolNode;
     private CommunicationsStub com;
 

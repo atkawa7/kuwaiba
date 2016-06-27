@@ -39,11 +39,11 @@ public class ContractManagerActionFactory {
     /**
      * Singleton for the delete a contract action
      */
-//    private static DeleteContractAction deleteContractAction;
+    private static DeleteContractAction deleteContractAction;
     /**
      * Singleton for the delete a contract pool action
      */
-//    private static DeleteContractPoolAction deleteContractPoolAction;
+    private static DeleteContractPoolAction deleteContractPoolAction;
     
     
     public static CreateContractAction getCreateContractAction() {
@@ -60,20 +60,20 @@ public class ContractManagerActionFactory {
         return createContractPoolAction;
     }
     
-//    public static DeleteContractAction getDeleteContractAction() {
-//        if (deleteContractAction == null)
-//            deleteContractAction = new DeleteContractAction();
-//        
-//        return deleteContractAction;
-//    }
-//    
-//    public static DeleteContractPoolAction getDeleteContractPoolAction() {
-//        if (deleteContractPoolAction == null)
-//            deleteContractPoolAction = new DeleteContractPoolAction();
-//        
-//        return deleteContractPoolAction;
-//    }
-//    
+    public static DeleteContractAction getDeleteContractAction() {
+        if (deleteContractAction == null)
+            deleteContractAction = new DeleteContractAction();
+        
+        return deleteContractAction;
+    }
+    
+    public static DeleteContractPoolAction getDeleteContractPoolAction() {
+        if (deleteContractPoolAction == null)
+            deleteContractPoolAction = new DeleteContractPoolAction();
+        
+        return deleteContractPoolAction;
+    }
+    
 //    public static RelateContractToEquipmentAction getRelateContractToEquipmentAction() {
 //        if (relateContractToEquipmentAction == null)
 //            relateContractToEquipmentAction = new RelateContractToEquipmentAction();

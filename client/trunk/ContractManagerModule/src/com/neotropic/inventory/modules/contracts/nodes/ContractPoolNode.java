@@ -15,8 +15,11 @@
  */
 package com.neotropic.inventory.modules.contracts.nodes;
 
+import com.neotropic.inventory.modules.contracts.nodes.actions.ContractManagerActionFactory;
+import java.awt.Image;
 import java.util.Collections;
 import java.util.List;
+import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPool;
@@ -24,6 +27,7 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.pools.PoolNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
+import org.openide.util.ImageUtilities;
 
 /**
  * Represents a contract pool
@@ -31,9 +35,27 @@ import org.openide.nodes.Node;
  */
 public class ContractPoolNode extends PoolNode {
 
+    private Image icon = ImageUtilities.loadImage("com/neotropic/inventory/modules/contracts/res/contractPool.png");
+    
     public ContractPoolNode(LocalPool pool) {
         super(pool);
         setChildren(new ContractPoolChildren());
+    }
+    
+    @Override
+    public Action[] getActions(boolean context) {
+        return new Action[] { ContractManagerActionFactory.getCreateContractAction(), 
+                                ContractManagerActionFactory.getDeleteContractPoolAction()};
+    }
+    
+    @Override
+    public Image getIcon(int i){
+        return icon;
+    }
+    
+    @Override
+    public Image getOpenedIcon(int i){
+        return getIcon(i);
     }
     
     public static class ContractPoolChildren extends Children.Keys<LocalObjectLight> {

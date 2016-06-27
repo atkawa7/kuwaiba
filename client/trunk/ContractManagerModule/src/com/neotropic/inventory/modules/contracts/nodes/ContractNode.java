@@ -22,9 +22,9 @@ import java.util.List;
 import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 
@@ -41,7 +41,13 @@ public class ContractNode extends ObjectNode {
 
     @Override
     public Action[] getActions(boolean context) {
-        return new Action[] { };
+        if (showObjectIdAction == null) 
+            showObjectIdAction = new ShowObjectIdAction(getObject().getOid(), getObject().getClassName());
+
+        return new Action[] { ContractManagerActionFactory.getDeleteContractAction(), 
+                                null, 
+                                showObjectIdAction
+                            };
     }
     
     public static class ContractChildren extends Children.Keys<LocalObjectLight> {

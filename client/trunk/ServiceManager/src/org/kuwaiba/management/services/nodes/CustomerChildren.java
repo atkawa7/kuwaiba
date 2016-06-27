@@ -43,7 +43,7 @@ public class CustomerChildren extends Children.Keys<LocalPool> {
     
     @Override
     protected Node[] createNodes(LocalPool key) {
-        return new Node[] { new ServicePoolNode(new LocalPool(key.getOid(), key.getName(), key.getClassName(), null))};
+        return new Node[] { new ServicePoolNode(new LocalPool(key.getOid(), key.getName(), key.getClassName(), null, -1))};
   
     }
 

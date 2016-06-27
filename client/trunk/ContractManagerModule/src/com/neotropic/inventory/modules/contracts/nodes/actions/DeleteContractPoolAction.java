@@ -15,7 +15,7 @@
  */
 package com.neotropic.inventory.modules.contracts.nodes.actions;
 
-import com.neotropic.inventory.modules.contracts.nodes.ContractNode;
+import com.neotropic.inventory.modules.contracts.nodes.ContractManagerRootNode;
 import com.neotropic.inventory.modules.contracts.nodes.ContractPoolNode;
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
@@ -25,27 +25,27 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.util.Utilities;
 
 /**
- * Deletes a contract
+ * Deletes a contract pool
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class DeleteContractAction extends AbstractAction {
+public class DeleteContractPoolAction extends AbstractAction {
 
-    public DeleteContractAction() {
-        putValue(NAME, "Delete Contract");
+    public DeleteContractPoolAction() {
+        putValue(NAME, "Delete Contract Pool");
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        Iterator<? extends ContractNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ContractNode.class).allInstances().iterator();
+        Iterator<? extends ContractPoolNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ContractPoolNode.class).allInstances().iterator();
             
         if (!selectedNodes.hasNext())
             return;
     
-        ContractNode selectedNode = selectedNodes.next();
+        ContractPoolNode selectedNode = selectedNodes.next();
         
-        if (CommunicationsStub.getInstance().deleteObject(selectedNode.getObject().getClassName(), selectedNode.getObject().getOid())) {
-            NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "The selected contract was deleted");
-            ((ContractPoolNode.ContractPoolChildren)selectedNode.getParentNode().getChildren()).addNotify();
+        if (CommunicationsStub.getInstance().deletePool(selectedNode.getPool().getOid())) {
+            NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "The selected pool was deleted");
+            ((ContractManagerRootNode.ContractManagerRootChildren)selectedNode.getParentNode().getChildren()).addNotify();
         }
         else
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE, CommunicationsStub.getInstance().getError());

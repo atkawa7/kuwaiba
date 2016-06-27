@@ -16,6 +16,7 @@
 package org.inventory.navigation.applicationnodes.objectnodes.actions;
 
 import java.awt.event.ActionEvent;
+import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.JTextPane;
@@ -38,7 +39,7 @@ public final class ShowObjectIdAction extends AbstractAction{
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        LocalObjectLight[] parents = CommunicationsStub.getInstance().getParents(className, id);
+        List<LocalObjectLight> parents = CommunicationsStub.getInstance().getParents(className, id);
         String msg = "";
         if (parents != null){
             for (LocalObjectLight parent : parents)

@@ -27,7 +27,6 @@ import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
 import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter;
 
@@ -57,7 +56,7 @@ public class CreateContractAction extends AbstractAction implements Presenter.Po
         if (newPoolItem == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else {       
-            ((ObjectChildren)selectedNode.getChildren()).addNotify();
+            ((ContractPoolNode.ContractPoolChildren)selectedNode.getChildren()).addNotify();
             NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Contract created");
         }
     }    

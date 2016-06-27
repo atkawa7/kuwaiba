@@ -20,7 +20,6 @@ import java.awt.event.ActionEvent;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.AbstractAction;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -62,19 +61,14 @@ public class CreateContractPoolAction extends AbstractAction {
                     
             JTextField txtPoolDescription = new JTextField();
             txtPoolDescription.setName("txtPoolDescription");
-            
-            JComboBox<LocalClassMetadataLight> cmbPossibleContractClasses = 
-                    new JComboBox<LocalClassMetadataLight>(possibleContractClasses.toArray(new LocalClassMetadataLight[0]));
-            
-            cmbPossibleContractClasses.setName("cmbPossibleContractClasses");
-            
-            JComplexDialogPanel pnlPoolProperties = new JComplexDialogPanel(new String[] { "Pool Name", "Pool Description", "Type of Contract" }, 
-                    new JComponent[] { txtPoolName, txtPoolDescription, cmbPossibleContractClasses });
+                       
+            JComplexDialogPanel pnlPoolProperties = new JComplexDialogPanel(new String[] { "Pool Name", "Pool Description" }, 
+                    new JComponent[] { txtPoolName, txtPoolDescription });
             
             if (JOptionPane.showConfirmDialog(null, pnlPoolProperties, "New Contract Pool", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
                 LocalPool newPool = com.createPool(-1, ((JTextField)pnlPoolProperties.getComponent("txtPoolName")).getText(), 
-                                        ((JTextField)pnlPoolProperties.getComponent("txtPooldecription")).getText(), 
-                                        ((LocalClassMetadataLight)((JComboBox)pnlPoolProperties.getComponent("cmbPossibleContractClasses")).getSelectedItem()).getClassName());
+                                        ((JTextField)pnlPoolProperties.getComponent("txtPoolDescription")).getText(), 
+                                        Constants.CLASS_GENERICCONTRACT);
                 
                 if (newPool == null)
                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());

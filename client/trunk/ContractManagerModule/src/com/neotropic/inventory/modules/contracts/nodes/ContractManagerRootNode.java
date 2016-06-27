@@ -16,6 +16,7 @@
 package com.neotropic.inventory.modules.contracts.nodes;
 
 import com.neotropic.inventory.modules.contracts.nodes.actions.ContractManagerActionFactory;
+import java.awt.Image;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.Action;
@@ -26,15 +27,19 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
+import org.openide.util.ImageUtilities;
 
 /**
  * Represents the root node of the tree in the COntract manager module
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ContractManagerRootNode extends AbstractNode {
-
+    
+    private Image icon = ImageUtilities.loadImage("com/neotropic/inventory/modules/contracts/res/root.png");
+    
     public ContractManagerRootNode(ContractManagerRootChildren children) {
         super(children);
+        setDisplayName("Contract Manager");
     }
 
     @Override
@@ -42,7 +47,15 @@ public class ContractManagerRootNode extends AbstractNode {
         return new Action[] { ContractManagerActionFactory.getCreateContractPoolAction() };
     }
     
+    @Override
+    public Image getIcon(int i){
+        return icon;
+    }
     
+    @Override
+    public Image getOpenedIcon(int i){
+        return getIcon(i);
+    }
     
     public static class ContractManagerRootChildren extends Children.Keys<LocalPool> {
 

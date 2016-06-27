@@ -30,12 +30,14 @@ public class LocalPool extends LocalObjectLight {
      * Pool description
      */
     private String description;
+    private int type;
 
-    public LocalPool(long oid, String name, String className, String description) {
+    public LocalPool(long oid, String name, String className, String description, int type) {
         this.oid = oid;
         this.name = name;
         this.className = className;
         this.description = description;
+        this.type = type;
         DATA_FLAVOR = POOL_DATA_FLAVOR;
     }
 
@@ -47,6 +49,14 @@ public class LocalPool extends LocalObjectLight {
         this.description = description;
     }
 
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+    
     public int compareTo(LocalPool o) {
         return getName().compareTo(o.getName());
     }

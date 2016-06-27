@@ -25,6 +25,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalPool;
+import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.kuwaiba.management.services.nodes.ServiceManagerRootNode;
@@ -73,7 +74,7 @@ public class CreateCustomerPoolAction extends AbstractAction {
                 JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION){
         
                     LocalPool newPool = com.createPool(-1, ((JTextField)pnlMyDialog.getComponent("txtName")).getText(), 
-                            ((JTextField)pnlMyDialog.getComponent("txtDescription")).getText(), "GenericCustomer");
+                            ((JTextField)pnlMyDialog.getComponent("txtDescription")).getText(), Constants.CLASS_GENERICCUSTOMER);
                     
                     if (newPool ==  null)
                         NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());

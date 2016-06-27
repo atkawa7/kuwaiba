@@ -38,7 +38,7 @@ public class ServiceManagerRootNode extends AbstractNode {
   
     public ServiceManagerRootNode(ServiceManagerRootChildren children) {
         super(children);
-        setDisplayName("Service Manager Root");
+        setDisplayName("Service Manager");
     }
 
     @Override

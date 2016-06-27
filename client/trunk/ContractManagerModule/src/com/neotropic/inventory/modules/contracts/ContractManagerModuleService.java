@@ -22,7 +22,7 @@ import org.inventory.communications.core.LocalPool;
  * Contact Manager Module service
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ContactManagerModuleService {
+public class ContractManagerModuleService {
     public List<LocalPool> getContractPools() {
         return null;
     }
