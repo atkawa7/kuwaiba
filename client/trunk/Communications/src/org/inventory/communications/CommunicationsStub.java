@@ -261,6 +261,7 @@ public class CommunicationsStub {
      * Updates the attributes of a given object
      * @param obj is the object to be updated. Note that this object doesn't have
      *            every field within the "original". it only has the field(s) to be updated
+     * @return 
      */
     public boolean saveObject(LocalObject obj){
 
@@ -1968,6 +1969,35 @@ public class CommunicationsStub {
         }
     }
     
+    public boolean setPoolProperties(long poolId, String name, String description) {
+        try {
+            service.setPoolProperties(poolId, name, description, this.session.getSessionId());
+            return true;
+        } catch(Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    /**
+     * Retrieves the whole pool info
+     * @param oid
+     * @return The local representation of the pool
+     */
+    public LocalPool getPoolInfo(long oid) {
+        try {
+            RemotePool remotePool = service.getPool(oid, this.session.getSessionId());
+            
+            LocalPool localPool = new LocalPool(oid, remotePool.getName(), 
+                    remotePool.getClassName(), 
+                    remotePool.getDescription(), 
+                    remotePool.getType());
+            
+            return localPool;
+        } catch(Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
     /**
      * Retrieves the items inside a pool
      *
