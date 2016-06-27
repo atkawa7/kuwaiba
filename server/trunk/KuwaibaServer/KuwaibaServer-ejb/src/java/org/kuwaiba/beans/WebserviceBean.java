@@ -42,6 +42,7 @@ import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.application.ViewObject;
 import org.kuwaiba.apis.persistence.application.ViewObjectLight;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
@@ -1879,6 +1880,19 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.deletePools(ids);
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), ActivityLogEntry.ACTIVITY_TYPE_DELETE_APPLICATION_OBJECT, 
                     String.format("%s pools deleted", ids.length));
+        } catch (InventoryException ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void setPoolProperties(long poolId, String name, String description, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("getObject", ipAddress, sessionId);
+            aem.setPoolProperties(poolId, name, description);
         } catch (InventoryException ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());

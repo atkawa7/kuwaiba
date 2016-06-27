@@ -453,6 +453,25 @@ public interface WebserviceBeanRemote {
 
     public void deletePools(long[] ids, String ipAddress, String sessionId) throws ServerSideException;
     
+    /**
+     * Update Pool
+     * @param poolId
+     * @param name
+     * @param description
+     * @param ipAddress
+     * @param sessionId
+     * @throws ServerSideException 
+     */
+    public void setPoolProperties(long poolId, String name, String description, String ipAddress, String sessionId) throws ServerSideException;
+    
+    /**
+     * Gets a pool by  its id 
+     * @param poolId
+     * @param ipAddress
+     * @param sessionId
+     * @return remote pool object
+     * @throws ServerSideException 
+     */
     public RemotePool getPool(long poolId, String ipAddress, String sessionId) throws ServerSideException;
     
     public RemoteObjectLight[] getPools(int limit, long parentId, String className, String ipAddress, String sessionId) throws ServerSideException;

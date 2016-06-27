@@ -420,7 +420,7 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException If instancesOfClass is not a valid subclass of InventoryObject
      * @throws InvalidArgumentException If the owner doesn't exist
      * @throws ObjectNotFoundException If the parent can not be found
-     * @throws org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException If the user is not authorized to create pools
+     * @throws NotAuthorizedException If the user is not authorized to create pools
      */
     public long createPool(long parentId, String name, String description, String instancesOfClass, int type) 
             throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException, NotAuthorizedException;
@@ -429,11 +429,19 @@ public interface ApplicationEntityManager {
      * Deletes a set of pools
      * @param ids the list of ids from the objects to be deleted
      * @throws InvalidArgumentException If any of the pools to be deleted couldn't be found
-     * @throws org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException If any of the objects in the pool can not be deleted because it's not a business related instance (it's more a security restriction)
-     * @throws org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException If the user is not authorized to delete pools
+     * @throws OperationNotPermittedException If any of the objects in the pool can not be deleted because it's not a business related instance (it's more a security restriction)
+     * @throws NotAuthorizedException If the user is not authorized to delete pools
      */
     public void deletePools(long[] ids) throws InvalidArgumentException, OperationNotPermittedException, NotAuthorizedException;
    
+    /**
+     * Updates a pool. The class name field is read only to preserve the integrity of the pool. Same happens to the field type
+     * @param poolId Pool Id
+     * @param name Pool name. If null, this field will remain unchanged
+     * @param description Pool description. If null, this field will remain unchanged
+     */
+    public void setPoolProperties(long poolId, String name, String description);
+    
     /**
      * Gets the available pools for a specific parent id
      * @param limit
@@ -449,14 +457,14 @@ public interface ApplicationEntityManager {
      * @param limit Maximum number of pool records to be returned. -1 to return all
      * @param className
      * @return The list of pools as RemoteBusinessObjectLight instances
-     * @throws org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException
+     * @throws NotAuthorizedException
      */
     public List<RemoteBusinessObjectLight> getPools(int limit, String className) throws NotAuthorizedException;
     
     /**
      * Gets a pool by its id 
-     * @param poolId pool's id
-     * @return the pool as a RemoteBusinessObject
+     * @param poolId The pool's id
+     * @return the pool as a Pool object
      * @throws ApplicationObjectNotFoundException If the pool could not be found
      * @throws NotAuthorizedException If the user is not authorized to retrieve a pool's info
      */

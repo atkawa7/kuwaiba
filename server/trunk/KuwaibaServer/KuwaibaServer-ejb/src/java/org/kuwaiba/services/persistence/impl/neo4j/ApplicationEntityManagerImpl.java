@@ -1306,7 +1306,19 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             tx.success();
         }
     }
-
+    
+    @Override
+    public void setPoolProperties(long poolId, String name, String description) {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node poolNode = poolsIndex.get(Constants.PROPERTY_ID, poolId).getSingle();
+            if(name != null)
+                poolNode.setProperty(Constants.PROPERTY_NAME, name);
+            if(description != null)
+                poolNode.setProperty(Constants.PROPERTY_DESCRIPTION, description);
+            tx.success();
+        }
+    }
+    
     @Override
     public List<RemoteBusinessObjectLight> getPools(int limit, long parentId, String className) 
             throws NotAuthorizedException, ObjectNotFoundException
@@ -1414,13 +1426,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     @Override
     public Pool getPool(long poolId) throws NotAuthorizedException, ApplicationObjectNotFoundException {
-        try(Transaction tx = graphDb.beginTx()) 
-        {
+        try (Transaction tx = graphDb.beginTx()) {
             Node poolNode = poolsIndex.get(Constants.PROPERTY_ID, poolId).getSingle();
             
-            if(poolNode != null) {
-                
-                HashMap<String, List<String>> attributes = new HashMap<>();
+            if (poolNode != null) {                
                 
                 String name = poolNode.hasProperty(Constants.PROPERTY_NAME) ? 
                                     (String)poolNode.getProperty(Constants.PROPERTY_NAME) : null;
