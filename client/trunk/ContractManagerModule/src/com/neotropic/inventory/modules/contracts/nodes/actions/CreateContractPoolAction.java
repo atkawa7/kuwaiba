@@ -58,10 +58,12 @@ public class CreateContractPoolAction extends AbstractAction {
         else {       
             JTextField txtPoolName = new JTextField();
             txtPoolName.setName("txtPoolName");
+            txtPoolName.setColumns(10);
                     
             JTextField txtPoolDescription = new JTextField();
             txtPoolDescription.setName("txtPoolDescription");
-                       
+            txtPoolDescription.setColumns(10);
+            
             JComplexDialogPanel pnlPoolProperties = new JComplexDialogPanel(new String[] { "Pool Name", "Pool Description" }, 
                     new JComponent[] { txtPoolName, txtPoolDescription });
             

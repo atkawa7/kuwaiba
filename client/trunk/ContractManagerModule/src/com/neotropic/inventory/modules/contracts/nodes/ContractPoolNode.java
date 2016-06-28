@@ -24,6 +24,7 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPool;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.ExecuteClassReportAction;
 import org.inventory.navigation.applicationnodes.pools.PoolNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
@@ -45,7 +46,14 @@ public class ContractPoolNode extends PoolNode {
     @Override
     public Action[] getActions(boolean context) {
         return new Action[] { ContractManagerActionFactory.getCreateContractAction(), 
-                                ContractManagerActionFactory.getDeleteContractPoolAction()};
+                              ExecuteClassReportAction.ExecutePoolReportAction.createExecutePoolReportAction(),
+                                ContractManagerActionFactory.getDeleteContractPoolAction(),
+                            };
+    }
+    
+    @Override
+    public String getDisplayName() {
+        return getPool().getName() + " [Contract Pool]";
     }
     
     @Override

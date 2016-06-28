@@ -29,14 +29,6 @@ public class ContractManagerActionFactory {
      */
     private static CreateContractPoolAction createContractPoolAction;
     /**
-     * Singleton for the relate contract to equipment action
-     */
-//    private static RelateContractToEquipmentAction relateContractToEquipmentAction;
-    /**
-     * Singleton for the release contract from equipment action
-     */
-//    private static ReleaseContractFromEquipmentAction releaseContractFromEquipmentAction;
-    /**
      * Singleton for the delete a contract action
      */
     private static DeleteContractAction deleteContractAction;
@@ -73,18 +65,4 @@ public class ContractManagerActionFactory {
         
         return deleteContractPoolAction;
     }
-    
-//    public static RelateContractToEquipmentAction getRelateContractToEquipmentAction() {
-//        if (relateContractToEquipmentAction == null)
-//            relateContractToEquipmentAction = new RelateContractToEquipmentAction();
-//        
-//        return relateContractToEquipmentAction;
-//    }
-//    
-//    public static ReleaseContractFromEquipmentAction getReleaseContractFromEquipmentAction() {
-//        if (releaseContractFromEquipmentAction == null)
-//            releaseContractFromEquipmentAction = new ReleaseContractFromEquipmentAction();
-//        
-//        return releaseContractFromEquipmentAction;
-//    }
 }

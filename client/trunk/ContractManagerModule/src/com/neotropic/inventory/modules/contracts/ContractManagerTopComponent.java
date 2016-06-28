@@ -16,12 +16,14 @@
 package com.neotropic.inventory.modules.contracts;
 
 import com.neotropic.inventory.modules.contracts.nodes.ContractManagerRootNode;
+import org.inventory.core.services.api.behaviors.Refreshable;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
+import org.openide.nodes.Node;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 
@@ -46,10 +48,10 @@ import org.openide.util.NbBundle.Messages;
 )
 @Messages({
     "CTL_ContractManagerAction=ContractManager",
-    "CTL_ContractManagerTopComponent=ContractManager Window",
-    "HINT_ContractManagerTopComponent=This is a ContractManager window"
+    "CTL_ContractManagerTopComponent=Contract Manager",
+    "HINT_ContractManagerTopComponent=Contract Manager"
 })
-public final class ContractManagerTopComponent extends TopComponent implements ExplorerManager.Provider {
+public final class ContractManagerTopComponent extends TopComponent implements ExplorerManager.Provider, Refreshable {
     
     private BeanTreeView treeMain;
     private ExplorerManager em;
@@ -67,7 +69,6 @@ public final class ContractManagerTopComponent extends TopComponent implements E
         treeMain = new BeanTreeView();
         pnlScrollMain.setViewportView(treeMain);
         associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
-        em.setRootContext(new ContractManagerRootNode(new ContractManagerRootNode.ContractManagerRootChildren()));
     }
 
     /**
@@ -89,12 +90,12 @@ public final class ContractManagerTopComponent extends TopComponent implements E
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
-        // TODO add custom code on component opening
+        em.setRootContext(new ContractManagerRootNode(new ContractManagerRootNode.ContractManagerRootChildren()));
     }
 
     @Override
     public void componentClosed() {
-        // TODO add custom code on component closing
+        em.setRootContext(Node.EMPTY);
     }
 
     void writeProperties(java.util.Properties p) {
@@ -112,5 +113,11 @@ public final class ContractManagerTopComponent extends TopComponent implements E
     @Override
     public ExplorerManager getExplorerManager() {
         return em;
+    }
+
+    @Override
+    public void refresh() {
+        componentClosed();
+        componentOpened();
     }
 }

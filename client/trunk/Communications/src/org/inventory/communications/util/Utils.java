@@ -33,6 +33,8 @@ import java.util.Collection;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
+import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
 
 /**
@@ -341,5 +343,20 @@ public class Utils {
         if (globalFileChooser == null)
             globalFileChooser = new JFileChooser();
         return globalFileChooser;
+    }
+    
+    /**
+     * This is a utility method that sets an object's property. This is used mainly by property sheets
+     * @param className Object class
+     * @param objectId Object Id
+     * @param propertyName Name of the property to be set
+     * @param propertyValue Value of the property to be set
+     * @throws Exception The same exception capture in the CommunicationsStub
+     */
+    public static void updateObject(String className, long objectId, String propertyName, Object propertyValue) throws Exception {
+        LocalObject theUpdate = new LocalObject(className, objectId, new String [] { propertyName }, new Object [] { propertyValue });
+        
+        if(!CommunicationsStub.getInstance().saveObject(theUpdate))
+            throw new Exception(CommunicationsStub.getInstance().getError());
     }
 }

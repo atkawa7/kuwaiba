@@ -148,8 +148,8 @@ public final class NavigationTreeTopComponent extends TopComponent
         setRoot();
         ExplorerUtils.activateActions(em, true);
         TopComponent propertiesWindow = WindowManager.getDefault().findTopComponent("properties");
-        Mode navigator = WindowManager.getDefault().findMode("navigator"); //NOI18N
         if (!propertiesWindow.isOpened()){
+            Mode navigator = WindowManager.getDefault().findMode("navigator"); //NOI18N
             propertiesWindow.open();
             navigator.dockInto(propertiesWindow);
         }
@@ -158,8 +158,8 @@ public final class NavigationTreeTopComponent extends TopComponent
     @Override
     public void componentClosed() {
         ExplorerUtils.activateActions(em, false);
-        em.getRootContext().getChildren().remove(em.getRootContext().getChildren().getNodes());
-        //Workaround, because when you close a TC whose mode is "explorer" and open it again,
+        em.setRootContext(Node.EMPTY);
+        //Workaround, because when you close a TC whose mode is "navigation" and open it again,
         //it docks as "explorer". This forces the TC to be always docked "explorer"
         Mode myMode = WindowManager.getDefault().findMode("explorer"); //NOI18N
         myMode.dockInto(this);
@@ -201,14 +201,14 @@ public final class NavigationTreeTopComponent extends TopComponent
     @Override
     public void refresh() {
         if (em.getRootContext() instanceof RootObjectNode){
-            List<Node> toBeDeleted = new ArrayList<Node>();
+            List<Node> toBeDeleted = new ArrayList<>();
             for (Node child : em.getRootContext().getChildren().getNodes()){
                 if (!((ObjectNode)child).refresh())
                     toBeDeleted.add(child);
             }
             for (Node deadNode : toBeDeleted)
                 ((ObjectChildren)em.getRootContext().getChildren()).remove(new Node[]{deadNode});
-        }else{
+        }else {
             setRoot();
             revalidate();
         }

@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -272,11 +273,16 @@ public class CommunicationsStub {
             for (String key : obj.getAttributes().keySet()){
                 StringArray value = new StringArray();
                 attributeNames.add(key);
-                if (obj.getAttribute(key) instanceof List){
-                    for (long itemId : (List<Long>)obj.getAttribute(key))
+                Object theValue = obj.getAttribute(key);
+                if (theValue instanceof List) {
+                    for (long itemId : (List<Long>)theValue)
                         value.getItem().add(String.valueOf(itemId));
-                }else
-                    value.getItem().add(obj.getAttribute(key).toString());
+                } else {
+                    if (theValue instanceof Date)
+                        value.getItem().add(String.valueOf(((Date)theValue).getTime()));
+                    else
+                        value.getItem().add(theValue.toString());
+                }
                 attributeValues.add(value);
             }
             service.updateObject(obj.getClassName(),obj.getOid(), attributeNames, attributeValues, this.session.getSessionId());
@@ -1613,7 +1619,7 @@ public class CommunicationsStub {
         }
     }// </editor-fold>
     
-    // <editor-fold defaultstate="collapsed" desc="user/groups methods. Click on the + sign on the left to edit the code.">
+    // <editor-fold defaultstate="collapsed" desc="User management methods. Click on the + sign on the left to edit the code.">
     /**
      * Retrieves the user list
      * @return An array of LocalUserObject
@@ -2527,7 +2533,6 @@ public class CommunicationsStub {
         return false;
     }
         // </editor-fold>
-    
         // <editor-fold defaultstate="collapsed" desc="Contract manager">
     public boolean associateDevicesToContract(String[] objectsClass, Long[] objectsId, String contractClass, long contractId) {
         try {
@@ -2536,6 +2541,16 @@ public class CommunicationsStub {
             objectsClassList.addAll(Arrays.asList(objectsClass));
             objectsIdList.addAll(Arrays.asList(objectsId));
             service.associateDevicesToContract(objectsClassList, objectsIdList, contractClass, contractId, session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return false;
+        }
+    }
+    
+    public boolean releaseDeviceFromContract(String contractClass, long contractId, long targetId){
+        try{
+            service.releaseDeviceFromContract(contractClass, contractId, targetId, session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error =  ex.getMessage();

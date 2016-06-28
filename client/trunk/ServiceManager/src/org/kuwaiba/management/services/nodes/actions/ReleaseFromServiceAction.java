@@ -57,7 +57,7 @@ public class ReleaseFromServiceAction extends GenericObjectNodeAction implements
         }
         
         if (success)
-            NotificationUtil.getInstance().showSimplePopup("Sucess", NotificationUtil.INFO_MESSAGE, "The selected resources were released from the service");
+            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "The selected resources were released from the service");
     }
 
     @Override

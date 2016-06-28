@@ -31,7 +31,7 @@ public class LocalObject extends LocalObjectLight {
     private LocalClassMetadata myMetadata;
 
     public LocalObject(String className, long oid, String[] atts, Object[] vals){
-        HashMap<String,Object> dict = new HashMap<String, Object>();
+        HashMap<String,Object> dict = new HashMap<>();
         this.className = className;
         this.oid = oid;
         for(int i = 0; i < atts.length;i++)
@@ -54,7 +54,7 @@ public class LocalObject extends LocalObjectLight {
         this.oid = id;
         this.myMetadata = lcmdt;
         
-        attributes = new HashMap<String, Object>();
+        attributes = new HashMap<>();
         
         int i = 0;
         for (String attribute : attributeNames){
@@ -71,10 +71,15 @@ public class LocalObject extends LocalObjectLight {
 
     /**
      * Helper method to get the type of a given attribute
-     *
+     * @param name Attribute name
+     * @return A Java type
+     * @exception IllegalArgumentException If the attribute does not exist
      */
     public Class getTypeOf(String name){
-        return attributes.get(name).getClass();
+        if (attributes.get(name) == null)
+            throw new IllegalArgumentException(String.format("The requested attribute does not exist: %s", name));
+        else
+            return attributes.get(name).getClass();
     }   
 
     public HashMap<String,Object> getAttributes() {

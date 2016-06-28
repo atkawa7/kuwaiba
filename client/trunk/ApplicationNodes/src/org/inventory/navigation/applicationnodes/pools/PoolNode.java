@@ -38,6 +38,7 @@ import org.openide.nodes.PropertySupport;
 import org.openide.nodes.Sheet;
 import org.openide.nodes.Sheet.Set;
 import org.openide.util.ImageUtilities;
+import org.openide.util.WeakListeners;
 import org.openide.util.actions.SystemAction;
 import org.openide.util.datatransfer.PasteType;
 /**
@@ -55,7 +56,7 @@ public class PoolNode extends AbstractNode implements PropertyChangeListener {
     public PoolNode(LocalPool pool) {
         super(new PoolChildren(pool));
         this.pool = pool;
-        pool.addPropertyChangeListener(this);
+        pool.addPropertyChangeListener(WeakListeners.propertyChange(this, pool));
     }
     
     @Override

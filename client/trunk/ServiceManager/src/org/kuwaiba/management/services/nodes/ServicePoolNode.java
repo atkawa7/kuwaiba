@@ -26,7 +26,6 @@ import org.inventory.communications.core.LocalPool;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
 import org.inventory.navigation.applicationnodes.pools.PoolNode;
-import org.inventory.navigation.applicationnodes.pools.actions.DeletePoolAction;
 import org.kuwaiba.management.services.nodes.actions.ServiceManagerActionFactory;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
@@ -46,7 +45,7 @@ public class ServicePoolNode extends PoolNode {
     }
 
     @Override
-    public String getName(){
+    public String getDisplayName(){
         return getPool().getName() +" ["+java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_SERVICES_POOL")+"]";
     }
     

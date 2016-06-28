@@ -45,7 +45,7 @@ public class CreateContractAction extends AbstractAction implements Presenter.Po
         
         Iterator<? extends ContractPoolNode> selectedNodes = 
                 Utilities.actionsGlobalContext().lookupResult(ContractPoolNode.class).allInstances().iterator();
-            
+
         if (!selectedNodes.hasNext())
             return;
         
@@ -71,8 +71,11 @@ public class CreateContractAction extends AbstractAction implements Presenter.Po
             if (possibleContracts.isEmpty())
                 mnuPossibleContracts.setEnabled(false);
             else {
-                for (LocalClassMetadataLight possibleContract : possibleContracts)
-                    mnuPossibleContracts.add(new JMenuItem(possibleContract.getClassName()));
+                for (LocalClassMetadataLight possibleContract : possibleContracts) {
+                    JMenuItem mnuItemPossibleContract = new JMenuItem(possibleContract.getClassName()); 
+                    mnuItemPossibleContract.addActionListener(this);
+                    mnuPossibleContracts.add(mnuItemPossibleContract);
+                }
             }
         }
         

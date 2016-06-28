@@ -60,4 +60,9 @@ public class LocalPool extends LocalObjectLight {
     public int compareTo(LocalPool o) {
         return getName().compareTo(o.getName());
     }
+    
+    @Override
+    public String toString() {
+        return getName() +" [" + getClassName() + "]";
+    }
 }

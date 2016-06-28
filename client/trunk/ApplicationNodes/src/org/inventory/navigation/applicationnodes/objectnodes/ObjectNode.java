@@ -23,6 +23,7 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
@@ -41,6 +42,7 @@ import org.inventory.navigation.applicationnodes.objectnodes.actions.EditObjectA
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ExecuteClassReportAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.RefreshObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
+import org.inventory.navigation.applicationnodes.objectnodes.properties.DateTypeProperty;
 import org.inventory.navigation.applicationnodes.objectnodes.properties.ListTypeProperty;
 import org.inventory.navigation.applicationnodes.objectnodes.properties.NativeTypeProperty;
 import org.openide.actions.CopyAction;
@@ -55,6 +57,7 @@ import org.openide.nodes.PropertySupport;
 import org.openide.nodes.Sheet;
 import org.openide.nodes.Sheet.Set;
 import org.openide.util.Lookup;
+import org.openide.util.WeakListeners;
 import org.openide.util.actions.SystemAction;
 import org.openide.util.datatransfer.PasteType;
 import org.openide.util.lookup.Lookups;
@@ -67,7 +70,7 @@ import org.openide.util.lookup.Lookups;
 public class ObjectNode extends AbstractNode implements PropertyChangeListener {
 
     protected LocalObjectLight object;
-//There can be only one instance for OpenLocalExplorerAction, this attribute is a kind of singleton
+    //There can be only one instance for OpenLocalExplorerAction, this attribute is a kind of singleton
     protected static OpenLocalExplorerAction explorerAction = new OpenLocalExplorerAction();
     protected CommunicationsStub com;
     protected CreateBusinessObjectAction createAction;
@@ -86,7 +89,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
         this.object = lol;
         com = CommunicationsStub.getInstance();
         if (lol.getClassName() != null) {
-            object.addPropertyChangeListener(this);
+            object.addPropertyChangeListener(WeakListeners.propertyChange(this, object));
             icon = com.getMetaForClass(lol.getClassName(), false).getSmallIcon();
             explorerAction.putValue(OpenLocalExplorerAction.NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_EXPLORE"));
         }
@@ -95,7 +98,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
     public ObjectNode(LocalObjectLight lol, boolean isLeaf) {
         super(Children.LEAF, Lookups.singleton(lol));
         this.object = lol;
-        this.object.addPropertyChangeListener(this);
+        object.addPropertyChangeListener(WeakListeners.propertyChange(this, object));
         com = CommunicationsStub.getInstance();
         icon = com.getMetaForClass(lol.getClassName(), false).getSmallIcon();
         explorerAction.putValue(OpenLocalExplorerAction.NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_EXPLORE"));
@@ -119,7 +122,6 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
     protected Sheet createSheet() {
         sheet = Sheet.createDefault();
         Set generalPropertySet = Sheet.createPropertiesSet(); //General attributes category
-        Set administrativePropertySet = Sheet.createPropertiesSet(); //Administrative attributes category
         LocalClassMetadata meta = com.getMetaForClass(object.getClassName(), false);
         if (meta == null) {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
@@ -140,6 +142,9 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
                 int mapping = lam.getMapping();
                 switch (mapping) {
                     case Constants.MAPPING_DATE:
+                        property = new DateTypeProperty((Date)lo.getAttribute(lam.getName()) , 
+                                lam.getName(), Date.class, lam.getDisplayName(), lam.getDescription(), this);
+                        break;
                     case Constants.MAPPING_TIMESTAMP:
                     case Constants.MAPPING_PRIMITIVE:
                     //Those attributes that are not multiple, but reference another object
@@ -189,12 +194,9 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
                 generalPropertySet.put(property);
             }
         }
-        generalPropertySet.setName("1");
-        administrativePropertySet.setName("2");
+        generalPropertySet.setName("General Info");
         generalPropertySet.setDisplayName(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_GENERAL_ATTRIBUTES"));
-        administrativePropertySet.setDisplayName(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_ADMINISTRATIVE_ATTRIBUTES"));
         sheet.put(generalPropertySet);
-        sheet.put(administrativePropertySet);
         return sheet;
     }
 

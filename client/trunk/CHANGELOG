@@ -99,3 +99,4 @@
 * Icon set updated
 * Multiple fixes to views
 * Most of the deprecated calls to add(Node[]) and remove(Node[]) to update the children of a node were fixed
+* Pool properties are now editable

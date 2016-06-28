@@ -45,7 +45,7 @@ public class CustomerPoolNode extends PoolNode {
     }
     
     @Override
-    public String getName(){
+    public String getDisplayName(){
         return getPool().getName() + " [" + java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CUSTOMERS_POOL")+"]";
     }
     

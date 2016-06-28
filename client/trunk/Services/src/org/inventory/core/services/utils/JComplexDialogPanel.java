@@ -38,7 +38,7 @@ public class JComplexDialogPanel extends JPanel {
         if (labels.length != components.length)
             throw new RuntimeException("You must provide the same number of labels and components");
         
-        this.components = new HashMap<String, JComponent>();
+        this.components = new HashMap<>();
         setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
         setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();

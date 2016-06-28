@@ -29,16 +29,12 @@ import org.openide.nodes.Node;
  */
 public class ObjectChildren extends Children.Keys<LocalObjectLight> {
     
+    public ObjectChildren() {
+        setKeys(Collections.EMPTY_SET);
+    }
+    
     public ObjectChildren(LocalObjectLight[] lols){
         setKeys(lols);
-    }
-
-    /**
-     * This constructor is used to create a node with no children
-     *  since they're going to be created on demand (see addNotify method)
-     */
-    public ObjectChildren(){
-        setKeys(Collections.EMPTY_LIST);
     }
 
     /**

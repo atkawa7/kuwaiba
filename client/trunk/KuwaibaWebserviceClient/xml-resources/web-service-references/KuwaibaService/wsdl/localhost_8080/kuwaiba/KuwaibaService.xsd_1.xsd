@@ -526,6 +526,10 @@
 
 <xs:element name="setGroupPropertiesResponse" type="tns:setGroupPropertiesResponse"/>
 
+<xs:element name="setPoolProperties" type="tns:setPoolProperties"/>
+
+<xs:element name="setPoolPropertiesResponse" type="tns:setPoolPropertiesResponse"/>
+
 <xs:element name="setUserProperties" type="tns:setUserProperties"/>
 
 <xs:element name="setUserPropertiesResponse" type="tns:setUserPropertiesResponse"/>
@@ -674,19 +678,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="deleteListTypeItem">
-<xs:sequence>
-<xs:element name="className" type="xs:string" minOccurs="0"/>
-<xs:element name="oid" type="xs:long"/>
-<xs:element name="releaseRelationships" type="xs:boolean"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="deleteListTypeItemResponse">
-<xs:sequence/>
-</xs:complexType>
-
 <xs:complexType name="executeQuery">
 <xs:sequence>
 <xs:element name="query" type="tns:transientQuery" minOccurs="0"/>
@@ -723,6 +714,19 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="deleteListTypeItem">
+<xs:sequence>
+<xs:element name="className" type="xs:string" minOccurs="0"/>
+<xs:element name="oid" type="xs:long"/>
+<xs:element name="releaseRelationships" type="xs:boolean"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteListTypeItemResponse">
+<xs:sequence/>
+</xs:complexType>
+
 <xs:complexType name="getChildrenOfClassLight">
 <xs:sequence>
 <xs:element name="parentOid" type="xs:long"/>
@@ -739,6 +743,19 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="setPoolProperties">
+<xs:sequence>
+<xs:element name="poolId" type="xs:long"/>
+<xs:element name="name" type="xs:string" minOccurs="0"/>
+<xs:element name="description" type="xs:string" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="setPoolPropertiesResponse">
+<xs:sequence/>
+</xs:complexType>
+
 <xs:complexType name="deleteSDHContainerLink">
 <xs:sequence>
 <xs:element name="containerLinkClass" type="xs:string" minOccurs="0"/>
@@ -749,6 +766,18 @@
 </xs:complexType>
 
 <xs:complexType name="deleteSDHContainerLinkResponse">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="deletePhysicalConnection">
+<xs:sequence>
+<xs:element name="objectClass" type="xs:string" minOccurs="0"/>
+<xs:element name="objectId" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deletePhysicalConnectionResponse">
 <xs:sequence/>
 </xs:complexType>
 
@@ -767,18 +796,6 @@
 <xs:sequence>
 <xs:element name="return" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="deletePhysicalConnection">
-<xs:sequence>
-<xs:element name="objectClass" type="xs:string" minOccurs="0"/>
-<xs:element name="objectId" type="xs:long"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="deletePhysicalConnectionResponse">
-<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="releaseObjectFromService">
@@ -937,6 +954,19 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="getAllClassesLight">
+<xs:sequence>
+<xs:element name="includeListTypes" type="xs:boolean"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getAllClassesLightResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:classInfoLight" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="findSDHRoutesUsingTransportLinks">
 <xs:sequence>
 <xs:element name="communicationsEquipmentClassA" type="xs:string" minOccurs="0"/>
@@ -964,19 +994,6 @@
 <xs:element name="className" type="xs:string" minOccurs="0"/>
 <xs:element name="id" type="xs:long"/>
 <xs:element name="name" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getAllClassesLight">
-<xs:sequence>
-<xs:element name="includeListTypes" type="xs:boolean"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getAllClassesLightResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:classInfoLight" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -1997,6 +2014,20 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="getConnectionEndpoints">
+<xs:sequence>
+<xs:element name="connectionClass" type="xs:string" minOccurs="0"/>
+<xs:element name="connectionId" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getConnectionEndpointsResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="createListTypeItem">
 <xs:sequence>
 <xs:element name="className" type="xs:string" minOccurs="0"/>
@@ -2009,20 +2040,6 @@
 <xs:complexType name="createListTypeItemResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:long"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getConnectionEndpoints">
-<xs:sequence>
-<xs:element name="connectionClass" type="xs:string" minOccurs="0"/>
-<xs:element name="connectionId" type="xs:long"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getConnectionEndpointsResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -2720,6 +2737,18 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="addPossibleChildrenForClassWithId">
+<xs:sequence>
+<xs:element name="parentClassId" type="xs:long"/>
+<xs:element name="childrenToBeAdded" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="addPossibleChildrenForClassWithIdResponse">
+<xs:sequence/>
+</xs:complexType>
+
 <xs:complexType name="getSubnetUsedIps">
 <xs:sequence>
 <xs:element name="id" type="xs:long"/>
@@ -2732,18 +2761,6 @@
 <xs:sequence>
 <xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="addPossibleChildrenForClassWithId">
-<xs:sequence>
-<xs:element name="parentClassId" type="xs:long"/>
-<xs:element name="childrenToBeAdded" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="addPossibleChildrenForClassWithIdResponse">
-<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="setUserProperties">

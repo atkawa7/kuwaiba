@@ -174,6 +174,10 @@ public class Constants {
      */
     public static final String PROPERTY_NAME = "name";
     /**
+     * Property className
+     */
+    public static final String PROPERTY_CLASSNAME = "className";
+    /**
      * Property display name
      */
     public static final String PROPERTY_DISPLAYNAME = "displayName";

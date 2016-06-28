@@ -32,6 +32,7 @@ import org.inventory.communications.core.LocalReportDescriptor;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.MenuScroller;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.inventory.navigation.applicationnodes.pools.PoolNode;
 import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter;
 
@@ -39,7 +40,7 @@ import org.openide.util.actions.Presenter;
  * Shows the class reports available for the selected node (if any) and run any of them
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public final class ExecuteClassReportAction extends AbstractAction implements Presenter.Popup {
+public class ExecuteClassReportAction extends AbstractAction implements Presenter.Popup {
     private static ExecuteClassReportAction instance;
     
     private ExecuteClassReportAction() {
@@ -62,13 +63,19 @@ public final class ExecuteClassReportAction extends AbstractAction implements Pr
         }
         
         LocalObjectLight theObject = ((ObjectNode)selectedNodes.next()).getObject();
-        
         JMenuItem mniReport = (JMenuItem)ev.getSource();
+        
+        actionPerformed(theObject, Long.valueOf(mniReport.getName()));
+        
+    }
+    
+    public void actionPerformed(LocalObjectLight theObject, long reportId) {
+        
         HashMap<String, Object> arguments = new HashMap<>();
         arguments.put("objectId", theObject.getOid());
         arguments.put("objectClass", theObject.getClassName());
         
-        byte[] theReport = CommunicationsStub.getInstance().executeReport(Long.valueOf(mniReport.getName()), arguments);
+        byte[] theReport = CommunicationsStub.getInstance().executeReport(reportId, arguments);
         
         if (theReport == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
@@ -92,36 +99,89 @@ public final class ExecuteClassReportAction extends AbstractAction implements Pr
             }            
         }
     }
+    
+    public JMenuItem getPopupPresenter (LocalObjectLight theObject) {
+        JMenu mnuPossibleChildren = new JMenu("Reports");
+        mnuPossibleChildren.setEnabled(false);
+        List<LocalReportDescriptor> reportDescriptors = CommunicationsStub.getInstance().
+                    getReportsForClass(theObject.getClassName(), -1);
+            
+        if (reportDescriptors == null)
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.WARNING_MESSAGE, CommunicationsStub.getInstance().getError());
+        else {
+            if (!reportDescriptors.isEmpty()) {
+                for (LocalReportDescriptor reportDescriptor : reportDescriptors) {
+                    JMenuItem mnuReport = new JMenuItem(reportDescriptor.getName());
+                    mnuReport.setToolTipText(reportDescriptor.getDescription());
+                    mnuReport.setName(String.valueOf(reportDescriptor.getId()));
+                    mnuReport.addActionListener(this);
+                    mnuPossibleChildren.add(mnuReport);
+                }
+                mnuPossibleChildren.setEnabled(true);
+                MenuScroller.setScrollerFor(mnuPossibleChildren, 20, 100);
+            } 
+        }
+        
+        return mnuPossibleChildren;
+    }
 
     @Override
     public JMenuItem getPopupPresenter() {
-        JMenu mnuPossibleChildren = new JMenu("Reports");
-        mnuPossibleChildren.setEnabled(false);
 
         Iterator selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
         
         if (selectedNodes.hasNext()) {
             ObjectNode selectedNode = (ObjectNode)selectedNodes.next();
-            List<LocalReportDescriptor> reportDescriptors = CommunicationsStub.getInstance().
-                    getReportsForClass(selectedNode.getObject().getClassName(), -1);
-            
-            if (reportDescriptors == null)
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.WARNING_MESSAGE, CommunicationsStub.getInstance().getError());
-            else {
-                if (!reportDescriptors.isEmpty()) {
-                    for (LocalReportDescriptor reportDescriptor : reportDescriptors) {
-                        JMenuItem mniReport = new JMenuItem(reportDescriptor.getName());
-                        mniReport.setToolTipText(reportDescriptor.getDescription());
-                        mniReport.setName(String.valueOf(reportDescriptor.getId()));
-                        mniReport.addActionListener(this);
-                        mnuPossibleChildren.add(mniReport);
-                    }
-                    mnuPossibleChildren.setEnabled(true);
-                    MenuScroller.setScrollerFor(mnuPossibleChildren, 20, 100);
-                }
+            return getPopupPresenter(selectedNode.getObject());
+        } else {
+            JMenu mnuPossibleChildren = new JMenu("Reports");
+            mnuPossibleChildren.setEnabled(false);
+            return mnuPossibleChildren;
+        }
+    }
+    
+    public static class ExecutePoolReportAction extends ExecuteClassReportAction {
+        private static ExecutePoolReportAction instance;
+        
+        private ExecutePoolReportAction() {
+            putValue(NAME, "Pool Reports");
+        }
+        
+        public static ExecutePoolReportAction createExecutePoolReportAction() {
+            if (instance == null)
+                instance = new ExecutePoolReportAction();
+            return instance;
+        }
+        
+        @Override
+        public JMenuItem getPopupPresenter() {
+
+            Iterator selectedNodes = Utilities.actionsGlobalContext().lookupResult(PoolNode.class).allInstances().iterator();
+
+            if (selectedNodes.hasNext()) {
+                PoolNode selectedNode = (PoolNode)selectedNodes.next();
+                return getPopupPresenter(selectedNode.getPool());
+            } else {
+                JMenu mnuPossibleChildren = new JMenu("Reports");
+                mnuPossibleChildren.setEnabled(false);
+                return mnuPossibleChildren;
             }
         }
-		
-        return mnuPossibleChildren;
-    }
+        
+        @Override
+        public void actionPerformed(ActionEvent ev) {
+            Iterator selectedNodes = Utilities.actionsGlobalContext().lookupResult(PoolNode.class).allInstances().iterator();
+
+            if (!selectedNodes.hasNext()) {
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.WARNING_MESSAGE, "You have to select a node");
+                return;
+            }
+
+            LocalObjectLight theObject = ((PoolNode)selectedNodes.next()).getPool();
+            JMenuItem mniReport = (JMenuItem)ev.getSource();
+
+            actionPerformed(theObject, Long.valueOf(mniReport.getName()));
+
+        }
+    } 
 }
