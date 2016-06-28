@@ -516,19 +516,15 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     affectedProperties = attributeName + " ";
                     if (AttributeMetadata.isPrimitive(myClass.getType(attributeName))) { // We are changing a primitive type, such as String, or int
                         oldValues += (instance.hasProperty(attributeName) ? String.valueOf(instance.getProperty(attributeName)) : null) + " ";
-                        if (attributes.get(attributeName) == null)
+                        //If the array is empty or null, it means the attribute should be set to null
+                        if (attributes.get(attributeName) == null || attributes.get(attributeName).isEmpty())
                             instance.removeProperty(attributeName);
                         else {
-                            //If the array is empty, it means the attribute should be set to null
-                            if (attributes.get(attributeName).isEmpty())
+                            newValues += attributes.get(attributeName).get(0) + " ";
+                            if (attributes.get(attributeName).get(0) == null)
                                 instance.removeProperty(attributeName);
-                            else{
-                                newValues += attributes.get(attributeName).get(0) + " ";
-                                if (attributes.get(attributeName).get(0) == null)
-                                    instance.removeProperty(attributeName);
-                                else
-                                    instance.setProperty(attributeName,Util.getRealValue(attributes.get(attributeName).get(0),myClass.getType(attributeName)));
-                            }
+                            else
+                                instance.setProperty(attributeName,Util.getRealValue(attributes.get(attributeName).get(0), myClass.getType(attributeName)));
                         }
                     } else { //If the attribute is not a primitive type, then it's a relationship
                         if (!cm.getClass(myClass.getType(attributeName)).isListType())

@@ -1,7 +1,17 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
+ *
+ *  Licensed under the EPL License, Version 1.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.eclipse.org/legal/epl-v10.html
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package com.neotropic.kuwaiba.modules.reporting;
 
@@ -9,9 +19,13 @@ import com.neotropic.kuwaiba.modules.ipam.IPAMModule;
 import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHModule;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
+import org.kuwaiba.apis.persistence.application.Pool;
 import org.kuwaiba.apis.persistence.business.AnnotatedRemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
@@ -27,7 +41,7 @@ import org.kuwaiba.services.persistence.util.Constants;
 
 /**
  * Temporary class that provides methods to build class reports
- * @author gir
+ * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class Reports {
     public static byte[] buildRackUsageReport(BusinessEntityManager bem, ApplicationEntityManager aem, long rackId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
@@ -554,6 +568,82 @@ public class Reports {
         subnetUsageReportText += getFooter();
         
         return subnetUsageReportText.getBytes(StandardCharsets.UTF_8);
+    }
+    
+    public static byte[] buildContractStatusReport(BusinessEntityManager bem, ApplicationEntityManager aem, long contractPoolId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+//        String query = String.format("MATCH (superClass)<-[:%s*]-(class)-[:%s]-(contract) "
+//                                    + "WHERE superClass.name = \"%s\"");
+        Pool contractPool = aem.getPool(contractPoolId);
+        List<RemoteBusinessObjectLight> contracts = aem.getPoolItems(contractPoolId, -1);
+        
+        String title = "Contract Status Report for " + contractPool.getName();
+        String contractStatusReportText = getHeader(title);
+        
+        contractStatusReportText += 
+                            "  <body><table><tr><td><h1>" + title + "</h1><h2>" + contractPool.getDescription() + "</h2></td><td><img src=\"http://afr-ix.com/wp-content/themes/twentyfourteen/images/afrix_logo.png\"/></td></tr></table>\n";
+        
+        if (contracts.isEmpty())
+            contractStatusReportText += "<div class=\"warning\">This pool does not have contracts attached</div>";
+        else {
+            contractStatusReportText += "<table><tr><th>Name</th><th>Start Date</th><th>Expiration Date</th><th>Equipment</th></tr>";
+            
+            int i = 0;
+            SimpleDateFormat formatter = new SimpleDateFormat("MMMM dd, yyyy");
+            for (RemoteBusinessObjectLight aContract : contracts) {
+                RemoteBusinessObject fullContractInfo = bem.getObject(aContract.getClassName(), aContract.getId());
+                Date startDate =  fullContractInfo.getAttributes().get("startDate") == null ? 
+                        null : new Date(Long.valueOf(fullContractInfo.getAttributes().get("startDate").get(0)));
+                
+                String startDateString;
+                
+                if (startDate == null) 
+                    startDateString = asError("Not Set");
+                else 
+                    startDateString = formatter.format(startDate);
+                                
+                String expirationDateString;
+                Date expirationDate =  fullContractInfo.getAttributes().get("expirationDate") == null ? 
+                        null : new Date(Long.valueOf(fullContractInfo.getAttributes().get("expirationDate").get(0)));
+                
+                if (expirationDate == null)
+                    expirationDateString = asError("Not Set");
+                else {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.add(Calendar.DAY_OF_YEAR, 60);
+                    Date withinTwoMonths = calendar.getTime();
+                    
+                    if (expirationDate.compareTo(withinTwoMonths) > 0)
+                        expirationDateString = formatter.format(expirationDate);
+                    else {
+                        calendar.add(Calendar.DAY_OF_YEAR, -30);
+                        Date withinAMonth = calendar.getTime();
+                        if (expirationDate.compareTo(withinAMonth) > 0)
+                            expirationDateString = asWarning(formatter.format(expirationDate));
+                        else
+                            expirationDateString = asError(formatter.format(expirationDate));
+                    }
+                }
+                
+                List<RemoteBusinessObjectLight> equipment = bem.getSpecialAttribute(aContract.getClassName(), aContract.getId(), "contractHas"); //NOI18N
+                
+                String equipmentString = "";
+                if (equipment.isEmpty())
+                    equipmentString = asError("No Equipment");
+                else {
+                    for (RemoteBusinessObjectLight anEquipment : equipment)
+                        equipmentString += anEquipment + "<br/>";
+                }
+                
+                contractStatusReportText += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") + "\"><td>" + aContract.getName() + "</td>\n"
+                                                + "<td>" + startDateString + "</td><td>" + expirationDateString + "</td><td>" + equipmentString + "</td></tr>";
+                i ++;
+            }
+            contractStatusReportText += "</table>";
+        }
+        
+        contractStatusReportText += getFooter();
+        
+        return contractStatusReportText.getBytes(StandardCharsets.UTF_8);
     }
     
     //<editor-fold desc="Helpers" defaultstate="collapsed">

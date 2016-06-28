@@ -3,12 +3,8 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/data/kuwaiba/server/KuwaibaServer/KuwaibaServer-ejb/src/java/org/kuwaiba/services/persistence/impl/neo4j/ApplicationEntityManagerImpl.java</file>
-            <file>file:/data/kuwaiba/server/KuwaibaServer/KuwaibaServer-ejb/src/java/org/kuwaiba/apis/persistence/business/RemoteBusinessObject.java</file>
-            <file>file:/data/kuwaiba/server/KuwaibaServer/KuwaibaServer-ejb/src/java/org/kuwaiba/apis/persistence/application/ApplicationEntityManager.java</file>
-            <file>file:/data/kuwaiba/server/KuwaibaServer/KuwaibaServer-ejb/src/java/org/kuwaiba/beans/WebserviceBean.java</file>
-            <file>file:/data/kuwaiba/server/KuwaibaServer/KuwaibaServer-ejb/src/java/org/kuwaiba/ws/toserialize/business/RemoteObject.java</file>
-            <file>file:/data/kuwaiba/server/KuwaibaServer/KuwaibaServer-ejb/src/java/org/kuwaiba/beans/WebserviceBeanRemote.java</file>
+            <file>file:/home/gir/workspace/java/KuwaibaServer/trunk/KuwaibaServer/KuwaibaServer-ejb/src/java/org/kuwaiba/services/persistence/impl/neo4j/ApplicationEntityManagerImpl.java</file>
+            <file>file:/home/gir/workspace/java/KuwaibaServer/trunk/KuwaibaServer/KuwaibaServer-ejb/src/java/org/kuwaiba/util/bre/TempBusinessRulesEngine.java</file>
         </group>
     </open-files>
 </project-private>

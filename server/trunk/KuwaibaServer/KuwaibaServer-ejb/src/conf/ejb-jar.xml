@@ -22,7 +22,7 @@
            <description>Database path</description>
            <env-entry-name>dbPath</env-entry-name>
            <env-entry-type>java.lang.String</env-entry-type>
-           <env-entry-value>/data/kuwaiba/target/kuwaiba.db</env-entry-value>
+           <env-entry-value>/data/db/kuwaiba.db</env-entry-value>
         </env-entry>
         <env-entry>
            <description>Database host, if applicable</description>
@@ -40,7 +40,7 @@
            <description>Background path</description>
            <env-entry-name>backgroundsPath</env-entry-name>
            <env-entry-type>java.lang.String</env-entry-type>
-           <env-entry-value>../img/backgrounds</env-entry-value>
+           <env-entry-value>/data/img/backgrounds</env-entry-value>
         </env-entry>
         <env-entry>
            <description>Enable the default security manager</description>

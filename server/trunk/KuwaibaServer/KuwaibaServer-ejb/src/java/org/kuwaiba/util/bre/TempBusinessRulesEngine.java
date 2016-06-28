@@ -57,6 +57,7 @@ public class TempBusinessRulesEngine {
         subClassOfValidators.put("GenericPhysicalContainer", "physicalContainer");
         subClassOfValidators.put("GenericPhysicalLink", "physicalLink");
         subClassOfValidators.put("GenericApplicationElement", "applicationElement");
+        subClassOfValidators.put("GenericCommunicationsElement", "genericCommunicationsElement");
         subClassOfValidators.put("IPAddress", "ipaddress");
         subClassOfValidators.put("Subnet", "subnet");
     }

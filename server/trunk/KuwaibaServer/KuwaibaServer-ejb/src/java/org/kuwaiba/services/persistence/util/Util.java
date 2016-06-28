@@ -95,7 +95,8 @@ public class Util {
                                 return Boolean.valueOf(value);
                             else
                                 if(type.equals("Date"))
-                                    return new Date(Long.valueOf(value));
+                                    //return new Date(Long.valueOf(value));
+                                    return Long.valueOf(value); //Dates are actually saved as longs (milliseconds since Jan 1st 1970)
                                 else
                                     if(type.equals("Timestamp"))
                                         return Timestamp.valueOf(value);

@@ -28,8 +28,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.Singleton;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
@@ -42,7 +40,6 @@ import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.application.ViewObject;
 import org.kuwaiba.apis.persistence.application.ViewObjectLight;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
@@ -153,7 +150,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("deleteClass", ipAddress, sessionId);
             mem.deleteClass(className);
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -166,7 +162,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("deleteClass", ipAddress, sessionId);
             mem.deleteClass(classId);
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -185,7 +180,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             }
             return new ClassInfo(myClass, validators.toArray(new Validator[0]));
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -206,7 +200,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             return new ClassInfo(myClass, validators.toArray(new Validator[0]));
 
          } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -230,7 +223,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             }
             return cml;
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -255,7 +247,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             }
             return cml;
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -280,7 +271,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             }
             return cml;
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -305,7 +295,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             }
             return cml;
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -318,7 +307,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("moveClass", ipAddress, sessionId);
             mem.moveClass(classToMoveName, targetParentName);
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -331,7 +319,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("moveClass", ipAddress, sessionId);
             mem.moveClass(classToMoveId, targetParentId);
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -356,7 +343,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             mem.createAttribute(className, attributeMetadata);
 
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -381,7 +367,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             mem.createAttribute(classId, attributeMetadata);
 
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -410,7 +395,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             mem.setClassProperties(cm);
 
          } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -431,7 +415,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
                                                        atrbMtdt.getDescription());
             return atrbInfo;
          } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -454,7 +437,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             return atrbInfo;
 
          } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -481,7 +463,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             mem.setAttributeProperties(classId, attrMtdt);
 
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -508,7 +489,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             mem.setAttributeProperties(className, attrMtdt);
 
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -521,7 +501,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("deleteAttribute", ipAddress, sessionId);
             mem.deleteAttribute(className, attributeName);
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -535,7 +514,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             mem.deleteAttribute(classId, attributeName);
 
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -556,7 +534,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             return cml;
 
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
 
@@ -578,7 +555,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             return cml;
 
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -601,7 +577,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 }
             }
         } catch (InventoryException ex){
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
         return res;
@@ -620,7 +595,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             return res;
 
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -633,7 +607,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("addPossibleChildren", ipAddress, sessionId);
             mem.addPossibleChildren(parentClassId, possibleChildren);
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -646,7 +619,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("addPossibleChildren", ipAddress, sessionId);
             mem.addPossibleChildren(parentClassName, possibleChildren);
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -660,7 +632,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             mem.removePossibleChildren(parentClassId, childrenToBeRemoved);
 
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -674,7 +645,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             return aem.createListTypeItem(className, name, displayName);
 
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -688,7 +658,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.deleteListTypeItem(className, oid, realeaseRelationships);
 
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -705,7 +674,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 res[i] = new RemoteObjectLight(listTypeItems.get(i));
             return res;
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -734,7 +702,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.createGeneralActivityLogEntry(user, ActivityLogEntry.ACTIVITY_TYPE_OPEN_SESSION, String.format("Connected from %s", IPAddress));
             return new RemoteSession(newSession.getToken(), newSession.getUser());
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage()); 
         }
     }
@@ -748,7 +715,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.closeSession(sessionId, remoteAddress);
             aem.createGeneralActivityLogEntry(user, ActivityLogEntry.ACTIVITY_TYPE_CLOSE_SESSION, String.format("Connected from %s", remoteAddress));
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(ex.getMessage()); 
         }
     }
     
@@ -763,7 +730,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("getObjectChildren", ipAddress, sessionId);
             return RemoteObjectLight.toRemoteObjectLightArray(bem.getObjectChildren(objectClassId, oid, maxResults));
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -777,7 +743,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("getObjectChildren", ipAddress, sessionId);
             return RemoteObjectLight.toRemoteObjectLightArray(bem.getObjectChildren(className, oid, maxResults));
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -791,7 +756,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("getSiblings", ipAddress, sessionId);
             return RemoteObjectLight.toRemoteObjectLightArray(bem.getSiblings(className, oid, maxResults));
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -805,7 +769,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("getChildrenOfClass", ipAddress, sessionId);
             return RemoteObject.toRemoteObjectArray(bem.getChildrenOfClass(parentOid, parentClass,classToFilter, maxResults));
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -819,7 +782,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("getChildrenOfClassLight", ipAddress, sessionId);
             return RemoteObjectLight.toRemoteObjectLightArray(bem.getChildrenOfClassLight(parentOid, parentClass,classToFilter, maxResults));
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -832,7 +794,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("getObject", ipAddress, sessionId);
             return new RemoteObject(bem.getObject(objectClass, oid));
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -845,7 +806,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("getObjectLight", ipAddress, sessionId);
             return new RemoteObjectLight(bem.getObjectLight(objectClass, oid));
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -858,7 +818,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("getParent", ipAddress, sessionId);
             return new RemoteObject(bem.getParent(objectClass, oid));
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -883,7 +842,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("getSpecialAttribute", ipAddress, sessionId);
             return RemoteObjectLight.toRemoteObjectLightArray(bem.getSpecialAttribute(objectClass, objectId, attributeName));
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -900,7 +858,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
 
             return res;
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -913,7 +870,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("getParentOfClass", ipAddress, sessionId);
             return new RemoteObject(bem.getParentOfClass(objectClass, oid, parentClass));
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }  
@@ -926,7 +882,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("getObjectSpecialChildren", ipAddress, sessionId);
             return RemoteObjectLight.toRemoteObjectLightArray(bem.getObjectSpecialChildren(objectClass, objectId));
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -939,7 +894,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("getObjectsOfClassLight", ipAddress, sessionId);
             return RemoteObjectLight.toRemoteObjectLightArray(bem.getObjectsOfClassLight(className, maxResults));
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -957,7 +911,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 res[i] = new ClassInfoLight(instanceableListTypes.get(i), new Validator[0]);
             return res;
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -980,7 +933,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
                     ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.valueOf(newObjectId));
             return newObjectId;
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1006,7 +958,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             
             return newSpecialObjectId;
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1115,7 +1066,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), className,
                         oid, ActivityLogEntry.ACTIVITY_TYPE_UPDATE_INVENTORY_OBJECT, theChange);
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1163,7 +1113,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             bem.releaseSpecialRelationship(objectClass, objectId, -1, "mirror");
             
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1235,7 +1184,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             return newConnections;
 
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1255,7 +1203,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
                                             endpointB.isEmpty() ? null : new RemoteObjectLight(endpointB.get(0))};
 
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1316,7 +1263,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 }
             }
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1342,7 +1288,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             return res;
 
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1364,7 +1309,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 throw new ServerSideException(String.format("Class %s is not a service", serviceClass));
             bem.createSpecialRelationship(serviceClass, serviceId, objectClass, objectId, "uses", true);
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1383,7 +1327,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 bem.createSpecialRelationship(serviceClass, serviceId, objectClass[i], objectId[i], "uses", true);
             
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1397,7 +1340,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("releaseObjectFromService", ipAddress, sessionId);
             bem.releaseSpecialRelationship(serviceClass, serviceId, otherObjectId, "uses");
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1412,7 +1354,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 throw new ServerSideException(String.format("Class %s is not a service", serviceClass));
             return RemoteObjectLight.toRemoteObjectLightArray(bem.getSpecialAttribute(serviceClass, serviceId, "uses"));
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1431,7 +1372,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             
             return bem.createSpecialObject(serviceClass, customerClass, customerId, null, 0);
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1448,7 +1388,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             
             return bem.createSpecialObject(customerClass, null, -1, null, 0);
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1463,7 +1402,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 throw new ServerSideException(String.format("Class %s is not a customer", customerClass));
             return RemoteObjectLight.toRemoteObjectLightArray(bem.getObjectSpecialChildren(customerClass, customerId));
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1486,7 +1424,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             }
             return usersInfo;
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1508,7 +1445,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             return userGroupInfo;
 
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1522,7 +1458,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("setUserProperties", ipAddress, sessionId);
             aem.setUserProperties(oid, userName, password, firstName, lastName, enabled, privileges, groups);
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1535,7 +1470,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("createGroup", ipAddress, sessionId);
             return aem.createGroup(groupName, description, privileges, users);
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1554,7 +1488,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             
             return newUserId;
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1568,7 +1501,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("setGroupProperties", ipAddress, sessionId);
             aem.setGroupProperties(oid, groupName, description, privileges, users);
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1595,7 +1527,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("deleteGroups", ipAddress, sessionId);
             aem.deleteGroups(oids);
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1609,7 +1540,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("createObjectRelatedView", ipAddress, sessionId);
             return aem.createObjectRelatedView(objectId, objectClass, name, description, viewClassName, structure, background);
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1622,7 +1552,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("createGeneralView", ipAddress, sessionId);
             return aem.createGeneralView(viewClass, name, description, structure, background);
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1640,7 +1569,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             res.setBackground(myView.getBackground());
             return res;
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1716,7 +1644,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                     ActivityLogEntry.ACTIVITY_TYPE_UPDATE_VIEW, theChange);
         }catch(InventoryException ie){
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ie.getMessage());
+            throw new ServerSideException(ie.getMessage());
         }
     }
 
@@ -1783,7 +1711,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("deleteQuery", ipAddress, sessionId);
             aem.deleteQuery(queryOid);
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());            throw new ServerSideException(ex.getMessage());
+            throw new ServerSideException(ex.getMessage());
         }
     }
 
@@ -1817,7 +1745,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("getQuery", ipAddress, sessionId);
             return new RemoteQuery(aem.getQuery(queryOid));
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1840,7 +1767,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
 
             return resultArray;
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1854,7 +1780,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("createPool", ipAddress, sessionId);
             return aem.createPool(parentId, name, description, instancesOfClass, 0);
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1866,7 +1791,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             return bem.createPoolItem(poolId, className, attributeNames, attributeValues, templateId);
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1881,7 +1805,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), ActivityLogEntry.ACTIVITY_TYPE_DELETE_APPLICATION_OBJECT, 
                     String.format("%s pools deleted", ids.length));
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1894,7 +1817,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("getObject", ipAddress, sessionId);
             aem.setPoolProperties(poolId, name, description);
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1907,7 +1829,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("getPool", ipAddress, sessionId);
             return new RemotePool(aem.getPool(poolId));
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1920,7 +1841,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("getPools", ipAddress, sessionId);
             return RemoteObjectLight.toRemoteObjectLightArray(aem.getPools(limit, parentId, className));
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1933,7 +1853,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("getPools", ipAddress, sessionId);
             return RemoteObjectLight.toRemoteObjectLightArray(aem.getPools(limit, className));
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1946,7 +1865,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("getPoolItem", ipAddress, sessionId);
             return RemoteObjectLight.toRemoteObjectLightArray(aem.getPoolItems(poolId, limit));
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1964,7 +1882,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             
             return res;
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.INFO, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1987,7 +1904,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             
             return res;
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.INFO, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -2078,6 +1994,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
                             new ReportDescriptor(10, "Network Equipment", className, "Presents a list and details of all network equipment in a particular location"),
                             /*new ReportDescriptor(11, "Racks and Distribution Frames", className, "Presents a list and details of all racks and distribution frames in that particular location")*/
                     };
+                case "GenericContract": //Not an actual instanceable class
+                    return new ReportDescriptor[] {
+                            new ReportDescriptor(12, "Support Contract Status", className, "Shows the status of the support contracts in the inventory")
+                    };
             }
             return new ReportDescriptor[0];
         } catch (InventoryException ex) {
@@ -2120,6 +2040,9 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 case 11:
                     locationId = Long.valueOf(StringPair.get(arguments, "objectId"));
                     return Reports.buildBoxesInLocationReport(bem, aem, locationId);
+                case 12:
+                    locationId = Long.valueOf(StringPair.get(arguments, "objectId"));
+                    return Reports.buildContractStatusReport(bem, aem, locationId);
             }
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -2259,7 +2182,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
             return new RemoteObject(ipamModule.getSubnet(id));
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -2271,7 +2193,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
             return ipamModule.getSubnetPool(id);
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -2322,7 +2243,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
             return ipamModule.createSubnet(id, attributeNames, attributeValues);
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -2338,7 +2258,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
             ipamModule.deleteSubnets(ids, releaseRelationships);
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -2350,7 +2269,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
             ipamModule.deleteSubnetPools(ids);
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -2366,7 +2284,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
             return ipamModule.addIP(id, attributes);
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -2379,7 +2296,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
             ipamModule.removeIP(ids, releaseRelationships);
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -2391,7 +2307,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
             ipamModule.relateIPtoDevice(ipId, deviceClassName, deviceId);
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -2403,7 +2318,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
             ipamModule.relateSubnetToVLAN(id,vlanId);
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -2414,7 +2328,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
             ipamModule.releaseIPfromDevice(deviceClassName, deviceId, id);
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -2425,7 +2338,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
             ipamModule.releaseSubnetFromVLAN(vlanId, id);
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -2437,7 +2349,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
             return RemoteObjectLight.toRemoteObjectLightArray(ipamModule.getSubnetUsedIps(id));
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -2448,7 +2359,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
             ipamModule.itOverlaps(networkIp, broadcastIp);
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
         return true;
@@ -2495,7 +2405,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("releaseDeviceFromContract", ipAddress, sessionId);
             bem.releaseSpecialRelationship(deviceClass, deviceId, contractId, "contractHas");
         } catch (InventoryException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -2509,9 +2418,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             mem = persistenceService.getMetadataEntityManager();
             bem = persistenceService.getBusinessEntityManager();
             aem = persistenceService.getApplicationEntityManager();
-        }catch(Exception ex){
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE,
-                    ex.getClass().getSimpleName() + ": {0}",ex.getMessage()); //NOI18N
+        } catch(Exception ex){
             mem = null;
             bem = null;
             aem = null;
