@@ -1400,7 +1400,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
             List<RemoteBusinessObjectLight> pools  = new ArrayList<>();
             int i = 0;
-            for (Node node : poolNodes){
+            for (Node node : poolNodes) {
                 if (limit != -1){
                     if (i >= limit)
                          break;
@@ -1413,9 +1413,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     if(className.equals(node.getProperty(Constants.PROPERTY_CLASS_NAME)))
                         pools.add(rbol);
                 }
-                else{
+                else {
                     if(!Constants.CLASS_GENERICCUSTOMER.equals(node.getProperty(Constants.PROPERTY_CLASS_NAME)) &&
                        !Constants.CLASS_GENERICSERVICE.equals(node.getProperty(Constants.PROPERTY_CLASS_NAME)) &&
+                       !Constants.CLASS_GENERICCONTRACT.equals(node.getProperty(Constants.PROPERTY_CLASS_NAME)) &&
                        !Constants.CLASS_SUBNET.equals(node.getProperty(Constants.PROPERTY_CLASS_NAME)))
                        pools.add(rbol);
                 }
