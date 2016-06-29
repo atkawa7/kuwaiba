@@ -47,7 +47,7 @@ import org.openide.util.NbBundle.Messages;
         preferredID = "ContractManagerTopComponent"
 )
 @Messages({
-    "CTL_ContractManagerAction=ContractManager",
+    "CTL_ContractManagerAction=Contract Manager",
     "CTL_ContractManagerTopComponent=Contract Manager",
     "HINT_ContractManagerTopComponent=Contract Manager"
 })

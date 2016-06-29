@@ -97,6 +97,7 @@
 * Client support for HTTPS connections
 * In the service manager, all customers and services must be in a customer/service pool
 * Icon set updated
-* Multiple fixes to views
+* Multiple fixes to views and performance improvements
 * Most of the deprecated calls to add(Node[]) and remove(Node[]) to update the children of a node were fixed
 * Pool properties are now editable
+* Date fields can be edited

@@ -32,22 +32,7 @@ import org.openide.nodes.Node;
 public class CustomerChildren extends Children.Keys<LocalPool> {
     
       @Override
-    protected void addNotify() {
-        refreshList();
-    }
-    
-    @Override
-    public void removeNotify() {
-        setKeys(Collections.EMPTY_SET);
-    }
-    
-    @Override
-    protected Node[] createNodes(LocalPool key) {
-        return new Node[] { new ServicePoolNode(new LocalPool(key.getOid(), key.getName(), key.getClassName(), null, -1))};
-  
-    }
-
-    public void refreshList() {
+    public void addNotify() {
         LocalObjectLight customer = ((CustomerNode)this.getNode()).getObject();
         
         List<LocalPool> servicePools = CommunicationsStub.getInstance().getPools(customer.getOid(), Constants.CLASS_GENERICSERVICE);
@@ -61,5 +46,16 @@ public class CustomerChildren extends Children.Keys<LocalPool> {
             Collections.sort(servicePools);
             setKeys(servicePools);
         }
+    }
+    
+    @Override
+    public void removeNotify() {
+        setKeys(Collections.EMPTY_SET);
+    }
+    
+    @Override
+    protected Node[] createNodes(LocalPool key) {
+        return new Node[] { new ServicePoolNode(new LocalPool(key.getOid(), key.getName(), key.getClassName(), null, -1))};
+  
     }
 }

@@ -16,6 +16,7 @@
 package org.inventory.models.physicalconnections.actions;
 
 import java.awt.event.ActionEvent;
+import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
@@ -37,7 +38,7 @@ public class ConnectLinksAction extends GenericObjectNodeAction {
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        LocalObjectLight[] links = CommunicationsStub.getInstance().getObjectSpecialChildren(object.getClassName(), object.getOid());
+        List<LocalObjectLight> links = CommunicationsStub.getInstance().getObjectSpecialChildren(object.getClassName(), object.getOid());
         if (links == null){
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             return;

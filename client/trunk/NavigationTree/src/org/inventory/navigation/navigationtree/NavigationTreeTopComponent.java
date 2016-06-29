@@ -64,7 +64,6 @@ public final class NavigationTreeTopComponent extends TopComponent
         setName(NbBundle.getMessage(NavigationTreeTopComponent.class, "CTL_NavigationTreeTopComponent"));
         setToolTipText(NbBundle.getMessage(NavigationTreeTopComponent.class, "HINT_NavigationTreeTopComponent"));
         setIcon(ImageUtilities.loadImage(ICON_PATH, true));
-        //setDisplayName(java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_TITLE"));
     }
 
         /*

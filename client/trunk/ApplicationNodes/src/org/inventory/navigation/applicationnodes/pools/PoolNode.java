@@ -31,7 +31,6 @@ import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectI
 import org.inventory.navigation.applicationnodes.pools.actions.DeletePoolAction;
 import org.inventory.navigation.applicationnodes.pools.actions.NewPoolItemAction;
 import org.inventory.navigation.applicationnodes.pools.properties.PoolNativeTypeProperty;
-import org.openide.actions.PasteAction;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.NodeTransfer;
 import org.openide.nodes.PropertySupport;
@@ -39,7 +38,6 @@ import org.openide.nodes.Sheet;
 import org.openide.nodes.Sheet.Set;
 import org.openide.util.ImageUtilities;
 import org.openide.util.WeakListeners;
-import org.openide.util.actions.SystemAction;
 import org.openide.util.datatransfer.PasteType;
 /**
  * Represents a pool (a set of objects of a certain kind)
@@ -95,7 +93,7 @@ public class PoolNode extends AbstractNode implements PropertyChangeListener {
             deletePoolAction = new DeletePoolAction(this);
             showObjectIdAction = new ShowObjectIdAction (pool.getOid(), pool.getClassName());
         }
-        return new Action[]{SystemAction.get(PasteAction.class), null, newPoolItemAction, deletePoolAction, showObjectIdAction};
+        return new Action[]{ newPoolItemAction, deletePoolAction, showObjectIdAction};
     }
  
     @Override

@@ -15,42 +15,48 @@
  */
 package org.inventory.navigation.applicationnodes.pools;
 
+import java.util.Collections;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPool;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.navigation.applicationnodes.objectnodes.AbstractChildren;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
-import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 
 /**
  * Children for pool nodes
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class PoolChildren extends Children.Array {
+public class PoolChildren extends AbstractChildren {
 
     private LocalPool pool;
-    private boolean collapsed;
     
     public PoolChildren(LocalPool pool) {
         this.pool = pool;
-        collapsed = true;
     }
     
     @Override
     public void addNotify(){
-        collapsed = false;
         List<LocalObjectLight> items = CommunicationsStub.getInstance().getPoolItems(pool.getOid());
-        if (items == null)
+        if (items == null) {
+            setKeys(Collections.EMPTY_SET);
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-        else{
-            for (LocalObjectLight item : items)
-                add(new Node[]{new ObjectNode(item)});
+        }
+        else {
+            Collections.sort(items);
+            setKeys(items);
         }
     }
+    
+    @Override
+    public void removeNotify() {
+        setKeys(Collections.EMPTY_SET);
+    }
 
-    public boolean isCollapsed() {
-        return collapsed;
+    @Override
+    protected Node[] createNodes(LocalObjectLight key) {
+        return new Node[] { new ObjectNode(key) };
     }
 }

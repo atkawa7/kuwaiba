@@ -21,8 +21,8 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.applicationnodes.listmanagernodes.ListTypeItemChildren;
 import org.inventory.navigation.applicationnodes.listmanagernodes.ListTypeItemNode;
+import org.inventory.navigation.applicationnodes.objectnodes.AbstractChildren;
 
 /**
  * Action to delete an a list type item
@@ -45,7 +45,7 @@ public final class DeleteListTypeAction extends AbstractAction {
 
             if (CommunicationsStub.getInstance().deleteListTypeItem(node.getObject().getClassName(), node.getObject().getOid(),false)){
                 NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TEXT_OK"));
-                ((ListTypeItemChildren)node.getParentNode().getChildren()).refreshList();
+                ((AbstractChildren)node.getParentNode().getChildren()).addNotify();
                 //Refresh cache
                 CommunicationsStub.getInstance().getList(node.getObject().getClassName(), false, true);
             }

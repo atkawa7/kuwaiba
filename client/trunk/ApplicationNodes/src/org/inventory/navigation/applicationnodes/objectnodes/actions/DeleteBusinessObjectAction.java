@@ -23,7 +23,7 @@ import java.util.Iterator;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
+import org.inventory.navigation.applicationnodes.objectnodes.AbstractChildren;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.openide.nodes.Node;
 import org.openide.util.HelpCtx;
@@ -63,7 +63,7 @@ public final class DeleteBusinessObjectAction extends CallbackSystemAction {
             if (CommunicationsStub.getInstance().deleteObjects(classNames, oids)){
                 
                 for (Node parent : parents)
-                    ((ObjectChildren)parent.getChildren()).refreshList();
+                    ((AbstractChildren)parent.getChildren()).addNotify();
                 
                 NotificationUtil.getInstance().showSimplePopup("Success", 
                         NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TEXT_OK"));

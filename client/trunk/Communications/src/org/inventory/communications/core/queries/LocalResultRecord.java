@@ -28,8 +28,6 @@ public class LocalResultRecord {
     private LocalObjectLight object;
     private List<String> extraColumns;
 
-    public LocalResultRecord(){}
-
     public LocalResultRecord(LocalObjectLight object, List<String> extraColumns) {
         this.object = object;
         this.extraColumns = extraColumns;

@@ -1286,16 +1286,15 @@ public class CommunicationsStub {
     }
     //End Service Manager
     
-    public LocalObjectLight[] getObjectSpecialChildren(String objectClass, long objectId) {
-        try{
+    public List<LocalObjectLight> getObjectSpecialChildren(String objectClass, long objectId) {
+        try {
             List<RemoteObjectLight> specialChildren = service.getObjectSpecialChildren (
                     objectClass, objectId, session.getSessionId());
-            LocalObjectLight[] res = new LocalObjectLight[specialChildren.size()];
-            int i = 0;
-            for (RemoteObjectLight rol : specialChildren){
-                res[i] = new LocalObjectLight(rol.getOid(), rol.getName(), rol.getClassName());
-                i++;
-            }
+            List<LocalObjectLight> res = new ArrayList<>();
+            
+            for (RemoteObjectLight rol : specialChildren)
+                res.add(new LocalObjectLight(rol.getOid(), rol.getName(), rol.getClassName()));
+
             return res;
         }catch(Exception ex){
             this.error =  ex.getMessage();

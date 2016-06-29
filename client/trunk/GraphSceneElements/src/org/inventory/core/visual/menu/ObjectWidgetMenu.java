@@ -16,12 +16,12 @@
 package org.inventory.core.visual.menu;
 
 import java.awt.Point;
-import javax.swing.Action;
 import javax.swing.JPopupMenu;
+import org.inventory.core.visual.scene.SelectableConnectionWidget;
 import org.inventory.core.visual.scene.SelectableNodeWidget;
 import org.netbeans.api.visual.action.PopupMenuProvider;
 import org.netbeans.api.visual.widget.Widget;
-import org.openide.util.actions.Presenter;
+import org.openide.util.Utilities;
 
 /**
  * Menu with the actions associated to an edge (a physical connection)
@@ -31,17 +31,11 @@ public class ObjectWidgetMenu implements PopupMenuProvider {
 
     @Override
     public JPopupMenu getPopupMenu(Widget widget, Point localLocation) {
-        JPopupMenu menu = new JPopupMenu();       
-        for (Action action : ((SelectableNodeWidget)widget).getNode().getActions(false)){
-            if (action !=  null){
-                //For some stupid reason, the show-pop-up-action is ignoring actions
-                //implementing the Presenter.Popup interface, thus not showing the submenus
-                if (action instanceof Presenter.Popup)
-                    menu.add(((Presenter.Popup)action).getPopupPresenter());
-                else
-                    menu.add(action);
-            }
-        }
-        return menu;
+        if (widget instanceof SelectableNodeWidget)
+            return Utilities.actionsToPopup(((SelectableNodeWidget)widget).getNode().getActions(true), 
+                    widget.getScene().getView());
+        
+        return Utilities.actionsToPopup(((SelectableConnectionWidget)widget).getNode().getActions(true), 
+                    widget.getScene().getView());
     }
 }

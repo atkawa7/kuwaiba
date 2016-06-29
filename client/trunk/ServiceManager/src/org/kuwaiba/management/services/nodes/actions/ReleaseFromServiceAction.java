@@ -67,34 +67,34 @@ public class ReleaseFromServiceAction extends GenericObjectNodeAction implements
 
     @Override
     public JMenuItem getPopupPresenter() {
+        JMenu mnuServices = new JMenu(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_RELEASE_ELEMENT"));
+        mnuServices.setEnabled(false);
         
         Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
         
-        if (!selectedNodes.hasNext())
-            return null;
+        if (selectedNodes.hasNext()) {
         
-        ObjectNode selectedNode = selectedNodes.next(); //Uses the last selected only
-        
-        JMenu mnuServices = new JMenu(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_RELEASE_ELEMENT"));
-        List<LocalObjectLight> services = CommunicationsStub.getInstance().getSpecialAttribute(selectedNode.getObject().getClassName(), 
-                selectedNode.getObject().getOid(), "uses");
-        
-        if (services != null) {
-        
-            if (services.isEmpty())
-                mnuServices.setEnabled(false);
-            else {
-                for (LocalObjectLight service : services){
-                    JMenuItem smiServices = new JMenuItem(service.toString());
-                    smiServices.setName(String.valueOf(service.getOid()));
-                    smiServices.addActionListener(this);
-                    mnuServices.add(smiServices);
+            ObjectNode selectedNode = selectedNodes.next(); //Uses the last selected only
+
+            List<LocalObjectLight> services = CommunicationsStub.getInstance().getSpecialAttribute(selectedNode.getObject().getClassName(), 
+                    selectedNode.getObject().getOid(), "uses");
+
+            if (services != null) {
+
+                if (!services.isEmpty()) {
+                    for (LocalObjectLight service : services){
+                        JMenuItem smiServices = new JMenuItem(service.toString());
+                        smiServices.setName(String.valueOf(service.getOid()));
+                        smiServices.addActionListener(this);
+                        mnuServices.add(smiServices);
+                    }
+                    mnuServices.setEnabled(true);
                 }
-            }
-            return mnuServices;
-        } else {
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-            return null;
-        } 
+            } else
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+        }
+        
+        return mnuServices;
     }
+    
 }

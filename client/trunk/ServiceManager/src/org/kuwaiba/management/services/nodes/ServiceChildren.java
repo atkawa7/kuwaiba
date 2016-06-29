@@ -20,15 +20,15 @@ import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.navigation.applicationnodes.objectnodes.AbstractChildren;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
-import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 
 /**
  * All children under a Service node
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ServiceChildren extends Children.Keys<LocalObjectLight> {
+public class ServiceChildren extends AbstractChildren {
     
     @Override
     public void addNotify() {

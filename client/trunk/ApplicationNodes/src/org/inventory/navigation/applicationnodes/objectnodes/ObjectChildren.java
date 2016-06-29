@@ -20,14 +20,13 @@ import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 
 /**
  * Represents the children for the navigation tree
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ObjectChildren extends Children.Keys<LocalObjectLight> {
+public class ObjectChildren extends AbstractChildren {
     
     public ObjectChildren() {
         setKeys(Collections.EMPTY_SET);
@@ -42,20 +41,6 @@ public class ObjectChildren extends Children.Keys<LocalObjectLight> {
      */
     @Override
     public void addNotify() {
-        refreshList();
-    }
-       
-    @Override
-    public void removeNotify() {
-        setKeys(Collections.EMPTY_SET);
-    }
-    
-    @Override
-    protected Node[] createNodes(LocalObjectLight key) {
-        return new Node[] { new ObjectNode(key)};
-    }
-    
-    public void refreshList() {
         CommunicationsStub com = CommunicationsStub.getInstance();
         List <LocalObjectLight> children;
         //The tree root is not an AbstractNode, but a RootObjectNode
@@ -75,5 +60,15 @@ public class ObjectChildren extends Children.Keys<LocalObjectLight> {
             Collections.sort(children);
             setKeys(children);
         }
+    }
+       
+    @Override
+    public void removeNotify() {
+        setKeys(Collections.EMPTY_SET);
+    }
+    
+    @Override
+    protected Node[] createNodes(LocalObjectLight key) {
+        return new Node[] { new ObjectNode(key)};
     }
 }

@@ -30,7 +30,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
+import org.inventory.navigation.applicationnodes.objectnodes.AbstractChildren;
 import org.openide.util.Utilities;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -267,8 +267,8 @@ public class AddIPAddressAction extends GenericObjectNodeAction {
 
                     if (addedIP == null)
                         NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
-                    else{
-                        ((ObjectChildren)subnetNode.getChildren()).refreshList();
+                    else {
+                        ((AbstractChildren)subnetNode.getChildren()).addNotify();
                         NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_CREATED"));
                     }
                     dispose();

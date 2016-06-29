@@ -19,6 +19,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -43,7 +44,7 @@ import org.openide.util.LookupListener;
  * Show the activity log associated to an object
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ConnectLinksFrame extends JFrame{
+public class ConnectLinksFrame extends JFrame {
     JLabel lblResults;
     private JScrollPane pnlScrollLeft;
     private JScrollPane pnlScrollRight;
@@ -58,7 +59,7 @@ public class ConnectLinksFrame extends JFrame{
     private LocalObjectLight aSideRoot;
     private LocalObjectLight bSideRoot;
 
-    public ConnectLinksFrame(LocalObjectLight aSideRoot, LocalObjectLight bSideRoot, LocalObjectLight[] connections) {
+    public ConnectLinksFrame(LocalObjectLight aSideRoot, LocalObjectLight bSideRoot, List<LocalObjectLight> connections) {
         this.aSideRoot = aSideRoot;
         this.bSideRoot = bSideRoot;
         setLayout(new BorderLayout());
@@ -86,7 +87,7 @@ public class ConnectLinksFrame extends JFrame{
         
         JPanel centralPanel = new JPanel();
         centralPanel.setLayout(new BorderLayout());
-        lstAvailableConnections = new JList(connections);
+        lstAvailableConnections = new JList(connections.toArray(new LocalObjectLight[0]));
         lstAvailableConnections.addListSelectionListener(new ListSelectionListener() {
 
             @Override

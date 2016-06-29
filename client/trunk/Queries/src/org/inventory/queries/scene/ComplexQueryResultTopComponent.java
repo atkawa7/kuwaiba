@@ -22,7 +22,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.Action;
+import java.beans.PropertyVetoException;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
@@ -37,23 +37,22 @@ import org.inventory.core.services.api.export.ExportableTable;
 import org.inventory.core.services.api.export.filters.CSVFilter;
 import org.inventory.core.services.api.export.filters.TextExportFilter;
 import org.inventory.core.services.api.export.filters.XMLFilter;
-import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.queries.QueryManagerService;
 import org.netbeans.swing.etable.ETable;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
-import org.openide.util.Lookup;
-import org.openide.util.actions.Presenter;
-import org.openide.windows.Mode;
+import org.openide.explorer.ExplorerManager;
+import org.openide.explorer.ExplorerUtils;
+import org.openide.nodes.Node;
+import org.openide.util.Utilities;
 import org.openide.windows.TopComponent;
-import org.openide.windows.WindowManager;
 
 /**
  * Query results for the new Graphical Query builder
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ComplexQueryResultTopComponent extends TopComponent implements ExportableTable {
+public class ComplexQueryResultTopComponent extends TopComponent implements ExportableTable, ExplorerManager.Provider {
     private JToolBar barMain;
     private JButton btnNext;
     private JButton btnPrevious;
@@ -63,33 +62,34 @@ public class ComplexQueryResultTopComponent extends TopComponent implements Expo
     private ETable aTable;
     private int currentPage = 1;
     private int pageSize;
+    private ExplorerManager em;
     /**
      * Reference to the controller
      */
     private QueryManagerService qbs;
-    private NotificationUtil nu;
 
     public ComplexQueryResultTopComponent(LocalResultRecord[] res, int pageSize,
-            QueryManagerService qbs) {
+            QueryManagerService qbs) {       
         this.qbs = qbs;
         this.pageSize = pageSize;
+        this.em = new ExplorerManager();
         TableModel model = new QueryResultTableModel(res);
         aTable = new ETable(model);
-        initComponents();
         aTable.addMouseListener(new PopupProvider());
+        initComponents();
+        associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
     }
 
     private void initComponents(){
+        setLayout(new BorderLayout());
         barMain = new JToolBar();
         btnNext = new JButton();
         btnPrevious = new JButton();
         btnAll = new JButton();
         btnExport = new JButton();
         pnlScrollMain = new JScrollPane();
-        setLayout(new BorderLayout());
-
         pnlScrollMain.setViewportView(aTable);
-
+        
         btnExport.setIcon(new ImageIcon(getClass().getResource("/org/inventory/queries/res/export.png"))); //NOI18N
         btnExport.setToolTipText("Export...");
         btnNext.setIcon(new ImageIcon(getClass().getResource("/org/inventory/queries/res/next.png"))); //NOI18N
@@ -137,13 +137,10 @@ public class ComplexQueryResultTopComponent extends TopComponent implements Expo
         barMain.setRollover(true);
         barMain.setPreferredSize(new java.awt.Dimension(326, 33));
 
-        add(pnlScrollMain, BorderLayout.CENTER);
-        add(barMain, BorderLayout.PAGE_START);
+        add(barMain, BorderLayout.NORTH);
+        add(pnlScrollMain);
         
         setName("Query Results");
-
-        Mode myMode = WindowManager.getDefault().findMode("bottomSlidingSide"); //NOI18N
-        myMode.dockInto(this);
     }
 
     @Override
@@ -209,12 +206,6 @@ public class ComplexQueryResultTopComponent extends TopComponent implements Expo
         return TopComponent.PERSISTENCE_NEVER;
     }
 
-    public NotificationUtil getNotifier(){
-        if (this.nu == null)
-            nu = Lookup.getDefault().lookup(NotificationUtil.class);
-        return nu;
-    }
-
     public Object[][] getCurrentResults(){
         Object[][] res = new Object[aTable.getModel().getRowCount() + 1][aTable.getModel().getColumnCount()];
         res[0] = ((QueryResultTableModel)aTable.getModel()).getColumnNames();
@@ -237,7 +228,7 @@ public class ComplexQueryResultTopComponent extends TopComponent implements Expo
                 if (results.length == 0)
                     res = new Object[0][0];
                 else{
-                    res =new Object[results.length][results[0].getExtraColumns().size() + 1];
+                    res = new Object[results.length][results[0].getExtraColumns().size() + 1];
                     for (int i = 0; i < results.length; i++){
                         res[i][0] = results[i].getObject();
                         for (int j = 0; j < results[i].getExtraColumns().size();j++)
@@ -249,34 +240,29 @@ public class ComplexQueryResultTopComponent extends TopComponent implements Expo
         return res;
     }
 
-    private class PopupProvider extends MouseAdapter{
+    @Override
+    public ExplorerManager getExplorerManager() {
+        return em;
+    }
+
+    private class PopupProvider extends MouseAdapter {
 
         @Override
         public void mousePressed(MouseEvent e) {
-          showPopup(e);
-        }
-        @Override
-        public void mouseReleased(MouseEvent e) {
-          showPopup(e);
-        }
-        private void showPopup(MouseEvent e) {
-          if (e.isPopupTrigger()) {
-            LocalObjectLight singleRecord = (LocalObjectLight)aTable.getValueAt(aTable.rowAtPoint(new Point(e.getX(), e.getY())), 0);
-            ObjectNode node = new ObjectNode(singleRecord);
-            JPopupMenu  menu = new JPopupMenu();
+            LocalObjectLight selectedValue = (LocalObjectLight)aTable.getValueAt(aTable.rowAtPoint(new Point(e.getX(), e.getY())), 0);
+            ObjectNode node = new ObjectNode(selectedValue);
+            try {
+                em.setRootContext(node);
+                em.setSelectedNodes(new Node[] { node });
+            } catch (PropertyVetoException ex) {} //Should never happen
             
-            for (Action action : node.getActions(true)){
-                if (action != null){
-                    //For some stupid reason, the show-pop-up-action is ignoring actions
-                    //implementing the Presenter.Popup interface, thus not showing the submenus
-                    if (action instanceof Presenter.Popup)
-                        menu.add(((Presenter.Popup)action).getPopupPresenter());
-                    else
-                        menu.add(action);
-                }
+            if (e.isPopupTrigger()) {            
+              JPopupMenu  menu = Utilities.actionsToPopup(node.getActions(true), e.getComponent());
+              menu.show(e.getComponent(), e.getX(), e.getY());
             }
-            menu.show(e.getComponent(), e.getX(), e.getY());
-          }
         }
+        
+        @Override
+        public void mouseReleased(MouseEvent e) {}
     }
 }

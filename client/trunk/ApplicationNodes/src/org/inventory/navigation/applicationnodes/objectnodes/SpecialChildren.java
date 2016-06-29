@@ -15,6 +15,8 @@
  */
 package org.inventory.navigation.applicationnodes.objectnodes;
 
+import java.util.Collections;
+import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -30,15 +32,15 @@ public class SpecialChildren extends ObjectChildren {
         assert getNode() instanceof ObjectNode : "This node is not instance of ObjectNode";
         LocalObjectLight parentObject = ((ObjectNode)getNode()).getObject();
 
-        LocalObjectLight[] specialChildren = CommunicationsStub.getInstance().
+        List<LocalObjectLight> specialChildren = CommunicationsStub.getInstance().
                 getObjectSpecialChildren(parentObject.getClassName(), parentObject.getOid());
        
         if (specialChildren == null){
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-            return;
+            setKeys(Collections.EMPTY_SET);
+        } else {
+            Collections.sort(specialChildren);
+            setKeys(specialChildren);
         }
-            
-        for (LocalObjectLight lol : specialChildren)
-            add(new SpecialObjectNode[]{new SpecialObjectNode(lol)});
     }
 }

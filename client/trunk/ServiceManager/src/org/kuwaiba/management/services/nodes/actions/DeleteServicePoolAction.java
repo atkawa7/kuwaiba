@@ -51,7 +51,7 @@ class DeleteServicePoolAction extends AbstractAction {
                 if (!CommunicationsStub.getInstance().deletePool(selectedNode.getPool().getOid()))
                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 else
-                    ((CustomerChildren)((CustomerNode)selectedNode.getParentNode()).getChildren()).refreshList();
+                    ((CustomerChildren)((CustomerNode)selectedNode.getParentNode()).getChildren()).addNotify();
             }               
         }
     }

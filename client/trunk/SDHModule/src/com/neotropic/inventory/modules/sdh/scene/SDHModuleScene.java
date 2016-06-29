@@ -308,7 +308,7 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
             LocalObjectLight newConnection = wizard.run(sourceObject, targetObject);
 
             if (newConnection != null) {
-                //Only create edges in the scene if the connection if a TransportLink
+                //Only create edges in the scene if the connection is a TransportLink
                 if (CommunicationsStub.getInstance().isSubclassOf(newConnection.getClassName(), "GenericSDHTransportLink")) {
                     AbstractConnectionWidget newConnectionWidget = (AbstractConnectionWidget)addEdge(newConnection);
                     setEdgeSource(newConnection, sourceObject);

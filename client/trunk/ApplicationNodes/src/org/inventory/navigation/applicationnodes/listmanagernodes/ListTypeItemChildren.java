@@ -33,7 +33,7 @@ import org.openide.nodes.Node;
 public class ListTypeItemChildren extends ObjectChildren {
 
     @Override
-    public void refreshList() {
+    public void addNotify() {
         LocalClassMetadataLight lcml = ((ListTypeNode)this.getNode()).getObject();
         List<LocalObjectListItem> theListTypeItems = CommunicationsStub.getInstance().getList(lcml.getClassName(), false, true);
 

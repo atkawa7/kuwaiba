@@ -25,7 +25,7 @@ import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.MenuScroller;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
+import org.inventory.navigation.applicationnodes.objectnodes.AbstractChildren;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.navigation.applicationnodes.objectnodes.RootObjectNode;
 import org.openide.nodes.AbstractNode;
@@ -59,8 +59,8 @@ public final class CreateBusinessObjectAction extends AbstractAction implements 
                 node instanceof RootObjectNode? -1 : ((ObjectNode)node).getObject().getOid(), 0);
         if (myLol == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
-        else{
-            ((ObjectChildren)node.getChildren()).refreshList();
+        else {
+            ((AbstractChildren)node.getChildren()).addNotify();
             NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE,
                 java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATED"));
         }

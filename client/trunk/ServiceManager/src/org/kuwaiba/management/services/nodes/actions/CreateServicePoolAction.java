@@ -77,7 +77,7 @@ public class CreateServicePoolAction extends AbstractAction {
             if (newPool ==  null)
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             else {
-                ((CustomerChildren)customerNode.getChildren()).refreshList();
+                ((CustomerChildren)customerNode.getChildren()).addNotify();
                 NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATED"));
             }
         }

@@ -20,8 +20,8 @@ import javax.swing.AbstractAction;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.applicationnodes.listmanagernodes.ListTypeItemChildren;
 import org.inventory.navigation.applicationnodes.listmanagernodes.ListTypeNode;
+import org.inventory.navigation.applicationnodes.objectnodes.AbstractChildren;
 
 /**
  * Action to create a new list type item
@@ -43,7 +43,7 @@ public final class CreateListTypeAction extends AbstractAction {
         if (myLol == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else {
-            ((ListTypeItemChildren)node.getChildren()).refreshList();
+            ((AbstractChildren)node.getChildren()).addNotify();
             //Refresh cache
             com.getList(node.getObject().getClassName(), false, true);
         }
