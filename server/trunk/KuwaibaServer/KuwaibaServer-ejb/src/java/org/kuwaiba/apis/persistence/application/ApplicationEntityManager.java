@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectList;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
@@ -38,7 +37,18 @@ import org.kuwaiba.util.ChangeDescriptor;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public interface ApplicationEntityManager {
-    
+    /**
+     * Type of pool general purpose. These pools are not linked to any particular model
+     */
+    public static final int POOL_TYPE_GENERAL_PURPOSE = 1;
+    /**
+     * Type of pool module root. These pools are used in models and are the root of such model
+     */
+    public static final int POOL_TYPE_MODULE_ROOT = 2;
+    /**
+     * Type of pool module component. These pools are used in models and are in the lower levels of the pool containment hierarchy
+     */
+    public static int POOL_TYPE_MODULE_COMPONENT = 3;
     /**
      * String that identifies the class used for pools
      */
@@ -410,29 +420,68 @@ public interface ApplicationEntityManager {
     
     //Pools
     /**
-     * Creates a pool
-     * @param parentId Id of the parent object. -1 
+     * Creates a pool without a parent. They're used as general purpose place to put inventory objects, or as root for particular models
      * @param name Pool name
      * @param description Pool description
      * @param instancesOfClass What kind of objects can this pool contain? 
-     * @param type type of IPs addresses inside of the pool
+     * @param type Type of pool. For possible values see ApplicationManager.POOL_TYPE_XXX
      * @return The id of the new pool
      * @throws MetadataObjectNotFoundException If instancesOfClass is not a valid subclass of InventoryObject
-     * @throws InvalidArgumentException If the owner doesn't exist
-     * @throws ObjectNotFoundException If the parent can not be found
      * @throws NotAuthorizedException If the user is not authorized to create pools
      */
-    public long createPool(long parentId, String name, String description, String instancesOfClass, int type) 
-            throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException, NotAuthorizedException;
+    public long createRootPool(String name, String description, String instancesOfClass, int type)
+            throws MetadataObjectNotFoundException, NotAuthorizedException;
+    
+    /**
+     * Creates a pool that will have as parent an inventory object. This special containment structure can be used to 
+     * provide support for new models
+     * @param parentClassname Class name of the parent object
+     * @param parentId Id of the parent object
+     * @param name Pool name
+     * @param description Pool description
+     * @param instancesOfClass What kind of objects can this pool contain? 
+     * @param type Type of pool. For possible values see ApplicationManager.POOL_TYPE_XXX
+     * @return The id of the new pool
+     * @throws MetadataObjectNotFoundException If instancesOfClass is not a valid subclass of InventoryObject
+     * @throws ObjectNotFoundException If the parent object can not be found
+     * @throws NotAuthorizedException If the user is not authorized to create pools
+     */
+    public long createPoolInObject(String parentClassname, long parentId, String name, String description, String instancesOfClass, int type)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, NotAuthorizedException;
 
     /**
-     * Deletes a set of pools
+     * Creates a pool that will have as parent another pool. This special containment structure can be used to 
+     * provide support for new models
+     * @param parentId Id of the parent pool
+     * @param name Pool name
+     * @param description Pool description
+     * @param instancesOfClass What kind of objects can this pool contain? 
+     * @param type Type of pool. Not used so far, but it will be in the future. It will probably be used to help organize the existing pools
+     * @return The id of the new pool
+     * @throws MetadataObjectNotFoundException If instancesOfClass is not a valid subclass of InventoryObject
+     * @throws ApplicationObjectNotFoundException If the parent object can not be found
+     * @throws NotAuthorizedException If the user is not authorized to create pools
+     */
+    public long createPoolInPool(long parentId, String name, String description, String instancesOfClass, int type)
+            throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException;
+    
+    /**
+     * Deletes a single pool
+     * @param id The pool id
+     * @throws ApplicationObjectNotFoundException If the pool could not be found
+     * @throws OperationNotPermittedException If any of the pool children had relationships
+     * @throws NotAuthorizedException If the user is not allowed to delete pools
+     */
+    public void deletePool(long id) throws ApplicationObjectNotFoundException, OperationNotPermittedException, NotAuthorizedException;
+    
+    /**
+     * Deletes a set of pools. Note that this method will delete and commit the changes until it finds an error, so if deleting any of the pools fails, don't try to delete those that were already processed
      * @param ids the list of ids from the objects to be deleted
-     * @throws InvalidArgumentException If any of the pools to be deleted couldn't be found
+     * @throws ApplicationObjectNotFoundException If any of the pools to be deleted couldn't be found
      * @throws OperationNotPermittedException If any of the objects in the pool can not be deleted because it's not a business related instance (it's more a security restriction)
      * @throws NotAuthorizedException If the user is not authorized to delete pools
      */
-    public void deletePools(long[] ids) throws InvalidArgumentException, OperationNotPermittedException, NotAuthorizedException;
+    public void deletePools(long[] ids) throws ApplicationObjectNotFoundException, OperationNotPermittedException, NotAuthorizedException;
    
     /**
      * Updates a pool. The class name field is read only to preserve the integrity of the pool. Same happens to the field type
@@ -443,23 +492,34 @@ public interface ApplicationEntityManager {
     public void setPoolProperties(long poolId, String name, String description);
     
     /**
-     * Gets the available pools for a specific parent id
-     * @param limit
-     * @param parentId
-     * @param className
-     * @return
-     * @throws NotAuthorizedException 
-     * @throws org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException 
+     * Retrieves the pools that don't have any parent and are normally intended to be managed by the Pool Manager
+     * @param className The class name used to filter the results. Only the pools with a className attribute matching the provided value will be returned. Use null if you want to get all
+     * @param type The type of pools that should be retrieved. Root pools can be for general purpose, or as roots in models
+     * @return A set of pools
+     * @throws NotAuthorizedException If the user is not authorized to retrieve pool information
      */
-    public List<RemoteBusinessObjectLight> getPools(int limit, long parentId, String className) throws NotAuthorizedException, ObjectNotFoundException;
+    public List<Pool> getRootPools(String className, int type) throws NotAuthorizedException;
     /**
-     * Gets all the available pools
-     * @param limit Maximum number of pool records to be returned. -1 to return all
-     * @param className
-     * @return The list of pools as RemoteBusinessObjectLight instances
-     * @throws NotAuthorizedException
+     * Retrieves the pools associated to a particular object
+     * @param objectClassName The parent object class name
+     * @param objectId The parent object id
+     * @param poolClass The class name used to filter the results. Only the pools with a className attribute matching the provided value will be returned. Use null if you want to get all
+     * @return A set of pools
+     * @throws NotAuthorizedException If the user is not authorized to retrieve pool information
+     * @throws ObjectNotFoundException If the parent object can not be found
      */
-    public List<RemoteBusinessObjectLight> getPools(int limit, String className) throws NotAuthorizedException;
+    public List<Pool> getPoolsInObject(String objectClassName, long objectId, String poolClass) 
+            throws NotAuthorizedException, ObjectNotFoundException;
+    /**
+     * Retrieves the pools associated to a particular pool
+     * @param parentPoolId The parent pool id
+     * @param poolClass The class name used to filter the results. Only the pools with a className attribute matching the provided value will be returned. Use null if you want to get all
+     * @return A set of pools
+     * @throws NotAuthorizedException If the user is not authorized to retrieve pool information
+     * @throws ApplicationObjectNotFoundException If the parent object can not be found
+     */
+    public List<Pool> getPoolsInPool(long parentPoolId, String poolClass) 
+            throws NotAuthorizedException, ApplicationObjectNotFoundException;
     
     /**
      * Gets a pool by its id 

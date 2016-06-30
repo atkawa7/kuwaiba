@@ -39,6 +39,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
+import org.kuwaiba.apis.persistence.application.Pool;
 import org.kuwaiba.apis.persistence.application.Privilege;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
@@ -399,6 +400,16 @@ public class Util {
         ClassMetadata classMetadata = createClassMetadataFromNode(classNode);
         return createRemoteObjectFromNode(instance, classMetadata);
     }
+    
+    public static Pool createPoolFromNode(Node poolNode) {
+        return new Pool(poolNode.getId(), 
+                        poolNode.hasProperty(Constants.PROPERTY_NAME) ? (String)poolNode.getProperty(Constants.PROPERTY_NAME) : null, 
+                        poolNode.hasProperty(Constants.PROPERTY_DESCRIPTION) ? (String)poolNode.getProperty(Constants.PROPERTY_DESCRIPTION) : null,
+                        (String)poolNode.getProperty(Constants.PROPERTY_CLASS_NAME), 
+                        poolNode.hasProperty(Constants.PROPERTY_TYPE) ? (int)poolNode.getProperty(Constants.PROPERTY_TYPE) : -1);
+    }
+    
+    
     
     /**
      * Builds a RemoteBusinessObject instance from a node representing a business object

@@ -843,28 +843,95 @@ public class KuwaibaService {
      * Methods related to manage pools
      */
     /**
-     * Creates a pool
-     * @param parentId Id of the parent of this pool. -1 for none
+     * Creates a pool without a parent. They're used as general purpose place to put inventory objects, or as root for particular models
      * @param name Pool name
      * @param description Pool description
      * @param instancesOfClass What kind of objects can this pool contain? 
-     * @param sessionId Session identifier
-     * @return id of the new pool
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @param type Type of pool. For possible values see ApplicationManager.POOL_TYPE_XXX
+     * @param sessionId The session token
+     * @return The id of the new pool
+     * @throws Exception In case something goes wrong
      */
-    @WebMethod(operationName = "createPool")
-    public long createPool(@WebParam(name = "parentid")long parentId,
-            @WebParam(name = "name")String name,
-            @WebParam(name = "description")String description,
-            @WebParam(name = "instancesOfClass")String instancesOfClass,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
-        try{
-            return wsBean.createPool(parentId, name, description, instancesOfClass, getIPAddress(),  sessionId);
+    @WebMethod(operationName = "createRootPool")
+    public long createRootPool(@WebParam(name = "name")String name, 
+                               @WebParam(name = "description")String description, 
+                               @WebParam(name = "instancesOfClass")String instancesOfClass, 
+                               @WebParam(name = "type")int type, 
+                               @WebParam(name = "sessionId")String sessionId)
+            throws Exception {
+        try {
+            return wsBean.createRootPool(name, description, instancesOfClass, type, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in createPool: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in createRootPool: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Creates a pool that will have as parent an inventory object. This special containment structure can be used to 
+     * provide support for new models
+     * @param parentClassname Class name of the parent object
+     * @param parentId Id of the parent object
+     * @param name Pool name
+     * @param description Pool description
+     * @param instancesOfClass What kind of objects can this pool contain? 
+     * @param type Type of pool. For possible values see ApplicationManager.POOL_TYPE_XXX
+     * @param sessionId The session token
+     * @return The id of the new pool
+     * @throws Exception In case something goes wrong
+     */
+    @WebMethod(operationName = "createPoolInObject")
+    public long createPoolInObject(@WebParam(name = "parentClassname")String parentClassname, 
+                                   @WebParam(name = "parentId")long parentId, 
+                                   @WebParam(name = "name")String name, 
+                                   @WebParam(name = "description")String description, 
+                                   @WebParam(name = "instancesOfClass")String instancesOfClass, 
+                                   @WebParam(name = "type")int type, 
+                               @WebParam(name = "sessionId")String sessionId)
+            throws Exception {
+        try {
+            return wsBean.createPoolInObject(parentClassname, parentId, name, description, instancesOfClass, type, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createPoolInObject: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Creates a pool that will have as parent another pool. This special containment structure can be used to 
+     * provide support for new models
+     * @param parentId Id of the parent pool
+     * @param name Pool name
+     * @param description Pool description
+     * @param instancesOfClass What kind of objects can this pool contain? 
+     * @param type Type of pool. Not used so far, but it will be in the future. It will probably be used to help organize the existing pools
+     * @param sessionId The session token
+     * @return The id of the new pool
+     * @throws Exception In case something goes wrong
+     */
+    @WebMethod(operationName = "createPoolInPool")
+    public long createPoolInPool(@WebParam(name = "parentId")long parentId, 
+                                   @WebParam(name = "name")String name, 
+                                   @WebParam(name = "description")String description, 
+                                   @WebParam(name = "instancesOfClass")String instancesOfClass, 
+                                   @WebParam(name = "type")int type, 
+                               @WebParam(name = "sessionId")String sessionId)
+            throws Exception {
+        try {
+            return wsBean.createPoolInPool(parentId, name, description, instancesOfClass, type, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createPoolInPool: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
@@ -901,6 +968,27 @@ public class KuwaibaService {
     }
     
     /**
+     * Delete a pool
+     * @param id Pool to be deleted
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "deletePool")
+    public void deletePool(@WebParam(name = "id")long id,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            wsBean.deletePool(id, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deletePool: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
      * Deletes a set of pools
      * @param ids Pools to be deleted
      * @param sessionId Session identifier
@@ -922,27 +1010,57 @@ public class KuwaibaService {
     }
     
     /**
-     * Get a set of pools for a specific parent
-     * @param limit Maximum number of pool records to be returned
-     * @param parentId Pool's parent id
-     * @param className class type for the pools
+     * Retrieves the pools that don't have any parent and are normally intended to be managed by the Pool Manager
+     * @param className The class name used to filter the results. Only the pools with a className attribute matching the provided value will be returned. Use null if you want to get all
+     * @param type The type of pools that should be retrieved. Root pools can be for general purpose, or as roots in models
      * @param sessionId Session token
-     * @return The list of pools as RemoteObjectLight instances for an specific parent
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime 
+     * @return A set of pools
+     * @throws Exception In case something goes wrong
      */
-    @WebMethod(operationName = "getPoolsForParentWithId")
-    public RemoteObjectLight[] getPoolsForParentWithId(@WebParam(name = "limit")
-            int limit, @WebParam(name = "parentId") 
-            long parentId, @WebParam(name = "className") 
-            String className, @WebParam(name = "sessionId") 
-            String sessionId) throws Exception{
-        try{
-            return wsBean.getPools(limit, parentId, className, getIPAddress(), sessionId);
+    @WebMethod(operationName = "getRootPools")
+    public List<RemotePool> getRootPools(@WebParam(name = "className")String className, 
+                                         @WebParam(name = "type")int type, 
+                                         @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try {
+            return wsBean.getRootPools(className, type, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in getPoolsForParentWithId: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in getRootPools: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    @WebMethod(operationName = "getPoolsInObject")
+    public List<RemotePool> getPoolsInObject(@WebParam(name = "objectClassName")String objectClassName, 
+                                             @WebParam(name = "objectId")long objectId,
+                                             @WebParam(name = "poolClass")String poolClass, 
+                                             @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try {
+            return wsBean.getPoolsInObject(objectClassName, objectId, poolClass, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getPoolsInObject: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    @WebMethod(operationName = "getPoolsInPool")
+    public List<RemotePool> getPoolsInPool(@WebParam(name = "parentPoolId")long parentPoolId,
+                                             @WebParam(name = "poolClass")String poolClass, 
+                                             @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try {
+            return wsBean.getPoolsInPool(parentPoolId, poolClass, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getPoolsInPool: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
@@ -965,30 +1083,6 @@ public class KuwaibaService {
                 throw e;
             else {
                 System.out.println("[KUWAIBA] An unexpected error occurred in getPool: " + e.getMessage());
-                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
-            }
-        }
-    }
-    
-    /**
-     * Get a set of pools
-     * @param limit Maximum number of pool records to be returned
-     * @param className class type for the pools
-     * @param sessionId Session identifier
-     * @return The list of pools as RemoteObjectLight instances
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
-     */
-    @WebMethod(operationName = "getPools")
-    public RemoteObjectLight[] getPools(@WebParam(name = "limit")int limit,
-            @WebParam(name = "className") String className,
-            @WebParam(name = "sessionId") String sessionId) throws Exception{
-        try{
-            return wsBean.getPools(limit, className, getIPAddress(), sessionId);
-        } catch(Exception e){
-            if (e instanceof ServerSideException)
-                throw e;
-            else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in getPools: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }

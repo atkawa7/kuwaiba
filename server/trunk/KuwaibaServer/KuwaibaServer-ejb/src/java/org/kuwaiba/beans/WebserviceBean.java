@@ -35,6 +35,7 @@ import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.application.CompactQuery;
 import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
+import org.kuwaiba.apis.persistence.application.Pool;
 import org.kuwaiba.apis.persistence.application.Session;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.application.ViewObject;
@@ -1773,12 +1774,39 @@ public class WebserviceBean implements WebserviceBeanRemote {
     
     //Pools
     @Override
-    public long createPool(long parentId, String name, String description, String instancesOfClass, String ipAddress, String sessionId) throws ServerSideException{
+    public long createRootPool(String name, String description, String instancesOfClass, int type, String ipAddress, String sessionId)
+            throws ServerSideException {
         if (aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
-            aem.validateCall("createPool", ipAddress, sessionId);
-            return aem.createPool(parentId, name, description, instancesOfClass, 0);
+            aem.validateCall("createRootPool", ipAddress, sessionId);
+            return aem.createRootPool(name, description, instancesOfClass, type);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public long createPoolInObject(String parentClassname, long parentId, String name, String description, String instancesOfClass, int type, String ipAddress, String sessionId)
+            throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("createPoolInObject", ipAddress, sessionId);
+            return aem.createPoolInObject(parentClassname, parentId, name, description, instancesOfClass, type);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public long createPoolInPool(long parentId, String name, String description, String instancesOfClass, int type, String ipAddress, String sessionId) 
+            throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("createPoolInPool", ipAddress, sessionId);
+            return aem.createPoolInPool(parentId, name, description, instancesOfClass, type);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -1796,7 +1824,21 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void deletePools(long[] ids, String ipAddress, String sessionId) throws ServerSideException{
+    public void deletePool(long id, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("deletePool", ipAddress, sessionId);
+            aem.deletePool(id);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), ActivityLogEntry.ACTIVITY_TYPE_DELETE_APPLICATION_OBJECT, 
+                    String.format("Deleted pool with id %s ", id));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void deletePools(long[] ids, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
@@ -1834,29 +1876,59 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
     
     @Override
-    public RemoteObjectLight[] getPools(int limit, long parentId, String className, String ipAddress, String sessionId) throws ServerSideException{
+    public List<RemotePool> getRootPools(String className, int type, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
-            aem.validateCall("getPools", ipAddress, sessionId);
-            return RemoteObjectLight.toRemoteObjectLightArray(aem.getPools(limit, parentId, className));
+            aem.validateCall("getRootPools", ipAddress, sessionId);
+            List<RemotePool> res = new ArrayList<>();
+            List<Pool> rootPools = aem.getRootPools(className, type);
+            
+            for (Pool aPool : rootPools)
+                res.add(new RemotePool(aPool));
+            
+            return res;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
     
     @Override
-    public RemoteObjectLight[] getPools(int limit, String className, String ipAddress, String sessionId) throws ServerSideException{
+    public List<RemotePool> getPoolsInObject(String objectClassName, long objectId, String poolClass, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
-            aem.validateCall("getPools", ipAddress, sessionId);
-            return RemoteObjectLight.toRemoteObjectLightArray(aem.getPools(limit, className));
+            aem.validateCall("getPoolsInObject", ipAddress, sessionId);
+            List<RemotePool> res = new ArrayList<>();
+            List<Pool> rootPools = aem.getPoolsInObject(objectClassName, objectId, poolClass);
+            
+            for (Pool aPool : rootPools)
+                res.add(new RemotePool(aPool));
+            
+            return res;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
-
+    
+    @Override
+    public List<RemotePool> getPoolsInPool(long parentPoolId, String poolClass, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("getPoolsInPool", ipAddress, sessionId);
+            List<RemotePool> res = new ArrayList<>();
+            List<Pool> rootPools = aem.getPoolsInPool(parentPoolId, poolClass);
+            
+            for (Pool aPool : rootPools)
+                res.add(new RemotePool(aPool));
+            
+            return res;
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
     @Override
     public RemoteObjectLight[] getPoolItems(long poolId, int limit, String ipAddress, String sessionId) throws ServerSideException{
         if (aem == null)

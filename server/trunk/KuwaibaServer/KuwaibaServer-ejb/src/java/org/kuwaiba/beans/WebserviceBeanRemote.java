@@ -447,10 +447,19 @@ public interface WebserviceBeanRemote {
     public byte[] getClassHierarchy(boolean showAll, String ipAddress, String sessionId) throws ServerSideException;
 
     //Pools
-    public long createPool(long parentId, String name, String description, String instancesOfClass, String ipAddress, String sessionId) throws ServerSideException;
+    public long createRootPool(String name, String description, String instancesOfClass, int type, String ipAddress, String sessionId)
+            throws ServerSideException;
+    
+    public long createPoolInObject(String parentClassname, long parentId, String name, String description, String instancesOfClass, int type, String ipAddress, String sessionId)
+            throws ServerSideException;
+    
+    public long createPoolInPool(long parentId, String name, String description, String instancesOfClass, int type, String ipAddress, String sessionId) 
+            throws ServerSideException;
     
     public long createPoolItem(long poolId, String className, String[] attributeNames, String[][] attributeValues, long templateId, String ipAddress, String sessionId) throws ServerSideException;
 
+    public void deletePool(long id, String ipAddress, String sessionId) throws ServerSideException;
+    
     public void deletePools(long[] ids, String ipAddress, String sessionId) throws ServerSideException;
     
     /**
@@ -474,9 +483,11 @@ public interface WebserviceBeanRemote {
      */
     public RemotePool getPool(long poolId, String ipAddress, String sessionId) throws ServerSideException;
     
-    public RemoteObjectLight[] getPools(int limit, long parentId, String className, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemotePool> getRootPools(String className, int type, String ipAddress, String sessionId) throws ServerSideException;
     
-    public RemoteObjectLight[] getPools(int limit, String className, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemotePool> getPoolsInObject(String objectClassName, long objectId, String poolClass, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public List<RemotePool> getPoolsInPool(long parentPoolId, String poolClass, String ipAddress, String sessionId) throws ServerSideException;
     
     public RemoteObjectLight[] getPoolItems(long poolId, int limit, String ipAddress, String sessionId) throws ServerSideException;
     

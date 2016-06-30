@@ -56,7 +56,6 @@ import org.kuwaiba.apis.persistence.application.ViewObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectList;
-import org.kuwaiba.apis.persistence.exceptions.UnsupportedPropertyException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.apis.persistence.metadata.GenericObjectList;
@@ -69,14 +68,12 @@ import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Path;
 import org.neo4j.graphdb.QueryExecutionException;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
-import org.neo4j.graphdb.traversal.Evaluators;
 import org.neo4j.helpers.collection.IteratorUtil;
 
 /**
@@ -84,6 +81,7 @@ import org.neo4j.helpers.collection.IteratorUtil;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
+    
     /**
      * Graph db service
      */
@@ -1190,7 +1188,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             StartTagWAX classesTag = inventoryTag.start("classes");
             Node rootObjectNode = classIndex.get(Constants.PROPERTY_NAME, Constants.CLASS_ROOTOBJECT).getSingle(); //NOI18N
             if (rootObjectNode == null)
-                throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", Constants.CLASS_ROOTOBJECT));
+                throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", Constants.CLASS_ROOTOBJECT));
             getXMLNodeForClass(rootObjectNode, rootTag);
             classesTag.end();
             inventoryTag.end();
@@ -1201,8 +1199,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     //Pools
     @Override
-    public long createPool(long parentId, String name, String description, String instancesOfClass, int type)
-            throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException, NotAuthorizedException {
+    public long createRootPool(String name, String description, String instancesOfClass, int type)
+            throws MetadataObjectNotFoundException, NotAuthorizedException {
         try(Transaction tx = graphDb.beginTx())
         {
             Node poolNode =  graphDb.createNode();
@@ -1215,22 +1213,44 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     poolNode.setProperty(Constants.PROPERTY_TYPE, type);
             
             ClassMetadata classMetadata = cm.getClass(instancesOfClass);
+            
+            if (classMetadata == null)
+                throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", instancesOfClass));
+            
+            poolNode.setProperty(Constants.PROPERTY_CLASS_NAME, instancesOfClass);
+                                    
+            poolsIndex.putIfAbsent(poolNode, Constants.PROPERTY_ID, poolNode.getId());
+            
+            tx.success();
+            return poolNode.getId();
+        }
+    }
+    
+    @Override
+    public long createPoolInObject(String parentClassname, long parentId, String name, String description, String instancesOfClass, int type)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, NotAuthorizedException {
+        try(Transaction tx = graphDb.beginTx()) {
+            Node poolNode =  graphDb.createNode();
+
+            if (name != null)
+                poolNode.setProperty(Constants.PROPERTY_NAME, name);
+            if (description != null)
+                poolNode.setProperty(Constants.PROPERTY_DESCRIPTION, description);
+            if (type != 0)
+                    poolNode.setProperty(Constants.PROPERTY_TYPE, type);
+            
+            ClassMetadata classMetadata = cm.getClass(instancesOfClass);
+            
             if (classMetadata == null)
                 throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", instancesOfClass));
             
             poolNode.setProperty(Constants.PROPERTY_CLASS_NAME, instancesOfClass);
             
-            if (parentId != -1) { //A pool might be child of another pool or an inventory object
-                Node parentNode = poolsIndex.get(Constants.PROPERTY_ID, parentId).getSingle();
-                if (parentNode == null){
-                    parentNode = objectIndex.get(Constants.PROPERTY_ID, parentId).getSingle();
-                    if (parentNode == null)
-                        throw new ObjectNotFoundException("N/A", parentId);
-                    else
-                        poolNode.createRelationshipTo(parentNode, RelTypes.CHILD_OF_SPECIAL).setProperty(Constants.PROPERTY_NAME, Constants.REL_PROPERTY_POOL);
-                }
-            }
+            Node parentNode = objectIndex.get(Constants.PROPERTY_ID, parentId).getSingle();
+            if (parentNode == null)
+                throw new ObjectNotFoundException(parentClassname, parentId);
             
+            poolNode.createRelationshipTo(parentNode, RelTypes.CHILD_OF_SPECIAL).setProperty(Constants.PROPERTY_NAME, Constants.REL_PROPERTY_POOL);          
                         
             poolsIndex.putIfAbsent(poolNode, Constants.PROPERTY_ID, poolNode.getId());
             
@@ -1240,71 +1260,70 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public void deletePools(long[] ids) throws NotAuthorizedException, InvalidArgumentException, OperationNotPermittedException {
-        try(Transaction tx = graphDb.beginTx()) {
-            for (long id : ids){
-                Node poolNode = poolsIndex.get(Constants.PROPERTY_ID, id).getSingle();
-                if (poolNode == null)
-                    throw new InvalidArgumentException(String.format("A pool with id %s does not exist", id));
+    public long createPoolInPool(long parentId, String name, String description, String instancesOfClass, int type)
+            throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node poolNode =  graphDb.createNode();
 
-                //Let's delete the objects inside, if possible
-                HashMap<String, long[]> toBeDeleted = new HashMap<>();
-                List<Long> poolsToBeDeleted = new ArrayList<>();
-                for (Path p : graphDb.traversalDescription()
-                    .breadthFirst()
-                    .evaluator(Evaluators.atDepth(1))    
-                    .relationships(RelTypes.CHILD_OF_SPECIAL, Direction.INCOMING)
-                    .evaluator(Evaluators.excludeStartPosition())
-                    .traverse(poolNode)) {
-
-                    Node objectNode = p.endNode();
-                     
-                    if(objectNode.hasProperty(Constants.PROPERTY_CLASS_NAME) && objectNode.getProperty(Constants.PROPERTY_CLASS_NAME).equals(Constants.CLASS_GENERICSERVICE))
-                        poolsToBeDeleted.add(objectNode.getId());
-                    else {
-                        try {
-                            String className = Util.getObjectClassName(objectNode);
-                            if (toBeDeleted.get(className) == null) 
-                                toBeDeleted.put(className, new long[]{objectNode.getId()});
-                            else{
-                                long[] objectIds = toBeDeleted.get(className);
-                                long[] newObjectIds = new long[objectIds.length+1];
-                                System.arraycopy(objectIds, 0, newObjectIds, 0, objectIds.length);
-                                newObjectIds[objectIds.length]=objectNode.getId();
-                                toBeDeleted.put(className, newObjectIds);
-                            }
-                        } catch(UnsupportedPropertyException | MetadataObjectNotFoundException ex) {} //This shouldn't happen, so just ignore it
-                    }
-                }
-                
-                for (String className : toBeDeleted.keySet()){
-                    for (long oid : toBeDeleted.get(className)){
-                        if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, className))
-                            throw new OperationNotPermittedException(className, String.format("Class %s is not a business-related class", className));
-
-                        try {
-                            Node instance = getInstanceOfClass(className, oid);
-                            Util.deleteObject(instance, false);
-                        } catch (MetadataObjectNotFoundException | ObjectNotFoundException ex) {} //This should not happen, so just ignore it
-                    }
-                }
-
-                for (long pId : poolsToBeDeleted){
-                    Node servicePoolNode = poolsIndex.get(Constants.PROPERTY_ID, pId).getSingle();
-                    for (Relationship rel : servicePoolNode.getRelationships())
-                        rel.delete();
-                    poolsIndex.remove(servicePoolNode);
-                    servicePoolNode.delete();
-                }
-                
-                for (Relationship rel : poolNode.getRelationships())
-                    rel.delete();
-                poolsIndex.remove(poolNode);
-                poolNode.delete();
-            }
+            if (name != null)
+                poolNode.setProperty(Constants.PROPERTY_NAME, name);
+            if (description != null)
+                poolNode.setProperty(Constants.PROPERTY_DESCRIPTION, description);
+            if (type != 0)
+                    poolNode.setProperty(Constants.PROPERTY_TYPE, type);
+            
+            ClassMetadata classMetadata = cm.getClass(instancesOfClass);
+            
+            if (classMetadata == null)
+                throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", instancesOfClass));
+            
+            poolNode.setProperty(Constants.PROPERTY_CLASS_NAME, instancesOfClass);
+            
+            Node parentNode = poolsIndex.get(Constants.PROPERTY_ID, parentId).getSingle();
+            
+            if (parentNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("A pool with id %s could not be found", parentId));
+            
+            poolNode.createRelationshipTo(parentNode, RelTypes.CHILD_OF_SPECIAL).setProperty(Constants.PROPERTY_NAME, Constants.REL_PROPERTY_POOL);          
+                        
+            poolsIndex.putIfAbsent(poolNode, Constants.PROPERTY_ID, poolNode.getId());
             
             tx.success();
+            return poolNode.getId();
         }
+    }
+    
+    @Override
+    public void deletePool(long id) throws NotAuthorizedException, ApplicationObjectNotFoundException, OperationNotPermittedException {
+        try(Transaction tx = graphDb.beginTx()) {
+            Node poolNode = poolsIndex.get(Constants.PROPERTY_ID, id).getSingle();
+            if (poolNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("A pool with id %s does not exist", id));
+
+            for (Relationship containmentRelationship : poolNode.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF_SPECIAL)) {
+                //A pool may have inventory objects as children or other pools
+                Node child = containmentRelationship.getStartNode();
+                if (child.hasRelationship(RelTypes.INSTANCE_OF)) //It's an inventory object
+                    Util.deleteObject(poolNode, false);
+                else
+                    deletePool(child.getId()); //Although making deletePool to receive a node as argument would be more efficient,
+                                               //the impact is not that much since the number of pools is expected to be low
+            }
+            
+            //Removes any remaining relationships
+            for (Relationship remainingRelationship : poolNode.getRelationships())
+                remainingRelationship.delete();
+            
+            poolsIndex.remove(poolNode);
+            poolNode.delete();
+            tx.success();
+        }
+    }
+    
+    @Override
+    public void deletePools(long[] ids) throws NotAuthorizedException, ApplicationObjectNotFoundException, OperationNotPermittedException {
+        for (long id : ids)
+            deletePool(id);
     }
     
     @Override
@@ -1318,113 +1337,84 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             tx.success();
         }
     }
-    
+       
     @Override
-    public List<RemoteBusinessObjectLight> getPools(int limit, long parentId, String className) 
-            throws NotAuthorizedException, ObjectNotFoundException
-    {
+    public List<Pool> getRootPools(String className, int type) 
+            throws NotAuthorizedException {
         try(Transaction tx = graphDb.beginTx()) {
-            List<RemoteBusinessObjectLight> pools  = new ArrayList<>();
+            List<Pool> pools  = new ArrayList<>();
             
-            if(parentId == -1){
-                Node node = specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_IPV4ROOT).getSingle();
-
-                pools.add(new RemoteBusinessObjectLight(node.getId(),
-                        node.hasProperty(Constants.PROPERTY_NAME) ? (String)node.getProperty(Constants.PROPERTY_NAME) : null,
-                        node.hasProperty(Constants.PROPERTY_CLASS_NAME) ? (String)node.getProperty(Constants.PROPERTY_CLASS_NAME) : null));
-                
-                poolsIndex.putIfAbsent(node, Constants.PROPERTY_ID, node.getId());
-                
-                node = specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_IPV6ROOT).getSingle();
-                
-                pools.add(new RemoteBusinessObjectLight(node.getId(),
-                        node.hasProperty(Constants.PROPERTY_NAME) ? (String)node.getProperty(Constants.PROPERTY_NAME) : null,
-                        node.hasProperty(Constants.PROPERTY_CLASS_NAME) ? (String)node.getProperty(Constants.PROPERTY_CLASS_NAME) : null));
-                
-                poolsIndex.putIfAbsent(node, Constants.PROPERTY_ID, node.getId());
-                
-                tx.success();
-                return pools;
-            }
+            IndexHits<Node> poolNodes = poolsIndex.get(Constants.PROPERTY_ID, "*");
             
-            else {
-                Node parentNode = poolsIndex.get(Constants.PROPERTY_ID, parentId).getSingle();
-                    if (parentNode == null) { //The pools may be children of another pool or an invenotry object
-                        parentNode = objectIndex.get(Constants.PROPERTY_ID, parentId).getSingle();
-                        if (parentNode == null)
-                            throw new ObjectNotFoundException(className, parentId);
+            while (poolNodes.hasNext()) {
+                Node poolNode = poolNodes.next();
+                
+                if (!poolNode.hasRelationship(Direction.OUTGOING, RelTypes.CHILD_OF_SPECIAL)) { //Root pools don't have parents
+                    if ((int)poolNode.getProperty(Constants.PROPERTY_TYPE) == type) {
+                        if (className != null) { //We will return only those matching with the specified class name
+                            if (className.equals((String)poolNode.getProperty(Constants.PROPERTY_CLASS_NAME)))
+                                pools.add(Util.createPoolFromNode(poolNode));
+                        } else
+                            pools.add(Util.createPoolFromNode(poolNode));
                     }
-
-                int i = 0;
-                for(Relationship rel: parentNode.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF_SPECIAL)){
-                    if (limit != -1){
-                        if (i >= limit)
-                             break;
-                        i++;
-                    }
-                    
-                    Node poolNode = rel.getStartNode();
-                    
-                    if (className == null) { //That is, return all pools
-                        RemoteBusinessObjectLight poolAsRemoteBusinessObject = new RemoteBusinessObjectLight(poolNode.getId(),
-                                poolNode.hasProperty(Constants.PROPERTY_NAME) ? (String)poolNode.getProperty(Constants.PROPERTY_NAME) : null,
-                                poolNode.hasProperty(Constants.PROPERTY_CLASS_NAME) ? (String)poolNode.getProperty(Constants.PROPERTY_CLASS_NAME) : null);
-                        pools.add(poolAsRemoteBusinessObject);
-                    } else { //We need only a specific type of pool
-                        String poolClassName = poolNode.hasProperty(Constants.PROPERTY_CLASS_NAME) ? 
-                                (String) poolNode.getProperty(Constants.PROPERTY_CLASS_NAME) : null;
-                        
-                        if (poolClassName != null) { //This should never happen, but just in case
-                            if (poolClassName.equals(className)) {
-                                RemoteBusinessObjectLight poolAsRemoteBusinessObject = new RemoteBusinessObjectLight(poolNode.getId(),
-                                    poolNode.hasProperty(Constants.PROPERTY_NAME) ? (String)poolNode.getProperty(Constants.PROPERTY_NAME) : null,
-                                    poolNode.hasProperty(Constants.PROPERTY_CLASS_NAME) ? (String)poolNode.getProperty(Constants.PROPERTY_CLASS_NAME) : null);
-                                pools.add(poolAsRemoteBusinessObject);
-                            }
-                        }
-                        
-                    }
-                }
-                return pools;
-            }
-        }
-    }
-        
-    @Override
-    public List<RemoteBusinessObjectLight> getPools(int limit, String className) 
-            throws NotAuthorizedException
-    {
-        try(Transaction tx = graphDb.beginTx()) {
-            
-            IndexHits<Node> poolNodes = poolsIndex.query(Constants.PROPERTY_ID, "*");
-
-            List<RemoteBusinessObjectLight> pools  = new ArrayList<>();
-            int i = 0;
-            for (Node node : poolNodes) {
-                if (limit != -1){
-                    if (i >= limit)
-                         break;
-                    i++;
-                }
-                RemoteBusinessObjectLight rbol = new RemoteBusinessObjectLight(node.getId(),
-                        node.hasProperty(Constants.PROPERTY_NAME) ? (String)node.getProperty(Constants.PROPERTY_NAME) : null,
-                        node.hasProperty(Constants.PROPERTY_CLASS_NAME) ? (String)node.getProperty(Constants.PROPERTY_CLASS_NAME) : null);
-                if(className != null){
-                    if(className.equals(node.getProperty(Constants.PROPERTY_CLASS_NAME)))
-                        pools.add(rbol);
-                }
-                else {
-                    if(!Constants.CLASS_GENERICCUSTOMER.equals(node.getProperty(Constants.PROPERTY_CLASS_NAME)) &&
-                       !Constants.CLASS_GENERICSERVICE.equals(node.getProperty(Constants.PROPERTY_CLASS_NAME)) &&
-                       !Constants.CLASS_GENERICCONTRACT.equals(node.getProperty(Constants.PROPERTY_CLASS_NAME)) &&
-                       !Constants.CLASS_SUBNET.equals(node.getProperty(Constants.PROPERTY_CLASS_NAME)))
-                       pools.add(rbol);
                 }
             }
             return pools;
         }
     }
     
+    @Override
+    public List<Pool> getPoolsInObject(String objectClassName, long objectId, String poolClass) 
+            throws NotAuthorizedException, ObjectNotFoundException {
+        
+        try(Transaction tx = graphDb.beginTx()) {
+            List<Pool> pools  = new ArrayList<>();
+            
+            Node objectNode = objectIndex.get(Constants.PROPERTY_ID, objectId).getSingle();
+            
+            if (objectNode == null)
+                throw new ObjectNotFoundException(objectClassName, objectId);
+            
+            for (Relationship containmentRelationship : objectNode.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF_SPECIAL)) {
+                Node poolNode = containmentRelationship.getStartNode();
+                if (poolClass != null) { //We will return only those matching with the specified class name
+                    if (poolClass.equals((String)poolNode.getProperty(Constants.PROPERTY_CLASS_NAME)))
+                        pools.add(Util.createPoolFromNode(poolNode));
+                } else
+                    pools.add(Util.createPoolFromNode(poolNode));
+            }
+            return pools;
+        }
+    }
+    
+    @Override
+    public List<Pool> getPoolsInPool(long parentPoolId, String poolClass) 
+            throws NotAuthorizedException, ApplicationObjectNotFoundException {
+        
+        try(Transaction tx = graphDb.beginTx()) {
+            List<Pool> pools  = new ArrayList<>();
+            
+            Node parentPoolNode = poolsIndex.get(Constants.PROPERTY_ID, parentPoolId).getSingle();
+            
+            if (parentPoolNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("The pool with id %s could not be found", parentPoolId));
+            
+            for (Relationship containmentRelationship : parentPoolNode.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF_SPECIAL)) {
+                Node poolNode = containmentRelationship.getStartNode();
+                
+                if (poolNode.hasRelationship(Direction.OUTGOING, RelTypes.INSTANCE_OF)) //The pool items and the pools themselves also have CHILD_OF_SPECIAL relationships
+                    continue;
+                
+                if (poolClass != null) { //We will return only those matching with the specified class name
+                    if (poolClass.equals((String)poolNode.getProperty(Constants.PROPERTY_CLASS_NAME)))
+                        pools.add(Util.createPoolFromNode(poolNode));
+                } else
+                    pools.add(Util.createPoolFromNode(poolNode));
+            }
+            return pools;
+        }
+    }
+           
     @Override
     public Pool getPool(long poolId) throws NotAuthorizedException, ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
