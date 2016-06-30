@@ -37,7 +37,6 @@ import org.openide.nodes.Node;
 import org.openide.util.ImageUtilities;
 import org.openide.util.NbBundle;
 import org.openide.util.actions.SystemAction;
-import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 
@@ -139,29 +138,19 @@ public final class NavigationTreeTopComponent extends TopComponent
 
     @Override
     public int getPersistenceType() {
-        return TopComponent.PERSISTENCE_NEVER;
+        return TopComponent.PERSISTENCE_ALWAYS;
     }
 
     @Override
     public void componentOpened() {
         setRoot();
         ExplorerUtils.activateActions(em, true);
-        TopComponent propertiesWindow = WindowManager.getDefault().findTopComponent("properties");
-        if (!propertiesWindow.isOpened()){
-            Mode navigator = WindowManager.getDefault().findMode("navigator"); //NOI18N
-            propertiesWindow.open();
-            navigator.dockInto(propertiesWindow);
-        }
     }
 
     @Override
     public void componentClosed() {
         ExplorerUtils.activateActions(em, false);
         em.setRootContext(Node.EMPTY);
-        //Workaround, because when you close a TC whose mode is "navigation" and open it again,
-        //it docks as "explorer". This forces the TC to be always docked "explorer"
-        Mode myMode = WindowManager.getDefault().findMode("explorer"); //NOI18N
-        myMode.dockInto(this);
     }
 
     void writeProperties(java.util.Properties p) {

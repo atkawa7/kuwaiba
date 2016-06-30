@@ -21,8 +21,18 @@
             </folder>        
         </folder>     
         <folder name="Window">
+            <file name="CloseAllButThisAction.shadow_hidden"/>
+            <file name="CloseAllDocumentsAction.shadow_hidden"/>
+            <file name="CloseWindowAction.shadow_hidden"/>
             <file name="ConfigureWindow_hidden"/>
+            <file name="GroupsMenuAction.shadow_hidden"/>
+            <file name="Separator4.instance_hidden"/>
+            <file name="Tools_hidden"/>
             <file name="Web_hidden"/>
+            <file name="org-netbeans-core-windows-actions-GlobalPropertiesAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/Window/org-netbeans-core-windows-actions-GlobalPropertiesAction.instance"/>
+            </file>
+            <file name="org-netbeans-core-windows-actions-ResetWindowsAction.shadow_hidden"/>
         </folder>
     </folder>
     <folder name="Toolbars">
@@ -39,6 +49,9 @@
         <folder name="Modes">
             <folder name="explorer">
                 <file name="NavigationTreeTopComponent.wstcref" url="NavigationTreeTopComponentWstcref.xml"/>
+            </folder>
+            <folder name="properties">
+                <file name="properties.wstcref" url="propertiesWstcref.xml"/>
             </folder>
         </folder>
     </folder>
