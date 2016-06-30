@@ -35,7 +35,8 @@ public class CustomerChildren extends Children.Keys<LocalPool> {
     public void addNotify() {
         LocalObjectLight customer = ((CustomerNode)this.getNode()).getObject();
         
-        List<LocalPool> servicePools = CommunicationsStub.getInstance().getPools(customer.getOid(), Constants.CLASS_GENERICSERVICE);
+        List<LocalPool> servicePools = CommunicationsStub.getInstance().
+                getPoolsInObject(customer.getClassName(), customer.getOid(), Constants.CLASS_GENERICSERVICE);
 
         if (servicePools == null) {
             setKeys(Collections.EMPTY_LIST);

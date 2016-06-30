@@ -60,7 +60,7 @@ public class ServiceManagerRootNode extends AbstractNode {
 
         @Override
         public void addNotify() {
-            List<LocalPool> customerPools = CommunicationsStub.getInstance().getPools(Constants.CLASS_GENERICCUSTOMER);
+            List<LocalPool> customerPools = CommunicationsStub.getInstance().getRootPools(Constants.CLASS_GENERICCUSTOMER, LocalPool.POOL_TYPE_MODULE_ROOT);
 
             if (customerPools == null)
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, 

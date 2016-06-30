@@ -68,9 +68,10 @@ public class CreateContractPoolAction extends AbstractAction {
                     new JComponent[] { txtPoolName, txtPoolDescription });
             
             if (JOptionPane.showConfirmDialog(null, pnlPoolProperties, "New Contract Pool", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-                LocalPool newPool = com.createPool(-1, ((JTextField)pnlPoolProperties.getComponent("txtPoolName")).getText(), 
+                LocalPool newPool = com.createRootPool(((JTextField)pnlPoolProperties.getComponent("txtPoolName")).getText(), 
                                         ((JTextField)pnlPoolProperties.getComponent("txtPoolDescription")).getText(), 
-                                        Constants.CLASS_GENERICCONTRACT);
+                                        Constants.CLASS_GENERICCONTRACT, 
+                                        LocalPool.POOL_TYPE_MODULE_ROOT);
                 
                 if (newPool == null)
                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());

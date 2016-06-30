@@ -30,7 +30,7 @@ import org.openide.nodes.Node;
 import org.openide.util.ImageUtilities;
 
 /**
- * Represents the root node of the tree in the COntract manager module
+ * Represents the root node of the tree in the Contract Manager module
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ContractManagerRootNode extends AbstractNode {
@@ -61,7 +61,7 @@ public class ContractManagerRootNode extends AbstractNode {
 
         @Override
         public void addNotify() {
-            List<LocalPool> contractPools = CommunicationsStub.getInstance().getPools(Constants.CLASS_GENERICCONTRACT);
+            List<LocalPool> contractPools = CommunicationsStub.getInstance().getRootPools(Constants.CLASS_GENERICCONTRACT, LocalPool.POOL_TYPE_MODULE_ROOT);
 
             if (contractPools == null)
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, 

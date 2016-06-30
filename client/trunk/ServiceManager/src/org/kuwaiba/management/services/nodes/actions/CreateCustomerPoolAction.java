@@ -73,8 +73,8 @@ public class CreateCustomerPoolAction extends AbstractAction {
                 JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION){
         
-                    LocalPool newPool = com.createPool(-1, ((JTextField)pnlMyDialog.getComponent("txtName")).getText(), 
-                            ((JTextField)pnlMyDialog.getComponent("txtDescription")).getText(), Constants.CLASS_GENERICCUSTOMER);
+                    LocalPool newPool = com.createRootPool(((JTextField)pnlMyDialog.getComponent("txtName")).getText(), 
+                            ((JTextField)pnlMyDialog.getComponent("txtDescription")).getText(), Constants.CLASS_GENERICCUSTOMER, LocalPool.POOL_TYPE_MODULE_ROOT);
                     
                     if (newPool ==  null)
                         NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());

@@ -25,6 +25,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalPool;
+import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.kuwaiba.management.services.nodes.CustomerChildren;
@@ -71,8 +73,11 @@ public class CreateServicePoolAction extends AbstractAction {
                 java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATE_SERVICES_POOL"),
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION){
             
-            LocalObjectLight newPool = com.createPool(customerNode.getObject().getOid(), ((JTextField)pnlMyDialog.getComponent("txtName")).getText(), 
-                    ((JTextField)pnlMyDialog.getComponent("txtDescription")).getText(), "GenericService");
+            LocalObjectLight newPool = com.createPoolInObject(customerNode.getObject().getClassName(), 
+                                            customerNode.getObject().getOid(), 
+                                            ((JTextField)pnlMyDialog.getComponent("txtName")).getText(), 
+                                            ((JTextField)pnlMyDialog.getComponent("txtDescription")).getText(), 
+                                            Constants.CLASS_GENERICSERVICE, LocalPool.POOL_TYPE_MODULE_COMPONENT);
                     
             if (newPool ==  null)
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());

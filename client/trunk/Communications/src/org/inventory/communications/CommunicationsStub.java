@@ -1937,23 +1937,134 @@ public class CommunicationsStub {
     
     // <editor-fold defaultstate="collapsed" desc="Pools methods. Click on the + sign on the left to edit the code.">
     /**
-     * Creates a pool
-     * @param parentId the Parent id if parentId is -1 it means it has no parent.
+     * Creates a pool without a parent. They're used as general purpose place to put inventory objects, or as root for particular models
      * @param name Pool name
      * @param description Pool description
-     * @param className What kind of objects can this pool contain?
-     * @return The newly created pool
+     * @param instancesOfClass What kind of objects can this pool contain? 
+     * @param type Type of pool. For possible values see ApplicationManager.POOL_TYPE_XXX
+     * @return The id of the new pool
      */
-    public LocalPool createPool(long parentId, String name, String description, String className){
-        try{
-            long objectId  = service.createPool(parentId, name, description, className,session.getSessionId());
-            return new LocalPool(objectId, name, className, null, 0);
+    public LocalPool createRootPool(String name, String description, String instancesOfClass, int type){
+        try {
+            long newPoolId  = service.createRootPool(name, description, instancesOfClass, type,session.getSessionId());
+            return new LocalPool(newPoolId, name, instancesOfClass, description, type);
         }catch(Exception ex){
             this.error =  ex.getMessage();
             return null;
         }
     }
     
+    /**
+     * Creates a pool that will have as parent an inventory object. This special containment structure can be used to 
+     * provide support for new models
+     * @param parentClassname Class name of the parent object
+     * @param parentId Id of the parent object
+     * @param name Pool name
+     * @param description Pool description
+     * @param instancesOfClass What kind of objects can this pool contain? 
+     * @param type Type of pool. For possible values see ApplicationManager.POOL_TYPE_XXX
+     * @return The id of the new pool
+     */
+    public LocalPool createPoolInObject(String parentClassname, long parentId, String name, String description, String instancesOfClass, int type){
+        try {
+            long newPoolId  = service.createPoolInObject(parentClassname, parentId, name, description, instancesOfClass, type, session.getSessionId());
+            return new LocalPool(newPoolId, name, instancesOfClass, description, type);
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Creates a pool that will have as parent another pool. This special containment structure can be used to 
+     * provide support for new models
+     * @param parentId Id of the parent pool
+     * @param name Pool name
+     * @param description Pool description
+     * @param instancesOfClass What kind of objects can this pool contain? 
+     * @param type Type of pool. Not used so far, but it will be in the future. It will probably be used to help organize the existing pools
+     * @return The id of the new pool
+     */
+    public LocalPool createPoolInPool(long parentId, String name, String description, String instancesOfClass, int type){
+        try {
+            long newPoolId  = service.createPoolInPool(parentId, name, description, instancesOfClass, type, session.getSessionId());
+            return new LocalPool(newPoolId, name, instancesOfClass, description, type);
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Retrieves the pools that don't have any parent and are normally intended to be managed by the Pool Manager
+     * @param className The class name used to filter the results. Only the pools with a className attribute matching the provided value will be returned. Use null if you want to get all
+     * @param type The type of pools that should be retrieved. Root pools can be for general purpose, or as roots in models
+     * @return A set of pools
+     */
+    public List<LocalPool> getRootPools(String className, int type)  {
+        try {
+            List<LocalPool> res = new ArrayList<>();
+            List<RemotePool> rootPools = service.getRootPools(className, type, session.getSessionId());
+            
+            for (RemotePool aPool : rootPools)
+                res.add(new LocalPool(aPool.getId(), aPool.getName(), aPool.getClassName(), aPool.getDescription(), aPool.getType()));
+            
+            return res;
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Retrieves the pools associated to a particular object
+     * @param objectClassName The parent object class name
+     * @param objectId The parent object id
+     * @param poolClass The class name used to filter the results. Only the pools with a className attribute matching the provided value will be returned. Use null if you want to get all
+     * @return A set of pools
+     */
+    public List<LocalPool> getPoolsInObject(String objectClassName, long objectId, String poolClass)  {
+        try {
+            List<LocalPool> res = new ArrayList<>();
+            List<RemotePool> rootPools = service.getPoolsInObject(objectClassName, objectId, poolClass, session.getSessionId());
+            
+            for (RemotePool aPool : rootPools)
+                res.add(new LocalPool(aPool.getId(), aPool.getName(), aPool.getClassName(), aPool.getDescription(), aPool.getType()));
+            
+            return res;
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Retrieves the pools associated to a particular pool
+     * @param parentPoolId The parent pool id
+     * @param poolClass The class name used to filter the results. Only the pools with a className attribute matching the provided value will be returned. Use null if you want to get all
+     * @return A set of pools
+     */
+    public List<LocalPool> getPoolsInPool(long parentPoolId, String poolClass)  {
+        try {
+            List<LocalPool> res = new ArrayList<>();
+            List<RemotePool> rootPools = service.getPoolsInPool(parentPoolId, poolClass, session.getSessionId());
+            
+            for (RemotePool aPool : rootPools)
+                res.add(new LocalPool(aPool.getId(), aPool.getName(), aPool.getClassName(), aPool.getDescription(), aPool.getType()));
+            
+            return res;
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Creates an object inside a pool
+     * @param poolId Pool id
+     * @param className Class of the object to be created
+     * @return A local representation of the newly created object
+     */
     public LocalObjectLight createPoolItem (long poolId, String className){
         try {
             long objectId  = service.createPoolItem(poolId, className, null, null, -1,session.getSessionId());
@@ -2028,52 +2139,6 @@ public class CommunicationsStub {
         }
     }
     
-    /**
-     * Returns the list of pools available for a specific parent
-     * @param parentId
-     * @param className
-     * @return The list of pools
-     */
-    public List<LocalPool> getPools(long parentId, String className) {
-        try{
-            List <RemoteObjectLight> children = service.getPoolsForParentWithId(-1, parentId, className, this.session.getSessionId());
-            List <LocalPool> res = new ArrayList<>();
-
-            for (RemoteObjectLight rol : children){
-                HashMap<String, Integer> validators = new HashMap<>();
-                for (Validator validator : rol.getValidators())
-                    validators.put(validator.getLabel(), validator.getValue());
-                res.add(new LocalPool(rol.getOid(), rol.getName(), rol.getClassName(), null, 0));
-            }
-            return res;
-        }catch(Exception ex){
-            this.error =  ex.getMessage();
-            return null;
-        }
-    }
-    
-    /**
-     * Returns the list of pools available
-     * @param className
-     * @return The list of pools
-     */
-    public List<LocalPool> getPools(String className) {
-        try{
-            List <RemoteObjectLight> children = service.getPools(-1, className, this.session.getSessionId());
-            List <LocalPool> res = new ArrayList<>();
-
-            for (RemoteObjectLight rol : children){
-                HashMap<String, Integer> validators = new HashMap<>();
-                for (Validator validator : rol.getValidators())
-                    validators.put(validator.getLabel(), validator.getValue());
-                res.add(new LocalPool(rol.getOid(), rol.getName(), rol.getClassName(), null, 0));
-            }
-            return res;
-        }catch(Exception ex){
-            this.error =  ex.getMessage();
-            return null;
-        }
-    }
     // </editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="Reporting methods">

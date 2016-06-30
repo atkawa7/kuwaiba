@@ -18,10 +18,22 @@ package org.inventory.communications.core;
 import java.awt.datatransfer.DataFlavor;
 
 /**
- * A local representation of a pool (a place where you put similar objects)
+ * A local representation of a pool (a place where you put objects of a certain kind)
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class LocalPool extends LocalObjectLight { 
+public class LocalPool extends LocalObjectLight {
+    /**
+     * Type of pool general purpose. These pools are not linked to any particular model
+     */
+    public static final int POOL_TYPE_GENERAL_PURPOSE = 1;
+    /**
+     * Type of pool module root. These pools are used in models and are the root of such model
+     */
+    public static final int POOL_TYPE_MODULE_ROOT = 2;
+    /**
+     * Type of pool module component. These pools are used in models and are in the lower levels of the pool containment hierarchy
+     */
+    public static int POOL_TYPE_MODULE_COMPONENT = 3;
     /**
      * Pool data flavor
      */
