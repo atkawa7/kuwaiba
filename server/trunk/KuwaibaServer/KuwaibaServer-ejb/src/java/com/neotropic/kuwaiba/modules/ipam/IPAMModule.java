@@ -6,6 +6,7 @@
 package com.neotropic.kuwaiba.modules.ipam;
 
 import com.neotropic.kuwaiba.modules.GenericCommercialModule;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
@@ -145,7 +146,8 @@ public class IPAMModule implements GenericCommercialModule{
     {
         if (aem == null)
            throw new ServerSideException("Can't reach the backend. Contact your administrator");
-        return aem.createPool(parentId, subnetPoolName, subnetPoolDescription, Constants.CLASS_SUBNET, type);
+        //return aem.createPool(parentId, subnetPoolName, subnetPoolDescription, Constants.CLASS_SUBNET, type);
+        return -1;
     }
     
     /**
@@ -193,7 +195,8 @@ public class IPAMModule implements GenericCommercialModule{
     public List<RemoteBusinessObjectLight> getSubnetPools(int limit, 
             long parentId) throws NotAuthorizedException, ObjectNotFoundException
     {
-        return aem.getPools(limit, parentId, Constants.CLASS_SUBNET);
+        //return aem.getPools(limit, parentId, Constants.CLASS_SUBNET);
+        return Collections.EMPTY_LIST;
     }
    
     /**
@@ -258,9 +261,8 @@ public class IPAMModule implements GenericCommercialModule{
      */
     public void deleteSubnetPools(long[] subnetsId) 
             throws InvalidArgumentException, OperationNotPermittedException, 
-            NotAuthorizedException
-    {
-        aem.deletePools(subnetsId);
+            NotAuthorizedException  {
+        //aem.deletePools(subnetsId);
     }
 
     /**

@@ -192,8 +192,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         if (userName.trim().equals(""))
             throw new InvalidArgumentException("User name can not be an empty string");
         
-        if (!userName.matches("^[a-zA-Z0-9_]*$"))
-            throw new InvalidArgumentException(String.format("Class %s contains invalid characters", userName));
+        if (!userName.matches("^[a-zA-Z0-9_.]*$"))
+            throw new InvalidArgumentException(String.format("User name %s contains invalid characters", userName));
         
         if (password == null)
             throw new InvalidArgumentException("Password can not be null");
@@ -388,7 +388,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             throw new InvalidArgumentException("Group name can not be null");
         if (groupName.isEmpty())
             throw new InvalidArgumentException("Group name can not be an empty string");
-        if (!groupName.matches("^[a-zA-Z0-9_]*$"))
+        if (!groupName.matches("^[a-zA-Z0-9_.]*$"))
             throw new InvalidArgumentException(String.format("Class %s contains invalid characters", groupName));
         
         try (Transaction tx = graphDb.beginTx())
@@ -476,7 +476,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if(groupName != null){
                 if (groupName.isEmpty())
                     throw new InvalidArgumentException("Group name can not be an empty string");
-                if (!groupName.matches("^[a-zA-Z0-9_]*$"))
+                if (!groupName.matches("^[a-zA-Z0-9_.]*$"))
                     throw new InvalidArgumentException(String.format("Class %s contains invalid characters", groupName));
 
                 Node storedGroup = groupIndex.get(Constants.PROPERTY_NAME, groupName).getSingle();
@@ -1201,16 +1201,15 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override
     public long createRootPool(String name, String description, String instancesOfClass, int type)
             throws MetadataObjectNotFoundException, NotAuthorizedException {
-        try(Transaction tx = graphDb.beginTx())
-        {
+        try(Transaction tx = graphDb.beginTx()) {
             Node poolNode =  graphDb.createNode();
 
             if (name != null)
                 poolNode.setProperty(Constants.PROPERTY_NAME, name);
             if (description != null)
                 poolNode.setProperty(Constants.PROPERTY_DESCRIPTION, description);
-            if (type != 0)
-                    poolNode.setProperty(Constants.PROPERTY_TYPE, type);
+
+            poolNode.setProperty(Constants.PROPERTY_TYPE, type);
             
             ClassMetadata classMetadata = cm.getClass(instancesOfClass);
             
@@ -1344,7 +1343,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         try(Transaction tx = graphDb.beginTx()) {
             List<Pool> pools  = new ArrayList<>();
             
-            IndexHits<Node> poolNodes = poolsIndex.get(Constants.PROPERTY_ID, "*");
+            IndexHits<Node> poolNodes = poolsIndex.query(Constants.PROPERTY_ID, "*");
             
             while (poolNodes.hasNext()) {
                 Node poolNode = poolNodes.next();
@@ -1376,12 +1375,15 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 throw new ObjectNotFoundException(objectClassName, objectId);
             
             for (Relationship containmentRelationship : objectNode.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF_SPECIAL)) {
-                Node poolNode = containmentRelationship.getStartNode();
-                if (poolClass != null) { //We will return only those matching with the specified class name
-                    if (poolClass.equals((String)poolNode.getProperty(Constants.PROPERTY_CLASS_NAME)))
+                if (containmentRelationship.hasProperty(Constants.PROPERTY_NAME) && 
+                        Constants.REL_PROPERTY_POOL.equals(containmentRelationship.getProperty(Constants.PROPERTY_NAME))){
+                    Node poolNode = containmentRelationship.getStartNode();
+                    if (poolClass != null) { //We will return only those matching with the specified class name
+                        if (poolClass.equals((String)poolNode.getProperty(Constants.PROPERTY_CLASS_NAME)))
+                            pools.add(Util.createPoolFromNode(poolNode));
+                    } else
                         pools.add(Util.createPoolFromNode(poolNode));
-                } else
-                    pools.add(Util.createPoolFromNode(poolNode));
+                }
             }
             return pools;
         }
