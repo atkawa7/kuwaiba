@@ -64,7 +64,7 @@ public class CreateSubnetAction extends AbstractAction{
     @Override
     public void actionPerformed(ActionEvent e) {
         Iterator<? extends SubnetPoolNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(SubnetPoolNode.class).allInstances().iterator();
-        String name;
+        String className = "";
         long id = 0;
         
         if (!selectedNodes.hasNext())
@@ -72,14 +72,10 @@ public class CreateSubnetAction extends AbstractAction{
         
         while (selectedNodes.hasNext()) {
             SubnetPoolNode selectedNode = (SubnetPoolNode)selectedNodes.next();
-            name = selectedNode.getSubnetPool().getName();
+            className = selectedNode.getSubnetPool().getClassName();
             id = selectedNode.getSubnetPool().getOid();
         }
-
-        int type = (int)com.getSubnetPool(id).getType();
-
-
-        CreateSubnetFrame subnetFrame = new CreateSubnetFrame(id, type);
+        CreateSubnetFrame subnetFrame = new CreateSubnetFrame(id, className);
         subnetFrame.setVisible(true);
     }    
     
@@ -96,12 +92,12 @@ public class CreateSubnetAction extends AbstractAction{
         private javax.swing.JPanel pnl;
         private javax.swing.JCheckBox cbxCreateAllIps;
         
-        private int type;
+        private String className;
         private long parentId;
         private LocalObjectLight newSubnet;
 
-        public CreateSubnetFrame(long parentId, int type) {
-            this.type = type;
+        public CreateSubnetFrame(long parentId, String className) {
+            this.className = className;
             this.parentId = parentId;
             initComponents();
             txtDescription.requestFocus();
@@ -208,8 +204,8 @@ public class CreateSubnetAction extends AbstractAction{
             boolean createIps = false;
             if(SubnetEngine.isCIDRFormat(ipCIDR)){
                 lblError.setVisible(false);
-                String[] attributeNames = new String[6];
-                String[] attributeValues = new String[6];
+                String[] attributeNames = new String[5];
+                String[] attributeValues = new String[5];
 
                 attributeNames[0] = Constants.PROPERTY_NAME;
                 attributeNames[1] = Constants.PROPERTY_DESCRIPTION;
@@ -217,23 +213,21 @@ public class CreateSubnetAction extends AbstractAction{
                 attributeNames[2] = Constants.PROPERTY_BROADCASTIP;
                 attributeNames[3] = Constants.PROPERTY_NETWORKIP;
                 attributeNames[4] = Constants.PROPERTY_HOSTS;
-                attributeNames[5] = Constants.PROPERTY_TYPE;
 
-                if(type == Constants.IPV4_TYPE){
+                if(className.equals(Constants.CLASS_SUBNET_IPV4)){
                     subnetEngine.calculateSubnets(ipCIDR);
                     List<String> subnets = subnetEngine.getSubnets();
                     attributeValues[2] = subnets.get(subnets.size()-1);
                     attributeValues[3] = subnets.get(0);
                     attributeValues[4] = Integer.toString(subnetEngine.calculateNumberOfHosts());
-                    attributeValues[5] = Integer.toString(Constants.IPV4_TYPE);
                     attributeValues[0] = ipCIDR;
-                }else if(type == Constants.IPV6_TYPE){
+                    
+                }else if(className.equals(Constants.CLASS_SUBNET_IPV6)){
                     subnetEngine.calculateSubnetsIpv6(ipCIDR);
                     List<String> subnets = subnetEngine.getSubnets();
                     attributeValues[2] = subnets.get(subnets.size()-1);
                     attributeValues[3] = subnets.get(0);
                     attributeValues[4] = Integer.toString(subnetEngine.calculateNumberOfHostsIpV6());
-                    attributeValues[5] = Integer.toString(Constants.IPV6_TYPE);
                     attributeValues[0] = ipCIDR;
                 }
                 if(cbxCreateAllIps.isSelected()){
@@ -247,8 +241,8 @@ public class CreateSubnetAction extends AbstractAction{
                     }
                 }
                 
-                newSubnet = CommunicationsStub.getInstance().createSubnet(parentId, 
-                            new LocalObject(Constants.CLASS_SUBNET, 0, attributeNames, attributeValues));
+                newSubnet = CommunicationsStub.getInstance().createSubnet(parentId, className,
+                            new LocalObject(className, 0, attributeNames, attributeValues));
 
                 if(createIps){
                     String[] ipAttributeNames = new String[2];
@@ -260,27 +254,27 @@ public class CreateSubnetAction extends AbstractAction{
                     LocalObjectLight addedIP = null;
                     String[] split = ipCIDR.split("/");
                     String ip = SubnetEngine.nextIpv4(attributeValues[3], attributeValues[2], attributeValues[3], Integer.parseInt(split[1]));
-                    if(type == Constants.IPV4_TYPE){
+                    if(className.equals(Constants.CLASS_SUBNET_IPV4)){
 
                         while(SubnetEngine.belongsTo(attributeValues[3], ip, Integer.parseInt(split[1]))){
                             ip =  SubnetEngine.nextIpv4(attributeValues[3], attributeValues[2], ip, Integer.parseInt(split[1]));
                             ipAttributeValues[0] = ip;
                             ipAttributeValues[1] = "";
-                            addedIP = CommunicationsStub.getInstance().addIP(newSubnet.getOid(), 
-                            new LocalObject(Constants.CLASS_SUBNET, 0, ipAttributeNames, ipAttributeValues));
+                            addedIP = CommunicationsStub.getInstance().addIP(newSubnet.getOid(), className,
+                            new LocalObject(className, 0, ipAttributeNames, ipAttributeValues));
                             if(ip.equals(attributeValues[2]))
                                 break;
                         }
                     }
 
-                    else if(type == Constants.IPV6_TYPE){
+                    else if(className.equals(Constants.CLASS_SUBNET_IPV6)){
                         ip = SubnetEngine.nextIpv6(attributeValues[3], attributeValues[2], attributeValues[3], Integer.parseInt(split[1]));
                         while(SubnetEngine.belongsToIpv6(attributeValues[3], ip, Integer.parseInt(split[1]))){
                             ip =  SubnetEngine.nextIpv6(attributeValues[3], attributeValues[2], ip, Integer.parseInt(split[1]));
                             ipAttributeValues[0] = ip;
                             ipAttributeValues[1] = "";
-                            addedIP = CommunicationsStub.getInstance().addIP(newSubnet.getOid(), 
-                            new LocalObject(Constants.CLASS_SUBNET, 0, ipAttributeNames, ipAttributeValues));
+                            addedIP = CommunicationsStub.getInstance().addIP(newSubnet.getOid(), className, 
+                            new LocalObject(className, 0, ipAttributeNames, ipAttributeValues));
                             if(ip.equals(attributeValues[2]))
                                 break;
                         }

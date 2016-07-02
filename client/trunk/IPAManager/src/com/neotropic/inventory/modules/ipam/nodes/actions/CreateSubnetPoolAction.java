@@ -53,9 +53,8 @@ public class CreateSubnetPoolAction extends GenericObjectNodeAction{
     @Override
     public void actionPerformed(ActionEvent e) {
         Iterator<? extends SubnetPoolNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(SubnetPoolNode.class).allInstances().iterator();
-        String name = "";
-        long id = 0;
-        int type;
+        String className = "";
+        
         
         if (!selectedNodes.hasNext())
             return;
@@ -63,11 +62,9 @@ public class CreateSubnetPoolAction extends GenericObjectNodeAction{
         
         while (selectedNodes.hasNext()) {
             SubnetPoolNode selectedNode = (SubnetPoolNode)selectedNodes.next();
-            name = selectedNode.getSubnetPool().getName();
-            id = selectedNode.getSubnetPool().getOid();
+            className = selectedNode.getSubnetPool().getClassName();
         }
-
-        type = (int)com.getSubnetPool(id).getType();
+        
         JTextField txtName = new JTextField(), txtDescription =  new JTextField();
         txtName.setName("txtName"); //NOI18N
         txtName.setPreferredSize(new Dimension(120, 18));
@@ -84,8 +81,9 @@ public class CreateSubnetPoolAction extends GenericObjectNodeAction{
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION){
             
             LocalObjectLight newPool = com.createSubnetPool(subnetPoolNode.getSubnetPool().getOid(), 
+                    className,
                     ((JTextField)pnlMyDialog.getComponent("txtName")).getText(), 
-                    ((JTextField)pnlMyDialog.getComponent("txtDescription")).getText(), type);
+                    ((JTextField)pnlMyDialog.getComponent("txtDescription")).getText(), 3); //Type of pool module component. These pools are used in models and are in the lower levels of the pool containment hierarchy
             
             if (newPool ==  null)
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());

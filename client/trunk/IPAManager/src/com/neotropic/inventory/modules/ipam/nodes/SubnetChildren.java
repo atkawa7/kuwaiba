@@ -46,7 +46,7 @@ public class SubnetChildren extends Children.Array{
             for (LocalObjectLight item : items)
                 add(new Node[]{new SubnetNode(item)});
         }
-        List<LocalObjectLight> pools = CommunicationsStub.getInstance().getSubnetPools(subnet.getOid());
+        List<LocalObjectLight> pools = CommunicationsStub.getInstance().getSubnetPools(subnet.getOid(), subnet.getClassName());
         System.out.println("asdasd");
     }
     

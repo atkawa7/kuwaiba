@@ -64,26 +64,29 @@ public class AddIPAddressAction extends GenericObjectNodeAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         Iterator<? extends SubnetNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(SubnetNode.class).allInstances().iterator();
-        String name = "";
+        String className = "";
         long id = 0;
         if (!selectedNodes.hasNext())
             return;
         
         while (selectedNodes.hasNext()) {
             subnetNode = (SubnetNode)selectedNodes.next();
-            name = subnetNode.getSubnet().getName();
+            className = subnetNode.getSubnet().getClassName();
             id = subnetNode.getSubnet().getOid();
         }
-        LocalObject subnet = com.getSubnet(id);
+        LocalObject subnet = com.getSubnet(id, className);
         String networkIp = (String)subnet.getAttribute(Constants.PROPERTY_NETWORKIP);
         String broadcastIp = (String)subnet.getAttribute(Constants.PROPERTY_BROADCASTIP);
         String cidr = subnet.getName();
-        //hacer un metodo que me diga la ultima ip usada por el padre
-        int type = (int)subnet.getAttribute(Constants.PROPERTY_TYPE);
+        int type = 0;
+        if(className.equals(Constants.CLASS_SUBNET_IPV4))
+            type = 4;
+        if(className.equals(Constants.CLASS_SUBNET_IPV6))
+            type = 6;
         
         String nextIp = "";
         String lastUsedIP;
-        subnetUsedIps = com.getSubnetUsedIps(id);
+        subnetUsedIps = com.getSubnetUsedIps(id, className);
         if(!subnetUsedIps.isEmpty())
             lastUsedIP = subnetUsedIps.get(0).getName();
         else
@@ -99,7 +102,7 @@ public class AddIPAddressAction extends GenericObjectNodeAction {
             maskBits = Integer.parseInt(split[1]);
             nextIp = SubnetEngine.nextIpv6(networkIp, broadcastIp, lastUsedIP, maskBits);
         }
-        AddIPAddressFrame addIpFrame = new AddIPAddressFrame(id, networkIp, broadcastIp, type, nextIp);
+        AddIPAddressFrame addIpFrame = new AddIPAddressFrame(id, networkIp, broadcastIp, className, nextIp);
         addIpFrame.setVisible(true);
     }
     
@@ -117,14 +120,14 @@ public class AddIPAddressAction extends GenericObjectNodeAction {
         private String networkIp;
         private String broadcastIp;
         private String nextIp;
-        private int type;
+        private String className;
         private long parentId;
         private LocalObjectLight newSubnet;
 
-        public AddIPAddressFrame(long parentId, String networkIp, String broadcastIp, int type, String nextIp) {
+        public AddIPAddressFrame(long parentId, String networkIp, String broadcastIp, String className, String nextIp) {
             this.networkIp = networkIp;
             this.broadcastIp = broadcastIp;
-            this.type = type;
+            this.className = className;
             this.parentId = parentId;
             this.nextIp = nextIp;
             initComponents();
@@ -238,11 +241,11 @@ public class AddIPAddressAction extends GenericObjectNodeAction {
                     }
                 }
                 
-                if(type == Constants.IPV4_TYPE){
+                if(className.equals(Constants.CLASS_SUBNET_IPV4)){
                     if(!SubnetEngine.belongsTo(networkIp, ipAddress, maskBits))
                         itBelong = true;
                 }
-                else if (type == Constants.IPV6_TYPE){   
+                else if (className.equals(Constants.CLASS_SUBNET_IPV6)){   
                     if(!SubnetEngine.belongsToIpv6(networkIp, ipAddress, maskBits))
                         itBelong = true;
                 }
@@ -262,8 +265,8 @@ public class AddIPAddressAction extends GenericObjectNodeAction {
                     attributeValues[0] = ipAddress;
                     attributeValues[1] = txtDescription.getText();
 
-                    LocalObjectLight addedIP = CommunicationsStub.getInstance().addIP(parentId, 
-                            new LocalObject(Constants.CLASS_SUBNET, 0, attributeNames, attributeValues));
+                    LocalObjectLight addedIP = CommunicationsStub.getInstance().addIP(parentId, className,
+                            new LocalObject(className, 0, attributeNames, attributeValues));
 
                     if (addedIP == null)
                         NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());

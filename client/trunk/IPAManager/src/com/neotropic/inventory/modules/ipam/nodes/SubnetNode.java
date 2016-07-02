@@ -82,7 +82,7 @@ public class SubnetNode extends ObjectNode {
     
     @Override
     protected Sheet createSheet(){
-        LocalObject sp = com.getObjectInfo(Constants.CLASS_SUBNET, getSubnet().getOid());
+        LocalObject sp = com.getObjectInfo(getSubnet().getClassName(), getSubnet().getOid());
         sheet = Sheet.createDefault();
         Sheet.Set generalPropertySet = Sheet.createPropertiesSet(); //General attributes category
         

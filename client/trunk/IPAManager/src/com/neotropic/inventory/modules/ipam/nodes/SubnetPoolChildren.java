@@ -39,7 +39,7 @@ public class SubnetPoolChildren extends Children.Array{
     @Override
     public void addNotify(){
         collapsed = false;
-        List<LocalObjectLight> pools = CommunicationsStub.getInstance().getSubnetPools(subnetPool.getOid());
+        List<LocalObjectLight> pools = CommunicationsStub.getInstance().getSubnetPools(subnetPool.getOid(), subnetPool.getClassName());
         if (pools == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else{

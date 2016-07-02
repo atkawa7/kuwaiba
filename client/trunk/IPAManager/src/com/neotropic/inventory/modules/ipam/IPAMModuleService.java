@@ -30,7 +30,7 @@ public class IPAMModuleService {
     }
     
     public LocalObjectLight[] getRootChildren(){
-        List<LocalObjectLight> rootChildren = com.getSubnetPools(-1);
+        List<LocalObjectLight> rootChildren = com.getSubnetPools(-1, null);
         if(rootChildren != null)
             return rootChildren.toArray(new LocalObjectLight[0]);
         else{

@@ -55,18 +55,19 @@ public class DeleteSubnetAction extends GenericObjectNodeAction{
     public void actionPerformed(ActionEvent e) {
         
         Iterator<? extends SubnetNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(SubnetNode.class).allInstances().iterator();
-        String name = "";
+        String className = "";
         long id = 0;
         if (!selectedNodes.hasNext())
             return;
         List<Long> ids = new ArrayList<>();
         while (selectedNodes.hasNext()) {
             node = (SubnetNode)selectedNodes.next();
+            className = node.getSubnet().getClassName();
             ids.add(node.getSubnet().getOid());
         }
         
         
-        if (com.deleteSubnet(ids)){
+        if (com.deleteSubnet(className, ids)){
             node.getParentNode().getChildren().remove(new Node[]{node});
             NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
                     java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_DELETION_TEXT_OK"));

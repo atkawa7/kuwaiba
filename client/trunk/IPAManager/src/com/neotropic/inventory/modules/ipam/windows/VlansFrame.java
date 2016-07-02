@@ -113,7 +113,7 @@ public class VlansFrame extends JFrame{
                 JOptionPane.showMessageDialog(null, "Select a service from the list");
             else {
                 if (CommunicationsStub.getInstance().relateSubnetToVLAN(
-                        selectedSubnets.get(0).getOid(), lstAvailableVlans.getSelectedValue().getOid())){
+                        selectedSubnets.get(0).getOid(), selectedSubnets.get(0).getClassName(), lstAvailableVlans.getSelectedValue().getOid())){
                     JOptionPane.showMessageDialog(null, String.format("The %s subnet was related to VLAN %s", selectedSubnets.get(0).getName(), 
                             lstAvailableVlans.getSelectedValue().getName()));
                         dispose();
