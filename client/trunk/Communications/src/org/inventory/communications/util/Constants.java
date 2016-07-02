@@ -102,9 +102,13 @@ public class Constants {
      */
     public static final String CLASS_USER = "User";
     /**
-     * Name for class subnet is this constant used in the IPAM  module
+     * Name for class subnet IPv4 is this constant used in the IPAM  module
      */
-    public static final String CLASS_SUBNET = "Subnet";
+    public static final String CLASS_SUBNET_IPV4 = "SubnetIPv4";
+    /**
+     * Name for class subnet IPv6 is this constant used in the IPAM  module
+     */
+    public static final String CLASS_SUBNET_IPV6 = "SubnetIPv6";
     /**
      * Name for class Location owner this constant is used in the IPAM  module
      */
@@ -158,7 +162,7 @@ public class Constants {
     /**
      * This relationship is used to connect a VLAN with a Subnet
      */
-    public static final String RELATIONSHIP_IPAMBELONGSTOVLAN = "ipamBelongstoVlan";
+    public static final String RELATIONSHIP_IPAMBELONGSTOVLAN = "ipamBelongsToVlan";
     
     /**
      * A fixed label to indicate a given node doesn't have a name set

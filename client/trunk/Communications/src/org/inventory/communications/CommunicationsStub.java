@@ -2358,16 +2358,14 @@ public class CommunicationsStub {
     }
         // </editor-fold>
         // <editor-fold defaultstate="collapsed" desc="IPAM Module">
-    public List<LocalObjectLight> getSubnetPools(long parentId){
+    public List<LocalObjectLight> getSubnetPools(long parentId, String className){
         try{
-            List <RemoteObjectLight> poolRoots = service.getSubnetPools(-1, parentId, this.session.getSessionId());
+            List <RemotePool> pools = service.getSubnetPools(-1, parentId, className, this.session.getSessionId());
             List <LocalObjectLight> res = new ArrayList<>();
             
-            for (RemoteObjectLight rol : poolRoots){
+            for (RemotePool pool : pools){
                 HashMap<String, Integer> validators = new HashMap<>();
-                for (Validator validator : rol.getValidators())
-                    validators.put(validator.getLabel(), validator.getValue());
-                res.add(new LocalObjectLight(rol.getClassName(), rol.getName(), rol.getOid(), validators));
+                res.add(new LocalObjectLight(pool.getClassName(), pool.getName(), pool.getId(), validators));
             }
             return res;
         }catch(Exception ex){
@@ -2387,10 +2385,10 @@ public class CommunicationsStub {
         }
     }
     
-    public LocalObject getSubnet(long id){
+    public LocalObject getSubnet(long id, String className){
         try{
-            LocalClassMetadata lcmd = getMetaForClass(Constants.CLASS_SUBNET, false);
-            RemoteObject subnet = service.getSubnet(id,this.session.getSessionId());
+            LocalClassMetadata lcmd = getMetaForClass(className, false);
+            RemoteObject subnet = service.getSubnet(id, className, this.session.getSessionId());
             List<List<String>> values = new ArrayList<>();
             for (StringArray value : subnet.getValues())
                 values.add(value.getItem());
@@ -2421,20 +2419,20 @@ public class CommunicationsStub {
         }
     }
     
-    public LocalObjectLight createSubnetPool(long parentId, String subnetPoolName, 
+    public LocalObjectLight createSubnetPool(long parentId, String className, String subnetPoolName, 
             String subnetPoolDescription, int type) {
          try{
-             long objectId = service.createSubnetPool(parentId, subnetPoolName, subnetPoolDescription, type, this.session.getSessionId());
-             return new LocalObjectLight(objectId, subnetPoolName, Constants.CLASS_SUBNET);
+             long objectId = service.createSubnetPool(parentId, subnetPoolName, subnetPoolDescription, className, this.session.getSessionId());
+             return new LocalObjectLight(objectId, subnetPoolName, className);
          }catch(Exception ex){
             this.error = ex.getMessage();
             return null;
         }
     }
     
-    public boolean deleteSubnet(List<Long> oids){
+    public boolean deleteSubnet(String className, List<Long> oids){
         try{
-            service.deleteSubnets(oids, false, this.session.getSessionId());
+            service.deleteSubnets(oids, className, false, this.session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -2452,7 +2450,7 @@ public class CommunicationsStub {
         }
     }
         
-    public LocalObjectLight createSubnet(long poolId, LocalObject obj){
+    public LocalObjectLight createSubnet(long poolId, String parentClassName, LocalObject obj){
         try {
             List<String> attributeNames = new ArrayList<>();
             List<StringArray> attributeValues = new ArrayList<>();
@@ -2468,8 +2466,8 @@ public class CommunicationsStub {
                 attributeValues.add(value);
             }
             
-            long objectId  = service.createSubnet(poolId, attributeNames, attributeValues, this.session.getSessionId());
-            return new LocalObjectLight(objectId, obj.getName(), Constants.CLASS_SUBNET);
+            long objectId  = service.createSubnet(poolId, parentClassName, attributeNames, attributeValues, this.session.getSessionId());
+            return new LocalObjectLight(objectId, obj.getName(), parentClassName);
         }catch(Exception ex){
             this.error =  ex.getMessage();
             return null;
@@ -2506,7 +2504,7 @@ public class CommunicationsStub {
         }
     }
     
-    public LocalObjectLight addIP(long id, LocalObject obj){
+    public LocalObjectLight addIP(long id, String className, LocalObject obj){
         try {
             List<String> attributeNames = new ArrayList<>();
             List<StringArray> attributeValues = new ArrayList<>();
@@ -2522,8 +2520,8 @@ public class CommunicationsStub {
                 attributeValues.add(value);
             }
             
-            long objectId  = service.addIP(id, attributeNames, attributeValues, this.session.getSessionId());
-            return new LocalObjectLight(objectId, obj.getName(), Constants.CLASS_SUBNET);
+            long objectId  = service.addIP(id, className, attributeNames, attributeValues, this.session.getSessionId());
+            return new LocalObjectLight(objectId, obj.getName(), className);
         }catch(Exception ex){
             this.error =  ex.getMessage();
             return null;
@@ -2550,10 +2548,10 @@ public class CommunicationsStub {
         }
     }
     
-    public List<LocalObjectLight> getSubnetUsedIps(long id){
+    public List<LocalObjectLight> getSubnetUsedIps(long id, String className){
         try {
             List<LocalObjectLight> res = new ArrayList<>();
-            for (RemoteObjectLight anIp : service.getSubnetUsedIps(id, 0, this.session.getSessionId())) 
+            for (RemoteObjectLight anIp : service.getSubnetUsedIps(id, 0, className, this.session.getSessionId())) 
                 res.add(new LocalObjectLight(anIp.getOid(), anIp.getName(), anIp.getClassName()));
             return res;
         }catch(Exception ex){
@@ -2562,9 +2560,9 @@ public class CommunicationsStub {
         return null;
     }
     
-    public boolean relateSubnetToVLAN(long subnetId, long vlanId){
+    public boolean relateSubnetToVLAN(long subnetId, String className, long vlanId){
         try{
-            service.relateSubnetToVlan(subnetId, vlanId, this.session.getSessionId());
+            service.relateSubnetToVlan(subnetId, className, vlanId, this.session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = ex.getMessage();
