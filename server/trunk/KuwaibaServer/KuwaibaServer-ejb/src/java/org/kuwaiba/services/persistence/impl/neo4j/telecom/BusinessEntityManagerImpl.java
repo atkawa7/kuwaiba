@@ -435,7 +435,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             for (Node node : IteratorUtil.asIterable(column)){
                 if (node.getProperty(Constants.PROPERTY_NAME).equals(Constants.NODE_DUMMYROOT))
                     parents.add(new RemoteBusinessObjectLight((long)-1, Constants.NODE_DUMMYROOT, Constants.NODE_DUMMYROOT));
-                else
+                else 
                     parents.add(Util.createRemoteObjectLightFromNode(node));
             }
         }

@@ -561,26 +561,26 @@ public interface WebserviceBeanRemote {
         // </editor-fold>   
     
         // <editor-fold defaultstate="collapsed" desc="IP Administration manager module">
-        public RemoteObjectLight[] getSubnetPools(int limit, long parentId, String ipAddress, String sessionId) throws ServerSideException;
+        public RemotePool[] getSubnetPools(int limit, long parentId, String className, String ipAddress, String sessionId) throws ServerSideException;
         public RemoteObjectLight[] getSubnets(long poolId, int limit, String ipAddress, String sessionId) throws ServerSideException;
-        public RemoteObject getSubnet(long id, String ipAddress, String sessionId) throws ServerSideException;
+        public RemoteObject getSubnet(long id, String className, String ipAddress, String sessionId) throws ServerSideException;
         public RemotePool getSubnetPool(long id, String ipAddress, String sessionId) throws ServerSideException;
         public long createSubnetPool(long parentId, String subnetPoolName, 
-                String subnetPoolDescription, int type, String ipAddress, 
+                String subnetPoolDescription, String className, String ipAddress, 
                 String sessionId) throws ServerSideException;
-        public long createSubnet(long poolId, String attributeNames[], 
+        public long createSubnet(long poolId, String className, String attributeNames[], 
             String attributeValues[][], String ipAddress, String sessionId) throws ServerSideException;
         public void updateSubnet() throws ServerSideException;
-        public void deleteSubnets(long[] ids, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
+        public void deleteSubnets(long[] ids, String className, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
         public void deleteSubnetPools(long[] ids, String ipAddress, String sessionId) throws ServerSideException;
-        public long addIP(long id, String attributeNames[], 
+        public long addIP(long id, String parentClassName, String attributeNames[], 
             String attributeValues[][], String ipAddress, String sessionId) throws ServerSideException;
         public void removeIP(long[] ids, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
         public void relateIPtoDevice(long id, String deviceClassName, long deviceId, String ipAddress, String sessionId) throws ServerSideException;
-        public void relateSubnetToVlan(long id, long vlanId, String ipAddress, String sessionId) throws ServerSideException;
+        public void relateSubnetToVlan(long id, String className, long vlanId, String ipAddress, String sessionId) throws ServerSideException;
         public void releaseIPfromDevice(String deviceClassName, long deviceId, long id, String ipAddress, String sessionId) throws ServerSideException;
         public void releaseSubnetFromVlan(long vlanId, long id, String ipAddress, String sessionId) throws ServerSideException;
-        public RemoteObjectLight[] getSubnetUsedIps(long id, int limit, String ipAddress, String sessionId) throws ServerSideException;
+        public RemoteObjectLight[] getSubnetUsedIps(long id, String className, int limit, String ipAddress, String sessionId) throws ServerSideException;
         public boolean itOverlaps(String networkIp, String broadcastIp, String ipAddress, String sessionId) throws ServerSideException;
         // </editor-fold>
     // </editor-fold>

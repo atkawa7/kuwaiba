@@ -96,6 +96,7 @@ public class RemoteObjectLight implements Serializable {
      * Why not use getPort retrieving a LocalObject? Well, because the condition might be complicated, and
      * it's easier to compute its value at server side. Besides, it can involve complex queries that would require
      * more calls to the webservice
+     * @return a list with the validators
      */
     public List<Validator> getValidators() {
         return this.validators;
@@ -103,7 +104,7 @@ public class RemoteObjectLight implements Serializable {
 
     public void addValidator(Validator newValidator){
         if (this.validators == null)
-            this.validators = new ArrayList<Validator>();
+            this.validators = new ArrayList<>();
         this.validators.add(newValidator);
     }
 

@@ -6,10 +6,13 @@
 package com.neotropic.kuwaiba.modules.ipam;
 
 import com.neotropic.kuwaiba.modules.GenericCommercialModule;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
+import org.kuwaiba.apis.persistence.application.Pool;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
@@ -45,14 +48,6 @@ public class IPAMModule implements GenericCommercialModule{
      */
     private ApplicationEntityManager aem;
     
-    //constants
-    private static final int IPV4 = 4;
-    private static final int IPV6 = 6;
-    
-    /**
-     * Class subnet
-     */
-    private static final String CLASS_SUBNET = "Subnet";
     /**
      * The subnets could belong grouped in order to improve the IP Address
      * management, by default if no pool this set for a IPv4 subnet it belong 
@@ -120,11 +115,41 @@ public class IPAMModule implements GenericCommercialModule{
         //Registers the display names
         this.mem.setSpecialRelationshipDisplayName(RELATIONSHIP_IPAMBELONGSTOVLAN, "IPAM Subnet belong to a VLAN");
         this.mem.setSpecialRelationshipDisplayName(RELATIONSHIP_IPAMHASADDRESS, "IPAM GenericCommunicationElement has an IP Address");
+
     }
     
-    public List<RemoteBusinessObjectLight> getDefaultIPAMRootNodes() throws NotAuthorizedException, ObjectNotFoundException{
-        return null;
-    } 
+    /**
+     * Get the default pool nodes for IPv4 and IPv6 subnets
+     * @return default pool for IPv4 and IPv6
+     * @throws NotAuthorizedException 
+     */
+    private List<RemotePool> getDefaultIPAMRootNodes() throws NotAuthorizedException, MetadataObjectNotFoundException{
+        List<Pool> ipv4RootPools = aem.getRootPools(Constants.CLASS_SUBNET_IPV4, 2);
+        List<Pool> ipv6RootPools = aem.getRootPools(Constants.CLASS_SUBNET_IPV6, 2);
+        
+        List<RemotePool> rootSubnetPools = new ArrayList<>();
+        if(ipv4RootPools.isEmpty() || ipv6RootPools.isEmpty())
+            createRootNodes();
+        
+        for (Pool rootPool : ipv4RootPools) 
+            rootSubnetPools.add(new RemotePool(rootPool));
+        
+        for (Pool rootPool : ipv6RootPools) 
+            rootSubnetPools.add(new RemotePool(rootPool));
+        
+        return rootSubnetPools;
+    }
+    
+    /**
+     * Create the IPv4 and IPv6 default nodes if they don't exists.
+     * @throws MetadataObjectNotFoundException
+     * @throws NotAuthorizedException 
+     */
+    private void createRootNodes() throws MetadataObjectNotFoundException, NotAuthorizedException{
+        aem.createRootPool(Constants.NODE_IPV6ROOT, Constants.NODE_IPV6ROOT, Constants.CLASS_SUBNET_IPV6, 2);
+        aem.createRootPool(Constants.NODE_IPV4ROOT, Constants.NODE_IPV4ROOT, Constants.CLASS_SUBNET_IPV4, 2);
+        getDefaultIPAMRootNodes();
+    }
     
     /**
      * Creates a pool of subnets if the parentId is -1 the pool will be created 
@@ -132,26 +157,28 @@ public class IPAMModule implements GenericCommercialModule{
      * @param parentId
      * @param subnetPoolName subnet pool name
      * @param subnetPoolDescription subnet pool description
-     * @param type 4 if is a IPv4 subnet or 6 if is a IPv6 subnet
+     * @param className if is a IPv4 subnet or 6 if is a IPv6 subnet
      * @return new subnet pool id
      * @throws ServerSideException
      * @throws MetadataObjectNotFoundException
      * @throws InvalidArgumentException
      * @throws ObjectNotFoundException
      * @throws NotAuthorizedException 
+     * @throws org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException 
      */
     public long createSubnetsPool(long parentId, String subnetPoolName, 
-            String subnetPoolDescription, int type) throws ServerSideException, 
-            MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException, NotAuthorizedException 
+            String subnetPoolDescription, String className) throws ServerSideException, 
+            MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException, 
+            NotAuthorizedException, ApplicationObjectNotFoundException 
     {
         if (aem == null)
            throw new ServerSideException("Can't reach the backend. Contact your administrator");
-        //return aem.createPool(parentId, subnetPoolName, subnetPoolDescription, Constants.CLASS_SUBNET, type);
-        return -1;
+        return aem.createPoolInPool(parentId, subnetPoolName, subnetPoolDescription, className, 2);
     }
     
     /**
      * Get a subnet
+     * @param className if is a IPv4 subnet or if is a IPv6 subnet
      * @param oid subnet id
      * @return the subnet
      * @throws MetadataObjectNotFoundException
@@ -160,11 +187,11 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws ApplicationObjectNotFoundException
      * @throws NotAuthorizedException 
      */
-    public RemoteBusinessObject getSubnet(long oid) throws MetadataObjectNotFoundException, 
+    public RemoteBusinessObject getSubnet(String className, long oid) throws MetadataObjectNotFoundException, 
             ObjectNotFoundException, InvalidArgumentException, 
             ApplicationObjectNotFoundException, NotAuthorizedException
     {
-        return bem.getObject(Constants.CLASS_SUBNET, oid);
+        return bem.getObject(className, oid);
     }
     
     /**
@@ -188,15 +215,24 @@ public class IPAMModule implements GenericCommercialModule{
      * Get a set of subnet pools from a pool of subnets or from the root
      * @param limit limit of the result set, -1 no limit
      * @param parentId parent id
+     * @param className if is a IPv4 subnet or if is a IPv6 subnet
      * @return a list of subnet pools
      * @throws NotAuthorizedException
      * @throws ObjectNotFoundException 
+     * @throws ApplicationObjectNotFoundException 
+     * @throws MetadataObjectNotFoundException 
      */
-    public List<RemoteBusinessObjectLight> getSubnetPools(int limit, 
-            long parentId) throws NotAuthorizedException, ObjectNotFoundException
+    public List<RemotePool> getSubnetPools(int limit, 
+            long parentId, String className) throws NotAuthorizedException, ObjectNotFoundException, 
+            ApplicationObjectNotFoundException, MetadataObjectNotFoundException
     {
-        //return aem.getPools(limit, parentId, Constants.CLASS_SUBNET);
-        return Collections.EMPTY_LIST;
+        List<RemotePool> remotePools = new ArrayList<>();
+        if(parentId == -1 && className == null)
+            return getDefaultIPAMRootNodes();
+        
+        for (Pool pool : aem.getPoolsInPool(parentId, className)) 
+            remotePools.add(new RemotePool(pool));
+        return remotePools;
     }
    
     /**
@@ -226,12 +262,12 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws NotAuthorizedException
      * @throws MetadataObjectNotFoundException 
      */
-    public long createSubnet(long parentId, String[] attributeNames, 
+    public long createSubnet(long parentId, String className, String[] attributeNames, 
             String[][] attributeValues) throws ApplicationObjectNotFoundException, 
             InvalidArgumentException, ArraySizeMismatchException, NotAuthorizedException, 
             MetadataObjectNotFoundException
     {
-        return bem.createPoolItem(parentId, Constants.CLASS_SUBNET, attributeNames, attributeValues, 0);
+        return bem.createPoolItem(parentId, className, attributeNames, attributeValues, 0);
     }
     
     
@@ -244,12 +280,12 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws OperationNotPermittedException
      * @throws NotAuthorizedException 
      */
-    public void deleteSubnets(long[] ids, boolean releaseRelationships) 
+    public void deleteSubnets(long[] ids, String className, boolean releaseRelationships) 
             throws ObjectNotFoundException, MetadataObjectNotFoundException, 
             OperationNotPermittedException, NotAuthorizedException
     {
         if(ids != null)
-            bem.deleteObject(Constants.CLASS_SUBNET, ids[0], releaseRelationships);
+            bem.deleteObject(className, ids[0], releaseRelationships);
     }
     
     /**
@@ -258,18 +294,21 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws InvalidArgumentException
      * @throws OperationNotPermittedException
      * @throws NotAuthorizedException 
+     * @throws org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException 
      */
     public void deleteSubnetPools(long[] subnetsId) 
             throws InvalidArgumentException, OperationNotPermittedException, 
-            NotAuthorizedException  {
-        //aem.deletePools(subnetsId);
+            NotAuthorizedException, ApplicationObjectNotFoundException
+    {
+        aem.deletePools(subnetsId);
     }
 
     /**
      * creates an IP address inside a subnet
      * @param parentId subnet Id
-     * @param attributes ip Addres attributes, namem description
-     * @return ip addres id
+     * @param parentClassName if is a IPv4 or an IPv6 subnet
+     * @param attributes ip Address attributes, name description
+     * @return IP address id
      * @throws ApplicationObjectNotFoundException
      * @throws InvalidArgumentException
      * @throws ArraySizeMismatchException
@@ -279,17 +318,17 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws OperationNotPermittedException
      * @throws DatabaseException 
      */
-    public long addIP(long parentId, HashMap<String,List<String>> attributes) throws ApplicationObjectNotFoundException, 
+    public long addIP(long parentId, String parentClassName, HashMap<String,List<String>> attributes) throws ApplicationObjectNotFoundException, 
             InvalidArgumentException, ArraySizeMismatchException, NotAuthorizedException, 
             MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, DatabaseException
     {
-        return bem.createObject(Constants.CLASS_IP_ADDRESS, Constants.CLASS_SUBNET, parentId, attributes, 0);
+        return bem.createObject(Constants.CLASS_IP_ADDRESS, parentClassName, parentId, attributes, 0);
     }
 
     /**
      * Removes an ip address from a subnet
      * @param ids IP addresses ids
-     * @param releaseRelationships release exisiting relationships
+     * @param releaseRelationships release existing relationships
      * @throws ObjectNotFoundException
      * @throws MetadataObjectNotFoundException
      * @throws OperationNotPermittedException
@@ -320,15 +359,16 @@ public class IPAMModule implements GenericCommercialModule{
     /**
      * Relate a Subnet with a VLAN
      * @param id subnet id
+     * @param className if the subnet has IPv4 or IPv6 addresses
      * @param vlanId VLAN id
      * @throws ObjectNotFoundException
      * @throws OperationNotPermittedException
      * @throws MetadataObjectNotFoundException 
      */
-    public void relateSubnetToVLAN(long id, long vlanId)
+    public void relateSubnetToVLAN(long id, String className, long vlanId)
         throws ObjectNotFoundException,
             OperationNotPermittedException, MetadataObjectNotFoundException{
-        bem.createSpecialRelationship(Constants.CLASS_VLAN, vlanId, Constants.CLASS_SUBNET, id, RELATIONSHIP_IPAMBELONGSTOVLAN, true);
+        bem.createSpecialRelationship(Constants.CLASS_VLAN, vlanId, className, id, RELATIONSHIP_IPAMBELONGSTOVLAN, true);
     }
     
     /**
@@ -359,7 +399,7 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws ApplicationObjectNotFoundException
      * @throws NotAuthorizedException 
      */
-    public void releaseSubnetFromVLAN(long vlanId,long id)throws ObjectNotFoundException, MetadataObjectNotFoundException,
+    public void releaseSubnetFromVLAN(long vlanId, long id)throws ObjectNotFoundException, MetadataObjectNotFoundException,
             ApplicationObjectNotFoundException, NotAuthorizedException
     {
         bem.releaseSpecialRelationship(Constants.CLASS_VLAN, vlanId, id, RELATIONSHIP_IPAMBELONGSTOVLAN);
@@ -368,17 +408,19 @@ public class IPAMModule implements GenericCommercialModule{
     /**
      * Retrieves all the IP address created in a subnet
      * @param id subnet id
+     * @param className If the subnet has IPv4 or an IPv6 addresses
      * @return the next free IP address in the subnet 
      * @throws MetadataObjectNotFoundException 
      * @throws ObjectNotFoundException 
      * @throws ApplicationObjectNotFoundException 
      * @throws NotAuthorizedException 
      */
-    public List<RemoteBusinessObjectLight> getSubnetUsedIps(long id) throws MetadataObjectNotFoundException, 
+    public List<RemoteBusinessObjectLight> getSubnetUsedIps(long id, String className) 
+            throws MetadataObjectNotFoundException, 
             ObjectNotFoundException, ApplicationObjectNotFoundException, 
             NotAuthorizedException
     {
-        return bem.getObjectChildren(Constants.CLASS_SUBNET, id, 0);
+        return bem.getObjectChildren(className, id, 0);
     }
     /**
      * checks if the new subnet overlaps with in the created subnets

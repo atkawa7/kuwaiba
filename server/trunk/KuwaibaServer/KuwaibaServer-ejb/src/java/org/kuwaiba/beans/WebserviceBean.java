@@ -2104,7 +2104,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
                     tributaryLinkClass = StringPair.get(arguments, "objectClass");
                     return Reports.buildHighOrderTributaryLinkDetailReport(bem, aem, tributaryLinkClass, tributaryLinkId);
                 case 9: //Subnet usage
-                    return Reports.subnetUsageReport(bem, aem, Long.valueOf(StringPair.get(arguments, "objectId")));
+                    return Reports.subnetUsageReport(bem, aem, StringPair.get(arguments, "className"), Long.valueOf(StringPair.get(arguments, "objectId")));
                 case 10:
                     long locationId = Long.valueOf(StringPair.get(arguments, "objectId"));
                     String locationClass = StringPair.get(arguments, "objectClass");
@@ -2246,13 +2246,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
         // </editor-fold>    
     
         // <editor-fold defaultstate="collapsed" desc="IP Administration Manager Module">
-    
     @Override
-    public RemoteObject getSubnet(long id, String ipAddress, String sessionId) throws ServerSideException{
+    public RemoteObject getSubnet(long id, String className, String ipAddress, String sessionId) throws ServerSideException{
         try {
             aem.validateCall("getSubnet", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            return new RemoteObject(ipamModule.getSubnet(id));
+            return new RemoteObject(ipamModule.getSubnet(className, id));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2270,11 +2269,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
     
     @Override
-    public RemoteObjectLight[] getSubnetPools(int limit, long parentId, String ipAddress, String sessionId) throws ServerSideException{
+    public RemotePool[] getSubnetPools(int limit, long parentId, String className, String ipAddress, String sessionId) throws ServerSideException{
         try {
             aem.validateCall("getSubnetPools", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            return RemoteObjectLight.toRemoteObjectLightArray(ipamModule.getSubnetPools(limit, parentId));
+            return RemotePool.toRemotePoolArray(ipamModule.getSubnetPools(limit, parentId, className));
             
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -2295,12 +2294,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
     
     @Override
     public long createSubnetPool(long parentId, String subnetPoolName, 
-            String subnetPoolDescription, int type, String ipAddress, 
+            String subnetPoolDescription, String className, String ipAddress, 
             String sessionId) throws ServerSideException{
         try {
             aem.validateCall("createSubnetPool", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            return ipamModule.createSubnetsPool(parentId, subnetPoolName, subnetPoolDescription, type);
+            return ipamModule.createSubnetsPool(parentId, subnetPoolName, subnetPoolDescription, className);
             
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -2308,12 +2307,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
     
     @Override
-    public long createSubnet(long id, String attributeNames[], 
+    public long createSubnet(long id, String className, String attributeNames[], 
             String attributeValues[][], String ipAddress, String sessionId) throws ServerSideException{
         try {
             aem.validateCall("CreateSubnet", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            return ipamModule.createSubnet(id, attributeNames, attributeValues);
+            return ipamModule.createSubnet(id, className, attributeNames, attributeValues);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2324,11 +2323,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void deleteSubnets(long[] ids, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException{
+    public void deleteSubnets(long[] ids, String className, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException{
         try {
             aem.validateCall("DeleteSubnet", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            ipamModule.deleteSubnets(ids, releaseRelationships);
+            ipamModule.deleteSubnets(ids, className, releaseRelationships);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2346,7 +2345,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public long addIP(long id, String attributeNames[], String attributeValues[][], 
+    public long addIP(long id, String parentClassName, String attributeNames[], String attributeValues[][], 
             String ipAddress, String sessionId) throws ServerSideException{
         try{
             aem.validateCall("addIP", ipAddress, sessionId);
@@ -2354,7 +2353,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             for (int i = 0; i < attributeNames.length; i++)
                 attributes.put(attributeNames[i], Arrays.asList(attributeValues[i]));
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            return ipamModule.addIP(id, attributes);
+            return ipamModule.addIP(id, parentClassName, attributes);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2384,11 +2383,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
     
     @Override
-    public void relateSubnetToVlan(long id, long vlanId, String ipAddress, String sessionId) throws ServerSideException{
+    public void relateSubnetToVlan(long id, String className, long vlanId, String ipAddress, String sessionId) throws ServerSideException{
     try{
             aem.validateCall("relateSubnetToVLAN", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            ipamModule.relateSubnetToVLAN(id,vlanId);
+            ipamModule.relateSubnetToVLAN(id, className, vlanId);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2415,11 +2414,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
     
     @Override
-    public RemoteObjectLight[] getSubnetUsedIps(long id, int limit, String ipAddress, String sessionId) throws ServerSideException{
+    public RemoteObjectLight[] getSubnetUsedIps(long id, String className, int limit, String ipAddress, String sessionId) throws ServerSideException{
         try{
             aem.validateCall("getSubnetUsedIps", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            return RemoteObjectLight.toRemoteObjectLightArray(ipamModule.getSubnetUsedIps(id));
+            return RemoteObjectLight.toRemoteObjectLightArray(ipamModule.getSubnetUsedIps(id, className));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2483,6 +2482,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
 
     // </editor-fold>
     // </editor-fold>
+    
     // <editor-fold defaultstate="collapsed" desc="Helper methods. Click on the + sign on the left to edit the code.">
     protected final void connect() {
         try {

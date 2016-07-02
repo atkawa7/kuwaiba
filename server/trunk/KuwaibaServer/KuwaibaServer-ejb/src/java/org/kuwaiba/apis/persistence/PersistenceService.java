@@ -19,10 +19,13 @@ import com.neotropic.kuwaiba.modules.GenericCommercialModule;
 import com.neotropic.kuwaiba.modules.ipam.IPAMModule;
 import com.neotropic.kuwaiba.modules.mpls.MPLSModule;
 import com.neotropic.kuwaiba.modules.sdh.SDHModule;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Calendar;
 import java.util.Properties;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
+import org.kuwaiba.apis.persistence.exceptions.ConnectionException;
+import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.apis.persistence.integrity.DataIntegrityService;
 import org.kuwaiba.apis.persistence.integrity.DataModelLoader;
@@ -92,10 +95,9 @@ public class PersistenceService {
                 System.out.println(String.format("[KUWAIBA]   [%s]  %s %s by %s", Calendar.getInstance().getTime(), aModule.getName(), aModule.getVersion(), aModule.getVendor()));
                 aModule.configureModule(aem, mem, bem);
             }
-
             System.out.println(String.format("[KUWAIBA] [%s] Persistence Service is up and running", Calendar.getInstance().getTime()));
             state = EXECUTION_STATE.RUNNING;
-        }catch(Exception e){
+        }catch(InstantiationException | IllegalAccessException | ConnectionException | NoSuchMethodException | IllegalArgumentException | InvocationTargetException | NotAuthorizedException e){
             if (connectionManager != null)
                 connectionManager.closeConnection();
             System.out.println(String.format("[KUWAIBA] [%s] Persistence Service could not be started: %s", Calendar.getInstance().getTime(), e.getMessage()));

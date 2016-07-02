@@ -229,9 +229,13 @@ public class Constants {
      */
     public static final String CLASS_IP_ADDRESS = "IPAddress"; //NOI18N
     /**
-     * Class Subnet
+     * Class Subnet IPv4
      */
-    public static final String CLASS_SUBNET = "Subnet"; //NOI18N
+    public static final String CLASS_SUBNET_IPV4 = "SubnetIPv4"; //NOI18N
+    /**
+     * Class Subnet IPv6
+     */
+    public static final String CLASS_SUBNET_IPV6 = "SubnetIPv6"; //NOI18N
     /**
      * Class VLAN
      */

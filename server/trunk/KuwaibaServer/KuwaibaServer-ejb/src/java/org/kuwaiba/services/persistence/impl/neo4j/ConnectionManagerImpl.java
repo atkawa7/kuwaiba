@@ -33,7 +33,7 @@ public class ConnectionManagerImpl implements ConnectionManager <GraphDatabaseSe
     /**
      * Default db path
      */
-    private static final String DEFAULT_DB_PATH = "../target/kuwaiba.db";
+    private static final String DEFAULT_DB_PATH = "/data/db/kuwaiba.db";
     /**
      * Database path
      */

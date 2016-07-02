@@ -481,10 +481,10 @@ public class Reports {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public static byte[] subnetUsageReport(BusinessEntityManager bem, ApplicationEntityManager aem, long subnetId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+    public static byte[] subnetUsageReport(BusinessEntityManager bem, ApplicationEntityManager aem,  String className, long subnetId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
     
-        RemoteBusinessObject subnet = bem.getObject(Constants.CLASS_SUBNET, subnetId);
-        List<RemoteBusinessObjectLight> ips = bem.getObjectChildren(Constants.CLASS_SUBNET, subnetId, 0);
+        RemoteBusinessObject subnet = bem.getObject(className, subnetId);
+        List<RemoteBusinessObjectLight> ips = bem.getObjectChildren(className, subnetId, 0);
         HashMap<String, List<String>> subnetAttributes = subnet.getAttributes();
         int hosts = Integer.parseInt(subnetAttributes.get("hosts").get(0));
         int usedIps = ips.size();
@@ -492,15 +492,14 @@ public class Reports {
         int freeIps = hosts - usedIps;
         
         String vlan = "", service="", title, subnetUsageReportText;
-        List<RemoteBusinessObjectLight> vlans = bem.getSpecialAttribute(Constants.CLASS_SUBNET, subnetId, IPAMModule.RELATIONSHIP_IPAMBELONGSTOVLAN);
-        List<RemoteBusinessObjectLight> services = bem.getSpecialAttribute(Constants.CLASS_SUBNET, subnetId, "uses");
-        
+        List<RemoteBusinessObjectLight> vlans = bem.getSpecialAttribute(className, subnetId, IPAMModule.RELATIONSHIP_IPAMBELONGSTOVLAN);
+        List<RemoteBusinessObjectLight> services = bem.getSpecialAttribute(className, subnetId, "uses");
         
         if(!vlans.isEmpty()){
             vlan = "<b>" + vlans.get(0).getName() + " ["+ vlans.get(0).getClassName()+ "]</b> |"+
             formatLocation(bem.getParents(vlans.get(0).getClassName(), vlans.get(0).getId()));
-            
         }    
+
         if(!services.isEmpty())
             service = services.get(0).getName() + " ["+ services.get(0).getClassName()+ "]";
         

@@ -16,6 +16,7 @@
 
 package org.kuwaiba.ws.toserialize.application;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import org.kuwaiba.apis.persistence.application.Pool;
@@ -49,6 +50,14 @@ public class RemotePool {
 
     //No-arg constructor required
     public RemotePool(){}
+
+    public RemotePool(long id, String name, String description, String className, int type) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.className = className;
+        this.type = type;
+    }
     
     public RemotePool(Pool pool){
         this.id = pool.getId();
@@ -90,5 +99,14 @@ public class RemotePool {
         this.className = className;
     }
 
-    
+    public static RemotePool[] toRemotePoolArray(List<RemotePool> toBeWrapped){
+        if (toBeWrapped == null)
+            return null;
+
+        RemotePool[] res = new RemotePool[toBeWrapped.size()];
+        for (int i = 0; i < toBeWrapped.size(); i++)
+            res[i] = toBeWrapped.get(i);
+
+        return res;
+    }
 }

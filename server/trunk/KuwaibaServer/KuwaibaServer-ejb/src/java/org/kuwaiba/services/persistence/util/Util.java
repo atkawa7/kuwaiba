@@ -54,6 +54,7 @@ import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.apis.persistence.metadata.GenericObjectList;
 import org.kuwaiba.services.persistence.impl.neo4j.RelTypes;
+import org.kuwaiba.ws.toserialize.application.RemotePool;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.Label;
@@ -362,7 +363,6 @@ public class Util {
                 myClass.getPossibleChildren().add((String)rel.getEndNode().getProperty(Constants.PROPERTY_NAME));
             }
         }
-
         return myClass;
     }
 
@@ -389,6 +389,14 @@ public class Util {
         return attribute;
     }
     
+    public static RemotePool createRemotePoolFromNode(Node instance){
+        return new RemotePool(instance.getId(), 
+                (String)instance.getProperty(Constants.PROPERTY_NAME), 
+                (String)instance.getProperty(Constants.PROPERTY_DESCRIPTION),
+                (String)instance.getProperty(Constants.PROPERTY_CLASS_NAME), 
+                (Integer)instance.getProperty(Constants.PROPERTY_TYPE));
+    }
+    
     public static RemoteBusinessObjectLight createRemoteObjectLightFromNode (Node instance) {
         Node classNode = instance.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode();
         return new RemoteBusinessObjectLight(instance.getId(), 
@@ -408,8 +416,6 @@ public class Util {
                         (String)poolNode.getProperty(Constants.PROPERTY_CLASS_NAME), 
                         poolNode.hasProperty(Constants.PROPERTY_TYPE) ? (int)poolNode.getProperty(Constants.PROPERTY_TYPE) : -1);
     }
-    
-    
     
     /**
      * Builds a RemoteBusinessObject instance from a node representing a business object
