@@ -3365,16 +3365,18 @@ public class KuwaibaService {
      * Retrieves all the subnet pools
      * @param limit limit
      * @param parentId parent id
+     * @param className if is an IPv4 or an IPv6 subnet
      * @param sessionId the session id
      * @return a set of subnet pools
      * @throws Exception 
      */
     @WebMethod(operationName = "getSubnetPools")
-    public RemoteObjectLight[] getSubnetPools(@WebParam(name = "limit")
+    public RemotePool[] getSubnetPools(@WebParam(name = "limit")
             int limit, @WebParam(name = "parentId") long parentId,
+            @WebParam(name = "className") String className,
             @WebParam(name = "sessionId") String sessionId) throws Exception{
         try{
-            return wsBean.getSubnetPools(limit, parentId, getIPAddress(), sessionId);
+            return wsBean.getSubnetPools(limit, parentId, className, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -3411,12 +3413,12 @@ public class KuwaibaService {
     
     /**
      * Create a pool of subnets
-     * @param parentId
-     * @param subnetPoolName
+     * @param parentId subnet parent Id
+     * @param subnetPoolName subnet pool name
      * @param subnetPoolDescription
-     * @param type
+     * @param className if is a IPv4 or an IPv6 subnet
      * @param sessionId
-     * @return
+     * @return id of the created subnet pool 
      * @throws ServerSideException 
      */
     @WebMethod(operationName = "createSubnetPool")
@@ -3424,10 +3426,10 @@ public class KuwaibaService {
             @WebParam(name = "parentId")long parentId, 
             @WebParam(name = "subnetPoolName")String subnetPoolName, 
             @WebParam(name = "subnetPoolDescription")String subnetPoolDescription, 
-            @WebParam(name = "type")int type, 
+            @WebParam(name = "className")String className, 
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
-            return wsBean.createSubnetPool(parentId, subnetPoolName, subnetPoolDescription, type, getIPAddress(), sessionId);
+            return wsBean.createSubnetPool(parentId, subnetPoolName, subnetPoolDescription, className, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -3440,11 +3442,12 @@ public class KuwaibaService {
     
     @WebMethod(operationName = "createSubnet")
     public long createSubnet(@WebParam(name = "poolId")long poolId,
+            @WebParam(name = "className")String className,
             @WebParam(name = "attributeNames")String[] attributeNames,
             @WebParam(name = "attributeValues")String[][] attributeValues,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
-            return wsBean.createSubnet(poolId, attributeNames, attributeValues, getIPAddress(), sessionId);
+            return wsBean.createSubnet(poolId, className, attributeNames, attributeValues, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -3486,10 +3489,11 @@ public class KuwaibaService {
     @WebMethod(operationName = "deleteSubnets")
     public void deleteSubnets(
             @WebParam(name = "oid")long[] oids,
+            @WebParam(name = "className") String className,
             @WebParam(name = "releaseRelationships") boolean releaseRelationships,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
-            wsBean.deleteSubnets(oids, releaseRelationships, getIPAddress(), sessionId);
+            wsBean.deleteSubnets(oids, className, releaseRelationships, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -3510,9 +3514,10 @@ public class KuwaibaService {
     @WebMethod(operationName = "getSubnet")
     public RemoteObject getSubnet(
             @WebParam(name = "id") long id,
+            @WebParam(name = "className") String className,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
-            return wsBean.getSubnet(id, getIPAddress(), sessionId);
+            return wsBean.getSubnet(id, className, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -3558,11 +3563,12 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "addIP")
     public long addIP(@WebParam(name = "id")long id,
+            @WebParam(name = "parentClassName")String parentClassName,
             @WebParam(name = "attributeNames")String[] attributeNames,
             @WebParam(name = "attributeValues")String[][] attributeValues,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
-            return wsBean.addIP(id, attributeNames, attributeValues, getIPAddress(), sessionId);
+            return wsBean.addIP(id, parentClassName, attributeNames, attributeValues, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -3607,9 +3613,10 @@ public class KuwaibaService {
     @WebMethod(operationName = "getSubnetUsedIps")
     public RemoteObjectLight[] getSubnetUsedIps(@WebParam(name = "id")long id,
             @WebParam(name = "limit")int limit,
+            @WebParam(name = "className")String className,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
-            return wsBean.getSubnetUsedIps(id, limit, getIPAddress(), sessionId);
+            return wsBean.getSubnetUsedIps(id, className, limit, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -3647,6 +3654,7 @@ public class KuwaibaService {
     /**
      * Associates a subnet to existing VLAN
      * @param id Subnet id
+     * @param className if the subnet has IPv4 or IPv6 IP addresses
      * @param vlanId VLAN id
      * @param sessionId Session token
      * @throws Exception Generic exception encapsulating any possible error raised at runtime   
@@ -3654,10 +3662,11 @@ public class KuwaibaService {
     @WebMethod(operationName = "relateSubnetToVlan")
     public void relateSubnetToVlan (
             @WebParam(name = "id")long id,
+            @WebParam(name = "className")String className,
             @WebParam(name = "vlanId")long vlanId,
             @WebParam(name = "sessionId")String sessionId) throws Exception {
         try{
-            wsBean.relateSubnetToVlan(id, vlanId, getIPAddress(), sessionId);
+            wsBean.relateSubnetToVlan(id, className, vlanId, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
