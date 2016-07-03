@@ -128,8 +128,11 @@ public class IPAMModule implements GenericCommercialModule{
         List<Pool> ipv6RootPools = aem.getRootPools(Constants.CLASS_SUBNET_IPV6, 2);
         
         List<RemotePool> rootSubnetPools = new ArrayList<>();
-        if(ipv4RootPools.isEmpty() || ipv6RootPools.isEmpty())
+        if(ipv4RootPools.isEmpty() || ipv6RootPools.isEmpty()){
             createRootNodes();
+            ipv4RootPools = aem.getRootPools(Constants.CLASS_SUBNET_IPV4, 2);
+            ipv6RootPools = aem.getRootPools(Constants.CLASS_SUBNET_IPV6, 2);
+        }
         
         for (Pool rootPool : ipv4RootPools) 
             rootSubnetPools.add(new RemotePool(rootPool));
@@ -148,7 +151,7 @@ public class IPAMModule implements GenericCommercialModule{
     private void createRootNodes() throws MetadataObjectNotFoundException, NotAuthorizedException{
         aem.createRootPool(Constants.NODE_IPV6ROOT, Constants.NODE_IPV6ROOT, Constants.CLASS_SUBNET_IPV6, 2);
         aem.createRootPool(Constants.NODE_IPV4ROOT, Constants.NODE_IPV4ROOT, Constants.CLASS_SUBNET_IPV4, 2);
-        getDefaultIPAMRootNodes();
+        //getDefaultIPAMRootNodes();
     }
     
     /**
