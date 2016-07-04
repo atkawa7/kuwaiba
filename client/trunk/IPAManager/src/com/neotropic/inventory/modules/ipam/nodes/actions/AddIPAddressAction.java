@@ -108,7 +108,7 @@ public class AddIPAddressAction extends GenericObjectNodeAction {
     
     
     private class AddIPAddressFrame extends JFrame{
-        private javax.swing.JButton btnAddSubnet;
+        private javax.swing.JButton btnAddIPAddress;
         private javax.swing.JButton btnClose;
         private javax.swing.JTextField txtIpAddress;
         private javax.swing.JTextField txtDescription;
@@ -142,7 +142,7 @@ public class AddIPAddressAction extends GenericObjectNodeAction {
             setPreferredSize(new java.awt.Dimension(470, 170));
             setLocationRelativeTo(null);
             pnl = new javax.swing.JPanel();
-            btnAddSubnet = new javax.swing.JButton();
+            btnAddIPAddress = new javax.swing.JButton();
             btnClose = new javax.swing.JButton();
             btnClose.addActionListener(new ActionListener() {
 
@@ -158,8 +158,8 @@ public class AddIPAddressAction extends GenericObjectNodeAction {
             lblDescription = new javax.swing.JLabel();
             lblError = new javax.swing.JLabel();
             lblError.setVisible(false);
-            btnAddSubnet.setText(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_ADD_SUBNET"));
-            btnAddSubnet.addActionListener(new java.awt.event.ActionListener() {
+            btnAddIPAddress.setText(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_ADD_IP_ADDRESS"));
+            btnAddIPAddress.addActionListener(new java.awt.event.ActionListener() {
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     btnAddSubnetActionPerformed(evt);
@@ -188,7 +188,7 @@ public class AddIPAddressAction extends GenericObjectNodeAction {
                         .addGroup(pnlLayout.createSequentialGroup()
                             .addComponent(btnClose)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnAddSubnet))
+                            .addComponent(btnAddIPAddress))
                         .addGroup(pnlLayout.createSequentialGroup()
                             .addGroup(pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(lblIpAddress)
@@ -216,7 +216,7 @@ public class AddIPAddressAction extends GenericObjectNodeAction {
                     .addGap(18, 18, 18)
                     .addGroup(pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(btnClose)
-                        .addComponent(btnAddSubnet))
+                        .addComponent(btnAddIPAddress))
                     .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             );
 

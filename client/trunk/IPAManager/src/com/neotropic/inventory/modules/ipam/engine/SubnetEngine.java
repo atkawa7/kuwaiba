@@ -72,10 +72,6 @@ public class SubnetEngine {
             }
             segmentId++;
         }
-        
-        for (Map.Entry e : mapSubnets.entrySet()) {
-            System.out.println(e.getKey() + " " + e.getValue());
-        }
         createSubnets(1, "", "");
     }
     

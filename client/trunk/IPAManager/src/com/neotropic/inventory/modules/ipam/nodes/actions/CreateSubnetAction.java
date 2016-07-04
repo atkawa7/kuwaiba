@@ -108,7 +108,7 @@ public class CreateSubnetAction extends AbstractAction{
         public final void initComponents(){
             setLayout(new BorderLayout());
             setTitle(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_ADD_SUBNET"));
-            setPreferredSize(new java.awt.Dimension(470, 190));
+            setPreferredSize(new java.awt.Dimension(470, 200));
             setLocationRelativeTo(null);
             pnl = new javax.swing.JPanel();
             btnAddSubnet = new javax.swing.JButton();
