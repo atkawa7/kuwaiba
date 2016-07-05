@@ -9,8 +9,6 @@ import com.neotropic.kuwaiba.modules.GenericCommercialModule;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.application.Pool;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
@@ -325,7 +323,7 @@ public class IPAMModule implements GenericCommercialModule{
             InvalidArgumentException, ArraySizeMismatchException, NotAuthorizedException, 
             MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, DatabaseException
     {
-        return bem.createObject(Constants.CLASS_IP_ADDRESS, parentClassName, parentId, attributes, 0);
+        return bem.createSpecialObject(Constants.CLASS_IP_ADDRESS, parentClassName, parentId, attributes, 0);
     }
 
     /**
@@ -342,6 +340,7 @@ public class IPAMModule implements GenericCommercialModule{
             OperationNotPermittedException, NotAuthorizedException
     {
         if(ids != null)
+            
             bem.deleteObject(Constants.CLASS_IP_ADDRESS, ids[0], releaseRelationships);
     }
     
@@ -423,7 +422,7 @@ public class IPAMModule implements GenericCommercialModule{
             ObjectNotFoundException, ApplicationObjectNotFoundException, 
             NotAuthorizedException
     {
-        return bem.getObjectChildren(className, id, 0);
+        return bem.getObjectSpecialChildren(className, id);
     }
     /**
      * checks if the new subnet overlaps with in the created subnets
