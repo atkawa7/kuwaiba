@@ -71,8 +71,8 @@ public class AddIPAddressAction extends GenericObjectNodeAction {
         
         while (selectedNodes.hasNext()) {
             subnetNode = (SubnetNode)selectedNodes.next();
-            className = subnetNode.getSubnet().getClassName();
-            id = subnetNode.getSubnet().getOid();
+            className = subnetNode.getObject().getClassName();
+            id = subnetNode.getObject().getOid();
         }
         LocalObject subnet = com.getSubnet(id, className);
         String networkIp = (String)subnet.getAttribute(Constants.PROPERTY_NETWORKIP);
@@ -122,7 +122,6 @@ public class AddIPAddressAction extends GenericObjectNodeAction {
         private String nextIp;
         private String className;
         private long parentId;
-        private LocalObjectLight newSubnet;
 
         public AddIPAddressFrame(long parentId, String networkIp, String broadcastIp, String className, String nextIp) {
             this.networkIp = networkIp;
@@ -285,11 +284,11 @@ public class AddIPAddressAction extends GenericObjectNodeAction {
                     lblError.setVisible(true);  
                 }
                 else if(isNetworIp){
-                    lblError.setText("The network IP can be used");
+                    lblError.setText("The network IP can not be use");
                     lblError.setVisible(true);  
                 }
                 else if(isBroadcastIp){
-                    lblError.setText("The broadcast IP can be used");
+                    lblError.setText("The broadcast IP can not be use");
                     lblError.setVisible(true);  
                 }
             }

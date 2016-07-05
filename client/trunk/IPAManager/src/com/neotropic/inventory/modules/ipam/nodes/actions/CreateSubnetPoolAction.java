@@ -89,8 +89,7 @@ public class CreateSubnetPoolAction extends GenericObjectNodeAction{
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             else{
                 if(subnetPoolNode.getSubnetPool() != null){
-                    if (!((SubnetPoolChildren)subnetPoolNode.getChildren()).isCollapsed())
-                        subnetPoolNode.getChildren().add(new SubnetPoolNode[]{new SubnetPoolNode(newPool)});
+                    ((SubnetPoolChildren)subnetPoolNode.getChildren()).addNotify();
                     NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_CREATED"));
                 }
             }

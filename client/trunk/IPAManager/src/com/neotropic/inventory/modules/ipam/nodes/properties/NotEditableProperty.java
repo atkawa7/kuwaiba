@@ -22,11 +22,11 @@ import org.openide.nodes.PropertySupport;
  * Provides a property editor for the subnets in the IP Address manager
  * @author Adrian Martinez Molina <charles.bedon@kuwaiba.org>
  */
-public class SubnetProperty extends PropertySupport.ReadOnly{
+public class NotEditableProperty extends PropertySupport.ReadOnly{
 
     private Object value;
     
-    public SubnetProperty(String name, Class type, String displayName, String shortDescription, Object value) {
+    public NotEditableProperty(String name, Class type, String displayName, String shortDescription, Object value) {
         super(name, type, displayName, shortDescription);
         this.value = value;
     }

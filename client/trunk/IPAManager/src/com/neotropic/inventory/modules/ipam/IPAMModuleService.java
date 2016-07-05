@@ -12,12 +12,12 @@ package com.neotropic.inventory.modules.ipam;
 
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalPool;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 
 /**
- *
- * @author adrian
+ * IPAM service for top component 
+ * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class IPAMModuleService {
     
@@ -29,13 +29,13 @@ public class IPAMModuleService {
         com = CommunicationsStub.getInstance();
     }
     
-    public LocalObjectLight[] getRootChildren(){
-        List<LocalObjectLight> rootChildren = com.getSubnetPools(-1, null);
+    public LocalPool[] getRootChildren(){
+        List<LocalPool> rootChildren = com.getSubnetPools(-1, null);
         if(rootChildren != null)
-            return rootChildren.toArray(new LocalObjectLight[0]);
+            return rootChildren.toArray(new LocalPool[0]);
         else{
             ipamtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
-            return new LocalObjectLight[0];
+            return new LocalPool[0];
         }
     }
 }

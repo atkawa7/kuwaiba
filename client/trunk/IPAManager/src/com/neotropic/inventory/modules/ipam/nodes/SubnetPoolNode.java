@@ -17,11 +17,10 @@ package com.neotropic.inventory.modules.ipam.nodes;
 
 import java.awt.Image;
 import javax.swing.Action;
-import org.inventory.communications.core.LocalObjectLight;
 import com.neotropic.inventory.modules.ipam.nodes.actions.CreateSubnetAction;
 import com.neotropic.inventory.modules.ipam.nodes.actions.CreateSubnetPoolAction;
 import com.neotropic.inventory.modules.ipam.nodes.actions.DeleteSubnetPoolAction;
-import com.neotropic.inventory.modules.ipam.nodes.properties.SubnetPoolProperty;
+import com.neotropic.inventory.modules.ipam.nodes.properties.PoolNativeTypeProperty;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -43,10 +42,10 @@ public class SubnetPoolNode extends AbstractNode implements PropertyChangeListen
     private static final String ICON_PATH="com/neotropic/inventory/modules/res/folder-icon.png";
     private static Image defaultIcon = ImageUtilities.loadImage(ICON_PATH);
     protected Sheet sheet;
-    private LocalObjectLight subnetPool;
+    private LocalPool subnetPool;
     protected CommunicationsStub com;
 
-    public SubnetPoolNode(LocalObjectLight subnetPool) {
+    public SubnetPoolNode(LocalPool subnetPool) {
         super(new SubnetPoolChildren(subnetPool), Lookups.singleton(subnetPool));
         this.subnetPool = subnetPool;
         this.subnetPool.addPropertyChangeListener(this);
@@ -60,7 +59,7 @@ public class SubnetPoolNode extends AbstractNode implements PropertyChangeListen
         actions.add(new CreateSubnetAction(this));
         actions.add(new CreateSubnetPoolAction(this));
         actions.add(null);
-        if (!(getParentNode() instanceof IpamRootNode)) {
+        if (!(getParentNode() instanceof IPAMRootNode)) {
             actions.add(new DeleteSubnetPoolAction(this));
             actions.add(null); //Separator
         }
@@ -90,22 +89,22 @@ public class SubnetPoolNode extends AbstractNode implements PropertyChangeListen
         sheet = Sheet.createDefault();
         Sheet.Set generalPropertySet = Sheet.createPropertiesSet(); //General attributes category
         
-        generalPropertySet.put(new SubnetPoolProperty(Constants.PROPERTY_NAME, String.class, 
+        generalPropertySet.put(new PoolNativeTypeProperty(
+                Constants.PROPERTY_NAME, String.class, 
                 java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_NAME"),
-                "",sp.getName()));
+                "",this, sp.getName()));
         
-        generalPropertySet.put(new SubnetPoolProperty(Constants.PROPERTY_DESCRIPTION, String.class, 
+        generalPropertySet.put(new PoolNativeTypeProperty(Constants.PROPERTY_DESCRIPTION, String.class, 
                 java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_DESCRIPTION"),
-                "",sp.getDescription()));
-        
-        
+                "", this, sp.getDescription()));
+
         generalPropertySet.setName("1");
         generalPropertySet.setDisplayName(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_GENERAL_ATTRIBUTES"));
         sheet.put(generalPropertySet);
         return sheet;
     }
 
-    public LocalObjectLight getSubnetPool() {
+    public LocalPool getSubnetPool() {
         return subnetPool;
     }
 

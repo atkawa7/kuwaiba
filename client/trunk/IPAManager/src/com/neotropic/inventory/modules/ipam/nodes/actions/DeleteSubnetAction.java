@@ -62,10 +62,9 @@ public class DeleteSubnetAction extends GenericObjectNodeAction{
         List<Long> ids = new ArrayList<>();
         while (selectedNodes.hasNext()) {
             node = (SubnetNode)selectedNodes.next();
-            className = node.getSubnet().getClassName();
-            ids.add(node.getSubnet().getOid());
+            className = node.getObject().getClassName();
+            ids.add(node.getObject().getOid());
         }
-        
         
         if (com.deleteSubnet(className, ids)){
             node.getParentNode().getChildren().remove(new Node[]{node});

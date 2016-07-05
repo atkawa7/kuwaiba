@@ -10,10 +10,10 @@
  */
 package com.neotropic.inventory.modules.ipam;
 
-import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import com.neotropic.inventory.modules.ipam.nodes.IpamRootNode;
+import com.neotropic.inventory.modules.ipam.nodes.IPAMRootNode;
+import org.inventory.communications.core.LocalPool;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -105,9 +105,9 @@ public final class IPAMModuleTopComponentTopComponent extends TopComponent imple
     }
 
     public void setRoot(){
-        LocalObjectLight[] rootChildren = ipams.getRootChildren();
+        LocalPool[] rootChildren = ipams.getRootChildren();
         if (rootChildren != null)
-            em.setRootContext(new IpamRootNode(rootChildren));
+            em.setRootContext(new IPAMRootNode(rootChildren));
         else
             em.setRootContext(Node.EMPTY);
         

@@ -18,6 +18,7 @@ package com.neotropic.inventory.modules.ipam.nodes;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalPool;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
@@ -29,21 +30,19 @@ import org.openide.nodes.Node;
 public class SubnetPoolChildren extends Children.Array{
     
     private LocalObjectLight subnetPool;
-    private boolean collapsed;
+    
 
     public SubnetPoolChildren(LocalObjectLight subnetPool) {
         this.subnetPool = subnetPool;
-        collapsed = true;
     }
     
     @Override
     public void addNotify(){
-        collapsed = false;
-        List<LocalObjectLight> pools = CommunicationsStub.getInstance().getSubnetPools(subnetPool.getOid(), subnetPool.getClassName());
+        List<LocalPool> pools = CommunicationsStub.getInstance().getSubnetPools(subnetPool.getOid(), subnetPool.getClassName());
         if (pools == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else{
-            for (LocalObjectLight item : pools)
+            for (LocalPool item : pools)
                 add(new Node[]{new SubnetPoolNode(item)});
         }
         List<LocalObjectLight> subnets = CommunicationsStub.getInstance().getSubnets(subnetPool.getOid());
@@ -53,9 +52,5 @@ public class SubnetPoolChildren extends Children.Array{
             for (LocalObjectLight item : subnets)
                 add(new Node[]{new SubnetNode(item)});
         }
-    }
-    
-    public boolean isCollapsed() {
-        return collapsed;
     }
 }

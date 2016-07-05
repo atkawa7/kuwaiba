@@ -253,17 +253,17 @@ public class CreateSubnetAction extends AbstractAction{
                     
                     LocalObjectLight addedIP = null;
                     String[] split = ipCIDR.split("/");
-                    String ip = SubnetEngine.nextIpv4(attributeValues[3], attributeValues[2], attributeValues[3], Integer.parseInt(split[1]));
+                    String ip = attributeValues[3];
                     if(className.equals(Constants.CLASS_SUBNET_IPV4)){
 
                         while(SubnetEngine.belongsTo(attributeValues[3], ip, Integer.parseInt(split[1]))){
                             ip =  SubnetEngine.nextIpv4(attributeValues[3], attributeValues[2], ip, Integer.parseInt(split[1]));
+                            if(ip.trim().equals(attributeValues[2].trim()))
+                                break;
                             ipAttributeValues[0] = ip;
                             ipAttributeValues[1] = "";
                             addedIP = CommunicationsStub.getInstance().addIP(newSubnet.getOid(), className,
                             new LocalObject(className, 0, ipAttributeNames, ipAttributeValues));
-                            if(ip.equals(attributeValues[2]))
-                                break;
                         }
                     }
 
@@ -271,20 +271,19 @@ public class CreateSubnetAction extends AbstractAction{
                         ip = SubnetEngine.nextIpv6(attributeValues[3], attributeValues[2], attributeValues[3], Integer.parseInt(split[1]));
                         while(SubnetEngine.belongsToIpv6(attributeValues[3], ip, Integer.parseInt(split[1]))){
                             ip =  SubnetEngine.nextIpv6(attributeValues[3], attributeValues[2], ip, Integer.parseInt(split[1]));
+                            if(ip.trim().equals(attributeValues[2].trim()))
+                                break;
                             ipAttributeValues[0] = ip;
                             ipAttributeValues[1] = "";
                             addedIP = CommunicationsStub.getInstance().addIP(newSubnet.getOid(), className, 
                             new LocalObject(className, 0, ipAttributeNames, ipAttributeValues));
-                            if(ip.equals(attributeValues[2]))
-                                break;
                         }
                     }
                 }
                 if (newSubnet == null)
                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
                 else{
-                    if (!((SubnetPoolChildren)subnetPoolNode.getChildren()).isCollapsed())
-                        subnetPoolNode.getChildren().add(new SubnetNode[]{new SubnetNode(newSubnet)});
+                    ((SubnetPoolChildren)subnetPoolNode.getChildren()).addNotify();
                     NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_CREATED"));
                     }
                 dispose();

@@ -17,7 +17,7 @@ package com.neotropic.inventory.modules.ipam.nodes;
 
 import java.awt.Image;
 import javax.swing.Action;
-import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalPool;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.util.ImageUtilities;
@@ -26,14 +26,14 @@ import org.openide.util.ImageUtilities;
  * This is the root node for all the IPAM Nodes, this is not visible
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class IpamRootNode extends AbstractNode{
+public class IPAMRootNode extends AbstractNode{
     
     private static final String ICON_PATH="org/inventory/navigation/applicationnodes/res/folder-icon.png";
     private static Image defaultIcon = ImageUtilities.loadImage(ICON_PATH);
 
-    public IpamRootNode(LocalObjectLight[] subnetPools) {
+    public IPAMRootNode(LocalPool[] subnetPools) {
         super (new Children.Array());
-        for (LocalObjectLight subnetPool : subnetPools)
+        for (LocalPool subnetPool : subnetPools)
             getChildren().add(new SubnetPoolNode[] { new SubnetPoolNode(subnetPool)});
     }
 
@@ -50,11 +50,6 @@ public class IpamRootNode extends AbstractNode{
     @Override
     public Image getOpenedIcon(int i){
         return getIcon(i);
-    }
-    
-   @Override
-    public String getName(){
-        return "IPvRootNode";
     }
     
 }

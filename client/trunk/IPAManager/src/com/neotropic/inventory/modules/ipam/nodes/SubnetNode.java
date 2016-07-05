@@ -22,7 +22,8 @@ import org.inventory.communications.core.LocalObjectLight;
 import com.neotropic.inventory.modules.ipam.nodes.actions.DeleteSubnetAction;
 import com.neotropic.inventory.modules.ipam.nodes.actions.RelateToVlanAction;
 import com.neotropic.inventory.modules.ipam.nodes.actions.ReleaseFromVlanAction;
-import com.neotropic.inventory.modules.ipam.nodes.properties.SubnetProperty;
+import com.neotropic.inventory.modules.ipam.nodes.properties.GeneralProperty;
+import com.neotropic.inventory.modules.ipam.nodes.properties.NotEditableProperty;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.util.Constants;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
@@ -42,11 +43,10 @@ public class SubnetNode extends ObjectNode {
     private static final String ICON_PATH="com/neotropic/inventory/modules/res/subnet-icon.png";
     private static Image defaultIcon = ImageUtilities.loadImage(ICON_PATH);
     
-    private LocalObjectLight subnet;
 
     public SubnetNode(LocalObjectLight subnet) {
         super(subnet);
-        this.subnet = subnet;
+        setChildren(new SubnetChildren());
     }
     
     @Override
@@ -64,11 +64,6 @@ public class SubnetNode extends ObjectNode {
             new DeleteSubnetAction()
         };
     }
-    
-    @Override
-    public String getName(){
-        return subnet.getName() +" ["+subnet.getClassName()+"]";
-    }
  
     @Override
     public Image getIcon(int i){
@@ -82,27 +77,28 @@ public class SubnetNode extends ObjectNode {
     
     @Override
     protected Sheet createSheet(){
-        LocalObject sp = com.getObjectInfo(getSubnet().getClassName(), getSubnet().getOid());
+        LocalObject sp = com.getObjectInfo(getObject().getClassName(), getObject().getOid());
         sheet = Sheet.createDefault();
         Sheet.Set generalPropertySet = Sheet.createPropertiesSet(); //General attributes category
         
-        generalPropertySet.put(new SubnetProperty(Constants.PROPERTY_NAME, String.class, 
+        
+        generalPropertySet.put(new NotEditableProperty(Constants.PROPERTY_NAME, String.class, 
                 java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_NAME"),
                 "",sp.getName()));
         
-        generalPropertySet.put(new SubnetProperty(Constants.PROPERTY_DESCRIPTION, String.class, 
+        generalPropertySet.put(new GeneralProperty(Constants.PROPERTY_DESCRIPTION, String.class, 
                 java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_DESCRIPTION"),
-                "",sp.getAttribute(Constants.PROPERTY_DESCRIPTION)));
+                "",this, sp.getAttribute(Constants.PROPERTY_DESCRIPTION)));
         
-        generalPropertySet.put(new SubnetProperty(Constants.PROPERTY_NETWORKIP, String.class, 
+        generalPropertySet.put(new NotEditableProperty(Constants.PROPERTY_NETWORKIP, String.class, 
                 java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_NETWORK_IP"),
                 "",sp.getAttribute(Constants.PROPERTY_NETWORKIP)));
         
-        generalPropertySet.put(new SubnetProperty(Constants.PROPERTY_BROADCASTIP, String.class, 
+        generalPropertySet.put(new NotEditableProperty(Constants.PROPERTY_BROADCASTIP, String.class, 
                 java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_BROADCAST_IP"),
                 "",sp.getAttribute(Constants.PROPERTY_BROADCASTIP)));
         
-        generalPropertySet.put(new SubnetProperty(Constants.PROPERTY_HOSTS, String.class, 
+        generalPropertySet.put(new NotEditableProperty(Constants.PROPERTY_HOSTS, String.class, 
                 java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_HOSTS"),
                 "",sp.getAttribute(Constants.PROPERTY_HOSTS)));
         
@@ -115,9 +111,5 @@ public class SubnetNode extends ObjectNode {
     @Override
     public boolean canRename() {
         return false;
-    }
-
-    public LocalObjectLight getSubnet() {
-        return subnet;
     }
 }

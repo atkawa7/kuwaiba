@@ -15,43 +15,42 @@
  */
 package com.neotropic.inventory.modules.ipam.nodes;
 
+import java.util.Collections;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.openide.nodes.Children;
+import org.inventory.navigation.applicationnodes.objectnodes.AbstractChildren;
+
 import org.openide.nodes.Node;
 
 /**
  * Children for subnet nodes
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class SubnetChildren extends Children.Array{
+public class SubnetChildren extends AbstractChildren{
     
-    private LocalObjectLight subnet;
-    private boolean collapsed;
-
-    public SubnetChildren(LocalObjectLight subnet) {
-        this.subnet = subnet;
-        collapsed = true;
-    }
-
     @Override
     public void addNotify(){
-        collapsed = false;
-        List<LocalObjectLight> items = CommunicationsStub.getInstance().getPoolItems(subnet.getOid());
-        if (items == null)
+        LocalObjectLight subnet = ((SubnetNode)getNode()).getObject();
+        
+        List<LocalObjectLight> ips = CommunicationsStub.getInstance().getObjectSpecialChildren(subnet.getClassName(), subnet.getOid());
+        
+        if (ips == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-        else{
-            for (LocalObjectLight item : items)
-                add(new Node[]{new SubnetNode(item)});
+        else {
+            Collections.sort(ips);
+            setKeys(ips);
         }
-        List<LocalObjectLight> pools = CommunicationsStub.getInstance().getSubnetPools(subnet.getOid(), subnet.getClassName());
-        System.out.println("asdasd");
     }
     
-    
-    public boolean isCollapsed() {
-        return collapsed;
+    @Override
+    protected void removeNotify() {
+        setKeys(Collections.EMPTY_SET);
+    } 
+
+    @Override
+    protected Node[] createNodes(LocalObjectLight key) {
+        return new Node[] { new IPAddressNode(key) };
     }
 }
