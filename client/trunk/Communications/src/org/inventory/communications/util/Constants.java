@@ -104,6 +104,10 @@ public class Constants {
     /**
      * Name for class subnet IPv4 is this constant used in the IPAM  module
      */
+    public static final String CLASS_SUBNET = "Subnet";
+    /**
+     * Name for class subnet IPv4 is this constant used in the IPAM  module
+     */
     public static final String CLASS_SUBNET_IPV4 = "SubnetIPv4";
     /**
      * Name for class subnet IPv6 is this constant used in the IPAM  module
@@ -177,6 +181,11 @@ public class Constants {
      * Property name
      */
     public static final String PROPERTY_NAME = "name";
+    
+    /**
+     * Property state
+     */
+    public static final String PROPERTY_STATE = "state";
     /**
      * Property className
      */
@@ -273,6 +282,10 @@ public class Constants {
      * Property maximum number of hosts in a subnet
      */
     public static final String PROPERTY_HOSTS = "hosts";
+    /**
+     * List type class for operational state
+     */
+    public static final String LIST_TYPE_OPERATIONAL_STATE = "OperationalState";
     /**
      * Generic classes
      */

@@ -2358,15 +2358,14 @@ public class CommunicationsStub {
     }
         // </editor-fold>
         // <editor-fold defaultstate="collapsed" desc="IPAM Module">
-    public List<LocalObjectLight> getSubnetPools(long parentId, String className){
+    public List<LocalPool> getSubnetPools(long parentId, String className){
         try{
             List <RemotePool> pools = service.getSubnetPools(-1, parentId, className, this.session.getSessionId());
-            List <LocalObjectLight> res = new ArrayList<>();
+            List <LocalPool> res = new ArrayList<>();
             
-            for (RemotePool pool : pools){
-                HashMap<String, Integer> validators = new HashMap<>();
-                res.add(new LocalObjectLight(pool.getClassName(), pool.getName(), pool.getId(), validators));
-            }
+            for (RemotePool pool : pools)
+                res.add(new LocalPool(pool.getId(), pool.getName(), pool.getClassName(), pool.getDescription(), pool.getType()));
+            
             return res;
         }catch(Exception ex){
             this.error = ex.getMessage();
