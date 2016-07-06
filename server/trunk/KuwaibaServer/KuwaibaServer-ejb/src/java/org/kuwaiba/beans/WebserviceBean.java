@@ -37,6 +37,8 @@ import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.Pool;
 import org.kuwaiba.apis.persistence.application.Session;
+import org.kuwaiba.apis.persistence.application.Task;
+import org.kuwaiba.apis.persistence.application.TaskResult;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.application.ViewObject;
 import org.kuwaiba.apis.persistence.application.ViewObjectLight;
@@ -63,8 +65,12 @@ import org.kuwaiba.ws.toserialize.application.RemotePool;
 import org.kuwaiba.ws.toserialize.application.RemoteQuery;
 import org.kuwaiba.ws.toserialize.application.RemoteQueryLight;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.ws.toserialize.application.RemoteTask;
+import org.kuwaiba.ws.toserialize.application.RemoteTaskResult;
 import org.kuwaiba.ws.toserialize.application.ReportDescriptor;
 import org.kuwaiba.ws.toserialize.application.ResultRecord;
+import org.kuwaiba.ws.toserialize.application.TaskNotificationDescriptor;
+import org.kuwaiba.ws.toserialize.application.TaskScheduleDescriptor;
 import org.kuwaiba.ws.toserialize.application.UserInfo;
 import org.kuwaiba.ws.toserialize.application.Validator;
 import org.kuwaiba.ws.toserialize.application.ViewInfo;
@@ -103,6 +109,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
      * Sync/load data reference
      */
     private SyncManager sync;
+    /**
+     * Reference to the report generator
+     */
+    private Reports reports;
     
     public WebserviceBean() {
         super();
@@ -1979,6 +1989,136 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(ex.getMessage());
         }
     }
+
+    @Override
+    public long createTask(String name, String description, boolean enabled, String script, 
+            List<StringPair> parameters, TaskScheduleDescriptor schedule, TaskNotificationDescriptor notificationType, 
+            String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("createTask", ipAddress, sessionId);
+            return aem.createTask(name, description, enabled, script, parameters, schedule, notificationType);
+            
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void updateTaskProperties(long taskId, String propertyName, String propertyValue, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("updateTaskProperties", ipAddress, sessionId);
+            aem.updateTaskProperties(taskId, propertyName, propertyValue);
+            
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void updateTaskParameters(long taskId, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException  {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("updateTaskParameters", ipAddress, sessionId);
+            aem.updateTaskParameters(taskId, parameters);
+            
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void updateTaskSchedule(long taskId, TaskScheduleDescriptor schedule, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("updateTaskSchedule", ipAddress, sessionId);
+            aem.updateTaskSchedule(taskId, schedule);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void updateTaskNotificationType(long taskId, TaskNotificationDescriptor notificationType, String ipAddress, String sessionId) throws ServerSideException  {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("updateTaskNotificationType", ipAddress, sessionId);
+            aem.updateTaskNotificationType(taskId, notificationType);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public RemoteTask getTask(long taskId, String ipAddress, String sessionId) throws ServerSideException  {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("getTask", ipAddress, sessionId);
+            Task theTask = aem.getTask(taskId);
+            return new RemoteTask(theTask.getName(), theTask.getDescription(), theTask.isEnabled(), theTask.getScript(),
+                                    theTask.getParameters(), theTask.getSchedule(), theTask.getNotificationType());
+            
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void deleteTask(long taskId, String ipAddress, String sessionId) throws ServerSideException  {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("deleteTask", ipAddress, sessionId);
+            aem.deleteTask(taskId);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void subscribeUserToTask(long taskId, long userId, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("subscribeUserToTask", ipAddress, sessionId);
+            aem.subscribeUserToTask(taskId, userId);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void unsubscribeUserFromTask(long taskId, long userId, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("unsubscribeUserFromTask", ipAddress, sessionId);
+            aem.unsubscribeUserFromTask(taskId, userId);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public RemoteTaskResult executeTask(long taskId, String ipAddress, String sessionId) throws ServerSideException  {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("executeTask", ipAddress, sessionId);
+            TaskResult theTask = aem.executeTask(taskId);
+            return new RemoteTaskResult(theTask.getMessages(), theTask.getResultStatus(), theTask.getErrorMessage());
+            
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
     
     // </editor-fold>
     
@@ -2027,8 +2167,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 case "ODF":
                 case "DDF":
                     return new ReportDescriptor[] {
-                        new ReportDescriptor(2, "Frame Details", className, "Shows the distribution frame usage"),
-                        //new ReportDescriptor(3, "Frame Usage", className, "Shows the distribution frame usage")
+                        new ReportDescriptor(2, "Frame Details", className, "Shows the distribution frame usage")
                         };
                 case "STM1":
                 case "STM4":
@@ -2086,35 +2225,35 @@ public class WebserviceBean implements WebserviceBeanRemote {
             switch ((int)reportId) {
                 case 1: //Rack usage
                     long rackId = Long.valueOf(StringPair.get(arguments, "objectId"));
-                    return Reports.buildRackUsageReport(bem, aem, rackId);
+                    return reports.buildRackUsageReport(rackId);
                 case 2: //ODF/DDF Report
                     long frameId = Long.valueOf(StringPair.get(arguments, "objectId"));
                     String frameClass = StringPair.get(arguments, "objectClass");
-                    return Reports.buildDistributionFrameDetailReport(bem, aem, frameClass, frameId);
+                    return reports.buildDistributionFrameDetailReport(frameClass, frameId);
                 case 4: //Transport link usage
                     long transportLinkId = Long.valueOf(StringPair.get(arguments, "objectId"));
                     String transportLinkClass = StringPair.get(arguments, "objectClass");
-                    return Reports.buildTransportLinkUsageReport(bem, aem, transportLinkClass, transportLinkId);
+                    return reports.buildTransportLinkUsageReport(transportLinkClass, transportLinkId);
                 case 5: //Tributary link details (VC12/VC3)
                     long tributaryLinkId = Long.valueOf(StringPair.get(arguments, "objectId"));
                     String tributaryLinkClass = StringPair.get(arguments, "objectClass");
-                    return Reports.buildLowOrderTributaryLinkDetailReport(bem, aem, tributaryLinkClass, tributaryLinkId);
+                    return reports.buildLowOrderTributaryLinkDetailReport(tributaryLinkClass, tributaryLinkId);
                 case 6: //Tributary link details (VC4)
                     tributaryLinkId = Long.valueOf(StringPair.get(arguments, "objectId"));
                     tributaryLinkClass = StringPair.get(arguments, "objectClass");
-                    return Reports.buildHighOrderTributaryLinkDetailReport(bem, aem, tributaryLinkClass, tributaryLinkId);
+                    return reports.buildHighOrderTributaryLinkDetailReport(tributaryLinkClass, tributaryLinkId);
                 case 9: //Subnet usage
-                    return Reports.subnetUsageReport(bem, aem, StringPair.get(arguments, "className"), Long.valueOf(StringPair.get(arguments, "objectId")));
+                    return reports.subnetUsageReport(StringPair.get(arguments, "className"), Long.valueOf(StringPair.get(arguments, "objectId")));
                 case 10:
                     long locationId = Long.valueOf(StringPair.get(arguments, "objectId"));
                     String locationClass = StringPair.get(arguments, "objectClass");
-                    return Reports.buildNetworkEquipmentInLocationReport(bem, aem, locationClass,locationId);
+                    return reports.buildNetworkEquipmentInLocationReport(locationClass,locationId);
                 case 11:
                     locationId = Long.valueOf(StringPair.get(arguments, "objectId"));
-                    return Reports.buildBoxesInLocationReport(bem, aem, locationId);
+                    return reports.buildBoxesInLocationReport(locationId);
                 case 12:
                     locationId = Long.valueOf(StringPair.get(arguments, "objectId"));
-                    return Reports.buildContractStatusReport(bem, aem, locationId);
+                    return reports.buildContractStatusReport(locationId);
             }
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -2490,6 +2629,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             mem = persistenceService.getMetadataEntityManager();
             bem = persistenceService.getBusinessEntityManager();
             aem = persistenceService.getApplicationEntityManager();
+            reports = new Reports(bem, aem);
         } catch(Exception ex){
             mem = null;
             bem = null;

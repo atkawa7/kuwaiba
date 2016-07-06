@@ -40,6 +40,7 @@ public class StartupBean {
             Properties persistenceServiceProperties = new Properties();
             persistenceServiceProperties.setProperty("dbPath", (String)context.lookup("java:comp/env/dbPath")); //NOI18N
             persistenceServiceProperties.setProperty("backgroundsPath", (String)context.lookup("java:comp/env/backgroundsPath")); //NOI18N
+            persistenceServiceProperties.setProperty("corporateLogo", (String)context.lookup("java:comp/env/corporateLogo")); //NOI18N
             persistenceService.setConfiguration(persistenceServiceProperties);
             persistenceService.start();
         }catch (IllegalStateException ise) {

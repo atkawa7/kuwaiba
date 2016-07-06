@@ -21,8 +21,6 @@ import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
 import java.util.List;
 import javax.ejb.Remote;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
-import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
-import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.exceptions.NotAuthorizedException;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.ws.todeserialize.StringPair;
@@ -33,8 +31,12 @@ import org.kuwaiba.ws.toserialize.application.RemotePool;
 import org.kuwaiba.ws.toserialize.application.RemoteQuery;
 import org.kuwaiba.ws.toserialize.application.RemoteQueryLight;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.ws.toserialize.application.RemoteTask;
+import org.kuwaiba.ws.toserialize.application.RemoteTaskResult;
 import org.kuwaiba.ws.toserialize.application.ReportDescriptor;
 import org.kuwaiba.ws.toserialize.application.ResultRecord;
+import org.kuwaiba.ws.toserialize.application.TaskNotificationDescriptor;
+import org.kuwaiba.ws.toserialize.application.TaskScheduleDescriptor;
 import org.kuwaiba.ws.toserialize.application.UserInfo;
 import org.kuwaiba.ws.toserialize.application.ViewInfo;
 import org.kuwaiba.ws.toserialize.application.ViewInfoLight;
@@ -92,130 +94,38 @@ public interface WebserviceBeanRemote {
 
     public ClassInfo getClass(long classId, String ipAddress, String sessionId) throws ServerSideException;
 
-    /**
-     * Moves a class from one parentClass to an other parentClass
-     * @param classToMoveName
-     * @param targetParentName
-     * @throws Exception
-     */
     public void moveClass(String classToMoveName, String targetParentName, String ipAddress, String sessionId) throws ServerSideException;
 
-    /**
-     * Moves a class from one parentClass to an other parentClass
-     * @param classToMoveId
-     * @param targetParentClassId
-     */
     public void moveClass(long classToMoveId, long targetParentId, String ipAddress, String sessionId) throws ServerSideException;
 
-    /**
-     * Adds an attribute to the class
-     * @param className
-     * @param attributeDefinition
-     */
     public void createAttribute(String className, AttributeInfo attributeDefinition, String ipAddress, String sessionId) throws ServerSideException;
 
-    /**
-     * Adds an attribute to a class
-     * @param classId
-     * @param attributeDefinition
-     */
     public void createAttribute(long classId, AttributeInfo attributeDefinition, String ipAddress, String sessionId) throws ServerSideException;
 
-    /**
-     * Gets an attribute belonging to a class
-     * @param className
-     * @param attributeName
-     * @return AttributeMetada, null if there is no attribute with such name
-     */
     public AttributeInfo getAttribute(String className, String attributeName, String ipAddress, String sessionId) throws ServerSideException;
 
-    /**
-     * Gets an attribute belonging to a class
-     * @param classId
-     * @param attributeName
-     * @return AttributeMetada, null if there is no attribute with such name
-     */
     public AttributeInfo getAttribute(long classId, long attributeId, String ipAddress, String sessionId) throws ServerSideException;
 
-    /**
-     * Changes an attribute definition using an id to get the class it belongs to
-     * @param classId Class name this attribute belongs to
-     * @param newAttributeDefinition
-     */
     public void setAttributeProperties(long classId, AttributeInfo newAttributeDefinition, String ipAddress, String sessionId) throws ServerSideException;
-    /**
-     * Changes an attribute definition using name to get the class it belongs to
-     * @param className Class name this attribute belongs to
-     * @param newAttributeDefinition
-     */
+
     public void setAttributeProperties(String className, AttributeInfo newAttributeDefinition, String ipAddress, String sessionId) throws ServerSideException;
 
-    /**
-     * Deletes an attribute belonging to a classMetadata
-     * @param className
-     * @param attributeName
-     */
     public void deleteAttribute(String className, String attributeName, String ipAddress, String sessionId) throws ServerSideException;
 
-    /**
-     * Deletes an attribute belonging to a classMetadata
-     * @param classId
-     * @param attributeName
-     */
     public void deleteAttribute(long classId, String attributeName, String ipAddress, String sessionId) throws ServerSideException;
         
-    /**
-     * Gets all classes whose instances can be contained into the given parent class. This method
-     * is recursive, so the result include the possible children in children classes
-     * @param parentClassName
-     * @return an array with the list of classes
-     */
     public List<ClassInfoLight> getPossibleChildren(String parentClassName, String ipAddress, String sessionId) throws ServerSideException;
 
-    /**
-     * Same as getPossibleChildren but this one only gets the possible children for the given class,
-     * this is, subclasses are not included
-     * @param parentClass
-     * @return The list of possible children
-     */
     public List<ClassInfoLight> getPossibleChildrenNoRecursive(String parentClassName, String ipAddress, String sessionId) throws ServerSideException;
-    /**
-     * Get the possible children, but not according to the containment hierarchy but to a set of business rules
-     * @param parentClassName
-     * @return The list of possible children
-     * @throws ServerSideException 
-     */
+    
     public List<ClassInfoLight> getSpecialPossibleChildren(String parentClassName, String ipAddress, String sessionId) throws ServerSideException;
 
-    /**
-     * Get the upstream containment hierarchy for a given class, unlike getPossibleChildren (which will give you the
-     * downstream hierarchy).
-     * @param className Class name
-     * @throws ServerSideException
-     */
     public List<ClassInfoLight> getUpstreamContainmentHierarchy(String className, boolean recursive, String ipAddress, String sessionId) throws ServerSideException;
-    /**
-     * Adds to a given class a list of possible children classes whose instances can be contained
-     *
-     * @param parentClassId Id of the class whose instances can contain the instances of the next param
-     * @param _possibleChildren ids of the candidates to be contained
-     */
+    
     public void addPossibleChildren(long parentClassId, long[] possibleChildren, String ipAddress, String sessionId) throws ServerSideException;
-    /**
-     * Adds to a given class a list of possible children classes whose instances can be contained using the class name to find the parent class
-     * @param parentClassName parent class name
-     * @param newPossibleChildren list of possible children
-     * @throws ServerSideException In case something goes wrong
-     */
+    
     public void addPossibleChildren(String parentClassName, String[] newPossibleChildren, String ipAddress, String sessionId) throws ServerSideException;
 
-    /**
-     * The opposite of addPossibleChildren. It removes the given possible children
-     * TODO: Make this method safe. This is, check if there's already intances of the given
-     * "children to be deleted" with parentClass as their parent
-     * @param parentClassId Id of the class whos instances can contain the instances of the next param
-     * @param childrenTBeRemoved ids of the candidates to be deleted
-     */
     public void removePossibleChildren(long parentClassId, long[] childrenToBeRemoved, String ipAddress, String sessionId) throws ServerSideException;
 
 
@@ -282,93 +192,30 @@ public interface WebserviceBeanRemote {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Application methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Sets de user properties
-     * @param userName user name
-     * @param password user password
-     * @param firstName user's first name
-     * @param lastName user's last name
-     * @param privileges user's individual privileges
-     * @param groups groups to which the user belongs
-     * @throws ServerSideException
-     */
     public void setUserProperties(long oid, String userName, String password, String firstName,
             String lastName, boolean enabled, long[] privileges, long[] groups, String ipAddress, String sessionId)
             throws ServerSideException;
 
 
-    /**
-     * Creates a group
-     * @param name group's name
-     * @param description group's name
-     * @param creationDate group's creation date
-     * @throws InvalidArgumentException
-     * @throws ObjectNotFoundException
-     */
     public long createGroup(String groupName, String description,
             long[] privileges, long[] users, String ipAddress, String sessionId) throws ServerSideException;
 
-    /**
-     * Get all users
-     * @return an array with all the users info
-     * @throws ServerSideException 
-     */
     public UserInfo[] getUsers(String ipAddress, String sessionId) throws ServerSideException;
 
-    /**
-     * Get All Groups
-     * @return an array with all the groups info
-     * @throws ServerSideException
-     */
     public GroupInfo[] getGroups(String ipAddress, String sessionId) throws ServerSideException;
 
-    /**
-     * Creates a new user
-     * @return The newly created user
-     * @throws InvalidArgumentException
-     * @throws ObjectNotFoundException
-     */
     public long createUser(String userName, String password, String firstName,
             String lastName, boolean enabled, long[] privileges, long[] groups, String ipAddress, String sessionId)
             throws ServerSideException;
 
-    /**
-     * Set user attributes (group membership is managed using other methods)
-     * @param groupName
-     * @param description
-     * @param privileges
-     * @return
-     * @throws InvalidArgumentException
-     * @throws ObjectNotFoundException
-     */
     public void setGroupProperties(long oid, String groupName, String description,
             long[] privileges, long[] users, String ipAddress, String sessionId)throws ServerSideException;
 
-     /**
-     * Removes a list of users
-     * @param oids
-     * @throws InvalidArgumentException
-     * @throws ObjectNotFoundException
-     */
     public void deleteUsers(long[] oids, String ipAddress, String sessionId)throws ServerSideException;
 
-    /**
-     * Removes a list of groups
-     * @param oids
-     * @throws InvalidArgumentException
-     * @throws ObjectNotFoundException
-     */
     public void deleteGroups(long[] oids, String ipAddress, String sessionId)
             throws ServerSideException;
 
-    /**
-     *
-     * @param oid
-     * @param objectClass
-     * @param viewType
-     * @return
-     * @throws ServerSideException
-     */
     public ViewInfo getObjectRelatedView(long oid, String objectClass, long viewId, String ipAddress, String sessionId) throws ServerSideException;
 
     public ViewInfoLight[] getObjectRelatedViews(long oid, String objectClass, int viewType, int limit, String ipAddress, String sessionId) throws ServerSideException;
@@ -387,61 +234,18 @@ public interface WebserviceBeanRemote {
 
     public void deleteGeneralView(long [] oids, String ipAddress, String sessionId) throws ServerSideException;
 
-    /**
-     * Executes a complex query generated using the Graphical Query Builder.  Please note
-     * that the first record is reserved for the column headers, so and empty result set
-     * will have at least one record.
-     * @param query
-     * @return
-     * @throws ServerSideException
-     */
     public ResultRecord[] executeQuery(TransientQuery query, String ipAddress, String sessionId) throws ServerSideException;
 
-    /**
-     * Creates a query using the Graphical Query Builder
-     * @param queryName
-     * @param ownerOid
-     * @param queryStructure
-     * @param description
-     * @return
-     * @throws ServerSideException
-     */
     public long createQuery(String queryName, long ownerOid, byte[] queryStructure,
             String description, String ipAddress, String sessionId) throws ServerSideException;
 
-    /**
-     * Save the query made in the graphical Query builder
-     * @param queryOid
-     * @param queryName
-     * @param ownerOid
-     * @param queryStructure
-     * @param description
-     * @throws ServerSideException
-     */
     public void saveQuery(long queryOid, String queryName, long ownerOid, 
             byte[] queryStructure, String description, String ipAddress, String sessionId) throws ServerSideException;
 
-    /**
-     * Deletes the query load in the graphical query builder
-     * @param queryOid
-     * @throws ServerSideException
-     */
     public void deleteQuery(long queryOid, String ipAddress, String sessionId) throws ServerSideException;
 
-    /**
-     * Retrieves all queries made in the graphical Query builder
-     * @param showPublic
-     * @return
-     * @throws ServerSideException
-     */
     public RemoteQueryLight[] getQueries(boolean showPublic, String ipAddress, String sessionId) throws ServerSideException;
 
-    /**
-     * Load a query from all saved queries
-     * @param queryOid
-     * @return
-     * @throws ServerSideException
-     */
     public RemoteQuery getQuery(long queryOid, String ipAddress, String sessionId) throws ServerSideException;
 
     public byte[] getClassHierarchy(boolean showAll, String ipAddress, String sessionId) throws ServerSideException;
@@ -461,26 +265,8 @@ public interface WebserviceBeanRemote {
     public void deletePool(long id, String ipAddress, String sessionId) throws ServerSideException;
     
     public void deletePools(long[] ids, String ipAddress, String sessionId) throws ServerSideException;
-    
-    /**
-     * Update Pool
-     * @param poolId
-     * @param name
-     * @param description
-     * @param ipAddress
-     * @param sessionId
-     * @throws ServerSideException 
-     */
     public void setPoolProperties(long poolId, String name, String description, String ipAddress, String sessionId) throws ServerSideException;
     
-    /**
-     * Gets a pool by  its id 
-     * @param poolId
-     * @param ipAddress
-     * @param sessionId
-     * @return remote pool object
-     * @throws ServerSideException 
-     */
     public RemotePool getPool(long poolId, String ipAddress, String sessionId) throws ServerSideException;
     
     public List<RemotePool> getRootPools(String className, int type, String ipAddress, String sessionId) throws ServerSideException;
@@ -497,7 +283,25 @@ public interface WebserviceBeanRemote {
     
     public ApplicationLogEntry[] getGeneralActivityAuditTrail(int page, int limit, String ipAddress, String sessionId) throws ServerSideException;
     
+    public long createTask(String name, String description, boolean enabled, String script, List<StringPair> parameters, TaskScheduleDescriptor schedule, TaskNotificationDescriptor notificationType, String ipAddress, String sessionId) throws ServerSideException;
+
+    public void updateTaskProperties(long taskId, String propertyName, String propertyValue, String ipAddress, String sessionId) throws ServerSideException;
+
+    public void updateTaskParameters(long taskId, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException;
     
+    public void updateTaskSchedule(long taskId, TaskScheduleDescriptor schedule, String ipAddress, String sessionId) throws ServerSideException;
+
+    public void updateTaskNotificationType(long taskId, TaskNotificationDescriptor notificationType, String ipAddress, String sessionId) throws ServerSideException;
+
+    public RemoteTask getTask(long taskId, String ipAddress, String sessionId) throws ServerSideException;
+
+    public void deleteTask(long taskId, String ipAddress, String sessionId) throws ServerSideException;
+
+    public void subscribeUserToTask(long taskId, long userId, String ipAddress, String sessionId) throws ServerSideException;
+
+    public void unsubscribeUserFromTask(long taskId, long userId, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public RemoteTaskResult executeTask(long taskId, String ipAddress, String sessionId) throws ServerSideException;
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Sync/bulkupload methods. Click on the + sign on the left to edit the code.">
@@ -583,15 +387,18 @@ public interface WebserviceBeanRemote {
         public RemoteObjectLight[] getSubnetUsedIps(long id, String className, int limit, String ipAddress, String sessionId) throws ServerSideException;
         public boolean itOverlaps(String networkIp, String broadcastIp, String ipAddress, String sessionId) throws ServerSideException;
         // </editor-fold>
+        
+        // <editor-fold defaultstate="collapsed" desc="Contract Manager">
+    public void associateDevicesToContract(String[] deviceClass, long[] deviceId, 
+            String contractClass, long contractId, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public void releaseDeviceFromContract(String deviceClass, long deviceId, long contractId,
+            String ipAddress, String sessionId) throws ServerSideException;    
+        //</editor-fold>
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Help methods. Click on the + sign on the left to edit the code.">
     public boolean isSubclassOf(String className, String subclassOf, String remoteAddress, String sessionId);
     // </editor-fold>
-
-    public void associateDevicesToContract(String[] deviceClass, long[] deviceId, 
-            String contractClass, long contractId, String ipAddress, String sessionId) throws ServerSideException;
     
-    public void releaseDeviceFromContract(String deviceClass, long deviceId, long contractId,
-            String ipAddress, String sessionId) throws ServerSideException;
 }

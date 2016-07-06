@@ -21,8 +21,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
@@ -64,10 +62,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
      */
     private Index<Node> classIndex;
     /**
-     * Special nodes index
-     */
-    private Index<Node> specialNodesIndex;
-    /**
      * Instance of application entity manager
      */
     ApplicationEntityManager aem;
@@ -97,10 +91,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         this.relationshipDisplayNames = new HashMap<>();
         try(Transaction tx = graphDb.beginTx()) {
             classIndex = graphDb.index().forNodes(Constants.INDEX_CLASS);
-            this.specialNodesIndex = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES);
-            buildContainmentCache();
+            buildClassCache();
         }catch(Exception ex) {
-            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "MEM constructor: {0}", ex.getMessage()); //NOI18N
+            System.out.println(String.format("[KUWAIBA] [%s] An error was found while creating the MEM instance: %s", 
+                    Calendar.getInstance().getTime(), ex.getMessage()));
         }
         
     }
@@ -198,9 +192,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                             "Can not find parent class with name %s", classDefinition.getParentClassName()));
             }//end else not rootNode
             
-            buildContainmentCache();
+            buildClassCache();
             tx.success();
-            cm.putClass(Util.createClassMetadataFromNode(classNode));
             return id;
         }
     }
@@ -231,7 +224,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 classIndex.remove(classMetadata, Constants.PROPERTY_NAME);
                 classMetadata.setProperty(Constants.PROPERTY_NAME, newClassDefinition.getName());
                 classIndex.add(classMetadata, Constants.PROPERTY_NAME, newClassDefinition.getName());
-                buildContainmentCache();
+                buildClassCache();
             }
             if(newClassDefinition.getDisplayName() != null)
                 classMetadata.setProperty(Constants.PROPERTY_DISPLAY_NAME, newClassDefinition.getDisplayName());
@@ -299,10 +292,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             
             classIndex.remove(node);
             node.delete();
-            buildContainmentCache();
+            buildClassCache();
             tx.success();
-            cm.removeClass(className);
-            
         }
     }
     
@@ -337,9 +328,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             
             classIndex.remove(node);
             node.delete();
-            buildContainmentCache();
+            buildClassCache();
             tx.success();
-            cm.removeClass(className);
         }
     }
    
@@ -860,8 +850,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     
     @Override
     public List<ClassMetadataLight> getPossibleChildren(String parentClassName) 
-            throws MetadataObjectNotFoundException, NotAuthorizedException 
-    {
+            throws MetadataObjectNotFoundException, NotAuthorizedException   {
         List<ClassMetadataLight> classMetadataResultList = new ArrayList<>();
         List<String> cachedPossibleChildren = cm.getPossibleChildren(parentClassName);
         if (cachedPossibleChildren != null) {
@@ -875,11 +864,11 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         if (parentClassName.equals(Constants.NODE_DUMMYROOT)){
             cypherQuery = "MATCH (n:root {name:\"" + Constants.NODE_DUMMYROOT + "\"})-[:POSSIBLE_CHILD]->directChild " +
                     "OPTIONAL MATCH directChild<-[:EXTENDS*]-subClass " +
-                    "WHERE subClass.abstract=false OR subClass IS NULL " +
+                    "WHERE subClass.abstract = false OR subClass IS NULL " +
                     "RETURN directChild, subClass " +
                     "ORDER BY directChild.name,subClass.name ASC ";
         }
-        else{
+        else {
             cypherQuery = "START parentClassNode=node:classes(name = {className}) " +
                         "MATCH (parentClassNode:class)-[:POSSIBLE_CHILD]->(directChild) " +
                         "OPTIONAL MATCH (directChild)<-[:EXTENDS*]-(subClass) " +
@@ -1068,7 +1057,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 parentNode = classIndex.get(Constants.PROPERTY_ID, parentClassId).getSingle();
                 if (parentNode == null)
                     throw new MetadataObjectNotFoundException(String.format(
-                            "Can not find a class with id %1s", parentClassId));
+                            "Can not find a class with id %s", parentClassId));
             }
             for (long id : childrenToBeRemoved){
                 Node childNode = classIndex.get(Constants.PROPERTY_ID, id).getSingle();
@@ -1152,22 +1141,14 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     }
     
    //Callers must handle associated transactions
-   private void buildContainmentCache() {
-       cm.clearContainmentCache();
-       
-        for (Node classNode : classIndex.query(Constants.PROPERTY_ID, "*")){
+   private void buildClassCache() {
+        cm.clearClassCache();
+        
+        for (Node classNode : classIndex.query(Constants.PROPERTY_ID, "*")) {
              ClassMetadata aClass = Util.createClassMetadataFromNode(classNode);
              cm.putClass(aClass);
              cm.putPossibleChildren(aClass.getName(), aClass.getPossibleChildren());
-         }
-        //Now we add the possible children of the navigation root (which is not a class itself)
-        Node dummyRootNode = specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
-        List<String> dummyRootPossibleChildren = new ArrayList<>();
-        for (Relationship possibleChildRelationship : dummyRootNode.getRelationships(RelTypes.POSSIBLE_CHILD, Direction.OUTGOING)) {
-            Node possibleChildNode = possibleChildRelationship.getEndNode();
-            dummyRootPossibleChildren.add(String.valueOf(possibleChildNode.getProperty(Constants.PROPERTY_NAME)));
-        }           
-        cm.putPossibleChildren(Constants.NODE_DUMMYROOT, dummyRootPossibleChildren);
-        
+        }
+        //Only the DummyRoot is not cached. It will be cached on demand later
    }
 }

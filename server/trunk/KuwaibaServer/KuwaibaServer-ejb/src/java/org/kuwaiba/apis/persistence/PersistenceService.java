@@ -79,6 +79,7 @@ public class PersistenceService {
             aem = plf.createApplicationEntityManager(connectionManager);
             Properties applicationConfiguration = new Properties();
             applicationConfiguration.put("backgroundsPath", configuration.getProperty("backgroundsPath"));
+            applicationConfiguration.put("corporateLogo", configuration.getProperty("corporateLogo"));
             aem.setConfiguration(applicationConfiguration);
             mem = plf.createMetadataEntityManager(connectionManager, aem);
             bem = plf.createBusinessEntityManager(connectionManager, aem);

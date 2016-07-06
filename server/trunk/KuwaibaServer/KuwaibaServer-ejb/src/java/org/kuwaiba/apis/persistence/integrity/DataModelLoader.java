@@ -70,8 +70,7 @@ public class DataModelLoader {
         try (Transaction tx = graphDb.beginTx())
         {
             Node dummyRootNode = specialNodes.get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
-            if(dummyRootNode == null)
-            {
+            if(dummyRootNode == null) {
                 Label label = DynamicLabel.label(Constants.LABEL_ROOT);
                 dummyRootNode = graphDb.createNode(label);
                 dummyRootNode.setProperty(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);

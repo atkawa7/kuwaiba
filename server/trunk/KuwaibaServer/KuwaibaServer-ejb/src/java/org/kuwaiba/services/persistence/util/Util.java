@@ -74,6 +74,7 @@ public class Util {
      * Converts a String value to an object value based on a give mapping. This method
      * does not convert binary or relationship-like attributes
      * @param value Value as String
+     * @param type The alleged type of the provided value
      * @return the converted value
      * @throws InvalidArgumentException If the type can't be converted
      */
@@ -349,8 +350,7 @@ public class Util {
         myClass.setAttributes(listAttributes);
 
         //Possible Children
-        for (Relationship rel : classNode.getRelationships(Direction.OUTGOING, RelTypes.POSSIBLE_CHILD))
-        {
+        for (Relationship rel : classNode.getRelationships(Direction.OUTGOING, RelTypes.POSSIBLE_CHILD)) {
             if((Boolean)rel.getEndNode().getProperty(Constants.PROPERTY_ABSTRACT)){
                 Iterable<Node> allSubclasses = Util.getAllSubclasses(rel.getEndNode());
                 for (Node childNode : allSubclasses) {
@@ -359,7 +359,7 @@ public class Util {
                     }
                 }//end for
             }//end if
-            else{
+            else {
                 myClass.getPossibleChildren().add((String)rel.getEndNode().getProperty(Constants.PROPERTY_NAME));
             }
         }

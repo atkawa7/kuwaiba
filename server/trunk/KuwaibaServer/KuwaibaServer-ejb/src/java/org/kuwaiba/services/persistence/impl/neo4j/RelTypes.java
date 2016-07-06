@@ -34,8 +34,6 @@ public enum RelTypes implements RelationshipType{
     RELATED_TO, //Represents the many-to-one, many-to-may relationships (like type, responsible, etc)
     BELONGS_TO_GROUP, //Used to associate a user to a group (group of user)
     OWNS_QUERY, //Used to asociate a user to a query
-    OWNS_POOL, //Used to asociate a user to a pool
-    DUMMY_ROOT, //Used to associate the db root object with application dummy root
     POSSIBLE_CHILD, //Used to build the containment hierarchy
     HAS_VIEW, //Used to link an object to a particular view
     HAS_HISTORY_ENTRY, //Used to link an object to a particular historic entry
@@ -45,4 +43,5 @@ public enum RelTypes implements RelationshipType{
     PERFORMED_BY, //Connects a log entry node with a user
     GROUP, //Used to associate the groups nodes with group root node
     PRIVILEGE, //Used to associate the privilege nodes with privilege root node
+    SUBSCRIBED_TO //Used to relate a user to a task, so it can be notified about the result of its execution
 }

@@ -39,7 +39,11 @@ import org.kuwaiba.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.ws.toserialize.application.ResultRecord;
 import org.kuwaiba.ws.toserialize.application.GroupInfo;
 import org.kuwaiba.ws.toserialize.application.RemotePool;
+import org.kuwaiba.ws.toserialize.application.RemoteTask;
+import org.kuwaiba.ws.toserialize.application.RemoteTaskResult;
 import org.kuwaiba.ws.toserialize.application.ReportDescriptor;
+import org.kuwaiba.ws.toserialize.application.TaskNotificationDescriptor;
+import org.kuwaiba.ws.toserialize.application.TaskScheduleDescriptor;
 import org.kuwaiba.ws.toserialize.application.UserInfo;
 import org.kuwaiba.ws.toserialize.application.ViewInfo;
 import org.kuwaiba.ws.toserialize.application.ViewInfoLight;
@@ -1124,8 +1128,8 @@ public class KuwaibaService {
     @WebMethod(operationName = "getPoolItems")
     public RemoteObjectLight[] getPoolItems(@WebParam(name = "poolId")long poolId,
             @WebParam(name = "limit")int limit,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
-        try{
+            @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try {
             return wsBean.getPoolItems(poolId, limit, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
@@ -1136,6 +1140,240 @@ public class KuwaibaService {
             }
         }
     }
+    
+    /**
+     * Creates and schedule a task. A task is an application entity that allows to run jobs that will be executed depending on certain schedule
+     * @param name Task name
+     * @param description Task description
+     * @param enabled Is the task enabled?
+     * @param script The script to be executed
+     * @param parameters The parameters for the script
+     * @param schedule When the task should be executed
+     * @param notificationType How the result of the task should be notified to the associated users 
+     * @param sessionId The session token
+     * @return The id of the newly created task
+     * @throws Exception If something goes wrong
+     */
+    @WebMethod(operationName = "createTask")
+    public long createTask(@WebParam(name = "name")String name,
+            @WebParam(name = "description")String description,
+            @WebParam(name = "enabled")boolean enabled,
+            @WebParam(name = "script")String script,
+            @WebParam(name = "parameters")List<StringPair> parameters,
+            @WebParam(name = "schedule")TaskScheduleDescriptor schedule,
+            @WebParam(name = "notificationType")TaskNotificationDescriptor notificationType,
+            @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try {
+            return wsBean.createTask(name, description, enabled, script, parameters, 
+                    schedule, notificationType, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createTask: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Updates any of these properties from a task: name, description, enabled and script
+     * @param taskId Task id
+     * @param propertyName Property name. Possible values: "name", "description", "enabled" and "script"
+     * @param propertyValue The value of the property. For the property "enabled", the allowed values are "true" and "false"
+     * @param sessionId The session token
+     * @throws Exception In case something goes wrong
+     */
+    @WebMethod(operationName = "updateTaskProperties")
+    public void updateTaskProperties(@WebParam(name = "taskId")long taskId,
+            @WebParam(name = "propertyName")String propertyName,
+            @WebParam(name = "propertyValue")String propertyValue,
+            @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try {
+            wsBean.updateTaskProperties(taskId, propertyName, propertyValue, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in updateTaskProperties: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Updates the parameters of a task. If any of the values is null, that parameter will be deleted, if the parameter does not exist, it will be created
+     * @param taskId Task id
+     * @param parameters The parameters to be modified as pairs paramName/paramValue
+     * @param sessionId The session token
+     * @throws Exception In case something goes wrong
+     */
+    @WebMethod(operationName = "updateTaskParameters")
+    public void updateTaskParameters(@WebParam(name = "taskId")long taskId,
+            @WebParam(name = "parameters")List<StringPair> parameters,
+            @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try {
+            wsBean.updateTaskParameters(taskId, parameters, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in updateTaskParameters: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Updates a task schedule
+     * @param taskId Task id
+     * @param schedule New schedule
+     * @param sessionId Session token
+     * @throws Exception In case something goes wrong
+     */
+    @WebMethod(operationName = "updateTaskSchedule")
+    public void updateTaskSchedule(@WebParam(name = "taskId")long taskId,
+            @WebParam(name = "schedule")TaskScheduleDescriptor schedule,
+            @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try {
+            wsBean.updateTaskSchedule(taskId, schedule, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in updateTaskSchedule: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Updates a task notification type
+     * @param taskId Task id
+     * @param notificationType New notification type
+     * @param sessionId Session token
+     * @throws Exception In case something goes wrong
+     */
+    @WebMethod(operationName = "updateTaskNotificationType")
+    public void updateTaskNotificationType(@WebParam(name = "taskId")long taskId,
+            @WebParam(name = "notificationType")TaskNotificationDescriptor notificationType,
+            @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try {
+            wsBean.updateTaskNotificationType(taskId, notificationType, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in updateTaskNotificationType: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Retrieves the information about a particular task
+     * @param taskId Id of the task
+     * @param sessionId Session token
+     * @return A remote task object representing the task
+     * @throws Exception In case something goes wrong
+     */
+    @WebMethod(operationName = "getTask")
+    public RemoteTask getTask(@WebParam(name = "taskId")long taskId,
+            @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try {
+            return wsBean.getTask(taskId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getTask: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Deletes a task and unsubscribes all users from it
+     * @param taskId Task id
+     * @param sessionId Session token
+     * @throws Exception In case something goes wrong
+     */
+    @WebMethod(operationName = "deleteTask")
+    public void deleteTask(@WebParam(name = "taskId")long taskId,
+            @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try {
+            wsBean.deleteTask(taskId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteTask: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Subscribes a user to a task, so it will be notified of the result of its execution
+     * @param taskId Id of the task
+     * @param userId Id of the user
+     * @param sessionId Session token
+     * @throws Exception In case something goes wrong
+     */
+    @WebMethod(operationName = "subscribeUserToTask")
+    public void subscribeUserToTask(@WebParam(name = "taskId")long taskId,
+            @WebParam(name = "userId")long userId,
+            @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try {
+            wsBean.subscribeUserToTask(taskId, userId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in subscribeUserToTask: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Unsubscribes a user from a task, so it will no longer be notified about the result of its execution
+     * @param taskId Id of the task
+     * @param userId Id of the user
+     * @param sessionId Session token
+     * @throws Exception In case something goes wrong
+     */
+    @WebMethod(operationName = "unsubscribeUserFromTask")
+    public void unsubscribeUserFromTask(@WebParam(name = "taskId")long taskId,
+            @WebParam(name = "userId")long userId,
+            @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try {
+            wsBean.unsubscribeUserFromTask(taskId, userId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in unsubscribeUserFromTask: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    @WebMethod(operationName = "executeTask")
+    public RemoteTaskResult executeTask(@WebParam(name = "taskId")long taskId, 
+                                        @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.executeTask(taskId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in executeTask: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
     //</editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Business Methods. Click on the + sign on the left to edit the code.">
@@ -3803,7 +4041,7 @@ public class KuwaibaService {
     }    
         // </editor-fold>
     // </editor-fold>
-    
+        
     // <editor-fold defaultstate="collapsed" desc="Helpers. Click on the + sign on the left to edit the code.">/**
     /**
      * Gets the IP address from the client issuing the request

@@ -31,6 +31,9 @@ import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.util.ChangeDescriptor;
+import org.kuwaiba.ws.todeserialize.StringPair;
+import org.kuwaiba.ws.toserialize.application.TaskNotificationDescriptor;
+import org.kuwaiba.ws.toserialize.application.TaskScheduleDescriptor;
 
 /**
  * This is the entity in charge of manipulating application objects such as users, views, etc
@@ -613,6 +616,12 @@ public interface ApplicationEntityManager {
     public void setConfiguration(Properties properties);
     
     /**
+     * Set the configuration variables of this manager
+     * @return A Properties object with the configuration variables
+     */
+    public Properties getConfiguration();
+    
+    /**
      * Creates a general activity log entry, that is, an entry that is not associated to a particular object
      * @param userName User that performed the action
      * @param type Type of action. See class ActivityLogEntry for possible values
@@ -687,4 +696,82 @@ public interface ApplicationEntityManager {
      * @throws NotAuthorizedException If the user is not authorized to access a particular commercial module
      */
     public Collection<GenericCommercialModule> getCommercialModules() throws NotAuthorizedException;    
+    /**
+     * Creates and schedule a task. A task is an application entity that allows to run jobs that will be executed depending on certain schedule
+     * @param name Task name
+     * @param description Task description
+     * @param enabled Is the task enabled?
+     * @param script The script to be executed
+     * @param parameters The parameters for the script
+     * @param schedule When the task should be executed
+     * @param notificationType How the result of the task should be notified to the associated users 
+     * @return The id of the newly created task
+     */
+    public long createTask(String name, String description, boolean enabled, String script, List<StringPair> parameters, TaskScheduleDescriptor schedule, TaskNotificationDescriptor notificationType);
+    /**
+     * Updates any of these properties from a task: name, description, enabled and script
+     * @param taskId Task id
+     * @param propertyName Property name. Possible values: "name", "description", "enabled" and "script"
+     * @param propertyValue The value of the property. For the property "enabled", the allowed values are "true" and "false"
+     * @throws ApplicationObjectNotFoundException If the task could not be found
+     * @throws InvalidArgumentException If the property name has an invalid value
+     */
+    public void updateTaskProperties(long taskId, String propertyName, String propertyValue) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    /**
+     * Updates the parameters of a task. If any of the values is null, that parameter will be deleted, if the parameter does not exist, it will be created
+     * @param taskId Task id
+     * @param parameters The parameters to be modified as pairs paramName/paramValue
+     * @throws ApplicationObjectNotFoundException If the task could not be found
+     */
+    public void updateTaskParameters(long taskId, List<StringPair> parameters) throws ApplicationObjectNotFoundException;
+    /**
+     * Updates a task schedule
+     * @param taskId Task id
+     * @param schedule New schedule
+     * @throws ApplicationObjectNotFoundException If the task could not be found
+     */
+    public void updateTaskSchedule(long taskId, TaskScheduleDescriptor schedule) throws ApplicationObjectNotFoundException;
+    /**
+     * Updates a task notification type
+     * @param taskId Task id
+     * @param notificationType New notification type
+     */
+    public void updateTaskNotificationType(long taskId, TaskNotificationDescriptor notificationType) throws ApplicationObjectNotFoundException;
+    /**
+     * Deletes a task and unsubscribes all users from it
+     * @param taskId Task id
+     * @throws ApplicationObjectNotFoundException If the task could not be found
+     */
+    public void deleteTask(long taskId) throws ApplicationObjectNotFoundException;
+    /**
+     * Subscribes a user to a task, so it will be notified of the result of its execution
+     * @param taskId Id of the task
+     * @param userId Id of the user
+     * @throws ApplicationObjectNotFoundException If the task or the user could not be found
+     * @throws InvalidArgumentException If the user is already subscribed to the task
+     */
+    public void subscribeUserToTask(long taskId, long userId) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    /**
+     * Unsubscribes a user from a task, so it will no longer be notified about the result of its execution
+     * @param taskId Id of the task
+     * @param userId Id of the user
+     * @throws ApplicationObjectNotFoundException If the task or the user could not be found
+     */
+    public void unsubscribeUserFromTask(long taskId, long userId) throws ApplicationObjectNotFoundException;
+    /**
+     * Retrieves the information about a particular task
+     * @param taskId Id of the task
+     * @return A remote task object representing the task
+     * @throws ApplicationObjectNotFoundException If the task could not be found
+     */
+    public Task getTask(long taskId) throws ApplicationObjectNotFoundException;
+    /**
+     * Executes a task on demand
+     * @param taskId Id of the task
+     * @return An object representing the task result
+     * @throws ApplicationObjectNotFoundException If the task could not be found
+     * @throws InvalidArgumentException  If the task doesn't have a script
+     */
+    public TaskResult executeTask(long taskId) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    
 }

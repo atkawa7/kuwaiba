@@ -118,6 +118,10 @@ public class Constants {
      */
     public static final String INDEX_POOLS = "pools"; //NOI18N
     /**
+     * Name of the index for tasks
+     */
+    public static final String INDEX_TASKS = "tasks"; //NOI18N
+    /**
      * Label used for the class index
      */
     public static final String INDEX_CLASS = "classes"; //NOI18N
@@ -189,6 +193,12 @@ public class Constants {
     public static final String PROPERTY_FIRST_NAME = "firstName"; //NOI18N
     public static final String PROPERTY_LAST_NAME = "lastName"; //NOI18N
     public static final String PROPERTY_ENABLED = "enabled"; //NOI18N
+    public static final String PROPERTY_SCRIPT = "script"; //NOI18N
+    public static final String PROPERTY_EXECUTION_TYPE = "executionTime"; //NOI18N
+    public static final String PROPERTY_EVERY_X_MINUTES = "everyXMinutes"; //NOI18N
+    public static final String PROPERTY_START_TIME = "startTime"; //NOI18N
+    public static final String PROPERTY_NOTIFICATION_TYPE = "notificationType"; //NOI18N
+    public static final String PROPERTY_EMAIL = "email"; //NOI18N
     public static final String PROPERTY_PASSWORD = "password"; //NOI18N
     public static final String PROPERTY_OLD_VALUE = "oldValue"; //NOI18N
     public static final String PROPERTY_NEW_VALUE = "newValue"; //NOI18N

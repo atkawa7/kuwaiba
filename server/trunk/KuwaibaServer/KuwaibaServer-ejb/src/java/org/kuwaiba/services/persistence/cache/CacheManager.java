@@ -127,7 +127,8 @@ public class CacheManager {
         return possibleChildrenIndex.get(parent);
     }
     
-    public void clearContainmentCache(){
+    public void clearClassCache(){
+        classIndex.clear();
         possibleChildrenIndex.clear();
     }
 

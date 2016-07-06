@@ -43,6 +43,12 @@
            <env-entry-value>/data/img/backgrounds</env-entry-value>
         </env-entry>
         <env-entry>
+           <description>Corporate Logo</description>
+           <env-entry-name>corporateLogo</env-entry-name>
+           <env-entry-type>java.lang.String</env-entry-type>
+           <env-entry-value>http://neotropic.co/img/logo_small.png</env-entry-value>
+        </env-entry>
+        <env-entry>
            <description>Enable the default security manager</description>
            <env-entry-name>enableSecurityManager</env-entry-name>
            <env-entry-type>java.lang.Boolean</env-entry-type>

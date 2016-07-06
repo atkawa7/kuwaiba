@@ -44,7 +44,23 @@ import org.kuwaiba.services.persistence.util.Constants;
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class Reports {
-    public static byte[] buildRackUsageReport(BusinessEntityManager bem, ApplicationEntityManager aem, long rackId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+    
+    private ApplicationEntityManager aem;
+    private BusinessEntityManager bem;
+    public String corporateLogo; // = "http://afr-ix.com/wp-content/themes/twentyfourteen/images/afrix_logo.png";
+    
+    public Reports(BusinessEntityManager bem, ApplicationEntityManager aem) {
+        this.aem = aem;
+        this.bem = bem;
+        this.corporateLogo = aem.getConfiguration().getProperty("corporateLogo") == null ? "logo.jpg" : aem.getConfiguration().getProperty("corporateLogo");
+    }
+    
+    
+    
+    
+    //public final String corporateLogo = "http://www.gitge.org/wp-content/themes/dzonia-lite/images/logo.png";
+    
+    public byte[] buildRackUsageReport(long rackId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
         RemoteBusinessObject theRack = bem.getObject("Rack", rackId);
                     
         String query = String.format("MATCH (rack)<-[:%s*1..2]-(rackable)-[:%s]->(childClass)-[:%s*]->(superClass) "
@@ -59,7 +75,7 @@ public class Reports {
                                 "    <title>Rack Usage Report " + theRack.getName() + "</title>\n" +
                                 getStyleSheet() +
                                 "  </head>\n" +
-                                "  <body><table><tr><td><h1>Rack Usage Report for " + theRack.getName() + "</h1></td><td><img src=\"http://afr-ix.com/wp-content/themes/twentyfourteen/images/afrix_logo.png\"/></td></tr></table>\n";
+                                "  <body><table><tr><td><h1>Rack Usage Report for " + theRack.getName() + "</h1></td><td><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
 
         int totalRackUnits;
         int usedRackUnits = 0;
@@ -122,7 +138,7 @@ public class Reports {
         return rackUsageReportBody.getBytes(StandardCharsets.UTF_8);
     }
 
-    public static byte[] buildDistributionFrameDetailReport(BusinessEntityManager bem, ApplicationEntityManager aem, String frameClass, long frameId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+    public byte[] buildDistributionFrameDetailReport(String frameClass, long frameId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
         RemoteBusinessObject theFrame =  bem.getObject(frameClass, frameId);
         List<RemoteBusinessObjectLight> frameChildren = bem.getObjectChildren(frameClass, frameId, -1);
         
@@ -133,7 +149,7 @@ public class Reports {
                                 "    <title>Frame Usage Report for " + theFrame.getName() + "</title>\n" +
                                 getStyleSheet() +
                                 "  </head>\n" +
-                                "  <body><table><tr><td><h1>Frame Usage Report for " + theFrame.getName() + "</h1></td><td><img src=\"http://afr-ix.com/wp-content/themes/twentyfourteen/images/afrix_logo.png\"/></td></tr></table>\n";
+                                "  <body><table><tr><td><h1>Frame Usage Report for " + theFrame.getName() + "</h1></td><td><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
         String portList = "";
         int usedPorts = 0;
         
@@ -213,7 +229,7 @@ public class Reports {
         return frameUsageReportText.getBytes(StandardCharsets.UTF_8);
     }
 
-    public static byte[] buildTransportLinkUsageReport (BusinessEntityManager bem, ApplicationEntityManager aem, String transportLinkClass, long transportLinkId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+    public byte[] buildTransportLinkUsageReport (String transportLinkClass, long transportLinkId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
         String query = String.format("MATCH (transportLink)-[relation:%s]-(port)-[:%s*]->(equipment)-[:%s]->(class)-[:%s*]->(superClass) "
                     + "WHERE id(transportLink) = %s AND superClass.name = \"%s\" AND (relation.name = \"%s\" OR relation.name = \"%s\")"
                     + "RETURN transportLink, equipment, port",  RelTypes.RELATED_TO_SPECIAL, RelTypes.CHILD_OF, RelTypes.INSTANCE_OF, 
@@ -234,7 +250,7 @@ public class Reports {
             title = "Transport Link Usage Report for " + theTransportLink.getName();
             transportLinkUsageReportText = getHeader(title);
             transportLinkUsageReportText += 
-                                "  <body><table><tr><td><h1>" + title + "</h1></td><td><img src=\"http://afr-ix.com/wp-content/themes/twentyfourteen/images/afrix_logo.png\"/></td></tr></table>\n";
+                                "  <body><table><tr><td><h1>" + title + "</h1></td><td><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
             
             //General Info
             transportLinkUsageReportText += "<table><tr><td class=\"generalInfoLabel\">Name</td><td class=\"generalInfoValue\">" + theTransportLink.getName() + "</td></tr>"
@@ -278,7 +294,7 @@ public class Reports {
         return transportLinkUsageReportText.getBytes(StandardCharsets.UTF_8);
     }
     
-    public static byte[] buildLowOrderTributaryLinkDetailReport (BusinessEntityManager bem, ApplicationEntityManager aem, String tributaryLinkClass, long tributaryLinkId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+    public byte[] buildLowOrderTributaryLinkDetailReport (String tributaryLinkClass, long tributaryLinkId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
         String query = String.format("MATCH (customerSuperClass)<-[:%s*]-(customerClass)<-[:%s]-(customer)<-[:%s*]-(service)-[relationA:%s]->(tributaryLink)-[relationB:%s]-(port)-[:%s*]->(equipment)-[:%s]->(class)-[:%s*]->(superClass) "
                 + "WHERE id(tributaryLink) = %s AND superClass.name=\"%s\" AND relationA.name = \"%s\" AND (relationB.name = \"%s\" OR relationB.name = \"%s\") AND customerSuperClass.name=\"%s\" RETURN tributaryLink, customer, service, port, equipment", 
                     RelTypes.EXTENDS, RelTypes.INSTANCE_OF, RelTypes.CHILD_OF_SPECIAL, RelTypes.RELATED_TO_SPECIAL, RelTypes.RELATED_TO_SPECIAL, 
@@ -299,7 +315,7 @@ public class Reports {
             title = "Tributary Link Details Report for " + theTributaryLink.getName();
             tributaryLinkUsageReportText = getHeader(title);
             tributaryLinkUsageReportText += 
-                                "  <body><table><tr><td><h1>" + title + "</h1></td><td><img src=\"http://afr-ix.com/wp-content/themes/twentyfourteen/images/afrix_logo.png\"/></td></tr></table>\n";
+                                "  <body><table><tr><td><h1>" + title + "</h1></td><td><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
             
             //Demarcation points
             query = String.format("MATCH (tributaryLink)-[relationA:%s]-(equipmentPort)-[relationB:%s]-(physicalConnection)-[relationC:%s]-(nextEquipmentPort)-[:%s*]->(nextEquipment)-[:%s]->(class)-[:%s*]->(superClass) "
@@ -360,7 +376,7 @@ public class Reports {
         return tributaryLinkUsageReportText.getBytes(StandardCharsets.UTF_8);
     }
 
-    public static byte[] buildHighOrderTributaryLinkDetailReport (BusinessEntityManager bem, ApplicationEntityManager aem, String tributaryLinkClass, long tributaryLinkId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+    public byte[] buildHighOrderTributaryLinkDetailReport (String tributaryLinkClass, long tributaryLinkId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
         String query = String.format("MATCH (customerSuperClass)<-[:%s*]-(customerClass)<-[:%s]-(customer)<-[:%s*]-(service)-[relationA:%s]->(tributaryLink)-[relationB:%s]-(port)-[:%s*]->(equipment)-[:%s]->(class)-[:%s*]->(superClass) "
                 + "WHERE id(tributaryLink) = %s AND superClass.name=\"%s\" AND relationA.name = \"%s\" AND (relationB.name = \"%s\" OR relationB.name = \"%s\") AND customerSuperClass.name=\"%s\" RETURN tributaryLink, customer, service, port, equipment", 
                     RelTypes.EXTENDS, RelTypes.INSTANCE_OF, RelTypes.CHILD_OF_SPECIAL, RelTypes.RELATED_TO_SPECIAL, RelTypes.RELATED_TO_SPECIAL, 
@@ -381,7 +397,7 @@ public class Reports {
             title = "Tributary Link Details Report for " + theTributaryLink.getName();
             tributaryLinkUsageReportText = getHeader(title);
             tributaryLinkUsageReportText += 
-                                "  <body><table><tr><td><h1>" + title + "</h1></td><td><img src=\"http://afr-ix.com/wp-content/themes/twentyfourteen/images/afrix_logo.png\"/></td></tr></table>\n";
+                                "  <body><table><tr><td><h1>" + title + "</h1></td><td><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
             
             //Demarcation points
             query = String.format("MATCH (tributaryLink)-[relationA:%s]-(equipmentPort)-[relationB:%s]-(physicalConnection)-[relationC:%s]-(nextEquipmentPort)-[:%s*]->(nextEquipment)-[:%s]->(class)-[:%s*]->(superClass) "
@@ -433,7 +449,7 @@ public class Reports {
         return tributaryLinkUsageReportText.getBytes(StandardCharsets.UTF_8);
     }
     
-    public static byte[] buildNetworkEquipmentInLocationReport(BusinessEntityManager bem, ApplicationEntityManager aem, String locationClass, long locationId) throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+    public byte[] buildNetworkEquipmentInLocationReport(String locationClass, long locationId) throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
         String query = String.format("MATCH (location)<-[:%s*]-(networkEquipment)-[:%s]->(class)-[:%s*]->(superclass) "
                 + "WHERE id(location) = %s AND superclass.name = \"%s\" "
                 + "RETURN networkEquipment", RelTypes.CHILD_OF, RelTypes.INSTANCE_OF, RelTypes.EXTENDS, 
@@ -447,7 +463,7 @@ public class Reports {
         title = "Network Equipment Report for " + location.getName();
         networkEquipmentInLocationReportText = getHeader(title);
         networkEquipmentInLocationReportText += 
-                            "  <body><table><tr><td><h1>" + title + "</h1></td><td><img src=\"http://afr-ix.com/wp-content/themes/twentyfourteen/images/afrix_logo.png\"/></td></tr></table>\n";
+                            "  <body><table><tr><td><h1>" + title + "</h1></td><td><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
 
         networkEquipmentInLocationReportText += "<table><tr><td class=\"generalInfoLabel\"><b>Name</b></td><td>" + location.getName() + "</td></tr>\n"
                 + "<tr><td class=\"generalInfoLabel\"><b>Type</b></td><td>" + location.getClassName() + "</td></tr>\n"
@@ -477,11 +493,11 @@ public class Reports {
         return networkEquipmentInLocationReportText.getBytes(StandardCharsets.UTF_8);
     }
 
-    public static byte[] buildBoxesInLocationReport(BusinessEntityManager bem, ApplicationEntityManager aem, long locationId) {
+    public byte[] buildBoxesInLocationReport(long locationId) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public static byte[] subnetUsageReport(BusinessEntityManager bem, ApplicationEntityManager aem,  String className, long subnetId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+    public byte[] subnetUsageReport(String className, long subnetId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
     
         RemoteBusinessObject subnet = bem.getObject(className, subnetId);
         List<RemoteBusinessObjectLight> ips = bem.getObjectChildren(className, subnetId, 0);
@@ -512,7 +528,7 @@ public class Reports {
             title = "Subnet Usage Detail Report for " + subnet.getName();
             subnetUsageReportText = getHeader(title);
             subnetUsageReportText += 
-                                "  <body><table><tr><td><h1>" + title + "</h1></td><td><img src=\"http://afr-ix.com/wp-content/themes/twentyfourteen/images/afrix_logo.png\"/></td></tr></table>\n";
+                                "  <body><table><tr><td><h1>" + title + "</h1></td><td><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
             
             subnetUsageReportText += pieChartScript(usedIps, freeIps);
 
@@ -569,9 +585,7 @@ public class Reports {
         return subnetUsageReportText.getBytes(StandardCharsets.UTF_8);
     }
     
-    public static byte[] buildContractStatusReport(BusinessEntityManager bem, ApplicationEntityManager aem, long contractPoolId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
-//        String query = String.format("MATCH (superClass)<-[:%s*]-(class)-[:%s]-(contract) "
-//                                    + "WHERE superClass.name = \"%s\"");
+    public byte[] buildContractStatusReport(long contractPoolId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
         Pool contractPool = aem.getPool(contractPoolId);
         List<RemoteBusinessObjectLight> contracts = aem.getPoolItems(contractPoolId, -1);
         
@@ -579,7 +593,7 @@ public class Reports {
         String contractStatusReportText = getHeader(title);
         
         contractStatusReportText += 
-                            "  <body><table><tr><td><h1>" + title + "</h1><h2>" + contractPool.getDescription() + "</h2></td><td><img src=\"http://afr-ix.com/wp-content/themes/twentyfourteen/images/afrix_logo.png\"/></td></tr></table>\n";
+                            "  <body><table><tr><td><h1>" + title + "</h1><h2>" + contractPool.getDescription() + "</h2></td><td><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
         
         if (contracts.isEmpty())
             contractStatusReportText += "<div class=\"warning\">This pool does not have contracts attached</div>";
@@ -646,7 +660,7 @@ public class Reports {
     }
     
     //<editor-fold desc="Helpers" defaultstate="collapsed">
-    private static String getStyleSheet() {
+    private String getStyleSheet() {
         return "<style> " +
                     "   body {\n" +
                     "            font-family: Helvetica, Arial, sans-serif;\n" +
@@ -707,7 +721,7 @@ public class Reports {
                      "</style>\n";
     }
     
-    private static String getHeader(String title){
+    private String getHeader(String title){
         return "<!DOCTYPE html>\n" +
                     "<html lang=\"en\">\n" +
                     "  <head>\n" +
@@ -717,12 +731,12 @@ public class Reports {
                     "  </head>\n";
     }
     
-    private static String getFooter() {
+    private String getFooter() {
         return "  <div class=\"footer\">This report is powered by <a href=\"http://www.kuwaiba.org\">Kuwaiba Open Network Inventory</a></div></body>\n" +
                                 "</html>";
     }
     
-    private static String formatLocation (List<RemoteBusinessObjectLight> containmentHierarchy) {
+    private String formatLocation (List<RemoteBusinessObjectLight> containmentHierarchy) {
         String location = "";
         for (int i = 0; i < containmentHierarchy.size() - 1; i ++)
             location += containmentHierarchy.get(i).toString() + " | ";
@@ -730,19 +744,19 @@ public class Reports {
         return location;
     }
     
-    private static String asOk(String text) {
+    private String asOk(String text) {
         return "<span class=\"ok\">" + text + "</span>";
     }
     
-    private static String asWarning(String text) {
+    private String asWarning(String text) {
         return "<span class=\"warning\">" + text + "</span>";
     }
     
-    private static String asError(String text) {
+    private String asError(String text) {
         return "<span class=\"error\">" + text + "</span>";
     }
     
-    private static String pieChartScript(int usedIps, int freeIps){
+    private String pieChartScript(int usedIps, int freeIps){
         String script = "\n<script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>\n" +
                         "    <script type=\"text/javascript\">\n" +
                         "      google.charts.load('current', {'packages':['corechart']});\n" +

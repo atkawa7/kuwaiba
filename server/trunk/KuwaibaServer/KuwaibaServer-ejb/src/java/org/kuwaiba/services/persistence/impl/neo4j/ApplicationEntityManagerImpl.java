@@ -19,6 +19,8 @@ package org.kuwaiba.services.persistence.impl.neo4j;
 import com.neotropic.kuwaiba.modules.GenericCommercialModule;
 import com.ociweb.xml.StartTagWAX;
 import com.ociweb.xml.WAX;
+import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -50,9 +52,12 @@ import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.Pool;
 import org.kuwaiba.apis.persistence.application.ResultRecord;
 import org.kuwaiba.apis.persistence.application.Session;
+import org.kuwaiba.apis.persistence.application.Task;
+import org.kuwaiba.apis.persistence.application.TaskResult;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.application.ViewObject;
 import org.kuwaiba.apis.persistence.application.ViewObjectLight;
+import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectList;
@@ -63,6 +68,9 @@ import org.kuwaiba.services.persistence.cache.CacheManager;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.services.persistence.util.Util;
 import org.kuwaiba.util.ChangeDescriptor;
+import org.kuwaiba.ws.todeserialize.StringPair;
+import org.kuwaiba.ws.toserialize.application.TaskNotificationDescriptor;
+import org.kuwaiba.ws.toserialize.application.TaskScheduleDescriptor;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -127,6 +135,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
      */
     private Index<Node> privilegeIndex;
     /**
+     * Task index
+     */
+    private Index<Node> taskIndex;
+    /**
      * Index for general views (those not related to a particular object)
      */
     private Index<Node> generalViewsIndex;
@@ -146,6 +158,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
      * A library of all registered commercial modules
      */
     private HashMap<String, GenericCommercialModule> commercialModules;
+    /**
+     * Reference to the bem
+     */
+    private BusinessEntityManager bem;
     
     public ApplicationEntityManagerImpl() {
         this.cm = CacheManager.getInstance();
@@ -153,9 +169,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         this.configuration = new Properties();
     }
 
-    public ApplicationEntityManagerImpl(ConnectionManager cmn) {
+    public ApplicationEntityManagerImpl(ConnectionManager cmn, BusinessEntityManager bem) {
         this();
         this.graphDb = (GraphDatabaseService) cmn.getConnectionHandler();
+        this.bem = bem;
         try(Transaction tx = graphDb.beginTx()){
             this.userIndex = graphDb.index().forNodes(Constants.INDEX_USERS);
             this.groupIndex = graphDb.index().forNodes(Constants.INDEX_GROUPS);
@@ -166,11 +183,15 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             this.generalViewsIndex = graphDb.index().forNodes(Constants.INDEX_GENERAL_VIEWS);
             this.poolsIndex = graphDb.index().forNodes(Constants.INDEX_POOLS);
             this.privilegeIndex = graphDb.index().forNodes(Constants.INDEX_PRIVILEGE_NODES);
+            this.taskIndex = graphDb.index().forNodes(Constants.INDEX_TASKS);
             this.specialNodesIndex = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES);
             for (Node listTypeNode : listTypeItemsIndex.query(Constants.PROPERTY_ID, "*")){
                 GenericObjectList aListType = Util.createGenericObjectListFromNode(listTypeNode);
                 cm.putListType(aListType);
             }
+        } catch(Exception ex) {
+            System.out.println(String.format("[KUWAIBA] [%s] An error was found while creating the AEM instance: %s", 
+                    Calendar.getInstance().getTime(), ex.getMessage()));
         }
         this.sessions = new HashMap<>();
     }
@@ -189,7 +210,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         if (userName == null)
             throw new InvalidArgumentException("User name can not be null");
         
-        if (userName.trim().equals(""))
+        if (userName.trim().isEmpty())
             throw new InvalidArgumentException("User name can not be an empty string");
         
         if (!userName.matches("^[a-zA-Z0-9_.]*$"))
@@ -198,7 +219,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         if (password == null)
             throw new InvalidArgumentException("Password can not be null");
        
-        if (password.trim().equals(""))
+        if (password.trim().isEmpty())
             throw new InvalidArgumentException("Password can not be an empty string");
         
         try(Transaction tx = graphDb.beginTx()) {
@@ -255,7 +276,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 throw new ApplicationObjectNotFoundException(String.format("Can not find a user with id %s",oid));
 
             if(userName != null){
-                if (userName.trim().equals(""))
+                if (userName.trim().isEmpty())
                     throw new InvalidArgumentException("User name can not be an empty string");
 
                 if (!userName.matches("^[a-zA-Z0-9_.]*$"))
@@ -323,7 +344,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
             if(newUserName != null)
             {
-                if (newUserName.isEmpty())
+                if (newUserName.trim().isEmpty())
                     throw new InvalidArgumentException("User name can not be an empty string");
 
                 Node storedUser = userIndex.get(Constants.PROPERTY_NAME, newUserName).getSingle();
@@ -386,7 +407,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     {
         if (groupName == null)
             throw new InvalidArgumentException("Group name can not be null");
-        if (groupName.isEmpty())
+        if (groupName.trim().isEmpty())
             throw new InvalidArgumentException("Group name can not be an empty string");
         if (!groupName.matches("^[a-zA-Z0-9_.]*$"))
             throw new InvalidArgumentException(String.format("Class %s contains invalid characters", groupName));
@@ -1667,6 +1688,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public void setConfiguration (Properties properties) {
         this.configuration = properties;
     }
+    
+    @Override
+    public Properties getConfiguration () {
+        return this.configuration;
+    }
 
     @Override
     public void createGeneralActivityLogEntry(String userName, int type, String notes) throws ApplicationObjectNotFoundException {
@@ -1725,6 +1751,235 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             int type, ChangeDescriptor changeDescriptor) throws ApplicationObjectNotFoundException, ObjectNotFoundException {
         createObjectActivityLogEntry(userName, className, oid, type, changeDescriptor.getAffectedProperties(), changeDescriptor.getOldValues(), changeDescriptor.getNewValues(), changeDescriptor.getNotes());
     }
+
+    @Override
+    public long createTask(String name, String description, boolean enabled, String script, List<StringPair> parameters, TaskScheduleDescriptor schedule, TaskNotificationDescriptor notificationType) {
+        try(Transaction tx = graphDb.beginTx()) {
+            Node taskNode = graphDb.createNode();
+            taskNode.setProperty(Constants.PROPERTY_NAME, name == null ? "" : name);
+            taskNode.setProperty(Constants.PROPERTY_DESCRIPTION, description == null ? "" : description);
+            taskNode.setProperty(Constants.PROPERTY_ENABLED, enabled);
+            
+            if (script != null)
+                taskNode.setProperty(Constants.PROPERTY_SCRIPT, script);
+            
+            for (StringPair parameter : parameters) //param names have the prefic PARAM_ to identify them from the other properties
+                taskNode.setProperty("PARAM_" + parameter.getKey(), parameter.getValue());
+            
+            if (schedule != null) {
+                taskNode.setProperty(Constants.PROPERTY_EXECUTION_TYPE, schedule.getExecutionType());
+                taskNode.setProperty(Constants.PROPERTY_EVERY_X_MINUTES, schedule.getEveryXMinutes());
+                taskNode.setProperty(Constants.PROPERTY_START_TIME, schedule.getStartTime());
+            }
+            
+            if (notificationType != null) {
+                taskNode.setProperty(Constants.PROPERTY_NOTIFICATION_TYPE, notificationType.getNotificationType());
+                taskNode.setProperty(Constants.PROPERTY_EMAIL, notificationType.getEmail() ==  null ? "" : notificationType.getEmail());
+            }
+            
+            taskIndex.putIfAbsent(taskNode, Constants.PROPERTY_ID, taskNode.getId());
+            tx.success();
+            return taskNode.getId();
+        }
+    }
+
+    @Override
+    public void updateTaskProperties(long taskId, String propertyName, String propertyValue) 
+            throws ApplicationObjectNotFoundException, InvalidArgumentException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node taskNode = taskIndex.get(Constants.PROPERTY_ID, taskId).getSingle();
+            if (taskNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", taskId));
+
+            switch (propertyName) {
+                case Constants.PROPERTY_NAME:
+                case Constants.PROPERTY_DESCRIPTION:
+                case Constants.PROPERTY_ENABLED:
+                case Constants.PROPERTY_SCRIPT:
+                    taskNode.setProperty(propertyName, propertyValue);
+                    break;
+                default:
+                    throw new InvalidArgumentException(String.format("%s is not a valid task property", propertyName));
+            }
+            tx.success();
+        }
+    }
+
+    @Override
+    public void updateTaskParameters(long taskId, List<StringPair> parameters) throws ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node taskNode = taskIndex.get(Constants.PROPERTY_ID, taskId).getSingle();
+            if (taskNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", taskId));
+
+            for (StringPair parameter : parameters) {
+                String actualParameterName = "PARAM_" + parameter.getKey();
+                //The parameters are stored with a prefix PARAM_
+                //params set to null, must be deleted
+                if (taskNode.hasProperty(actualParameterName) && parameter.getValue() == null)
+                    taskNode.removeProperty(actualParameterName);
+                else
+                    taskNode.setProperty(actualParameterName, parameter.getValue());
+            }
+            
+            tx.success();
+        }
+    }
+
+    @Override
+    public void updateTaskSchedule(long taskId, TaskScheduleDescriptor schedule) throws ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node taskNode = taskIndex.get(Constants.PROPERTY_ID, taskId).getSingle();
+            if (taskNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", taskId));
+
+            taskNode.setProperty(Constants.PROPERTY_EXECUTION_TYPE, schedule.getExecutionType());
+            taskNode.setProperty(Constants.PROPERTY_EVERY_X_MINUTES, schedule.getEveryXMinutes());
+            taskNode.setProperty(Constants.PROPERTY_START_TIME, schedule.getStartTime());
+            
+            tx.success();
+        }
+    }
+
+    @Override
+    public void updateTaskNotificationType(long taskId, TaskNotificationDescriptor notificationType) throws ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node taskNode = taskIndex.get(Constants.PROPERTY_ID, taskId).getSingle();
+            if (taskNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", taskId));
+
+            taskNode.setProperty(Constants.PROPERTY_NOTIFICATION_TYPE, notificationType.getNotificationType());
+            taskNode.setProperty(Constants.PROPERTY_EMAIL, notificationType.getEmail() == null ? "" : notificationType.getEmail());
+            
+            tx.success();
+        }
+    }
+
+    @Override
+    public void deleteTask(long taskId) throws ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node taskNode = taskIndex.get(Constants.PROPERTY_ID, taskId).getSingle();
+            if (taskNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", taskId));
+
+            taskIndex.remove(taskNode);
+            taskNode.delete();
+            
+            tx.success();
+        }
+    }
+
+    @Override
+    public void subscribeUserToTask(long taskId, long userId) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node taskNode = taskIndex.get(Constants.PROPERTY_ID, taskId).getSingle();
+            if (taskNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", taskId));
+            
+            boolean found = false;
+            
+            for (Relationship rel : taskNode.getRelationships(Direction.INCOMING, RelTypes.SUBSCRIBED_TO)) {
+                if (rel.getStartNode().getId() == userId) {
+                    found = true;
+                    break;
+                }
+            }
+            
+            if (found)
+                throw new InvalidArgumentException("This user is already subscribed to the task");
+            
+            Node userNode = userIndex.get(Constants.PROPERTY_ID, userId).getSingle();
+            if (userNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("A user with id %s could not be found", userId));
+            
+            Relationship rel = userNode.createRelationshipTo(taskNode, RelTypes.SUBSCRIBED_TO);
+            rel.setProperty(Constants.PROPERTY_NAME, "task"); //NOI18N
+            
+            tx.success();
+        }
+    }
+
+    @Override
+    public void unsubscribeUserFromTask(long taskId, long userId) throws ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node taskNode = taskIndex.get(Constants.PROPERTY_ID, taskId).getSingle();
+            if (taskNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", taskId));
+            
+            boolean found = false;
+            
+            for (Relationship rel : taskNode.getRelationships(Direction.INCOMING, RelTypes.SUBSCRIBED_TO)) {
+                if (rel.getStartNode().getId() == userId) {
+                    rel.delete();
+                    found = true;
+                    break;
+                }
+            }
+            
+            if (!found)
+                throw new ApplicationObjectNotFoundException(String.format("A user with id %s could not be found", taskId));
+            else
+                tx.success();
+        }
+    }
+
+    @Override
+    public Task getTask(long taskId) throws ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node taskNode = taskIndex.get(Constants.PROPERTY_ID, taskId).getSingle();
+            if (taskNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", taskId));
+            
+            Iterable<String> allProperties = taskNode.getPropertyKeys();
+            
+            List<StringPair> parameters = new ArrayList<>();
+            
+            for (String property : allProperties) {
+                if (property.startsWith("PARAM_"))
+                    parameters.add(new StringPair(property.replace("PARAM_", ""), (String)taskNode.getProperty(property)));
+            }
+            
+            TaskScheduleDescriptor schedule = new TaskScheduleDescriptor((long)taskNode.getProperty(Constants.PROPERTY_START_TIME),
+                                                    (int)taskNode.getProperty(Constants.PROPERTY_EVERY_X_MINUTES), 
+                                                    (int)taskNode.getProperty(Constants.PROPERTY_EXECUTION_TYPE));
+            
+            TaskNotificationDescriptor notificationType = new TaskNotificationDescriptor((String)taskNode.getProperty(Constants.PROPERTY_EMAIL), 
+                                                                                (int)taskNode.getProperty(Constants.PROPERTY_NOTIFICATION_TYPE));
+            
+            return new Task((String)taskNode.getProperty(Constants.PROPERTY_NAME), 
+                            (String)taskNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
+                            (boolean)taskNode.getProperty(Constants.PROPERTY_ENABLED), 
+                            taskNode.hasProperty(Constants.PROPERTY_SCRIPT) ? (String)taskNode.getProperty(Constants.PROPERTY_SCRIPT) : null, 
+                            parameters, schedule, notificationType);
+        }
+    }
+    
+    @Override
+    public TaskResult executeTask(long taskId) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node taskNode = taskIndex.get(Constants.PROPERTY_ID, taskId).getSingle();
+            if (taskNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", taskId));
+            if (!taskNode.hasProperty(Constants.PROPERTY_SCRIPT))
+                throw new InvalidArgumentException(String.format("The task with id %s does not have a script", taskId));
+            
+            String script = (String)taskNode.getProperty(Constants.PROPERTY_SCRIPT);
+            
+            Iterable<String> allProperties = taskNode.getPropertyKeys();
+            List<StringPair> scriptParameters = new ArrayList<>();
+            for (String property : allProperties) {
+                if (property.startsWith("PARAM_"))
+                    scriptParameters.add(new StringPair(property.replace("PARAM_", ""), (String)taskNode.getProperty(property)));
+            }
+            
+            Binding environmentParameters = new Binding();
+            environmentParameters.setVariable("graphDb", graphDb); //NOI18N
+            environmentParameters.setVariable("scriptParameters", scriptParameters); //NOI18N
+            
+            GroovyShell shell = new GroovyShell(environmentParameters);
+            return (TaskResult)shell.evaluate(script);
+        }
+    }
     
     //Comercial modules
 
@@ -1768,26 +2023,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         }
     }
     
-    public HashMap<String, RemoteBusinessObjectList> executeCustomDbCodeSeq(String dbCode) throws NotAuthorizedException {
-        try (Transaction tx = graphDb.beginTx()) {
-        
-            Result theResult = graphDb.execute(dbCode);
-            HashMap<String, RemoteBusinessObjectList> thePaths = new HashMap<>();
-            
-            for (String column : theResult.columns())
-                thePaths.put(column, new RemoteBusinessObjectList());
-            
-            try {
-                while (theResult.hasNext()) {
-                    Map<String, Object> row = theResult.next();
-                    for (String column : row.keySet()) 
-                        thePaths.get(column).add(Util.createRemoteObjectFromNode((Node)row.get(column)));
-                }
-            } catch (InvalidArgumentException ex) {} //this should not happen
-            
-            return thePaths;
-        }
-    }    
 
     // Helpers
     /**

@@ -47,6 +47,8 @@ import org.kuwaiba.services.persistence.impl.neo4j.RelTypes;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.services.persistence.util.Util;
 import org.kuwaiba.util.ChangeDescriptor;
+import org.neo4j.cypher.javacompat.ExecutionEngine;
+import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -86,10 +88,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      */
     private Index<Node> poolsIndex;
     /**
-     * Subnets index
-     */
-    private Index<Node> subnetsIndex;
-    /**
      * Special nodes index
      */
     private Index<Node> specialNodesIndex;
@@ -106,13 +104,14 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         this();
         this.aem = aem;
         this.graphDb = (GraphDatabaseService)cmn.getConnectionHandler();
-        try(Transaction tx = graphDb.beginTx())
-        {
+        try(Transaction tx = graphDb.beginTx()) {
             this.classIndex = graphDb.index().forNodes(Constants.INDEX_CLASS);
             this.objectIndex = graphDb.index().forNodes(Constants.INDEX_OBJECTS);
             this.poolsIndex = graphDb.index().forNodes(Constants.INDEX_POOLS);
             this.specialNodesIndex = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES);
-            this.subnetsIndex = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES);
+        }catch(Exception ex) {
+            System.out.println(String.format("[KUWAIBA] [%s] An error was found while creating the BEM instance: %s", 
+                    Calendar.getInstance().getTime(), ex.getMessage()));
         }
     }
 
@@ -404,7 +403,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 Node parentNode = objectNode.getSingleRelationship(RelTypes.CHILD_OF, Direction.OUTGOING).getEndNode();
 
                 //If the direct parent is DummyRoot, return a dummy RemoteBusinessObject with oid = -1
-                if (parentNode.hasRelationship(RelTypes.DUMMY_ROOT))
+                if (parentNode.hasProperty(Constants.PROPERTY_NAME) && Constants.NODE_DUMMYROOT.equals(parentNode.getProperty(Constants.PROPERTY_NAME)) )
                     return new RemoteBusinessObject(-1L, Constants.NODE_DUMMYROOT, Constants.NODE_DUMMYROOT);
                 else    
                     return Util.createRemoteObjectFromNode(parentNode, cm.getClass(Util.getClassName(parentNode)));
@@ -1046,25 +1045,38 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     //TODO DELETE. This is a business dependant method, should not be here. Don't use it
     @Override
     public List<RemoteBusinessObjectLight> getPhysicalPath(String objectClass, long objectId) throws ApplicationObjectNotFoundException, NotAuthorizedException{
-        String cypherQuery = "MATCH path = (o)-[r:" + RelTypes.RELATED_TO_SPECIAL + "*]-(c)," + 
-                                    " (c)-[:" + RelTypes.INSTANCE_OF + "]->(class)-[:" + RelTypes.EXTENDS + "*]->(superclass) " +
-                             "WHERE id(o) = " + objectId + " AND all(rel in r where rel.name = 'mirror' or rel.name = 'endpointA' or rel.name = 'endpointB') AND superclass.name=\"" + Constants.CLASS_GENERICPORT + "\" " +
-                             "RETURN nodes(path) as path";
-        
-        List<RemoteBusinessObjectLight> res = new ArrayList<>();
-        
-        try (Transaction tx = graphDb.beginTx()) {
-            Result theResult = graphDb.execute(cypherQuery);
+        Node lastNode = null;
+        List<RemoteBusinessObjectLight> path = new ArrayList<>();
+        String cypherQuery = "START o=node({oid}) "+ 
+                             "MATCH path = o-[r:" + RelTypes.RELATED_TO_SPECIAL + "*]-c "+
+                             "WHERE all(rel in r where rel.name = 'mirror' or rel.name = 'endpointA' or rel.name = 'endpointB') "+
+                             "RETURN collect(distinct c) as path";
+        Map<String, Object> params = new HashMap<>();
+        params.put("oid", objectId);
+        try (Transaction tx = graphDb.beginTx()){
+            ExecutionEngine engine = new ExecutionEngine(graphDb);
+            ExecutionResult result = engine.execute(cypherQuery, params);
+            Iterator<List<Node>> column = result.columnAs("path");
             
-            for (Object cell : IteratorUtil.asIterable(theResult.columnAs("path"))) {
-                Iterable<Node> nodes = (Iterable<Node>) cell;
-                for (Node aNode : nodes)
-                    res.add(Util.createRemoteObjectLightFromNode(aNode));
+            for (List<Node> list : IteratorUtil.asIterable(column)){
+                if (list.isEmpty())
+                    return path;
+                lastNode = list.get(list.size()-1);
             }
-            
+            params.clear();
+            params.put("oid", lastNode.getId());
+
+            engine = new ExecutionEngine(graphDb);
+            result = engine.execute(cypherQuery, params);
+            column = result.columnAs("path");
+            path.add(Util.createRemoteObjectLightFromNode(lastNode));
+            for (List<Node> listOfNodes : IteratorUtil.asIterable(column)){
+                for(Node node : listOfNodes)
+                    path.add(Util.createRemoteObjectLightFromNode(node));
+            }
         }
-        
-        return res;
+        return path;
+
     }
 
     @Override
