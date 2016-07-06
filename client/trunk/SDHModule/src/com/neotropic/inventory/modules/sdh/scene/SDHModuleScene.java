@@ -46,6 +46,7 @@ import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.WidgetAction;
 import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.netbeans.api.visual.anchor.PointShape;
+import org.netbeans.api.visual.model.ObjectState;
 import org.netbeans.api.visual.router.RouterFactory;
 import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.LayerWidget;
@@ -104,6 +105,8 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
         moveControlPointAction = new CustomMoveControlPointAction(this);
         
         connectProvider = new SDHModuleConnectProvider();
+        
+        setState (ObjectState.createNormal ());
     }
 
     @Override

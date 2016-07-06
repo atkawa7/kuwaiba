@@ -66,6 +66,10 @@ public class Constants {
      */
     public static final String VALIDATOR_SUBNET = "subnet";
     /**
+     * DummyRoot constant. It's a pseudo class
+     */
+    public static final String DUMMYROOT = "DummyRoot";
+    /**
      * Name for the class InventoryObject
      */
     public static final String CLASS_INVENTORYOBJECT = "InventoryObject";

@@ -17,7 +17,6 @@ package org.inventory.navigation.applicationnodes.objectnodes.properties;
 
 import java.beans.PropertyEditor;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.Date;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.util.Constants;
@@ -67,12 +66,5 @@ public class NativeTypeProperty extends PropertySupport.ReadWrite {
     @Override
     public PropertyEditor getPropertyEditor(){        
         return super.getPropertyEditor();
-    }
-
-    @Override
-    public boolean canWrite(){
-        //Dates are read only for now until we integrate a date picker
-        return !getValueType().equals(Date.class);
-            
     }
 }

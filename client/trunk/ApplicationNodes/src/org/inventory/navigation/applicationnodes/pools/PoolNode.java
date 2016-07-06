@@ -44,7 +44,7 @@ import org.openide.util.datatransfer.PasteType;
  * @author Charles edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class PoolNode extends AbstractNode implements PropertyChangeListener {
-    private static final Image defaultIcon = ImageUtilities.loadImage("org/inventory/navigation/applicationnodes/res/folder-icon.png");
+    private static final Image defaultIcon = ImageUtilities.loadImage("org/inventory/navigation/applicationnodes/res/pool.png");
     private NewPoolItemAction newPoolItemAction;
     private DeletePoolAction deletePoolAction;
     private ShowObjectIdAction showObjectIdAction;
@@ -134,7 +134,6 @@ public class PoolNode extends AbstractNode implements PropertyChangeListener {
                 this, lp.getDescription());
         generalPropertySet.put(propertyDescription);
         
-        generalPropertySet.setName("1");
         generalPropertySet.setDisplayName(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_GENERAL_ATTRIBUTES"));
         sheet.put(generalPropertySet);
         return sheet;

@@ -16,7 +16,6 @@
 package com.neotropic.inventory.modules.ipam.nodes;
 
 import java.awt.Image;
-import javax.swing.Action;
 import org.inventory.communications.core.LocalPool;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
@@ -36,12 +35,7 @@ public class IPAMRootNode extends AbstractNode{
         for (LocalPool subnetPool : subnetPools)
             getChildren().add(new SubnetPoolNode[] { new SubnetPoolNode(subnetPool)});
     }
-
-    @Override
-    public Action[] getActions(boolean context){
-        return null;
-    }
-    
+   
     @Override
     public Image getIcon(int i){
         return defaultIcon;
@@ -50,6 +44,5 @@ public class IPAMRootNode extends AbstractNode{
     @Override
     public Image getOpenedIcon(int i){
         return getIcon(i);
-    }
-    
+    }    
 }

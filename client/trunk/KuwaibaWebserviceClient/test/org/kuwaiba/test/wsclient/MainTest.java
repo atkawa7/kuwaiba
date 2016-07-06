@@ -32,7 +32,7 @@ public class MainTest {
 
     public static void main (String[] args){
         
-        try{
+        try {
             System.out.println("Starting at: " + Calendar.getInstance().getTime());
             URL serverURL = new URL("http", "localhost", 8080,"/kuwaiba/KuwaibaService?wsdl"); //NOI18n
             port = new KuwaibaService_Service(serverURL).getKuwaibaServicePort();

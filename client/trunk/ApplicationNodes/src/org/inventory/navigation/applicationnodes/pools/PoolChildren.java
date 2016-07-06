@@ -51,11 +51,6 @@ public class PoolChildren extends AbstractChildren {
     }
     
     @Override
-    public void removeNotify() {
-        setKeys(Collections.EMPTY_SET);
-    }
-
-    @Override
     protected Node[] createNodes(LocalObjectLight key) {
         return new Node[] { new ObjectNode(key) };
     }

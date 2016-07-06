@@ -141,11 +141,11 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
                 PropertySupport.ReadWrite property = null;
                 int mapping = lam.getMapping();
                 switch (mapping) {
+                    case Constants.MAPPING_TIMESTAMP:
                     case Constants.MAPPING_DATE:
                         property = new DateTypeProperty((Date)lo.getAttribute(lam.getName()) , 
                                 lam.getName(), Date.class, lam.getDisplayName(), lam.getDescription(), this);
                         break;
-                    case Constants.MAPPING_TIMESTAMP:
                     case Constants.MAPPING_PRIMITIVE:
                     //Those attributes that are not multiple, but reference another object
                     //like endpointX in physicalConnections should be ignored, at least by now

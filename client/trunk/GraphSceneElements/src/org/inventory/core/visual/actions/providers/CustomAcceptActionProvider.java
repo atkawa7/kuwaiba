@@ -93,6 +93,8 @@ public class CustomAcceptActionProvider implements AcceptProvider {
                     newNode.setPreferredLocation(new Point(point.x - newNode.getBounds().width / 2, point.y)); //A position correction is needed
                                                                                                                //because the widget is positioned using the top left corner, not the center
                                                                                                                //Since getBounds is called AFTER validating the scene, its value is never null
+                    scene.validate();
+                    scene.repaint();
                     scene.fireChangeEvent(new ActionEvent(this, AbstractScene.SCENE_CHANGE, "attachNode")); //NOI18N
                     
                 }

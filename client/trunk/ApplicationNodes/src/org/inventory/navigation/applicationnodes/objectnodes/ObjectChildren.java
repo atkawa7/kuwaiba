@@ -61,11 +61,6 @@ public class ObjectChildren extends AbstractChildren {
             setKeys(children);
         }
     }
-       
-    @Override
-    public void removeNotify() {
-        setKeys(Collections.EMPTY_SET);
-    }
     
     @Override
     protected Node[] createNodes(LocalObjectLight key) {

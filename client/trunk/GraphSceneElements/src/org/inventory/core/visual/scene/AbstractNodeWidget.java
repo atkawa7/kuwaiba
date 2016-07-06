@@ -82,7 +82,8 @@ public class AbstractNodeWidget extends SelectableNodeWidget {
     @Override
     public void notifyStateChanged (ObjectState previousState, ObjectState state) {
         if (state.isSelected())
-            labelWidget.setBorder(BorderFactory.createLineBorder(Color.RED));
+            labelWidget.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(Color.RED, 1, true), BorderFactory.createEmptyBorder(5, 5, 5, 5)));
         else
             labelWidget.setBorder(BorderFactory.createEmptyBorder());
     }   

@@ -44,11 +44,6 @@ public class ServiceChildren extends AbstractChildren {
             setKeys(resources);
         }
     }
-    
-    @Override
-    protected void removeNotify() {
-        setKeys(Collections.EMPTY_SET);
-    } 
 
     @Override
     protected Node[] createNodes(LocalObjectLight key) {

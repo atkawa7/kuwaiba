@@ -16,6 +16,7 @@
  */
 package org.inventory.navigation.applicationnodes.objectnodes;
 
+import java.util.Collections;
 import org.inventory.communications.core.LocalObjectLight;
 import org.openide.nodes.Children;
 
@@ -27,4 +28,9 @@ import org.openide.nodes.Children;
 public abstract class AbstractChildren extends Children.Keys<LocalObjectLight> {
     @Override
     public abstract void addNotify();
+    
+    @Override
+    protected void removeNotify() {
+        setKeys(Collections.EMPTY_SET);
+    } 
 }

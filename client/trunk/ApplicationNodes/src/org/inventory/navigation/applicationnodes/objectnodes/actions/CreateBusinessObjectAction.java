@@ -23,6 +23,7 @@ import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.MenuScroller;
 import org.inventory.navigation.applicationnodes.objectnodes.AbstractChildren;
@@ -72,7 +73,7 @@ public final class CreateBusinessObjectAction extends AbstractAction implements 
 
         List<LocalClassMetadataLight> items;
         if (node instanceof RootObjectNode) //For the root node
-            items = com.getPossibleChildren(null, false);
+            items = com.getPossibleChildren(Constants.DUMMYROOT, false);
         else
             items = com.getPossibleChildren(((ObjectNode)node).getObject().getClassName(),false);
 

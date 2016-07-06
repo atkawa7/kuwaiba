@@ -29,7 +29,7 @@ public class SpecialChildren extends ObjectChildren {
 
     @Override
     public void addNotify(){
-        assert getNode() instanceof ObjectNode : "This node is not instance of ObjectNode";
+        assert getNode() instanceof ObjectNode : "This node is not an instance of ObjectNode";
         LocalObjectLight parentObject = ((ObjectNode)getNode()).getObject();
 
         List<LocalObjectLight> specialChildren = CommunicationsStub.getInstance().
