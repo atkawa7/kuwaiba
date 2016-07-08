@@ -482,6 +482,14 @@
 
 <xs:element name="getTaskResponse" type="tns:getTaskResponse"/>
 
+<xs:element name="getTasks" type="tns:getTasks"/>
+
+<xs:element name="getTasksForUser" type="tns:getTasksForUser"/>
+
+<xs:element name="getTasksForUserResponse" type="tns:getTasksForUserResponse"/>
+
+<xs:element name="getTasksResponse" type="tns:getTasksResponse"/>
+
 <xs:element name="getUpstreamContainmentHierarchy" type="tns:getUpstreamContainmentHierarchy"/>
 
 <xs:element name="getUpstreamContainmentHierarchyResponse" type="tns:getUpstreamContainmentHierarchyResponse"/>
@@ -749,6 +757,7 @@
 
 <xs:complexType name="remoteTask" final="extension restriction">
 <xs:sequence>
+<xs:element name="id" type="xs:long"/>
 <xs:element name="name" type="xs:string" minOccurs="0"/>
 <xs:element name="description" type="xs:string" minOccurs="0"/>
 <xs:element name="enabled" type="xs:boolean"/>
@@ -1165,6 +1174,18 @@
 <xs:complexType name="getAllClassesLightResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:classInfoLight" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getTasks">
+<xs:sequence>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getTasksResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteTask" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -2437,6 +2458,19 @@
 <xs:complexType name="getGeneralViewsResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:viewInfoLight" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getTasksForUser">
+<xs:sequence>
+<xs:element name="userId" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getTasksForUserResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteTask" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 

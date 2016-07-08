@@ -203,6 +203,34 @@ public class Constants {
      */
     public static final String PROPERTY_DESCRIPTION = "description";
     /**
+     * Property enabled
+     */
+    public static final String PROPERTY_ENABLED = "enabled"; //NOI18N
+    /**
+     * Property script
+     */
+    public static final String PROPERTY_SCRIPT = "script"; //NOI18N
+    /**
+     * Property executionTime
+     */
+    public static final String PROPERTY_EXECUTION_TYPE = "executionType"; //NOI18N
+    /**
+     * Property everyXMinutes
+     */
+    public static final String PROPERTY_EVERY_X_MINUTES = "everyXMinutes"; //NOI18N
+    /**
+     * Property start time
+     */
+    public static final String PROPERTY_START_TIME = "startTime"; //NOI18N
+    /**
+     * Property Notification Type
+     */
+    public static final String PROPERTY_NOTIFICATION_TYPE = "notificationType"; //NOI18N
+    /**
+     * Property email
+     */
+    public static final String PROPERTY_EMAIL = "email"; //NOI18N
+    /**
      * Property abstract
      */
     public static final String PROPERTY_ABSTRACT = "abstract";

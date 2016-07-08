@@ -36,6 +36,10 @@ import org.inventory.communications.core.LocalObjectLightList;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.core.LocalPool;
 import org.inventory.communications.core.LocalReportDescriptor;
+import org.inventory.communications.core.LocalTask;
+import org.inventory.communications.core.LocalTaskNotificationDescriptor;
+import org.inventory.communications.core.LocalTaskResult;
+import org.inventory.communications.core.LocalTaskScheduleDescriptor;
 import org.inventory.communications.core.LocalUserGroupObject;
 import org.inventory.communications.core.LocalUserObject;
 import org.inventory.communications.core.caching.Cache;
@@ -45,7 +49,6 @@ import org.inventory.communications.core.queries.LocalResultRecord;
 import org.inventory.communications.core.queries.LocalTransientQuery;
 import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalObjectViewLight;
-import org.inventory.communications.util.Constants;
 import org.kuwaiba.wsclient.ApplicationLogEntry;
 import org.kuwaiba.wsclient.ClassInfo;
 import org.kuwaiba.wsclient.ClassInfoLight;
@@ -60,6 +63,8 @@ import org.kuwaiba.wsclient.RemoteObjectLightArray;
 import org.kuwaiba.wsclient.RemoteObjectSpecialRelationships;
 import org.kuwaiba.wsclient.RemotePool;
 import org.kuwaiba.wsclient.RemoteQueryLight;
+import org.kuwaiba.wsclient.RemoteTask;
+import org.kuwaiba.wsclient.RemoteTaskResult;
 import org.kuwaiba.wsclient.ReportDescriptor;
 import org.kuwaiba.wsclient.ResultRecord;
 import org.kuwaiba.wsclient.SdhContainerLinkDefinition;
@@ -67,6 +72,8 @@ import org.kuwaiba.wsclient.SdhPosition;
 import org.kuwaiba.wsclient.ServerSideException_Exception;
 import org.kuwaiba.wsclient.StringArray;
 import org.kuwaiba.wsclient.StringPair;
+import org.kuwaiba.wsclient.TaskNotificationDescriptor;
+import org.kuwaiba.wsclient.TaskScheduleDescriptor;
 import org.kuwaiba.wsclient.TransientQuery;
 import org.kuwaiba.wsclient.UserInfo;
 import org.kuwaiba.wsclient.Validator;
@@ -936,7 +943,156 @@ public class CommunicationsStub {
             return null;
         }
     }// </editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Tasks">
+    /**
+     * Creates a task
+     * @param name Task name
+     * @param description Task description
+     * @param enabled Is the task enabled?
+     * @param script Task script
+     * @param parameters Task parameters as pairs param name/param value
+     * @param schedule Schedule descriptor
+     * @param notificationType Notification type descriptor
+     * @return A local representation of the task if the operation was successful, null otherwise
+     */
+    public LocalTask createTask(String name, String description, boolean enabled, 
+            String script, HashMap<String, String> parameters, LocalTaskScheduleDescriptor schedule, LocalTaskNotificationDescriptor notificationType) {
+        try {
+            TaskScheduleDescriptor atsd = new TaskScheduleDescriptor();
+            atsd.setEveryXMinutes(schedule.getEveryXMinutes());
+            atsd.setExecutionType(schedule.getExecutionType());
+            atsd.setStartTime(schedule.getStartTime());
+            
+            TaskNotificationDescriptor tnd = new TaskNotificationDescriptor();
+            tnd.setEmail(notificationType.getEmail());
+            tnd.setNotificationType(notificationType.getNotificationType());
+            
+            List<StringPair> remoteParameters = new ArrayList<>();
+            
+            for (String parameter : parameters.keySet()) {
+                StringPair remoteParameter = new StringPair();
+                remoteParameter.setKey(parameter);
+                remoteParameter.setValue(parameters.get(parameter));
+                remoteParameters.add(remoteParameter);
+            }
+                
+            long taskId = service.createTask(name, description, enabled, script, 
+                   remoteParameters, atsd, tnd, session.getSessionId());
+            
+            return new LocalTask(taskId, name, description, enabled, script, null, schedule, notificationType);
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Deletes a task
+     * @param taskId Task id
+     * @return True if it could be deleted, false if not
+     */
+    public boolean deleteTask(long taskId) {
+        try {
+            service.deleteTask(taskId, session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Updates the main properties of a task (name, description, enabled or script)
+     * @param taskId Task id
+     * @param propertyName Name of the property to be updated
+     * @param propertyValue Value of the property to be updated
+     * @return True if it could be updated, false if not
+     */
+    public boolean updateTaskProperties(long taskId, String propertyName, String propertyValue) {
+        try {
+            service.updateTaskProperties(taskId, propertyName, propertyValue, session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Updates the main properties of a task (name, description, enabled or script)
+     * @param taskId Task id
+     * @param parameters Set of parameters to be updated. If you want to delete a parameter, the value must be set to null. New entries will be added automatically, while the existing will be updated
+     * @return True if it could be updated, false if not
+     */
+    public boolean updateTaskParameters(long taskId, HashMap<String, String> parameters) {
+        try {
+            
+            List<StringPair> remoteParameters = new ArrayList<>();
+            
+            for (String parameterName : parameters.keySet()) {
+                StringPair remoteParameter = new StringPair();
+                remoteParameter.setKey(parameterName);
+                remoteParameter.setValue(parameters.get(parameterName));
+                remoteParameters.add(remoteParameter);
+            }
+            
+            service.updateTaskParameters(taskId, remoteParameters, session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Gets all registered tasks
+     * @return A list of tasks
+     */
+    public List<LocalTask> getTasks() {
+        try {
+            List<RemoteTask> remoteTasks = service.getTasks(session.getSessionId());
+            List<LocalTask> localTasks = new ArrayList<>();
+            
+            for (RemoteTask remoteTask : remoteTasks) {
+                TaskScheduleDescriptor schedule = remoteTask.getSchedule();
+                LocalTaskScheduleDescriptor ltsd = new LocalTaskScheduleDescriptor(schedule.getStartTime(), schedule.getEveryXMinutes(), schedule.getExecutionType());
 
+                TaskNotificationDescriptor notificationType = remoteTask.getNotificationType();
+                LocalTaskNotificationDescriptor tnd = new LocalTaskNotificationDescriptor(notificationType.getEmail(), notificationType.getNotificationType());
+
+                HashMap<String, String> remoteParameters = new HashMap<>();
+                
+                for (StringPair remoteParameter : remoteTask.getParameters())
+                    remoteParameters.put(remoteParameter.getKey(), remoteParameter.getValue());
+                
+                localTasks.add(new LocalTask(remoteTask.getId(), remoteTask.getName(), 
+                        remoteTask.getDescription(), remoteTask.isEnabled(), remoteTask.getScript(), 
+                        remoteParameters, ltsd, tnd));
+            }
+            
+            return localTasks;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Executes a task on demand
+     * @param taskId Id of the task
+     * @return A local representation of the result
+     */
+    public LocalTaskResult executeTask(long taskId){
+        try {
+            RemoteTaskResult remoteTaskResult  = service.executeTask(taskId, session.getSessionId());
+            return new LocalTaskResult(remoteTaskResult.getMessages(), remoteTaskResult.getErrorMessage(), remoteTaskResult.getResultStatus());
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    //</editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Object methods. Click on the + sign on the left to edit the code.">
     /**
      * 
@@ -947,7 +1103,7 @@ public class CommunicationsStub {
      * @return 
      */
     public LocalObjectLight createObject(String objectClass, String parentClass, long parentOid, long template){
-        try{
+        try {
             long objectId  = service.createObject(objectClass,parentClass, parentOid, new ArrayList<String>(),new ArrayList<StringArray>(),template,this.session.getSessionId());
             return new LocalObjectLight(objectId, null, objectClass);
         }catch(Exception ex){

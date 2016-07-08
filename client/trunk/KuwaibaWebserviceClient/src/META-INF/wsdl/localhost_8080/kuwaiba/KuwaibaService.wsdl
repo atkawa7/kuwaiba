@@ -16,6 +16,18 @@
 <message name="Exception">
 <part name="fault" element="tns:Exception"/>
 </message>
+<message name="setUserProperties">
+<part name="parameters" element="tns:setUserProperties"/>
+</message>
+<message name="setUserPropertiesResponse">
+<part name="parameters" element="tns:setUserPropertiesResponse"/>
+</message>
+<message name="createUser">
+<part name="parameters" element="tns:createUser"/>
+</message>
+<message name="createUserResponse">
+<part name="parameters" element="tns:createUserResponse"/>
+</message>
 <message name="createClass">
 <part name="parameters" element="tns:createClass"/>
 </message>
@@ -39,18 +51,6 @@
 </message>
 <message name="getSubClassesLightResponse">
 <part name="parameters" element="tns:getSubClassesLightResponse"/>
-</message>
-<message name="setUserProperties">
-<part name="parameters" element="tns:setUserProperties"/>
-</message>
-<message name="setUserPropertiesResponse">
-<part name="parameters" element="tns:setUserPropertiesResponse"/>
-</message>
-<message name="createUser">
-<part name="parameters" element="tns:createUser"/>
-</message>
-<message name="createUserResponse">
-<part name="parameters" element="tns:createUserResponse"/>
 </message>
 <message name="getSubClassesLightNoRecursive">
 <part name="parameters" element="tns:getSubClassesLightNoRecursive"/>
@@ -829,11 +829,17 @@
 <message name="getGroupsResponse">
 <part name="parameters" element="tns:getGroupsResponse"/>
 </message>
-<message name="getServices">
-<part name="parameters" element="tns:getServices"/>
+<message name="getTasks">
+<part name="parameters" element="tns:getTasks"/>
 </message>
-<message name="getServicesResponse">
-<part name="parameters" element="tns:getServicesResponse"/>
+<message name="getTasksResponse">
+<part name="parameters" element="tns:getTasksResponse"/>
+</message>
+<message name="getTasksForUser">
+<part name="parameters" element="tns:getTasksForUser"/>
+</message>
+<message name="getTasksForUserResponse">
+<part name="parameters" element="tns:getTasksForUserResponse"/>
 </message>
 <message name="getTask">
 <part name="parameters" element="tns:getTask"/>
@@ -841,17 +847,23 @@
 <message name="getTaskResponse">
 <part name="parameters" element="tns:getTaskResponse"/>
 </message>
-<message name="getAttribute">
-<part name="parameters" element="tns:getAttribute"/>
-</message>
-<message name="getAttributeResponse">
-<part name="parameters" element="tns:getAttributeResponse"/>
-</message>
 <message name="createGroup">
 <part name="parameters" element="tns:createGroup"/>
 </message>
 <message name="createGroupResponse">
 <part name="parameters" element="tns:createGroupResponse"/>
+</message>
+<message name="getServices">
+<part name="parameters" element="tns:getServices"/>
+</message>
+<message name="getServicesResponse">
+<part name="parameters" element="tns:getServicesResponse"/>
+</message>
+<message name="getAttribute">
+<part name="parameters" element="tns:getAttribute"/>
+</message>
+<message name="getAttributeResponse">
+<part name="parameters" element="tns:getAttributeResponse"/>
 </message>
 <message name="createService">
 <part name="parameters" element="tns:createService"/>
@@ -913,6 +925,16 @@
 <output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/executeQueryResponse" message="tns:executeQueryResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/executeQuery/Fault/Exception"/>
 </operation>
+<operation name="setUserProperties">
+<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/setUserPropertiesRequest" message="tns:setUserProperties"/>
+<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/setUserPropertiesResponse" message="tns:setUserPropertiesResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/setUserProperties/Fault/Exception"/>
+</operation>
+<operation name="createUser">
+<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createUserRequest" message="tns:createUser"/>
+<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createUserResponse" message="tns:createUserResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createUser/Fault/Exception"/>
+</operation>
 <operation name="createClass">
 <input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createClassRequest" message="tns:createClass"/>
 <output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createClassResponse" message="tns:createClassResponse"/>
@@ -932,16 +954,6 @@
 <input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getSubClassesLightRequest" message="tns:getSubClassesLight"/>
 <output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getSubClassesLightResponse" message="tns:getSubClassesLightResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getSubClassesLight/Fault/Exception"/>
-</operation>
-<operation name="setUserProperties">
-<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/setUserPropertiesRequest" message="tns:setUserProperties"/>
-<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/setUserPropertiesResponse" message="tns:setUserPropertiesResponse"/>
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/setUserProperties/Fault/Exception"/>
-</operation>
-<operation name="createUser">
-<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createUserRequest" message="tns:createUser"/>
-<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createUserResponse" message="tns:createUserResponse"/>
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createUser/Fault/Exception"/>
 </operation>
 <operation name="getSubClassesLightNoRecursive">
 <input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getSubClassesLightNoRecursiveRequest" message="tns:getSubClassesLightNoRecursive"/>
@@ -1588,25 +1600,35 @@
 <output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getGroupsResponse" message="tns:getGroupsResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getGroups/Fault/Exception"/>
 </operation>
-<operation name="getServices">
-<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getServicesRequest" message="tns:getServices"/>
-<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getServicesResponse" message="tns:getServicesResponse"/>
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getServices/Fault/Exception"/>
+<operation name="getTasks">
+<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getTasksRequest" message="tns:getTasks"/>
+<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getTasksResponse" message="tns:getTasksResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getTasks/Fault/Exception"/>
+</operation>
+<operation name="getTasksForUser">
+<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getTasksForUserRequest" message="tns:getTasksForUser"/>
+<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getTasksForUserResponse" message="tns:getTasksForUserResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getTasksForUser/Fault/Exception"/>
 </operation>
 <operation name="getTask">
 <input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getTaskRequest" message="tns:getTask"/>
 <output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getTaskResponse" message="tns:getTaskResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getTask/Fault/Exception"/>
 </operation>
-<operation name="getAttribute">
-<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getAttributeRequest" message="tns:getAttribute"/>
-<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getAttributeResponse" message="tns:getAttributeResponse"/>
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getAttribute/Fault/Exception"/>
-</operation>
 <operation name="createGroup">
 <input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createGroupRequest" message="tns:createGroup"/>
 <output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createGroupResponse" message="tns:createGroupResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createGroup/Fault/Exception"/>
+</operation>
+<operation name="getServices">
+<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getServicesRequest" message="tns:getServices"/>
+<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getServicesResponse" message="tns:getServicesResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getServices/Fault/Exception"/>
+</operation>
+<operation name="getAttribute">
+<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getAttributeRequest" message="tns:getAttribute"/>
+<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getAttributeResponse" message="tns:getAttributeResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getAttribute/Fault/Exception"/>
 </operation>
 <operation name="createService">
 <input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createServiceRequest" message="tns:createService"/>
@@ -1668,6 +1690,30 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
+<operation name="setUserProperties">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="createUser">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
 <operation name="createClass">
 <soap:operation soapAction=""/>
 <input>
@@ -1705,30 +1751,6 @@
 </fault>
 </operation>
 <operation name="getSubClassesLight">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="Exception">
-<soap:fault name="Exception" use="literal"/>
-</fault>
-</operation>
-<operation name="setUserProperties">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="Exception">
-<soap:fault name="Exception" use="literal"/>
-</fault>
-</operation>
-<operation name="createUser">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -3288,7 +3310,19 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
-<operation name="getServices">
+<operation name="getTasks">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="getTasksForUser">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -3312,7 +3346,7 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
-<operation name="getAttribute">
+<operation name="createGroup">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -3324,7 +3358,19 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
-<operation name="createGroup">
+<operation name="getServices">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="getAttribute">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
