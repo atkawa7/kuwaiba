@@ -29,6 +29,10 @@ import org.kuwaiba.ws.todeserialize.StringPair;
 @XmlAccessorType(XmlAccessType.FIELD)
 public final class RemoteTask implements Serializable {
     /**
+     * Task id
+     */
+    private long id;
+    /**
      * Task name
      */
     private String name;
@@ -60,7 +64,8 @@ public final class RemoteTask implements Serializable {
     //No-arg constructor required
     public RemoteTask() {   }
 
-    public RemoteTask(String name, String description, boolean enabled, String script, List<StringPair> parameters, TaskScheduleDescriptor schedule, TaskNotificationDescriptor notificationType) {
+    public RemoteTask(long id, String name, String description, boolean enabled, String script, List<StringPair> parameters, TaskScheduleDescriptor schedule, TaskNotificationDescriptor notificationType) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.enabled = enabled;

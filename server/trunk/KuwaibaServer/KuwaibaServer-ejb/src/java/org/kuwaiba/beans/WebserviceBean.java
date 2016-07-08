@@ -2062,8 +2062,50 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateCall("getTask", ipAddress, sessionId);
             Task theTask = aem.getTask(taskId);
-            return new RemoteTask(theTask.getName(), theTask.getDescription(), theTask.isEnabled(), theTask.getScript(),
+            return new RemoteTask(theTask.getId(), theTask.getName(), theTask.getDescription(), theTask.isEnabled(), theTask.getScript(),
                                     theTask.getParameters(), theTask.getSchedule(), theTask.getNotificationType());
+            
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public List<RemoteTask> getTasks(String ipAddress, String sessionId) throws ServerSideException  {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("getTasks", ipAddress, sessionId);
+            List<Task> tasks = aem.getTasks();
+            
+            List<RemoteTask> remoteTasks = new ArrayList<>();
+            
+            for (Task task : tasks)
+                remoteTasks.add(new RemoteTask(task.getId(), task.getName(), task.getDescription(), task.isEnabled(), task.getScript(),
+                                    task.getParameters(), task.getSchedule(), task.getNotificationType()));
+            
+            return remoteTasks;
+            
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public List<RemoteTask> getTasksForUser(long userId, String ipAddress, String sessionId) throws ServerSideException  {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("getTasks", ipAddress, sessionId);
+            List<Task> tasks = aem.getTasksForUser(userId);
+            
+            List<RemoteTask> remoteTasks = new ArrayList<>();
+            
+            for (Task task : tasks)
+                remoteTasks.add(new RemoteTask(task.getId(), task.getName(), task.getDescription(), task.isEnabled(), task.getScript(),
+                                    task.getParameters(), task.getSchedule(), task.getNotificationType()));
+            
+            return remoteTasks;
             
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());

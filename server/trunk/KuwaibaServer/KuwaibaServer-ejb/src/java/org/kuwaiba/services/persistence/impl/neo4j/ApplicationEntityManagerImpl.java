@@ -21,6 +21,7 @@ import com.ociweb.xml.StartTagWAX;
 import com.ociweb.xml.WAX;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
+import groovy.lang.MissingPropertyException;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -37,6 +38,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.codehaus.groovy.control.MultipleCompilationErrorsException;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
@@ -57,7 +59,6 @@ import org.kuwaiba.apis.persistence.application.TaskResult;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.application.ViewObject;
 import org.kuwaiba.apis.persistence.application.ViewObjectLight;
-import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectList;
@@ -151,17 +152,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
      */
     private CacheManager cm;
     /**
-     * Hashmap with the current sessions. The key is the username, the value is the respective session object
+     * Map with the current sessions. The key is the username, the value is the respective session object
      */
     private HashMap<String, Session> sessions;
     /**
      * A library of all registered commercial modules
      */
     private HashMap<String, GenericCommercialModule> commercialModules;
-    /**
-     * Reference to the bem
-     */
-    private BusinessEntityManager bem;
     
     public ApplicationEntityManagerImpl() {
         this.cm = CacheManager.getInstance();
@@ -169,10 +166,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         this.configuration = new Properties();
     }
 
-    public ApplicationEntityManagerImpl(ConnectionManager cmn, BusinessEntityManager bem) {
+    public ApplicationEntityManagerImpl(ConnectionManager cmn) {
         this();
         this.graphDb = (GraphDatabaseService) cmn.getConnectionHandler();
-        this.bem = bem;
         try(Transaction tx = graphDb.beginTx()){
             this.userIndex = graphDb.index().forNodes(Constants.INDEX_USERS);
             this.groupIndex = graphDb.index().forNodes(Constants.INDEX_GROUPS);
@@ -1946,13 +1942,87 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             TaskNotificationDescriptor notificationType = new TaskNotificationDescriptor((String)taskNode.getProperty(Constants.PROPERTY_EMAIL), 
                                                                                 (int)taskNode.getProperty(Constants.PROPERTY_NOTIFICATION_TYPE));
             
-            return new Task((String)taskNode.getProperty(Constants.PROPERTY_NAME), 
+            return new Task(taskNode.getId(),
+                            (String)taskNode.getProperty(Constants.PROPERTY_NAME), 
                             (String)taskNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
                             (boolean)taskNode.getProperty(Constants.PROPERTY_ENABLED), 
                             taskNode.hasProperty(Constants.PROPERTY_SCRIPT) ? (String)taskNode.getProperty(Constants.PROPERTY_SCRIPT) : null, 
                             parameters, schedule, notificationType);
         }
     }
+
+    @Override
+    public List<Task> getTasks() {
+        try (Transaction tx = graphDb.beginTx()) {
+            IndexHits<Node> taskNodes = taskIndex.query(Constants.PROPERTY_ID, "*");
+            List<Task> allTasks = new ArrayList<>();
+            for (Node taskNode : taskNodes) {
+                Iterable<String> allProperties = taskNode.getPropertyKeys();
+            
+                List<StringPair> parameters = new ArrayList<>();
+
+                for (String property : allProperties) {
+                    if (property.startsWith("PARAM_"))
+                        parameters.add(new StringPair(property.replace("PARAM_", ""), (String)taskNode.getProperty(property)));
+                }
+
+                TaskScheduleDescriptor schedule = new TaskScheduleDescriptor((long)taskNode.getProperty(Constants.PROPERTY_START_TIME),
+                                                        (int)taskNode.getProperty(Constants.PROPERTY_EVERY_X_MINUTES), 
+                                                        (int)taskNode.getProperty(Constants.PROPERTY_EXECUTION_TYPE));
+
+                TaskNotificationDescriptor notificationType = new TaskNotificationDescriptor((String)taskNode.getProperty(Constants.PROPERTY_EMAIL), 
+                                                                                    (int)taskNode.getProperty(Constants.PROPERTY_NOTIFICATION_TYPE));
+
+                allTasks.add(new Task(taskNode.getId(),
+                                (String)taskNode.getProperty(Constants.PROPERTY_NAME), 
+                                (String)taskNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
+                                (boolean)taskNode.getProperty(Constants.PROPERTY_ENABLED), 
+                                taskNode.hasProperty(Constants.PROPERTY_SCRIPT) ? (String)taskNode.getProperty(Constants.PROPERTY_SCRIPT) : null, 
+                                parameters, schedule, notificationType));
+            }
+            return allTasks;
+        }
+    }
+
+    @Override
+    public List<Task> getTasksForUser(long userId) throws ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node userNode = userIndex.get(Constants.PROPERTY_ID, userId).getSingle();
+            if (userNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("The user with id %s could not be found", userId));
+            
+            List<Task> allTasks = new ArrayList<>();
+            
+            for (Relationship rel : userNode.getRelationships(Direction.OUTGOING, RelTypes.SUBSCRIBED_TO)) {
+                Node taskNode = rel.getEndNode();
+                Iterable<String> allProperties = taskNode.getPropertyKeys();
+            
+                List<StringPair> parameters = new ArrayList<>();
+
+                for (String property : allProperties) {
+                    if (property.startsWith("PARAM_"))
+                        parameters.add(new StringPair(property.replace("PARAM_", ""), (String)taskNode.getProperty(property)));
+                }
+
+                TaskScheduleDescriptor schedule = new TaskScheduleDescriptor((long)taskNode.getProperty(Constants.PROPERTY_START_TIME),
+                                                        (int)taskNode.getProperty(Constants.PROPERTY_EVERY_X_MINUTES), 
+                                                        (int)taskNode.getProperty(Constants.PROPERTY_EXECUTION_TYPE));
+
+                TaskNotificationDescriptor notificationType = new TaskNotificationDescriptor((String)taskNode.getProperty(Constants.PROPERTY_EMAIL), 
+                                                                                    (int)taskNode.getProperty(Constants.PROPERTY_NOTIFICATION_TYPE));
+
+                allTasks.add(new Task(taskNode.getId(),
+                                (String)taskNode.getProperty(Constants.PROPERTY_NAME), 
+                                (String)taskNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
+                                (boolean)taskNode.getProperty(Constants.PROPERTY_ENABLED), 
+                                taskNode.hasProperty(Constants.PROPERTY_SCRIPT) ? (String)taskNode.getProperty(Constants.PROPERTY_SCRIPT) : null, 
+                                parameters, schedule, notificationType));
+            }
+            
+            return allTasks;
+        }
+    }
+    
     
     @Override
     public TaskResult executeTask(long taskId) throws ApplicationObjectNotFoundException, InvalidArgumentException {
@@ -1974,10 +2044,19 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             Binding environmentParameters = new Binding();
             environmentParameters.setVariable("graphDb", graphDb); //NOI18N
+            environmentParameters.setVariable("objectIndex", objectIndex); //NOI18N
+            environmentParameters.setVariable("classIndex", classIndex); //NOI18N
+            environmentParameters.setVariable("TaskResult", TaskResult.class); //NOI18N
+            environmentParameters.setVariable("Constants", Constants.class); //NOI18N
+            environmentParameters.setVariable("Direction", Direction.class); //NOI18N
+            environmentParameters.setVariable("RelTypes", RelTypes.class); //NOI18N
             environmentParameters.setVariable("scriptParameters", scriptParameters); //NOI18N
-            
-            GroovyShell shell = new GroovyShell(environmentParameters);
-            return (TaskResult)shell.evaluate(script);
+            try {
+                GroovyShell shell = new GroovyShell(environmentParameters);
+                return (TaskResult)shell.evaluate(script);
+            } catch(MultipleCompilationErrorsException | MissingPropertyException ex) {
+                return new TaskResult(null, TaskResult.STATUS_ERROR, ex.getMessage());
+            }
         }
     }
     
@@ -2160,4 +2239,32 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         throw new ObjectNotFoundException(className, oid);
     }    
     //End of Helpers
+    
+//    public class ScriptClassLoader extends ClassLoader {
+//
+//        @Override
+//        protected Class<?> findClass(String name) throws ClassNotFoundException {
+//            return loadClass(name, true);
+//        }
+//
+//        @Override
+//        protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+//            switch(name) {
+//                case "TaskResult":
+//                    return TaskResult.class;
+//                case "String":
+//                    return String.class;
+//                case "HashMap":
+//                    return HashMap.class;
+//                case "List":
+//                    return List.class;
+//                case "ArrayList":
+//                    return ArrayList.class;
+//                case "Exception":
+//                    return Exception.class;
+//                default:
+//                    throw new ClassNotFoundException(String.format("Class %s could not be found or is not accessible", name));
+//            }
+//        }
+//    }
 }

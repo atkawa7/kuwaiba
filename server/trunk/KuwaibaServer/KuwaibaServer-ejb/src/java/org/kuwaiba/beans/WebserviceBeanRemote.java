@@ -294,6 +294,10 @@ public interface WebserviceBeanRemote {
     public void updateTaskNotificationType(long taskId, TaskNotificationDescriptor notificationType, String ipAddress, String sessionId) throws ServerSideException;
 
     public RemoteTask getTask(long taskId, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public List<RemoteTask> getTasks(String ipAddress, String sessionId) throws ServerSideException;
+    
+    public List<RemoteTask> getTasksForUser(long userId, String ipAddress, String sessionId) throws ServerSideException;
 
     public void deleteTask(long taskId, String ipAddress, String sessionId) throws ServerSideException;
 

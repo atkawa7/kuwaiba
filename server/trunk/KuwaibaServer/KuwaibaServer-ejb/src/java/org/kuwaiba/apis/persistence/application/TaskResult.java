@@ -16,6 +16,7 @@
 package org.kuwaiba.apis.persistence.application;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -50,6 +51,11 @@ public class TaskResult implements Serializable {
      */
     private String errorMessage;
 
+    public TaskResult() {
+        this.messages = new ArrayList<>();
+        this.resultStatus = STATUS_SUCCESS;
+    }
+    
     public TaskResult(List<String> messages, int resultStatus, String errorMessage) {
         this.messages = messages;
         this.resultStatus = resultStatus;
@@ -78,6 +84,10 @@ public class TaskResult implements Serializable {
 
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
+    }
+    
+    public static TaskResult createErrorResult(String message) {
+        return new TaskResult(null, STATUS_ERROR, message);
     }
     
 }    

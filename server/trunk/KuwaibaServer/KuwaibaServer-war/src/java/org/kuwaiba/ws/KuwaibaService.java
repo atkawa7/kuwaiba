@@ -1293,6 +1293,48 @@ public class KuwaibaService {
     }
     
     /**
+     * Gets all the regiistered tasks
+     * @param sessionId Session token
+     * @return A list of task objects
+     * @throws Exception In case something goes wrong
+     */
+    @WebMethod(operationName = "getTasks")
+    public List<RemoteTask> getTasks(@WebParam(name = "sessionId")String sessionId) throws Exception {
+        try {
+            return wsBean.getTasks(getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getTasks: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Gets all the tasks related to a particular user
+     * @param userId User if
+     * @param sessionId Session token
+     * @return A list of task objects
+     * @throws Exception In case something goes wrong
+     */
+    @WebMethod(operationName = "getTasksForUser")
+    public List<RemoteTask> getTasksForUser(@WebParam(name = "userId")long userId,
+            @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try {
+            return wsBean.getTasksForUser(userId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getTasksForUser: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
      * Deletes a task and unsubscribes all users from it
      * @param taskId Task id
      * @param sessionId Session token

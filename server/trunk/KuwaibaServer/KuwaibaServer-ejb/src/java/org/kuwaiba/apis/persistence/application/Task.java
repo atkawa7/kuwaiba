@@ -15,10 +15,7 @@
  */
 package org.kuwaiba.apis.persistence.application;
 
-import java.io.Serializable;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import org.kuwaiba.ws.todeserialize.StringPair;
 import org.kuwaiba.ws.toserialize.application.TaskNotificationDescriptor;
 import org.kuwaiba.ws.toserialize.application.TaskScheduleDescriptor;
@@ -28,8 +25,11 @@ import org.kuwaiba.ws.toserialize.application.TaskScheduleDescriptor;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 
-@XmlAccessorType(XmlAccessType.FIELD)
-public final class Task implements Serializable {
+public final class Task {
+    /**
+     * Task id
+     */
+    private long id;
     /**
      * Task name
      */
@@ -59,7 +59,8 @@ public final class Task implements Serializable {
      */
     private TaskNotificationDescriptor notificationType;
 
-    public Task(String name, String description, boolean enabled, String script, List<StringPair> parameters, TaskScheduleDescriptor schedule, TaskNotificationDescriptor notificationType) {
+    public Task(long id, String name, String description, boolean enabled, String script, List<StringPair> parameters, TaskScheduleDescriptor schedule, TaskNotificationDescriptor notificationType) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.enabled = enabled;
@@ -124,5 +125,14 @@ public final class Task implements Serializable {
     public void setScript(String script) {
         this.script = script;
     }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+    
 }    
     

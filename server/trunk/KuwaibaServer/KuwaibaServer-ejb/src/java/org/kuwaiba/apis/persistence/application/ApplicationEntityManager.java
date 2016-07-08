@@ -766,6 +766,18 @@ public interface ApplicationEntityManager {
      */
     public Task getTask(long taskId) throws ApplicationObjectNotFoundException;
     /**
+     * Gets all registered tasks
+     * @return A list with the task objects
+     */
+    public List<Task> getTasks();
+    /**
+     * Gets the tasks associated to a particular user
+     * @param userId Id if the user
+     * @return A list with the task objects
+     * @throws ApplicationObjectNotFoundException If the user can not be found
+     */
+    public List<Task> getTasksForUser(long userId) throws ApplicationObjectNotFoundException;
+    /**
      * Executes a task on demand
      * @param taskId Id of the task
      * @return An object representing the task result
