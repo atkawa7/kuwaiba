@@ -1925,29 +1925,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             Node taskNode = taskIndex.get(Constants.PROPERTY_ID, taskId).getSingle();
             if (taskNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", taskId));
-            
-            Iterable<String> allProperties = taskNode.getPropertyKeys();
-            
-            List<StringPair> parameters = new ArrayList<>();
-            
-            for (String property : allProperties) {
-                if (property.startsWith("PARAM_"))
-                    parameters.add(new StringPair(property.replace("PARAM_", ""), (String)taskNode.getProperty(property)));
-            }
-            
-            TaskScheduleDescriptor schedule = new TaskScheduleDescriptor((long)taskNode.getProperty(Constants.PROPERTY_START_TIME),
-                                                    (int)taskNode.getProperty(Constants.PROPERTY_EVERY_X_MINUTES), 
-                                                    (int)taskNode.getProperty(Constants.PROPERTY_EXECUTION_TYPE));
-            
-            TaskNotificationDescriptor notificationType = new TaskNotificationDescriptor((String)taskNode.getProperty(Constants.PROPERTY_EMAIL), 
-                                                                                (int)taskNode.getProperty(Constants.PROPERTY_NOTIFICATION_TYPE));
-            
-            return new Task(taskNode.getId(),
-                            (String)taskNode.getProperty(Constants.PROPERTY_NAME), 
-                            (String)taskNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
-                            (boolean)taskNode.getProperty(Constants.PROPERTY_ENABLED), 
-                            taskNode.hasProperty(Constants.PROPERTY_SCRIPT) ? (String)taskNode.getProperty(Constants.PROPERTY_SCRIPT) : null, 
-                            parameters, schedule, notificationType);
+                        
+            return Util.createTaskFromNode(taskNode);
         }
     }
 
@@ -1956,30 +1935,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         try (Transaction tx = graphDb.beginTx()) {
             IndexHits<Node> taskNodes = taskIndex.query(Constants.PROPERTY_ID, "*");
             List<Task> allTasks = new ArrayList<>();
-            for (Node taskNode : taskNodes) {
-                Iterable<String> allProperties = taskNode.getPropertyKeys();
+            for (Node taskNode : taskNodes)               
+                allTasks.add(Util.createTaskFromNode(taskNode));
             
-                List<StringPair> parameters = new ArrayList<>();
-
-                for (String property : allProperties) {
-                    if (property.startsWith("PARAM_"))
-                        parameters.add(new StringPair(property.replace("PARAM_", ""), (String)taskNode.getProperty(property)));
-                }
-
-                TaskScheduleDescriptor schedule = new TaskScheduleDescriptor((long)taskNode.getProperty(Constants.PROPERTY_START_TIME),
-                                                        (int)taskNode.getProperty(Constants.PROPERTY_EVERY_X_MINUTES), 
-                                                        (int)taskNode.getProperty(Constants.PROPERTY_EXECUTION_TYPE));
-
-                TaskNotificationDescriptor notificationType = new TaskNotificationDescriptor((String)taskNode.getProperty(Constants.PROPERTY_EMAIL), 
-                                                                                    (int)taskNode.getProperty(Constants.PROPERTY_NOTIFICATION_TYPE));
-
-                allTasks.add(new Task(taskNode.getId(),
-                                (String)taskNode.getProperty(Constants.PROPERTY_NAME), 
-                                (String)taskNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
-                                (boolean)taskNode.getProperty(Constants.PROPERTY_ENABLED), 
-                                taskNode.hasProperty(Constants.PROPERTY_SCRIPT) ? (String)taskNode.getProperty(Constants.PROPERTY_SCRIPT) : null, 
-                                parameters, schedule, notificationType));
-            }
             return allTasks;
         }
     }
@@ -1995,28 +1953,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             for (Relationship rel : userNode.getRelationships(Direction.OUTGOING, RelTypes.SUBSCRIBED_TO)) {
                 Node taskNode = rel.getEndNode();
-                Iterable<String> allProperties = taskNode.getPropertyKeys();
-            
-                List<StringPair> parameters = new ArrayList<>();
 
-                for (String property : allProperties) {
-                    if (property.startsWith("PARAM_"))
-                        parameters.add(new StringPair(property.replace("PARAM_", ""), (String)taskNode.getProperty(property)));
-                }
-
-                TaskScheduleDescriptor schedule = new TaskScheduleDescriptor((long)taskNode.getProperty(Constants.PROPERTY_START_TIME),
-                                                        (int)taskNode.getProperty(Constants.PROPERTY_EVERY_X_MINUTES), 
-                                                        (int)taskNode.getProperty(Constants.PROPERTY_EXECUTION_TYPE));
-
-                TaskNotificationDescriptor notificationType = new TaskNotificationDescriptor((String)taskNode.getProperty(Constants.PROPERTY_EMAIL), 
-                                                                                    (int)taskNode.getProperty(Constants.PROPERTY_NOTIFICATION_TYPE));
-
-                allTasks.add(new Task(taskNode.getId(),
-                                (String)taskNode.getProperty(Constants.PROPERTY_NAME), 
-                                (String)taskNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
-                                (boolean)taskNode.getProperty(Constants.PROPERTY_ENABLED), 
-                                taskNode.hasProperty(Constants.PROPERTY_SCRIPT) ? (String)taskNode.getProperty(Constants.PROPERTY_SCRIPT) : null, 
-                                parameters, schedule, notificationType));
+                allTasks.add(Util.createTaskFromNode(taskNode));
             }
             
             return allTasks;

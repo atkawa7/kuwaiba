@@ -72,6 +72,7 @@ import org.kuwaiba.ws.toserialize.application.ResultRecord;
 import org.kuwaiba.ws.toserialize.application.TaskNotificationDescriptor;
 import org.kuwaiba.ws.toserialize.application.TaskScheduleDescriptor;
 import org.kuwaiba.ws.toserialize.application.UserInfo;
+import org.kuwaiba.ws.toserialize.application.UserInfoLight;
 import org.kuwaiba.ws.toserialize.application.Validator;
 import org.kuwaiba.ws.toserialize.application.ViewInfo;
 import org.kuwaiba.ws.toserialize.application.ViewInfoLight;
@@ -2062,8 +2063,13 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateCall("getTask", ipAddress, sessionId);
             Task theTask = aem.getTask(taskId);
+            List<UserInfoLight> users = new ArrayList<>();
+            
+            for (UserProfile aUser : theTask.getUsers())
+                users.add(new UserInfoLight(aUser));
+            
             return new RemoteTask(theTask.getId(), theTask.getName(), theTask.getDescription(), theTask.isEnabled(), theTask.getScript(),
-                                    theTask.getParameters(), theTask.getSchedule(), theTask.getNotificationType());
+                                    theTask.getParameters(), theTask.getSchedule(), theTask.getNotificationType(), users);
             
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -2080,9 +2086,13 @@ public class WebserviceBean implements WebserviceBeanRemote {
             
             List<RemoteTask> remoteTasks = new ArrayList<>();
             
-            for (Task task : tasks)
+            for (Task task : tasks) {
+                List<UserInfoLight> users = new ArrayList<>();
+                for (UserProfile aUser : task.getUsers())
+                    users.add(new UserInfoLight(aUser));
                 remoteTasks.add(new RemoteTask(task.getId(), task.getName(), task.getDescription(), task.isEnabled(), task.getScript(),
-                                    task.getParameters(), task.getSchedule(), task.getNotificationType()));
+                                    task.getParameters(), task.getSchedule(), task.getNotificationType(), users));
+            }
             
             return remoteTasks;
             
@@ -2101,10 +2111,13 @@ public class WebserviceBean implements WebserviceBeanRemote {
             
             List<RemoteTask> remoteTasks = new ArrayList<>();
             
-            for (Task task : tasks)
+            for (Task task : tasks) {
+                List<UserInfoLight> users = new ArrayList<>();
+                for (UserProfile aUser : task.getUsers())
+                    users.add(new UserInfoLight(aUser));
                 remoteTasks.add(new RemoteTask(task.getId(), task.getName(), task.getDescription(), task.isEnabled(), task.getScript(),
-                                    task.getParameters(), task.getSchedule(), task.getNotificationType()));
-            
+                                    task.getParameters(), task.getSchedule(), task.getNotificationType(), users));
+            }
             return remoteTasks;
             
         } catch (InventoryException ex) {

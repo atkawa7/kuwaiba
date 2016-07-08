@@ -41,6 +41,7 @@ import java.util.Set;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.Pool;
 import org.kuwaiba.apis.persistence.application.Privilege;
+import org.kuwaiba.apis.persistence.application.Task;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
@@ -54,7 +55,10 @@ import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.apis.persistence.metadata.GenericObjectList;
 import org.kuwaiba.services.persistence.impl.neo4j.RelTypes;
+import org.kuwaiba.ws.todeserialize.StringPair;
 import org.kuwaiba.ws.toserialize.application.RemotePool;
+import org.kuwaiba.ws.toserialize.application.TaskNotificationDescriptor;
+import org.kuwaiba.ws.toserialize.application.TaskScheduleDescriptor;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.Label;
@@ -415,6 +419,38 @@ public class Util {
                         poolNode.hasProperty(Constants.PROPERTY_DESCRIPTION) ? (String)poolNode.getProperty(Constants.PROPERTY_DESCRIPTION) : null,
                         (String)poolNode.getProperty(Constants.PROPERTY_CLASS_NAME), 
                         poolNode.hasProperty(Constants.PROPERTY_TYPE) ? (int)poolNode.getProperty(Constants.PROPERTY_TYPE) : -1);
+    }
+    
+    public static Task createTaskFromNode(Node taskNode) {
+        Iterable<String> allProperties = taskNode.getPropertyKeys();
+            
+        List<StringPair> parameters = new ArrayList<>();
+
+        for (String property : allProperties) {
+            if (property.startsWith("PARAM_"))
+                parameters.add(new StringPair(property.replace("PARAM_", ""), (String)taskNode.getProperty(property)));
+        }
+
+        
+        TaskScheduleDescriptor schedule = new TaskScheduleDescriptor(taskNode.hasProperty(Constants.PROPERTY_START_TIME) ? (long)taskNode.getProperty(Constants.PROPERTY_START_TIME) : 0,
+                                                taskNode.hasProperty(Constants.PROPERTY_EVERY_X_MINUTES) ? (int)taskNode.getProperty(Constants.PROPERTY_EVERY_X_MINUTES) : 0, 
+                                                taskNode.hasProperty(Constants.PROPERTY_EXECUTION_TYPE) ? (int)taskNode.getProperty(Constants.PROPERTY_EXECUTION_TYPE) : 0);
+
+        TaskNotificationDescriptor notificationType = new TaskNotificationDescriptor(taskNode.hasProperty(Constants.PROPERTY_EMAIL) ? (String)taskNode.getProperty(Constants.PROPERTY_EMAIL) : "", 
+                                                                            taskNode.hasProperty(Constants.PROPERTY_NOTIFICATION_TYPE) ? (int)taskNode.getProperty(Constants.PROPERTY_NOTIFICATION_TYPE) : 0);
+        
+        List<UserProfile> subscribedUsers = new ArrayList<>();
+        
+        for (Relationship rel : taskNode.getRelationships(Direction.INCOMING, RelTypes.SUBSCRIBED_TO))
+            subscribedUsers.add(createUserProfileFromNode(rel.getStartNode()));
+        
+        return new Task(taskNode.getId(),
+                                (String)taskNode.getProperty(Constants.PROPERTY_NAME), 
+                                (String)taskNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
+                                (boolean)taskNode.getProperty(Constants.PROPERTY_ENABLED), 
+                                taskNode.hasProperty(Constants.PROPERTY_SCRIPT) ? (String)taskNode.getProperty(Constants.PROPERTY_SCRIPT) : null, 
+                                parameters, schedule, notificationType, subscribedUsers);
+        
     }
     
     /**

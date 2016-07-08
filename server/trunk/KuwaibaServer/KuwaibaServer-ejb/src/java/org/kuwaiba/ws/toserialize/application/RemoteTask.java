@@ -60,11 +60,16 @@ public final class RemoteTask implements Serializable {
      * How the results of the task should be notified to the subscribed users
      */
     private TaskNotificationDescriptor notificationType;
+    /**
+     * Users subscribed to this task
+     */
+    private List<UserInfoLight> users;
 
     //No-arg constructor required
     public RemoteTask() {   }
 
-    public RemoteTask(long id, String name, String description, boolean enabled, String script, List<StringPair> parameters, TaskScheduleDescriptor schedule, TaskNotificationDescriptor notificationType) {
+    public RemoteTask(long id, String name, String description, boolean enabled, 
+            String script, List<StringPair> parameters, TaskScheduleDescriptor schedule, TaskNotificationDescriptor notificationType, List<UserInfoLight> users) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -73,6 +78,7 @@ public final class RemoteTask implements Serializable {
         this.parameters = parameters;
         this.schedule = schedule;
         this.notificationType = notificationType;
+        this.users = users;
     }
     
     public String getName() {
@@ -129,6 +135,22 @@ public final class RemoteTask implements Serializable {
 
     public void setScript(String script) {
         this.script = script;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public List<UserInfoLight> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<UserInfoLight> users) {
+        this.users = users;
     }
 }    
     

@@ -26,7 +26,7 @@ import org.kuwaiba.apis.persistence.application.UserProfile;
  * @author Adrian Fernando Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class UserInfoLight implements Serializable{
+public class UserInfoLight implements Serializable {
     /**
      * User's id
      */

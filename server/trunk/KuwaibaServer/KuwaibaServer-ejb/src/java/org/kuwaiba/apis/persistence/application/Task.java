@@ -58,8 +58,13 @@ public final class Task {
      * How the results of the task should be notified to the subscribed users
      */
     private TaskNotificationDescriptor notificationType;
+    /**
+     * Users subscribed to the task
+     */
+    private List<UserProfile> users;
 
-    public Task(long id, String name, String description, boolean enabled, String script, List<StringPair> parameters, TaskScheduleDescriptor schedule, TaskNotificationDescriptor notificationType) {
+    public Task(long id, String name, String description, boolean enabled, String script, 
+            List<StringPair> parameters, TaskScheduleDescriptor schedule, TaskNotificationDescriptor notificationType, List<UserProfile> users) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -68,6 +73,7 @@ public final class Task {
         this.parameters = parameters;
         this.schedule = schedule;
         this.notificationType = notificationType;
+        this.users = users;
     }
     
     public String getName() {
@@ -132,6 +138,14 @@ public final class Task {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public List<UserProfile> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<UserProfile> users) {
+        this.users = users;
     }
     
 }    
