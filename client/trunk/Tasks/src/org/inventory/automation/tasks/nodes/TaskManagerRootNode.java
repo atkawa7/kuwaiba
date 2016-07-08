@@ -17,7 +17,9 @@ package org.inventory.automation.tasks.nodes;
 
 import java.util.Collections;
 import java.util.List;
+import javax.swing.Action;
 import org.inventory.automation.tasks.TaskManagerService;
+import org.inventory.automation.tasks.nodes.actions.TaskManagerActionFactory;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalTask;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -36,7 +38,14 @@ public class TaskManagerRootNode extends AbstractNode {
         super(new TaskManagerRootChildren());
         setDisplayName("Task Manager Root");
         setIconBaseWithExtension(DEFAULT_ICON_PATH);
-    }   
+    }
+
+    @Override
+    public Action[] getActions(boolean context) {
+        return new Action[] { TaskManagerActionFactory.createCreateTaskAction() };
+    }
+    
+    
     
     public static class TaskManagerRootChildren extends Children.Keys<LocalTask> {
 

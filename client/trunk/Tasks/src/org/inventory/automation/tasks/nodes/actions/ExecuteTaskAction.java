@@ -35,7 +35,7 @@ public class ExecuteTaskAction extends AbstractAction {
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        LocalTask selectedTask = Utilities.actionsGlobalContext().lookup (LocalTask.class);
+        LocalTask selectedTask = Utilities.actionsGlobalContext().lookup(LocalTask.class);
         LocalTaskResult taskResult = CommunicationsStub.getInstance().executeTask(selectedTask.getId());
         
         if (taskResult == null)

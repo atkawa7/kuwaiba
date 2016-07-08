@@ -959,22 +959,30 @@ public class CommunicationsStub {
     public LocalTask createTask(String name, String description, boolean enabled, 
             String script, HashMap<String, String> parameters, LocalTaskScheduleDescriptor schedule, LocalTaskNotificationDescriptor notificationType) {
         try {
-            TaskScheduleDescriptor atsd = new TaskScheduleDescriptor();
-            atsd.setEveryXMinutes(schedule.getEveryXMinutes());
-            atsd.setExecutionType(schedule.getExecutionType());
-            atsd.setStartTime(schedule.getStartTime());
+            TaskScheduleDescriptor atsd = null;
+            if (schedule != null) {
+                atsd = new TaskScheduleDescriptor();
+                atsd.setEveryXMinutes(schedule.getEveryXMinutes());
+                atsd.setExecutionType(schedule.getExecutionType());
+                atsd.setStartTime(schedule.getStartTime());
+            }
             
-            TaskNotificationDescriptor tnd = new TaskNotificationDescriptor();
-            tnd.setEmail(notificationType.getEmail());
-            tnd.setNotificationType(notificationType.getNotificationType());
+            TaskNotificationDescriptor tnd = null;
+            if (notificationType != null) {
+                tnd = new TaskNotificationDescriptor();
+                tnd.setEmail(notificationType.getEmail());
+                tnd.setNotificationType(notificationType.getNotificationType());
+            }
             
-            List<StringPair> remoteParameters = new ArrayList<>();
-            
-            for (String parameter : parameters.keySet()) {
-                StringPair remoteParameter = new StringPair();
-                remoteParameter.setKey(parameter);
-                remoteParameter.setValue(parameters.get(parameter));
-                remoteParameters.add(remoteParameter);
+            List<StringPair> remoteParameters = null;
+            if (parameters !=  null) {
+                remoteParameters = new ArrayList<>();
+                for (String parameter : parameters.keySet()) {
+                    StringPair remoteParameter = new StringPair();
+                    remoteParameter.setKey(parameter);
+                    remoteParameter.setValue(parameters.get(parameter));
+                    remoteParameters.add(remoteParameter);
+                }
             }
                 
             long taskId = service.createTask(name, description, enabled, script, 

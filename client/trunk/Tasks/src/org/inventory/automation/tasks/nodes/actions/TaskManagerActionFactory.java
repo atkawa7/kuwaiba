@@ -21,10 +21,17 @@ package org.inventory.automation.tasks.nodes.actions;
  */
 public class TaskManagerActionFactory {
     private static ExecuteTaskAction executeTaskAction;
+    private static CreateTaskAction createTaskAction;
     
     public static ExecuteTaskAction createExecuteTaskAction() {
         if (executeTaskAction == null)
             executeTaskAction = new ExecuteTaskAction();
         return executeTaskAction;
+    }
+    
+    public static CreateTaskAction createCreateTaskAction() {
+        if (createTaskAction == null)
+            createTaskAction = new CreateTaskAction();
+        return createTaskAction;
     }
 }
