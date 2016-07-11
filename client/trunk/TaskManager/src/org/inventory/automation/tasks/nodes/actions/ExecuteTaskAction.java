@@ -27,7 +27,7 @@ import org.openide.util.Utilities;
  * Executes the selected task
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ExecuteTaskAction extends AbstractAction {
+class ExecuteTaskAction extends AbstractAction {
     
     ExecuteTaskAction() {
         putValue(NAME, "Execute Task");

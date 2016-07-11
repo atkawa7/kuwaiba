@@ -59,10 +59,18 @@ public class LocalTask implements Comparable<LocalTask> {
      * How the results of the task should be notified to the subscribed users
      */
     private LocalTaskNotificationDescriptor notificationType;
-
+    /**
+     * Users subscribed to this task
+     */
+    private List<LocalUserObjectLight> users;
+    /**
+     * List of listeners of this task's properties
+     */
     private List<PropertyChangeListener> changeListeners;
 
-    public LocalTask(long id, String name, String description, boolean enabled, String script, HashMap<String, String> parameters, LocalTaskScheduleDescriptor schedule, LocalTaskNotificationDescriptor notificationType) {
+    public LocalTask(long id, String name, String description, boolean enabled, 
+            String script, HashMap<String, String> parameters, LocalTaskScheduleDescriptor schedule, 
+            LocalTaskNotificationDescriptor notificationType, List<LocalUserObjectLight> users) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -71,6 +79,7 @@ public class LocalTask implements Comparable<LocalTask> {
         this.parameters = parameters;
         this.schedule = schedule;
         this.notificationType = notificationType;
+        this.users = users;
         this.changeListeners = new ArrayList<>();
     }
     
@@ -201,6 +210,27 @@ public class LocalTask implements Comparable<LocalTask> {
         changeListeners.clear();
     }
 
+    public LocalTaskScheduleDescriptor getSchedule() {
+        return schedule;
+    }
+
+    public void setSchedule(LocalTaskScheduleDescriptor schedule) {
+        this.schedule = schedule;
+    }
+
+    public void setNotificationType(LocalTaskNotificationDescriptor notificationType) {
+        this.notificationType = notificationType;
+    }
+
+    public List<LocalUserObjectLight> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<LocalUserObjectLight> users) {
+        this.users = users;
+    }
+
+    
     @Override
     public int compareTo(LocalTask o) {
         return name.compareTo(o.getName());

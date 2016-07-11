@@ -232,6 +232,7 @@ public class ChildrenViewBuilder implements AbstractViewBuilder {
             widget.setBackground(com.getMetaForClass(node.getClassName(), false).getColor());
 
             lastX += X_OFFSET;
+            scene.validate();
         }
 
         //TODO: This algorithm to find the endpoints for a connection could be improved in many ways
@@ -253,6 +254,7 @@ public class ChildrenViewBuilder implements AbstractViewBuilder {
             newEdge.setLineColor(Utils.getConnectionColor(container.getClassName()));
             newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideWidget));
             newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideWidget));
+            scene.validate();
         }
     }
 

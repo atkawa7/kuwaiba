@@ -29,6 +29,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.Random;
 import java.util.Set;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.visual.actions.providers.CustomAcceptActionProvider;
 import org.inventory.core.visual.actions.providers.SceneConnectProvider;
@@ -137,7 +138,7 @@ public class TopologyViewScene extends AbstractScene<Object, String>
     private NotificationUtil notifier;
 
     public TopologyViewScene(NotificationUtil notifier) {
-        getActions().addAction(ActionFactory.createAcceptAction(new CustomAcceptActionProvider(this)));
+        getActions().addAction(ActionFactory.createAcceptAction(new CustomAcceptActionProvider(this, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT)));
 
         nodeLayer = new LayerWidget(this);
         edgeLayer = new LayerWidget(this);

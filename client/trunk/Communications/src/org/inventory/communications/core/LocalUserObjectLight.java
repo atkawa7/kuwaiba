@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
@@ -13,25 +13,37 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.inventory.automation.tasks.nodes.actions;
+
+package org.inventory.communications.core;
 
 /**
- * Share singletons of all actions applicable to the nodes in this module
+ * Implementation for the local representation of an application user with the most basic information
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class TaskManagerActionFactory {
-    private static ExecuteTaskAction executeTaskAction;
-    private static CreateTaskAction createTaskAction;
-    
-    public static ExecuteTaskAction createExecuteTaskAction() {
-        if (executeTaskAction == null)
-            executeTaskAction = new ExecuteTaskAction();
-        return executeTaskAction;
+public class LocalUserObjectLight {
+
+    private long userId;
+    private String userName;
+
+    public LocalUserObjectLight(long userId, String userName) {
+        this.userId = userId;
+        this.userName = userName;
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
     
-    public static CreateTaskAction createCreateTaskAction() {
-        if (createTaskAction == null)
-            createTaskAction = new CreateTaskAction();
-        return createTaskAction;
-    }
 }

@@ -31,7 +31,7 @@ import org.openide.util.Utilities;
  * Creates a task
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class CreateTaskAction extends AbstractAction {
+class CreateTaskAction extends AbstractAction {
     
     CreateTaskAction() {
         putValue(NAME, "Create Task");
@@ -57,7 +57,7 @@ public class CreateTaskAction extends AbstractAction {
                     true, "", null, null, null);
             
             if (newTask == null)
-                NotificationUtil.getInstance().showSimplePopup("Errir", NotificationUtil.ERROR_MESSAGE, com.getError());
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             else {
                 ((TaskManagerRootNode.TaskManagerRootChildren)Utilities.actionsGlobalContext().lookup (TaskManagerRootNode.class).getChildren()).addNotify();
                 NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Task created successfully");

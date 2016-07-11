@@ -13,7 +13,7 @@
  *   limitations under the License.
  * 
  */
-package org.kuwaiba.management.services.windows;
+package org.inventory.automation.tasks.windows;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -36,36 +36,37 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalTask;
+import org.inventory.communications.core.LocalUserObject;
 
 /**
- * Shows the available services to associate to a resource
+ * Show the activity log associated to an object
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ServicesFrame extends JFrame {
+public class UsersFrame extends JFrame {
     
     private JTextField txtField;
     private JScrollPane pnlScrollMain;
-    private JList lstAvailableServices;
-    private LocalObjectLight[] selectedObjects;
-    private List<LocalObjectLight> services;
+    private JList<LocalUserObject> lstAvailableUsers;
+    private LocalTask selectedTask;
+    private List<LocalUserObject> users;
     
     
-    public ServicesFrame(LocalObjectLight[] selectedObjects, List<LocalObjectLight> services) {
-        this.selectedObjects = selectedObjects;
-        this.services = services;
+    public UsersFrame(LocalTask selectedTask, List<LocalUserObject> users) {
+        this.selectedTask = selectedTask;
+        this.users = users;
         setLayout(new BorderLayout());
-        setTitle(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_TITLE_AVAILABLE_SERVICES"));
+        setTitle("Available Users");
         setSize(400, 650);
         setLocationRelativeTo(null);
-        JLabel lblInstructions = new JLabel(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_INSTRUCTIONS_SELECT_SERVICE"));
+        JLabel lblInstructions = new JLabel("Select a user from the list");
         lblInstructions.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         
                 
         JPanel pnlSearch = new JPanel();
         pnlSearch.setLayout(new GridLayout(1, 2));
-        lstAvailableServices = new JList<>(services.toArray(new LocalObjectLight[0]));
-        lstAvailableServices.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        lstAvailableUsers = new JList<>(users.toArray(new LocalUserObject[0]));
+        lstAvailableUsers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         pnlScrollMain = new JScrollPane();
         txtField = new JTextField();
         txtField.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 2));
@@ -91,12 +92,12 @@ public class ServicesFrame extends JFrame {
         pnlSearch.add(txtField);
         add(pnlSearch, BorderLayout.NORTH);
         
-        pnlScrollMain.setViewportView(lstAvailableServices);
-        add(lstAvailableServices, BorderLayout.CENTER);
+        pnlScrollMain.setViewportView(lstAvailableUsers);
+        add(lstAvailableUsers, BorderLayout.CENTER);
         
         JPanel pnlButtons = new JPanel();
         pnlButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
-        JButton btnRelate = new JButton("Create relationship");
+        JButton btnRelate = new JButton("Subscribe");
         pnlButtons.add(btnRelate);
         btnRelate.addActionListener(new BtnConnectActionListener());
         JButton btnClose = new JButton("Close");
@@ -116,21 +117,12 @@ public class ServicesFrame extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (lstAvailableServices.getSelectedValue() == null)
-                JOptionPane.showMessageDialog(null, "Select a service from the list");
-            else{
-                String [] objectsClassName = new String[selectedObjects.length];
-                Long [] objectsId = new Long[selectedObjects.length];
-                for(int i=0; i<selectedObjects.length; i++){
-                    objectsClassName[i] = selectedObjects[i].getClassName();
-                    objectsId [i] = selectedObjects[i].getOid();
-                }
-                
-                if (CommunicationsStub.getInstance().associateObjectsToService(
-                    objectsClassName, objectsId, 
-                    ((LocalObjectLight)lstAvailableServices.getSelectedValue()).getClassName(),
-                    ((LocalObjectLight)lstAvailableServices.getSelectedValue()).getOid())){
-                        JOptionPane.showMessageDialog(null, String.format("%s object was related to %s", selectedObjects.length, lstAvailableServices.getSelectedValue()));
+            if (lstAvailableUsers.getSelectedValue() == null)
+                JOptionPane.showMessageDialog(null, "Select a user from the list");
+            else {
+               
+                if (CommunicationsStub.getInstance().subscribeUser(selectedTask.getId(), lstAvailableUsers.getSelectedValue().getOid())){
+                        JOptionPane.showMessageDialog(null, "User subscribed successfully");
                         dispose();
                 }
                 else 
@@ -141,13 +133,12 @@ public class ServicesFrame extends JFrame {
     }
     
     public void servicesFilter(String text){
-        List<LocalObjectLight> filteredServices = new ArrayList<>();
-        for(LocalObjectLight service : services){
-            if(service.getClassName().toLowerCase().contains(text.toLowerCase()) 
-                    || service.getName().toLowerCase().contains(text.toLowerCase()))
-                filteredServices.add(service);
+        List<LocalUserObject> filteredUsers = new ArrayList<>();
+        for(LocalUserObject service : users){
+            if(service.getUserName().toLowerCase().contains(text.toLowerCase()) 
+                    || service.getFirstName().toLowerCase().contains(text.toLowerCase()))
+                filteredUsers.add(service);
         }
-        LocalObjectLight[] toArray = filteredServices.toArray(new LocalObjectLight[filteredServices.size()]);
-        lstAvailableServices.setListData(toArray);
+        lstAvailableUsers.setListData(filteredUsers.toArray(new LocalUserObject[0]));
     }
 }

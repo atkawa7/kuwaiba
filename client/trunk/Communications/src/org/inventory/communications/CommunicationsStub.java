@@ -42,6 +42,7 @@ import org.inventory.communications.core.LocalTaskResult;
 import org.inventory.communications.core.LocalTaskScheduleDescriptor;
 import org.inventory.communications.core.LocalUserGroupObject;
 import org.inventory.communications.core.LocalUserObject;
+import org.inventory.communications.core.LocalUserObjectLight;
 import org.inventory.communications.core.caching.Cache;
 import org.inventory.communications.core.queries.LocalQuery;
 import org.inventory.communications.core.queries.LocalQueryLight;
@@ -76,6 +77,7 @@ import org.kuwaiba.wsclient.TaskNotificationDescriptor;
 import org.kuwaiba.wsclient.TaskScheduleDescriptor;
 import org.kuwaiba.wsclient.TransientQuery;
 import org.kuwaiba.wsclient.UserInfo;
+import org.kuwaiba.wsclient.UserInfoLight;
 import org.kuwaiba.wsclient.Validator;
 import org.kuwaiba.wsclient.ViewInfo;
 import org.kuwaiba.wsclient.ViewInfoLight;
@@ -988,7 +990,8 @@ public class CommunicationsStub {
             long taskId = service.createTask(name, description, enabled, script, 
                    remoteParameters, atsd, tnd, session.getSessionId());
             
-            return new LocalTask(taskId, name, description, enabled, script, null, schedule, notificationType);
+            return new LocalTask(taskId, name, description, enabled, script, 
+                    null, schedule, notificationType, new ArrayList<LocalUserObjectLight>());
         }catch(Exception ex){
             this.error = ex.getMessage();
             return null;
@@ -1074,9 +1077,14 @@ public class CommunicationsStub {
                 for (StringPair remoteParameter : remoteTask.getParameters())
                     remoteParameters.put(remoteParameter.getKey(), remoteParameter.getValue());
                 
+                List<LocalUserObjectLight> users = new ArrayList<>();
+                
+                for (UserInfoLight user : remoteTask.getUsers())
+                    users.add(new LocalUserObjectLight(user.getId(), user.getUserName()));
+                
                 localTasks.add(new LocalTask(remoteTask.getId(), remoteTask.getName(), 
                         remoteTask.getDescription(), remoteTask.isEnabled(), remoteTask.getScript(), 
-                        remoteParameters, ltsd, tnd));
+                        remoteParameters, ltsd, tnd, users));
             }
             
             return localTasks;
@@ -1098,6 +1106,16 @@ public class CommunicationsStub {
         }catch(Exception ex){
             this.error = ex.getMessage();
             return null;
+        }
+    }
+    
+    public boolean subscribeUser(long taskId, long userId) {
+        try {
+            service.subscribeUserToTask(taskId, userId, session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
         }
     }
     //</editor-fold>
