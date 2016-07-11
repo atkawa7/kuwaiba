@@ -248,7 +248,7 @@ public interface MetadataEntityManager {
     /**
      * Adds to a given class a list of possible children classes whose instances can be contained
      *
-     * @param parentClassId Id of the class whose instances can contain the instances of the next param
+     * @param parentClassId Id of the class whose instances can contain the instances of the classes in possibleChildren. Use -1 to refer to the DummyRoot
      * @param possibleChildren ids of the candidates to be contained
      * @throws MetadataObjectNotFoundException if any of the possible children or the parent don't exist
      * @throws InvalidArgumentException
@@ -257,7 +257,7 @@ public interface MetadataEntityManager {
     public void addPossibleChildren(long parentClassId, long[] possibleChildren) throws MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException, DatabaseException;
     /**
      * Adds to a given class a list of possible children classes whose instances can be contained using the class name to find the parent class
-     * @param parentClassName parent class name
+     * @param parentClassName parent class name. Use DummyRoot for the Navigation Tree root
      * @param possibleChildren list of possible children
      * @throws MetadataObjectNotFoundException if the parent class or any of the possible children can not be found
      * @throws InvalidArgumentException if any of the given possible children can not be a possible children of parentClassName
@@ -268,7 +268,7 @@ public interface MetadataEntityManager {
      * TODO: Make this method safe. This is, check if there's already intances of the given
      * "children to be deleted" with parentClass as their parent
      * @param parentClassId Id of the class whos instances can contain the instances of the next param
-     * @param childrenTBeRemoved ids of the candidates to be deleted
+     * @param childrenToBeRemoved ids of the candidates to be deleted
      * @throws MetadataObjectNotFoundException If any of the ids provided can't be found
      */
     public void removePossibleChildren(long parentClassId, long[] childrenToBeRemoved) throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;

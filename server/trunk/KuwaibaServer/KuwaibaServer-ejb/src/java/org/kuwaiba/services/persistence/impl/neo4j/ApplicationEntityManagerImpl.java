@@ -1316,22 +1316,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (poolNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("A pool with id %s does not exist", id));
 
-            for (Relationship containmentRelationship : poolNode.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF_SPECIAL)) {
-                //A pool may have inventory objects as children or other pools
-                Node child = containmentRelationship.getStartNode();
-                if (child.hasRelationship(RelTypes.INSTANCE_OF)) //It's an inventory object
-                    Util.deleteObject(poolNode, false);
-                else
-                    deletePool(child.getId()); //Although making deletePool to receive a node as argument would be more efficient,
-                                               //the impact is not that much since the number of pools is expected to be low
-            }
+            deletePool(poolNode);
             
-            //Removes any remaining relationships
-            for (Relationship remainingRelationship : poolNode.getRelationships())
-                remainingRelationship.delete();
-            
-            poolsIndex.remove(poolNode);
-            poolNode.delete();
             tx.success();
         }
     }
@@ -1859,6 +1845,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", taskId));
 
             taskIndex.remove(taskNode);
+            
+            for (Relationship rel : taskNode.getRelationships()) //Unsubscribe users
+                rel.delete();
+            
             taskNode.delete();
             
             tx.success();
@@ -2176,33 +2166,28 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         }
         throw new ObjectNotFoundException(className, oid);
     }    
+    
+    public void deletePool(Node poolNode) throws OperationNotPermittedException {
+        
+        for (Relationship containmentRelationship : poolNode.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF_SPECIAL)) {
+                //A pool may have inventory objects as children or other pools
+                Node child = containmentRelationship.getStartNode();
+                if (child.hasRelationship(RelTypes.INSTANCE_OF)) //It's an inventory object
+                    Util.deleteObject(child, false);
+                else
+                    deletePool(child); //Although making deletePool to receive a node as argument would be more efficient,
+                                               //the impact is not that much since the number of pools is expected to be low
+            }
+            
+            //Removes any remaining relationships
+            for (Relationship remainingRelationship : poolNode.getRelationships())
+                remainingRelationship.delete();
+            
+            poolsIndex.remove(poolNode);
+            poolNode.delete();
+    }
+    
     //End of Helpers
     
-//    public class ScriptClassLoader extends ClassLoader {
-//
-//        @Override
-//        protected Class<?> findClass(String name) throws ClassNotFoundException {
-//            return loadClass(name, true);
-//        }
-//
-//        @Override
-//        protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-//            switch(name) {
-//                case "TaskResult":
-//                    return TaskResult.class;
-//                case "String":
-//                    return String.class;
-//                case "HashMap":
-//                    return HashMap.class;
-//                case "List":
-//                    return List.class;
-//                case "ArrayList":
-//                    return ArrayList.class;
-//                case "Exception":
-//                    return Exception.class;
-//                default:
-//                    throw new ClassNotFoundException(String.format("Class %s could not be found or is not accessible", name));
-//            }
-//        }
-//    }
+    
 }

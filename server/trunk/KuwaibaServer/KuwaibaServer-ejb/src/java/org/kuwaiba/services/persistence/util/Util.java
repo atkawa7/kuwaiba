@@ -27,7 +27,6 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -86,29 +85,25 @@ public class Util {
         if (value == null)
             return null;
         try {
-            if(type.equals("String"))
-                return value;
-            else
-                if(type.equals("Float"))
+            
+            switch (type) {
+                case "String":
+                    return value;
+                case "Float":
                     return Float.valueOf(value);
-                else
-                    if(type.equals("Long"))
-                        return Long.valueOf(value);
-                    else
-                        if(type.equals("Integer"))
-                            return Integer.valueOf(value);
-                        else
-                            if(type.equals("Boolean"))
-                                return Boolean.valueOf(value);
-                            else
-                                if(type.equals("Date"))
-                                    //return new Date(Long.valueOf(value));
-                                    return Long.valueOf(value); //Dates are actually saved as longs (milliseconds since Jan 1st 1970)
-                                else
-                                    if(type.equals("Timestamp"))
-                                        return Timestamp.valueOf(value);
-                                    else
-                                        throw new InvalidArgumentException(String.format("Type %s not found",type));
+                case "Long":
+                    return Long.valueOf(value);
+                case "Integer":
+                    return Integer.valueOf(value);
+                case "Boolean":
+                    return Boolean.valueOf(value);
+                case "Date":
+                case "Timestamp":
+                    return Long.valueOf(value);
+                default:
+                    throw new InvalidArgumentException(String.format("Type %s not found", type));
+            }
+            
         }catch (NumberFormatException | InvalidArgumentException e){
             throw new InvalidArgumentException(String.format("Can not convert value %s to a type %s", value, type));
         }
@@ -259,6 +254,7 @@ public class Util {
      * Creates a ClassMetadata with default values
      * @param classDefinition
      * @return
+     * @throws MetadataObjectNotFoundException If the class does not have a name
      */
     public static ClassMetadata setDefaultsForClassMetadatas(ClassMetadata classDefinition) throws MetadataObjectNotFoundException{
         if(classDefinition.getName() == null){
