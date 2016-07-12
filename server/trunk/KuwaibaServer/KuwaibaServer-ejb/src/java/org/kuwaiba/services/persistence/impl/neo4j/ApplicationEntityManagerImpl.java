@@ -21,7 +21,6 @@ import com.ociweb.xml.StartTagWAX;
 import com.ociweb.xml.WAX;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
-import groovy.lang.MissingPropertyException;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -38,7 +37,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.codehaus.groovy.control.MultipleCompilationErrorsException;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
@@ -72,6 +70,7 @@ import org.kuwaiba.util.ChangeDescriptor;
 import org.kuwaiba.ws.todeserialize.StringPair;
 import org.kuwaiba.ws.toserialize.application.TaskNotificationDescriptor;
 import org.kuwaiba.ws.toserialize.application.TaskScheduleDescriptor;
+import org.kuwaiba.ws.toserialize.application.UserInfoLight;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -219,7 +218,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             throw new InvalidArgumentException("Password can not be an empty string");
         
         try(Transaction tx = graphDb.beginTx()) {
-            Node storedUser = userIndex.get(Constants.PROPERTY_NAME,userName).getSingle();
+            Node storedUser = userIndex.get(Constants.PROPERTY_NAME, userName).getSingle();
             if (storedUser != null)
                 throw new InvalidArgumentException(String.format("User name %s already exists", userName));
             
@@ -541,7 +540,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             throws ApplicationObjectNotFoundException, NotAuthorizedException {
         
         try(Transaction tx = graphDb.beginTx()) {
-            //TODO watch if there is relationships you can not delete
+            //TODO watch if there are relationships you can/should not delete
             if(oids != null){
                 for (long id : oids)
                 {
@@ -551,9 +550,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     }
                     cm.removeUser((String)userNode.getProperty(Constants.PROPERTY_NAME));
                     Iterable<Relationship> relationships = userNode.getRelationships();
-                    for (Relationship relationship : relationships) {
+                    for (Relationship relationship : relationships) 
                         relationship.delete();
-                    }
+
                     userIndex.remove(userNode);
                     userNode.delete();
                 }
@@ -1776,9 +1775,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             switch (propertyName) {
                 case Constants.PROPERTY_NAME:
                 case Constants.PROPERTY_DESCRIPTION:
-                case Constants.PROPERTY_ENABLED:
                 case Constants.PROPERTY_SCRIPT:
                     taskNode.setProperty(propertyName, propertyValue);
+                    break;
+                case Constants.PROPERTY_ENABLED:
+                    taskNode.setProperty(propertyName, Boolean.valueOf(propertyValue));
                     break;
                 default:
                     throw new InvalidArgumentException(String.format("%s is not a valid task property", propertyName));
@@ -1856,7 +1857,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public void subscribeUserToTask(long taskId, long userId) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+    public void subscribeUserToTask(long userId, long taskId) throws ApplicationObjectNotFoundException, InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
             Node taskNode = taskIndex.get(Constants.PROPERTY_ID, taskId).getSingle();
             if (taskNode == null)
@@ -1886,7 +1887,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public void unsubscribeUserFromTask(long taskId, long userId) throws ApplicationObjectNotFoundException {
+    public void unsubscribeUserFromTask(long userId, long taskId) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             Node taskNode = taskIndex.get(Constants.PROPERTY_ID, taskId).getSingle();
             if (taskNode == null)
@@ -1904,8 +1905,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             if (!found)
                 throw new ApplicationObjectNotFoundException(String.format("A user with id %s could not be found", taskId));
-            else
-                tx.success();
+
+            tx.success();
         }
     }
 
@@ -1917,6 +1918,23 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", taskId));
                         
             return Util.createTaskFromNode(taskNode);
+        }
+    }
+    
+    @Override
+    public List<UserInfoLight> getSubscribersForTask(long taskId) throws ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node taskNode = taskIndex.get(Constants.PROPERTY_ID, taskId).getSingle();
+            if (taskNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", taskId));
+                
+            List<UserInfoLight> subscribers = new ArrayList<>();
+            for (Relationship rel : taskNode.getRelationships(Direction.INCOMING, RelTypes.SUBSCRIBED_TO)) {
+                Node userNode = rel.getStartNode();
+                subscribers.add(new UserInfoLight(userNode.getId(), (String)userNode.getProperty(Constants.PROPERTY_NAME)));
+            }
+            
+            return subscribers;
         }
     }
 
@@ -1964,10 +1982,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             String script = (String)taskNode.getProperty(Constants.PROPERTY_SCRIPT);
             
             Iterable<String> allProperties = taskNode.getPropertyKeys();
-            List<StringPair> scriptParameters = new ArrayList<>();
+            HashMap<String, String> scriptParameters = new HashMap<>();
             for (String property : allProperties) {
                 if (property.startsWith("PARAM_"))
-                    scriptParameters.add(new StringPair(property.replace("PARAM_", ""), (String)taskNode.getProperty(property)));
+                    scriptParameters.put(property.replace("PARAM_", ""), (String)taskNode.getProperty(property));
             }
             
             Binding environmentParameters = new Binding();
@@ -1982,8 +2000,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             try {
                 GroovyShell shell = new GroovyShell(environmentParameters);
                 return (TaskResult)shell.evaluate(script);
-            } catch(MultipleCompilationErrorsException | MissingPropertyException ex) {
-                return new TaskResult(null, TaskResult.STATUS_ERROR, ex.getMessage());
+            } catch(Exception ex) {
+                return TaskResult.createErrorResult(ex.getMessage());
             }
         }
     }
@@ -2061,7 +2079,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         currentTag.attr("javaModifiers",javaModifiers);
         
         //Class type
-        if (classNode.getProperty(Constants.PROPERTY_NAME).equals("RootObject")){
+        if (classNode.getProperty(Constants.PROPERTY_NAME).equals(Constants.CLASS_ROOTOBJECT)){
             currentTag.attr("classType",Constants.CLASS_TYPE_ROOT);
         }else{
             if (Util.isSubClass("InventoryObject", classNode))
@@ -2187,7 +2205,5 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             poolNode.delete();
     }
     
-    //End of Helpers
-    
-    
+    //End of Helpers   
 }

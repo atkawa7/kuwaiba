@@ -34,6 +34,7 @@ import org.kuwaiba.util.ChangeDescriptor;
 import org.kuwaiba.ws.todeserialize.StringPair;
 import org.kuwaiba.ws.toserialize.application.TaskNotificationDescriptor;
 import org.kuwaiba.ws.toserialize.application.TaskScheduleDescriptor;
+import org.kuwaiba.ws.toserialize.application.UserInfoLight;
 
 /**
  * This is the entity in charge of manipulating application objects such as users, views, etc
@@ -750,14 +751,14 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException If the task or the user could not be found
      * @throws InvalidArgumentException If the user is already subscribed to the task
      */
-    public void subscribeUserToTask(long taskId, long userId) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    public void subscribeUserToTask(long userId, long taskId) throws ApplicationObjectNotFoundException, InvalidArgumentException;
     /**
      * Unsubscribes a user from a task, so it will no longer be notified about the result of its execution
      * @param taskId Id of the task
      * @param userId Id of the user
      * @throws ApplicationObjectNotFoundException If the task or the user could not be found
      */
-    public void unsubscribeUserFromTask(long taskId, long userId) throws ApplicationObjectNotFoundException;
+    public void unsubscribeUserFromTask(long userId, long taskId) throws ApplicationObjectNotFoundException;
     /**
      * Retrieves the information about a particular task
      * @param taskId Id of the task
@@ -765,6 +766,13 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException If the task could not be found
      */
     public Task getTask(long taskId) throws ApplicationObjectNotFoundException;
+    /**
+     * Gets the subscribers of a particular task
+     * @param taskId task id
+     * @return The list of users subscribers to the task identified with the id taskId
+     * @throws ApplicationObjectNotFoundException Id the task could not be found
+     */
+    public List<UserInfoLight> getSubscribersForTask(long taskId) throws ApplicationObjectNotFoundException;
     /**
      * Gets all registered tasks
      * @return A list with the task objects

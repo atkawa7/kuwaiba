@@ -43,6 +43,11 @@ public class UserInfoLight implements Serializable {
             this.id = user.getId();
             this.userName = user.getUserName(); 
     }
+
+    public UserInfoLight(long id, String userName) {
+        this.id = id;
+        this.userName = userName;
+    }
     
     public long getId() {
         return id;

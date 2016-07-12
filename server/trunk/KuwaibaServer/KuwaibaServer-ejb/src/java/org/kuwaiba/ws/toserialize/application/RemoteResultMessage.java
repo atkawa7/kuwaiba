@@ -16,8 +16,6 @@
 package org.kuwaiba.ws.toserialize.application;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
@@ -26,35 +24,44 @@ import javax.xml.bind.annotation.XmlAccessorType;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RemoteTaskResult implements Serializable {
+public class RemoteResultMessage implements Serializable {
+    /**
+     * The task resulted in error. The consumer should check the errorMessage for details
+     */
+    public static final int STATUS_ERROR = 1;
+    /**
+     * The execution was successful
+     */
+    public static final int STATUS_SUCCESS = 2;
+    /**
+     * The execution had non-blocking errors. There will be messages, but also an error message
+     */
+    public static final int STATUS_WARNING = 3;
     /**
      * The list of messages showing the results of the task
      */
-    private List<RemoteResultMessage> messages;
-    
+    private String message;
+    private int messageType;
 
-    public RemoteTaskResult() {
-        this.messages = new ArrayList<>();
+    public RemoteResultMessage(int messagetType, String message) {
+        this.messageType = messagetType;
+        this.message = message;
     }
 
-    public RemoteTaskResult(List<RemoteResultMessage> messages) {
-        this.messages = messages;
+    public String getMessage() {
+        return message;
     }
 
-    public List<RemoteResultMessage> getMessages() {
-        return messages;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
-    public void setMessages(List<RemoteResultMessage> messages) {
-        this.messages = messages;
+    public int getMessageType() {
+        return messageType;
     }
 
-    public static RemoteTaskResult createErrorResult(String message) {
-        ArrayList<RemoteResultMessage> errorMessage = new ArrayList<>();
-        errorMessage.add(new RemoteResultMessage(RemoteResultMessage.STATUS_ERROR, message));
-                
-        return new RemoteTaskResult(errorMessage);
+    public void setMessageType(int messageType) {
+        this.messageType = messageType;
     }
-    
 }    
     

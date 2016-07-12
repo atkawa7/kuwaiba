@@ -36,6 +36,7 @@ import org.kuwaiba.apis.persistence.application.CompactQuery;
 import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.Pool;
+import org.kuwaiba.apis.persistence.application.ResultMessage;
 import org.kuwaiba.apis.persistence.application.Session;
 import org.kuwaiba.apis.persistence.application.Task;
 import org.kuwaiba.apis.persistence.application.TaskResult;
@@ -64,6 +65,7 @@ import org.kuwaiba.ws.toserialize.application.GroupInfo;
 import org.kuwaiba.ws.toserialize.application.RemotePool;
 import org.kuwaiba.ws.toserialize.application.RemoteQuery;
 import org.kuwaiba.ws.toserialize.application.RemoteQueryLight;
+import org.kuwaiba.ws.toserialize.application.RemoteResultMessage;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.ws.toserialize.application.RemoteTask;
 import org.kuwaiba.ws.toserialize.application.RemoteTaskResult;
@@ -2077,6 +2079,19 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
     
     @Override
+    public List<UserInfoLight> getSubscribersForTask(long taskId, String ipAddress, String sessionId) throws ServerSideException {
+         if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("getSubscribersForTask", ipAddress, sessionId);
+            return aem.getSubscribersForTask(taskId);
+            
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
     public List<RemoteTask> getTasks(String ipAddress, String sessionId) throws ServerSideException  {
         if (aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
@@ -2138,24 +2153,24 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void subscribeUserToTask(long taskId, long userId, String ipAddress, String sessionId) throws ServerSideException {
+    public void subscribeUserToTask(long userId, long taskId, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateCall("subscribeUserToTask", ipAddress, sessionId);
-            aem.subscribeUserToTask(taskId, userId);
+            aem.subscribeUserToTask(userId, taskId);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
 
     @Override
-    public void unsubscribeUserFromTask(long taskId, long userId, String ipAddress, String sessionId) throws ServerSideException {
+    public void unsubscribeUserFromTask(long userId, long taskId, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateCall("unsubscribeUserFromTask", ipAddress, sessionId);
-            aem.unsubscribeUserFromTask(taskId, userId);
+            aem.unsubscribeUserFromTask(userId, taskId);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2167,14 +2182,19 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateCall("executeTask", ipAddress, sessionId);
-            TaskResult theTask = aem.executeTask(taskId);
-            return new RemoteTaskResult(theTask.getMessages(), theTask.getResultStatus(), theTask.getErrorMessage());
+            TaskResult theTaskResult = aem.executeTask(taskId);
+            RemoteTaskResult remoteTaskResult = new RemoteTaskResult();
+            
+            for(ResultMessage resultMessage : theTaskResult.getMessages())
+                remoteTaskResult.getMessages().add(new RemoteResultMessage(resultMessage.getMessageType(), resultMessage.getMessage()));
+            
+            return remoteTaskResult;
             
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
-    
+       
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Sync/Bulk load data methods">

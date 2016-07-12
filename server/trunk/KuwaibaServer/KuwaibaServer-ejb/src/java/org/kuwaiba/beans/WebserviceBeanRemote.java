@@ -38,6 +38,7 @@ import org.kuwaiba.ws.toserialize.application.ResultRecord;
 import org.kuwaiba.ws.toserialize.application.TaskNotificationDescriptor;
 import org.kuwaiba.ws.toserialize.application.TaskScheduleDescriptor;
 import org.kuwaiba.ws.toserialize.application.UserInfo;
+import org.kuwaiba.ws.toserialize.application.UserInfoLight;
 import org.kuwaiba.ws.toserialize.application.ViewInfo;
 import org.kuwaiba.ws.toserialize.application.ViewInfoLight;
 import org.kuwaiba.ws.toserialize.business.RemoteObject;
@@ -298,14 +299,17 @@ public interface WebserviceBeanRemote {
     public List<RemoteTask> getTasks(String ipAddress, String sessionId) throws ServerSideException;
     
     public List<RemoteTask> getTasksForUser(long userId, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public List<UserInfoLight> getSubscribersForTask(long taskId, String ipAddress, String sessionId) throws ServerSideException;
 
     public void deleteTask(long taskId, String ipAddress, String sessionId) throws ServerSideException;
 
-    public void subscribeUserToTask(long taskId, long userId, String ipAddress, String sessionId) throws ServerSideException;
+    public void subscribeUserToTask(long userId, long taskId, String ipAddress, String sessionId) throws ServerSideException;
 
-    public void unsubscribeUserFromTask(long taskId, long userId, String ipAddress, String sessionId) throws ServerSideException;
+    public void unsubscribeUserFromTask(long userId, long taskId, String ipAddress, String sessionId) throws ServerSideException;
     
     public RemoteTaskResult executeTask(long taskId, String ipAddress, String sessionId) throws ServerSideException;
+    
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Sync/bulkupload methods. Click on the + sign on the left to edit the code.">

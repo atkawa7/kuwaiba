@@ -23,72 +23,46 @@ import java.util.List;
  * The result of a task execution
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-
 public class TaskResult implements Serializable {
-    /**
-     * The task resulted in error. The consumer should check the errorMessage for details
-     */
-    public static final int STATUS_ERROR = 1;
-    /**
-     * The execution was successful
-     */
-    public static final int STATUS_SUCCESS = 2;
-    /**
-     * The execution had non-blocking errors. There will be messages, but also an error message
-     */
-    public static final int STATUS_WARNING = 3;
-    
     /**
      * The list of messages showing the results of the task
      */
-    private List<String> messages;
-    /**
-     * The status of the result. For possible values see the static members of this class
-     */
-    private int resultStatus;
-    /**
-     * Error message, if applicable
-     */
-    private String errorMessage;
+    private List<ResultMessage> messages;
+    
 
     public TaskResult() {
         this.messages = new ArrayList<>();
-        this.resultStatus = STATUS_SUCCESS;
-    }
-    
-    public TaskResult(List<String> messages, int resultStatus, String errorMessage) {
-        this.messages = messages;
-        this.resultStatus = resultStatus;
-        this.errorMessage = errorMessage;
     }
 
-    public List<String> getMessages() {
+    public TaskResult(List<ResultMessage> messages) {
+        this.messages = messages;
+    }
+
+    public List<ResultMessage> getMessages() {
         return messages;
     }
 
-    public void setMessages(List<String> messages) {
+    public void setMessages(List<ResultMessage> messages) {
         this.messages = messages;
     }
 
-    public int getResultStatus() {
-        return resultStatus;
-    }
-
-    public void setResultStatus(int resultStatus) {
-        this.resultStatus = resultStatus;
-    }
-
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
-    }
-    
     public static TaskResult createErrorResult(String message) {
-        return new TaskResult(null, STATUS_ERROR, message);
+        ArrayList<ResultMessage> errorMessage = new ArrayList<>();
+        errorMessage.add(new ResultMessage(ResultMessage.STATUS_ERROR, message));
+                
+        return new TaskResult(errorMessage);
     }
     
+    public static ResultMessage createErrorMessage(String message) {
+        return new ResultMessage(ResultMessage.STATUS_ERROR, message);
+    }
+    
+    public static ResultMessage createSuccessMessage(String message) {
+        return new ResultMessage(ResultMessage.STATUS_SUCCESS, message);
+    }
+    
+    public static ResultMessage createWarningMessage(String message) {
+        return new ResultMessage(ResultMessage.STATUS_WARNING, message);
+    }
 }    
     

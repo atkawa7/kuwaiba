@@ -45,6 +45,7 @@ import org.kuwaiba.ws.toserialize.application.ReportDescriptor;
 import org.kuwaiba.ws.toserialize.application.TaskNotificationDescriptor;
 import org.kuwaiba.ws.toserialize.application.TaskScheduleDescriptor;
 import org.kuwaiba.ws.toserialize.application.UserInfo;
+import org.kuwaiba.ws.toserialize.application.UserInfoLight;
 import org.kuwaiba.ws.toserialize.application.ViewInfo;
 import org.kuwaiba.ws.toserialize.application.ViewInfoLight;
 import org.kuwaiba.ws.toserialize.business.RemoteObject;
@@ -1334,6 +1335,20 @@ public class KuwaibaService {
         }
     }
     
+    public List<UserInfoLight> getSubscribersForTask(@WebParam(name = "taskId")long taskId,
+                                                     @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try {
+            return wsBean.getSubscribersForTask(taskId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getSubscribersForTask: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
     /**
      * Deletes a task and unsubscribes all users from it
      * @param taskId Task id
@@ -1363,11 +1378,11 @@ public class KuwaibaService {
      * @throws Exception In case something goes wrong
      */
     @WebMethod(operationName = "subscribeUserToTask")
-    public void subscribeUserToTask(@WebParam(name = "taskId")long taskId,
-            @WebParam(name = "userId")long userId,
+    public void subscribeUserToTask(@WebParam(name = "userId")long userId,
+            @WebParam(name = "taskId")long taskId,
             @WebParam(name = "sessionId")String sessionId) throws Exception {
         try {
-            wsBean.subscribeUserToTask(taskId, userId, getIPAddress(), sessionId);
+            wsBean.subscribeUserToTask(userId, taskId, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -1386,11 +1401,11 @@ public class KuwaibaService {
      * @throws Exception In case something goes wrong
      */
     @WebMethod(operationName = "unsubscribeUserFromTask")
-    public void unsubscribeUserFromTask(@WebParam(name = "taskId")long taskId,
-            @WebParam(name = "userId")long userId,
+    public void unsubscribeUserFromTask(@WebParam(name = "userId")long userId,
+            @WebParam(name = "taskId")long taskId,
             @WebParam(name = "sessionId")String sessionId) throws Exception {
         try {
-            wsBean.unsubscribeUserFromTask(taskId, userId, getIPAddress(), sessionId);
+            wsBean.unsubscribeUserFromTask(userId, taskId, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -3762,6 +3777,7 @@ public class KuwaibaService {
      /**
      * Delete a set of subnets. Note that this method must be used only for Subnet objects
      * @param oids object id from the objects to be deleted
+     * @param className The class of the subnet
      * @param releaseRelationships Should the deletion be forced, deleting all the relationships?
      * @param sessionId Session token
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
