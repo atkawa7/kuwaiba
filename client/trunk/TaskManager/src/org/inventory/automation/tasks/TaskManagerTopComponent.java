@@ -19,6 +19,7 @@ import org.inventory.automation.tasks.nodes.TaskManagerRootNode;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
@@ -36,12 +37,12 @@ import org.openide.util.NbBundle.Messages;
 )
 @TopComponent.Description(
         preferredID = "TaskManagerTopComponent",
-        //iconBase="SET/PATH/TO/ICON/HERE", 
+        iconBase="org/inventory/automation/tasks/res/icon.png", 
         persistenceType = TopComponent.PERSISTENCE_NEVER
 )
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
 @ActionID(category = "Window", id = "org.inventory.automation.tasks.TaskManagerTopComponent")
-@ActionReference(path = "Menu/Tools" /*, position = 333 */)
+@ActionReferences( value = {@ActionReference(path = "Menu/Tools" ), @ActionReference(path = "Toolbars/Tools" )} )
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_TaskAction",
         preferredID = "TaskManagerTopComponent"

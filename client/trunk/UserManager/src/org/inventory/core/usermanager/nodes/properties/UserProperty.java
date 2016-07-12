@@ -74,14 +74,20 @@ public class UserProperty extends ReadWrite{
             oids[i] = groups[i].getOid();
 
         boolean success = false;
-        if (this.getName().equals(UserNode.PROP_USERNAME))
-            success = com.setUserProperties(user.getOid(), (String)t, null, null, null, oids);
-        else if(this.getName().equals(UserNode.PROP_PASSWORD))
-            success = com.setUserProperties(user.getOid(), null, (String)t, null, null, oids);
-        else if(this.getName().equals(UserNode.PROP_FIRSTNAME))
-            success = com.setUserProperties(user.getOid(), null, null, (String)t, null, oids);
-        else if(this.getName().equals(UserNode.PROP_LASTNAME))
-            success = com.setUserProperties(user.getOid(), null, null, null, (String)t, oids);
+        switch (this.getName()) {
+            case UserNode.PROP_USERNAME:
+                success = com.setUserProperties(user.getUserId(), (String)t, null, null, null, oids);
+                break;
+            case UserNode.PROP_PASSWORD:
+                success = com.setUserProperties(user.getUserId(), null, (String)t, null, null, oids);
+                break;
+            case UserNode.PROP_FIRSTNAME:
+                success = com.setUserProperties(user.getUserId(), null, null, (String)t, null, oids);
+                break;
+            case UserNode.PROP_LASTNAME:
+                success = com.setUserProperties(user.getUserId(), null, null, null, (String)t, oids);
+                break;
+        }
         
         if(!success){
             NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
@@ -117,7 +123,7 @@ public class UserProperty extends ReadWrite{
      * @param passwd a String with the password to be set for this user
      */
     public void setPassword(String passwd) {
-        if(!com.setUserProperties(user.getOid(), null, passwd, null, null, null))
+        if(!com.setUserProperties(user.getUserId(), null, passwd, null, null, null))
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
     }
 }

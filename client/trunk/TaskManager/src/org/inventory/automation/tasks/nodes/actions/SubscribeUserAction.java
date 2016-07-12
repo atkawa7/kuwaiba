@@ -16,15 +16,12 @@
 package org.inventory.automation.tasks.nodes.actions;
 
 import java.awt.event.ActionEvent;
+import java.util.List;
 import javax.swing.AbstractAction;
-import javax.swing.JComponent;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import org.inventory.automation.tasks.nodes.TaskManagerRootNode;
+import org.inventory.automation.tasks.nodes.TaskNode;
+import org.inventory.automation.tasks.windows.UsersFrame;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalTask;
-import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.core.services.utils.JComplexDialogPanel;
+import org.inventory.communications.core.LocalUserObject;
 import org.openide.util.Utilities;
 
 /**
@@ -33,17 +30,17 @@ import org.openide.util.Utilities;
  */
 class SubscribeUserAction extends AbstractAction {
     
-    SubscribeUserAction() {
-        putValue(NAME, "Subscribe User");
+    public SubscribeUserAction() {
+        putValue(NAME, "Subscribe User...");
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
+        TaskNode taskNode = Utilities.actionsGlobalContext().lookup(TaskNode.class);
         CommunicationsStub com = CommunicationsStub.getInstance();
-        
-        
-            
-        
+        List<LocalUserObject> users = com.getUsers();
+        UsersFrame frame = new UsersFrame(taskNode, users);
+        frame.setVisible(true);
     }
     
 }

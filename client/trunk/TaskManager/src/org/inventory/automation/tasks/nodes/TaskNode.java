@@ -18,13 +18,16 @@ package org.inventory.automation.tasks.nodes;
 import java.awt.Color;
 import java.awt.Image;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
 import javax.swing.Action;
 import org.inventory.automation.tasks.nodes.actions.TaskManagerActionFactory;
 import org.inventory.communications.core.LocalTask;
+import org.inventory.communications.core.LocalUserObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.communications.util.Utils;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
+import org.openide.nodes.Node;
 import org.openide.nodes.PropertySupport;
 import org.openide.nodes.Sheet;
 import org.openide.util.lookup.Lookups;
@@ -38,12 +41,19 @@ public class TaskNode extends AbstractNode {
     private static final Image defaultIcon = Utils.createRectangleIcon(Color.PINK, 10, 10);
     
     public TaskNode(LocalTask task) {
-        super(Children.LEAF, Lookups.singleton(task));
+        super(new TaskChildren(), Lookups.singleton(task));
     }
 
     @Override
     public Action[] getActions(boolean context) {
-        return new Action[] { TaskManagerActionFactory.createExecuteTaskAction() };
+        return new Action[] { 
+            TaskManagerActionFactory.createExecuteTaskAction(),
+            TaskManagerActionFactory.createAddParameterToTaskActionAction(),
+            TaskManagerActionFactory.createRemoveParameterFromTaskActionAction(),
+            TaskManagerActionFactory.createSubscribeUserAction(),
+            null,
+            TaskManagerActionFactory.createDeleteTaskAction()
+        };
     }
     
     @Override
@@ -60,6 +70,10 @@ public class TaskNode extends AbstractNode {
     public String getDisplayName() {
         LocalTask task = getLookup().lookup (LocalTask.class);
         return task.getName() == null ? "<No Name>" : task.getName();
+    }
+    
+    public void resetPropertySheet() {
+        setSheet(createSheet());
     }
 
     @Override
@@ -113,6 +127,25 @@ public class TaskNode extends AbstractNode {
         }catch (NoSuchMethodException nsme) { } //Should not happen
         
         return sheet;
+    }
+    
+    public static class TaskChildren extends Children.Keys<LocalUserObjectLight> {
+        
+        @Override
+        public void addNotify() {
+            LocalTask theTask = getNode().getLookup().lookup(LocalTask.class);
+            setKeys(theTask.getUsers());
+        }
+        
+        @Override
+        public void removeNotify() {
+            setKeys(Collections.EMPTY_LIST);
+        }
+        
+        @Override
+        protected Node[] createNodes(LocalUserObjectLight key) {
+            return new Node[] { new TaskUserNode(key) };
+        }
     }
     
     private static class TaskParameterPropertySupport extends PropertySupport.ReadWrite<String> {

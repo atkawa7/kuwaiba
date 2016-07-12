@@ -46,4 +46,8 @@ public class LocalUserObjectLight {
         this.userName = userName;
     }
     
+    @Override
+    public String toString() {
+        return userName;
+    }
 }

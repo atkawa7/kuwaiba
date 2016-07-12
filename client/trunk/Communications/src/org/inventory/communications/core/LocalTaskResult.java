@@ -1,5 +1,5 @@
-/*
- *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>
+/**
+ *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,67 +15,34 @@
  */
 package org.inventory.communications.core;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents a task result
+ * The result of a task execution
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class LocalTaskResult {
     /**
-     * The task resulted in error. The consumer should check the errorMessage for details
+     * The list of messages showing the results of the task
      */
-    public static final int STATUS_ERROR = 1;
-    /**
-     * The execution was successful
-     */
-    public static final int STATUS_SUCCESS = 2;
-    /**
-     * The execution had non-blocking errors. There will be messages, but also an error message
-     */
-    public static final int STATUS_WARNING = 3;
-    /**
-     * Task execution messages
-     */
-    private List<String> messages;
-    /**
-     * Error message, if the resultStatus is either STATUS_ERROR or STATUS_WARNING
-     */
-    private String errorMessage;
-    /**
-     * How did the execution go? See the static fields of this class for possible values
-     */
-    private int resultStatus;
-
-    public LocalTaskResult(List<String> messages, String errorMessage, int resultStatus) {
-        this.messages = messages;
-        this.errorMessage = errorMessage;
-        this.resultStatus = resultStatus;
-    }
+    private List<LocalTaskResultMessage> messages;
     
-    public List<String> getMessages() {
+
+    public LocalTaskResult() {
+        this.messages = new ArrayList<>();
+    }
+
+    public LocalTaskResult(List<LocalTaskResultMessage> messages) {
+        this.messages = messages;
+    }
+
+    public List<LocalTaskResultMessage> getMessages() {
         return messages;
     }
 
-    public void setMessages(List<String> messages) {
+    public void setMessages(List<LocalTaskResultMessage> messages) {
         this.messages = messages;
-    }
-
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
-    }
-
-    public int getResultStatus() {
-        return resultStatus;
-    }
-
-    public void setResultStatus(int resultStatus) {
-        this.resultStatus = resultStatus;
-    }
+    }    
+}    
     
-    
-}

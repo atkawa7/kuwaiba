@@ -17,6 +17,7 @@ package org.inventory.automation.tasks.nodes.actions;
 
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
+import javax.swing.JOptionPane;
 import org.inventory.automation.tasks.nodes.TaskManagerRootNode;
 import org.inventory.automation.tasks.nodes.TaskNode;
 import org.inventory.communications.CommunicationsStub;
@@ -40,11 +41,15 @@ class DeleteTaskAction extends AbstractAction {
         
         TaskNode taskNode = Utilities.actionsGlobalContext().lookup (TaskNode.class);
         
-        if (com.deleteTask(taskNode.getLookup().lookup(LocalTask.class).getId())) {
-            NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Task deleted successfully");
-            ((TaskManagerRootNode.TaskManagerRootChildren)taskNode.getParentNode().getChildren()).addNotify();
-        } else
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());            
+        if (JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this task? All users will be unsubscribed", 
+                "Delete Task", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+        
+            if (com.deleteTask(taskNode.getLookup().lookup(LocalTask.class).getId())) {
+                NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Task deleted successfully");
+                ((TaskManagerRootNode.TaskManagerRootChildren)taskNode.getParentNode().getChildren()).addNotify();
+            } else
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+        }
         
     }
     

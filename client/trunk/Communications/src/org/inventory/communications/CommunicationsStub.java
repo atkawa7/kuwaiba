@@ -36,6 +36,7 @@ import org.inventory.communications.core.LocalObjectLightList;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.core.LocalPool;
 import org.inventory.communications.core.LocalReportDescriptor;
+import org.inventory.communications.core.LocalTaskResultMessage;
 import org.inventory.communications.core.LocalTask;
 import org.inventory.communications.core.LocalTaskNotificationDescriptor;
 import org.inventory.communications.core.LocalTaskResult;
@@ -64,6 +65,7 @@ import org.kuwaiba.wsclient.RemoteObjectLightArray;
 import org.kuwaiba.wsclient.RemoteObjectSpecialRelationships;
 import org.kuwaiba.wsclient.RemotePool;
 import org.kuwaiba.wsclient.RemoteQueryLight;
+import org.kuwaiba.wsclient.RemoteResultMessage;
 import org.kuwaiba.wsclient.RemoteTask;
 import org.kuwaiba.wsclient.RemoteTaskResult;
 import org.kuwaiba.wsclient.ReportDescriptor;
@@ -1029,6 +1031,47 @@ public class CommunicationsStub {
             return false;
         }
     }
+
+    /**
+     * Updates the schedule of a task
+     * @param taskId Task id
+     * @param schedule New schedule
+     * @return True if the operation was successful, false if not
+     */
+    public boolean updateTaskSchedule(long taskId, LocalTaskScheduleDescriptor schedule) {
+        try {
+            TaskScheduleDescriptor remoteSchedule = new TaskScheduleDescriptor();
+            remoteSchedule.setStartTime(schedule.getStartTime());
+            remoteSchedule.setEveryXMinutes(schedule.getEveryXMinutes());
+            remoteSchedule.setExecutionType(schedule.getExecutionType());
+            
+            service.updateTaskSchedule(taskId, remoteSchedule, session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Updates the schedule of a task
+     * @param taskId Task id
+     * @param notificationType New notification type
+     * @return True if the operation was successful, false if not
+     */
+    public boolean updateTaskNotificationType(long taskId, LocalTaskNotificationDescriptor notificationType) {
+        try {
+            TaskNotificationDescriptor remoteNotificationType = new TaskNotificationDescriptor();
+            remoteNotificationType.setEmail(notificationType.getEmail());
+            remoteNotificationType.setNotificationType(notificationType.getNotificationType());
+            
+            service.updateTaskNotificationType(taskId, remoteNotificationType, session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
     
     /**
      * Updates the main properties of a task (name, description, enabled or script)
@@ -1095,6 +1138,26 @@ public class CommunicationsStub {
     }
     
     /**
+     * Gets the subscribers of a particular task
+     * @param taskId TaskId
+     * @return A list of users subscribed to the task
+     */
+    public List<LocalUserObjectLight> getSubscribersForTask(long taskId) {
+        try {
+            List<UserInfoLight> remoteSubscribers = service.getSubscribersForTask(taskId, session.getSessionId());
+            List<LocalUserObjectLight> subscribers = new ArrayList<>();
+            
+            for (UserInfoLight remoteSubscriber : remoteSubscribers)
+                subscribers.add(new LocalUserObjectLight(remoteSubscriber.getId(), remoteSubscriber.getUserName()));
+            
+            return subscribers;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
      * Executes a task on demand
      * @param taskId Id of the task
      * @return A local representation of the result
@@ -1102,16 +1165,43 @@ public class CommunicationsStub {
     public LocalTaskResult executeTask(long taskId){
         try {
             RemoteTaskResult remoteTaskResult  = service.executeTask(taskId, session.getSessionId());
-            return new LocalTaskResult(remoteTaskResult.getMessages(), remoteTaskResult.getErrorMessage(), remoteTaskResult.getResultStatus());
+            LocalTaskResult taskResult = new LocalTaskResult();
+            
+            for (RemoteResultMessage remoteResulMessage :remoteTaskResult.getMessages())
+                taskResult.getMessages().add(new LocalTaskResultMessage(remoteResulMessage.getMessageType(), remoteResulMessage.getMessage()));
+            
+            return taskResult;
         }catch(Exception ex){
             this.error = ex.getMessage();
             return null;
         }
     }
     
-    public boolean subscribeUser(long taskId, long userId) {
+    /**
+     * Subscribes a user to a task
+     * @param userId User id
+     * @param taskId Task id
+     * @return True if the operation was successful. False if not 
+     */
+    public boolean subscribeUserToTask(long userId, long taskId) {
         try {
-            service.subscribeUserToTask(taskId, userId, session.getSessionId());
+            service.subscribeUserToTask(userId, taskId, session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Unsubscribes a user from a task
+     * @param userId User id
+     * @param taskId Task id
+     * @return True if the operation was successful. False if not
+     */
+    public boolean unsubscribeUserFromTask(long userId, long taskId) {
+        try {
+            service.unsubscribeUserFromTask(userId, taskId, session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -1805,16 +1895,14 @@ public class CommunicationsStub {
      * Retrieves the user list
      * @return An array of LocalUserObject
      */
-    public LocalUserObject[] getUsers() {
+    public List<LocalUserObject> getUsers() {
         try{
             List<UserInfo> users = service.getUsers(this.session.getSessionId());
-            LocalUserObject[] localUsers = new LocalUserObject[users.size()];
+            List<LocalUserObject> localUsers = new ArrayList<>();
 
-            int i = 0;
-            for (UserInfo user : users){
-                localUsers[i] = (LocalUserObject) new LocalUserObject(user);
-                i++;
-            }
+            for (UserInfo user : users)
+                localUsers.add(new LocalUserObject(user));
+            
             return localUsers;
         }catch(Exception ex){
             this.error = ex.getMessage();

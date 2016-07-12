@@ -478,6 +478,10 @@
 
 <xs:element name="getSubnetsResponse" type="tns:getSubnetsResponse"/>
 
+<xs:element name="getSubscribersForTask" type="tns:getSubscribersForTask"/>
+
+<xs:element name="getSubscribersForTaskResponse" type="tns:getSubscribersForTaskResponse"/>
+
 <xs:element name="getTask" type="tns:getTask"/>
 
 <xs:element name="getTaskResponse" type="tns:getTaskResponse"/>
@@ -809,6 +813,19 @@
 <xs:sequence/>
 </xs:complexType>
 
+<xs:complexType name="deleteListTypeItem">
+<xs:sequence>
+<xs:element name="className" type="xs:string" minOccurs="0"/>
+<xs:element name="oid" type="xs:long"/>
+<xs:element name="releaseRelationships" type="xs:boolean"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteListTypeItemResponse">
+<xs:sequence/>
+</xs:complexType>
+
 <xs:complexType name="executeQuery">
 <xs:sequence>
 <xs:element name="query" type="tns:transientQuery" minOccurs="0"/>
@@ -843,19 +860,6 @@
 <xs:element name="object" type="tns:remoteObjectLight" minOccurs="0"/>
 <xs:element name="extraColumns" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="deleteListTypeItem">
-<xs:sequence>
-<xs:element name="className" type="xs:string" minOccurs="0"/>
-<xs:element name="oid" type="xs:long"/>
-<xs:element name="releaseRelationships" type="xs:boolean"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="deleteListTypeItemResponse">
-<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="getPoolsInObject">
@@ -1178,6 +1182,18 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="getTasks">
+<xs:sequence>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getTasksResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteTask" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="connectMirrorPort">
 <xs:sequence>
 <xs:element name="aObjectClass" type="xs:string" minOccurs="0"/>
@@ -1190,18 +1206,6 @@
 
 <xs:complexType name="connectMirrorPortResponse">
 <xs:sequence/>
-</xs:complexType>
-
-<xs:complexType name="getTasks">
-<xs:sequence>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getTasksResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:remoteTask" minOccurs="0" maxOccurs="unbounded"/>
-</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="getInstanceableListTypes">
@@ -1545,9 +1549,14 @@
 
 <xs:complexType name="remoteTaskResult">
 <xs:sequence>
-<xs:element name="messages" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element name="resultStatus" type="xs:int"/>
-<xs:element name="errorMessage" type="xs:string" minOccurs="0"/>
+<xs:element name="messages" type="tns:remoteResultMessage" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="remoteResultMessage">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+<xs:element name="messageType" type="xs:int"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -1662,8 +1671,8 @@
 
 <xs:complexType name="subscribeUserToTask">
 <xs:sequence>
-<xs:element name="taskId" type="xs:long"/>
 <xs:element name="userId" type="xs:long"/>
+<xs:element name="taskId" type="xs:long"/>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
@@ -2251,8 +2260,8 @@
 
 <xs:complexType name="unsubscribeUserFromTask">
 <xs:sequence>
-<xs:element name="taskId" type="xs:long"/>
 <xs:element name="userId" type="xs:long"/>
+<xs:element name="taskId" type="xs:long"/>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
@@ -2277,20 +2286,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="getConnectionEndpoints">
-<xs:sequence>
-<xs:element name="connectionClass" type="xs:string" minOccurs="0"/>
-<xs:element name="connectionId" type="xs:long"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getConnectionEndpointsResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="createListTypeItem">
 <xs:sequence>
 <xs:element name="className" type="xs:string" minOccurs="0"/>
@@ -2303,6 +2298,20 @@
 <xs:complexType name="createListTypeItemResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:long"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getConnectionEndpoints">
+<xs:sequence>
+<xs:element name="connectionClass" type="xs:string" minOccurs="0"/>
+<xs:element name="connectionId" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getConnectionEndpointsResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -2462,18 +2471,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="deleteAttributeForClassWithId">
-<xs:sequence>
-<xs:element name="classId" type="xs:long"/>
-<xs:element name="attributeName" type="xs:string" minOccurs="0"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="deleteAttributeForClassWithIdResponse">
-<xs:sequence/>
-</xs:complexType>
-
 <xs:complexType name="getTasksForUser">
 <xs:sequence>
 <xs:element name="userId" type="xs:long"/>
@@ -2487,6 +2484,18 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="deleteAttributeForClassWithId">
+<xs:sequence>
+<xs:element name="classId" type="xs:long"/>
+<xs:element name="attributeName" type="xs:string" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteAttributeForClassWithIdResponse">
+<xs:sequence/>
+</xs:complexType>
+
 <xs:complexType name="deleteClass">
 <xs:sequence>
 <xs:element name="className" type="xs:string" minOccurs="0"/>
@@ -2496,6 +2505,19 @@
 
 <xs:complexType name="deleteClassResponse">
 <xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="getSubscribersForTask">
+<xs:sequence>
+<xs:element name="taskId" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getSubscribersForTaskResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:userInfoLight" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="relateIPtoDevice">
@@ -2524,24 +2546,6 @@
 <xs:sequence/>
 </xs:complexType>
 
-<xs:complexType name="createSpecialObject">
-<xs:sequence>
-<xs:element name="className" type="xs:string" minOccurs="0"/>
-<xs:element name="parentObjectClassName" type="xs:string" minOccurs="0"/>
-<xs:element name="parentOid" type="xs:long"/>
-<xs:element name="attributeNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element name="attributeValues" type="ns1:stringArray" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element name="templateId" type="xs:long"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="createSpecialObjectResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:long"/>
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="getGroups">
 <xs:sequence>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
@@ -2565,6 +2569,24 @@
 </xs:sequence>
 </xs:extension>
 </xs:complexContent>
+</xs:complexType>
+
+<xs:complexType name="createSpecialObject">
+<xs:sequence>
+<xs:element name="className" type="xs:string" minOccurs="0"/>
+<xs:element name="parentObjectClassName" type="xs:string" minOccurs="0"/>
+<xs:element name="parentOid" type="xs:long"/>
+<xs:element name="attributeNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="attributeValues" type="ns1:stringArray" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="templateId" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createSpecialObjectResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:long"/>
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="getChildrenOfClass">
@@ -2849,6 +2871,18 @@
 <xs:sequence/>
 </xs:complexType>
 
+<xs:complexType name="updateTaskParameters">
+<xs:sequence>
+<xs:element name="taskId" type="xs:long"/>
+<xs:element name="parameters" type="tns:stringPair" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="updateTaskParametersResponse">
+<xs:sequence/>
+</xs:complexType>
+
 <xs:complexType name="setClassProperties">
 <xs:sequence>
 <xs:element name="classId" type="xs:long"/>
@@ -2867,18 +2901,6 @@
 </xs:complexType>
 
 <xs:complexType name="setClassPropertiesResponse">
-<xs:sequence/>
-</xs:complexType>
-
-<xs:complexType name="updateTaskParameters">
-<xs:sequence>
-<xs:element name="taskId" type="xs:long"/>
-<xs:element name="parameters" type="tns:stringPair" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="updateTaskParametersResponse">
 <xs:sequence/>
 </xs:complexType>
 
@@ -2959,20 +2981,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="getSubnet">
-<xs:sequence>
-<xs:element name="id" type="xs:long"/>
-<xs:element name="className" type="xs:string" minOccurs="0"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getSubnetResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:remoteObject" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="createAttribute">
 <xs:sequence>
 <xs:element name="className" type="xs:string" minOccurs="0"/>
@@ -2991,6 +2999,20 @@
 
 <xs:complexType name="createAttributeResponse">
 <xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="getSubnet">
+<xs:sequence>
+<xs:element name="id" type="xs:long"/>
+<xs:element name="className" type="xs:string" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getSubnetResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObject" minOccurs="0"/>
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="bulkUpload">
@@ -3058,18 +3080,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="addPossibleChildrenForClassWithId">
-<xs:sequence>
-<xs:element name="parentClassId" type="xs:long"/>
-<xs:element name="childrenToBeAdded" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="addPossibleChildrenForClassWithIdResponse">
-<xs:sequence/>
-</xs:complexType>
-
 <xs:complexType name="getSubnetUsedIps">
 <xs:sequence>
 <xs:element name="id" type="xs:long"/>
@@ -3083,6 +3093,18 @@
 <xs:sequence>
 <xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="addPossibleChildrenForClassWithId">
+<xs:sequence>
+<xs:element name="parentClassId" type="xs:long"/>
+<xs:element name="childrenToBeAdded" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="addPossibleChildrenForClassWithIdResponse">
+<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="setUserProperties">

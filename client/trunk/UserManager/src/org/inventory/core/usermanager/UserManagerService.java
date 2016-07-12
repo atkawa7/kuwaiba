@@ -16,6 +16,8 @@
 
 package org.inventory.core.usermanager;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalUserGroupObject;
 import org.inventory.communications.core.LocalUserObject;
@@ -61,10 +63,10 @@ public class UserManagerService {
      */
     public void populateUsersList() {
         usersTableModel = new NodeTableModel();
-        LocalUserObject[] users = com.getUsers();
+        List<LocalUserObject> users = com.getUsers();
         if (users == null){
             umtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
-            users = new LocalUserObject[0];
+            users = new ArrayList<>();
         }
         usersRoot = new AbstractNode(new UserChildren(users));
         usersTableModel.setNodes(usersRoot.getChildren().getNodes());

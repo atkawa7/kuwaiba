@@ -60,7 +60,7 @@ public class DeleteAction extends AbstractAction {
             if(JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this user?", "Confirmation",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.CANCEL_OPTION)
                 return;
 
-            if(com.deleteUsers(new long[]{((UserNode)this.node).getObject().getOid()})){
+            if(com.deleteUsers(new long[]{((UserNode)this.node).getObject().getUserId()})){
                 NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "The user was deleted successfully");
                 node.getParentNode().getChildren().remove(new Node[]{node});
                 ums.refreshUserList();

@@ -99,7 +99,7 @@ public class GroupsEditorSupport extends PropertyEditorSupport
     @Override
     public void vetoableChange(PropertyChangeEvent evt) throws PropertyVetoException {
         if(evt.getNewValue().equals(PropertyEnv.STATE_VALID)){
-            boolean success = com.setUserProperties(this.user.getOid(), null, null, null, null, myPanel.toBeAdded());
+            boolean success = com.setUserProperties(this.user.getUserId(), null, null, null, null, myPanel.toBeAdded());
             if (!success)
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             else

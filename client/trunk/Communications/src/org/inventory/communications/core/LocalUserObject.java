@@ -23,19 +23,13 @@ import org.kuwaiba.wsclient.UserInfo;
  * Implementation for the local representation of an application user
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class LocalUserObject {
-
-    private long oid;
-    private String userName;
+public class LocalUserObject extends LocalUserObjectLight {
     private String firstName;
     private String lastName;
     private LocalUserGroupObjectLight[] groups;
 
-    public LocalUserObject() {    }
-
     public LocalUserObject(UserInfo user) {
-        this.oid = user.getId();
-        this.userName = user.getUserName();
+        super(user.getId(), user.getUserName());
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
         if (user.getGroups() == null)
@@ -63,15 +57,12 @@ public class LocalUserObject {
         return lastName;
     }
 
-    public long getOid() {
-        return oid;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
     public void setGroups(LocalUserGroupObjectLight[] groups) {
         this.groups = groups;
+    }
+    
+    @Override
+    public String toString() {
+        return firstName == null || lastName == null ? getUserName() : String.format("%s, %s - %s", lastName, firstName, getUserName());
     }
 }

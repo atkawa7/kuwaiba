@@ -35,9 +35,12 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import org.inventory.automation.tasks.nodes.TaskNode;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalTask;
 import org.inventory.communications.core.LocalUserObject;
+import org.inventory.communications.core.LocalUserObjectLight;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 
 /**
  * Show the activity log associated to an object
@@ -48,12 +51,12 @@ public class UsersFrame extends JFrame {
     private JTextField txtField;
     private JScrollPane pnlScrollMain;
     private JList<LocalUserObject> lstAvailableUsers;
-    private LocalTask selectedTask;
+    private TaskNode selectedTaskNode;
     private List<LocalUserObject> users;
     
     
-    public UsersFrame(LocalTask selectedTask, List<LocalUserObject> users) {
-        this.selectedTask = selectedTask;
+    public UsersFrame(TaskNode selectedTaskNode, List<LocalUserObject> users) {
+        this.selectedTaskNode = selectedTaskNode;
         this.users = users;
         setLayout(new BorderLayout());
         setTitle("Available Users");
@@ -120,12 +123,25 @@ public class UsersFrame extends JFrame {
             if (lstAvailableUsers.getSelectedValue() == null)
                 JOptionPane.showMessageDialog(null, "Select a user from the list");
             else {
-               
-                if (CommunicationsStub.getInstance().subscribeUser(selectedTask.getId(), lstAvailableUsers.getSelectedValue().getOid())){
-                        JOptionPane.showMessageDialog(null, "User subscribed successfully");
-                        dispose();
-                }
-                else 
+                CommunicationsStub com =CommunicationsStub.getInstance();
+                if (com.subscribeUserToTask(lstAvailableUsers.getSelectedValue().getUserId(), 
+                        selectedTaskNode.getLookup().lookup(LocalTask.class).getId())) {
+                    
+                    JOptionPane.showMessageDialog(null, "User subscribed successfully");
+                    
+                    LocalTask task = selectedTaskNode.getLookup().lookup(LocalTask.class);
+                    
+                    List<LocalUserObjectLight> subscribers = com.getSubscribersForTask(task.getId());
+                
+                    if (subscribers == null)
+                        NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+                    else {
+                        task.setUsers(subscribers);
+                        ((TaskNode.TaskChildren)selectedTaskNode.getChildren()).addNotify();
+                    }
+                    
+                    dispose();
+                } else 
                     JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError(), 
                         "Error", JOptionPane.ERROR_MESSAGE);
             }

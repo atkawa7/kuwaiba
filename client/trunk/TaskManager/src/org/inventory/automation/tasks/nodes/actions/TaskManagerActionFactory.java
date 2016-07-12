@@ -26,6 +26,9 @@ public class TaskManagerActionFactory {
     private static CreateTaskAction createTaskAction;
     private static DeleteTaskAction deleteTaskAction;
     private static SubscribeUserAction subscribeUserAction;
+    private static UnsubscribeUserAction unsubscribeUserAction;
+    private static AddParameterToTaskAction addParameterToTaskAction;
+    private static RemoveParameterFromTaskAction removeParameterFromTaskAction;
     
     public static AbstractAction createExecuteTaskAction() {
         if (executeTaskAction == null)
@@ -49,5 +52,23 @@ public class TaskManagerActionFactory {
         if (subscribeUserAction == null)
             subscribeUserAction = new SubscribeUserAction();
         return subscribeUserAction;
+    }
+    
+    public static AbstractAction createUnsubscribeUserAction() {
+        if (unsubscribeUserAction == null)
+            unsubscribeUserAction = new UnsubscribeUserAction();
+        return unsubscribeUserAction;
+    }
+    
+    public static AbstractAction createAddParameterToTaskActionAction() {
+        if (addParameterToTaskAction == null)
+            addParameterToTaskAction = new AddParameterToTaskAction();
+        return addParameterToTaskAction;
+    }
+    
+    public static AbstractAction createRemoveParameterFromTaskActionAction() {
+        if (removeParameterFromTaskAction == null)
+            removeParameterFromTaskAction = new RemoveParameterFromTaskAction();
+        return removeParameterFromTaskAction;
     }
 }

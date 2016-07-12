@@ -17,6 +17,7 @@ package org.inventory.automation.tasks.nodes.actions;
 
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
+import org.inventory.automation.tasks.windows.ExecuteTaskResultTopComponent;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalTask;
 import org.inventory.communications.core.LocalTaskResult;
@@ -29,7 +30,7 @@ import org.openide.util.Utilities;
  */
 class ExecuteTaskAction extends AbstractAction {
     
-    ExecuteTaskAction() {
+    public ExecuteTaskAction() {
         putValue(NAME, "Execute Task");
     }
     
@@ -41,12 +42,10 @@ class ExecuteTaskAction extends AbstractAction {
         if (taskResult == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else {
-            if (taskResult.getResultStatus() == LocalTaskResult.STATUS_ERROR)
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, taskResult.getErrorMessage());
-            else {
-                for (String message : taskResult.getMessages())
-                    System.out.println("MSG: " + message);
-            }
+            ExecuteTaskResultTopComponent tc = new ExecuteTaskResultTopComponent(taskResult);
+            tc.setDisplayName(String.format("Result for task %s", selectedTask.getName()));
+            tc.open();
+            tc.requestAttention(true);
         }
     }
     
