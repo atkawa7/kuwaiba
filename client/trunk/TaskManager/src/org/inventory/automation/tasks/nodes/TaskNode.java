@@ -17,14 +17,21 @@ package org.inventory.automation.tasks.nodes;
 
 import java.awt.Color;
 import java.awt.Image;
+import java.beans.PropertyEditor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
+import java.util.Date;
 import javax.swing.Action;
 import org.inventory.automation.tasks.nodes.actions.TaskManagerActionFactory;
 import org.inventory.communications.core.LocalTask;
+import org.inventory.communications.core.LocalTaskNotificationDescriptor;
+import org.inventory.communications.core.LocalTaskScheduleDescriptor;
 import org.inventory.communications.core.LocalUserObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.communications.util.Utils;
+import org.inventory.navigation.applicationnodes.objectnodes.properties.AbstractComboBoxProperty;
+import org.inventory.navigation.applicationnodes.objectnodes.properties.DatePickerPropertyEditorSupport;
+import org.inventory.navigation.applicationnodes.objectnodes.properties.IntegerEntry;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
@@ -39,6 +46,16 @@ import org.openide.util.lookup.Lookups;
 public class TaskNode extends AbstractNode {
     
     private static final Image defaultIcon = Utils.createRectangleIcon(Color.PINK, 10, 10);
+    private static final IntegerEntry[] NOTIFICATION_TYPES 
+                        = new IntegerEntry[] { new IntegerEntry(LocalTaskNotificationDescriptor.TYPE_NOTHING, "No Notification"), 
+                                               new IntegerEntry(LocalTaskNotificationDescriptor.TYPE_CLIENT, "Client Managed"), 
+                                               new IntegerEntry(LocalTaskNotificationDescriptor.TYPE_EMAIL, "Email") };
+    
+    private static final IntegerEntry[] EXECUTION_TYPES = new IntegerEntry[] { 
+                        new IntegerEntry(LocalTaskScheduleDescriptor.TYPE_ON_DEMAND, "On Demand"), 
+                        new IntegerEntry(LocalTaskScheduleDescriptor.TYPE_LOGIN, "User Login"), 
+                        new IntegerEntry(LocalTaskScheduleDescriptor.TYPE_LOOP, "Loop"),
+                        new IntegerEntry(LocalTaskScheduleDescriptor.TYPE_STARTUP, "System Startup") };
     
     public TaskNode(LocalTask task) {
         super(new TaskChildren(), Lookups.singleton(task));
@@ -96,11 +113,11 @@ public class TaskNode extends AbstractNode {
             Sheet.Set schedulePropertySet = Sheet.createPropertiesSet(); //Schedule task properties
             schedulePropertySet.setName("Scheduling");
             schedulePropertySet.setDisplayName("Scheduling");
-            PropertySupport.Reflection<Long> startTimeProperty = new PropertySupport.Reflection(task, long.class, Constants.PROPERTY_START_TIME);
+            StartTimePropertySupport startTimeProperty = new StartTimePropertySupport(task, Constants.PROPERTY_START_TIME, "startTime", "" );
             schedulePropertySet.put(startTimeProperty);
             PropertySupport.Reflection<Integer> everyXminutesProperty = new PropertySupport.Reflection(task, int.class, Constants.PROPERTY_EVERY_X_MINUTES);
             schedulePropertySet.put(everyXminutesProperty);
-            PropertySupport.Reflection<Integer> executionTypeProperty = new PropertySupport.Reflection(task, int.class, Constants.PROPERTY_EXECUTION_TYPE);
+            ExecutionTypePropertySupport executionTypeProperty = new ExecutionTypePropertySupport(task, EXECUTION_TYPES, Constants.PROPERTY_EXECUTION_TYPE, "executionType", "");
             schedulePropertySet.put(executionTypeProperty);
 
             Sheet.Set notificationTypePropertySet = Sheet.createPropertiesSet(); //Notification config task properties
@@ -108,7 +125,7 @@ public class TaskNode extends AbstractNode {
             notificationTypePropertySet.setDisplayName("Notification Type");
             PropertySupport.Reflection<String> emailProperty = new PropertySupport.Reflection(task, String.class, Constants.PROPERTY_EMAIL);
             notificationTypePropertySet.put(emailProperty);
-            PropertySupport.Reflection<Integer> notificationTypeProperty = new PropertySupport.Reflection(task, int.class, Constants.PROPERTY_NOTIFICATION_TYPE);
+            NotificationTypePropertySupport notificationTypeProperty = new NotificationTypePropertySupport(task, NOTIFICATION_TYPES , Constants.PROPERTY_NOTIFICATION_TYPE, "notificationType", "");
             notificationTypePropertySet.put(notificationTypeProperty);
 
             Sheet.Set paramsPropertySet = Sheet.createPropertiesSet(); //Task parameters
@@ -116,7 +133,7 @@ public class TaskNode extends AbstractNode {
             paramsPropertySet.setDisplayName("Task Parameters");
             for (String parameterName : task.getParameters().keySet() ) {
                 PropertySupport.ReadWrite<String> parameterProperty = 
-                        new TaskParameterPropertySupport(task, parameterName, String.class, parameterName, "");
+                        new ParameterPropertySupport(task, parameterName, String.class, parameterName, "");
                 paramsPropertySet.put(parameterProperty);
             }
             
@@ -148,9 +165,9 @@ public class TaskNode extends AbstractNode {
         }
     }
     
-    private static class TaskParameterPropertySupport extends PropertySupport.ReadWrite<String> {
+    private static class ParameterPropertySupport extends PropertySupport.ReadWrite<String> {
         private LocalTask task;
-        public TaskParameterPropertySupport(LocalTask task, String name, Class<String> type, String displayName, String shortDescription) {
+        public ParameterPropertySupport(LocalTask task, String name, Class<String> type, String displayName, String shortDescription) {
             super(name, type, displayName, shortDescription);
             this.task = task;
         }
@@ -163,6 +180,78 @@ public class TaskNode extends AbstractNode {
         @Override
         public void setValue(String value) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
             task.setParameter(getName(), value);
+        }
+    }
+    
+    private static class StartTimePropertySupport extends PropertySupport.ReadWrite<Date> {
+        private LocalTask task;
+
+        public StartTimePropertySupport(LocalTask task, String name, String displayName, String shortDescription) {
+            super(name, Date.class, displayName, shortDescription);
+            this.task = task;
+        }
+        
+        @Override
+        public Date getValue() throws IllegalAccessException, InvocationTargetException {
+            return new Date(task.getStartTime());
+        }
+
+        @Override
+        public void setValue(Date val) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+            task.setStartTime(val.getTime());
+        }
+        
+        @Override
+        public PropertyEditor getPropertyEditor(){        
+            return new DatePickerPropertyEditorSupport(new Date(task.getStartTime()));
+        }
+    }
+    
+    private static class NotificationTypePropertySupport extends AbstractComboBoxProperty<IntegerEntry> {
+        private LocalTask task;
+
+        public NotificationTypePropertySupport(LocalTask task, IntegerEntry[] tags, String name, 
+                                    String displayName, String shortDescription) {
+            super(tags, name, IntegerEntry.class, displayName, shortDescription);
+            this.task = task;
+        }
+
+        @Override
+        public void setValue(IntegerEntry val) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+            task.setNotificationType(val.getValue());
+        }
+
+        @Override
+        public IntegerEntry getValue() throws IllegalAccessException, InvocationTargetException {
+            for (IntegerEntry anEntry : tags) {
+                if (anEntry.getValue() == task.getNotificationType())
+                    return anEntry;
+            }
+            return null;
+        }
+    }
+    
+    private static class ExecutionTypePropertySupport extends AbstractComboBoxProperty<IntegerEntry> {
+        private LocalTask task;
+
+        public ExecutionTypePropertySupport(LocalTask task, IntegerEntry[] tags, String name, 
+                                    String displayName, String shortDescription) {
+            super(tags, name, IntegerEntry.class, displayName, shortDescription);
+            this.task = task;
+        }
+
+        @Override
+        public void setValue(IntegerEntry val) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+            task.setExecutionType(val.getValue());
+        }
+
+        @Override
+        public IntegerEntry getValue() throws IllegalAccessException, InvocationTargetException {
+            for (IntegerEntry anEntry : tags) {
+                if (anEntry.getValue() == task.getExecutionType())
+                    return anEntry;
+            }
+            return null;
         }
     }
 }

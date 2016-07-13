@@ -22,6 +22,10 @@ package org.inventory.communications.core;
 
 public final class LocalTaskNotificationDescriptor {
     /**
+     * Do nothing
+     */
+    public static final int TYPE_NOTHING = 0;
+    /**
      * Execute once, on system start-up.
      */
     public static final int TYPE_CLIENT = 1;

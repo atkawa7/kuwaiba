@@ -22,6 +22,10 @@ package org.inventory.communications.core;
 
 public final class LocalTaskScheduleDescriptor {
     /**
+     * Runs on demand
+     */
+    public static final int TYPE_ON_DEMAND = 0;
+    /**
      * Execute once, on system start-up.
      */
     public static final int TYPE_STARTUP = 1;

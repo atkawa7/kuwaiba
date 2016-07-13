@@ -16,7 +16,8 @@
 package org.inventory.communications.core;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.beans.PropertyVetoException;
+import java.beans.VetoableChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -66,7 +67,7 @@ public class LocalTask implements Comparable<LocalTask> {
     /**
      * List of listeners of this task's properties
      */
-    private List<PropertyChangeListener> changeListeners;
+    private List<VetoableChangeListener> changeListeners;
 
     public LocalTask(long id, String name, String description, boolean enabled, 
             String script, HashMap<String, String> parameters, LocalTaskScheduleDescriptor schedule, 
@@ -89,8 +90,10 @@ public class LocalTask implements Comparable<LocalTask> {
 
     public void setName(String name) {
         String oldName = this.name;
-        this.name = name;
-        firePropertyChange(Constants.PROPERTY_NAME, oldName, name);
+        try {
+            firePropertyChange(Constants.PROPERTY_NAME, oldName, name);
+            this.name = name;
+        } catch (PropertyVetoException ex) {}
     }
 
     public String getDescription() {
@@ -99,8 +102,10 @@ public class LocalTask implements Comparable<LocalTask> {
 
     public void setDescription(String description) {
         String oldDescription = this.description;
-        this.description = description;
-        firePropertyChange(Constants.PROPERTY_NAME, oldDescription, name);
+        try {
+            firePropertyChange(Constants.PROPERTY_DESCRIPTION, oldDescription, description);
+            this.description = description;
+        } catch (PropertyVetoException ex) {}
     }
 
     public boolean isEnabled() {
@@ -109,8 +114,10 @@ public class LocalTask implements Comparable<LocalTask> {
 
     public void setEnabled(boolean enabled) {
         boolean oldEnabled = this.isEnabled();
-        this.enabled = enabled;
-        firePropertyChange(Constants.PROPERTY_ENABLED, String.valueOf(oldEnabled), String.valueOf(enabled));
+        try {
+            firePropertyChange(Constants.PROPERTY_ENABLED, String.valueOf(oldEnabled), String.valueOf(enabled));
+            this.enabled = enabled;
+        } catch (PropertyVetoException ex) {}
     }
 
     public HashMap<String, String> getParameters() {
@@ -118,7 +125,11 @@ public class LocalTask implements Comparable<LocalTask> {
     }
 
     public void setParameter(String parameterName, String parameterValue) {
-        this.parameters.put(parameterName, parameterValue);
+        String oldParameterValue = this.parameters.get(parameterName);
+        try {
+            firePropertyChange(parameterName, oldParameterValue, parameterValue);
+            this.parameters.put(parameterName, parameterValue);
+        } catch (PropertyVetoException ex) {}
     }
     
     public void setParameters(HashMap<String, String> parameters) {
@@ -131,8 +142,10 @@ public class LocalTask implements Comparable<LocalTask> {
     
     public void setStartTime(long startTime) { 
         long oldStartTime = this.schedule.getStartTime();
-        schedule.setStartTime(startTime);
-        firePropertyChange(Constants.PROPERTY_START_TIME, oldStartTime, startTime);
+        try {
+            firePropertyChange(Constants.PROPERTY_START_TIME, oldStartTime, startTime);
+            schedule.setStartTime(startTime);
+        } catch (PropertyVetoException ex) {}
     }
     
     public int getExecutionType() {        
@@ -141,8 +154,10 @@ public class LocalTask implements Comparable<LocalTask> {
     
     public void setExecutionType(int executionType) { 
         int oldExecutionType = this.schedule.getExecutionType();
-        schedule.setExecutionType(executionType);
-        firePropertyChange(Constants.PROPERTY_EXECUTION_TYPE, oldExecutionType, executionType);
+        try {
+            firePropertyChange(Constants.PROPERTY_EXECUTION_TYPE, oldExecutionType, executionType);
+            schedule.setExecutionType(executionType);
+        } catch (PropertyVetoException ex) {}
     }
     
     public int getEveryXMinutes() {
@@ -151,8 +166,11 @@ public class LocalTask implements Comparable<LocalTask> {
     
     public void setEveryXMinutes(int everyXMinutes) { 
         int oldEveryXMinutes = this.schedule.getEveryXMinutes();
-        schedule.setEveryXMinutes(everyXMinutes);
-        firePropertyChange(Constants.PROPERTY_EVERY_X_MINUTES, oldEveryXMinutes, everyXMinutes);
+        
+        try {
+            firePropertyChange(Constants.PROPERTY_EVERY_X_MINUTES, oldEveryXMinutes, everyXMinutes);
+            schedule.setEveryXMinutes(everyXMinutes);
+        } catch (PropertyVetoException ex) {}
     }
     
     public String getEmail() {
@@ -161,8 +179,10 @@ public class LocalTask implements Comparable<LocalTask> {
     
     public void setEmail(String email) {
         String oldEmail = this.notificationType.getEmail();
-        notificationType.setEmail(email);
-        firePropertyChange(Constants.PROPERTY_EMAIL, oldEmail, email);
+        try {
+            firePropertyChange(Constants.PROPERTY_EMAIL, oldEmail, email);
+            notificationType.setEmail(email);
+        } catch (PropertyVetoException ex) {}
     }
     
     public int getNotificationType() {
@@ -171,8 +191,10 @@ public class LocalTask implements Comparable<LocalTask> {
     
     public void setNotificationType(int notificationType) {
         int oldNotificationType = this.notificationType.getNotificationType();
-        this.notificationType.setNotificationType(notificationType);
-        firePropertyChange(Constants.PROPERTY_NOTIFICATION_TYPE, oldNotificationType, notificationType);
+        try {
+            firePropertyChange(Constants.PROPERTY_NOTIFICATION_TYPE, oldNotificationType, notificationType);
+            this.notificationType.setNotificationType(notificationType);
+        } catch (PropertyVetoException ex) {}
     }
 
     public String getScript() {
@@ -180,9 +202,11 @@ public class LocalTask implements Comparable<LocalTask> {
     }
 
     public void setScript(String script) {
-        String oldScript = this.script;
-        this.script = script;
-        firePropertyChange(Constants.PROPERTY_SCRIPT, oldScript, script);
+        String oldScript = this.script;        
+        try {
+            firePropertyChange(Constants.PROPERTY_SCRIPT, oldScript, script);
+            this.script = script;
+        } catch (PropertyVetoException ex) {}
     }
 
     public long getId() {
@@ -193,16 +217,16 @@ public class LocalTask implements Comparable<LocalTask> {
         this.id = id;
     }
     
-    public void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
-        for (PropertyChangeListener changeListener : changeListeners)
-            changeListener.propertyChange(new PropertyChangeEvent(this, propertyName, oldValue, newValue));
+    public void firePropertyChange(String propertyName, Object oldValue, Object newValue) throws PropertyVetoException {
+        for (VetoableChangeListener changeListener : changeListeners)
+            changeListener.vetoableChange(new PropertyChangeEvent(this, propertyName, oldValue, newValue));
     }
     
-    public void addChangeListener(PropertyChangeListener listener) {
+    public void addChangeListener(VetoableChangeListener listener) {
         changeListeners.add(listener);
     }
     
-    public void removeChangeListener(PropertyChangeListener listener) {
+    public void removeChangeListener(VetoableChangeListener listener) {
         changeListeners.remove(listener);
     }
     
