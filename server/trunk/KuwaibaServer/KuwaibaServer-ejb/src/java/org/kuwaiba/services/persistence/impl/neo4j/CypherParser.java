@@ -66,13 +66,22 @@ public class CypherParser {
      */
     public String createListypeMatch(String listTypeName, String listTypeName2){
         if(listTypeName2.isEmpty())
-            return "OPTIONAL MATCH instance-[r_"+listTypeName+":"+RelTypes.RELATED_TO+"]->listType_"+listTypeName;
+            return ", instance-[r_"+listTypeName+":"+RelTypes.RELATED_TO+"]->listType_"+listTypeName;
         if(listTypeName2.equalsIgnoreCase("parent"))
-            return "OPTIONAL MATCH "+listTypeName2+"-[r_"+listTypeName+":"+RelTypes.RELATED_TO+"]->listType_"+listTypeName;
+            return ", "+listTypeName2+"-[r_"+listTypeName+":"+RelTypes.RELATED_TO+"]->listType_"+listTypeName;
         else
-            return "OPTIONAL MATCH listType_"+listTypeName2+"-[r_"+listTypeName+":"+RelTypes.RELATED_TO+"]->listType_"+listTypeName;
+            return ", listType_"+listTypeName2+"-[r_"+listTypeName+":"+RelTypes.RELATED_TO+"]->listType_"+listTypeName;
     }
-
+    
+    /**
+     * if has no relationship
+     * @param listTypeName
+     * @return 
+     */
+    public String createNoneWhere(String listTypeName){
+        return " NOT instance-[:RELATED_TO {name:\""+listTypeName+"\"}]->()    ";
+    }
+    
     /**
      * Add this to the match for the parent and the parent joins
      * @param listTypeName
@@ -81,9 +90,9 @@ public class CypherParser {
      */
     public String createListypeParentMatch(String listTypeName, String listTypeName2){
         if(listTypeName2.isEmpty())
-            return "OPTIONAL MATCH  parent-[r_"+listTypeName+":"+RelTypes.RELATED_TO+"]->listType_"+listTypeName;
+            return ", parent-[r_"+listTypeName+":"+RelTypes.RELATED_TO+"]->listType_"+listTypeName;
         else
-            return "OPTIONAL MATCH  listType_"+listTypeName2+"-[r_"+listTypeName+":"+RelTypes.RELATED_TO+"]->listType_"+listTypeName;
+            return ", listType_"+listTypeName2+"-[r_"+listTypeName+":"+RelTypes.RELATED_TO+"]->listType_"+listTypeName;
     }
 
     /**
@@ -224,17 +233,17 @@ public class CypherParser {
     public String getOperator(int condition){
         switch (condition) {
             case ExtendedQuery.EQUAL:
-                return "! =~";//NOI18N
+                return " =~";//NOI18N
             case ExtendedQuery.EQUAL_OR_GREATER_THAN:
-                return "! >=";//NOI18N
+                return " >=";//NOI18N
             case ExtendedQuery.EQUAL_OR_LESS_THAN:
-                return "! <=";//NOI18N
+                return " <=";//NOI18N
             case ExtendedQuery.GREATER_THAN:
-                return "! >";//NOI18N
+                return " >";//NOI18N
             case ExtendedQuery.LESS_THAN:
-                return "! <";//NOI18N
+                return " <";//NOI18N
             case ExtendedQuery.LIKE:
-                return "! =~";//NOI18N
+                return " =~";//NOI18N
             default:
                 return "";
         }

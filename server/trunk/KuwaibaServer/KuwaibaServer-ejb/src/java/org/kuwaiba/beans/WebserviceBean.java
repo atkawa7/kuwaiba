@@ -2269,7 +2269,8 @@ public class WebserviceBean implements WebserviceBeanRemote {
                     return new ReportDescriptor[] {
                             new ReportDescriptor(8, "Service details", className, "Shows the resources used by the service and some of its attributes")
                     };
-                case "Subnet":
+                case "SubnetIPv4":
+                case "SubnetIPv6":
                     return new ReportDescriptor[] {
                             new ReportDescriptor(9, "Subnet details", className, "Shows the IPs created in that subnet and some of their attributes")
                     };
@@ -2318,7 +2319,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
                     tributaryLinkClass = StringPair.get(arguments, "objectClass");
                     return reports.buildHighOrderTributaryLinkDetailReport(tributaryLinkClass, tributaryLinkId);
                 case 9: //Subnet usage
-                    return reports.subnetUsageReport(StringPair.get(arguments, "className"), Long.valueOf(StringPair.get(arguments, "objectId")));
+                    return reports.subnetUsageReport(StringPair.get(arguments, "objectClass"), Long.valueOf(StringPair.get(arguments, "objectId")));
                 case 10:
                     long locationId = Long.valueOf(StringPair.get(arguments, "objectId"));
                     String locationClass = StringPair.get(arguments, "objectClass");

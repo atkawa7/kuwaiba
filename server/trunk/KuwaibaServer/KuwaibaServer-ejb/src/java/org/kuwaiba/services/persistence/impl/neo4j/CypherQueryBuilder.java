@@ -106,25 +106,29 @@ public class CypherQueryBuilder {
      */
     public void readJoins(String listTypeName, String listTypeName2, ExtendedQuery query){
         
-        Node classNode = classNodes.get(query.getClassName());
-        match = match.concat(cp.createListypeMatch(listTypeName, listTypeName2));
-        where = where.concat(cp.createJoinRelation(listTypeName));
-        _return = _return.concat(", ").concat(LISTTYPE).concat(listTypeName);
+        if(query == null)
+            where = where.concat(cp.createNoneWhere(listTypeName));
+        else{
+            Node classNode = classNodes.get(query.getClassName());
+            match = match.concat(cp.createListypeMatch(listTypeName, listTypeName2));
+            where = where.concat(cp.createJoinRelation(listTypeName));
+            _return = _return.concat(", ").concat(LISTTYPE).concat(listTypeName);
 
-        if(query.getAttributeNames() != null){
-            for(int i=0; i<query.getAttributeNames().size(); i++){
-                    if(query.getAttributeValues().get(i) != null){
-                        where = where.concat(cp.createJoinWhere(query.getConditions().get(i), listTypeName,
-                                                            query.getAttributeNames().get(i),
-                                                            query.getAttributeValues().get(i),
-                                                            Util.getTypeOfAttribute(classNode, query.getAttributeNames().get(i))
-                                                            ).concat(query.getLogicalConnector() == ExtendedQuery.CONNECTOR_AND ? " AND " : "  OR "));
-                    }
-                    else{
-                        readJoins(query.getAttributeNames().get(i), listTypeName, query.getJoins().get(i));
-                    }
-            }//end for
-        }//end if
+            if(query.getAttributeNames() != null){
+                for(int i=0; i<query.getAttributeNames().size(); i++){
+                        if(query.getAttributeValues().get(i) != null){
+                            where = where.concat(cp.createJoinWhere(query.getConditions().get(i), listTypeName,
+                                                                query.getAttributeNames().get(i),
+                                                                query.getAttributeValues().get(i),
+                                                                Util.getTypeOfAttribute(classNode, query.getAttributeNames().get(i))
+                                                                ).concat(query.getLogicalConnector() == ExtendedQuery.CONNECTOR_AND ? " AND " : "  OR "));
+                        }
+                        else{
+                            readJoins(query.getAttributeNames().get(i), listTypeName, query.getJoins().get(i));
+                        }
+                }//end for
+            }//end if
+        }
     }
 
     /**
@@ -161,19 +165,18 @@ public class CypherQueryBuilder {
         if(query.getAttributeNames() != null){
             for(int i=0; i<query.getAttributeNames().size(); i++){
                 if(query.getAttributeValues().get(i) != null){
-                    where = where.concat(cp.createWhere(query.getConditions().get(i),
+                    if(query.getAttributeValues().get(i) != null) 
+                        where = where.concat(cp.createWhere(query.getConditions().get(i),
                                                             query.getAttributeNames().get(i),
                                                             query.getAttributeValues().get(i),
                                                             Util.getTypeOfAttribute(classNode, query.getAttributeNames().get(i))
                                                             ).concat(query.getLogicalConnector() == ExtendedQuery.CONNECTOR_AND ? " AND " : "  OR "));
                 }
                else{
-                    if( query.getAttributeNames().get(i).equalsIgnoreCase(PARENT)){
+                    if( query.getAttributeNames().get(i).equalsIgnoreCase(PARENT))
                         readParent(query.getAttributeNames().get(i), "", query.getJoins().get(i));
-                    }
-                    else{
+                    else
                         readJoins(query.getAttributeNames().get(i), "", query.getJoins().get(i));
-                    }
                 }
             }//end for
         }//end if
@@ -194,8 +197,10 @@ public class CypherQueryBuilder {
                 if(query.getAttributeValues().get(i) == null){
                     if(query.getAttributeNames().get(i).equalsIgnoreCase(PARENT))
                         readVissibleAttributeParent(query.getJoins().get(i));
-                    else
-                        readVissibleAttributeJoins(query.getAttributeNames().get(i), query.getJoins().get(i));
+                    else{
+                        if(query.getJoins().get(i) != null)
+                            readVissibleAttributeJoins(query.getAttributeNames().get(i), query.getJoins().get(i));
+                    }
                 }
             }//end for
         }

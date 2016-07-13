@@ -500,7 +500,7 @@ public class Reports {
     public byte[] subnetUsageReport(String className, long subnetId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
     
         RemoteBusinessObject subnet = bem.getObject(className, subnetId);
-        List<RemoteBusinessObjectLight> ips = bem.getObjectChildren(className, subnetId, 0);
+        List<RemoteBusinessObjectLight> ips = bem.getObjectSpecialChildren(className, subnetId);
         HashMap<String, List<String>> subnetAttributes = subnet.getAttributes();
         int hosts = Integer.parseInt(subnetAttributes.get("hosts").get(0));
         int usedIps = ips.size();
@@ -545,7 +545,7 @@ public class Reports {
         String ipAddresses; 
         
         if (ips.isEmpty())
-            ipAddresses = "<div class=\"error\">There are no IP addresses in use</div>";
+            ipAddresses = "<div class=\"error\">There are no IPs Addresses in use</div>";
         else {
             ipAddresses = "<table><tr><th>IP Address</th><th>Description</th><th>Host name</th><th>Location</th><th>Service</th></tr>";
 
