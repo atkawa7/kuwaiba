@@ -98,6 +98,10 @@ public class Constants {
      */
     public static final String CLASS_GENERICCOMMUNICATIONSELEMENT = "GenericCommunicationsElement";
     /**
+     * Name for the class ViewableObject
+     */
+    public static final String CLASS_VIEWABLEOBJECT = "ViewableObject";
+    /**
      * Class Rack
      */
     public static final String CLASS_RACK = "Rack";
@@ -191,7 +195,7 @@ public class Constants {
      */
     public static final String PROPERTY_STATE = "state";
     /**
-     * Property className
+     * Property class name
      */
     public static final String PROPERTY_CLASSNAME = "className";
     /**
