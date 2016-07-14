@@ -42,17 +42,13 @@ public class CustomAcceptActionProvider implements AcceptProvider {
      */
     private String filterClass;
     
-    public CustomAcceptActionProvider(AbstractScene scene) {
-        this.scene = scene;
-    }
-    
     /**
      * This constructor allows to specify the instances of what classes (as in inventory classes) can be dropped where
      * @param scene The related scene
      * @param filterClass The class name of the instances allowed to be dropped here. It'd be useful to use a root, abstract class such as InventoryObject or GenericSomething. Null (or using the other constructor) will allow any inventory object to be added to the scene
      */
     public CustomAcceptActionProvider(AbstractScene scene, String filterClass) {
-        this (scene);
+        this.scene = scene;
         this.filterClass = filterClass;
     }
    
@@ -85,7 +81,7 @@ public class CustomAcceptActionProvider implements AcceptProvider {
             if (!scene.isNode(droppedObject)){
                 
                 if (!CommunicationsStub.getInstance().isSubclassOf(droppedObject.getClassName(), filterClass))
-                    JOptionPane.showMessageDialog(null, "Only GenericCommunicationsElements are allowed in this view", "Information", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, String.format("Only %s are allowed in this view", filterClass), "Information", JOptionPane.INFORMATION_MESSAGE);
                 else {
                     Widget newNode = scene.addNode(droppedObject); 
                     //validate is called here, otherwise, the widget won't be able to resolve its bounds and the next line will raise a NullPointerException
