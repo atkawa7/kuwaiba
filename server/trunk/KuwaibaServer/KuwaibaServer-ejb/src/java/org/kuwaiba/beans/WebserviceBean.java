@@ -1612,7 +1612,13 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateCall("getGeneralView", ipAddress, sessionId);
-            return new ViewInfo(aem.getGeneralView(viewId));
+            ViewObject viewObject = aem.getGeneralView(viewId);
+            if(viewObject == null) {
+                return null;
+            }
+            ViewInfo viewInfo = new ViewInfo(viewObject);
+            viewInfo.setBackground(viewObject.getBackground());
+            return viewInfo;
         } catch(InventoryException e) {
             throw new ServerSideException(e.getMessage());
         }
