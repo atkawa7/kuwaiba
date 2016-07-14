@@ -21,6 +21,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.security.InvalidParameterException;
 import java.util.HashMap;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
@@ -78,7 +80,9 @@ public class TaskResultWidget extends AbstractWidget {
         if (state != WIDGET_STATE_SET_UP)
             throw new InvalidStateException("Widget state is not SET_UP");
         
-        setLayout(new GridBagLayout());
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setBackground(Color.red);
+        setBorder(BorderFactory.createLineBorder(Color.yellow));
         
         GridBagConstraints layoutConstraints = new GridBagConstraints();
         
@@ -113,7 +117,7 @@ public class TaskResultWidget extends AbstractWidget {
         } else {
             int i = 1;
             for (LocalTaskResultMessage message : taskResult.getMessages()) {
-                JLabel lblMessage = new JLabel(message.getMessage());
+                JLabel lblMessage = new JLabel(message.getMessage(), SwingConstants.RIGHT);
                 lblMessage.setOpaque(true);
                 lblMessage.setBorder(new EmptyBorder(10, 10, 10, 10));
                 
