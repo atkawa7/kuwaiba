@@ -97,7 +97,7 @@ public class CommunicationsStub {
     private Cache cache;
     private LocalSession session;
     
-    private CommunicationsStub(){
+    private CommunicationsStub() {
         cache = Cache.getInstace();
     }
 

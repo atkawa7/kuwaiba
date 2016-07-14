@@ -15,16 +15,21 @@
  */
 package org.inventory.navigation.dashboard;
 
-import java.awt.BorderLayout;
-import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
+import java.awt.Component;
+import java.security.InvalidParameterException;
+import java.util.HashMap;
+import java.util.List;
+import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalTask;
+import org.inventory.communications.core.LocalTaskScheduleDescriptor;
+import org.inventory.navigation.dashboard.widgets.AbstractWidget;
+import org.inventory.navigation.dashboard.widgets.TaskResultWidget;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
+import org.openide.windows.WindowManager;
 
 /**
  * The Dashboard TopComponent
@@ -48,34 +53,17 @@ import org.openide.util.NbBundle.Messages;
 )
 @Messages({
     "CTL_DashBoardAction=DashBoard",
-    "CTL_DashBoardTopComponent=DashBoard Window",
-    "HINT_DashBoardTopComponent=This is a DashBoard window"
+    "CTL_DashBoardTopComponent=DashBoard",
+    "HINT_DashBoardTopComponent=All the relevant information in a single place"
 })
 public final class DashBoardTopComponent extends TopComponent {
-    private JFXPanel pnlFx;
+    private boolean loaded = false;
     public DashBoardTopComponent() {
         initComponents();
         setName(Bundle.CTL_DashBoardTopComponent());
-        setToolTipText(Bundle.HINT_DashBoardTopComponent());
-        setLayout(new BorderLayout());
-        pnlFx = new JFXPanel();
-        
-        add(pnlFx);
-        
-        // create JavaFX scene
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                createScene();
-            }
-        });
-
+        setToolTipText(Bundle.HINT_DashBoardTopComponent());        
     }
 
-    public void createScene() {
-        Label lblTest = new Label("Jojojo");
-        pnlFx.setScene(new Scene(lblTest));
-    }
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -85,28 +73,49 @@ public final class DashBoardTopComponent extends TopComponent {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
-        );
+        setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.Y_AXIS));
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
-        // TODO add custom code on component opening
+        if (loaded)
+            loadWidgets();
+        else
+            WindowManager.getDefault().invokeWhenUIReady(new Runnable() {
+                @Override
+                public void run() {
+                    loadWidgets();
+                    loaded = true;
+                }
+              });
     }
 
     @Override
     public void componentClosed() {
-        // TODO add custom code on component closing
+        for (Component component : this.getComponents()) {
+            try {
+                ((TaskResultWidget)component).done();
+            } catch (AbstractWidget.InvalidStateException ex) {}
+        }
+        removeAll();
+    }
+    
+    public void loadWidgets() {
+        List<LocalTask> allTasks = CommunicationsStub.getInstance().getTasks();
+        for (LocalTask aTask : allTasks) {
+            if (aTask.getExecutionType() == LocalTaskScheduleDescriptor.TYPE_LOGIN) {
+                TaskResultWidget aWidget = new TaskResultWidget();
+                try {
+                    HashMap<String, Object> parameters = new HashMap<>();
+                    parameters.put("task", aTask);
+                    aWidget.setup(parameters);
+                    aWidget.init();
+                } catch (AbstractWidget.InvalidStateException |  InvalidParameterException ex) {}
+                add(aWidget);
+            }
+        }
     }
 
     void writeProperties(java.util.Properties p) {
