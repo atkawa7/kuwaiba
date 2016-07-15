@@ -15,10 +15,10 @@
  */
 package org.inventory.navigation.dashboard;
 
-import java.awt.Component;
 import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.List;
+import javax.swing.JPanel;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalTask;
 import org.inventory.communications.core.LocalTaskScheduleDescriptor;
@@ -94,28 +94,27 @@ public final class DashBoardTopComponent extends TopComponent {
 
     @Override
     public void componentClosed() {
-        for (Component component : this.getComponents()) {
-            try {
-                ((TaskResultWidget)component).done();
-            } catch (AbstractWidget.InvalidStateException ex) {}
-        }
         removeAll();
     }
     
-    public void loadWidgets() {
+    public void loadWidgets() {    
         List<LocalTask> allTasks = CommunicationsStub.getInstance().getTasks();
-        for (LocalTask aTask : allTasks) {
-            if (aTask.getExecutionType() == LocalTaskScheduleDescriptor.TYPE_LOGIN) {
-                TaskResultWidget aWidget = new TaskResultWidget();
-                try {
-                    HashMap<String, Object> parameters = new HashMap<>();
-                    parameters.put("task", aTask);
-                    aWidget.setup(parameters);
-                    aWidget.init();
-                } catch (AbstractWidget.InvalidStateException |  InvalidParameterException ex) {}
-                add(aWidget);
-            }
+        
+        for (int i = 0; i < 8 ; i++) {
+            if (i < allTasks.size()) {
+                if (allTasks.get(i).getExecutionType() == LocalTaskScheduleDescriptor.TYPE_LOGIN) {
+                    TaskResultWidget aWidget = new TaskResultWidget();
+                    try {
+                        HashMap<String, Object> parameters = new HashMap<>();
+                        parameters.put("task", allTasks.get(i));
+                        aWidget.setup(parameters);
+                        aWidget.init();
+                    } catch (AbstractWidget.InvalidStateException |  InvalidParameterException ex) {}
+                    add(aWidget);
+                }
+            } else add(new JPanel());
         }
+        validate();
     }
 
     void writeProperties(java.util.Properties p) {

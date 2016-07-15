@@ -98,10 +98,6 @@ public class Constants {
      */
     public static final String CLASS_GENERICCOMMUNICATIONSELEMENT = "GenericCommunicationsElement";
     /**
-     * Name for the class ViewableObject
-     */
-    public static final String CLASS_VIEWABLEOBJECT = "ViewableObject";
-    /**
      * Class Rack
      */
     public static final String CLASS_RACK = "Rack";
@@ -137,6 +133,10 @@ public class Constants {
      * Not an actual class, but yet used by the service manager to identify a pool mapped to a LocalObjectLight
      */
     public static final String CLASS_POOL = "Pool";
+    /**
+     * Class ViewableObject
+     */
+    public static final String CLASS_VIEWABLEOBJECT = "ViewableObject";
     /**
      * Default type for a new attribute
      */

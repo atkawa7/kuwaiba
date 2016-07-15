@@ -46,7 +46,6 @@ import org.inventory.core.visual.actions.providers.CustomMoveProvider;
 import org.inventory.core.visual.actions.providers.CustomResizeProvider;
 import org.inventory.core.visual.actions.providers.CustomSelectProvider;
 import org.inventory.core.visual.scene.AbstractScene;
-import static org.inventory.core.visual.scene.AbstractScene.SCENE_CHANGE;
 import org.inventory.design.topology.actions.TopologyViewActions;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
@@ -196,24 +195,24 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
 
             polygonTag.attr("x", framesWidget.getPreferredLocation().getX());
             polygonTag.attr("y", framesWidget.getPreferredLocation().getY());
-            polygonTag.attr("w", framesWidget.getBounds().getWidth());
-            polygonTag.attr("h", framesWidget.getBounds().getHeight());
+            polygonTag.attr("w", framesWidget.getBounds().width);
+            polygonTag.attr("h", framesWidget.getBounds().height);
 
             polygonTag.start("vertex").attr("x0", framesWidget.getPreferredLocation().getX()).
-                    attr("x1", framesWidget.getPreferredLocation().getX() + framesWidget.getBounds().getWidth()).
+                    attr("x1", framesWidget.getPreferredLocation().getX() + framesWidget.getBounds().width).
                     attr("y0", framesWidget.getPreferredLocation().getY()).
                     attr("y1", framesWidget.getPreferredLocation().getY()).end();
             polygonTag.start("vertex").attr("x0", framesWidget.getPreferredLocation().getX() + framesWidget.getBounds().getWidth()).
-                    attr("x1", framesWidget.getPreferredLocation().getX() + framesWidget.getBounds().getWidth()).
+                    attr("x1", framesWidget.getPreferredLocation().getX() + framesWidget.getBounds().width).
                     attr("y0", framesWidget.getPreferredLocation().getY()).
-                    attr("y1", framesWidget.getPreferredLocation().getY() - framesWidget.getBounds().getHeight()).end();
-            polygonTag.start("vertex").attr("x0", framesWidget.getPreferredLocation().getX() + framesWidget.getBounds().getWidth()).
+                    attr("y1", framesWidget.getPreferredLocation().getY() - framesWidget.getBounds().height).end();
+            polygonTag.start("vertex").attr("x0", framesWidget.getPreferredLocation().getX() + framesWidget.getBounds().width).
                     attr("x1", framesWidget.getPreferredLocation().getX()).
                     attr("y0", framesWidget.getPreferredLocation().getY()).
                     attr("y1", framesWidget.getPreferredLocation().getY()).end();
             polygonTag.start("vertex").attr("x0", framesWidget.getPreferredLocation().getX()).
                     attr("x1", framesWidget.getPreferredLocation().getX()).
-                    attr("y0", framesWidget.getPreferredLocation().getY() - framesWidget.getBounds().getHeight()).
+                    attr("y0", framesWidget.getPreferredLocation().getY() - framesWidget.getBounds().height).
                     attr("y1", framesWidget.getPreferredLocation().getY()).end();
             polygonTag.end();
         }

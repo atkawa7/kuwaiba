@@ -15,27 +15,33 @@
  */
 package org.inventory.navigation.dashboard.widgets;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.security.InvalidParameterException;
 import java.util.HashMap;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalTask;
 import org.inventory.communications.core.LocalTaskResult;
 import org.inventory.communications.core.LocalTaskResultMessage;
+import org.inventory.communications.util.Utils;
 
 /**
  * A widget that shows the results of a task
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class TaskResultWidget extends AbstractWidget {
+    private static Icon ICON_OK = new ImageIcon(Utils.createRectangleIcon(DashboardWidgetUtilities.GREEN, 15, 15));
+    private static Icon ICON_WARNING = new ImageIcon(Utils.createRectangleIcon(DashboardWidgetUtilities.YELLOW, 15, 15));
+    private static Icon ICON_CRITICAL = new ImageIcon(Utils.createRectangleIcon(DashboardWidgetUtilities.RED, 15, 15));
     private LocalTask task;
         
     @Override
@@ -80,64 +86,87 @@ public class TaskResultWidget extends AbstractWidget {
         if (state != WIDGET_STATE_SET_UP)
             throw new InvalidStateException("Widget state is not SET_UP");
         
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        setBackground(Color.red);
-        setBorder(BorderFactory.createLineBorder(Color.yellow));
+        setLayout(new BorderLayout());
+        
+        JScrollPane pnlScrollMain = new JScrollPane();
+        
+        //Apparently, you can't use the same instance for different orientations
+        pnlScrollMain.getHorizontalScrollBar().setUI(DashboardWidgetUtilities.createSimpleScrollBarUI(
+                DashboardWidgetUtilities.DARK_GREEN, DashboardWidgetUtilities.LIGHT_GREEN, DashboardWidgetUtilities.GREEN));
+        pnlScrollMain.getVerticalScrollBar().setUI(DashboardWidgetUtilities.createSimpleScrollBarUI(
+                DashboardWidgetUtilities.DARK_GREEN, DashboardWidgetUtilities.LIGHT_GREEN, DashboardWidgetUtilities.GREEN));
+        
+        add(pnlScrollMain);
+                
+        JPanel pnlInner = new JPanel(new GridBagLayout());
+        pnlInner.setBackground(Color.WHITE);
+        
+        pnlScrollMain.setViewportView(pnlInner);
         
         GridBagConstraints layoutConstraints = new GridBagConstraints();
         
         //The horizontal fill is a general setting
         layoutConstraints.fill = GridBagConstraints.HORIZONTAL;
-        
+              
         //Lets configure how the title will be placed
         layoutConstraints.gridx = 0;
         layoutConstraints.gridy = 0;
+
+        layoutConstraints.anchor = GridBagConstraints.FIRST_LINE_START;
+        layoutConstraints.weightx = 1; //Fill in the remaining space
+        layoutConstraints.weighty = 1; 
+
         
         //Now, we create the actual title component
         JLabel lblTitle = new JLabel("<html><b>" + getTitle() + "</b></html>", SwingConstants.RIGHT);
-        lblTitle.setMinimumSize(new Dimension(0, 20));
+        //lblTitle.setMinimumSize(new Dimension(10, 20));
         lblTitle.setOpaque(true);
-        lblTitle.setBackground(Color.LIGHT_GRAY);
-        lblTitle.setBorder(new EmptyBorder(5, 5, 5, 5));
+        lblTitle.setBackground(DashboardWidgetUtilities.BLUE);
+        lblTitle.setForeground(Color.WHITE);
+        lblTitle.setBorder(new EmptyBorder(10, 10, 10, 10));
         
-        add(lblTitle, layoutConstraints);
+        pnlInner.add(lblTitle, layoutConstraints);
         
         LocalTaskResult taskResult = CommunicationsStub.getInstance().executeTask(task.getId());
         
         if (taskResult == null) {
-            JLabel lblError = new JLabel(String.format("Widget Error: %s", CommunicationsStub.getInstance().getError()));
-            lblError.setOpaque(true);
-            lblError.setBorder(new EmptyBorder(10, 10, 10, 10));
-            lblError.setBackground(Color.PINK);
-            
-            layoutConstraints.gridy = 1;
-            
-            add(lblTitle, layoutConstraints);
+            JLabel lblError = DashboardWidgetUtilities.buildOpaqueLabel(String.format("Error: %s", 
+                    CommunicationsStub.getInstance().getError()), DashboardWidgetUtilities.LIGHT_RED);
+            layoutConstraints.gridy = 1;           
+            pnlInner.add(lblError, layoutConstraints);
             
         } else {
-            int i = 1;
-            for (LocalTaskResultMessage message : taskResult.getMessages()) {
-                JLabel lblMessage = new JLabel(message.getMessage(), SwingConstants.RIGHT);
-                lblMessage.setOpaque(true);
-                lblMessage.setBorder(new EmptyBorder(10, 10, 10, 10));
-                
-                switch (message.getMessageType()) {
-                    case LocalTaskResultMessage.STATUS_SUCCESS:
-                        lblMessage.setBackground(Color.GREEN);
-                        break;
-                    case LocalTaskResultMessage.STATUS_WARNING:
-                        lblMessage.setBackground(Color.ORANGE);
-                        break;
-                    case LocalTaskResultMessage.STATUS_ERROR:
-                        lblMessage.setBackground(Color.PINK);
-                        break;
+            if (taskResult.getMessages().isEmpty()) {
+                JLabel lblNoResults = DashboardWidgetUtilities.buildOpaqueLabel(String.format("No results for this task"), DashboardWidgetUtilities.LIGHT_GREEN);
+
+                layoutConstraints.gridy = 1;
+
+                pnlInner.add(lblNoResults, layoutConstraints);
+            } else {
+                int i = 1;
+                for (LocalTaskResultMessage message : taskResult.getMessages()) {
+                    JLabel lblMessage = new JLabel(message.getMessage());
+                    lblMessage.setOpaque(false);
+                    lblMessage.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+                    switch (message.getMessageType()) {
+                        case LocalTaskResultMessage.STATUS_SUCCESS:
+                            lblMessage.setIcon(ICON_OK);
+                            break;
+                        case LocalTaskResultMessage.STATUS_WARNING:
+                            lblMessage.setIcon(ICON_WARNING);
+                            break;
+                        case LocalTaskResultMessage.STATUS_ERROR:
+                            lblMessage.setIcon(ICON_CRITICAL);
+                            break;
+                    }
+
+                    layoutConstraints.gridy = i;
+
+                    pnlInner.add(lblMessage, layoutConstraints);
+
+                    i++;
                 }
-                
-                layoutConstraints.gridy = i;
-                
-                add(lblMessage, layoutConstraints);
-                
-                i++;
             }
         }
         
@@ -160,5 +189,5 @@ public class TaskResultWidget extends AbstractWidget {
         removeAll();
         
         state = WIDGET_STATE_DONE;
-    }
+    }    
 }
