@@ -1999,7 +1999,15 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             environmentParameters.setVariable("scriptParameters", scriptParameters); //NOI18N
             try {
                 GroovyShell shell = new GroovyShell(environmentParameters);
-                return (TaskResult)shell.evaluate(script);
+                Object theResult = shell.evaluate(script);
+                
+                if (theResult == null)
+                    throw new InvalidArgumentException("The script returned a null object. Please check the syntax.");
+                else if (!TaskResult.class.isInstance(theResult))
+                    throw new InvalidArgumentException("The script does not return a TaskResult object. Please check the return value.");
+                
+                return (TaskResult)theResult;
+                
             } catch(Exception ex) {
                 return TaskResult.createErrorResult(ex.getMessage());
             }
