@@ -38,29 +38,29 @@ import org.openide.util.NbBundle.Messages;
         autostore = false
 )
 @TopComponent.Description(
-        preferredID = "IPAMModuleTopComponentTopComponent",
+        preferredID = "IPAMModuleTopComponent",
         iconBase="com/neotropic/inventory/modules/res/icon.png", 
         persistenceType = TopComponent.PERSISTENCE_NEVER
 )
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
-@ActionID(category = "Window", id = "com.neotropic.inventory.modules.ipam.IPAMModuleTopComponentTopComponent")
-@ActionReference(path = "Menu/Tools/Commercial" /*, position = 333 */)
+@ActionID(category = "Window", id = "com.neotropic.inventory.modules.ipam.IPAMModuleTopComponent")
+@ActionReference(path = "Menu/Tools/Advanced" /*, position = 333 */)
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_IPAMModuleTopComponentAction",
-        preferredID = "IPAMModuleTopComponentTopComponent"
+        preferredID = "IPAMModuleTopComponent"
 )
 @Messages({
     "CTL_IPAMModuleTopComponentAction=IP Address Manager",
     "CTL_IPAMModuleTopComponentTopComponent=IP Address Manager",
     "HINT_IPAMModuleTopComponentTopComponent=IP Address Manager"
 })
-public final class IPAMModuleTopComponentTopComponent extends TopComponent implements ExplorerManager.Provider, Refreshable {
+public final class IPAMModuleTopComponent extends TopComponent implements ExplorerManager.Provider, Refreshable {
     
     private static final ExplorerManager em = new ExplorerManager();
     private BeanTreeView treeView;
     private IPAMModuleService ipams;
     
-    public IPAMModuleTopComponentTopComponent() {
+    public IPAMModuleTopComponent() {
         initComponents();
         setName(Bundle.CTL_IPAMModuleTopComponentTopComponent());
         setToolTipText(Bundle.HINT_IPAMModuleTopComponentTopComponent());
@@ -95,7 +95,7 @@ public final class IPAMModuleTopComponentTopComponent extends TopComponent imple
 
     @Override
     public void componentClosed() {
-        // TODO add custom code on component closing
+        em.setRootContext(Node.EMPTY);
     }
 
     void writeProperties(java.util.Properties p) {

@@ -36,7 +36,7 @@ public class TaskManagerRootNode extends AbstractNode {
     
     public TaskManagerRootNode() {
         super(new TaskManagerRootChildren());
-        setDisplayName("Task Manager Root");
+        setDisplayName("Available Tasks");
         setIconBaseWithExtension(DEFAULT_ICON_PATH);
     }
 
@@ -44,8 +44,6 @@ public class TaskManagerRootNode extends AbstractNode {
     public Action[] getActions(boolean context) {
         return new Action[] { TaskManagerActionFactory.createCreateTaskAction() };
     }
-    
-    
     
     public static class TaskManagerRootChildren extends Children.Keys<LocalTask> {
 

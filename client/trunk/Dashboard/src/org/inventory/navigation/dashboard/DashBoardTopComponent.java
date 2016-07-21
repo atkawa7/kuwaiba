@@ -22,6 +22,7 @@ import javax.swing.JPanel;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalTask;
 import org.inventory.communications.core.LocalTaskScheduleDescriptor;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.dashboard.widgets.AbstractWidget;
 import org.inventory.navigation.dashboard.widgets.TaskResultWidget;
 import org.netbeans.api.settings.ConvertAsProperties;
@@ -99,22 +100,30 @@ public final class DashBoardTopComponent extends TopComponent {
     
     public void loadWidgets() {    
         List<LocalTask> allTasks = CommunicationsStub.getInstance().getTasks();
-        
-        for (int i = 0; i < 8 ; i++) {
-            if (i < allTasks.size()) {
-                if (allTasks.get(i).getExecutionType() == LocalTaskScheduleDescriptor.TYPE_LOGIN) {
-                    TaskResultWidget aWidget = new TaskResultWidget();
-                    try {
-                        HashMap<String, Object> parameters = new HashMap<>();
-                        parameters.put("task", allTasks.get(i));
-                        aWidget.setup(parameters);
-                        aWidget.init();
-                    } catch (AbstractWidget.InvalidStateException |  InvalidParameterException ex) {}
-                    add(aWidget);
+        if (allTasks == null)
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, 
+                    CommunicationsStub.getInstance().getError());
+        else {
+            if (allTasks.isEmpty()) {
+                
+            } else {
+                for (int i = 0; i < 8 ; i++) {
+                    if (i < allTasks.size()) {
+                        if (allTasks.get(i).getExecutionType() == LocalTaskScheduleDescriptor.TYPE_LOGIN) {
+                            TaskResultWidget aWidget = new TaskResultWidget();
+                            try {
+                                HashMap<String, Object> parameters = new HashMap<>();
+                                parameters.put("task", allTasks.get(i));
+                                aWidget.setup(parameters);
+                                aWidget.init();
+                            } catch (AbstractWidget.InvalidStateException |  InvalidParameterException ex) {}
+                            add(aWidget);
+                        }
+                    } else add(new JPanel());
                 }
-            } else add(new JPanel());
+                validate();
+            }
         }
-        validate();
     }
 
     void writeProperties(java.util.Properties p) {

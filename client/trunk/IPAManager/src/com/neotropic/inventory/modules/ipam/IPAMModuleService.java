@@ -27,9 +27,9 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 public class IPAMModuleService {
     
     private CommunicationsStub com;
-    private IPAMModuleTopComponentTopComponent ipamtc;
+    private IPAMModuleTopComponent ipamtc;
 
-    IPAMModuleService(IPAMModuleTopComponentTopComponent ipamtc) {
+    IPAMModuleService(IPAMModuleTopComponent ipamtc) {
         this.ipamtc = ipamtc;
         com = CommunicationsStub.getInstance();
     }
