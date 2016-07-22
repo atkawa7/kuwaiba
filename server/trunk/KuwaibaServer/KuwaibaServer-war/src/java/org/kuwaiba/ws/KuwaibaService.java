@@ -78,11 +78,11 @@ public class KuwaibaService {
      * @param username user login name
      * @param password user password
      * @return A session object, including the session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "createSession")
     public RemoteSession createSession(@WebParam(name = "username") String username,
-            @WebParam(name = "password") String password) throws Exception{
+            @WebParam(name = "password") String password) throws ServerSideException{
         try {
             String remoteAddress = getIPAddress();
             return wsBean.createSession(username, password, remoteAddress);
@@ -98,10 +98,10 @@ public class KuwaibaService {
     /**
      * Closes a session
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "closeSession")
-    public void closeSession(@WebParam(name = "sessionId")String sessionId) throws Exception{
+    public void closeSession(@WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             String remoteAddress = getIPAddress();
             wsBean.closeSession(sessionId, remoteAddress);
@@ -119,11 +119,11 @@ public class KuwaibaService {
      * Retrieves the list of uses
      * @param sessionId session token
      * @return The list of users
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
 
     @WebMethod(operationName = "getUsers")
-    public UserInfo[] getUsers(@WebParam(name = "sessionId")String sessionId) throws Exception {
+    public UserInfo[] getUsers(@WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try
         {
             return wsBean.getUsers(getIPAddress(), sessionId);
@@ -141,10 +141,10 @@ public class KuwaibaService {
      * Retrieves the list of groups
      * @param sessionId Session token
      * @return A group object list
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getGroups")
-    public GroupInfo[] getGroups(@WebParam(name = "sessionId")String sessionId) throws Exception {
+    public GroupInfo[] getGroups(@WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try
         {
             return wsBean.getGroups(getIPAddress(), sessionId);
@@ -169,7 +169,7 @@ public class KuwaibaService {
      * @param groups List of the ids of the groups to relate to this user
      * @param sessionId Session token
      * @return The new user Id
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "createUser")
     public long createUser(
@@ -180,7 +180,7 @@ public class KuwaibaService {
             @WebParam(name = "enabled")boolean enabled,
             @WebParam(name = "privileges")long[] privileges,
             @WebParam(name = "groups")long[] groups,
-            @WebParam(name = "sessionId")String sessionId) throws Exception {
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try
         {
             return wsBean.createUser(username, password, firstName, lastName, enabled, privileges, groups, getIPAddress(), sessionId);
@@ -205,7 +205,7 @@ public class KuwaibaService {
      * @param privileges (null if unchanged). Does nothing for now
      * @param groups List of ids of the groups to be related to this user(null if unchanged)
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "setUserProperties")
     public void setUserProperties(
@@ -217,7 +217,7 @@ public class KuwaibaService {
             @WebParam(name = "enabled")boolean enabled,
             @WebParam(name = "privileges")long[] privileges,
             @WebParam(name = "groups")long[] groups,
-            @WebParam(name = "sessionId")String sessionId) throws Exception {
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try
         {
             wsBean.setUserProperties(oid, username, password, firstName, lastName, enabled, privileges, groups, getIPAddress(), sessionId);
@@ -239,7 +239,7 @@ public class KuwaibaService {
      * @param users List of user ids to be related to this group
      * @param sessionId Session token
      * @return The group id
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "createGroup")
     public long createGroup(
@@ -247,7 +247,7 @@ public class KuwaibaService {
             @WebParam(name = "description")String description,
             @WebParam(name = "privileges")long[] privileges,
             @WebParam(name = "users")long[] users,
-            @WebParam(name = "sessionId")String sessionId) throws Exception {
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try
         {
             return wsBean.createGroup(groupName, description, privileges, users, getIPAddress(), sessionId);
@@ -269,7 +269,7 @@ public class KuwaibaService {
      * @param privileges New group privileges (null if unchanged)
      * @param users New group users (null if unchanged)
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "setGroupProperties")
     public void setGroupProperties(@WebParam(name = "oid")long oid,
@@ -277,7 +277,7 @@ public class KuwaibaService {
             @WebParam(name = "description")String description,
             @WebParam(name = "privileges")long[] privileges,
             @WebParam(name = "users")long[] users,
-            @WebParam(name = "sessionId")String sessionId) throws Exception {
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try
         {
             wsBean.setGroupProperties(oid, groupName, description, privileges, users, getIPAddress(), sessionId);
@@ -295,11 +295,11 @@ public class KuwaibaService {
      * Deletes a list of users
      * @param oids List of user ids to be deleted
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "deleteUsers")
     public void deleteUsers(@WebParam(name = "oids")long[] oids,
-            @WebParam(name = "sessionId")String sessionId) throws Exception {
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             wsBean.deleteUsers(oids, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -316,11 +316,11 @@ public class KuwaibaService {
      * Deletes a list of groups
      * @param oids list of group ids to be deleted
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "deleteGroups")
     public void deleteGroups(@WebParam(name = "oids")long[] oids,
-            @WebParam(name = "sessionId")String sessionId) throws Exception {
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             wsBean.deleteGroups(oids, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -340,13 +340,13 @@ public class KuwaibaService {
      * @param viewId The view id
      * @param sessionId Session token
      * @return The View object (which is basically an XML document)
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getObjectRelatedView")
     public ViewInfo getObjectRelatedView(@WebParam(name = "oid")long oid,
             @WebParam(name = "objectClass")String objectClass,
             @WebParam(name = "viewId")long viewId,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.getObjectRelatedView(oid, objectClass, viewId, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -367,14 +367,14 @@ public class KuwaibaService {
      * @param limit Max number of results
      * @param sessionId Session token
      * @return List of objects related to the object
-     * @throws Exception Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getObjectRelatedViews")
     public ViewInfoLight[] getObjectRelatedViews(@WebParam(name = "oid")long oid,
             @WebParam(name = "objectClass")String objectClass,
             @WebParam(name = "viewType")int viewType,
             @WebParam(name = "limit")int limit,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.getObjectRelatedViews(oid, objectClass, viewType, limit, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -393,12 +393,12 @@ public class KuwaibaService {
      * @param limit Max number if results
      * @param sessionId Session token
      * @return A list of views
-     * @throws Exception Exception Generic exception encapsulating any possible error raised at runtime 
+     * @throws ServerSideException Exception Generic exception encapsulating any possible error raised at runtime 
      */
     @WebMethod(operationName = "getGeneralViews")
     public ViewInfoLight[] getGeneralViews(@WebParam(name = "viewClass")String viewClass,
             @WebParam(name = "limit")int limit,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.getGeneralViews(viewClass, limit, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -416,11 +416,11 @@ public class KuwaibaService {
      * @param viewId View id
      * @param sessionId Session token
      * @return The view
-     * @throws Exception Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getGeneralView")
     public ViewInfo getGeneralView(@WebParam(name = "viewId")long viewId,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try {
             return wsBean.getGeneralView(viewId, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -444,7 +444,7 @@ public class KuwaibaService {
      * @param background Background
      * @param sessionId Session id
      * @return The id of the newly created view
-     * @throws Exception Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "createObjectRelatedView")
     public long createObjectRelatedView(@WebParam(name = "objectId")long objectId,
@@ -454,7 +454,7 @@ public class KuwaibaService {
             @WebParam(name = "viewClassName")String viewClassName,
             @WebParam(name = "structure")byte[] structure,
             @WebParam(name = "background")byte[] background,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try {
             return wsBean.createObjectRelatedView(objectId, objectClass, name, description, viewClassName, structure, background, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -476,7 +476,7 @@ public class KuwaibaService {
      * @param background background
      * @param sessionId Session id
      * @return The id of the newly created view
-     * @throws Exception Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "createGeneralView")
     public long createGeneralView(@WebParam(name = "viewClass")String viewClass,
@@ -484,7 +484,7 @@ public class KuwaibaService {
             @WebParam(name = "description")String description,
             @WebParam(name = "structure")byte[] structure,
             @WebParam(name = "background")byte[] background,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.createGeneralView(viewClass, name, description, structure, background, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -507,14 +507,14 @@ public class KuwaibaService {
      * @param structure View structure. Null to leave unchanged
      * @param background Background. Null to leave unchanged
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "updateObjectRelatedView")
     public void updateObjectRelatedView(@WebParam(name = "objectOid")long objectOid,
             @WebParam(name = "objectClass")String objectClass, @WebParam(name = "viewId")long viewId,
             @WebParam(name = "viewName")String viewName, @WebParam(name = "viewDescription")String viewDescription,
             @WebParam(name = "structure")byte[] structure,
-            @WebParam(name = "background")byte[] background, @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "background")byte[] background, @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try {
             wsBean.updateObjectRelatedView(objectOid, objectClass, viewId, viewName, viewDescription, structure, background, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -535,12 +535,12 @@ public class KuwaibaService {
      * @param structure View structure. Null to leave unchanged
      * @param background Background. Null to leave unchanged
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "updateGeneralView")
     public void updateGeneralView(@WebParam(name = "viewId")long viewId,
             @WebParam(name = "viewName")String viewName, @WebParam(name = "viewDescription")String viewDescription,
-            @WebParam(name = "structure")byte[] structure, @WebParam(name = "background")byte[] background, @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "structure")byte[] structure, @WebParam(name = "background")byte[] background, @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             wsBean.updateGeneralView(viewId, viewName, viewDescription, structure, background, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -556,11 +556,11 @@ public class KuwaibaService {
      * Deletes views
      * @param oids Ids of the views to be deleted
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "deleteGeneralView")
     public void deleteGeneralView(@WebParam(name = "oids")long [] oids,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             wsBean.deleteGeneralView(oids, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -580,14 +580,14 @@ public class KuwaibaService {
      * @param displayName List type item display name
      * @param sessionId Session token
      * @return the id of the new object
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "createListTypeItem")
     public long createListTypeItem(
             @WebParam(name = "className") String className,
             @WebParam(name = "name") String name,
             @WebParam(name = "displayName") String displayName,
-            @WebParam(name = "sessionId") String sessionId) throws Exception{
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException{
         try
         {
             return wsBean.createListTypeItem(className, name, displayName, getIPAddress(), sessionId);
@@ -608,14 +608,14 @@ public class KuwaibaService {
      * @param oid list type item id
      * @param releaseRelationships should the deletion process release the relationships attached to this object
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "deleteListTypeItem")
     public void deleteListTypeItem(
             @WebParam(name = "className") String className,
             @WebParam(name = "oid") long oid,
             @WebParam(name = "releaseRelationships") boolean releaseRelationships,
-            @WebParam(name = "sessionId") String sessionId) throws Exception{
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException{
 
         try{
             wsBean.deleteListTypeItem(className, oid, releaseRelationships, getIPAddress(), sessionId);
@@ -635,12 +635,12 @@ public class KuwaibaService {
      * @param className The list type class
      * @param sessionId Session token
      * @return a list of list type items
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getListTypeItems")
     public RemoteObjectLight[] getListTypeItems(
             @WebParam(name = "className") String className,
-            @WebParam(name = "sessionId") String sessionId) throws Exception{
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException{
         try{
             return wsBean.getListTypeItems(className, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -658,11 +658,11 @@ public class KuwaibaService {
      * Retrieves all possible list types
      * @param sessionId Session token
      * @return A list of list types as ClassInfoLight instances
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getInstanceableListTypes")
     public ClassInfoLight[] getInstanceableListTypes(
-            @WebParam(name = "sessionId") String sessionId) throws Exception{
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException{
         try
         {
             return wsBean.getInstanceableListTypes(getIPAddress(), sessionId);
@@ -683,11 +683,11 @@ public class KuwaibaService {
      * @param query The TransientQuery object (a code friendly version of the graphical query designed at client side).
      * @param sessionId session id to check permissions
      * @return An array of records (the first raw is used to put the headers)
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "executeQuery")
     public ResultRecord[] executeQuery(@WebParam(name="query")TransientQuery query,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.executeQuery(query, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -708,14 +708,14 @@ public class KuwaibaService {
      * @param description a short descriptions for the query
      * @param sessionId session id to check permissions
      * @return a RemoteObjectLight wrapping the newly created query
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "createQuery")
     public long createQuery(@WebParam(name="queryName")String queryName,
             @WebParam(name="ownerOid")long ownerOid,
             @WebParam(name="queryStructure")byte[] queryStructure,
             @WebParam(name="description")String description,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.createQuery(queryName, ownerOid, queryStructure, description, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -736,7 +736,7 @@ public class KuwaibaService {
      * @param queryStructure XML document if unchanged. Null otherwise
      * @param description Query description. Null if unchanged
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "saveQuery")
     public void saveQuery(@WebParam(name="queryOid")long queryOid,
@@ -744,7 +744,7 @@ public class KuwaibaService {
             @WebParam(name = "ownerOid")long ownerOid,
             @WebParam(name = "queryStructure")byte[] queryStructure,
             @WebParam(name = "description")String description,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             wsBean.saveQuery(queryOid, queryName, ownerOid, queryStructure, description, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -761,11 +761,11 @@ public class KuwaibaService {
      * Deletes a query
      * @param queryOid Query id
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "deleteQuery")
     public void deleteQuery(@WebParam(name="queryOid")long queryOid,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             wsBean.deleteQuery(queryOid, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -783,11 +783,11 @@ public class KuwaibaService {
      * @param showPublic should this method return the public queries along with the private to this user?
      * @param sessionId Session token
      * @return A list with the available queries
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getQueries")
     public RemoteQueryLight[] getQueries(@WebParam(name="showPublic")boolean showPublic,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.getQueries(showPublic, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -805,11 +805,11 @@ public class KuwaibaService {
      * @param queryOid Query id
      * @param sessionId Session token
      * @return The query
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getQuery")
     public RemoteQuery getQuery(@WebParam(name="queryOid")long queryOid,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.getQuery(queryOid, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -827,11 +827,11 @@ public class KuwaibaService {
      * @param showAll should this method return all entity classes or only InventoryObject subclasses
      * @param sessionId session identifier
      * @return A byte array containing the class hierarchy as an XML document. See the <a href="http://neotropic.co/kuwaiba/wiki/index.php?title=XML_Documents#To_Save_Queries">wiki entry</a> for details on the document structure
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getClassHierarchy")
     public byte[] getClassHierarchy(@WebParam(name = "showAll")boolean showAll,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.getClassHierarchy(showAll, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -855,7 +855,7 @@ public class KuwaibaService {
      * @param type Type of pool. For possible values see ApplicationManager.POOL_TYPE_XXX
      * @param sessionId The session token
      * @return The id of the new pool
-     * @throws Exception In case something goes wrong
+     * @throws ServerSideException In case something goes wrong
      */
     @WebMethod(operationName = "createRootPool")
     public long createRootPool(@WebParam(name = "name")String name, 
@@ -863,7 +863,7 @@ public class KuwaibaService {
                                @WebParam(name = "instancesOfClass")String instancesOfClass, 
                                @WebParam(name = "type")int type, 
                                @WebParam(name = "sessionId")String sessionId)
-            throws Exception {
+            throws ServerSideException {
         try {
             return wsBean.createRootPool(name, description, instancesOfClass, type, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -887,7 +887,7 @@ public class KuwaibaService {
      * @param type Type of pool. For possible values see ApplicationManager.POOL_TYPE_XXX
      * @param sessionId The session token
      * @return The id of the new pool
-     * @throws Exception In case something goes wrong
+     * @throws ServerSideException In case something goes wrong
      */
     @WebMethod(operationName = "createPoolInObject")
     public long createPoolInObject(@WebParam(name = "parentClassname")String parentClassname, 
@@ -897,7 +897,7 @@ public class KuwaibaService {
                                    @WebParam(name = "instancesOfClass")String instancesOfClass, 
                                    @WebParam(name = "type")int type, 
                                @WebParam(name = "sessionId")String sessionId)
-            throws Exception {
+            throws ServerSideException {
         try {
             return wsBean.createPoolInObject(parentClassname, parentId, name, description, instancesOfClass, type, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -920,7 +920,7 @@ public class KuwaibaService {
      * @param type Type of pool. Not used so far, but it will be in the future. It will probably be used to help organize the existing pools
      * @param sessionId The session token
      * @return The id of the new pool
-     * @throws Exception In case something goes wrong
+     * @throws ServerSideException In case something goes wrong
      */
     @WebMethod(operationName = "createPoolInPool")
     public long createPoolInPool(@WebParam(name = "parentId")long parentId, 
@@ -929,7 +929,7 @@ public class KuwaibaService {
                                    @WebParam(name = "instancesOfClass")String instancesOfClass, 
                                    @WebParam(name = "type")int type, 
                                @WebParam(name = "sessionId")String sessionId)
-            throws Exception {
+            throws ServerSideException {
         try {
             return wsBean.createPoolInPool(parentId, name, description, instancesOfClass, type, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -951,7 +951,7 @@ public class KuwaibaService {
      * @param templateId Template to be used
      * @param sessionId Session identifier
      * @return The id of the newly created object
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "createPoolItem")
     public long createPoolItem(@WebParam(name = "poolId")long poolId,
@@ -959,7 +959,7 @@ public class KuwaibaService {
             @WebParam(name = "attributeNames")String[] attributeNames,
             @WebParam(name = "attributeValues")String[][] attributeValues,
             @WebParam(name = "templateId")long templateId,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.createPoolItem(poolId, className, attributeNames, attributeValues, templateId, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -976,11 +976,11 @@ public class KuwaibaService {
      * Delete a pool
      * @param id Pool to be deleted
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "deletePool")
     public void deletePool(@WebParam(name = "id")long id,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             wsBean.deletePool(id, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -997,11 +997,11 @@ public class KuwaibaService {
      * Deletes a set of pools
      * @param ids Pools to be deleted
      * @param sessionId Session identifier
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "deletePools")
     public void deletePools(@WebParam(name = "ids")long[] ids,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             wsBean.deletePools(ids, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -1020,12 +1020,12 @@ public class KuwaibaService {
      * @param type The type of pools that should be retrieved. Root pools can be for general purpose, or as roots in models
      * @param sessionId Session token
      * @return A set of pools
-     * @throws Exception In case something goes wrong
+     * @throws ServerSideException In case something goes wrong
      */
     @WebMethod(operationName = "getRootPools")
     public List<RemotePool> getRootPools(@WebParam(name = "className")String className, 
                                          @WebParam(name = "type")int type, 
-                                         @WebParam(name = "sessionId")String sessionId) throws Exception {
+                                         @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             return wsBean.getRootPools(className, type, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -1042,7 +1042,7 @@ public class KuwaibaService {
     public List<RemotePool> getPoolsInObject(@WebParam(name = "objectClassName")String objectClassName, 
                                              @WebParam(name = "objectId")long objectId,
                                              @WebParam(name = "poolClass")String poolClass, 
-                                             @WebParam(name = "sessionId")String sessionId) throws Exception {
+                                             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             return wsBean.getPoolsInObject(objectClassName, objectId, poolClass, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -1058,7 +1058,7 @@ public class KuwaibaService {
     @WebMethod(operationName = "getPoolsInPool")
     public List<RemotePool> getPoolsInPool(@WebParam(name = "parentPoolId")long parentPoolId,
                                              @WebParam(name = "poolClass")String poolClass, 
-                                             @WebParam(name = "sessionId")String sessionId) throws Exception {
+                                             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             return wsBean.getPoolsInPool(parentPoolId, poolClass, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -1076,11 +1076,11 @@ public class KuwaibaService {
      * @param poolId The id of the pool
      * @param sessionId The session token
      * @return The pool object
-     * @throws Exception In case something goes wrong
+     * @throws ServerSideException In case something goes wrong
      */
     @WebMethod(operationName = "getPool")
     public RemotePool getPool(@WebParam(name = "poolId") long poolId,
-            @WebParam(name = "sessionId") String sessionId) throws Exception{
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException{
         try{
             return wsBean.getPool(poolId, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -1099,13 +1099,13 @@ public class KuwaibaService {
      * @param name Pool name
      * @param description Pool description
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "setPoolProperties")
     public void setPoolProperties(@WebParam(name = "poolId") long poolId, 
             @WebParam(name = "name") String name, 
             @WebParam(name = "description") String description, 
-            @WebParam(name = "sessionId") String sessionId) throws Exception {
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try {
             wsBean.setPoolProperties(poolId, name, description, getIPAddress(), sessionId);
         } catch (Exception e) {
@@ -1124,12 +1124,12 @@ public class KuwaibaService {
      * @param limit limit of results. -1 to return all
      * @param sessionId Session identifier
      * @return The list of items
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getPoolItems")
     public RemoteObjectLight[] getPoolItems(@WebParam(name = "poolId")long poolId,
             @WebParam(name = "limit")int limit,
-            @WebParam(name = "sessionId")String sessionId) throws Exception {
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             return wsBean.getPoolItems(poolId, limit, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -1153,7 +1153,7 @@ public class KuwaibaService {
      * @param notificationType How the result of the task should be notified to the associated users 
      * @param sessionId The session token
      * @return The id of the newly created task
-     * @throws Exception If something goes wrong
+     * @throws ServerSideException If something goes wrong
      */
     @WebMethod(operationName = "createTask")
     public long createTask(@WebParam(name = "name")String name,
@@ -1163,7 +1163,7 @@ public class KuwaibaService {
             @WebParam(name = "parameters")List<StringPair> parameters,
             @WebParam(name = "schedule")TaskScheduleDescriptor schedule,
             @WebParam(name = "notificationType")TaskNotificationDescriptor notificationType,
-            @WebParam(name = "sessionId")String sessionId) throws Exception {
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             return wsBean.createTask(name, description, enabled, script, parameters, 
                     schedule, notificationType, getIPAddress(), sessionId);
@@ -1183,13 +1183,13 @@ public class KuwaibaService {
      * @param propertyName Property name. Possible values: "name", "description", "enabled" and "script"
      * @param propertyValue The value of the property. For the property "enabled", the allowed values are "true" and "false"
      * @param sessionId The session token
-     * @throws Exception In case something goes wrong
+     * @throws ServerSideException In case something goes wrong
      */
     @WebMethod(operationName = "updateTaskProperties")
     public void updateTaskProperties(@WebParam(name = "taskId")long taskId,
             @WebParam(name = "propertyName")String propertyName,
             @WebParam(name = "propertyValue")String propertyValue,
-            @WebParam(name = "sessionId")String sessionId) throws Exception {
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             wsBean.updateTaskProperties(taskId, propertyName, propertyValue, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -1207,12 +1207,12 @@ public class KuwaibaService {
      * @param taskId Task id
      * @param parameters The parameters to be modified as pairs paramName/paramValue
      * @param sessionId The session token
-     * @throws Exception In case something goes wrong
+     * @throws ServerSideException In case something goes wrong
      */
     @WebMethod(operationName = "updateTaskParameters")
     public void updateTaskParameters(@WebParam(name = "taskId")long taskId,
             @WebParam(name = "parameters")List<StringPair> parameters,
-            @WebParam(name = "sessionId")String sessionId) throws Exception {
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             wsBean.updateTaskParameters(taskId, parameters, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -1230,12 +1230,12 @@ public class KuwaibaService {
      * @param taskId Task id
      * @param schedule New schedule
      * @param sessionId Session token
-     * @throws Exception In case something goes wrong
+     * @throws ServerSideException In case something goes wrong
      */
     @WebMethod(operationName = "updateTaskSchedule")
     public void updateTaskSchedule(@WebParam(name = "taskId")long taskId,
             @WebParam(name = "schedule")TaskScheduleDescriptor schedule,
-            @WebParam(name = "sessionId")String sessionId) throws Exception {
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             wsBean.updateTaskSchedule(taskId, schedule, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -1253,12 +1253,12 @@ public class KuwaibaService {
      * @param taskId Task id
      * @param notificationType New notification type
      * @param sessionId Session token
-     * @throws Exception In case something goes wrong
+     * @throws ServerSideException In case something goes wrong
      */
     @WebMethod(operationName = "updateTaskNotificationType")
     public void updateTaskNotificationType(@WebParam(name = "taskId")long taskId,
             @WebParam(name = "notificationType")TaskNotificationDescriptor notificationType,
-            @WebParam(name = "sessionId")String sessionId) throws Exception {
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             wsBean.updateTaskNotificationType(taskId, notificationType, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -1276,11 +1276,11 @@ public class KuwaibaService {
      * @param taskId Id of the task
      * @param sessionId Session token
      * @return A remote task object representing the task
-     * @throws Exception In case something goes wrong
+     * @throws ServerSideException In case something goes wrong
      */
     @WebMethod(operationName = "getTask")
     public RemoteTask getTask(@WebParam(name = "taskId")long taskId,
-            @WebParam(name = "sessionId")String sessionId) throws Exception {
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             return wsBean.getTask(taskId, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -1297,10 +1297,10 @@ public class KuwaibaService {
      * Gets all the regiistered tasks
      * @param sessionId Session token
      * @return A list of task objects
-     * @throws Exception In case something goes wrong
+     * @throws ServerSideException In case something goes wrong
      */
     @WebMethod(operationName = "getTasks")
-    public List<RemoteTask> getTasks(@WebParam(name = "sessionId")String sessionId) throws Exception {
+    public List<RemoteTask> getTasks(@WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             return wsBean.getTasks(getIPAddress(), sessionId);
         } catch(Exception e){
@@ -1318,11 +1318,11 @@ public class KuwaibaService {
      * @param userId User if
      * @param sessionId Session token
      * @return A list of task objects
-     * @throws Exception In case something goes wrong
+     * @throws ServerSideException In case something goes wrong
      */
     @WebMethod(operationName = "getTasksForUser")
     public List<RemoteTask> getTasksForUser(@WebParam(name = "userId")long userId,
-            @WebParam(name = "sessionId")String sessionId) throws Exception {
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             return wsBean.getTasksForUser(userId, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -1336,7 +1336,7 @@ public class KuwaibaService {
     }
     
     public List<UserInfoLight> getSubscribersForTask(@WebParam(name = "taskId")long taskId,
-                                                     @WebParam(name = "sessionId")String sessionId) throws Exception {
+                                                     @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             return wsBean.getSubscribersForTask(taskId, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -1353,11 +1353,11 @@ public class KuwaibaService {
      * Deletes a task and unsubscribes all users from it
      * @param taskId Task id
      * @param sessionId Session token
-     * @throws Exception In case something goes wrong
+     * @throws ServerSideException In case something goes wrong
      */
     @WebMethod(operationName = "deleteTask")
     public void deleteTask(@WebParam(name = "taskId")long taskId,
-            @WebParam(name = "sessionId")String sessionId) throws Exception {
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             wsBean.deleteTask(taskId, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -1375,12 +1375,12 @@ public class KuwaibaService {
      * @param taskId Id of the task
      * @param userId Id of the user
      * @param sessionId Session token
-     * @throws Exception In case something goes wrong
+     * @throws ServerSideException In case something goes wrong
      */
     @WebMethod(operationName = "subscribeUserToTask")
     public void subscribeUserToTask(@WebParam(name = "userId")long userId,
             @WebParam(name = "taskId")long taskId,
-            @WebParam(name = "sessionId")String sessionId) throws Exception {
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             wsBean.subscribeUserToTask(userId, taskId, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -1398,12 +1398,12 @@ public class KuwaibaService {
      * @param taskId Id of the task
      * @param userId Id of the user
      * @param sessionId Session token
-     * @throws Exception In case something goes wrong
+     * @throws ServerSideException In case something goes wrong
      */
     @WebMethod(operationName = "unsubscribeUserFromTask")
     public void unsubscribeUserFromTask(@WebParam(name = "userId")long userId,
             @WebParam(name = "taskId")long taskId,
-            @WebParam(name = "sessionId")String sessionId) throws Exception {
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             wsBean.unsubscribeUserFromTask(userId, taskId, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -1441,13 +1441,13 @@ public class KuwaibaService {
      * @param maxResults Max number of children to be returned. O for all
      * @param sessionId Session token
      * @return An array of all the direct children of the provided object according with the current container hierarchy
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getObjectChildrenForClassWithId")
     public RemoteObjectLight[] getObjectChildrenForClassWithId(@WebParam(name = "oid") long oid,
             @WebParam(name = "objectClassId") long objectClassId,
             @WebParam(name = "maxResults") int maxResults,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             RemoteObjectLight[] res = wsBean.getObjectChildren(oid,objectClassId, maxResults, getIPAddress(), sessionId);
             return res;
@@ -1468,13 +1468,13 @@ public class KuwaibaService {
      * @param maxResults Max number of children to be returned. O for all
      * @param sessionId Session token
      * @return An array of all the direct children of the provided object according with the current container hierarchy
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getObjectChildren")
     public RemoteObjectLight[] getObjectChildren(@WebParam(name = "objectClassName") String objectClassName,
             @WebParam(name = "oid") long oid,
             @WebParam(name = "maxResults") int maxResults,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             RemoteObjectLight[] res = wsBean.getObjectChildren(objectClassName, oid, maxResults, getIPAddress(), sessionId);
             return res;
@@ -1495,13 +1495,13 @@ public class KuwaibaService {
      * @param maxResults Max number of results to be returned
      * @param sessionId Session token
      * @return List of siblings
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getSiblings")
     public RemoteObjectLight[] getSiblings(@WebParam(name = "objectClassName") String objectClassName,
             @WebParam(name = "oid") long oid,
             @WebParam(name = "maxResults") int  maxResults,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             RemoteObjectLight[] res = wsBean.getSiblings(objectClassName, oid, maxResults, getIPAddress(), sessionId);
             return res;
@@ -1523,14 +1523,14 @@ public class KuwaibaService {
      * @param maxResults Max number of children to be returned. O for all
      * @param sessionId Session token
      * @return An array with children
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName="getChildrenOfClass")
     public RemoteObject[] getChildrenOfClass(@WebParam(name="parentOid")long parentOid,
             @WebParam(name="parentClass")String parentClass,
             @WebParam(name="childrenClass")String childrenClass,
             @WebParam(name="maxResults")int maxResults,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             RemoteObject[] res = wsBean.getChildrenOfClass(parentOid,parentClass,childrenClass, maxResults, getIPAddress(), sessionId);
             return res;
@@ -1552,14 +1552,14 @@ public class KuwaibaService {
      * @param maxResults Max number of children to be returned. O for all
      * @param sessionId Session token
      * @return An array with children
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName="getChildrenOfClassLight")
     public RemoteObjectLight[] getChildrenOfClassLight(@WebParam(name="parentOid")long parentOid,
             @WebParam(name="parentClass")String parentClass,
             @WebParam(name="childrenClass")String childrenClass,
             @WebParam(name="maxResults")int maxResults,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.getChildrenOfClassLight(parentOid,parentClass,childrenClass,maxResults, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -1578,12 +1578,12 @@ public class KuwaibaService {
       * @param oid Object id
       * @param sessionId Session token
       * @return a representation of the entity as a RemoteObject
-      * @throws Exception Generic exception encapsulating any possible error raised at runtime
+      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
       */
     @WebMethod(operationName = "getObject")
     public RemoteObject getObject(@WebParam(name = "objectClass") String objectClass,
             @WebParam(name = "oid") long oid,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
 
         try{
             return wsBean.getObject(objectClass, oid, getIPAddress(), sessionId);
@@ -1603,12 +1603,12 @@ public class KuwaibaService {
      * @param oid Object oid
      * @param sessionId Session token
      * @return a representation of the entity as a RemoteObjectLight
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getObjectLight")
     public RemoteObjectLight getObjectLight(@WebParam(name = "objectclass") String objectClass,
             @WebParam(name = "oid") long oid,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.getObjectLight(objectClass, oid, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -1627,12 +1627,12 @@ public class KuwaibaService {
      * @param maxResults Max number of results. 0 to retriever all
      * @param sessionId Session token
      * @return A list of instances of @className
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getObjectsOfClassLight")
     public RemoteObjectLight[] getObjectsOfClassLight(@WebParam(name = "className") String className,
             @WebParam(name = "maxResults")int maxResults,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.getObjectsOfClassLight(className, maxResults, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -1651,12 +1651,12 @@ public class KuwaibaService {
      * @param oid Object id
      * @param sessionId Session id
      * @return The parent object
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getParent")
     public RemoteObject getParent(@WebParam(name = "objectclass") String objectClass,
             @WebParam(name = "oid") long oid,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.getParent(objectClass, oid, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -1672,7 +1672,7 @@ public class KuwaibaService {
     @WebMethod(operationName = "getParents")
     public RemoteObjectLight[] getParents(@WebParam(name = "objectclass") String objectClass,
             @WebParam(name = "oid") long oid,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.getParents(objectClass, oid, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -1692,12 +1692,12 @@ public class KuwaibaService {
      * @param oid Object id
      * @param sessionId Session token
      * @return
-     * @throws Exception If case something goes wrong
+     * @throws ServerSideException If case something goes wrong
      */
     @WebMethod(operationName = "getSpecialAttributes")
     public RemoteObjectSpecialRelationships getSpecialAttributes(@WebParam(name = "objectClass") String objectClass,
             @WebParam(name = "oid") long oid,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.getSpecialAttributes(objectClass, oid, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -1717,13 +1717,13 @@ public class KuwaibaService {
      * @param parentClass Class to be matched
      * @param sessionId sssion Id
      * @return
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getParentOfClass")
     public RemoteObject getParentOfClass(@WebParam(name = "objectclass") String objectClass,
             @WebParam(name = "oid") long oid,
             @WebParam(name = "parentClass") String parentClass,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.getParentOfClass(objectClass, oid, parentClass, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -1744,13 +1744,13 @@ public class KuwaibaService {
      * @param sessionId Session token
      * @return A list of the values related to the given object through attributeName.
      * Note that this is a <strong>string</strong> array on purpose, so the values used not necessarily are not longs
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getSpecialAttribute")
     public RemoteObjectLight[] getSpecialAttribute(@WebParam(name = "objectclass") String objectClass,
             @WebParam(name = "oid") long oid,
             @WebParam(name = "attributename") String attributeName,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.getSpecialAttribute(objectClass, oid, attributeName, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -1766,7 +1766,7 @@ public class KuwaibaService {
     @WebMethod(operationName = "getObjectSpecialChildren")
     public RemoteObjectLight[] getObjectSpecialChildren (@WebParam(name = "objectclass") String objectClass,
             @WebParam(name = "objectId") long objectId,
-            @WebParam(name = "sessionId") String sessionId) throws Exception {
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try{
             return wsBean.getObjectSpecialChildren(objectClass, objectId, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -1786,14 +1786,14 @@ public class KuwaibaService {
      * @param  attributeNames attribute names to be changed
      * @param  attributeValues attribute values for the attributes above
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "updateObject")
     public void updateObject(@WebParam(name = "className")String className,
             @WebParam(name = "oid")long oid,
             @WebParam(name = "attributeNames")String[] attributeNames,
             @WebParam(name = "attributeValues")String[][] attributeValues,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             wsBean.updateObject(className,oid,attributeNames, attributeValues, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -1816,7 +1816,7 @@ public class KuwaibaService {
      * @param templateId Template id. Does nothing for now
      * @param sessionId Session token
      * @return the id of the new object
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "createObject")
     public long createObject(@WebParam(name = "className")String className,
@@ -1825,7 +1825,7 @@ public class KuwaibaService {
             @WebParam(name = "attributeNames")String[] attributeNames,
             @WebParam(name = "attributeValues")String[][] attributeValues,
             @WebParam(name = "templateId")long templateId,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.createObject(className,parentObjectClassName, parentOid,attributeNames,attributeValues, templateId, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -1850,7 +1850,7 @@ public class KuwaibaService {
      * @param templateId Template id. Does nothing for now
      * @param sessionId Session token
      * @return the id of the new object
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "createSpecialObject")
     public long createSpecialObject(@WebParam(name = "className")String className,
@@ -1859,7 +1859,7 @@ public class KuwaibaService {
             @WebParam(name = "attributeNames")String[] attributeNames,
             @WebParam(name = "attributeValues")String[][] attributeValues,
             @WebParam(name = "templateId")long templateId,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.createSpecialObject(className,parentObjectClassName, parentOid,attributeNames,attributeValues, templateId, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -1878,13 +1878,13 @@ public class KuwaibaService {
      * @param oid object id from the objects to be deleted
      * @param releaseRelationships Should the deletion be forced, deleting all the relationships?
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "deleteObject")
     public void deleteObject(@WebParam(name = "className")String className,
             @WebParam(name = "oid")long oid,
             @WebParam(name = "releaseRelationships") boolean releaseRelationships,
-            @WebParam(name = "sessionId")String sessionId) throws Exception {
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
             wsBean.deleteObject(className,oid, releaseRelationships, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -1903,13 +1903,13 @@ public class KuwaibaService {
      * @param oids object id from the objects to be deleted
      * @param releaseRelationships Should the deletion be forced, deleting all the relationships?
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "deleteObjects")
     public void deleteObjects(@WebParam(name = "classNames")String[] classNames,
             @WebParam(name = "oid")long[] oids,
             @WebParam(name = "releaseRelationships") boolean releaseRelationships,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             wsBean.deleteObjects(classNames,oids, releaseRelationships, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -1929,14 +1929,14 @@ public class KuwaibaService {
      * @param objectClasses Class names of the objects to be moved
      * @param objectOids Oids of the objects to be moved
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "moveObjects")
     public void moveObjects(@WebParam(name = "targetClass")String targetClass,
             @WebParam(name = "targetOid")long targetOid,
             @WebParam(name = "objectsClasses")String[] objectClasses,
             @WebParam(name = "objectsOids")long[] objectOids,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             wsBean.moveObjects(targetClass,targetOid, objectClasses, objectOids, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -1958,7 +1958,7 @@ public class KuwaibaService {
      * @param recursive should the objects be copied recursively? (themselves plus their children)
      * @param sessionId Session token
      * @return An array with the ids of the new objects
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "copyObjects")
     public long[] copyObjects(
@@ -1967,7 +1967,7 @@ public class KuwaibaService {
             @WebParam(name = "templateClases")String[] objectClasses,
             @WebParam(name = "templateOids")long[] objectOids,
             @WebParam(name = "recursive")boolean recursive,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.copyObjects(targetClass,targetOid, objectClasses, objectOids, recursive, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -1991,7 +1991,7 @@ public class KuwaibaService {
      * @param bObjectClass Port B class
      * @param bObjectId Port B id
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime 
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime 
      */
     @WebMethod(operationName = "connectMirrorPort")
     public void connectMirrorPort(
@@ -1999,7 +1999,7 @@ public class KuwaibaService {
             @WebParam(name = "aObjectId")long aObjectId,
             @WebParam(name = "bObjectClass")String bObjectClass,
             @WebParam(name = "bObjectId")long bObjectId,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             wsBean.connectMirrorPort(aObjectClass, aObjectId, bObjectClass, bObjectId, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -2017,13 +2017,13 @@ public class KuwaibaService {
      * @param objectClass Object class
      * @param objectId Object id
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "releaseMirrorPort")
     public void releaseMirrorPort(
             @WebParam(name = "objectClass")String objectClass,
             @WebParam(name = "objectId")long objectId,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             wsBean.releaseMirrorPort(objectClass, objectId, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -2050,7 +2050,7 @@ public class KuwaibaService {
      * @param connectionClass Class used to create the connection. See Constants class for supported values
      * @param sessionId Session token
      * @return The new connection id
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime   
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
      */
     @WebMethod(operationName = "createPhysicalConnection")
     public long createPhysicalConnection(
@@ -2063,7 +2063,7 @@ public class KuwaibaService {
             @WebParam(name = "attributeNames")String[] attributeNames,
             @WebParam(name = "attributeValues")String[][] attributeValues,
             @WebParam(name = "connectionClass") String connectionClass,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.createPhysicalConnection(aObjectClass, aObjectId,bObjectClass, bObjectId,
                    parentClass, parentId, attributeNames, attributeValues, connectionClass, getIPAddress(), sessionId);
@@ -2085,13 +2085,13 @@ public class KuwaibaService {
      * @param parentId Id of the parent object to the connections. Anything none, -1 for DummyRoot
      * @param sessionId Session token
      * @return The ids of the new objects
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime   
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
      */
     public long[] createBulkPhysicalConnections(@WebParam(name = "connectionClass")String connectionClass, 
             @WebParam(name = "numberOfChildren")int numberOfChildren, 
             @WebParam(name = "parentClass")String parentClass, 
             @WebParam(name = "parentId")long parentId, 
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.createBulkPhysicalConnections(connectionClass, numberOfChildren,
                    parentClass, parentId, getIPAddress(), sessionId);
@@ -2111,11 +2111,11 @@ public class KuwaibaService {
      * @param connectionId Connection id
      * @param sessionId Session token
      * @return An array of two positions: the first is the A endpoint and the second is the B endpoint
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime   
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
      */
     public RemoteObjectLight[] getConnectionEndpoints(@WebParam(name = "connectionClass")String connectionClass, 
             @WebParam(name = "connectionId")long connectionId, 
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.getConnectionEndpoints(connectionClass, connectionId, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -2134,12 +2134,12 @@ public class KuwaibaService {
      * @param objectId Object id
      * @param sessionId Session token
      * @return An array containing the sorted elements in the physical path of the given port
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime   
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
      */
     @WebMethod(operationName = "getPhysicalPath")
     public RemoteObjectLight[] getPhysicalPath (@WebParam(name = "objectClass")String objectClass,
             @WebParam(name = "objectId")long objectId,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.getPhysicalPath(objectClass, objectId, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -2161,15 +2161,15 @@ public class KuwaibaService {
      * @param sideBClassNames The list of classes of the other side of the connection
      * @param sideBIds The list of ids the objects on the other side of the connection
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime   
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
      */
     public void connectPhysicalLinks (@WebParam(name = "sideAClassNames")String[] sideAClassNames, @WebParam(name = "sideAIds")Long[] sideAIds,
                                       @WebParam(name = "linksClassNames")String[] linksClassNames, @WebParam(name = "linksIds")Long[] linksIds,
                                       @WebParam(name = "sideBClassNames")String[] sideBClassNames, @WebParam(name = "sideBIds")Long[] sideBIds,
-                                      @WebParam(name = "sessionId")String sessionId) throws Exception {
-        try{
+                                      @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
             if ((sideAClassNames.length + sideAIds.length + linksClassNames.length + linksIds.length + sideBClassNames.length + sideBIds.length) / 4 != sideAClassNames.length)
-                throw new Exception("The array sizes don't match");
+                throw new ServerSideException("The array sizes don't match");
             
             wsBean.connectPhysicalLinks(sideAClassNames, sideAIds, linksClassNames, linksIds, sideBClassNames, sideBIds, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -2187,13 +2187,13 @@ public class KuwaibaService {
      * @param objectClass Object class
      * @param objectId Object id
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "deletePhysicalConnection")
     public void deletePhysicalConnection(
             @WebParam(name = "objectClass")String objectClass,
             @WebParam(name = "objectId")long objectId,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             wsBean.deletePhysicalConnection(objectClass, objectId, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -2215,7 +2215,7 @@ public class KuwaibaService {
      * @param serviceClass service class
      * @param serviceId service id
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime   
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
      */
     @WebMethod(operationName = "associateObjectToService")
     public void associateObjectToService (
@@ -2223,7 +2223,7 @@ public class KuwaibaService {
             @WebParam(name = "objectId")long objectId,
             @WebParam(name = "serviceClass")String serviceClass,
             @WebParam(name = "serviceId")long serviceId,
-            @WebParam(name = "sessionId")String sessionId) throws Exception {
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
             wsBean.associateObjectToService(objectClass, objectId, serviceClass, serviceId, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -2243,7 +2243,7 @@ public class KuwaibaService {
      * @param serviceClass service class
      * @param serviceId service id
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime   
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
      */
     @WebMethod(operationName = "associateObjectsToService")
     public void associateObjectsToService (
@@ -2251,7 +2251,7 @@ public class KuwaibaService {
             @WebParam(name = "objectId")long[] objectId,
             @WebParam(name = "serviceClass")String serviceClass,
             @WebParam(name = "serviceId")long serviceId,
-            @WebParam(name = "sessionId")String sessionId) throws Exception {
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
             wsBean.associateObjectsToService(objectClass, objectId, serviceClass, serviceId, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -2270,14 +2270,14 @@ public class KuwaibaService {
      * @param serviceId Service id
      * @param targetId target object id
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime    
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime    
      */
     @WebMethod(operationName = "releaseObjectFromService")
     public void releaseObjectFromService (
             @WebParam(name = "serviceClass")String serviceClass,
             @WebParam(name = "serviceId")long serviceId,
             @WebParam(name = "targetId")long targetId,           
-            @WebParam(name = "sessionId")String sessionId) throws Exception {
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
             wsBean.releaseObjectFromService(serviceClass, serviceId, targetId, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -2296,13 +2296,13 @@ public class KuwaibaService {
      * @param serviceId Service id
      * @param sessionId Session token
      * @return A list of services
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime   
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
      */
     @WebMethod(operationName = "getServiceResources")
     public RemoteObjectLight[] getServiceResources (
             @WebParam(name = "serviceClass")String serviceClass,
             @WebParam(name = "serviceId")long serviceId,
-            @WebParam(name = "sessionId")String sessionId) throws Exception {
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
             return wsBean.getServiceResources(serviceClass, serviceId, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -2322,14 +2322,14 @@ public class KuwaibaService {
      * @param attributeValues Default values to #attributes
      * @param sessionId Session token
      * @return The id of the newly created customer
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime   
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
      */
     @WebMethod(operationName = "createCustomer")
     public long createCustomer (
             @WebParam(name = "customerClass")String customerClass,
             @WebParam(name = "attributes")String[] attributes,
             @WebParam(name = "attributeValues")String[] attributeValues,
-            @WebParam(name = "sessionId")String sessionId) throws Exception {
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
             return wsBean.createCustomer(customerClass, attributes, attributeValues, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -2351,7 +2351,7 @@ public class KuwaibaService {
      * @param attributeValues Default values to #attributes
      * @param sessionId Session token
      * @return The id of the newly created service
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime  
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime  
      */
     @WebMethod(operationName = "createService")
     public long createService (
@@ -2360,7 +2360,7 @@ public class KuwaibaService {
             @WebParam(name = "customerId")long customerId,
             @WebParam(name = "attributes")String[] attributes,
             @WebParam(name = "attributeValues")String[] attributeValues,
-            @WebParam(name = "sessionId")String sessionId) throws Exception {
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
             return wsBean.createService(serviceClass, customerClass, customerId, attributes, attributeValues, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -2379,12 +2379,12 @@ public class KuwaibaService {
      * @param customerId Customer Id
      * @param sessionId Session token
      * @return The list of services related to the give customer
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getServices")
     public RemoteObjectLight[] getServices(@WebParam(name = "customerClass")String customerClass, 
             @WebParam(name = "customerId")long customerId,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.getServices(customerClass, customerId, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -2405,14 +2405,14 @@ public class KuwaibaService {
      * @param limit Max number of results (0 to retrieve all)
      * @param sessionId Session token
      * @return The object's audit trail
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getBusinessObjectAuditTrail")
     public ApplicationLogEntry[] getBusinessObjectAuditTrail (
             @WebParam(name = "objectClass")String objectClass,
             @WebParam(name = "objectId")long objectId,
             @WebParam(name = "limit")int limit,
-            @WebParam(name = "sessionId")String sessionId) throws Exception {
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
             return wsBean.getBusinessObjectAuditTrail (objectClass, objectId, limit, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -2431,13 +2431,13 @@ public class KuwaibaService {
      * @param limit limit of results per page. 0 to retrieve them all
      * @param sessionId The session id
      * @return The list of activity log entries
-     * @throws java.lang.Exception If anything goes wrong
+     * @throws ServerSideException If anything goes wrong
      */
     @WebMethod(operationName = "getGeneralActivityAuditTrail")
     public ApplicationLogEntry[] getGeneralActivityAuditTrail (
             @WebParam(name = "page")int page,
             @WebParam(name = "limit")int limit,
-            @WebParam(name = "sessionId")String sessionId) throws Exception {
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
             return wsBean.getGeneralActivityAuditTrail (page, limit, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -2456,14 +2456,14 @@ public class KuwaibaService {
      * @param objectId Object id
      * @param limit Max number of results (0 for all)
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getApplicationObjectAuditTrail")
     public void getApplicationObjectAuditTrail (
             @WebParam(name = "objectClass")String objectClass,
             @WebParam(name = "objectId")long objectId,
             @WebParam(name = "limit")int limit,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             wsBean.getApplicationObjectAuditTrail (objectClass, objectId, limit, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -2495,7 +2495,7 @@ public class KuwaibaService {
      * @param sessionId Session token
      * @param color
      * @return the id of the new class metadata object
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "createClass")
     public long createClass(@WebParam(name = "className")
@@ -2510,7 +2510,7 @@ public class KuwaibaService {
         byte[] icon, @WebParam(name = "smallIcon")
         byte[] smallIcon, @WebParam(name = "color")
         int color, @WebParam(name = "sessionId")
-        String sessionId) throws Exception {
+        String sessionId) throws ServerSideException {
         
         try{
             if (icon != null){
@@ -2562,7 +2562,7 @@ public class KuwaibaService {
      * @param isCustom
      * @param isCountable
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "setClassProperties")
     public void setClassProperties(@WebParam(name = "classId")
@@ -2577,7 +2577,7 @@ public class KuwaibaService {
         Boolean isInDesign, @WebParam(name = "isCustom")
         Boolean isCustom, @WebParam(name = "isCountable")
         Boolean isCountable, @WebParam(name = "sessionId")
-        String sessionId) throws Exception {
+        String sessionId) throws ServerSideException {
         try
         {
             if (icon != null){
@@ -2619,13 +2619,13 @@ public class KuwaibaService {
      * @param attributeName
      * @param sessionId Session token
      * @return the class attribute
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime  
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime  
      */
     @WebMethod(operationName = "getAttribute")
     public AttributeInfo getAttribute(@WebParam(name = "className")
     String className, @WebParam(name = "attributeName")
     String attributeName, @WebParam(name = "sesionId")
-    String sessionId) throws Exception {
+    String sessionId) throws ServerSideException {
         try {
             return wsBean.getAttribute(className, attributeName, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -2644,13 +2644,13 @@ public class KuwaibaService {
      * @param attributeName Attribute name
      * @param sessionId  Session token
      * @return The attribute definition
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime 
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime 
      */
     @WebMethod(operationName = "getAttributeForClassWithId")
     public AttributeInfo getAttributeForClassWithId(@WebParam(name = "classId")
         String classId, @WebParam(name = "attributeName")
         String attributeName, @WebParam(name = "sessionId")
-        String sessionId) throws Exception{
+        String sessionId) throws ServerSideException{
         try {
             return wsBean.getAttribute(classId, attributeName, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -2676,7 +2676,7 @@ public class KuwaibaService {
      * @param isReadOnly is the attribute read only?
      * @param unique should this attribute be unique?
      * @param sessionId session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "createAttribute")
     public void createAttribute(@WebParam(name = "className")
@@ -2690,7 +2690,7 @@ public class KuwaibaService {
         boolean isReadOnly, @WebParam(name = "noCopy")
         boolean noCopy, @WebParam(name = "unique")
         boolean unique, @WebParam(name = "sessionId")
-        String sessionId) throws Exception {
+        String sessionId) throws ServerSideException {
 
         try {
             AttributeInfo ai = new AttributeInfo(name, displayName, type, administrative, 
@@ -2721,7 +2721,7 @@ public class KuwaibaService {
      * @param noCopy
      * @param unique should this attribute be unique?
      * @param sessionId session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "createAttributeForClassWithId")
     public void createAttributeForClassWithId(@WebParam(name = "classId")
@@ -2735,7 +2735,7 @@ public class KuwaibaService {
         boolean isReadOnly, @WebParam(name = "noCopy")
         boolean noCopy, @WebParam(name = "unique")
         boolean unique, @WebParam(name = "sessionId")
-        String sessionId) throws Exception {
+        String sessionId) throws ServerSideException {
 
         try {
             AttributeInfo ai = new AttributeInfo(name, displayName, type, administrative, 
@@ -2767,7 +2767,7 @@ public class KuwaibaService {
      * @param unique should this attribute be unique?
      * @param noCopy can this attribute be copy in copy/paste operation?
      * @param sessionId session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "setAttributeProperties")
     public void setAttributeProperties(@WebParam(name = "className")
@@ -2782,7 +2782,7 @@ public class KuwaibaService {
         Boolean readOnly, @WebParam(name = "unique")
         Boolean unique, @WebParam(name = "noCopy")
         Boolean noCopy, @WebParam(name = "sessionId")
-        String sessionId) throws Exception {
+        String sessionId) throws ServerSideException {
 
         try {
             AttributeInfo ai = new AttributeInfo(attributeId, name, displayName, 
@@ -2812,7 +2812,7 @@ public class KuwaibaService {
      * @param isUnique should this attribute be unique?
      * @param noCopy can this attribute be copy in copy/paste operation?
      * @param sessionId session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "setAttributePropertiesForClassWithId")
     public void setAttributePropertiesForClassWithId(@WebParam(name = "classId")
@@ -2827,7 +2827,7 @@ public class KuwaibaService {
         Boolean isReadOnly, @WebParam(name = "noCopy")
         Boolean noCopy, @WebParam(name = "isUnique")
         Boolean isUnique, @WebParam(name = "sessionId")
-        String sessionId) throws Exception {
+        String sessionId) throws ServerSideException {
 
         try {
             AttributeInfo ai = new AttributeInfo(attributeId, name, displayName, 
@@ -2848,14 +2848,14 @@ public class KuwaibaService {
      * @param className Class name
      * @param attributeName Attribute name
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     
     @WebMethod(operationName = "deleteAttribute")
     public void deleteAttribute(@WebParam(name = "className") 
             String className, @WebParam(name = "attributeName")
             String attributeName, @WebParam(name = "sessionId")
-            String sessionId) throws Exception{
+            String sessionId) throws ServerSideException{
         try {
             wsBean.deleteAttribute(className, attributeName, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -2873,13 +2873,13 @@ public class KuwaibaService {
      * @param classId Class id
      * @param attributeName Attribute name
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "deleteAttributeForClassWithId")
     public void deleteAttributeForClassWithId(@WebParam(name = "classId") 
             long classId, @WebParam(name = "attributeName")
             String attributeName, @WebParam(name = "sessionId")
-            String sessionId) throws Exception{
+            String sessionId) throws ServerSideException{
         try {
             wsBean.deleteAttribute(classId, attributeName, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -2897,12 +2897,12 @@ public class KuwaibaService {
      * @param className Class name
      * @param sessionId Session token
      * @return The metadata as a ClassInfo instance
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getClass")
     public ClassInfo getClass(@WebParam(name = "className")
     String className, @WebParam(name = "sessionId")
-    String sessionId) throws Exception {
+    String sessionId) throws ServerSideException {
 
         try {
             return wsBean.getClass(className, getIPAddress(), sessionId);
@@ -2921,12 +2921,12 @@ public class KuwaibaService {
      * @param classId Class metadata object id
      * @param sessionId session token
      * @return The metadata as a ClassInfo instance
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getClassWithId")
     public ClassInfo getClassWithId(@WebParam(name = "classId")
     long classId, @WebParam(name = "sessionId")
-    String sessionId) throws Exception {
+    String sessionId) throws ServerSideException {
         try {
             return wsBean.getClass(classId, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -2946,14 +2946,14 @@ public class KuwaibaService {
      * @param includeSelf Should the list include the subclasses and the parent class?
      * @param sessionId Session token
      * @return The list of subclasses
-     * @throws Exception Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getSubClassesLight")
     public List<ClassInfoLight> getSubClassesLight(
             @WebParam(name = "className")String className,
             @WebParam(name = "includeAbstractClasses")boolean includeAbstractClasses,
             @WebParam(name = "includeSelf")boolean includeSelf,
-            @WebParam(name = "sessionId") String sessionId) throws Exception{
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException{
         try
         {
             return wsBean.getSubClassesLight(className, includeAbstractClasses, includeSelf, getIPAddress(), sessionId);
@@ -2975,14 +2975,14 @@ public class KuwaibaService {
      * @param includeSelf Should the list include the subclasses and the parent class?
      * @param sessionId Session token
      * @return The list of subclasses
-     * @throws Exception Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getSubClassesLightNoRecursive")
     public List<ClassInfoLight> getSubClassesLightNoRecursive(
             @WebParam(name = "className")String className,
             @WebParam(name = "includeAbstractClasses")boolean includeAbstractClasses,
             @WebParam(name = "includeSelf")boolean includeSelf,
-            @WebParam(name = "sessionId") String sessionId) throws Exception{
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException{
         try
         {
             return wsBean.getSubClassesLightNoRecursive(className, includeAbstractClasses, includeSelf, getIPAddress(), sessionId);
@@ -3002,12 +3002,12 @@ public class KuwaibaService {
      * @param includeListTypes boolean to indicate if the list should include the subclasses of
      * GenericObjectList
      * @return An array with the metadata for the entire class hierarchy as ClassInfo instances
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getAllClasses")
     public List<ClassInfo> getAllClasses(
             @WebParam(name = "includeListTypes")boolean includeListTypes,
-            @WebParam(name = "sessionId") String sessionId) throws Exception{
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException{
         try
         {
             return wsBean.getAllClasses(includeListTypes, getIPAddress(), sessionId);
@@ -3027,12 +3027,12 @@ public class KuwaibaService {
      * @param includeListTypes boolean to indicate if the list should include the subclasses of
      * GenericObjectList
      * @return An array with the metadata for the entire class hierarchy as ClassInfoLight instances
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getAllClassesLight")
     public List<ClassInfoLight> getAllClassesLight(
             @WebParam(name = "includeListTypes")boolean includeListTypes,
-            @WebParam(name = "sessionId") String sessionId) throws Exception{
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException{
         try
         {
             return wsBean.getAllClassesLight(includeListTypes, getIPAddress(), sessionId);
@@ -3050,13 +3050,13 @@ public class KuwaibaService {
      * Deletes a class from the data model using its name as key to find it
      * @param className Class name
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      *
      */
     @WebMethod(operationName = "deleteClass")
     public void deleteClass(@WebParam(name = "className")
     String className, @WebParam(name = "sessionId")
-    String sessionId) throws Exception {
+    String sessionId) throws ServerSideException {
 
         try {
             wsBean.deleteClass(className, getIPAddress(), sessionId);
@@ -3074,13 +3074,13 @@ public class KuwaibaService {
      * Deletes a class from the data model using its id as key to find it
      * @param classId Class id
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
 
     @WebMethod(operationName = "deleteClassWithId")
     public void deleteClassWithId(@WebParam(name = "classId")
     long classId, @WebParam(name = "sessionId")
-    String sessionId) throws Exception {
+    String sessionId) throws ServerSideException {
 
         try {
             wsBean.deleteClass(classId, getIPAddress(), sessionId);
@@ -3100,12 +3100,12 @@ public class KuwaibaService {
      * @param sessionId Session token
      * @return A list of possible children as ClassInfoLight instances
      * An array with the metadata for the entire class hierarchy as ClassInfoLight instances
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getPossibleChildren")
     public List<ClassInfoLight> getPossibleChildren(@WebParam(name = "parentClassName")
                     String parentClassName, @WebParam(name = "sessionId")
-                    String sessionId) throws Exception {
+                    String sessionId) throws ServerSideException {
 
         try {
             return wsBean.getPossibleChildren(parentClassName, getIPAddress(), sessionId);
@@ -3126,12 +3126,12 @@ public class KuwaibaService {
      * @param parentClassName Class to retrieve its possible children
      * @param sessionId Session token
      * @return An array with the metadata for the entire class hierarchy as ClassInfoLight instances
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getPossibleChildrenNoRecursive")
     public List<ClassInfoLight> getPossibleChildrenNoRecursive(@WebParam(name = "parentClassName")
     String parentClassName, @WebParam(name = "sessionId")
-    String sessionId) throws Exception {
+    String sessionId) throws ServerSideException {
 
         try {
             return wsBean.getPossibleChildrenNoRecursive(parentClassName, getIPAddress(), sessionId);
@@ -3151,12 +3151,12 @@ public class KuwaibaService {
      * @param parentClassName Class to retrieve its possible children
      * @param sessionId Session token
      * @return The list of possible special children
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getSpecialPossibleChildren")
     public List<ClassInfoLight> getSpecialPossibleChildren(@WebParam(name = "parentClassName")
     String parentClassName, @WebParam(name = "sessionId")
-    String sessionId) throws Exception {
+    String sessionId) throws ServerSideException {
 
         try {
             return wsBean.getSpecialPossibleChildren(parentClassName, getIPAddress(), sessionId);
@@ -3176,13 +3176,13 @@ public class KuwaibaService {
      * @param parentClassId Class to attach the new possible children
      * @param newPossibleChildren List of nre possible children. Abstract classes are de-aggregated
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "addPossibleChildrenForClassWithId")
     public void addPossibleChildrenForClassWithId(@WebParam(name = "parentClassId")
             long parentClassId, @WebParam(name = "childrenToBeAdded")
             long[] newPossibleChildren, @WebParam(name = "sessionId")
-            String sessionId) throws Exception {
+            String sessionId) throws ServerSideException {
 
         try {
             wsBean.addPossibleChildren(parentClassId, newPossibleChildren, getIPAddress(), sessionId);
@@ -3203,13 +3203,13 @@ public class KuwaibaService {
      * @param parentClassName Class to attach the new possible children
      * @param childrenToBeAdded List of nre possible children. Abstract classes are de-aggregated
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "addPossibleChildren")
     public void addPossibleChildren(@WebParam(name = "parentClassName")
             String parentClassName, @WebParam(name = "childrenToBeAdded")
             String[] childrenToBeAdded, @WebParam(name = "sessionId")
-            String sessionId) throws Exception {
+            String sessionId) throws ServerSideException {
         try {
             wsBean.addPossibleChildren(parentClassName, childrenToBeAdded, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -3227,13 +3227,13 @@ public class KuwaibaService {
      * @param parentClassId Class the possible children are going to be removed from
      * @param childrenToBeRemoved List of ids of classes to be removed as possible children
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "removePossibleChildrenForClassWithId")
     public void removePossibleChildrenForClassWithId(@WebParam(name = "parentClassId")
     long parentClassId, @WebParam(name = "childrenToBeRemoved")
     long[] childrenToBeRemoved, @WebParam(name = "sessionId")
-    String sessionId) throws Exception {
+    String sessionId) throws ServerSideException {
         try{
             wsBean.removePossibleChildren(parentClassId, childrenToBeRemoved, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -3253,13 +3253,13 @@ public class KuwaibaService {
      * @param recursive do it recursively or not
      * @param sessionId
      * @return List of classes in the upstream containment hierarchy
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getUpstreamContainmentHierarchy")
     public List<ClassInfoLight> getUpstreamContainmentHierarchy(@WebParam(name = "className")
             String className, @WebParam(name = "recursive")
             boolean recursive, @WebParam(name = "sessionId")
-            String sessionId) throws Exception {
+            String sessionId) throws ServerSideException {
         try{
             return wsBean.getUpstreamContainmentHierarchy(className, recursive, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -3298,7 +3298,7 @@ public class KuwaibaService {
         byte[] file, @WebParam(name = "commitSize")
         int commitSize, @WebParam(name = "dataType")
         int dataType, @WebParam(name = "sessionId")
-        String sessionId) throws Exception {
+        String sessionId) throws ServerSideException {
         try{
             return wsBean.bulkUpload(file, commitSize, dataType, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -3314,7 +3314,7 @@ public class KuwaibaService {
     @WebMethod(operationName = "downloadBulkLoadLog")
     public byte[] downloadBulkLoadLog(@WebParam(name = "fileName")
         String fileName, @WebParam(name = "sessionId")
-            String sessionId) throws Exception {
+            String sessionId) throws ServerSideException {
         try{
             return wsBean.downloadBulkLoadLog(fileName, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -3663,13 +3663,13 @@ public class KuwaibaService {
      * @param className if is an IPv4 or an IPv6 subnet
      * @param sessionId the session id
      * @return a set of subnet pools
-     * @throws Exception 
+     * @throws ServerSideException 
      */
     @WebMethod(operationName = "getSubnetPools")
     public RemotePool[] getSubnetPools(@WebParam(name = "limit")
             int limit, @WebParam(name = "parentId") long parentId,
             @WebParam(name = "className") String className,
-            @WebParam(name = "sessionId") String sessionId) throws Exception{
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException{
         try{
             return wsBean.getSubnetPools(limit, parentId, className, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -3688,12 +3688,12 @@ public class KuwaibaService {
      * @param limit limit of returned subnets
      * @param sessionId
      * @return a set of subnets
-     * @throws Exception 
+     * @throws ServerSideException 
      */
     @WebMethod(operationName = "getSubnets")
     public RemoteObjectLight[] getSubnets(@WebParam(name = "poolId")long poolId,
             @WebParam(name = "limit")int limit,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.getSubnets(poolId, limit, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -3740,7 +3740,7 @@ public class KuwaibaService {
             @WebParam(name = "className")String className,
             @WebParam(name = "attributeNames")String[] attributeNames,
             @WebParam(name = "attributeValues")String[][] attributeValues,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.createSubnet(poolId, className, attributeNames, attributeValues, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -3757,11 +3757,11 @@ public class KuwaibaService {
      * Deletes a set of subnet pools
      * @param ids Pools to be deleted
      * @param sessionId Session identifier
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "deleteSubnetPools")
     public void deleteSubnetPools(@WebParam(name = "ids")long[] ids,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             wsBean.deleteSubnetPools(ids, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -3780,14 +3780,14 @@ public class KuwaibaService {
      * @param className The class of the subnet
      * @param releaseRelationships Should the deletion be forced, deleting all the relationships?
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "deleteSubnets")
     public void deleteSubnets(
             @WebParam(name = "oid")long[] oids,
             @WebParam(name = "className") String className,
             @WebParam(name = "releaseRelationships") boolean releaseRelationships,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             wsBean.deleteSubnets(oids, className, releaseRelationships, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -3803,15 +3803,16 @@ public class KuwaibaService {
     /**
       * Gets the complete information about a given subnet (all its attributes)
       * @param id Subnet id
+      * @param className VPN classs
       * @param sessionId Session token
       * @return a representation of the entity as a RemoteObject
-      * @throws Exception Generic exception encapsulating any possible error raised at runtime
+      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
       */
     @WebMethod(operationName = "getSubnet")
     public RemoteObject getSubnet(
             @WebParam(name = "id") long id,
             @WebParam(name = "className") String className,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.getSubnet(id, className, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -3829,12 +3830,12 @@ public class KuwaibaService {
       * @param subnetPoolId Subnet pool id
       * @param sessionId Session token
       * @return a representation of the entity as a RemoteObject
-      * @throws Exception Generic exception encapsulating any possible error raised at runtime
+      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
       */
     @WebMethod(operationName = "getSubnetPool")
     public RemotePool getSubnetPool(
             @WebParam(name = "subnetPoolId") long subnetPoolId,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
 
         try{
             return wsBean.getSubnetPool(subnetPoolId, getIPAddress(), sessionId);
@@ -3855,14 +3856,14 @@ public class KuwaibaService {
      * @param attributeValues IP Addres values
      * @param sessionId
      * @return the id of the new IP Address
-     * @throws Exception 
+     * @throws ServerSideException 
      */
     @WebMethod(operationName = "addIP")
     public long addIP(@WebParam(name = "id")long id,
             @WebParam(name = "parentClassName")String parentClassName,
             @WebParam(name = "attributeNames")String[] attributeNames,
             @WebParam(name = "attributeValues")String[][] attributeValues,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.addIP(id, parentClassName, attributeNames, attributeValues, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -3880,13 +3881,13 @@ public class KuwaibaService {
      * @param oids object id from the objects to be deleted
      * @param releaseRelationships Should the deletion be forced, deleting all the relationships?
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "removeIP")
     public void removeIP(
             @WebParam(name = "oid")long[] oids,
             @WebParam(name = "releaseRelationships") boolean releaseRelationships,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             wsBean.removeIP(oids, releaseRelationships, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -3904,13 +3905,13 @@ public class KuwaibaService {
      * @param limit limit of returned subnets
      * @param sessionId
      * @return a set of subnets
-     * @throws Exception 
+     * @throws ServerSideException 
      */
     @WebMethod(operationName = "getSubnetUsedIps")
     public RemoteObjectLight[] getSubnetUsedIps(@WebParam(name = "id")long id,
             @WebParam(name = "limit")int limit,
             @WebParam(name = "className")String className,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.getSubnetUsedIps(id, className, limit, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -3928,13 +3929,13 @@ public class KuwaibaService {
      * @param id Subnet id
      * @param vlanId the VLAN id
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime    
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime    
      */
     @WebMethod(operationName = "releaseSubnetFromVlan")
     public void releaseSubnetFromVlan (
             @WebParam(name = "id")long id,
             @WebParam(name = "vlanId")long vlanId,
-            @WebParam(name = "sessionId")String sessionId) throws Exception {
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
             wsBean.releaseSubnetFromVlan(vlanId, id, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -3953,14 +3954,14 @@ public class KuwaibaService {
      * @param className if the subnet has IPv4 or IPv6 IP addresses
      * @param vlanId VLAN id
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime   
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
      */
     @WebMethod(operationName = "relateSubnetToVlan")
     public void relateSubnetToVlan (
             @WebParam(name = "id")long id,
             @WebParam(name = "className")String className,
             @WebParam(name = "vlanId")long vlanId,
-            @WebParam(name = "sessionId")String sessionId) throws Exception {
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
             wsBean.relateSubnetToVlan(id, className, vlanId, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -3979,14 +3980,14 @@ public class KuwaibaService {
      * @param deviceClassName device class
      * @param deviceId device id
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime   
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
      */
     @WebMethod(operationName = "relateIPtoDevice")
     public void relateIPtoDevice (
             @WebParam(name = "id")long id,
             @WebParam(name = "deviceClassName")String deviceClassName,
             @WebParam(name = "deviceId")long deviceId,
-            @WebParam(name = "sessionId")String sessionId) throws Exception {
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
             wsBean.relateIPtoDevice(id, deviceClassName, deviceId, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -4005,13 +4006,13 @@ public class KuwaibaService {
      * @param broadcastIp the broadcast ip for the subnet
      * @param sessionId Session token
      * @return true if overlaps
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime   
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
      */
     @WebMethod(operationName = "itOverlaps")
     public boolean itOverlaps (
             @WebParam(name = "networkIp")String networkIp,
             @WebParam(name = "broadcastIp")String broadcastIp,
-            @WebParam(name = "sessionId")String sessionId) throws Exception {
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
             return wsBean.itOverlaps(networkIp, broadcastIp, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -4030,14 +4031,14 @@ public class KuwaibaService {
      * @param deviceId device id
      * @param id Subnet id
      * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime    
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime    
      */
     @WebMethod(operationName = "releaseIPFromDevice")
     public void releaseIPFromDevice (
             @WebParam(name = "deviceClassName")String deviceClassName,
             @WebParam(name = "deviceId")long deviceId,
             @WebParam(name = "id")long id,
-            @WebParam(name = "sessionId")String sessionId) throws Exception {
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
             wsBean.releaseIPfromDevice(deviceClassName, deviceId, id, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -4059,7 +4060,7 @@ public class KuwaibaService {
      * @param contractClass contract class
      * @param contractId contract id
      * @param sessionId Session token
-     * @throws Exception In case something goes wrong. A server side exception is a managed error, while a RunTimeException is something unexpected
+     * @throws ServerSideException In case something goes wrong. A server side exception is a managed error, while a RunTimeException is something unexpected
      */
     @WebMethod(operationName = "associateDevicesToContract")
     public void associateDevicesToContract (
@@ -4067,7 +4068,7 @@ public class KuwaibaService {
             @WebParam(name = "deviceId")long[] deviceId,
             @WebParam(name = "contractClass")String contractClass,
             @WebParam(name = "contractId")long contractId,
-            @WebParam(name = "sessionId")String sessionId) throws Exception {
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
             wsBean.associateDevicesToContract(deviceClass, deviceId, contractClass, contractId, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -4085,7 +4086,7 @@ public class KuwaibaService {
             @WebParam(name = "deviceClass")String deviceClass,
             @WebParam(name = "deviceId")long deviceId,
             @WebParam(name = "contractId")long contractId,
-            @WebParam(name = "sessionId")String sessionId) throws Exception {
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
             wsBean.releaseDeviceFromContract(deviceClass, deviceId, contractId, getIPAddress(), sessionId);
         } catch(Exception e){
