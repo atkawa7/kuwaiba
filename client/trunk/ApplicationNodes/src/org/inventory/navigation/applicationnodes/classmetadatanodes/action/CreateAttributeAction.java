@@ -54,7 +54,7 @@ public class CreateAttributeAction extends AbstractAction {
         
         List<LocalClassMetadataLight> instanceableListTypes = CommunicationsStub.getInstance().getInstanceableListTypes();
         
-        ArrayList<String> attributeTypeslist = new ArrayList<String>();
+        ArrayList<String> attributeTypeslist = new ArrayList<>();
         
         //Primitive types
         attributeTypeslist.addAll(Arrays.asList(Constants.ATTRIBUTE_TYPES));
@@ -80,7 +80,7 @@ public class CreateAttributeAction extends AbstractAction {
                 new JComponent []{txtName, txtDisplayName, txtDescription, lstType});
         if (JOptionPane.showConfirmDialog(null,
                 pnlMyDialog,
-                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW_POOL"),
+                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW_ATTRIBUTE"),
                 JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION){
                     if (CommunicationsStub.getInstance().createAttribute(classNode.getClassMetadata().getOid(), 

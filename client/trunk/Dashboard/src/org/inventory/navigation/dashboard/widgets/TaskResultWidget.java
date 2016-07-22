@@ -39,9 +39,9 @@ import org.inventory.communications.util.Utils;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class TaskResultWidget extends AbstractWidget {
-    private static Icon ICON_OK = new ImageIcon(Utils.createRectangleIcon(DashboardWidgetUtilities.GREEN, 15, 15));
-    private static Icon ICON_WARNING = new ImageIcon(Utils.createRectangleIcon(DashboardWidgetUtilities.YELLOW, 15, 15));
-    private static Icon ICON_CRITICAL = new ImageIcon(Utils.createRectangleIcon(DashboardWidgetUtilities.RED, 15, 15));
+    private static Icon ICON_OK = new ImageIcon(Utils.createCircleIcon(DashboardWidgetUtilities.GREEN, 15));
+    private static Icon ICON_WARNING = new ImageIcon(Utils.createCircleIcon(DashboardWidgetUtilities.YELLOW, 15));
+    private static Icon ICON_CRITICAL = new ImageIcon(Utils.createCircleIcon(DashboardWidgetUtilities.RED, 15));
     private LocalTask task;
         
     @Override
@@ -51,7 +51,7 @@ public class TaskResultWidget extends AbstractWidget {
     
     @Override
     public String getTitle() {
-        return String.format("%s Results", task.getName()); //NOI18N
+        return String.format(task.getName());
     }
     
     @Override
@@ -119,13 +119,12 @@ public class TaskResultWidget extends AbstractWidget {
         
         //Now, we create the actual title component
         JLabel lblTitle = new JLabel("<html><b>" + getTitle() + "</b></html>", SwingConstants.RIGHT);
-        //lblTitle.setMinimumSize(new Dimension(10, 20));
         lblTitle.setOpaque(true);
         lblTitle.setBackground(DashboardWidgetUtilities.BLUE);
         lblTitle.setForeground(Color.WHITE);
         lblTitle.setBorder(new EmptyBorder(10, 10, 10, 10));
         
-        pnlInner.add(lblTitle, layoutConstraints);
+        add(lblTitle, BorderLayout.NORTH);
         
         LocalTaskResult taskResult = CommunicationsStub.getInstance().executeTask(task.getId());
         
@@ -145,25 +144,24 @@ public class TaskResultWidget extends AbstractWidget {
             } else {
                 int i = 1;
                 for (LocalTaskResultMessage message : taskResult.getMessages()) {
-                    JLabel lblMessage = new JLabel(message.getMessage());
-                    lblMessage.setOpaque(false);
-                    lblMessage.setBorder(new EmptyBorder(10, 10, 10, 10));
+                    Icon theIcon;
 
                     switch (message.getMessageType()) {
+                        default:
                         case LocalTaskResultMessage.STATUS_SUCCESS:
-                            lblMessage.setIcon(ICON_OK);
+                            theIcon = ICON_OK;
                             break;
                         case LocalTaskResultMessage.STATUS_WARNING:
-                            lblMessage.setIcon(ICON_WARNING);
+                            theIcon = ICON_WARNING;
                             break;
                         case LocalTaskResultMessage.STATUS_ERROR:
-                            lblMessage.setIcon(ICON_CRITICAL);
+                            theIcon = ICON_CRITICAL;
                             break;
                     }
 
                     layoutConstraints.gridy = i;
 
-                    pnlInner.add(lblMessage, layoutConstraints);
+                    pnlInner.add(DashboardWidgetUtilities.buildDecoratedOpaqueTextField(message.getMessage(), null, theIcon), layoutConstraints);
 
                     i++;
                 }

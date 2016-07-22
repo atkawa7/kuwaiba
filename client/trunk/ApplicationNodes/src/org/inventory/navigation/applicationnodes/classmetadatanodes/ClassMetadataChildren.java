@@ -55,7 +55,7 @@ public class ClassMetadataChildren extends Children.Keys<LocalClassMetadataLight
 
     @Override
     protected Node[] createNodes(LocalClassMetadataLight key) {
-        return new Node[] {new ClassMetadataNode(key)};
+        return new Node[] { new ClassMetadataNode(key) };
     }
     
     public void refreshList() {
@@ -68,7 +68,8 @@ public class ClassMetadataChildren extends Children.Keys<LocalClassMetadataLight
 
         if (subClasses == null) {
             setKeys(Collections.EMPTY_LIST);
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, "An error has occurred retrieving this Metadata Sub Class: "+com.getError());
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, 
+                    "An error has occurred retrieving the subclasses of this class: " + com.getError());
         }
         else {
             Collections.sort(subClasses);

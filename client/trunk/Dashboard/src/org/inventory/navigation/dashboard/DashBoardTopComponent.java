@@ -15,15 +15,23 @@
  */
 package org.inventory.navigation.dashboard;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.GridLayout;
 import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.List;
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalTask;
 import org.inventory.communications.core.LocalTaskScheduleDescriptor;
+import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.dashboard.widgets.AbstractWidget;
+import org.inventory.navigation.dashboard.widgets.DashboardWidgetUtilities;
 import org.inventory.navigation.dashboard.widgets.TaskResultWidget;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -57,14 +65,26 @@ import org.openide.windows.WindowManager;
     "CTL_DashBoardTopComponent=DashBoard",
     "HINT_DashBoardTopComponent=All the relevant information in a single place"
 })
-public final class DashBoardTopComponent extends TopComponent {
+public final class DashBoardTopComponent extends TopComponent implements Refreshable {
+    
     private boolean loaded = false;
+    private JPanel pnlMainContainer;
+    private JPanel pnlOptionsContainer;
+    
     public DashBoardTopComponent() {
         initComponents();
+        initCustomComponents();
         setName(Bundle.CTL_DashBoardTopComponent());
         setToolTipText(Bundle.HINT_DashBoardTopComponent());        
     }
 
+    public void initCustomComponents() {
+        pnlMainContainer = new JPanel(new GridLayout(4, 2));
+        add(pnlMainContainer, BorderLayout.CENTER);
+        
+        pnlOptionsContainer = new JPanel(new BorderLayout());
+        add(pnlOptionsContainer, BorderLayout.NORTH);
+    }
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -74,7 +94,7 @@ public final class DashBoardTopComponent extends TopComponent {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setLayout(new java.awt.GridLayout(4, 2));
+        setLayout(new java.awt.BorderLayout());
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -95,7 +115,8 @@ public final class DashBoardTopComponent extends TopComponent {
 
     @Override
     public void componentClosed() {
-        removeAll();
+        pnlMainContainer.removeAll();
+        pnlOptionsContainer.removeAll();
     }
     
     public void loadWidgets() {    
@@ -105,7 +126,12 @@ public final class DashBoardTopComponent extends TopComponent {
                     CommunicationsStub.getInstance().getError());
         else {
             if (allTasks.isEmpty()) {
-                
+                JLabel lblDefaultMessage = new JLabel("The dashboard is empty! Add some tasks in the Task Manager", SwingConstants.CENTER);
+                lblDefaultMessage.setOpaque(true);
+                lblDefaultMessage.setBackground(DashboardWidgetUtilities.DARK_GREEN);
+                lblDefaultMessage.setForeground(Color.WHITE);
+                lblDefaultMessage.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+                pnlOptionsContainer.add(lblDefaultMessage, BorderLayout.NORTH);
             } else {
                 for (int i = 0; i < 8 ; i++) {
                     if (i < allTasks.size()) {
@@ -117,12 +143,12 @@ public final class DashBoardTopComponent extends TopComponent {
                                 aWidget.setup(parameters);
                                 aWidget.init();
                             } catch (AbstractWidget.InvalidStateException |  InvalidParameterException ex) {}
-                            add(aWidget);
+                            pnlMainContainer.add(aWidget);
                         }
                     } else add(new JPanel());
                 }
-                validate();
             }
+            validate();
         }
     }
 
@@ -136,5 +162,11 @@ public final class DashBoardTopComponent extends TopComponent {
     void readProperties(java.util.Properties p) {
         String version = p.getProperty("version");
         // TODO read your settings according to their version
+    }
+
+    @Override
+    public void refresh() {
+        componentClosed();
+        componentOpened();
     }
 }

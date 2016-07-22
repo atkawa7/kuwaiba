@@ -15,17 +15,23 @@
  */
 package org.inventory.navigation.dashboard.widgets;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollBar;
+import javax.swing.JTextField;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.ScrollBarUI;
 import javax.swing.plaf.basic.BasicScrollBarUI;
@@ -63,10 +69,61 @@ public class DashboardWidgetUtilities {
         return theLabel;
     }
     
+    /** 
+     * Same as buildOpaqueLabel, but adds an icon to the label
+     * @param text The text of the label
+     * @param color The color of the label
+     * @param icon The icon
+     * @return A decorated JLabel object
+     */
     public static JLabel buildDecoratedOpaqueLabel(String text, Color color, Icon icon) {
         JLabel theLabel = buildOpaqueLabel(text, color);
         theLabel.setIcon(icon);
         return theLabel;
+    }
+    
+    /**
+     * Creates an opaque JTextField to use it as an entry in a result table. The difference with the buildOpaqueLabel method is that the
+     * text field has selectable text
+     * @param text The text of the label
+     * @param color The background color
+     * @return The text field object
+     */
+    public static JTextField buildOpaqueTextField(String text, Color color) {
+        JTextField theTextField = new JTextField(text);
+        theTextField.setOpaque(true);
+        theTextField.setBackground(color);
+        theTextField.setBorder(new EmptyBorder(10, 10, 10, 10));
+        return theTextField;
+    }
+    
+    /** 
+     * Same as buildOpaqueTextField, but adds an icon to the label
+     * @param text The text of the label
+     * @param color The color of the label
+     * @param icon The icon
+     * @return A JPanel object with a decorated JTextField
+     */
+    public static JPanel buildDecoratedOpaqueTextField(String text, Color color, Icon icon) {
+        JPanel container = new JPanel(new BorderLayout());
+        
+        if (color != null)
+            container.setBackground(color);
+        else 
+            container.setOpaque(false);
+        
+        JTextField txtText = buildOpaqueTextField(text, color);
+        txtText.setOpaque(false);
+        
+        JLabel lblIcon = new JLabel(icon);
+        lblIcon.setOpaque(false);
+        
+        container.add(lblIcon, BorderLayout.WEST);
+        container.add(txtText);
+        
+        container.setBorder(new EmptyBorder(2, 5, 2, 5));
+        
+        return container;
     }
     
     /**
@@ -82,7 +139,7 @@ public class DashboardWidgetUtilities {
     
     
     private static class CustomScrollBarUI extends BasicScrollBarUI {
-        private final Dimension d = new Dimension(20, 20);
+        private final Dimension d = new Dimension(10, 10);
         private Color draggingColor;
         private Color rollingOverColor;
         private Color normalColor;
@@ -134,4 +191,32 @@ public class DashboardWidgetUtilities {
           scrollbar.repaint();
         }
     }
+    
+    /**
+     * A custom round border as seen in https://community.oracle.com/thread/1371231?start=0&tstart=0
+     */
+    public static class RoundedBorder implements Border {
+        
+        private int radius;
+        
+        public RoundedBorder(int radius) {
+            this.radius = radius;
+        }
+        
+        @Override
+        public Insets getBorderInsets(Component c) {
+            return new Insets(this.radius + 1, this.radius + 1, this.radius + 2, this.radius);
+        }
+
+        @Override
+        public boolean isBorderOpaque() {
+            return true;
+        }
+
+        @Override
+        public void paintBorder(Component c, Graphics graphics, int x, int y, int width, int height) {
+            graphics.drawRoundRect(x, y, width-1, height - 1, radius, radius);
+        }
+    }
+    
 }

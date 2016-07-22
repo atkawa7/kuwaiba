@@ -18,6 +18,7 @@ package org.inventory.communications.util;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -205,6 +206,24 @@ public class Utils {
         if (color != null)
             graphics.setColor(color);
         graphics.fillRect(0, 0, width, height);
+        graphics.dispose();
+        return image;
+    }
+    
+    /**
+     * Creates a circle Image with the specified diameter and color
+     * @param color Color of the icon
+     * @param diameter Diameter of the icon
+     * @return An Image object
+     */
+    public static Image createCircleIcon(Color color, int diameter){
+        BufferedImage image = new BufferedImage(diameter, diameter, BufferedImage.TYPE_INT_ARGB);
+
+        Graphics2D graphics = image.createGraphics();
+        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                          RenderingHints.VALUE_ANTIALIAS_ON);
+        graphics.setColor(color);
+        graphics.fillOval(0, 0, diameter, diameter);
         graphics.dispose();
         return image;
     }

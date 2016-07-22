@@ -48,6 +48,11 @@ public class ExecuteTaskResultTopComponent extends TopComponent {
         pnlScrollMain = new JScrollPane(tblResult);
         add(pnlScrollMain);
     }
+
+    @Override
+    public int getPersistenceType() {
+        return TopComponent.PERSISTENCE_NEVER;
+    }
     
     private static class TaskResultTableModel implements TableModel {
         private LocalTaskResult taskresult;
