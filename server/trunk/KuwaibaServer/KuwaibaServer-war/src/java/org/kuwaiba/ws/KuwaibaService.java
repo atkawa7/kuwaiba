@@ -4099,6 +4099,66 @@ public class KuwaibaService {
         }
     }    
         // </editor-fold>
+    
+        // <editor-fold defaultstate="collapsed" desc="Contract Manager">
+    /**
+     * Creates an MPLS link
+     * @param classNameEndpointA The class name of the endpoint A (some kind of port)
+     * @param idEndpointA Id of endpoint A
+     * @param classNameEndpointB  The class name of the endpoint Z (some kind of port)
+     * @param idEndpointB Id of endpoint Z
+     * @param linkType Type of link (MPLS)
+     * @param defaultName The default name of th
+     * @param sessionId Session token
+     * @return The id of the newly created transport link
+     * @throws ServerSideException In case something goes wrong with the creation process
+     */
+    @WebMethod(operationName = "createMPLSLink")
+    public long createMPLSLink(@WebParam(name = "classNameEndpointA") String classNameEndpointA, 
+            @WebParam(name = "idEndpointA") long idEndpointA, 
+            @WebParam(name = "classNameEndpointB") String classNameEndpointB, 
+            @WebParam(name = "idEndpointB") long idEndpointB, 
+            @WebParam(name = "linkType") String linkType, 
+            @WebParam(name = "defaultName") String defaultName, 
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            return wsBean.createMPLSLink(classNameEndpointA, idEndpointA, classNameEndpointB, idEndpointB, linkType, defaultName, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createSDHTransportLink: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Deletes a MPLS link and its corresponding container link
+     * @param linkClass The class of the link
+     * @param linkId the id of the link
+     * @param forceDelete Ignore the existing relationships
+     * @param sessionId Session token
+     * @throws ServerSideException If some high level thing goes wrong
+     */
+    @WebMethod(operationName = "deleteMPLSLink")
+    public void deleteMPLSLink(@WebParam(name = "linkClass") String linkClass, 
+            @WebParam(name = "linkId") long linkId, 
+            @WebParam(name = "forceDelete") boolean forceDelete, 
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            wsBean.deleteMPLSLink(linkClass, linkId, forceDelete, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteSDHTributaryLink: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+        // </editor-fold>
     // </editor-fold>
         
     // <editor-fold defaultstate="collapsed" desc="Helpers. Click on the + sign on the left to edit the code.">/**
