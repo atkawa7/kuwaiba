@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Arch Linux) (preloaded format=pdflatex 2016.7.22)  25 JUL 2016 22:55
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Arch Linux) (preloaded format=pdflatex 2016.7.22)  26 JUL 2016 03:13
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -431,11 +431,7 @@ Package etexcmds Info: Could not find \expanded.
 LaTeX Info: Redefining \ref on input line 353.
 LaTeX Info: Redefining \pageref on input line 353.
 )
-(./user_manual.aux
-
-LaTeX Warning: Label `fig:data_model_manager' multiply defined.
-
-)
+(./user_manual.aux)
 \openout1 = `user_manual.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 26.
@@ -531,17 +527,17 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <6> on input line 27.
 [1
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./user_manual.toc)
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./user_manual.toc
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 9.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 9.
+)
 \tf@toc=\write3
 \openout3 = `user_manual.toc'.
 
 
-[2]
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 47.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 47.
- [3] <img/cc_license_logo.jpg, id=17, 88.33pt x 31.11626pt>
+[2] [3] <img/cc_license_logo.jpg, id=17, 88.33pt x 31.11626pt>
 File: img/cc_license_logo.jpg Graphic file (type jpg)
 
 <use img/cc_license_logo.jpg>
@@ -713,10 +709,10 @@ ager.png>]
 File: img/data_model_manager.png Graphic file (type png)
 
 <use img/data_model_manager.png>
-Package pdftex.def Info: img/data_model_manager.png used on input line 204.
+Package pdftex.def Info: img/data_model_manager.png used on input line 205.
 (pdftex.def)             Requested size: 170.71393pt x 193.11763pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 201--209
+Underfull \hbox (badness 10000) in paragraph at lines 202--210
 
  []
 
@@ -724,38 +720,113 @@ Underfull \hbox (badness 10000) in paragraph at lines 201--209
 File: img/properties_class_node.png Graphic file (type png)
 
 <use img/properties_class_node.png>
-Package pdftex.def Info: img/properties_class_node.png used on input line 216.
-(pdftex.def)             Requested size: 170.71393pt x 154.75711pt.
+Package pdftex.def Info: img/properties_class_node.png used on input line 217.
+(pdftex.def)             Requested size: 213.39568pt x 193.45529pt.
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[4 <./img/data_model_manager.png>] [5 <./img/properties_class_node.png>]
-(./user_manual.aux)
+[4 <./img/data_model_manager.png>]
+<img/class_attribute_details.png, id=63, 340.27126pt x 295.1025pt>
+File: img/class_attribute_details.png Graphic file (type png)
 
-LaTeX Warning: There were multiply-defined labels.
+<use img/class_attribute_details.png>
+Package pdftex.def Info: img/class_attribute_details.png used on input line 233
+.
+(pdftex.def)             Requested size: 170.71393pt x 148.05069pt.
+ [5 <./img/properties_class_node.png> <./img/class_attribute_details.png>]
+<img/class_node_menu.png, id=68, 335.2525pt x 242.9075pt>
+File: img/class_node_menu.png Graphic file (type png)
 
- ) 
+<use img/class_node_menu.png>
+Package pdftex.def Info: img/class_node_menu.png used on input line 249.
+(pdftex.def)             Requested size: 170.71393pt x 123.68843pt.
+ [6 <./img/class_node_menu.png>]
+<img/containment_manager.png, id=73, 999.735pt x 740.7675pt>
+File: img/containment_manager.png Graphic file (type png)
+
+<use img/containment_manager.png>
+Package pdftex.def Info: img/containment_manager.png used on input line 264.
+(pdftex.def)             Requested size: 298.75264pt x 221.36162pt.
+ [7 <./img/containment_manager.png>]
+<img/navigation_tree.png, id=78, 343.2825pt x 220.825pt>
+File: img/navigation_tree.png Graphic file (type png)
+
+<use img/navigation_tree.png>
+Package pdftex.def Info: img/navigation_tree.png used on input line 283.
+(pdftex.def)             Requested size: 170.71393pt x 109.81581pt.
+
+<img/navigation_tree_properties.png, id=79, 429.605pt x 354.32375pt>
+File: img/navigation_tree_properties.png Graphic file (type png)
+
+<use img/navigation_tree_properties.png>
+Package pdftex.def Info: img/navigation_tree_properties.png used on input line 
+290.
+(pdftex.def)             Requested size: 213.39568pt x 176.00443pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 280--295
+
+ []
+
+<img/navigation_tree_context_menu.png, id=80, 481.8pt x 312.16624pt>
+File: img/navigation_tree_context_menu.png Graphic file (type png)
+
+<use img/navigation_tree_context_menu.png>
+Package pdftex.def Info: img/navigation_tree_context_menu.png used on input lin
+e 299.
+(pdftex.def)             Requested size: 213.39568pt x 138.25859pt.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[8 <./img/navigation_tree.png> <./img/navigation_tree_properties.png>]
+<img/action_show_object_id.png, id=86, 934.49126pt x 126.4725pt>
+File: img/action_show_object_id.png Graphic file (type png)
+
+<use img/action_show_object_id.png>
+Package pdftex.def Info: img/action_show_object_id.png used on input line 317.
+(pdftex.def)             Requested size: 426.79135pt x 57.7612pt.
+ [9 <./img/navigation_tree_context_menu.png> <./img/action_show_object_id.png>]
+
+<img/navigation_tree_relationship_explorer.png, id=93, 321.2pt x 248.93pt>
+File: img/navigation_tree_relationship_explorer.png Graphic file (type png)
+
+<use img/navigation_tree_relationship_explorer.png>
+Package pdftex.def Info: img/navigation_tree_relationship_explorer.png used on 
+input line 334.
+(pdftex.def)             Requested size: 170.71393pt x 132.3045pt.
+
+<img/navigation_tree_special_children_explorer.png, id=94, 277.035pt x 262.9825
+pt>
+File: img/navigation_tree_special_children_explorer.png Graphic file (type png)
+
+ <use img/navigation_tree_special_children_explorer.png>
+Package pdftex.def Info: img/navigation_tree_special_children_explorer.png used
+ on input line 341.
+(pdftex.def)             Requested size: 128.0387pt x 121.54323pt.
+ [10 <./img/navigation_tree_relationship_explorer.png> <./img/navigation_tree_s
+pecial_children_explorer.png>] [11] [12] [13] [14] (./user_manual.aux) ) 
 Here is how much of TeX's memory you used:
- 3010 strings out of 493054
- 42927 string characters out of 6140586
- 112500 words of memory out of 5000000
- 6445 multiletter control sequences out of 15000+600000
+ 3073 strings out of 493054
+ 45027 string characters out of 6140586
+ 114345 words of memory out of 5000000
+ 6499 multiletter control sequences out of 15000+600000
  7895 words of font info for 28 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 42i,13n,32p,1069b,310s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/
-texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-dist/fon
-ts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-dist/fonts/type1/public
-/amsfonts/cm/cmr12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cm
-r17.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/sh
-are/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texmf-dist/f
-onts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texmf-dist/fonts/type1/publi
-c/amsfonts/cm/cmsy10.pfb>
-Output written on user_manual.pdf (9 pages, 197063 bytes).
+ 42i,13n,32p,1370b,310s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/s
+hare/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texmf-dis
+t/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-dist/fonts/type1/
+public/amsfonts/cm/cmr10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts
+/cm/cmr12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb><
+/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texmf
+-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texmf-dist/fonts/type
+1/public/amsfonts/cm/cmr8.pfb></usr/share/texmf-dist/fonts/type1/public/amsfont
+s/cm/cmsy10.pfb>
+Output written on user_manual.pdf (18 pages, 347330 bytes).
 PDF statistics:
- 96 PDF objects out of 1000 (max. 8388607)
- 50 compressed objects within 1 object stream
+ 141 PDF objects out of 1000 (max. 8388607)
+ 69 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 106 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 151 words of extra memory for PDF output out of 10000 (max. 10000000)
 
