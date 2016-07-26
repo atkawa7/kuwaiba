@@ -7,10 +7,10 @@
 \contentsline {subsection}{Step by Step Guide}{3}
 \contentsline {subsubsection}{Step 1: Preparation}{3}
 \contentsline {subsubsection}{Step 2: Deploying the application}{4}
-\contentsline {section}{Troubleshooting}{6}
-\contentsline {section}{Client Installation}{7}
-\contentsline {subsection}{Requirements}{7}
-\contentsline {subsection}{Step by step guide}{7}
-\contentsline {section}{Appendices}{8}
-\contentsline {section}{Appendix A. Security Manager Configuration}{8}
-\contentsline {section}{Appendix B. How to Configure a Secure Connection}{9}
+\contentsline {section}{Troubleshooting}{7}
+\contentsline {section}{Client Installation}{8}
+\contentsline {subsection}{Requirements}{8}
+\contentsline {subsection}{Step by step guide}{8}
+\contentsline {section}{Appendices}{9}
+\contentsline {section}{Appendix A. Security Manager Configuration}{9}
+\contentsline {section}{Appendix B. How to Configure a Secure Connection}{10}

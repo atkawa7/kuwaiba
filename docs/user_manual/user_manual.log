@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Arch Linux) (preloaded format=pdflatex 2016.7.22)  26 JUL 2016 03:13
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Arch Linux) (preloaded format=pdflatex 2016.7.22)  26 JUL 2016 13:08
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -805,28 +805,45 @@ Package pdftex.def Info: img/navigation_tree_special_children_explorer.png used
  on input line 341.
 (pdftex.def)             Requested size: 128.0387pt x 121.54323pt.
  [10 <./img/navigation_tree_relationship_explorer.png> <./img/navigation_tree_s
-pecial_children_explorer.png>] [11] [12] [13] [14] (./user_manual.aux) ) 
+pecial_children_explorer.png>] <img/default_view.png, id=99, 881.2925pt x 507.8
+975pt>
+File: img/default_view.png Graphic file (type png)
+
+<use img/default_view.png>
+Package pdftex.def Info: img/default_view.png used on input line 353.
+(pdftex.def)             Requested size: 384.1096pt x 221.36763pt.
+
+<img/room_plan.png, id=100, 860.21375pt x 518.93875pt>
+File: img/room_plan.png Graphic file (type png)
+ <use img/room_plan.png>
+Package pdftex.def Info: img/room_plan.png used on input line 361.
+(pdftex.def)             Requested size: 384.1096pt x 231.72281pt.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[11 <./img/default_view.png>] [12 <./img/room_plan.png>] [13] [14] [15]
+(./user_manual.aux) ) 
 Here is how much of TeX's memory you used:
- 3073 strings out of 493054
- 45027 string characters out of 6140586
- 114345 words of memory out of 5000000
- 6499 multiletter control sequences out of 15000+600000
+ 3085 strings out of 493054
+ 45275 string characters out of 6140586
+ 114466 words of memory out of 5000000
+ 6509 multiletter control sequences out of 15000+600000
  7895 words of font info for 28 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  42i,13n,32p,1370b,310s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/s
-hare/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texmf-dis
-t/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-dist/fonts/type1/
-public/amsfonts/cm/cmr10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts
-/cm/cmr12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb><
-/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texmf
--dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texmf-dist/fonts/type
-1/public/amsfonts/cm/cmr8.pfb></usr/share/texmf-dist/fonts/type1/public/amsfont
-s/cm/cmsy10.pfb>
-Output written on user_manual.pdf (18 pages, 347330 bytes).
+</usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx
+10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/s
+hare/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-dist
+/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-dist/fonts/type1/pu
+blic/amsfonts/cm/cmr17.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/c
+m/cmr6.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr
+/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texmf-dis
+t/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
+Output written on user_manual.pdf (19 pages, 423563 bytes).
 PDF statistics:
- 141 PDF objects out of 1000 (max. 8388607)
- 69 compressed objects within 1 object stream
+ 147 PDF objects out of 1000 (max. 8388607)
+ 72 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 151 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 161 words of extra memory for PDF output out of 10000 (max. 10000000)
 

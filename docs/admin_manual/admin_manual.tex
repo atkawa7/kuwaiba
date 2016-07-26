@@ -240,7 +240,7 @@
 					\label{fig:dapplications}		  
 				\end{figure}				
 				\item Test if the application was correctly deployed by opening the URL \\ \textbf{http://[server\_domain\_name\_or\_ip]:8080/kuwaiba/}. See figure~\ref{fig:kw_managementconsole}.
-				\begin{figure}
+				\begin{figure}[h!]
 					\includegraphics[width=\linewidth]{img/kw_management_console.jpg} 	
 					\caption{Administration console}
 					\label{fig:kw_managementconsole}
@@ -248,7 +248,12 @@
 				\begin{framed} {\large \textbf{Important}} \\
 					For security reasons, the administration console can \textbf{only} be opened from the same computer the server is running. If you try to open it from some other computer, you'll get a error.
 				\end{framed}
-				\item Additionally, \textbf{always} check the command prompt/console you used to launch the server to see if an error was thrown. Sometimes, the errors are logged only in the server log file, located at \textbf{[GF\_INSTALL\_DIR]/glassfish/domains/domainXX/logs/}. The application may have been deployed, but the Persistence Service might have not started.
+				\item Additionally, \textbf{always} check the command prompt/console you used to launch the server to see if an error was thrown. Sometimes, the errors are logged only in the server log file, located at \textbf{[GF\_INSTALL\_DIR]/glassfish/domains/domainXX/logs/}. The application may have been deployed, but the Persistence Service might have not started. A successful startup should look like this in the server log files:
+				\begin{figure}[h!]
+					\includegraphics[width=\linewidth]{img/log_messages.png} 	
+					\caption{Startup messages}
+					\label{fig:startup_messages}
+				\end{figure}
 			\end{itemize}
 			
 			\newpage

@@ -345,6 +345,26 @@
 	\end{itemize}
 	
 	\newpage
+	\section{Default and Rack Views}
+	\subsection{Default View}
+		A view is a graphical representation of an object. There are many types of views, because an object has different perspectives, for example, a service object may have a view showing all the resources associated to it, a second view showing how all those resources are connected and a third showing statistics about such service. All instances (objects) of subclasses of \textbf{ViewableObject} have a default view that displays the direct children of the selected node. Most objects, except logical and administrative assets and a few physical ones such as slots and ports are subclasses of \textbf{ViewableObject}. To access a default view, just open the Default View window (see \nameref{tab:toolbar_icons}) and select a node in the navigation tree.\\
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.9\linewidth]{img/default_view.png}
+			\caption{Default view of the selected \textbf{Country} object}
+			\label{fig:default_view}
+		\end{figure}
+		
+		In the default view, you can move and connect the nodes, add a background and export the view. It is particularly useful at Room and City levels, because it will allow you to see how the children elements are located geographically (e.g. buildings) or in an enclosed space (racks in a data center as seen in figure~\ref{fig:room_plan}).
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.9\linewidth]{img/room_plan.png}
+			\caption{Default view of the selected \textbf{Room} object}
+			\label{fig:room_plan}
+		\end{figure}
+		
+		
+	\newpage
 	\section{Physical Connections} \label{sec:physical_connections}
 	
 	\newpage

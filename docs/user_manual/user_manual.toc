@@ -7,7 +7,9 @@
 \contentsline {section}{Containment Manager}{7}
 \contentsline {section}{Navigation Tree}{8}
 \contentsline {subsection}{Relationship and Special Children Explorer}{10}
-\contentsline {section}{Physical Connections}{11}
-\contentsline {section}{List Type Manager}{12}
-\contentsline {section}{Audit Trail}{13}
-\contentsline {section}{Service Manager}{14}
+\contentsline {section}{Default and Rack Views}{11}
+\contentsline {subsection}{Default View}{11}
+\contentsline {section}{Physical Connections}{12}
+\contentsline {section}{List Type Manager}{13}
+\contentsline {section}{Audit Trail}{14}
+\contentsline {section}{Service Manager}{15}
