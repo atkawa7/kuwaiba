@@ -2889,6 +2889,28 @@ public class CommunicationsStub {
         }
     }
         // </editor-fold>
+        // <editor-fold defaultstate="collapsed" desc="MPLS Module">
+    public LocalObjectLight createMPLSLink(LocalObjectLight endpointA, LocalObjectLight endpointB, String transportLinkType, String defaultName){
+        try { 
+            long newObjectId = service.createMPLSLink(endpointA.getClassName(),
+                    endpointA.getOid(), endpointB.getClassName(), endpointB.getOid(), transportLinkType, defaultName, session.getSessionId());
+            return new LocalObjectLight(newObjectId, defaultName, transportLinkType);
+        } catch (ServerSideException_Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    public boolean deleteMPLSLink(String linkClass, long linkId) {
+        try {
+            service.deleteMPLSLink(linkClass, linkId, true, session.getSessionId());
+            return true;
+        } catch (ServerSideException_Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+        // </editor-fold>
     // </editor-fold>
 
 }
