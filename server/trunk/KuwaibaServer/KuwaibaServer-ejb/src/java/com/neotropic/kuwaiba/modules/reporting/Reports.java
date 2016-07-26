@@ -16,6 +16,7 @@
 package com.neotropic.kuwaiba.modules.reporting;
 
 import com.neotropic.kuwaiba.modules.ipam.IPAMModule;
+import com.neotropic.kuwaiba.modules.mpls.MPLSModule;
 import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHModule;
 import java.nio.charset.StandardCharsets;
@@ -542,6 +543,7 @@ public class Reports {
                     + "<tr><td class=\"generalInfoLabel\">VLAN</td><td class=\"generalInfoValue\">" + vlan + "</td></tr>"
                     + "<tr><td class=\"generalInfoLabel\">Service</td><td class=\"generalInfoValue\">" + service + "</td></tr></table>";
         }
+        
         String ipAddresses; 
         
         if (ips.isEmpty())
@@ -657,6 +659,60 @@ public class Reports {
         contractStatusReportText += getFooter();
         
         return contractStatusReportText.getBytes(StandardCharsets.UTF_8);
+    }
+    
+    public byte[] buildMPLSServiceReport(String serviceClass, long serviceId) 
+            throws MetadataObjectNotFoundException, ObjectNotFoundException,
+            InvalidArgumentException, ApplicationObjectNotFoundException, 
+            NotAuthorizedException
+    {
+        RemoteBusinessObject MPLSService = bem.getObject(serviceClass, serviceId);
+        List<RemoteBusinessObjectLight> serviceInstances = bem.getSpecialAttribute(serviceClass, serviceId, "uses");
+
+        String service="", title, MPLSDetailReportText;
+        
+        if (MPLSService == null) {
+            title = "Error";
+            MPLSDetailReportText = getHeader(title);
+            MPLSDetailReportText += "<div class=\"error\">No information about this subnet could be found</div>";
+        }
+        else {
+            title = "MPLS service detail Report for " + MPLSService.getName() + "[" + MPLSService.getClassName() + "]";
+            MPLSDetailReportText = getHeader(title);
+            MPLSDetailReportText += 
+                                "  <body><table><tr><td><h1>" + title + "</h1></td><td><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
+        }
+            String instance; 
+            
+            if (serviceInstances.isEmpty())
+                instance = "<div class=\"error\">There are no instance asossiate to this service</div>";
+            else {
+                instance = "<table><tr><th>Service Instance</th><th>Location</th></tr>";
+
+            int i = 0;
+            for (RemoteBusinessObjectLight serviceInstance : serviceInstances) {
+                String device = "";
+                service = "";
+                
+                RemoteBusinessObject ports = bem.getObject(serviceInstance.getClassName(), serviceInstance.getId());
+                String location = "";
+                if(ports != null){
+                    device = ports.getName() + " [" + ports.getClassName()+"]";
+                    List<RemoteBusinessObjectLight> parents = bem.getParents(ports.getClassName(), ports.getId());
+                    location =  formatLocation(parents);
+                }
+                
+                instance += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") +"\"><td>" + serviceInstance.getName() + " [" + serviceInstance.getClassName()+"] </td>"
+                              + "<td>" + location +"</td>";
+                              
+                i ++;
+            }
+            instance += "</table>";
+        }
+        MPLSDetailReportText += instance;
+        MPLSDetailReportText += getFooter();
+        
+        return MPLSDetailReportText.getBytes(StandardCharsets.UTF_8);
     }
     
     //<editor-fold desc="Helpers" defaultstate="collapsed">

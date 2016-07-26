@@ -17,6 +17,7 @@
 package org.kuwaiba.beans;
 
 import com.neotropic.kuwaiba.modules.ipam.IPAMModule;
+import com.neotropic.kuwaiba.modules.mpls.MPLSModule;
 import com.neotropic.kuwaiba.modules.reporting.Reports;
 import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHModule;
@@ -2291,6 +2292,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
                     return new ReportDescriptor[] {
                             new ReportDescriptor(12, "Support Contract Status", className, "Shows the status of the support contracts in the inventory")
                     };
+                case "ELANService":
+                case "ELINEService":
+                case "ETREEService":
+                    return new ReportDescriptor[] {
+                            new ReportDescriptor(13, "Service details", className, "Shows the resources used by the service and some of its attributes")
+                    };
             }
             return new ReportDescriptor[0];
         } catch (InventoryException ex) {
@@ -2336,6 +2343,9 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 case 12:
                     locationId = Long.valueOf(StringPair.get(arguments, "objectId"));
                     return reports.buildContractStatusReport(locationId);
+                case 13:
+                    return reports.buildMPLSServiceReport(StringPair.get(arguments, "objectClass"), 
+                            Long.valueOf(StringPair.get(arguments, "objectId")));
             }
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -2702,6 +2712,32 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="MPLS Module">
+    @Override
+    public long createMPLSLink(String classNameEndpointA, long idEndpointA, 
+            String classNameEndpointB, long idEndpointB, String linkType, String defaultName, String ipAddress, String sessionId) throws ServerSideException{
+        try {
+            aem.validateCall("createMPLSLink", ipAddress, sessionId);
+            MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
+            return mplsModule.createMPLSLink(classNameEndpointA, idEndpointA, classNameEndpointB, idEndpointB, linkType, defaultName);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void deleteMPLSLink(String linkClass, long linkId, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException{
+        try {
+            aem.validateCall("deleteMPLSLink", ipAddress, sessionId);
+            MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
+            mplsModule.deleteMPLSLink(linkClass, linkId, forceDelete);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    // </editor-fold>
+    
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Helper methods. Click on the + sign on the left to edit the code.">

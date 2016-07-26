@@ -6,9 +6,20 @@
 package com.neotropic.kuwaiba.modules.mpls;
 
 import com.neotropic.kuwaiba.modules.GenericCommercialModule;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
+import org.kuwaiba.apis.persistence.exceptions.InventoryException;
+import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
+import org.kuwaiba.exceptions.ServerSideException;
+import org.kuwaiba.services.persistence.util.Constants;
 
 /**
  * This class implements the functionality corresponding to the MPLS module
@@ -26,15 +37,29 @@ public class MPLSModule implements GenericCommercialModule {
     private BusinessEntityManager bem;
     
     //Constants
+    /**
+     * A side in a tributary link
+     */
+    public static String RELATIONSHIP_MPLSENDPOINTA = "mplsEndpointA";
+    /**
+     * B side in a tributary link
+     */
+    public static String RELATIONSHIP_MPLSENDPOINTB = "mplsEndpointB";
+    /**
+     * The relationship used to connect two GenericCommunicationsEquipment to 
+     * represent that ports within the equipment are connected with MPLS Links. 
+     * This is used to ease the way to find routes between elements
+     */
+    public static String RELATIONSHIP_MPLSLINK = "mplsLink";
     
     @Override
     public String getName() {
-        return "MPLS Networks Dummy Module"; //NOI18N
+        return "MPLS Networks Module"; //NOI18N
     }
 
     @Override
     public String getDescription() {
-        return "MPLS Dummy Module. Not yet implemented";
+        return "MPLS Module, ";
     }
     
     @Override
@@ -69,5 +94,69 @@ public class MPLSModule implements GenericCommercialModule {
     }
     
     //The actual methods
+    public long createMPLSLink(String classNameEndpointA, long idEndpointA, 
+            String classNameEndpointB, long idEndpointB, String linkType, String defaultName) throws ServerSideException {
+        if (bem == null || mem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        long newConnectionId = -1;
+        try {
+            if (!mem.isSubClass("GenericLogicalConnection", linkType)) //NOI18N
+                throw new ServerSideException(String.format("Class %s is not subclass of GenericLogicalConnection", linkType));
+
+            HashMap<String, List<String>> attributesToBeSet = new HashMap<>();
+            attributesToBeSet.put(Constants.PROPERTY_NAME, Arrays.asList(new String[] { defaultName == null ? "" : defaultName }));
+            
+            RemoteBusinessObject communicationsEquipmentA = bem.getParentOfClass(classNameEndpointA, idEndpointA, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
+            if (communicationsEquipmentA == null)
+                throw new ServerSideException(String.format("The specified port (%s : %s) doesn't seem to be located in a communications equipment", classNameEndpointA, idEndpointA));
+            
+            RemoteBusinessObject communicationsEquipmentB = bem.getParentOfClass(classNameEndpointB, idEndpointB, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
+            if (communicationsEquipmentB == null)
+                throw new ServerSideException(String.format("The specified port (%s : %s) doesn't seem to be located in a communications equipment", classNameEndpointB, idEndpointB));
+            
+            newConnectionId = bem.createSpecialObject(linkType, null, -1, attributesToBeSet, 0);                      
+                       
+            bem.createSpecialRelationship(linkType, newConnectionId, classNameEndpointA, idEndpointA, RELATIONSHIP_MPLSENDPOINTA, true);
+            bem.createSpecialRelationship(linkType, newConnectionId, classNameEndpointB, idEndpointB, RELATIONSHIP_MPLSENDPOINTB, true);
+            
+            //We add a relationship between the shelves and the Transport LInks so we can easily find a route between two equipment when creatin low order connections
+            //based on TransportLinks paths            
+            bem.createSpecialRelationship(communicationsEquipmentA.getClassName(), communicationsEquipmentA.getId(), 
+                    linkType, newConnectionId, RELATIONSHIP_MPLSLINK, false);
+            
+            bem.createSpecialRelationship(linkType, newConnectionId, communicationsEquipmentB.getClassName(), 
+                    communicationsEquipmentB.getId(), RELATIONSHIP_MPLSLINK, false);
+            
+            return newConnectionId;
+        } catch (Exception e) {
+            //TODO: This should be replace with a transaction that lasts as long as everything in this method has been done, instead of
+            //doing commits in every call to the BEM
+            //If the new connection was successfully created, but there's a problem creating the relationships,
+            //delete the connection and throw an exception
+            if (newConnectionId != -1) {
+                try {
+                    bem.deleteObject(linkType, newConnectionId, true);
+                } catch (Exception ex) {
+                    Logger.getLogger(MPLSModule.class.getName()).log(Level.SEVERE, null, ex);
+                } 
+            }
+
+            throw new ServerSideException(e.getMessage());
+        }
+    }
+    
+    //The actual methods
+    public void deleteMPLSLink(String linkClass, long linkId, boolean forceDelete) 
+            throws ServerSideException, InventoryException, NotAuthorizedException {
+        if (bem == null || mem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        
+        if (!linkClass.equals("MPLSLink")) //NOI18N
+                throw new ServerSideException(String.format("Class %s is not a of MPLSLink", linkClass));
+        
+        List<RemoteBusinessObjectLight> containerLinks = bem.getSpecialAttribute(linkClass, linkId, RELATIONSHIP_MPLSLINK);
+        
+        bem.deleteObject(linkClass, linkId, forceDelete);
+    }
     
 }

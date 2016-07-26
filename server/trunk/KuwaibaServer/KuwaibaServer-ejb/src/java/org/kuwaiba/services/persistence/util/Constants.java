@@ -235,6 +235,10 @@ public class Constants {
      */
     public static final String CLASS_GENERICCUSTOMER = "GenericCustomer"; //NOI18N
     /**
+     * Class service instance
+     */
+    public static final String CLASS_SERVICE_INSTANCE = "ServiceInstance"; //NOI18N
+    /**
      * IP Address
      */
     public static final String CLASS_IP_ADDRESS = "IPAddress"; //NOI18N

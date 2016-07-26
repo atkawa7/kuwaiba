@@ -60,6 +60,9 @@ public class TempBusinessRulesEngine {
         subClassOfValidators.put("GenericCommunicationsElement", "genericCommunicationsElement");
         subClassOfValidators.put("IPAddress", "ipaddress");
         subClassOfValidators.put("Subnet", "subnet");
+        subClassOfValidators.put("ELANService", "elanservice");
+        subClassOfValidators.put("ELINEService", "elineservice");
+        subClassOfValidators.put("ETREEService", "etreeservice");
     }
 
     public HashMap<String, List<String[]>> getMappings(){       

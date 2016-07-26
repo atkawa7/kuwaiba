@@ -403,8 +403,16 @@ public interface WebserviceBeanRemote {
     public void releaseDeviceFromContract(String deviceClass, long deviceId, long contractId,
             String ipAddress, String sessionId) throws ServerSideException;    
         //</editor-fold>
+    
+        
     // </editor-fold>
-
+    // <editor-fold defaultstate="collapsed" desc="MPLS Networks Module">
+         public long createMPLSLink(String classNameEndpointA, long idEndpointA, 
+            String classNameEndpointB, long idEndpointB, String linkType, String defaultName, String ipAddress, String sessionId) throws ServerSideException;
+    
+         public void deleteMPLSLink(String linkClass, long linkId, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException;
+    // </editor-fold>
+    
     // <editor-fold defaultstate="collapsed" desc="Help methods. Click on the + sign on the left to edit the code.">
     public boolean isSubclassOf(String className, String subclassOf, String remoteAddress, String sessionId);
     // </editor-fold>
