@@ -1,0 +1,16 @@
+\contentsline {section}{Document History}{}
+\contentsline {section}{License}{}
+\contentsline {paragraph}{Disclaimer}{}
+\contentsline {section}{Introduction}{1}
+\contentsline {section}{Server Installation}{2}
+\contentsline {subsection}{Requirements}{2}
+\contentsline {subsection}{Step by Step Guide}{3}
+\contentsline {subsubsection}{Step 1: Preparation}{3}
+\contentsline {subsubsection}{Step 2: Deploying the application}{4}
+\contentsline {section}{Troubleshooting}{6}
+\contentsline {section}{Client Installation}{7}
+\contentsline {subsection}{Requirements}{7}
+\contentsline {subsection}{Step by step guide}{7}
+\contentsline {section}{Appendices}{8}
+\contentsline {section}{Appendix A. Security Manager Configuration}{8}
+\contentsline {section}{Appendix B. How to Configure a Secure Connection}{9}
