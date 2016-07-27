@@ -22,11 +22,11 @@
 <message name="getGroupsResponse">
 <part name="parameters" element="tns:getGroupsResponse"/>
 </message>
-<message name="executeQuery">
-<part name="parameters" element="tns:executeQuery"/>
+<message name="createClass">
+<part name="parameters" element="tns:createClass"/>
 </message>
-<message name="executeQueryResponse">
-<part name="parameters" element="tns:executeQueryResponse"/>
+<message name="createClassResponse">
+<part name="parameters" element="tns:createClassResponse"/>
 </message>
 <message name="deleteClass">
 <part name="parameters" element="tns:deleteClass"/>
@@ -69,12 +69,6 @@
 </message>
 <message name="createUserResponse">
 <part name="parameters" element="tns:createUserResponse"/>
-</message>
-<message name="createClass">
-<part name="parameters" element="tns:createClass"/>
-</message>
-<message name="createClassResponse">
-<part name="parameters" element="tns:createClassResponse"/>
 </message>
 <message name="setClassProperties">
 <part name="parameters" element="tns:setClassProperties"/>
@@ -141,6 +135,108 @@
 </message>
 <message name="getListTypeItemsResponse">
 <part name="parameters" element="tns:getListTypeItemsResponse"/>
+</message>
+<message name="closeSession">
+<part name="parameters" element="tns:closeSession"/>
+</message>
+<message name="closeSessionResponse">
+<part name="parameters" element="tns:closeSessionResponse"/>
+</message>
+<message name="getObjectChildren">
+<part name="parameters" element="tns:getObjectChildren"/>
+</message>
+<message name="getObjectChildrenResponse">
+<part name="parameters" element="tns:getObjectChildrenResponse"/>
+</message>
+<message name="getSiblings">
+<part name="parameters" element="tns:getSiblings"/>
+</message>
+<message name="getSiblingsResponse">
+<part name="parameters" element="tns:getSiblingsResponse"/>
+</message>
+<message name="getChildrenOfClass">
+<part name="parameters" element="tns:getChildrenOfClass"/>
+</message>
+<message name="getChildrenOfClassResponse">
+<part name="parameters" element="tns:getChildrenOfClassResponse"/>
+</message>
+<message name="getChildrenOfClassLight">
+<part name="parameters" element="tns:getChildrenOfClassLight"/>
+</message>
+<message name="getChildrenOfClassLightResponse">
+<part name="parameters" element="tns:getChildrenOfClassLightResponse"/>
+</message>
+<message name="getObjectLight">
+<part name="parameters" element="tns:getObjectLight"/>
+</message>
+<message name="getObjectLightResponse">
+<part name="parameters" element="tns:getObjectLightResponse"/>
+</message>
+<message name="getSpecialAttribute">
+<part name="parameters" element="tns:getSpecialAttribute"/>
+</message>
+<message name="getSpecialAttributeResponse">
+<part name="parameters" element="tns:getSpecialAttributeResponse"/>
+</message>
+<message name="getSpecialAttributes">
+<part name="parameters" element="tns:getSpecialAttributes"/>
+</message>
+<message name="getSpecialAttributesResponse">
+<part name="parameters" element="tns:getSpecialAttributesResponse"/>
+</message>
+<message name="getParentOfClass">
+<part name="parameters" element="tns:getParentOfClass"/>
+</message>
+<message name="getParentOfClassResponse">
+<part name="parameters" element="tns:getParentOfClassResponse"/>
+</message>
+<message name="getObjectSpecialChildren">
+<part name="parameters" element="tns:getObjectSpecialChildren"/>
+</message>
+<message name="getObjectSpecialChildrenResponse">
+<part name="parameters" element="tns:getObjectSpecialChildrenResponse"/>
+</message>
+<message name="getObjectsOfClassLight">
+<part name="parameters" element="tns:getObjectsOfClassLight"/>
+</message>
+<message name="getObjectsOfClassLightResponse">
+<part name="parameters" element="tns:getObjectsOfClassLightResponse"/>
+</message>
+<message name="getInstanceableListTypes">
+<part name="parameters" element="tns:getInstanceableListTypes"/>
+</message>
+<message name="getInstanceableListTypesResponse">
+<part name="parameters" element="tns:getInstanceableListTypesResponse"/>
+</message>
+<message name="createSpecialObject">
+<part name="parameters" element="tns:createSpecialObject"/>
+</message>
+<message name="createSpecialObjectResponse">
+<part name="parameters" element="tns:createSpecialObjectResponse"/>
+</message>
+<message name="deleteObject">
+<part name="parameters" element="tns:deleteObject"/>
+</message>
+<message name="deleteObjectResponse">
+<part name="parameters" element="tns:deleteObjectResponse"/>
+</message>
+<message name="deleteObjects">
+<part name="parameters" element="tns:deleteObjects"/>
+</message>
+<message name="deleteObjectsResponse">
+<part name="parameters" element="tns:deleteObjectsResponse"/>
+</message>
+<message name="moveObjects">
+<part name="parameters" element="tns:moveObjects"/>
+</message>
+<message name="moveObjectsResponse">
+<part name="parameters" element="tns:moveObjectsResponse"/>
+</message>
+<message name="updateObject">
+<part name="parameters" element="tns:updateObject"/>
+</message>
+<message name="updateObjectResponse">
+<part name="parameters" element="tns:updateObjectResponse"/>
 </message>
 <message name="connectMirrorPort">
 <part name="parameters" element="tns:connectMirrorPort"/>
@@ -267,126 +363,6 @@
 </message>
 <message name="getObjectRelatedViewsResponse">
 <part name="parameters" element="tns:getObjectRelatedViewsResponse"/>
-</message>
-<message name="getClassHierarchy">
-<part name="parameters" element="tns:getClassHierarchy"/>
-</message>
-<message name="getClassHierarchyResponse">
-<part name="parameters" element="tns:getClassHierarchyResponse"/>
-</message>
-<message name="createSession">
-<part name="parameters" element="tns:createSession"/>
-</message>
-<message name="createSessionResponse">
-<part name="parameters" element="tns:createSessionResponse"/>
-</message>
-<message name="closeSession">
-<part name="parameters" element="tns:closeSession"/>
-</message>
-<message name="closeSessionResponse">
-<part name="parameters" element="tns:closeSessionResponse"/>
-</message>
-<message name="getObjectChildren">
-<part name="parameters" element="tns:getObjectChildren"/>
-</message>
-<message name="getObjectChildrenResponse">
-<part name="parameters" element="tns:getObjectChildrenResponse"/>
-</message>
-<message name="getSiblings">
-<part name="parameters" element="tns:getSiblings"/>
-</message>
-<message name="getSiblingsResponse">
-<part name="parameters" element="tns:getSiblingsResponse"/>
-</message>
-<message name="getChildrenOfClass">
-<part name="parameters" element="tns:getChildrenOfClass"/>
-</message>
-<message name="getChildrenOfClassResponse">
-<part name="parameters" element="tns:getChildrenOfClassResponse"/>
-</message>
-<message name="getChildrenOfClassLight">
-<part name="parameters" element="tns:getChildrenOfClassLight"/>
-</message>
-<message name="getChildrenOfClassLightResponse">
-<part name="parameters" element="tns:getChildrenOfClassLightResponse"/>
-</message>
-<message name="getObjectLight">
-<part name="parameters" element="tns:getObjectLight"/>
-</message>
-<message name="getObjectLightResponse">
-<part name="parameters" element="tns:getObjectLightResponse"/>
-</message>
-<message name="getSpecialAttribute">
-<part name="parameters" element="tns:getSpecialAttribute"/>
-</message>
-<message name="getSpecialAttributeResponse">
-<part name="parameters" element="tns:getSpecialAttributeResponse"/>
-</message>
-<message name="getSpecialAttributes">
-<part name="parameters" element="tns:getSpecialAttributes"/>
-</message>
-<message name="getSpecialAttributesResponse">
-<part name="parameters" element="tns:getSpecialAttributesResponse"/>
-</message>
-<message name="getParentOfClass">
-<part name="parameters" element="tns:getParentOfClass"/>
-</message>
-<message name="getParentOfClassResponse">
-<part name="parameters" element="tns:getParentOfClassResponse"/>
-</message>
-<message name="getObjectSpecialChildren">
-<part name="parameters" element="tns:getObjectSpecialChildren"/>
-</message>
-<message name="getObjectSpecialChildrenResponse">
-<part name="parameters" element="tns:getObjectSpecialChildrenResponse"/>
-</message>
-<message name="getObjectsOfClassLight">
-<part name="parameters" element="tns:getObjectsOfClassLight"/>
-</message>
-<message name="getObjectsOfClassLightResponse">
-<part name="parameters" element="tns:getObjectsOfClassLightResponse"/>
-</message>
-<message name="getInstanceableListTypes">
-<part name="parameters" element="tns:getInstanceableListTypes"/>
-</message>
-<message name="getInstanceableListTypesResponse">
-<part name="parameters" element="tns:getInstanceableListTypesResponse"/>
-</message>
-<message name="createSpecialObject">
-<part name="parameters" element="tns:createSpecialObject"/>
-</message>
-<message name="createSpecialObjectResponse">
-<part name="parameters" element="tns:createSpecialObjectResponse"/>
-</message>
-<message name="deleteObject">
-<part name="parameters" element="tns:deleteObject"/>
-</message>
-<message name="deleteObjectResponse">
-<part name="parameters" element="tns:deleteObjectResponse"/>
-</message>
-<message name="deleteObjects">
-<part name="parameters" element="tns:deleteObjects"/>
-</message>
-<message name="deleteObjectsResponse">
-<part name="parameters" element="tns:deleteObjectsResponse"/>
-</message>
-<message name="moveObjects">
-<part name="parameters" element="tns:moveObjects"/>
-</message>
-<message name="moveObjectsResponse">
-<part name="parameters" element="tns:moveObjectsResponse"/>
-</message>
-<message name="copyObjects">
-<part name="parameters" element="tns:copyObjects"/>
-</message>
-<message name="copyObjectsResponse">
-<part name="parameters" element="tns:copyObjectsResponse"/>
-</message>
-<message name="updateObject">
-<part name="parameters" element="tns:updateObject"/>
-</message>
-<message name="updateObjectResponse">
-<part name="parameters" element="tns:updateObjectResponse"/>
 </message>
 <message name="getGeneralView">
 <part name="parameters" element="tns:getGeneralView"/>
@@ -592,12 +568,6 @@
 <message name="unsubscribeUserFromTaskResponse">
 <part name="parameters" element="tns:unsubscribeUserFromTaskResponse"/>
 </message>
-<message name="executeTask">
-<part name="parameters" element="tns:executeTask"/>
-</message>
-<message name="executeTaskResponse">
-<part name="parameters" element="tns:executeTaskResponse"/>
-</message>
 <message name="bulkUpload">
 <part name="parameters" element="tns:bulkUpload"/>
 </message>
@@ -784,6 +754,18 @@
 <message name="releaseDeviceFromContractResponse">
 <part name="parameters" element="tns:releaseDeviceFromContractResponse"/>
 </message>
+<message name="createMPLSLink">
+<part name="parameters" element="tns:createMPLSLink"/>
+</message>
+<message name="createMPLSLinkResponse">
+<part name="parameters" element="tns:createMPLSLinkResponse"/>
+</message>
+<message name="deleteMPLSLink">
+<part name="parameters" element="tns:deleteMPLSLink"/>
+</message>
+<message name="deleteMPLSLinkResponse">
+<part name="parameters" element="tns:deleteMPLSLinkResponse"/>
+</message>
 <message name="getObjectChildrenForClassWithId">
 <part name="parameters" element="tns:getObjectChildrenForClassWithId"/>
 </message>
@@ -844,6 +826,36 @@
 <message name="releaseIPFromDeviceResponse">
 <part name="parameters" element="tns:releaseIPFromDeviceResponse"/>
 </message>
+<message name="executeQuery">
+<part name="parameters" element="tns:executeQuery"/>
+</message>
+<message name="executeQueryResponse">
+<part name="parameters" element="tns:executeQueryResponse"/>
+</message>
+<message name="createSession">
+<part name="parameters" element="tns:createSession"/>
+</message>
+<message name="createSessionResponse">
+<part name="parameters" element="tns:createSessionResponse"/>
+</message>
+<message name="executeTask">
+<part name="parameters" element="tns:executeTask"/>
+</message>
+<message name="executeTaskResponse">
+<part name="parameters" element="tns:executeTaskResponse"/>
+</message>
+<message name="getClassHierarchy">
+<part name="parameters" element="tns:getClassHierarchy"/>
+</message>
+<message name="getClassHierarchyResponse">
+<part name="parameters" element="tns:getClassHierarchyResponse"/>
+</message>
+<message name="getAttribute">
+<part name="parameters" element="tns:getAttribute"/>
+</message>
+<message name="getAttributeResponse">
+<part name="parameters" element="tns:getAttributeResponse"/>
+</message>
 <message name="getServices">
 <part name="parameters" element="tns:getServices"/>
 </message>
@@ -856,11 +868,17 @@
 <message name="createGroupResponse">
 <part name="parameters" element="tns:createGroupResponse"/>
 </message>
-<message name="getAttribute">
-<part name="parameters" element="tns:getAttribute"/>
+<message name="getTask">
+<part name="parameters" element="tns:getTask"/>
 </message>
-<message name="getAttributeResponse">
-<part name="parameters" element="tns:getAttributeResponse"/>
+<message name="getTaskResponse">
+<part name="parameters" element="tns:getTaskResponse"/>
+</message>
+<message name="copyObjects">
+<part name="parameters" element="tns:copyObjects"/>
+</message>
+<message name="copyObjectsResponse">
+<part name="parameters" element="tns:copyObjectsResponse"/>
 </message>
 <message name="createService">
 <part name="parameters" element="tns:createService"/>
@@ -879,12 +897,6 @@
 </message>
 <message name="isSubclassOfResponse">
 <part name="parameters" element="tns:isSubclassOfResponse"/>
-</message>
-<message name="getTask">
-<part name="parameters" element="tns:getTask"/>
-</message>
-<message name="getTaskResponse">
-<part name="parameters" element="tns:getTaskResponse"/>
 </message>
 <message name="getClass">
 <part name="parameters" element="tns:getClass"/>
@@ -933,10 +945,10 @@
 <output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getGroupsResponse" message="tns:getGroupsResponse"/>
 <fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getGroups/Fault/ServerSideException"/>
 </operation>
-<operation name="executeQuery">
-<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/executeQueryRequest" message="tns:executeQuery"/>
-<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/executeQueryResponse" message="tns:executeQueryResponse"/>
-<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/executeQuery/Fault/ServerSideException"/>
+<operation name="createClass">
+<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createClassRequest" message="tns:createClass"/>
+<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createClassResponse" message="tns:createClassResponse"/>
+<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createClass/Fault/ServerSideException"/>
 </operation>
 <operation name="deleteClass">
 <input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/deleteClassRequest" message="tns:deleteClass"/>
@@ -972,11 +984,6 @@
 <input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createUserRequest" message="tns:createUser"/>
 <output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createUserResponse" message="tns:createUserResponse"/>
 <fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createUser/Fault/ServerSideException"/>
-</operation>
-<operation name="createClass">
-<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createClassRequest" message="tns:createClass"/>
-<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createClassResponse" message="tns:createClassResponse"/>
-<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createClass/Fault/ServerSideException"/>
 </operation>
 <operation name="setClassProperties">
 <input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/setClassPropertiesRequest" message="tns:setClassProperties"/>
@@ -1032,6 +1039,91 @@
 <input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getListTypeItemsRequest" message="tns:getListTypeItems"/>
 <output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getListTypeItemsResponse" message="tns:getListTypeItemsResponse"/>
 <fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getListTypeItems/Fault/ServerSideException"/>
+</operation>
+<operation name="closeSession">
+<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/closeSessionRequest" message="tns:closeSession"/>
+<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/closeSessionResponse" message="tns:closeSessionResponse"/>
+<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/closeSession/Fault/ServerSideException"/>
+</operation>
+<operation name="getObjectChildren">
+<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getObjectChildrenRequest" message="tns:getObjectChildren"/>
+<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getObjectChildrenResponse" message="tns:getObjectChildrenResponse"/>
+<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getObjectChildren/Fault/ServerSideException"/>
+</operation>
+<operation name="getSiblings">
+<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getSiblingsRequest" message="tns:getSiblings"/>
+<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getSiblingsResponse" message="tns:getSiblingsResponse"/>
+<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getSiblings/Fault/ServerSideException"/>
+</operation>
+<operation name="getChildrenOfClass">
+<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassRequest" message="tns:getChildrenOfClass"/>
+<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassResponse" message="tns:getChildrenOfClassResponse"/>
+<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClass/Fault/ServerSideException"/>
+</operation>
+<operation name="getChildrenOfClassLight">
+<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassLightRequest" message="tns:getChildrenOfClassLight"/>
+<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassLightResponse" message="tns:getChildrenOfClassLightResponse"/>
+<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassLight/Fault/ServerSideException"/>
+</operation>
+<operation name="getObjectLight">
+<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getObjectLightRequest" message="tns:getObjectLight"/>
+<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getObjectLightResponse" message="tns:getObjectLightResponse"/>
+<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getObjectLight/Fault/ServerSideException"/>
+</operation>
+<operation name="getSpecialAttribute">
+<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getSpecialAttributeRequest" message="tns:getSpecialAttribute"/>
+<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getSpecialAttributeResponse" message="tns:getSpecialAttributeResponse"/>
+<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getSpecialAttribute/Fault/ServerSideException"/>
+</operation>
+<operation name="getSpecialAttributes">
+<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getSpecialAttributesRequest" message="tns:getSpecialAttributes"/>
+<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getSpecialAttributesResponse" message="tns:getSpecialAttributesResponse"/>
+<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getSpecialAttributes/Fault/ServerSideException"/>
+</operation>
+<operation name="getParentOfClass">
+<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getParentOfClassRequest" message="tns:getParentOfClass"/>
+<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getParentOfClassResponse" message="tns:getParentOfClassResponse"/>
+<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getParentOfClass/Fault/ServerSideException"/>
+</operation>
+<operation name="getObjectSpecialChildren">
+<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getObjectSpecialChildrenRequest" message="tns:getObjectSpecialChildren"/>
+<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getObjectSpecialChildrenResponse" message="tns:getObjectSpecialChildrenResponse"/>
+<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getObjectSpecialChildren/Fault/ServerSideException"/>
+</operation>
+<operation name="getObjectsOfClassLight">
+<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getObjectsOfClassLightRequest" message="tns:getObjectsOfClassLight"/>
+<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getObjectsOfClassLightResponse" message="tns:getObjectsOfClassLightResponse"/>
+<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getObjectsOfClassLight/Fault/ServerSideException"/>
+</operation>
+<operation name="getInstanceableListTypes">
+<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getInstanceableListTypesRequest" message="tns:getInstanceableListTypes"/>
+<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getInstanceableListTypesResponse" message="tns:getInstanceableListTypesResponse"/>
+<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getInstanceableListTypes/Fault/ServerSideException"/>
+</operation>
+<operation name="createSpecialObject">
+<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createSpecialObjectRequest" message="tns:createSpecialObject"/>
+<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createSpecialObjectResponse" message="tns:createSpecialObjectResponse"/>
+<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createSpecialObject/Fault/ServerSideException"/>
+</operation>
+<operation name="deleteObject">
+<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/deleteObjectRequest" message="tns:deleteObject"/>
+<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/deleteObjectResponse" message="tns:deleteObjectResponse"/>
+<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/deleteObject/Fault/ServerSideException"/>
+</operation>
+<operation name="deleteObjects">
+<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/deleteObjectsRequest" message="tns:deleteObjects"/>
+<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/deleteObjectsResponse" message="tns:deleteObjectsResponse"/>
+<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/deleteObjects/Fault/ServerSideException"/>
+</operation>
+<operation name="moveObjects">
+<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/moveObjectsRequest" message="tns:moveObjects"/>
+<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/moveObjectsResponse" message="tns:moveObjectsResponse"/>
+<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/moveObjects/Fault/ServerSideException"/>
+</operation>
+<operation name="updateObject">
+<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/updateObjectRequest" message="tns:updateObject"/>
+<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/updateObjectResponse" message="tns:updateObjectResponse"/>
+<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/updateObject/Fault/ServerSideException"/>
 </operation>
 <operation name="connectMirrorPort">
 <input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/connectMirrorPortRequest" message="tns:connectMirrorPort"/>
@@ -1137,106 +1229,6 @@
 <input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getObjectRelatedViewsRequest" message="tns:getObjectRelatedViews"/>
 <output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getObjectRelatedViewsResponse" message="tns:getObjectRelatedViewsResponse"/>
 <fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getObjectRelatedViews/Fault/ServerSideException"/>
-</operation>
-<operation name="getClassHierarchy">
-<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getClassHierarchyRequest" message="tns:getClassHierarchy"/>
-<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getClassHierarchyResponse" message="tns:getClassHierarchyResponse"/>
-<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getClassHierarchy/Fault/ServerSideException"/>
-</operation>
-<operation name="createSession">
-<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createSessionRequest" message="tns:createSession"/>
-<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createSessionResponse" message="tns:createSessionResponse"/>
-<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createSession/Fault/ServerSideException"/>
-</operation>
-<operation name="closeSession">
-<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/closeSessionRequest" message="tns:closeSession"/>
-<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/closeSessionResponse" message="tns:closeSessionResponse"/>
-<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/closeSession/Fault/ServerSideException"/>
-</operation>
-<operation name="getObjectChildren">
-<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getObjectChildrenRequest" message="tns:getObjectChildren"/>
-<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getObjectChildrenResponse" message="tns:getObjectChildrenResponse"/>
-<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getObjectChildren/Fault/ServerSideException"/>
-</operation>
-<operation name="getSiblings">
-<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getSiblingsRequest" message="tns:getSiblings"/>
-<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getSiblingsResponse" message="tns:getSiblingsResponse"/>
-<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getSiblings/Fault/ServerSideException"/>
-</operation>
-<operation name="getChildrenOfClass">
-<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassRequest" message="tns:getChildrenOfClass"/>
-<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassResponse" message="tns:getChildrenOfClassResponse"/>
-<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClass/Fault/ServerSideException"/>
-</operation>
-<operation name="getChildrenOfClassLight">
-<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassLightRequest" message="tns:getChildrenOfClassLight"/>
-<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassLightResponse" message="tns:getChildrenOfClassLightResponse"/>
-<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassLight/Fault/ServerSideException"/>
-</operation>
-<operation name="getObjectLight">
-<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getObjectLightRequest" message="tns:getObjectLight"/>
-<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getObjectLightResponse" message="tns:getObjectLightResponse"/>
-<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getObjectLight/Fault/ServerSideException"/>
-</operation>
-<operation name="getSpecialAttribute">
-<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getSpecialAttributeRequest" message="tns:getSpecialAttribute"/>
-<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getSpecialAttributeResponse" message="tns:getSpecialAttributeResponse"/>
-<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getSpecialAttribute/Fault/ServerSideException"/>
-</operation>
-<operation name="getSpecialAttributes">
-<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getSpecialAttributesRequest" message="tns:getSpecialAttributes"/>
-<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getSpecialAttributesResponse" message="tns:getSpecialAttributesResponse"/>
-<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getSpecialAttributes/Fault/ServerSideException"/>
-</operation>
-<operation name="getParentOfClass">
-<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getParentOfClassRequest" message="tns:getParentOfClass"/>
-<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getParentOfClassResponse" message="tns:getParentOfClassResponse"/>
-<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getParentOfClass/Fault/ServerSideException"/>
-</operation>
-<operation name="getObjectSpecialChildren">
-<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getObjectSpecialChildrenRequest" message="tns:getObjectSpecialChildren"/>
-<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getObjectSpecialChildrenResponse" message="tns:getObjectSpecialChildrenResponse"/>
-<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getObjectSpecialChildren/Fault/ServerSideException"/>
-</operation>
-<operation name="getObjectsOfClassLight">
-<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getObjectsOfClassLightRequest" message="tns:getObjectsOfClassLight"/>
-<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getObjectsOfClassLightResponse" message="tns:getObjectsOfClassLightResponse"/>
-<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getObjectsOfClassLight/Fault/ServerSideException"/>
-</operation>
-<operation name="getInstanceableListTypes">
-<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getInstanceableListTypesRequest" message="tns:getInstanceableListTypes"/>
-<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getInstanceableListTypesResponse" message="tns:getInstanceableListTypesResponse"/>
-<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getInstanceableListTypes/Fault/ServerSideException"/>
-</operation>
-<operation name="createSpecialObject">
-<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createSpecialObjectRequest" message="tns:createSpecialObject"/>
-<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createSpecialObjectResponse" message="tns:createSpecialObjectResponse"/>
-<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createSpecialObject/Fault/ServerSideException"/>
-</operation>
-<operation name="deleteObject">
-<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/deleteObjectRequest" message="tns:deleteObject"/>
-<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/deleteObjectResponse" message="tns:deleteObjectResponse"/>
-<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/deleteObject/Fault/ServerSideException"/>
-</operation>
-<operation name="deleteObjects">
-<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/deleteObjectsRequest" message="tns:deleteObjects"/>
-<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/deleteObjectsResponse" message="tns:deleteObjectsResponse"/>
-<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/deleteObjects/Fault/ServerSideException"/>
-</operation>
-<operation name="moveObjects">
-<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/moveObjectsRequest" message="tns:moveObjects"/>
-<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/moveObjectsResponse" message="tns:moveObjectsResponse"/>
-<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/moveObjects/Fault/ServerSideException"/>
-</operation>
-<operation name="copyObjects">
-<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/copyObjectsRequest" message="tns:copyObjects"/>
-<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/copyObjectsResponse" message="tns:copyObjectsResponse"/>
-<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/copyObjects/Fault/ServerSideException"/>
-</operation>
-<operation name="updateObject">
-<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/updateObjectRequest" message="tns:updateObject"/>
-<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/updateObjectResponse" message="tns:updateObjectResponse"/>
-<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/updateObject/Fault/ServerSideException"/>
 </operation>
 <operation name="getGeneralView">
 <input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getGeneralViewRequest" message="tns:getGeneralView"/>
@@ -1408,11 +1400,6 @@
 <output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/unsubscribeUserFromTaskResponse" message="tns:unsubscribeUserFromTaskResponse"/>
 <fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/unsubscribeUserFromTask/Fault/ServerSideException"/>
 </operation>
-<operation name="executeTask">
-<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/executeTaskRequest" message="tns:executeTask"/>
-<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/executeTaskResponse" message="tns:executeTaskResponse"/>
-<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/executeTask/Fault/ServerSideException"/>
-</operation>
 <operation name="bulkUpload">
 <input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/bulkUploadRequest" message="tns:bulkUpload"/>
 <output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/bulkUploadResponse" message="tns:bulkUploadResponse"/>
@@ -1568,6 +1555,16 @@
 <output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/releaseDeviceFromContractResponse" message="tns:releaseDeviceFromContractResponse"/>
 <fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/releaseDeviceFromContract/Fault/ServerSideException"/>
 </operation>
+<operation name="createMPLSLink">
+<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createMPLSLinkRequest" message="tns:createMPLSLink"/>
+<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createMPLSLinkResponse" message="tns:createMPLSLinkResponse"/>
+<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createMPLSLink/Fault/ServerSideException"/>
+</operation>
+<operation name="deleteMPLSLink">
+<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/deleteMPLSLinkRequest" message="tns:deleteMPLSLink"/>
+<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/deleteMPLSLinkResponse" message="tns:deleteMPLSLinkResponse"/>
+<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/deleteMPLSLink/Fault/ServerSideException"/>
+</operation>
 <operation name="getObjectChildrenForClassWithId">
 <input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getObjectChildrenForClassWithIdRequest" message="tns:getObjectChildrenForClassWithId"/>
 <output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getObjectChildrenForClassWithIdResponse" message="tns:getObjectChildrenForClassWithIdResponse"/>
@@ -1618,6 +1615,31 @@
 <output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/releaseIPFromDeviceResponse" message="tns:releaseIPFromDeviceResponse"/>
 <fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/releaseIPFromDevice/Fault/ServerSideException"/>
 </operation>
+<operation name="executeQuery">
+<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/executeQueryRequest" message="tns:executeQuery"/>
+<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/executeQueryResponse" message="tns:executeQueryResponse"/>
+<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/executeQuery/Fault/ServerSideException"/>
+</operation>
+<operation name="createSession">
+<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createSessionRequest" message="tns:createSession"/>
+<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createSessionResponse" message="tns:createSessionResponse"/>
+<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createSession/Fault/ServerSideException"/>
+</operation>
+<operation name="executeTask">
+<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/executeTaskRequest" message="tns:executeTask"/>
+<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/executeTaskResponse" message="tns:executeTaskResponse"/>
+<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/executeTask/Fault/ServerSideException"/>
+</operation>
+<operation name="getClassHierarchy">
+<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getClassHierarchyRequest" message="tns:getClassHierarchy"/>
+<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getClassHierarchyResponse" message="tns:getClassHierarchyResponse"/>
+<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getClassHierarchy/Fault/ServerSideException"/>
+</operation>
+<operation name="getAttribute">
+<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getAttributeRequest" message="tns:getAttribute"/>
+<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getAttributeResponse" message="tns:getAttributeResponse"/>
+<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getAttribute/Fault/ServerSideException"/>
+</operation>
 <operation name="getServices">
 <input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getServicesRequest" message="tns:getServices"/>
 <output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getServicesResponse" message="tns:getServicesResponse"/>
@@ -1628,10 +1650,15 @@
 <output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createGroupResponse" message="tns:createGroupResponse"/>
 <fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createGroup/Fault/ServerSideException"/>
 </operation>
-<operation name="getAttribute">
-<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getAttributeRequest" message="tns:getAttribute"/>
-<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getAttributeResponse" message="tns:getAttributeResponse"/>
-<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getAttribute/Fault/ServerSideException"/>
+<operation name="getTask">
+<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getTaskRequest" message="tns:getTask"/>
+<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getTaskResponse" message="tns:getTaskResponse"/>
+<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getTask/Fault/ServerSideException"/>
+</operation>
+<operation name="copyObjects">
+<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/copyObjectsRequest" message="tns:copyObjects"/>
+<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/copyObjectsResponse" message="tns:copyObjectsResponse"/>
+<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/copyObjects/Fault/ServerSideException"/>
 </operation>
 <operation name="createService">
 <input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/createServiceRequest" message="tns:createService"/>
@@ -1647,11 +1674,6 @@
 <input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/isSubclassOfRequest" message="tns:isSubclassOf"/>
 <output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/isSubclassOfResponse" message="tns:isSubclassOfResponse"/>
 <fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/isSubclassOf/Fault/ServerSideException"/>
-</operation>
-<operation name="getTask">
-<input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getTaskRequest" message="tns:getTask"/>
-<output wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getTaskResponse" message="tns:getTaskResponse"/>
-<fault message="tns:ServerSideException" name="ServerSideException" wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getTask/Fault/ServerSideException"/>
 </operation>
 <operation name="getClass">
 <input wsam:Action="http://ws.kuwaiba.org/KuwaibaService/getClassRequest" message="tns:getClass"/>
@@ -1710,7 +1732,7 @@
 <soap:fault name="ServerSideException" use="literal"/>
 </fault>
 </operation>
-<operation name="executeQuery">
+<operation name="createClass">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -1795,18 +1817,6 @@
 </fault>
 </operation>
 <operation name="createUser">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="ServerSideException">
-<soap:fault name="ServerSideException" use="literal"/>
-</fault>
-</operation>
-<operation name="createClass">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -1939,6 +1949,210 @@
 </fault>
 </operation>
 <operation name="getListTypeItems">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="ServerSideException">
+<soap:fault name="ServerSideException" use="literal"/>
+</fault>
+</operation>
+<operation name="closeSession">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="ServerSideException">
+<soap:fault name="ServerSideException" use="literal"/>
+</fault>
+</operation>
+<operation name="getObjectChildren">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="ServerSideException">
+<soap:fault name="ServerSideException" use="literal"/>
+</fault>
+</operation>
+<operation name="getSiblings">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="ServerSideException">
+<soap:fault name="ServerSideException" use="literal"/>
+</fault>
+</operation>
+<operation name="getChildrenOfClass">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="ServerSideException">
+<soap:fault name="ServerSideException" use="literal"/>
+</fault>
+</operation>
+<operation name="getChildrenOfClassLight">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="ServerSideException">
+<soap:fault name="ServerSideException" use="literal"/>
+</fault>
+</operation>
+<operation name="getObjectLight">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="ServerSideException">
+<soap:fault name="ServerSideException" use="literal"/>
+</fault>
+</operation>
+<operation name="getSpecialAttribute">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="ServerSideException">
+<soap:fault name="ServerSideException" use="literal"/>
+</fault>
+</operation>
+<operation name="getSpecialAttributes">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="ServerSideException">
+<soap:fault name="ServerSideException" use="literal"/>
+</fault>
+</operation>
+<operation name="getParentOfClass">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="ServerSideException">
+<soap:fault name="ServerSideException" use="literal"/>
+</fault>
+</operation>
+<operation name="getObjectSpecialChildren">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="ServerSideException">
+<soap:fault name="ServerSideException" use="literal"/>
+</fault>
+</operation>
+<operation name="getObjectsOfClassLight">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="ServerSideException">
+<soap:fault name="ServerSideException" use="literal"/>
+</fault>
+</operation>
+<operation name="getInstanceableListTypes">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="ServerSideException">
+<soap:fault name="ServerSideException" use="literal"/>
+</fault>
+</operation>
+<operation name="createSpecialObject">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="ServerSideException">
+<soap:fault name="ServerSideException" use="literal"/>
+</fault>
+</operation>
+<operation name="deleteObject">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="ServerSideException">
+<soap:fault name="ServerSideException" use="literal"/>
+</fault>
+</operation>
+<operation name="deleteObjects">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="ServerSideException">
+<soap:fault name="ServerSideException" use="literal"/>
+</fault>
+</operation>
+<operation name="moveObjects">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="ServerSideException">
+<soap:fault name="ServerSideException" use="literal"/>
+</fault>
+</operation>
+<operation name="updateObject">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -2191,246 +2405,6 @@
 </fault>
 </operation>
 <operation name="getObjectRelatedViews">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="ServerSideException">
-<soap:fault name="ServerSideException" use="literal"/>
-</fault>
-</operation>
-<operation name="getClassHierarchy">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="ServerSideException">
-<soap:fault name="ServerSideException" use="literal"/>
-</fault>
-</operation>
-<operation name="createSession">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="ServerSideException">
-<soap:fault name="ServerSideException" use="literal"/>
-</fault>
-</operation>
-<operation name="closeSession">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="ServerSideException">
-<soap:fault name="ServerSideException" use="literal"/>
-</fault>
-</operation>
-<operation name="getObjectChildren">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="ServerSideException">
-<soap:fault name="ServerSideException" use="literal"/>
-</fault>
-</operation>
-<operation name="getSiblings">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="ServerSideException">
-<soap:fault name="ServerSideException" use="literal"/>
-</fault>
-</operation>
-<operation name="getChildrenOfClass">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="ServerSideException">
-<soap:fault name="ServerSideException" use="literal"/>
-</fault>
-</operation>
-<operation name="getChildrenOfClassLight">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="ServerSideException">
-<soap:fault name="ServerSideException" use="literal"/>
-</fault>
-</operation>
-<operation name="getObjectLight">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="ServerSideException">
-<soap:fault name="ServerSideException" use="literal"/>
-</fault>
-</operation>
-<operation name="getSpecialAttribute">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="ServerSideException">
-<soap:fault name="ServerSideException" use="literal"/>
-</fault>
-</operation>
-<operation name="getSpecialAttributes">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="ServerSideException">
-<soap:fault name="ServerSideException" use="literal"/>
-</fault>
-</operation>
-<operation name="getParentOfClass">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="ServerSideException">
-<soap:fault name="ServerSideException" use="literal"/>
-</fault>
-</operation>
-<operation name="getObjectSpecialChildren">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="ServerSideException">
-<soap:fault name="ServerSideException" use="literal"/>
-</fault>
-</operation>
-<operation name="getObjectsOfClassLight">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="ServerSideException">
-<soap:fault name="ServerSideException" use="literal"/>
-</fault>
-</operation>
-<operation name="getInstanceableListTypes">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="ServerSideException">
-<soap:fault name="ServerSideException" use="literal"/>
-</fault>
-</operation>
-<operation name="createSpecialObject">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="ServerSideException">
-<soap:fault name="ServerSideException" use="literal"/>
-</fault>
-</operation>
-<operation name="deleteObject">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="ServerSideException">
-<soap:fault name="ServerSideException" use="literal"/>
-</fault>
-</operation>
-<operation name="deleteObjects">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="ServerSideException">
-<soap:fault name="ServerSideException" use="literal"/>
-</fault>
-</operation>
-<operation name="moveObjects">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="ServerSideException">
-<soap:fault name="ServerSideException" use="literal"/>
-</fault>
-</operation>
-<operation name="copyObjects">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="ServerSideException">
-<soap:fault name="ServerSideException" use="literal"/>
-</fault>
-</operation>
-<operation name="updateObject">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -2850,18 +2824,6 @@
 <soap:fault name="ServerSideException" use="literal"/>
 </fault>
 </operation>
-<operation name="executeTask">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="ServerSideException">
-<soap:fault name="ServerSideException" use="literal"/>
-</fault>
-</operation>
 <operation name="bulkUpload">
 <soap:operation soapAction=""/>
 <input>
@@ -3234,6 +3196,30 @@
 <soap:fault name="ServerSideException" use="literal"/>
 </fault>
 </operation>
+<operation name="createMPLSLink">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="ServerSideException">
+<soap:fault name="ServerSideException" use="literal"/>
+</fault>
+</operation>
+<operation name="deleteMPLSLink">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="ServerSideException">
+<soap:fault name="ServerSideException" use="literal"/>
+</fault>
+</operation>
 <operation name="getObjectChildrenForClassWithId">
 <soap:operation soapAction=""/>
 <input>
@@ -3354,6 +3340,66 @@
 <soap:fault name="ServerSideException" use="literal"/>
 </fault>
 </operation>
+<operation name="executeQuery">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="ServerSideException">
+<soap:fault name="ServerSideException" use="literal"/>
+</fault>
+</operation>
+<operation name="createSession">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="ServerSideException">
+<soap:fault name="ServerSideException" use="literal"/>
+</fault>
+</operation>
+<operation name="executeTask">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="ServerSideException">
+<soap:fault name="ServerSideException" use="literal"/>
+</fault>
+</operation>
+<operation name="getClassHierarchy">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="ServerSideException">
+<soap:fault name="ServerSideException" use="literal"/>
+</fault>
+</operation>
+<operation name="getAttribute">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="ServerSideException">
+<soap:fault name="ServerSideException" use="literal"/>
+</fault>
+</operation>
 <operation name="getServices">
 <soap:operation soapAction=""/>
 <input>
@@ -3378,7 +3424,19 @@
 <soap:fault name="ServerSideException" use="literal"/>
 </fault>
 </operation>
-<operation name="getAttribute">
+<operation name="getTask">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="ServerSideException">
+<soap:fault name="ServerSideException" use="literal"/>
+</fault>
+</operation>
+<operation name="copyObjects">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -3415,18 +3473,6 @@
 </fault>
 </operation>
 <operation name="isSubclassOf">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="ServerSideException">
-<soap:fault name="ServerSideException" use="literal"/>
-</fault>
-</operation>
-<operation name="getTask">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>

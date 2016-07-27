@@ -15,7 +15,7 @@
  */
 package com.neotropic.inventory.modules.sdh.scene;
 
-import com.neotropic.inventory.modules.sdh.actions.SDHModuleActions;
+import com.neotropic.inventory.modules.sdh.actions.SDHModuleActionsFactory;
 import com.neotropic.inventory.modules.sdh.wizard.SDHConnectionWizard;
 import com.ociweb.xml.StartTagWAX;
 import com.ociweb.xml.WAX;
@@ -92,7 +92,7 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
     /**
      * Reference to the action factory used to assign actions to the nodes and connections
      */
-    private SDHModuleActions moduleActions;
+    private SDHModuleActionsFactory moduleActions;
 
     public SDHModuleScene() {
         getActions().addAction(ActionFactory.createAcceptAction(new CustomAcceptActionProvider(this, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT)));
@@ -100,7 +100,7 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
         nodeLayer = new LayerWidget(this);
         edgeLayer = new LayerWidget(this);
         
-        moduleActions = new SDHModuleActions(this);
+        moduleActions = new SDHModuleActionsFactory(this);
         
         addChild(edgeLayer);
         addChild(nodeLayer);

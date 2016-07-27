@@ -28,7 +28,6 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
-import javax.swing.JSeparator;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -39,7 +38,6 @@ import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteBusin
 import org.netbeans.api.visual.action.PopupMenuProvider;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Utilities;
-import org.openide.util.actions.Presenter;
 import org.openide.util.actions.SystemAction;
 import org.openide.windows.TopComponent;
 
@@ -47,7 +45,7 @@ import org.openide.windows.TopComponent;
  * All the actions used by the nodes of an SDHModuleScene
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class SDHModuleActions {
+public class SDHModuleActionsFactory {
     private PopupMenuProvider nodeMenu;
     private PopupMenuProvider connectionMenu;
     private RemoveSDHBusinessObjectFromView removeSDHBusinessObjectFromViewAction;
@@ -56,7 +54,7 @@ public class SDHModuleActions {
     private ShowSDHConnectionsInGenericCommunicationsElement showSDHConnectionsInGenericCommunicationsElementAction;
     private SDHModuleScene scene;
 
-    public SDHModuleActions(SDHModuleScene scene) {
+    public SDHModuleActionsFactory(SDHModuleScene scene) {
         this.scene = scene;
         removeSDHBusinessObjectFromViewAction = new RemoveSDHBusinessObjectFromView();
         deleteSDHConnectionAction = new DeleteSDHConnection();
@@ -70,25 +68,21 @@ public class SDHModuleActions {
 
                 @Override
                 public JPopupMenu getPopupMenu(Widget widget, Point localLocation) {
-                    JPopupMenu theMenu = new JPopupMenu("Options");
-                    theMenu.add(removeSDHBusinessObjectFromViewAction);
-                    theMenu.add(SystemAction.get(DeleteBusinessObjectAction.class));
-                    theMenu.add(new JSeparator());
-                    Widget theWidget = scene.getFocusedWidget();
-                    if (theWidget instanceof AbstractNodeWidget) { //For some reason, a right click selects automatically an edge, but not a node (!)
-                        AbstractNodeWidget nodeWidget = (AbstractNodeWidget)theWidget;
-                        for (Action action : nodeWidget.getNode().getActions(true)) {
-                            if (action instanceof Presenter.Popup) //For some reason, these kind of actions are not properly display, so we ignore them
-                                continue;
-                            if(action == null)
-                                theMenu.add(new JSeparator());
-                            else
-                                theMenu.add(action);
-                        }
-                        return theMenu;
-                    }
-                    else
+                    
+                    if (AbstractConnectionWidget.class.isInstance(widget)) //For some reason right-click selects automatically edges , but not nodes, so we have to fake selection in those cases
                         return null;
+                    else {
+                        List<Action> actions = new ArrayList<>();
+                        actions.add(removeSDHBusinessObjectFromViewAction);
+                        actions.add(SystemAction.get(DeleteBusinessObjectAction.class));
+                        actions.add(null);
+
+                        AbstractNodeWidget nodeWidget = (AbstractNodeWidget)widget;
+                        actions.addAll(Arrays.asList(nodeWidget.getNode().getActions(true)));
+
+                        return Utilities.actionsToPopup(actions.toArray(new Action[0]), scene.getView()); 
+                        
+                    }
                 }
             };
         return nodeMenu;
@@ -106,8 +100,8 @@ public class SDHModuleActions {
                     actions.add(showSDHContainersInTransportLinkAction);
                     actions.add(null);
                     
-                    AbstractConnectionWidget nodeWidget = (AbstractConnectionWidget)widget;
-                    actions.addAll(Arrays.asList(nodeWidget.getNode().getActions(true)));
+                    AbstractConnectionWidget connectionWidget = (AbstractConnectionWidget)widget;
+                    actions.addAll(Arrays.asList(connectionWidget.getNode().getActions(true)));
                     
                     return Utilities.actionsToPopup(actions.toArray(new Action[0]), scene.getView());                    
                 }

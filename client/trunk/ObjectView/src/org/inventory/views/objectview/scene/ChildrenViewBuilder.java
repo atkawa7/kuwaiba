@@ -300,8 +300,10 @@ public class ChildrenViewBuilder implements AbstractViewBuilder {
                      service.getCurrentObject().getClassName(), currentView.getId(),
                     null, null,viewStructure, scene.getBackgroundImage()))
                 service.getComponent().getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
-            else
+            else {
                 service.getComponent().setHtmlDisplayName(service.getComponent().getDisplayName());
+                NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "The view was saved successfully");
+            }
         }
     }
 }

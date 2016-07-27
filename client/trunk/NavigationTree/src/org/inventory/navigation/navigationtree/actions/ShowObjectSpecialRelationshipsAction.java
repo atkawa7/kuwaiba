@@ -30,7 +30,7 @@ import org.openide.util.NbBundle;
 @ActionID(category = "Tools", id = "org.inventory.navigation.navigationtree.actions.ShowObjectSpecialRelationshipsAction")
 @ActionRegistration(iconBase="org/inventory/navigation/navigationtree/res/special_relationships_explorer.png", displayName = "#CTL_ShowSpecialRelationships")
 @ActionReference(path = "Menu/Tools/Navigation")
-@NbBundle.Messages({"CTL_ShowSpecialRelationships=Show special relationships"})
+@NbBundle.Messages({"CTL_ShowSpecialRelationships=Show Special Relationships"})
 public final class ShowObjectSpecialRelationshipsAction extends AbstractAction{
 
     @Override

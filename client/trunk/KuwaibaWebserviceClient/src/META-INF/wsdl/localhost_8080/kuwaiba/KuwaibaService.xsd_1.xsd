@@ -80,6 +80,10 @@
 
 <xs:element name="createListTypeItemResponse" type="tns:createListTypeItemResponse"/>
 
+<xs:element name="createMPLSLink" type="tns:createMPLSLink"/>
+
+<xs:element name="createMPLSLinkResponse" type="tns:createMPLSLinkResponse"/>
+
 <xs:element name="createObject" type="tns:createObject"/>
 
 <xs:element name="createObjectRelatedView" type="tns:createObjectRelatedView"/>
@@ -179,6 +183,10 @@
 <xs:element name="deleteListTypeItem" type="tns:deleteListTypeItem"/>
 
 <xs:element name="deleteListTypeItemResponse" type="tns:deleteListTypeItemResponse"/>
+
+<xs:element name="deleteMPLSLink" type="tns:deleteMPLSLink"/>
+
+<xs:element name="deleteMPLSLinkResponse" type="tns:deleteMPLSLinkResponse"/>
 
 <xs:element name="deleteObject" type="tns:deleteObject"/>
 
@@ -1734,17 +1742,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="deleteGroups">
-<xs:sequence>
-<xs:element name="oids" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="deleteGroupsResponse">
-<xs:sequence/>
-</xs:complexType>
-
 <xs:complexType name="getObjectLight">
 <xs:sequence>
 <xs:element name="objectclass" type="xs:string" minOccurs="0"/>
@@ -1757,6 +1754,17 @@
 <xs:sequence>
 <xs:element name="return" type="tns:remoteObjectLight" minOccurs="0"/>
 </xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteGroups">
+<xs:sequence>
+<xs:element name="oids" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteGroupsResponse">
+<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="getObjectSpecialChildren">
@@ -2359,6 +2367,24 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="createMPLSLink">
+<xs:sequence>
+<xs:element name="classNameEndpointA" type="xs:string" minOccurs="0"/>
+<xs:element name="idEndpointA" type="xs:long"/>
+<xs:element name="classNameEndpointB" type="xs:string" minOccurs="0"/>
+<xs:element name="idEndpointB" type="xs:long"/>
+<xs:element name="linkType" type="xs:string" minOccurs="0"/>
+<xs:element name="defaultName" type="xs:string" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createMPLSLinkResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:long"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="deleteSubnetPools">
 <xs:sequence>
 <xs:element name="ids" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
@@ -2877,6 +2903,19 @@
 <xs:sequence>
 <xs:element name="return" type="tns:remoteTask" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteMPLSLink">
+<xs:sequence>
+<xs:element name="linkClass" type="xs:string" minOccurs="0"/>
+<xs:element name="linkId" type="xs:long"/>
+<xs:element name="forceDelete" type="xs:boolean"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteMPLSLinkResponse">
+<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="associateObjectToService">
