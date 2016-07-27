@@ -86,7 +86,7 @@ public class PersistenceService {
             dataModelLoader = new DataModelLoader(connectionManager, mem);
             //dataIntegrityService = new DataIntegrityService(connectionManager);
             //dataIntegrityService.checkIntegrity();
-            System.out.println(String.format("[KUWAIBA] [%s] Detecting commercial modules...", Calendar.getInstance().getTime()));
+            System.out.println(String.format("[KUWAIBA] [%s] Detecting advanced modules...", Calendar.getInstance().getTime()));
             //Place here some fancy OSGi stuff instead of this horrid hardcoded list
             aem.registerCommercialModule(new IPAMModule());
             aem.registerCommercialModule(new SDHModule());
