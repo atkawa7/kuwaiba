@@ -270,7 +270,7 @@
 		\begin{itemize}
 			\item To avoid adding one by one many classes to a parent, you can use the flexibility of the data model as a hierarchical structure. For example, a \textbf{Rack} may contain within many types of equipment (routers, DDFs, switches, battery banks, etc). Instead of adding one by one each of these classes, you can add a common super class and all of them will be added automatically. For this example a common super class for most of those classes could be \textbf{GenericCommunicationsElement}.
 			\item To search for a particular class, just select any node in the desired side of the panel and type the first letters of the class name. If there are many occurrences of the term, jump from one to another using the F3 key.
-			\item The changes are applied immediately, however, if you happen to not see them reflected, press the Refresh Cache button in the main toolbar (see table~\ref{tab:toolbar_icons}).
+			\item The changes are applied immediately, however, if you happen to not see them reflected, press the Refresh Cache button \includegraphics[width=0.5cm]{img/icon_refresh_cache.png} in the main toolbar (see table~\ref{tab:toolbar_icons}).
 		\end{itemize}
 	\end{framed}
 	\newpage
@@ -345,9 +345,12 @@
 	\end{itemize}
 	
 	\newpage
+	\section{List Type Manager} \label{sec:list_type_manager}
+	
+	\newpage
 	\section{Default and Rack Views}
-	\subsection{Default View}
-		A view is a graphical representation of an object. There are many types of views, because an object has different perspectives, for example, a service object may have a view showing all the resources associated to it, a second view showing how all those resources are connected and a third showing statistics about such service. All instances (objects) of subclasses of \textbf{ViewableObject} have a default view that displays the direct children of the selected node. Most objects, except logical and administrative assets and a few physical ones such as slots and ports are subclasses of \textbf{ViewableObject}. To access a default view, just open the Default View window (see \nameref{tab:toolbar_icons}) and select a node in the navigation tree.\\
+	\subsection{Default View} \label{sec:default_view}
+		A view is a graphical representation of an object. There are many types of views, because an object has different perspectives, for example, a service object may have a view showing all the resources associated to it, a second view showing how all those resources are connected and a third showing statistics about such service. All instances (objects) of subclasses of \textbf{ViewableObject} have a default view that displays the direct children of the selected node. Most objects, except logical and administrative assets and a few physical ones such as slots and ports are subclasses of \textbf{ViewableObject}. To access a default view, just open the Default View window (see \nameref{tab:toolbar_icons}) and select a node in the navigation tree.
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.9\linewidth]{img/default_view.png}
@@ -355,24 +358,357 @@
 			\label{fig:default_view}
 		\end{figure}
 		
-		In the default view, you can move and connect the nodes, add a background and export the view. It is particularly useful at Room and City levels, because it will allow you to see how the children elements are located geographically (e.g. buildings) or in an enclosed space (racks in a data center as seen in figure~\ref{fig:room_plan}).
+		In the default view, you can move and connect the nodes, add a background and export the view. It is particularly useful at Room and City levels, because it will allow you to see how the children elements are located geographically (e.g. buildings) or in an enclosed space (racks in a data center as seen in figure~\ref{fig:room_plan}).	
 		\begin{figure}[h!]
 			\centering
-			\includegraphics[width=0.9\linewidth]{img/room_plan.png}
+			\includegraphics[width=0.7\linewidth]{img/room_plan.png}
 			\caption{Default view of the selected \textbf{Room} object}
 			\label{fig:room_plan}
 		\end{figure}
 		
+		The figure~\ref{fig:default_view_toolbar} shows all general purpose tools available in this window.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.6\linewidth]{img/default_view_toolbar.png}
+			\caption{Default view toolbar}
+			\label{fig:default_view_toolbar}
+		\end{figure}
+		
+		\begin{table}[h!]
+			\centering
+			\begin{tabular}[h!]{lp{10cm}}
+				\includegraphics[width=0.5cm]{img/icon_add_background.png} & Add background\\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_remove_background.png} & Remove background\\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_format_text.png} & Format text\\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_add_background.png} & Add background\\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_toggle_labels.png} & Hide/show the labels under the nodes\\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_save_view.png} & Save view\\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_add_background.png} & Add background\\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_select_tool.png} & Select/Move tool (selected by default)\\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_connect_tool.png} & Connect tool (See \textbf{\nameref{sec:physical_connections}} for more details on how to use it)\\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_export.png} & Export to image file\\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_refresh_view.png} & Refresh view\\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_view_type.png} & View type. Currently, only the default view and the rack view are available (see \textbf{\nameref{sec:rack_view}} for more details on the latter)\\
+			\end{tabular}
+		\end{table}
+		
+		\subsection{Rack View} \label{sec:rack_view}
+		This view works only with objects of class \textbf{Rack} or its subclasses. It shows how the elements contained within the selected object are organized, based on their positions and number of rack units used. 
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.2\linewidth]{img/rack_view_combobox.png}
+			\caption{How to find the rack view in the toolbar}
+			\label{fig:rack_view_combobox}
+		\end{figure}
+		
+		For this view to be correctly built, two conditions must be met:
+		\begin{itemize}
+			\item The rack must have its \textbf{rackUnits} attribute set to a valid integer value. This attribute stores the total number rack units supported by the rack. Typical values are 20, 28, 34, 40 or 45.
+			\begin{figure}[h!]
+				\centering
+				\includegraphics[width=0.6\linewidth]{img/error_rack_view_not_rackunits.png}
+				\caption{Error displayed when the rack does not have a valid value of rack units}
+				\label{fig:error_rack_view_not_rackunits}
+			\end{figure}
+			\item The attributes \textbf{rackUnits} and \textbf{position} must exist and set to valid values in the elements contained inside the rack. \textbf{rackUnits} in this case, makes reference to the number of rack units occupied by the contained element, while \textbf{position} is the start position of the contained element, 1-based, numbered from top to bottom. Your equipment vendor usually provides this value.
+			\begin{figure}[h!]
+				\centering
+				\includegraphics[width=0.4\linewidth]{img/rack_view_attributes_contained_element.png}
+				\caption{Attributes correctly set in a DDF contained inside a rack}
+				\label{fig:rack_view_attributes_contained_element}
+			\end{figure}
+		\end{itemize}
+		\begin{framed} {\large \textbf{Important}}
+			\begin{itemize}
+				\item The attribute names (\textbf{rackUnits}, \textbf{position}) are case sensitive and must be integers.
+				\item Some elements you want to create inside a rack \textbf{might not} have those attributes by default, so you will need to create them using the \nameref{sec:data_model_manager}.			
+			\end{itemize}
+		\end{framed}
+		If all values are correct, the view should look like this:
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.9\linewidth]{img/rack_view_sample_view.png}
+			\caption{Sample rack view}
+			\label{fig:rack_view_sample_view}
+		\end{figure}
 		
 	\newpage
 	\section{Physical Connections} \label{sec:physical_connections}
-	
+		The Physical Connections toolkit is tightly integrated to the default view module. With Kuwaiba you can create physical layer connections using cables, fiber optics or radio links very easily, navigate through the connections and inspect the resources in use.\newline
+		
+		Before presenting the tools provided by the application, let's first clarify and introduce some concepts. This module deals solely with L1 topologies. It's only about cables, ports, etc. The data model provides four types of entities to represent physical layer elements:
+		\begin{itemize}
+			\item \textbf{Connections:} These are all point-to-point physical links. In the current data model, there are three	types of connections: \textbf{ElectricalLink} (for electrical connections like coaxial, twisted
+			pairs and the like), \textbf{OpticalLink} (for fiber optics) and \textbf{RadioLink} (for radio links -Microwave links, mostly-).
+			\item \textbf{Containers:} All objects that can be used to contain, wrap and protect connections (understanding \textit{Connection} as defined above). There are two types of containers: \textbf{WireContainer} (used to contain all kind of cables -wires and fibers-, like pipes, conduits, ditches, etc) and \textbf{WirelessContainer} (used to contain radio channels or carriers).
+			\item \textbf{Nodes:} These objects are endpoints to \textit{Containers}. In the default data model you will find classes like: \textbf{Tower}, \textbf{Warehouse}, \textbf{Facility}, \textbf{Shelter}, \textbf{Building}, \textbf{Floor} and \textbf{Room}, but in general, any subclass of \textbf{GenericPhysicalNode} can be a so called \textit{Node}.
+			\textbf{Endpoints:} These objects are endpoints to \textit{Connections}. In practice, they're always some kind of \textbf{Port} (in the data model context, this means all subclasses of \textbf{GenericPort}).
+		\end{itemize}
+		In summary, you can only connect \textit{Nodes} using \textit{Containers} and \textit{Endpoints} using \textit{Connections}. To create new connections, select in the \textbf{\nameref{sec:navigation_tree}} an element and try to connected the desired children using the \nameref{sec:default_view}. For example, if you want to connect two buildings, select the city which is the parent for both. Likewise, if you want to connect a router to an ODF, you probably will have to select the room or the rack they are located. In short, select the nearest common parent between the two elements you want to connect.
+		\begin{framed} {\large \textbf{Important}}\\
+			You can also create power connections with this approach.
+		\end{framed}
+		\begin{table}[h!]
+			\centering
+			\begin{tabular}{lp{10cm}}
+				\includegraphics[width=0.5cm]{img/icon_connect_tool.png} & Select the Connection tool \\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_wire_container.png} & Create a wire container \\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_wireless_container.png} & Create a wireless container \\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_electrical_link.png} & Create an electrical link \\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_optical_link.png} & Create an optical link \\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_wireless_link.png} & Create a wireless link \\
+			\end{tabular}
+			\caption{Connection tools}
+		\end{table}
+		Let's put together all this concepts  with some examples. 
+		\subsection{Example 1} \label{sec:physical_connections_example_1}
+			In this example, we will create a direct connection between two routers in the same room, but in different racks using a CAT-5 patch as shown in the figure~\ref{fig:l1_example_1}.\newline
+			\begin{figure}[h!]
+				\centering
+				\includegraphics[width=0.5\linewidth]{img/l1_example_1.png}
+				\caption{Connection diagram for example 1}
+				\label{fig:l1_example_1}
+			\end{figure}
+			
+			Let's consider the layout in figure~\ref{fig:l1_example_1_layout}
+			\begin{figure}[h!]
+				\centering
+				\includegraphics[width=0.3\linewidth]{img/l1_example_1_layout.png}
+				\caption{Containment layout for example 1}
+				\label{fig:l1_example_1_layout}
+			\end{figure}
+			\begin{enumerate}
+				\item Select the nearest common parent in the navigation tree (in this case the \textbf{Room} called Control Center), and using the select tool, change the default position of the nodes
+				\begin{figure}[h!]
+					\centering
+					\includegraphics[width=0.8\linewidth]{img/l1_example_1_initial_view.png}
+					\caption{Racks in the room}
+					\label{fig:l1_example_1_initial_view}
+				\end{figure}
+				\item Using the \textbf{\nameref{sec:list_type_manager}}, create a list type called \textit{CAT-5} under \textbf{ElectricalLinkType}. Following a similar procedure, you can create the different types of electrical connections depending on your network (POTS, coaxial, etc). We will use this later.
+				\label{item:connection_type}
+				\newpage
+				\begin{figure}[h!]
+					\centering
+					\includegraphics[width=0.4\linewidth]{img/l1_example_1_electrical_link_type.png}
+					\caption{Creating the link type}
+					\label{fig:l1_example_1_electrical_link_type}
+				\end{figure}
+				\item Activating the connection tool, click on one node and hold, dragging the mouse until you reach the second node. Make sure you also select the type of connection you want to create, in this case, an \textbf{ElectricalLink} (a patch cable).
+				\begin{figure}[h!]
+					\centering
+					\includegraphics[width=0.8\linewidth]{img/l1_example_1_new_connection.png}
+					\caption{Creating the connection}
+					\label{fig:l1_example_1_new_connection}
+				\end{figure}
+				\item This will open a wizard where you should select the endpoints of the connection (the end ports)
+				\begin{figure}[h!]
+					\centering
+					\includegraphics[width=0.8\linewidth]{img/l1_example_1_endpoints.png}
+					\caption{Connection wizard, step 1}
+					\label{fig:l1_example_1_endpoints}
+				\end{figure}
+				\item In the next step of the wizard, you have to fill in the basic information about the connection: its name and type. Use the type we just created in step~\ref{item:connection_type}.
+				\begin{figure}[h!]
+					\centering
+					\includegraphics[width=0.5\linewidth]{img/l1_example_1_basic_info.png}
+					\caption{Connection wizard, step 2}
+					\label{fig:l1_example_1_basic_info}
+				\end{figure}
+			\end{enumerate}
+			
+			And that's it. Double-clicking the connection will add a control point to it. You can add as many as you want, and control its route. The Properties window will get updated accordingly if you select the link or a node.
+			\begin{figure}[h!]
+				\centering
+				\includegraphics[width=0.6\linewidth]{img/l1_example_1_final.png}
+				\caption{Final result}
+				\label{fig:l1_example_1_final}
+			\end{figure}
+			\begin{framed} {\large \textbf{Important}}\\
+				Don't forget to save the view using the icon \includegraphics[width=0.5cm]{img/icon_save_view.png} in the toolbar, so your positioning changes are stored.
+			\end{framed}
+			
+		\subsection{Example 2}	
+			The second example is more complex. We will connect two buildings with a conduit that contains fibers. In each building there's a router and an ODF, one of the fiber pairs connecting the buildings, will be linking the two ODFs, and then, from the ODF, we'll patch our way the routers.
+			\begin{figure}[h!]
+				\centering
+				\includegraphics[width=0.8\linewidth]{img/l1_example_2.png}
+				\caption{Connection diagram for example 2}
+				\label{fig:l1_example_2}
+			\end{figure}
+			\newpage
+			We will use a similar containment layout for this example, just adding a couple ODFs.
+			\begin{figure}[h!]
+				\centering
+				\includegraphics[width=0.4\linewidth]{img/l1_example_2_layout.png}
+				\caption{Containment layout for example 2}
+				\label{fig:l1_example_2_layout}
+			\end{figure}
+			
+			\begin{enumerate}
+					\item First, we must make the initial arrangements. In this case, we will use a Google maps image as background for the city (the nearest common parent) and locate the buildings. We also select the connection tool and the type of connection, which will be a \textbf{WireContainer} this time.  
+					\begin{figure}[h!]
+						\centering
+						\includegraphics[width=\linewidth]{img/l1_example_2_initial_view.png}
+						\caption{Buildings in the city}
+						\label{fig:l1_example_2_initial_view}
+					\end{figure}
+					\newpage
+					\item Since this time we are creating a \textbf{WireContainer}, the list type for it must be created under \textbf{WireContainerType}. Using the \nameref{sec:list_type_manager}, add this entry:
+					\begin{figure}[h!]
+						\centering
+						\includegraphics[width=0.2\linewidth]{img/l1_example_1_wire_container_type.png}
+						\caption{reating a connection type}
+						\label{fig:l1_example_1_wire_container_type}
+					\end{figure}
+					\item Just like we did in the past example, let's start the connection wizard, but this time the endpoints will be the buildings instead of the ports (remember that we are creating a container here).
+					\begin{figure}[h!]
+						\centering
+						\includegraphics[width=0.8\linewidth]{img/l1_example_2_endpoints.png}
+						\caption{Connection wizard, step 1}
+						\label{fig:l1_example_2_endpoints}
+					\end{figure}			
+					\item In the second step, we fill in the basic fields, but in addition to what we had seen already, it's also necessary to provide information about what's gonna be contained inside the \textbf{WireContainer} and how many of those elements are to be created. Since this example is about connecting fibers, we select \textbf{OpticalLink} in the field \textit{Children type} and 20 in \textit{Num of children} just for the sake of the example.
+					\begin{figure}[h!]
+						\centering
+						\includegraphics[width=0.6\linewidth]{img/l1_example_2_basic_info.png}
+						\caption{Connection wizard, step 2}
+						\label{fig:l1_example_2_basic_info}
+					\end{figure}
+					\item Using the Select tool, modify the route of the connection. Now the container has been created successfully.
+					\begin{figure}[h!]
+						\centering
+						\includegraphics[width=\linewidth]{img/l1_example_2_final.png}
+						\caption{Final result}
+						\label{fig:l1_example_2_final}
+					\end{figure}
+					\item Once the container has been created, we can now connect a pair of fibers to each side's ODF back port (note the naming used for the ODF ports in the figure~\ref{fig:l1_example_2_layout}). To start a wizard to perform this operation, right-click the container and select the option \textit{Connect links...}
+					\begin{figure}[h!]
+						\centering
+						\includegraphics[width=0.3\linewidth]{img/l1_example_2_container_context_menu.png}
+						\caption{Container's contextual menu}
+						\label{fig:l1_example_2_container_context_menu}
+					\end{figure}
+					\item This open a window divided in three panels. The side panels let you choose what ports do you want to connect to the fibers in the container. In this example, we will connect the first pair to the ports labeled as \textit{Back} in the ODFs. You can select multiple ports and fibers and connect them at the same time (use the SHIFT key for multiple selection). Note that it's not necessary to connect both sides. Push the \textit{Connect} button on the lower part of the central panel to finish the procedure.
+					\begin{figure}[h!]
+						\centering
+						\includegraphics[width=\linewidth]{img/l1_example_2_connect_links.png}
+						\caption{Connecting links}
+						\label{fig:l1_example_2_connect_links}
+					\end{figure}
+					\begin{framed} {\large \textbf{Important}}
+						\begin{itemize}
+							\item In optical connections, Rx and Tx ports are treated as a single port and a pair of fibers, are actually represented as a single \textbf{OpticalLink}.							
+						\end{itemize}
+					\end{framed}
+					It's possible to explore the contents of a container and see to what fiber the ports are connected to using the explorers in the menu Tools $\rightarrow$ Navigation. In the figure~\ref{fig:l1_example_2_links_in_container} you will see the Special Children explorer when the container is selected in the view. In the figure~\ref{fig:l1_example_2_container_relationships}, the relationship explorer shows the connections of one of the ports in the ODF when selected in the \nameref{sec:navigation_tree}.
+					\begin{figure}
+						\centering
+						\includegraphics[width=0.3\linewidth]{img/l1_example_2_links_in_container.png}
+						\caption{Exploring the container's contents}
+						\label{fig:l1_example_2_links_in_container}
+					\end{figure}
+					\begin{figure}
+						\centering
+						\includegraphics[width=0.4\linewidth]{img/l1_example_2_container_relationships.png}
+						\caption{Exploring the container's relationships}
+						\label{fig:l1_example_2_container_relationships}
+					\end{figure}
+					\item Now we will create an optical patch on each building between the routers and the 1-Front ports of their respective ODFs in a similar way we did in the \textbf{\nameref{sec:physical_connections_example_1}}.
+					\begin{figure}[h!]
+						\centering
+						\includegraphics[width=0.5\linewidth]{img/l1_example_2_patch_a.png}\\
+						\includegraphics[width=0.5\linewidth]{img/l1_example_2_patch_b.png}
+						\caption{Optical patches between routers and ODFs}
+						\label{fig:l1_example_2_patches}
+					\end{figure}
+					\begin{framed} {\large \textbf{Important}}\\
+							Remember to use an \textbf{OpticalLink} \includegraphics[width=0.5cm]{img/icon_optical_link.png} instead of an \textbf{ElectricalLink} \includegraphics[width=0.5cm]{img/icon_electrical_link.png}.							
+					\end{framed}
+					\item There's still one last step: The ports 1-Front and 1-Back in each ODF are not yet bridged. To do this, we just have to right-click any of the two ports on each ODF and select the option \textit{Connect Mirror Port...}. A mirror port is basically a direct connection between two ports. A cable is a separate object in Kuwaiba, a mirror connection is not even an object, is just a relationship between a port an another with the same parent (that is, a sibling). You can see it as a backplane connection.
+					\begin{figure}[h!]
+						\centering
+						\includegraphics[width=0.5\linewidth]{img/l1_example_2_mirror_connection_menu.png}
+						\caption{Mirror connection menu}
+						\label{fig:l1_example_2_mirror_connection_menu}
+					\end{figure}
+					\newpage
+					This will open a window where you can select what port do you want to be mirror of the selected one. Since 1-Front ports only have one sibling (1-Back), that's the only option available.
+					\begin{figure}[h!]
+						\centering
+						\includegraphics[width=0.5\linewidth]{img/l1_example_2_mirror_connection_details.png}
+						\caption{Mirror connection details}
+						\label{fig:l1_example_2_mirror_connection_details}
+					\end{figure}
+					
+					Once the port is mirrored, you can see a new relationship in the relationship explorer when selecting any of the ODF ports in the \textbf{\nameref{sec:navigation_tree}}.
+					\begin{figure}[h!]
+						\centering
+						\includegraphics[width=0.4\linewidth]{img/l1_example_2_mirror_connection_relationships.png}
+						\caption{Mirror connection relationship}
+						\label{fig:l1_example_2_mirror_connection_relationships}
+					\end{figure}
+					
+					To release a mirror port, select the option from the context port's context menu.
+					\begin{figure}[h!]
+						\centering
+						\includegraphics[width=0.3\linewidth]{img/l1_example_2_mirror_connection_release.png}
+						\caption{Release mirror connection menu option}
+						\label{fig:l1_example_2_mirror_connection_release}
+					\end{figure}
+			\end{enumerate}
+			
+			A nice feature in Kuwaiba is the ability to see the path of a physical connection as long as there's continuity. In our example, there is continuity between the port in the router A (RTR-DMT-003) and the port in the Router B (RTR-DMT-004), that is, there are no active elements in between. To see the trace, right-click on any of the ports involved in the connection and select the option \textit{Show physical path}.
+			\begin{figure}[h!]
+				\centering
+				\includegraphics[width=0.3\linewidth]{img/l1_example_2_physical_path_menu.png}
+				\caption{Physical path menu option}
+				\label{fig:l1_example_2_physical_path_menu}
+			\end{figure}
+			The figure~\ref{fig:l1_example_2_physical_path_list} show the physical path between Router A's port and Router B's port. The port in red is where the trace begins.
+			\begin{figure}[h!]
+				\centering
+				\includegraphics[width=0.4\linewidth]{img/l1_example_2_physical_path_list.png}
+				\caption{Physical path details}
+				\label{fig:l1_example_2_physical_path_list}
+			\end{figure}
+			
+			And pressing the button \includegraphics[width=0.5cm]{img/icon_physical_path_graphical.png} you will get a graphical representation, easier to understand.
+			\begin{figure}[h!]
+				\centering
+				\includegraphics[width=1.1\linewidth]{img/l1_example_2_physical_path_view.png}
+				\caption{Physical path graphical representation}
+				\label{fig:l1_example_2_physical_path_view}
+			\end{figure}
+			The Properties window will be updated as you select any of the blocks. This view can also be updated.
 	\newpage
-	\section{List Type Manager} \label{sec:list_type_manager}
+	\section{SDH Networks Module} \label{sec:sdh_module}
 	
 	\newpage
 	\section{Audit Trail} \label{sec:audit_trail}
 	
 	\newpage
 	\section{Service Manager} \label{sec:service_manager}
+	
+	\newpage
+	\section{Contract Manager} \label{sec:contract_manager}
+	
+	\newpage
+	\section{Task Manager Manager} \label{sec:task_manager}
 \end{document}
