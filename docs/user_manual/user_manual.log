@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Arch Linux) (preloaded format=pdflatex 2016.7.22)  27 JUL 2016 03:26
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Arch Linux) (preloaded format=pdflatex 2016.7.22)  28 JUL 2016 01:32
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -431,7 +431,162 @@ Package etexcmds Info: Could not find \expanded.
 LaTeX Info: Redefining \ref on input line 353.
 LaTeX Info: Redefining \pageref on input line 353.
 )
-(./user_manual.aux)
+(/usr/share/texmf-dist/tex/latex/base/textcomp.sty
+Package: textcomp 2005/09/27 v1.99g Standard LaTeX package
+Package textcomp Info: Sub-encoding information:
+(textcomp)               5 = only ISO-Adobe without \textcurrency
+(textcomp)               4 = 5 + \texteuro
+(textcomp)               3 = 4 + \textohm
+(textcomp)               2 = 3 + \textestimated + \textcurrency
+(textcomp)               1 = TS1 - \textcircled - \t
+(textcomp)               0 = TS1 (full)
+(textcomp)             Font families with sub-encoding setting implement
+(textcomp)             only a restricted character set as indicated.
+(textcomp)             Family '?' is the default used for unknown fonts.
+(textcomp)             See the documentation for details.
+Package textcomp Info: Setting ? sub-encoding to TS1/1 on input line 79.
+
+(/usr/share/texmf-dist/tex/latex/base/ts1enc.def
+File: ts1enc.def 2001/06/05 v3.0e (jk/car/fm) Standard LaTeX file
+Now handling font encoding TS1 ...
+... processing UTF-8 mapping file for font encoding TS1
+
+(/usr/share/texmf-dist/tex/latex/base/ts1enc.dfu
+File: ts1enc.dfu 2015/09/07 v1.1p UTF-8 support for inputenc
+   defining Unicode char U+00A2 (decimal 162)
+   defining Unicode char U+00A3 (decimal 163)
+   defining Unicode char U+00A4 (decimal 164)
+   defining Unicode char U+00A5 (decimal 165)
+   defining Unicode char U+00A6 (decimal 166)
+   defining Unicode char U+00A7 (decimal 167)
+   defining Unicode char U+00A8 (decimal 168)
+   defining Unicode char U+00A9 (decimal 169)
+   defining Unicode char U+00AA (decimal 170)
+   defining Unicode char U+00AC (decimal 172)
+   defining Unicode char U+00AE (decimal 174)
+   defining Unicode char U+00AF (decimal 175)
+   defining Unicode char U+00B0 (decimal 176)
+   defining Unicode char U+00B1 (decimal 177)
+   defining Unicode char U+00B2 (decimal 178)
+   defining Unicode char U+00B3 (decimal 179)
+   defining Unicode char U+00B4 (decimal 180)
+   defining Unicode char U+00B5 (decimal 181)
+   defining Unicode char U+00B6 (decimal 182)
+   defining Unicode char U+00B7 (decimal 183)
+   defining Unicode char U+00B9 (decimal 185)
+   defining Unicode char U+00BA (decimal 186)
+   defining Unicode char U+00BC (decimal 188)
+   defining Unicode char U+00BD (decimal 189)
+   defining Unicode char U+00BE (decimal 190)
+   defining Unicode char U+00D7 (decimal 215)
+   defining Unicode char U+00F7 (decimal 247)
+   defining Unicode char U+0192 (decimal 402)
+   defining Unicode char U+02C7 (decimal 711)
+   defining Unicode char U+02D8 (decimal 728)
+   defining Unicode char U+02DD (decimal 733)
+   defining Unicode char U+0E3F (decimal 3647)
+   defining Unicode char U+2016 (decimal 8214)
+   defining Unicode char U+2020 (decimal 8224)
+   defining Unicode char U+2021 (decimal 8225)
+   defining Unicode char U+2022 (decimal 8226)
+   defining Unicode char U+2030 (decimal 8240)
+   defining Unicode char U+2031 (decimal 8241)
+   defining Unicode char U+203B (decimal 8251)
+   defining Unicode char U+203D (decimal 8253)
+   defining Unicode char U+2044 (decimal 8260)
+   defining Unicode char U+204E (decimal 8270)
+   defining Unicode char U+2052 (decimal 8274)
+   defining Unicode char U+20A1 (decimal 8353)
+   defining Unicode char U+20A4 (decimal 8356)
+   defining Unicode char U+20A6 (decimal 8358)
+   defining Unicode char U+20A9 (decimal 8361)
+   defining Unicode char U+20AB (decimal 8363)
+   defining Unicode char U+20AC (decimal 8364)
+   defining Unicode char U+20B1 (decimal 8369)
+   defining Unicode char U+2103 (decimal 8451)
+   defining Unicode char U+2116 (decimal 8470)
+   defining Unicode char U+2117 (decimal 8471)
+   defining Unicode char U+211E (decimal 8478)
+   defining Unicode char U+2120 (decimal 8480)
+   defining Unicode char U+2122 (decimal 8482)
+   defining Unicode char U+2126 (decimal 8486)
+   defining Unicode char U+2127 (decimal 8487)
+   defining Unicode char U+212E (decimal 8494)
+   defining Unicode char U+2190 (decimal 8592)
+   defining Unicode char U+2191 (decimal 8593)
+   defining Unicode char U+2192 (decimal 8594)
+   defining Unicode char U+2193 (decimal 8595)
+   defining Unicode char U+2329 (decimal 9001)
+   defining Unicode char U+232A (decimal 9002)
+   defining Unicode char U+2422 (decimal 9250)
+   defining Unicode char U+25E6 (decimal 9702)
+   defining Unicode char U+25EF (decimal 9711)
+   defining Unicode char U+266A (decimal 9834)
+))
+LaTeX Info: Redefining \oldstylenums on input line 334.
+Package textcomp Info: Setting cmr sub-encoding to TS1/0 on input line 349.
+Package textcomp Info: Setting cmss sub-encoding to TS1/0 on input line 350.
+Package textcomp Info: Setting cmtt sub-encoding to TS1/0 on input line 351.
+Package textcomp Info: Setting cmvtt sub-encoding to TS1/0 on input line 352.
+Package textcomp Info: Setting cmbr sub-encoding to TS1/0 on input line 353.
+Package textcomp Info: Setting cmtl sub-encoding to TS1/0 on input line 354.
+Package textcomp Info: Setting ccr sub-encoding to TS1/0 on input line 355.
+Package textcomp Info: Setting ptm sub-encoding to TS1/4 on input line 356.
+Package textcomp Info: Setting pcr sub-encoding to TS1/4 on input line 357.
+Package textcomp Info: Setting phv sub-encoding to TS1/4 on input line 358.
+Package textcomp Info: Setting ppl sub-encoding to TS1/3 on input line 359.
+Package textcomp Info: Setting pag sub-encoding to TS1/4 on input line 360.
+Package textcomp Info: Setting pbk sub-encoding to TS1/4 on input line 361.
+Package textcomp Info: Setting pnc sub-encoding to TS1/4 on input line 362.
+Package textcomp Info: Setting pzc sub-encoding to TS1/4 on input line 363.
+Package textcomp Info: Setting bch sub-encoding to TS1/4 on input line 364.
+Package textcomp Info: Setting put sub-encoding to TS1/5 on input line 365.
+Package textcomp Info: Setting uag sub-encoding to TS1/5 on input line 366.
+Package textcomp Info: Setting ugq sub-encoding to TS1/5 on input line 367.
+Package textcomp Info: Setting ul8 sub-encoding to TS1/4 on input line 368.
+Package textcomp Info: Setting ul9 sub-encoding to TS1/4 on input line 369.
+Package textcomp Info: Setting augie sub-encoding to TS1/5 on input line 370.
+Package textcomp Info: Setting dayrom sub-encoding to TS1/3 on input line 371.
+Package textcomp Info: Setting dayroms sub-encoding to TS1/3 on input line 372.
+
+Package textcomp Info: Setting pxr sub-encoding to TS1/0 on input line 373.
+Package textcomp Info: Setting pxss sub-encoding to TS1/0 on input line 374.
+Package textcomp Info: Setting pxtt sub-encoding to TS1/0 on input line 375.
+Package textcomp Info: Setting txr sub-encoding to TS1/0 on input line 376.
+Package textcomp Info: Setting txss sub-encoding to TS1/0 on input line 377.
+Package textcomp Info: Setting txtt sub-encoding to TS1/0 on input line 378.
+Package textcomp Info: Setting lmr sub-encoding to TS1/0 on input line 379.
+Package textcomp Info: Setting lmdh sub-encoding to TS1/0 on input line 380.
+Package textcomp Info: Setting lmss sub-encoding to TS1/0 on input line 381.
+Package textcomp Info: Setting lmssq sub-encoding to TS1/0 on input line 382.
+Package textcomp Info: Setting lmvtt sub-encoding to TS1/0 on input line 383.
+Package textcomp Info: Setting lmtt sub-encoding to TS1/0 on input line 384.
+Package textcomp Info: Setting qhv sub-encoding to TS1/0 on input line 385.
+Package textcomp Info: Setting qag sub-encoding to TS1/0 on input line 386.
+Package textcomp Info: Setting qbk sub-encoding to TS1/0 on input line 387.
+Package textcomp Info: Setting qcr sub-encoding to TS1/0 on input line 388.
+Package textcomp Info: Setting qcs sub-encoding to TS1/0 on input line 389.
+Package textcomp Info: Setting qpl sub-encoding to TS1/0 on input line 390.
+Package textcomp Info: Setting qtm sub-encoding to TS1/0 on input line 391.
+Package textcomp Info: Setting qzc sub-encoding to TS1/0 on input line 392.
+Package textcomp Info: Setting qhvc sub-encoding to TS1/0 on input line 393.
+Package textcomp Info: Setting futs sub-encoding to TS1/4 on input line 394.
+Package textcomp Info: Setting futx sub-encoding to TS1/4 on input line 395.
+Package textcomp Info: Setting futj sub-encoding to TS1/4 on input line 396.
+Package textcomp Info: Setting hlh sub-encoding to TS1/3 on input line 397.
+Package textcomp Info: Setting hls sub-encoding to TS1/3 on input line 398.
+Package textcomp Info: Setting hlst sub-encoding to TS1/3 on input line 399.
+Package textcomp Info: Setting hlct sub-encoding to TS1/5 on input line 400.
+Package textcomp Info: Setting hlx sub-encoding to TS1/5 on input line 401.
+Package textcomp Info: Setting hlce sub-encoding to TS1/5 on input line 402.
+Package textcomp Info: Setting hlcn sub-encoding to TS1/5 on input line 403.
+Package textcomp Info: Setting hlcw sub-encoding to TS1/5 on input line 404.
+Package textcomp Info: Setting hlcf sub-encoding to TS1/5 on input line 405.
+Package textcomp Info: Setting pplx sub-encoding to TS1/3 on input line 406.
+Package textcomp Info: Setting pplj sub-encoding to TS1/3 on input line 407.
+Package textcomp Info: Setting ptmx sub-encoding to TS1/4 on input line 408.
+Package textcomp Info: Setting ptmj sub-encoding to TS1/4 on input line 409.
+) (./user_manual.aux)
 \openout1 = `user_manual.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 26.
@@ -446,7 +601,15 @@ LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 26.
 LaTeX Font Info:    ... okay on input line 26.
 LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 26.
 LaTeX Font Info:    ... okay on input line 26.
- (/usr/share/texmf-dist/tex/context/base/supp-pdf.mkii
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 26.
+LaTeX Font Info:    Try loading font information for TS1+cmr on input line 26.
+
+(/usr/share/texmf-dist/tex/latex/base/ts1cmr.fd
+File: ts1cmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    ... okay on input line 26.
+
+(/usr/share/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count108
 \scratchdimen=\dimen133
@@ -554,13 +717,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 91--94
 \OT1/cmr/bx/n/10 http://www.eclipse.org/legal/epl-v10.html
  []
 
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 98.
-(/usr/share/texmf-dist/tex/latex/base/omscmr.fd
-File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
-)
-LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 98.
- [4 <./img/cc_license_logo.jpg> <./img/osi_logo.jpg>]
+[4 <./img/cc_license_logo.jpg> <./img/osi_logo.jpg>]
 Underfull \hbox (badness 10000) in paragraph at lines 108--109
 
  []
@@ -727,7 +884,7 @@ Package pdftex.def Info: img/properties_class_node.png used on input line 217.
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 [4 <./img/data_model_manager.png>]
-<img/class_attribute_details.png, id=63, 340.27126pt x 295.1025pt>
+<img/class_attribute_details.png, id=64, 340.27126pt x 295.1025pt>
 File: img/class_attribute_details.png Graphic file (type png)
 
 <use img/class_attribute_details.png>
@@ -735,14 +892,14 @@ Package pdftex.def Info: img/class_attribute_details.png used on input line 233
 .
 (pdftex.def)             Requested size: 170.71393pt x 148.05069pt.
  [5 <./img/properties_class_node.png> <./img/class_attribute_details.png>]
-<img/class_node_menu.png, id=68, 335.2525pt x 242.9075pt>
+<img/class_node_menu.png, id=69, 335.2525pt x 242.9075pt>
 File: img/class_node_menu.png Graphic file (type png)
 
 <use img/class_node_menu.png>
 Package pdftex.def Info: img/class_node_menu.png used on input line 249.
 (pdftex.def)             Requested size: 170.71393pt x 123.68843pt.
  [6 <./img/class_node_menu.png>]
-<img/containment_manager.png, id=73, 999.735pt x 740.7675pt>
+<img/containment_manager.png, id=74, 999.735pt x 740.7675pt>
 File: img/containment_manager.png Graphic file (type png)
 
 <use img/containment_manager.png>
@@ -753,14 +910,14 @@ File: img/icon_refresh_cache.png Graphic file (type png)
 Package pdftex.def Info: img/icon_refresh_cache.png used on input line 273.
 (pdftex.def)             Requested size: 14.22636pt x 13.8417pt.
  [7 <./img/containment_manager.png>] [8]
-<img/navigation_tree.png, id=81, 343.2825pt x 220.825pt>
+<img/navigation_tree.png, id=82, 343.2825pt x 220.825pt>
 File: img/navigation_tree.png Graphic file (type png)
 
 <use img/navigation_tree.png>
 Package pdftex.def Info: img/navigation_tree.png used on input line 283.
 (pdftex.def)             Requested size: 170.71393pt x 109.81581pt.
 
-<img/navigation_tree_properties.png, id=82, 429.605pt x 354.32375pt>
+<img/navigation_tree_properties.png, id=83, 429.605pt x 354.32375pt>
 File: img/navigation_tree_properties.png Graphic file (type png)
 
 <use img/navigation_tree_properties.png>
@@ -772,7 +929,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 280--295
 
  []
 
-<img/navigation_tree_context_menu.png, id=83, 481.8pt x 312.16624pt>
+<img/navigation_tree_context_menu.png, id=84, 481.8pt x 312.16624pt>
 File: img/navigation_tree_context_menu.png Graphic file (type png)
 
 <use img/navigation_tree_context_menu.png>
@@ -784,7 +941,7 @@ e 299.
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 [9 <./img/navigation_tree.png> <./img/navigation_tree_properties.png>]
-<img/action_show_object_id.png, id=90, 934.49126pt x 126.4725pt>
+<img/action_show_object_id.png, id=91, 934.49126pt x 126.4725pt>
 File: img/action_show_object_id.png Graphic file (type png)
 
 <use img/action_show_object_id.png>
@@ -792,7 +949,7 @@ Package pdftex.def Info: img/action_show_object_id.png used on input line 317.
 (pdftex.def)             Requested size: 426.79135pt x 57.7612pt.
  [10 <./img/navigation_tree_context_menu.png> <./img/action_show_object_id.png>
 ]
-<img/navigation_tree_relationship_explorer.png, id=96, 321.2pt x 248.93pt>
+<img/navigation_tree_relationship_explorer.png, id=97, 321.2pt x 248.93pt>
 File: img/navigation_tree_relationship_explorer.png Graphic file (type png)
 
 <use img/navigation_tree_relationship_explorer.png>
@@ -800,7 +957,7 @@ Package pdftex.def Info: img/navigation_tree_relationship_explorer.png used on
 input line 334.
 (pdftex.def)             Requested size: 170.71393pt x 132.3045pt.
 
-<img/navigation_tree_special_children_explorer.png, id=97, 277.035pt x 262.9825
+<img/navigation_tree_special_children_explorer.png, id=98, 277.035pt x 262.9825
 pt>
 File: img/navigation_tree_special_children_explorer.png Graphic file (type png)
 
@@ -809,484 +966,698 @@ Package pdftex.def Info: img/navigation_tree_special_children_explorer.png used
  on input line 341.
 (pdftex.def)             Requested size: 128.0387pt x 121.54323pt.
  [11 <./img/navigation_tree_relationship_explorer.png> <./img/navigation_tree_s
-pecial_children_explorer.png>] [12] <img/default_view.png, id=105, 881.2925pt x
- 507.8975pt>
+pecial_children_explorer.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 349--350
+
+ []
+
+<img/list_type_own_type.png, id=103, 210.7875pt x 145.54375pt>
+File: img/list_type_own_type.png Graphic file (type png)
+
+<use img/list_type_own_type.png>
+Package pdftex.def Info: img/list_type_own_type.png used on input line 354.
+(pdftex.def)             Requested size: 128.0387pt x 88.40845pt.
+File: img/icon_list_type_manager.png Graphic file (type png)
+ <use img/icon_list_type_manager.png>
+Package pdftex.def Info: img/icon_list_type_manager.png used on input line 358.
+
+(pdftex.def)             Requested size: 14.22636pt x 15.01634pt.
+
+<img/list_type_list_type_items.png, id=104, 242.9075pt x 289.08pt>
+File: img/list_type_list_type_items.png Graphic file (type png)
+
+<use img/list_type_list_type_items.png>
+Package pdftex.def Info: img/list_type_list_type_items.png used on input line 3
+61.
+(pdftex.def)             Requested size: 128.0387pt x 152.37357pt.
+ [12 <./img/list_type_own_type.png> <./img/list_type_list_type_items.png>]
+File: img/icon_refresh_cache.png Graphic file (type png)
+ <use img/icon_refresh_cache.png>
+Package pdftex.def Info: img/icon_refresh_cache.png used on input line 369.
+(pdftex.def)             Requested size: 14.22636pt x 13.8417pt.
+
+<img/list_type_applied_types.png, id=109, 306.14375pt x 243.91125pt>
+File: img/list_type_applied_types.png Graphic file (type png)
+
+<use img/list_type_applied_types.png>
+Package pdftex.def Info: img/list_type_applied_types.png used on input line 375
+.
+(pdftex.def)             Requested size: 170.71393pt x 136.00876pt.
+ [13 <./img/list_type_applied_types.png>]
+<img/default_view.png, id=114, 881.2925pt x 507.8975pt>
 File: img/default_view.png Graphic file (type png)
 
 <use img/default_view.png>
-Package pdftex.def Info: img/default_view.png used on input line 356.
+Package pdftex.def Info: img/default_view.png used on input line 386.
 (pdftex.def)             Requested size: 384.1096pt x 221.36763pt.
 
-<img/room_plan.png, id=106, 860.21375pt x 518.93875pt>
+<img/room_plan.png, id=115, 860.21375pt x 518.93875pt>
 File: img/room_plan.png Graphic file (type png)
  <use img/room_plan.png>
-Package pdftex.def Info: img/room_plan.png used on input line 364.
+Package pdftex.def Info: img/room_plan.png used on input line 394.
 (pdftex.def)             Requested size: 298.75264pt x 180.22974pt.
 
-<img/default_view_toolbar.png, id=107, 513.92pt x 37.13875pt>
+<img/default_view_toolbar.png, id=116, 513.92pt x 37.13875pt>
 File: img/default_view_toolbar.png Graphic file (type png)
 
 <use img/default_view_toolbar.png>
-Package pdftex.def Info: img/default_view_toolbar.png used on input line 372.
+Package pdftex.def Info: img/default_view_toolbar.png used on input line 402.
 (pdftex.def)             Requested size: 256.07741pt x 18.50584pt.
- [13 <./img/default_view.png> <./img/room_plan.png>] <img/icon_add_background.p
-ng, id=111, 27.10126pt x 26.0975pt>
+ [14 <./img/default_view.png> <./img/room_plan.png>] <img/icon_add_background.p
+ng, id=120, 27.10126pt x 26.0975pt>
 File: img/icon_add_background.png Graphic file (type png)
 
 <use img/icon_add_background.png>
-Package pdftex.def Info: img/icon_add_background.png used on input line 380.
+Package pdftex.def Info: img/icon_add_background.png used on input line 410.
 (pdftex.def)             Requested size: 14.22636pt x 13.69939pt.
 
-<img/icon_remove_background.png, id=112, 30.1125pt x 28.105pt>
+<img/icon_remove_background.png, id=121, 30.1125pt x 28.105pt>
 File: img/icon_remove_background.png Graphic file (type png)
 
 <use img/icon_remove_background.png>
-Package pdftex.def Info: img/icon_remove_background.png used on input line 382.
+Package pdftex.def Info: img/icon_remove_background.png used on input line 412.
 
 (pdftex.def)             Requested size: 14.22636pt x 13.27795pt.
 
-<img/icon_format_text.png, id=113, 30.1125pt x 28.105pt>
+<img/icon_format_text.png, id=122, 30.1125pt x 28.105pt>
 File: img/icon_format_text.png Graphic file (type png)
 
 <use img/icon_format_text.png>
-Package pdftex.def Info: img/icon_format_text.png used on input line 384.
+Package pdftex.def Info: img/icon_format_text.png used on input line 414.
 (pdftex.def)             Requested size: 14.22636pt x 13.27795pt.
 File: img/icon_add_background.png Graphic file (type png)
  <use img/icon_add_background.png>
-Package pdftex.def Info: img/icon_add_background.png used on input line 386.
+Package pdftex.def Info: img/icon_add_background.png used on input line 416.
 (pdftex.def)             Requested size: 14.22636pt x 13.69939pt.
 
-<img/icon_toggle_labels.png, id=114, 30.1125pt x 28.105pt>
+<img/icon_toggle_labels.png, id=123, 30.1125pt x 28.105pt>
 File: img/icon_toggle_labels.png Graphic file (type png)
 
 <use img/icon_toggle_labels.png>
-Package pdftex.def Info: img/icon_toggle_labels.png used on input line 388.
+Package pdftex.def Info: img/icon_toggle_labels.png used on input line 418.
 (pdftex.def)             Requested size: 14.22636pt x 13.27795pt.
 
-<img/icon_save_view.png, id=115, 25.09375pt x 26.0975pt>
-File: img/icon_save_view.png Graphic file (type png)
-
-<use img/icon_save_view.png>
-Package pdftex.def Info: img/icon_save_view.png used on input line 390.
+<img/icon_save.png, id=124, 25.09375pt x 26.0975pt>
+File: img/icon_save.png Graphic file (type png)
+ <use img/icon_save.png>
+Package pdftex.def Info: img/icon_save.png used on input line 420.
 (pdftex.def)             Requested size: 14.22636pt x 14.79567pt.
 File: img/icon_add_background.png Graphic file (type png)
- <use img/icon_add_background.png>
-Package pdftex.def Info: img/icon_add_background.png used on input line 392.
+
+<use img/icon_add_background.png>
+Package pdftex.def Info: img/icon_add_background.png used on input line 422.
 (pdftex.def)             Requested size: 14.22636pt x 13.69939pt.
 
-<img/icon_select_tool.png, id=116, 30.1125pt x 34.1275pt>
+<img/icon_select_tool.png, id=125, 30.1125pt x 34.1275pt>
 File: img/icon_select_tool.png Graphic file (type png)
 
 <use img/icon_select_tool.png>
-Package pdftex.def Info: img/icon_select_tool.png used on input line 394.
+Package pdftex.def Info: img/icon_select_tool.png used on input line 424.
 (pdftex.def)             Requested size: 14.22636pt x 16.12323pt.
 
-<img/icon_connect_tool.png, id=117, 27.10126pt x 26.0975pt>
+<img/icon_connect_tool.png, id=126, 27.10126pt x 26.0975pt>
 File: img/icon_connect_tool.png Graphic file (type png)
 
 <use img/icon_connect_tool.png>
-Package pdftex.def Info: img/icon_connect_tool.png used on input line 396.
+Package pdftex.def Info: img/icon_connect_tool.png used on input line 426.
 (pdftex.def)             Requested size: 14.22636pt x 13.69939pt.
 
-<img/icon_export.png, id=118, 26.0975pt x 25.09375pt>
+<img/icon_export.png, id=127, 26.0975pt x 25.09375pt>
 File: img/icon_export.png Graphic file (type png)
 
 <use img/icon_export.png>
-Package pdftex.def Info: img/icon_export.png used on input line 398.
+Package pdftex.def Info: img/icon_export.png used on input line 428.
 (pdftex.def)             Requested size: 14.22636pt x 13.67944pt.
 
-<img/icon_refresh_view.png, id=119, 25.09375pt x 24.09pt>
+<img/icon_refresh_view.png, id=128, 25.09375pt x 24.09pt>
 File: img/icon_refresh_view.png Graphic file (type png)
 
 <use img/icon_refresh_view.png>
-Package pdftex.def Info: img/icon_refresh_view.png used on input line 400.
+Package pdftex.def Info: img/icon_refresh_view.png used on input line 430.
 (pdftex.def)             Requested size: 14.22636pt x 13.65753pt.
 
-<img/icon_view_type.png, id=120, 93.34875pt x 21.07875pt>
+<img/icon_view_type.png, id=129, 93.34875pt x 21.07875pt>
 File: img/icon_view_type.png Graphic file (type png)
 
 <use img/icon_view_type.png>
-Package pdftex.def Info: img/icon_view_type.png used on input line 402.
+Package pdftex.def Info: img/icon_view_type.png used on input line 432.
 (pdftex.def)             Requested size: 14.22636pt x 3.21216pt.
 
-<img/rack_view_combobox.png, id=121, 202.7575pt x 55.20625pt>
+<img/rack_view_combobox.png, id=130, 202.7575pt x 55.20625pt>
 File: img/rack_view_combobox.png Graphic file (type png)
 
 <use img/rack_view_combobox.png>
-Package pdftex.def Info: img/rack_view_combobox.png used on input line 410.
+Package pdftex.def Info: img/rack_view_combobox.png used on input line 440.
 (pdftex.def)             Requested size: 85.35696pt x 23.24121pt.
 
-<img/error_rack_view_not_rackunits.png, id=122, 461.725pt x 89.33376pt>
+<img/error_rack_view_not_rackunits.png, id=131, 461.725pt x 89.33376pt>
 File: img/error_rack_view_not_rackunits.png Graphic file (type png)
 
 <use img/error_rack_view_not_rackunits.png>
 Package pdftex.def Info: img/error_rack_view_not_rackunits.png used on input li
-ne 420.
+ne 450.
 (pdftex.def)             Requested size: 256.07741pt x 49.54536pt.
 
-<img/rack_view_attributes_contained_element.png, id=123, 324.21124pt x 271.0125
+<img/rack_view_attributes_contained_element.png, id=132, 324.21124pt x 271.0125
 pt>
 File: img/rack_view_attributes_contained_element.png Graphic file (type png)
  <use img/rack_view_attributes_contained_element.png>
 Package pdftex.def Info: img/rack_view_attributes_contained_element.png used on
- input line 427.
+ input line 457.
 (pdftex.def)             Requested size: 170.71393pt x 142.70135pt.
- [14 <./img/default_view_toolbar.png> <./img/icon_add_background.png> <./img/ic
+ [15 <./img/default_view_toolbar.png> <./img/icon_add_background.png> <./img/ic
 on_remove_background.png> <./img/icon_format_text.png> <./img/icon_toggle_label
-s.png> <./img/icon_save_view.png> <./img/icon_select_tool.png> <./img/icon_conn
-ect_tool.png> <./img/icon_export.png> <./img/icon_refresh_view.png> <./img/icon
-_view_type.png> <./img/rack_view_combobox.png> <./img/error_rack_view_not_racku
-nits.png>]
-<img/rack_view_sample_view.png, id=139, 958.58125pt x 620.3175pt>
+s.png> <./img/icon_save.png> <./img/icon_select_tool.png> <./img/icon_connect_t
+ool.png> <./img/icon_export.png> <./img/icon_refresh_view.png> <./img/icon_view
+_type.png> <./img/rack_view_combobox.png> <./img/error_rack_view_not_rackunits.
+png>]
+<img/rack_view_sample_view.png, id=149, 958.58125pt x 620.3175pt>
 File: img/rack_view_sample_view.png Graphic file (type png)
 
 <use img/rack_view_sample_view.png>
-Package pdftex.def Info: img/rack_view_sample_view.png used on input line 441.
+Package pdftex.def Info: img/rack_view_sample_view.png used on input line 471.
 (pdftex.def)             Requested size: 384.1096pt x 248.56747pt.
- [15 <./img/rack_view_attributes_contained_element.png> <./img/rack_view_sample
+ [16 <./img/rack_view_attributes_contained_element.png> <./img/rack_view_sample
 _view.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 448--449
+Underfull \hbox (badness 10000) in paragraph at lines 478--479
 
  []
 
 File: img/icon_connect_tool.png Graphic file (type png)
 <use img/icon_connect_tool.png>
-Package pdftex.def Info: img/icon_connect_tool.png used on input line 465.
+Package pdftex.def Info: img/icon_connect_tool.png used on input line 495.
 (pdftex.def)             Requested size: 14.22636pt x 13.69939pt.
 
-<img/icon_wire_container.png, id=145, 25.09375pt x 27.10126pt>
+<img/icon_wire_container.png, id=154, 25.09375pt x 27.10126pt>
 File: img/icon_wire_container.png Graphic file (type png)
 
 <use img/icon_wire_container.png>
-Package pdftex.def Info: img/icon_wire_container.png used on input line 467.
+Package pdftex.def Info: img/icon_wire_container.png used on input line 497.
 (pdftex.def)             Requested size: 14.22636pt x 15.36475pt.
 
-<img/icon_wireless_container.png, id=146, 24.09pt x 25.09375pt>
+<img/icon_wireless_container.png, id=155, 24.09pt x 25.09375pt>
 File: img/icon_wireless_container.png Graphic file (type png)
 
 <use img/icon_wireless_container.png>
-Package pdftex.def Info: img/icon_wireless_container.png used on input line 469
+Package pdftex.def Info: img/icon_wireless_container.png used on input line 499
 .
 (pdftex.def)             Requested size: 14.22636pt x 14.81895pt.
 
-<img/icon_electrical_link.png, id=147, 26.0975pt x 28.105pt>
+<img/icon_electrical_link.png, id=156, 26.0975pt x 28.105pt>
 File: img/icon_electrical_link.png Graphic file (type png)
 
 <use img/icon_electrical_link.png>
-Package pdftex.def Info: img/icon_electrical_link.png used on input line 471.
+Package pdftex.def Info: img/icon_electrical_link.png used on input line 501.
 (pdftex.def)             Requested size: 14.22636pt x 15.32098pt.
 
-<img/icon_optical_link.png, id=148, 24.09pt x 25.09375pt>
+<img/icon_optical_link.png, id=157, 24.09pt x 25.09375pt>
 File: img/icon_optical_link.png Graphic file (type png)
 
 <use img/icon_optical_link.png>
-Package pdftex.def Info: img/icon_optical_link.png used on input line 473.
+Package pdftex.def Info: img/icon_optical_link.png used on input line 503.
 (pdftex.def)             Requested size: 14.22636pt x 14.81895pt.
 
-<img/icon_wireless_link.png, id=149, 25.09375pt x 27.10126pt>
+<img/icon_wireless_link.png, id=158, 25.09375pt x 27.10126pt>
 File: img/icon_wireless_link.png Graphic file (type png)
 
 <use img/icon_wireless_link.png>
-Package pdftex.def Info: img/icon_wireless_link.png used on input line 475.
+Package pdftex.def Info: img/icon_wireless_link.png used on input line 505.
 (pdftex.def)             Requested size: 14.22636pt x 15.36475pt.
 
-<img/l1_example_1.png, id=150, 534.99875pt x 180.675pt>
+<img/l1_example_1.png, id=159, 534.99875pt x 180.675pt>
 File: img/l1_example_1.png Graphic file (type png)
 
 <use img/l1_example_1.png>
-Package pdftex.def Info: img/l1_example_1.png used on input line 484.
+Package pdftex.def Info: img/l1_example_1.png used on input line 514.
 (pdftex.def)             Requested size: 213.39568pt x 72.06746pt.
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<img/l1_example_1_layout.png, id=151, 240.9pt x 193.72375pt>
+<img/l1_example_1_layout.png, id=160, 240.9pt x 193.72375pt>
 File: img/l1_example_1_layout.png Graphic file (type png)
 
 <use img/l1_example_1_layout.png>
-Package pdftex.def Info: img/l1_example_1_layout.png used on input line 492.
+Package pdftex.def Info: img/l1_example_1_layout.png used on input line 522.
 (pdftex.def)             Requested size: 128.0387pt x 102.96573pt.
- [16 <./img/icon_wire_container.png> <./img/icon_wireless_container.png> <./img
+ [17 <./img/icon_wire_container.png> <./img/icon_wireless_container.png> <./img
 /icon_electrical_link.png> <./img/icon_optical_link.png> <./img/icon_wireless_l
 ink.png>]
-<img/l1_example_1_initial_view.png, id=161, 654.445pt x 279.0425pt>
+<img/l1_example_1_initial_view.png, id=169, 654.445pt x 279.0425pt>
 File: img/l1_example_1_initial_view.png Graphic file (type png)
 
 <use img/l1_example_1_initial_view.png>
 Package pdftex.def Info: img/l1_example_1_initial_view.png used on input line 5
-00.
+30.
 (pdftex.def)             Requested size: 341.43437pt x 145.5798pt.
- [17 <./img/l1_example_1.png> <./img/l1_example_1_layout.png> <./img/l1_example
+ [18 <./img/l1_example_1.png> <./img/l1_example_1_layout.png> <./img/l1_example
 _1_initial_view.png>]
-<img/l1_example_1_electrical_link_type.png, id=165, 324.21124pt x 240.9pt>
+<img/l1_example_1_electrical_link_type.png, id=173, 324.21124pt x 240.9pt>
 File: img/l1_example_1_electrical_link_type.png Graphic file (type png)
 
 <use img/l1_example_1_electrical_link_type.png>
 Package pdftex.def Info: img/l1_example_1_electrical_link_type.png used on inpu
-t line 509.
+t line 539.
 (pdftex.def)             Requested size: 170.71393pt x 126.84564pt.
 
-<img/l1_example_1_new_connection.png, id=166, 779.91376pt x 298.11375pt>
+<img/l1_example_1_new_connection.png, id=174, 779.91376pt x 298.11375pt>
 File: img/l1_example_1_new_connection.png Graphic file (type png)
 
 <use img/l1_example_1_new_connection.png>
 Package pdftex.def Info: img/l1_example_1_new_connection.png used on input line
- 516.
+ 546.
 (pdftex.def)             Requested size: 341.43437pt x 130.50632pt.
 
-<img/l1_example_1_endpoints.png, id=167, 829.0975pt x 394.47375pt>
+<img/l1_example_1_endpoints.png, id=175, 829.0975pt x 394.47375pt>
 File: img/l1_example_1_endpoints.png Graphic file (type png)
 
 <use img/l1_example_1_endpoints.png>
-Package pdftex.def Info: img/l1_example_1_endpoints.png used on input line 523.
+Package pdftex.def Info: img/l1_example_1_endpoints.png used on input line 553.
 
 (pdftex.def)             Requested size: 341.43437pt x 162.44554pt.
 
-<img/l1_example_1_basic_info.png, id=168, 586.19pt x 296.10625pt>
+<img/l1_example_1_basic_info.png, id=176, 586.19pt x 296.10625pt>
 File: img/l1_example_1_basic_info.png Graphic file (type png)
 
 <use img/l1_example_1_basic_info.png>
-Package pdftex.def Info: img/l1_example_1_basic_info.png used on input line 530
+Package pdftex.def Info: img/l1_example_1_basic_info.png used on input line 560
 .
 (pdftex.def)             Requested size: 213.39568pt x 107.79097pt.
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<img/l1_example_1_final.png, id=169, 552.0625pt x 545.03625pt>
+<img/l1_example_1_final.png, id=177, 552.0625pt x 545.03625pt>
 File: img/l1_example_1_final.png Graphic file (type png)
 
 <use img/l1_example_1_final.png>
-Package pdftex.def Info: img/l1_example_1_final.png used on input line 539.
+Package pdftex.def Info: img/l1_example_1_final.png used on input line 569.
 (pdftex.def)             Requested size: 256.07741pt x 252.8238pt.
- [18 <./img/l1_example_1_electrical_link_type.png> <./img/l1_example_1_new_conn
+ [19 <./img/l1_example_1_electrical_link_type.png> <./img/l1_example_1_new_conn
 ection.png> <./img/l1_example_1_endpoints.png>]
-File: img/icon_save_view.png Graphic file (type png)
-<use img/icon_save_view.png>
-Package pdftex.def Info: img/icon_save_view.png used on input line 544.
+File: img/icon_save.png Graphic file (type png)
+<use img/icon_save.png>
+Package pdftex.def Info: img/icon_save.png used on input line 574.
 (pdftex.def)             Requested size: 14.22636pt x 14.79567pt.
 
-<img/l1_example_2.png, id=176, 894.34125pt x 346.29375pt>
+<img/l1_example_2.png, id=184, 894.34125pt x 346.29375pt>
 File: img/l1_example_2.png Graphic file (type png)
 
 <use img/l1_example_2.png>
-Package pdftex.def Info: img/l1_example_2.png used on input line 551.
+Package pdftex.def Info: img/l1_example_2.png used on input line 581.
 (pdftex.def)             Requested size: 341.43437pt x 132.20593pt.
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[19 <./img/l1_example_1_basic_info.png> <./img/l1_example_1_final.png>]
-<img/l1_example_2_layout.png, id=181, 349.305pt x 394.47375pt>
+[20 <./img/l1_example_1_basic_info.png> <./img/l1_example_1_final.png>]
+<img/l1_example_2_layout.png, id=189, 349.305pt x 394.47375pt>
 File: img/l1_example_2_layout.png Graphic file (type png)
 
 <use img/l1_example_2_layout.png>
-Package pdftex.def Info: img/l1_example_2_layout.png used on input line 559.
+Package pdftex.def Info: img/l1_example_2_layout.png used on input line 589.
 (pdftex.def)             Requested size: 170.71393pt x 192.78821pt.
 
-<img/l1_example_2_initial_view.png, id=182, 943.525pt x 740.7675pt>
+<img/l1_example_2_initial_view.png, id=190, 943.525pt x 740.7675pt>
 File: img/l1_example_2_initial_view.png Graphic file (type png)
 
 <use img/l1_example_2_initial_view.png>
 Package pdftex.def Info: img/l1_example_2_initial_view.png used on input line 5
-68.
+98.
 (pdftex.def)             Requested size: 426.79135pt x 335.08298pt.
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[20 <./img/l1_example_2.png> <./img/l1_example_2_layout.png>]
-<img/l1_example_1_wire_container_type.png, id=186, 163.61125pt x 40.15pt>
+[21 <./img/l1_example_2.png> <./img/l1_example_2_layout.png>]
+<img/l1_example_1_wire_container_type.png, id=195, 163.61125pt x 40.15pt>
 File: img/l1_example_1_wire_container_type.png Graphic file (type png)
 
 <use img/l1_example_1_wire_container_type.png>
 Package pdftex.def Info: img/l1_example_1_wire_container_type.png used on input
- line 576.
+ line 606.
 (pdftex.def)             Requested size: 85.35696pt x 20.9461pt.
 
-<img/l1_example_2_endpoints.png, id=187, 882.29625pt x 310.15875pt>
+<img/l1_example_2_endpoints.png, id=196, 882.29625pt x 310.15875pt>
 File: img/l1_example_2_endpoints.png Graphic file (type png)
 
 <use img/l1_example_2_endpoints.png>
-Package pdftex.def Info: img/l1_example_2_endpoints.png used on input line 583.
+Package pdftex.def Info: img/l1_example_2_endpoints.png used on input line 613.
 
 (pdftex.def)             Requested size: 341.43437pt x 120.02435pt.
- [21 <./img/l1_example_2_initial_view.png> <./img/l1_example_1_wire_container_t
+ [22 <./img/l1_example_2_initial_view.png> <./img/l1_example_1_wire_container_t
 ype.png> <./img/l1_example_2_endpoints.png>] <img/l1_example_2_basic_info.png, 
-id=194, 602.25pt x 336.25626pt>
+id=202, 602.25pt x 336.25626pt>
 File: img/l1_example_2_basic_info.png Graphic file (type png)
 
 <use img/l1_example_2_basic_info.png>
-Package pdftex.def Info: img/l1_example_2_basic_info.png used on input line 590
+Package pdftex.def Info: img/l1_example_2_basic_info.png used on input line 620
 .
 (pdftex.def)             Requested size: 256.07741pt x 142.98141pt.
 
-<img/l1_example_2_final.png, id=195, 900.36375pt x 707.64375pt>
+<img/l1_example_2_final.png, id=203, 900.36375pt x 707.64375pt>
 File: img/l1_example_2_final.png Graphic file (type png)
 
 <use img/l1_example_2_final.png>
-Package pdftex.def Info: img/l1_example_2_final.png used on input line 597.
+Package pdftex.def Info: img/l1_example_2_final.png used on input line 627.
 (pdftex.def)             Requested size: 426.79135pt x 335.44322pt.
 
-<img/l1_example_2_container_context_menu.png, id=196, 247.92625pt x 182.6825pt>
+<img/l1_example_2_container_context_menu.png, id=204, 247.92625pt x 182.6825pt>
 File: img/l1_example_2_container_context_menu.png Graphic file (type png)
 <use img/l1_example_2_container_context_menu.png>
 Package pdftex.def Info: img/l1_example_2_container_context_menu.png used on in
-put line 604.
+put line 634.
 (pdftex.def)             Requested size: 128.0387pt x 94.34315pt.
- [22 <./img/l1_example_2_basic_info.png> <./img/l1_example_2_final.png>]
-<img/l1_example_2_connect_links.png, id=202, 1003.75pt x 479.7925pt>
+ [23 <./img/l1_example_2_basic_info.png> <./img/l1_example_2_final.png>]
+<img/l1_example_2_connect_links.png, id=210, 1003.75pt x 479.7925pt>
 File: img/l1_example_2_connect_links.png Graphic file (type png)
 
 <use img/l1_example_2_connect_links.png>
 Package pdftex.def Info: img/l1_example_2_connect_links.png used on input line 
-611.
+641.
 (pdftex.def)             Requested size: 426.79135pt x 204.00793pt.
 
-<img/l1_example_2_links_in_container.png, id=203, 333.245pt x 432.61626pt>
+<img/l1_example_2_links_in_container.png, id=211, 333.245pt x 432.61626pt>
 File: img/l1_example_2_links_in_container.png Graphic file (type png)
 
 <use img/l1_example_2_links_in_container.png>
 Package pdftex.def Info: img/l1_example_2_links_in_container.png used on input 
-line 623.
+line 653.
 (pdftex.def)             Requested size: 128.0387pt x 166.2178pt.
 
-<img/l1_example_2_container_relationships.png, id=204, 333.245pt x 155.58125pt>
+<img/l1_example_2_container_relationships.png, id=212, 333.245pt x 155.58125pt>
 File: img/l1_example_2_container_relationships.png Graphic file (type png)
 <use img/l1_example_2_container_relationships.png>
 Package pdftex.def Info: img/l1_example_2_container_relationships.png used on i
-nput line 629.
+nput line 659.
 (pdftex.def)             Requested size: 170.71393pt x 79.70148pt.
 
-<img/l1_example_2_patch_a.png, id=205, 432.61626pt x 124.465pt>
+<img/l1_example_2_patch_a.png, id=213, 432.61626pt x 124.465pt>
 File: img/l1_example_2_patch_a.png Graphic file (type png)
 
 <use img/l1_example_2_patch_a.png>
-Package pdftex.def Info: img/l1_example_2_patch_a.png used on input line 636.
+Package pdftex.def Info: img/l1_example_2_patch_a.png used on input line 666.
 (pdftex.def)             Requested size: 213.39568pt x 61.3948pt.
 
-<img/l1_example_2_patch_b.png, id=206, 405.515pt x 112.42pt>
+<img/l1_example_2_patch_b.png, id=214, 405.515pt x 112.42pt>
 File: img/l1_example_2_patch_b.png Graphic file (type png)
 
 <use img/l1_example_2_patch_b.png>
-Package pdftex.def Info: img/l1_example_2_patch_b.png used on input line 637.
+Package pdftex.def Info: img/l1_example_2_patch_b.png used on input line 667.
 (pdftex.def)             Requested size: 213.39568pt x 59.16032pt.
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[23 <./img/l1_example_2_container_context_menu.png> <./img/l1_example_2_connect
+[24 <./img/l1_example_2_container_context_menu.png> <./img/l1_example_2_connect
 _links.png>]
 File: img/icon_optical_link.png Graphic file (type png)
  <use img/icon_optical_link.png>
-Package pdftex.def Info: img/icon_optical_link.png used on input line 642.
+Package pdftex.def Info: img/icon_optical_link.png used on input line 672.
 (pdftex.def)             Requested size: 14.22636pt x 14.81895pt.
 File: img/icon_electrical_link.png Graphic file (type png)
 
 <use img/icon_electrical_link.png>
-Package pdftex.def Info: img/icon_electrical_link.png used on input line 642.
+Package pdftex.def Info: img/icon_electrical_link.png used on input line 672.
 (pdftex.def)             Requested size: 14.22636pt x 15.32098pt.
 
-<img/l1_example_2_mirror_connection_menu.png, id=212, 428.60126pt x 387.4475pt>
+<img/l1_example_2_mirror_connection_menu.png, id=220, 428.60126pt x 387.4475pt>
 File: img/l1_example_2_mirror_connection_menu.png Graphic file (type png)
 <use img/l1_example_2_mirror_connection_menu.png>
 Package pdftex.def Info: img/l1_example_2_mirror_connection_menu.png used on in
-put line 647.
+put line 677.
 (pdftex.def)             Requested size: 213.39568pt x 192.90741pt.
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[24 <./img/l1_example_2_links_in_container.png> <./img/l1_example_2_container_r
+[25 <./img/l1_example_2_links_in_container.png> <./img/l1_example_2_container_r
 elationships.png> <./img/l1_example_2_patch_a.png> <./img/l1_example_2_patch_b.
 png>]
-<img/l1_example_2_mirror_connection_details.png, id=218, 487.8225pt x 131.49126
+<img/l1_example_2_mirror_connection_details.png, id=226, 487.8225pt x 131.49126
 pt>
 File: img/l1_example_2_mirror_connection_details.png Graphic file (type png)
  <use img/l1_example_2_mirror_connection_details.png>
 Package pdftex.def Info: img/l1_example_2_mirror_connection_details.png used on
- input line 655.
+ input line 685.
 (pdftex.def)             Requested size: 213.39568pt x 57.52126pt.
 
-<img/l1_example_2_mirror_connection_relationships.png, id=219, 314.17375pt x 24
+<img/l1_example_2_mirror_connection_relationships.png, id=227, 314.17375pt x 24
 9.93375pt>
 File: img/l1_example_2_mirror_connection_relationships.png Graphic file (type p
 ng)
  <use img/l1_example_2_mirror_connection_relationships.png>
 Package pdftex.def Info: img/l1_example_2_mirror_connection_relationships.png u
-sed on input line 663.
+sed on input line 693.
 (pdftex.def)             Requested size: 170.71393pt x 135.80502pt.
 
-<img/l1_example_2_mirror_connection_release.png, id=220, 244.915pt x 57.21375pt
+<img/l1_example_2_mirror_connection_release.png, id=228, 244.915pt x 57.21375pt
 >
 File: img/l1_example_2_mirror_connection_release.png Graphic file (type png)
  <use img/l1_example_2_mirror_connection_release.png>
 Package pdftex.def Info: img/l1_example_2_mirror_connection_release.png used on
- input line 671.
+ input line 701.
 (pdftex.def)             Requested size: 128.0387pt x 29.91107pt.
 
-<img/l1_example_2_physical_path_menu.png, id=221, 244.915pt x 77.28876pt>
+<img/l1_example_2_physical_path_menu.png, id=229, 244.915pt x 77.28876pt>
 File: img/l1_example_2_physical_path_menu.png Graphic file (type png)
 
 <use img/l1_example_2_physical_path_menu.png>
 Package pdftex.def Info: img/l1_example_2_physical_path_menu.png used on input 
-line 680.
+line 710.
 (pdftex.def)             Requested size: 128.0387pt x 40.40619pt.
 
-<img/l1_example_2_physical_path_list.png, id=222, 337.26pt x 243.91125pt>
+<img/l1_example_2_physical_path_list.png, id=230, 337.26pt x 243.91125pt>
 File: img/l1_example_2_physical_path_list.png Graphic file (type png)
 
 <use img/l1_example_2_physical_path_list.png>
 Package pdftex.def Info: img/l1_example_2_physical_path_list.png used on input 
-line 687.
+line 717.
 (pdftex.def)             Requested size: 170.71393pt x 123.46263pt.
- [25 <./img/l1_example_2_mirror_connection_menu.png> <./img/l1_example_2_mirror
+ [26 <./img/l1_example_2_mirror_connection_menu.png> <./img/l1_example_2_mirror
 _connection_details.png> <./img/l1_example_2_mirror_connection_relationships.pn
 g> <./img/l1_example_2_mirror_connection_release.png>]
-<img/icon_physical_path_graphical.png, id=229, 33.12375pt x 34.1275pt>
+<img/icon_physical_path_graphical.png, id=237, 33.12375pt x 34.1275pt>
 File: img/icon_physical_path_graphical.png Graphic file (type png)
 
 <use img/icon_physical_path_graphical.png>
 Package pdftex.def Info: img/icon_physical_path_graphical.png used on input lin
-e 692.
+e 722.
 (pdftex.def)             Requested size: 14.22636pt x 14.65733pt.
 
-<img/l1_example_2_physical_path_view.png, id=230, 1080.035pt x 365.365pt>
+<img/l1_example_2_physical_path_view.png, id=238, 1080.035pt x 365.365pt>
 File: img/l1_example_2_physical_path_view.png Graphic file (type png)
 
 <use img/l1_example_2_physical_path_view.png>
 Package pdftex.def Info: img/l1_example_2_physical_path_view.png used on input 
-line 695.
+line 725.
 (pdftex.def)             Requested size: 469.47308pt x 158.81541pt.
 
-Overfull \hbox (42.68173pt too wide) in paragraph at lines 695--696
+Overfull \hbox (42.68173pt too wide) in paragraph at lines 725--726
  [][] 
  []
 
-[26 <./img/l1_example_2_physical_path_menu.png> <./img/l1_example_2_physical_pa
+[27 <./img/l1_example_2_physical_path_menu.png> <./img/l1_example_2_physical_pa
 th_list.png> <./img/icon_physical_path_graphical.png> <./img/l1_example_2_physi
-cal_path_view.png>] [27] [28] [29] [30] [31] (./user_manual.aux) ) 
+cal_path_view.png>] [28]
+<img/audit_trail_general_events.png, id=248, 1131.22626pt x 741.77126pt>
+File: img/audit_trail_general_events.png Graphic file (type png)
+
+<use img/audit_trail_general_events.png>
+Package pdftex.def Info: img/audit_trail_general_events.png used on input line 
+738.
+(pdftex.def)             Requested size: 426.79135pt x 279.84999pt.
+File: img/icon_audit_trail.png Graphic file (type png)
+ <use img/icon_audit_trail.png>
+Package pdftex.def Info: img/icon_audit_trail.png used on input line 743.
+(pdftex.def)             Requested size: 14.22636pt x 12.80347pt.
+File: img/icon_export.png Graphic file (type png)
+
+<use img/icon_export.png>
+Package pdftex.def Info: img/icon_export.png used on input line 747.
+(pdftex.def)             Requested size: 14.22636pt x 13.67944pt.
+
+<img/icon_retrieve_all.png, id=249, 33.12375pt x 34.1275pt>
+File: img/icon_retrieve_all.png Graphic file (type png)
+
+<use img/icon_retrieve_all.png>
+Package pdftex.def Info: img/icon_retrieve_all.png used on input line 749.
+(pdftex.def)             Requested size: 14.22636pt x 14.65733pt.
+
+<img/icon_previous_page.png, id=250, 34.1275pt x 33.12375pt>
+File: img/icon_previous_page.png Graphic file (type png)
+
+<use img/icon_previous_page.png>
+Package pdftex.def Info: img/icon_previous_page.png used on input line 751.
+(pdftex.def)             Requested size: 14.22636pt x 13.80775pt.
+
+<img/icon_next_page.png, id=251, 34.1275pt x 33.12375pt>
+File: img/icon_next_page.png Graphic file (type png)
+
+<use img/icon_next_page.png>
+Package pdftex.def Info: img/icon_next_page.png used on input line 753.
+(pdftex.def)             Requested size: 14.22636pt x 13.80775pt.
+
+<img/audit_trail_menu_option.png, id=252, 403.5075pt x 316.18124pt>
+File: img/audit_trail_menu_option.png Graphic file (type png)
+
+<use img/audit_trail_menu_option.png>
+Package pdftex.def Info: img/audit_trail_menu_option.png used on input line 761
+.
+(pdftex.def)             Requested size: 213.39568pt x 167.21341pt.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[29 <./img/audit_trail_general_events.png> <./img/icon_retrieve_all.png> <./img
+/icon_previous_page.png> <./img/icon_next_page.png>]
+<img/audit_trail_object_related_events.png, id=257, 804.00375pt x 177.66376pt>
+File: img/audit_trail_object_related_events.png Graphic file (type png)
+
+<use img/audit_trail_object_related_events.png>
+Package pdftex.def Info: img/audit_trail_object_related_events.png used on inpu
+t line 769.
+(pdftex.def)             Requested size: 426.79135pt x 94.30772pt.
+ [30 <./img/audit_trail_menu_option.png> <./img/audit_trail_object_related_even
+ts.png>]
+File: img/icon_topology_designer.png Graphic file (type png)
+
+<use img/icon_topology_designer.png>
+Package pdftex.def Info: img/icon_topology_designer.png used on input line 775.
+
+(pdftex.def)             Requested size: 14.22636pt x 15.01634pt.
+
+<img/icon_new_element.png, id=263, 31.11626pt x 33.12375pt>
+File: img/icon_new_element.png Graphic file (type png)
+
+<use img/icon_new_element.png>
+Package pdftex.def Info: img/icon_new_element.png used on input line 779.
+(pdftex.def)             Requested size: 14.22636pt x 15.1446pt.
+
+<img/icon_open.png, id=264, 33.12375pt x 33.12375pt>
+File: img/icon_open.png Graphic file (type png)
+ <use img/icon_open.png>
+Package pdftex.def Info: img/icon_open.png used on input line 781.
+(pdftex.def)             Requested size: 14.22636pt x 14.22624pt.
+File: img/icon_save.png Graphic file (type png)
+
+<use img/icon_save.png>
+Package pdftex.def Info: img/icon_save.png used on input line 783.
+(pdftex.def)             Requested size: 14.22636pt x 14.79567pt.
+ <img/icon_delete.png, id=265, 34.1275pt x 33.12375pt>
+File: img/icon_delete.png Graphic file (type png)
+
+<use img/icon_delete.png>
+Package pdftex.def Info: img/icon_delete.png used on input line 785.
+(pdftex.def)             Requested size: 14.22636pt x 13.80775pt.
+File: img/icon_export.png Graphic file (type png)
+ <use img/icon_export.png>
+Package pdftex.def Info: img/icon_export.png used on input line 787.
+(pdftex.def)             Requested size: 14.22636pt x 13.67944pt.
+File: img/icon_select_tool.png Graphic file (type png)
+
+<use img/icon_select_tool.png>
+Package pdftex.def Info: img/icon_select_tool.png used on input line 789.
+(pdftex.def)             Requested size: 14.22636pt x 16.12323pt.
+File: img/icon_connect_tool.png Graphic file (type png)
+ <use img/icon_connect_tool.png>
+Package pdftex.def Info: img/icon_connect_tool.png used on input line 791.
+(pdftex.def)             Requested size: 14.22636pt x 13.69939pt.
+
+<img/icon_cloud.png, id=266, 33.12375pt x 33.12375pt>
+File: img/icon_cloud.png Graphic file (type png)
+ <use img/icon_cloud.png>
+Package pdftex.def Info: img/icon_cloud.png used on input line 793.
+(pdftex.def)             Requested size: 14.22636pt x 14.22624pt.
+
+<img/icon_frame.png, id=267, 33.12375pt x 34.1275pt>
+File: img/icon_frame.png Graphic file (type png)
+ <use img/icon_frame.png>
+Package pdftex.def Info: img/icon_frame.png used on input line 795.
+(pdftex.def)             Requested size: 14.22636pt x 14.65733pt.
+File: img/icon_add_background.png Graphic file (type png)
+
+<use img/icon_add_background.png>
+Package pdftex.def Info: img/icon_add_background.png used on input line 797.
+(pdftex.def)             Requested size: 14.22636pt x 13.69939pt.
+File: img/icon_remove_background.png Graphic file (type png)
+ <use img/icon_remove_background.png>
+Package pdftex.def Info: img/icon_remove_background.png used on input line 799.
+
+(pdftex.def)             Requested size: 14.22636pt x 13.27795pt.
+
+<img/topology_designer_initial_view.png, id=268, 686.565pt x 340.27126pt>
+File: img/topology_designer_initial_view.png Graphic file (type png)
+
+<use img/topology_designer_initial_view.png>
+Package pdftex.def Info: img/topology_designer_initial_view.png used on input l
+ine 811.
+(pdftex.def)             Requested size: 256.07741pt x 126.91084pt.
+File: img/icon_cloud.png Graphic file (type png)
+ <use img/icon_cloud.png>
+Package pdftex.def Info: img/icon_cloud.png used on input line 816.
+(pdftex.def)             Requested size: 14.22636pt x 14.22624pt.
+File: img/icon_select_tool.png Graphic file (type png)
+
+<use img/icon_select_tool.png>
+Package pdftex.def Info: img/icon_select_tool.png used on input line 816.
+(pdftex.def)             Requested size: 14.22636pt x 16.12323pt.
+File: img/icon_frame.png Graphic file (type png)
+ <use img/icon_frame.png>
+Package pdftex.def Info: img/icon_frame.png used on input line 816.
+(pdftex.def)             Requested size: 14.22636pt x 14.65733pt.
+
+<img/topology_designer_extra_nodes.png, id=269, 708.6475pt x 335.2525pt>
+File: img/topology_designer_extra_nodes.png Graphic file (type png)
+
+<use img/topology_designer_extra_nodes.png>
+Package pdftex.def Info: img/topology_designer_extra_nodes.png used on input li
+ne 819.
+(pdftex.def)             Requested size: 341.43437pt x 161.5281pt.
+ [31 <./img/icon_new_element.png> <./img/icon_open.png> <./img/icon_delete.png>
+ <./img/icon_cloud.png> <./img/icon_frame.png> <./img/topology_designer_initial
+_view.png>]
+<img/topology_designer_connections.png, id=274, 980.66376pt x 486.81876pt>
+File: img/topology_designer_connections.png Graphic file (type png)
+
+<use img/topology_designer_connections.png>
+Package pdftex.def Info: img/topology_designer_connections.png used on input li
+ne 827.
+(pdftex.def)             Requested size: 426.79135pt x 211.86101pt.
+File: img/icon_save.png Graphic file (type png)
+ <use img/icon_save.png>
+Package pdftex.def Info: img/icon_save.png used on input line 832.
+(pdftex.def)             Requested size: 14.22636pt x 14.79567pt.
+File: img/icon_open.png Graphic file (type png)
+
+<use img/icon_open.png>
+Package pdftex.def Info: img/icon_open.png used on input line 832.
+(pdftex.def)             Requested size: 14.22636pt x 14.22624pt.
+ [32 <./img/topology_designer_extra_nodes.png> <./img/topology_designer_connect
+ions.png>] [33] [34] [35] (./user_manual.aux) ) 
 Here is how much of TeX's memory you used:
- 3371 strings out of 493054
- 54987 string characters out of 6140586
- 117091 words of memory out of 5000000
- 6745 multiletter control sequences out of 15000+600000
- 8241 words of font info for 29 fonts, out of 8000000 for 9000
+ 3972 strings out of 493054
+ 65147 string characters out of 6140586
+ 120373 words of memory out of 5000000
+ 7320 multiletter control sequences out of 15000+600000
+ 8576 words of font info for 30 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  42i,13n,32p,1370b,312s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/share/t
-exmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texmf-dist/font
-s/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-dist/fonts/type1/public
-/amsfonts/cm/cmr10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cm
-r12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/s
-hare/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texmf-dist/
-fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texmf-dist/fonts/type1/publ
-ic/amsfonts/cm/cmr8.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/c
-msy10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb>
-Output written on user_manual.pdf (35 pages, 1182197 bytes).
+{/usr/share/texmf-dist/fonts/enc
+/dvips/cm-super/cm-super-ts1.enc}</usr/share/texmf-dist/fonts/type1/public/amsf
+onts/cm/cmbx10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12
+.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/shar
+e/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-dist/fo
+nts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texmf-dist/fonts/type1/publi
+c/amsfonts/cm/cmr6.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cm
+r7.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/sha
+re/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-dist/
+fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/texmf-dist/fonts/type1/pu
+blic/cm-super/sfrm1000.pfb>
+Output written on user_manual.pdf (39 pages, 1387960 bytes).
 PDF statistics:
- 286 PDF objects out of 1000 (max. 8388607)
- 109 compressed objects within 2 object streams
+ 329 PDF objects out of 1000 (max. 8388607)
+ 124 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
- 406 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 491 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -8,14 +8,15 @@
 \contentsline {section}{Navigation Tree}{9}
 \contentsline {subsection}{Relationship and Special Children Explorer}{11}
 \contentsline {section}{List Type Manager}{12}
-\contentsline {section}{Default and Rack Views}{13}
-\contentsline {subsection}{Default View}{13}
-\contentsline {subsection}{Rack View}{14}
-\contentsline {section}{Physical Connections}{16}
-\contentsline {subsection}{Example 1}{16}
-\contentsline {subsection}{Example 2}{19}
-\contentsline {section}{SDH Networks Module}{27}
-\contentsline {section}{Audit Trail}{28}
-\contentsline {section}{Service Manager}{29}
-\contentsline {section}{Contract Manager}{30}
-\contentsline {section}{Task Manager Manager}{31}
+\contentsline {section}{Default and Rack Views}{14}
+\contentsline {subsection}{Default View}{14}
+\contentsline {subsection}{Rack View}{15}
+\contentsline {section}{Physical Connections}{17}
+\contentsline {subsection}{Example 1}{17}
+\contentsline {subsection}{Example 2}{20}
+\contentsline {section}{SDH Networks Module}{28}
+\contentsline {section}{Audit Trail}{29}
+\contentsline {section}{Topology Designer}{31}
+\contentsline {section}{Service Manager}{33}
+\contentsline {section}{Contract Manager}{34}
+\contentsline {section}{Task Manager}{35}

@@ -17,7 +17,7 @@
 \usepackage{verbatimbox}
 \usepackage[toc,page]{appendix}
 \usepackage{nameref}
-
+\usepackage{textcomp}
 %\usepackage{hyperref}
 
 %Modify some defaults
@@ -346,7 +346,37 @@
 	
 	\newpage
 	\section{List Type Manager} \label{sec:list_type_manager}
+	Most of the attributes are primitive types (String, Integer, Booleans, etc), however, there are some more complex that point to another object in the database. This is the case of attributes such as \textit{vendor}, which points to an object holding the information about the vendor of that equipment (support lines, account manager, etc) or \textit{state}, that refers to the current operational state of the equipment (Working, Not Working, Stored, etc) and the state itself is an object, because it may hold information about what's the next allowed states, for example. Many objects in the database will have the same \textit{vendor}, and many other will have the same \textit{state}. In short, list types are those kind of attributes that point to an element in a limited set of objects. In terms of relational databases, you can see it as a many-to-one kind of relationships. To manage the existing list types and its instances, use the \textbf{\nameref{sec:data_model_manager}} and the \textbf{\nameref{sec:list_type_manager}}. \newline
 	
+	To add new list types, add a subclass under GenericObjectList directly or any of its utility subclasses. List types are like any other class, you can customize them as needed.
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width=0.3\linewidth]{img/list_type_own_type.png}
+		\caption{Custom list type}
+		\label{fig:list_type_own_type}
+	\end{figure}
+	 To create list type items, use the button \includegraphics[width=0.5cm]{img/icon_list_type_manager.png} or the menu option Tools $\rightarrow$ List Type Manager. This module consists of a simple navigation tree similar to the one seen in the past chapter.
+	 \begin{figure}[h!]
+	 	\centering
+	 	\includegraphics[width=0.3\linewidth]{img/list_type_list_type_items.png}
+	 	\caption{Custom list type items}
+	 	\label{fig:list_type_list_type_items}
+	 \end{figure}
+	 
+	 By right-clicking and choosing \textit{New} on a selected list type, you can create new items. The details for every item can be edited using the standard Properties Window as seen in the past chapter. 
+	 \newpage
+	 \begin{framed} {\large \textbf{Important}}\\
+	 	If the changes are not immediately reflected when editing an object, use the Refresh Cache button  \includegraphics[width=0.5cm]{img/icon_refresh_cache.png} and update the object (Right-click the object node and select the option \textit{Update}).
+	 \end{framed}
+	 
+	 In the figure~\ref{fig:list_type_applied_types} you can see the properties of an object of class \textbf{Router} modified to have an attribute called \textit{myOwnAttribute} of type \textbf{MyOwnListType}.\newline
+	 \begin{figure}[h!]
+	 	\centering
+	 	\includegraphics[width=0.4\linewidth]{img/list_type_applied_types.png}
+	 	\caption{Object of class \textbf{Router} with a custom listy type attribute}
+	 	\label{fig:list_type_applied_types}
+	 \end{figure}
+	 
 	\newpage
 	\section{Default and Rack Views}
 	\subsection{Default View} \label{sec:default_view}
@@ -387,7 +417,7 @@
 				\midrule
 				\includegraphics[width=0.5cm]{img/icon_toggle_labels.png} & Hide/show the labels under the nodes\\
 				\midrule
-				\includegraphics[width=0.5cm]{img/icon_save_view.png} & Save view\\
+				\includegraphics[width=0.5cm]{img/icon_save.png} & Save view\\
 				\midrule
 				\includegraphics[width=0.5cm]{img/icon_add_background.png} & Add background\\
 				\midrule
@@ -541,7 +571,7 @@
 				\label{fig:l1_example_1_final}
 			\end{figure}
 			\begin{framed} {\large \textbf{Important}}\\
-				Don't forget to save the view using the icon \includegraphics[width=0.5cm]{img/icon_save_view.png} in the toolbar, so your positioning changes are stored.
+				Don't forget to save the view using the icon \includegraphics[width=0.5cm]{img/icon_save.png} in the toolbar, so your positioning changes are stored.
 			\end{framed}
 			
 		\subsection{Example 2}	
@@ -702,7 +732,105 @@
 	
 	\newpage
 	\section{Audit Trail} \label{sec:audit_trail}
+	Kuwaiba is capable of tracking the changes performed by the users in the database for audit purposes. These changes can be made to inventory objects (equipment, locations, etc) or application objects (pools, tasks, user properties). There are two types of events that are logged: \textbf{General events}, that is, those that are not related to any object in particular, like new logins or creation of application objects. \textbf{Object-related events}, like property changes or move operations.
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width=\linewidth]{img/audit_trail_general_events.png}
+		\caption{General events window}
+		\label{fig:audit_trail_general_events}
+	\end{figure}
 	
+	The figure~\ref{fig:audit_trail_general_events} shows the window displayed after pressing the \textbf{\nameref{sec:audit_trail}} button \includegraphics[width=0.5cm]{img/icon_audit_trail} (or selecting the menu option Tools $\rightarrow$ Audit Trail). It shows the general events, paginated and chronologically sorted from the oldest to the newest event.
+	\begin{table}[h!]
+		\centering
+		\begin{tabular}{lp{10cm}}
+			\includegraphics[width=0.5cm]{img/icon_export.png} & Export to CSV file \\
+			\midrule
+			\includegraphics[width=0.5cm]{img/icon_retrieve_all.png} & Retrieve all log entries (may take some time depending on the number of records) \\
+			\midrule
+			\includegraphics[width=0.5cm]{img/icon_previous_page.png} & Previous page \\
+			\midrule
+			\includegraphics[width=0.5cm]{img/icon_next_page.png} & Next page \\
+		\end{tabular}
+		\caption{Audit trail toolbar icons}
+	\end{table}
+	
+	The object-related audit trail window is very similar, but contains only the events related to the selected node. To see the audit trail, select a node in a tree or view, right-click on it and select the \textit{Audit Trail} option.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.5\linewidth]{img/audit_trail_menu_option.png}
+			\caption{Audit trail menu option}
+			\label{fig:audit_trail_menu_option}
+		\end{figure}
+		\newpage
+		The result is not paginated, but can be exported to a CSV file.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=\linewidth]{img/audit_trail_object_related_events.png}
+			\caption{\textbf{Router} object audit trail}
+			\label{fig:audit_trail_object_related_events}
+		\end{figure}
+	\newpage
+	\section{Topology Designer} \label{sec:topology_designer}
+		Use this module to make sketches of your network, but using the equipment already created in the inventory. Most people use applications like MS Power Point\texttrademark, MS Visio\texttrademark  or a CAD program for this, but here it is already integrated. Use the button \includegraphics[width=0.5cm]{img/icon_topology_designer.png} in the main toolbar to open the designer.
+		\begin{table}[h!]
+			\centering
+			\begin{tabular}{lp{10cm}}
+				\includegraphics[width=0.5cm]{img/icon_new_element.png} & New topology \\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_open.png} & Open topology \\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_save.png} & Save topology \\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_delete.png} & Delete topology/Clear canvas \\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_export.png} & Export topology to image file \\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_select_tool.png} & Select tool \\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_connect_tool.png} & Connect tool \\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_cloud.png} & Insert cloud \\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_frame.png} & Insert frame \\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_add_background.png} & Add background \\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_remove_background.png} & Remove background \\
+			\end{tabular}
+			\caption{Topology Designer toolbar icons}
+			\label{tab:topology_designer_icons}
+		\end{table}
+		\begin{framed} {\large \textbf{Important}}\\
+			The connections made using this module are not actual inventory objects (unlike those seen in the chapter \textbf{\nameref{sec:physical_connections}}), simply lines linking nodes.							
+		\end{framed}
+		
+		For starters, drag objects from the \textbf{\nameref{sec:navigation_tree}} onto the canvas of the view. You can add equipment (routers, switches, multiplexers) or locations (buildings, outdoor cabinets, poles, etc). If you have previously set the \textit{icon} of the classes the object you have dragged are instance of, it will be used, otherwise, a colored squared will be used instead to represent the nodes. In the figure~\ref{fig:topology_designer_initial_view} there are two routers and an object of class \textbf{ExternalEquipment}. 
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.6\linewidth]{img/topology_designer_initial_view.png}
+			\caption{Sample topology without connections}
+			\label{fig:topology_designer_initial_view}
+		\end{figure}
+		
+		You can add nodes that are not inventory objects, but that can help to decorate the topology. If you click the cloud button \includegraphics[width=0.5cm]{img/icon_cloud.png}, a cloud will be added to the topology. If the Selection tool is activated \includegraphics[width=0.5cm]{img/icon_select_tool.png}, drag the nodes to position them as needed. You can also add a frame by clicking the frame button \includegraphics[width=0.5cm]{img/icon_frame.png}. The name of the nodes can be changed by double-clicking them. The label of a frame can also be changed by double-clicking its border.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.8\linewidth]{img/topology_designer_extra_nodes.png}
+			\caption{Same topology, but adding a cloud and a frame}
+			\label{fig:topology_designer_extra_nodes}
+		\end{figure}
+		
+		To resize a frame, click on a corner and drag until you get the desired size. To create connections, select the Connection tool and link two nodes as you did in the \textbf{\nameref{sec:physical_connections}} chapter.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=\linewidth]{img/topology_designer_connections.png}
+			\caption{Topology with connections}
+			\label{fig:topology_designer_connections}
+		\end{figure}
+		
+		Don't forget to save the topology with pressing the Save button \includegraphics[width=0.5cm]{img/icon_save.png}. If saved, this topology can be loaded later using the Open button  \includegraphics[width=0.5cm]{img/icon_open.png}
+		
 	\newpage
 	\section{Service Manager} \label{sec:service_manager}
 	
@@ -710,5 +838,5 @@
 	\section{Contract Manager} \label{sec:contract_manager}
 	
 	\newpage
-	\section{Task Manager Manager} \label{sec:task_manager}
+	\section{Task Manager} \label{sec:task_manager}
 \end{document}
