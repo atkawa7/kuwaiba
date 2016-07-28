@@ -104,10 +104,10 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
         topologyViewActions = new TopologyViewActions(this);
         
         addChild(backgroundLayer);
+        addChild(framesLayer);
         addChild(edgeLayer);
         addChild(iconsLayer);
         addChild(nodeLayer);
-        addChild(framesLayer);
         
         resizeProvider = new CustomResizeProvider(this);
         moveProvider = new CustomMoveProvider(this);
@@ -403,7 +403,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
     protected Widget attachNodeWidget(LocalObjectLight node) {
         if (node.getName() == null || 
                 (!node.getName().contains(CLOUD_ICON) && 
-                !node.getName().contains(FREE_FRAME))) {
+                    !node.getName().contains(FREE_FRAME))) {
             
             IconNodeWidget newNode = new IconNodeWidget(this);
             nodeLayer.addChild(newNode);
