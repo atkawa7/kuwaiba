@@ -18,10 +18,14 @@ package org.inventory.design.topology;
 import java.util.Collections;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalObject;
+import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.design.topology.scene.TopologyViewScene;
+import static org.inventory.design.topology.scene.TopologyViewScene.FREE_FRAME;
+import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Lookup;
 
 /**
@@ -65,6 +69,21 @@ public class TopologyViewService {
         return theView;
     }
     
+    public boolean saveNodesOfCurrentView() {
+        for (LocalObjectLight lol : scene.getNodes()) {
+            if (!lol.getName().contains(TopologyViewScene.FREE_FRAME) && !lol.getName().contains(TopologyViewScene.CLOUD_ICON)) {
+                LocalObject update = new LocalObject(lol.getClassName(), lol.getOid(), new String[]{"name"}, new Object[]{lol.getName()});
+                if (!CommunicationsStub.getInstance().saveObject(update)) {
+                    NotificationUtil.getInstance().showSimplePopup("Error", 
+                            NotificationUtil.ERROR_MESSAGE, 
+                            CommunicationsStub.getInstance().getError());
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    
     public boolean saveCurrentView() {
         if (view == null || view.getId() == -1) { // a new view
             long newViewId = com.createGeneralView(CLASS_VIEW, view.getName(), 
@@ -78,16 +97,20 @@ public class TopologyViewService {
                         view.getDescription(), scene.getAsXML(), scene.getBackgroundImage());
                 
                 TopologyViewConfigurationObject configObject = Lookup.getDefault().lookup(TopologyViewConfigurationObject.class);
-                configObject.setProperty("saved", true);
-                return true;
+                
+                boolean savedNodes = saveNodesOfCurrentView();
+                configObject.setProperty("saved", savedNodes);
+                return savedNodes;
             }
         } 
         else {
             if (com.updateGeneralView(view.getId(), view.getName(), 
                     view.getDescription(), scene.getAsXML(), scene.getBackgroundImage())) {
                 TopologyViewConfigurationObject configObject = Lookup.getDefault().lookup(TopologyViewConfigurationObject.class);
-                configObject.setProperty("saved", true);
-                return true;
+                
+                boolean savedNodes = saveNodesOfCurrentView();
+                configObject.setProperty("saved", savedNodes);
+                return savedNodes;
             }
             else {
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
@@ -95,6 +118,8 @@ public class TopologyViewService {
             }
         }
     }
+    
+    //private void update
     
     public boolean deleteView() {
         if (view != null) {

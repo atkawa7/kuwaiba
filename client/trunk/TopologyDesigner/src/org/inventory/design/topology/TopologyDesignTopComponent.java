@@ -391,8 +391,6 @@ public final class TopologyDesignTopComponent extends TopComponent implements Ex
                     service.setView(actualView);
                     scene.render(actualView.getStructure());
                     scene.setBackgroundImage(actualView.getBackground());
-                    scene.fireChangeEvent(new ActionEvent(scene, TopologyViewScene.SCENE_CHANGE, "Add Background"));
-                    configObject.setProperty("saved", true);
                     configObject.setProperty("saved", true);
                     setHtmlDisplayName(getDisplayName());
                 }
@@ -511,10 +509,11 @@ public final class TopologyDesignTopComponent extends TopComponent implements Ex
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getID() == TopologyViewScene.SCENE_CHANGE) {
+        if (e.getID() == TopologyViewScene.SCENE_CHANGE) {
             if ((boolean)configObject.getProperty("saved"))
                 configObject.setProperty("saved", false);
-            setHtmlDisplayName(getDisplayName());
+            
+            setHtmlDisplayName(getHtmlDisplayName());
             toggleButtons(true);
         }
     }

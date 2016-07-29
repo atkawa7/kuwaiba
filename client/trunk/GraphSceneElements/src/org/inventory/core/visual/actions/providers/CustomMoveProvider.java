@@ -40,7 +40,7 @@ public class CustomMoveProvider implements MoveProvider, MoveStrategy {
 
     @Override
     public void movementFinished(Widget widget) {
-        scene.fireChangeEvent(new ActionEvent(scene, 0, "widgetMove"));
+        scene.fireChangeEvent(new ActionEvent(scene, AbstractScene.SCENE_CHANGE, "widgetMove"));
     }
 
     @Override

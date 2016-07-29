@@ -412,6 +412,31 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
             newNode.setLabel(node.toString());
             newNode.createActions(AbstractScene.ACTION_SELECT);
             newNode.createActions(AbstractScene.ACTION_CONNECT);
+            newNode.getActions().addAction(ActionFactory.createInplaceEditorAction(new TextFieldInplaceEditor() {
+
+                @Override
+                public boolean isEnabled(Widget widget) {
+                    return true;
+                }
+
+                @Override
+                public String getText(Widget widget) {
+                    if (widget instanceof IconNodeWidget) {
+                        LocalObjectLight lol = (LocalObjectLight)findObject(widget);
+                        return lol.getName();
+                    }
+                    return null;
+                }
+
+                @Override
+                public void setText(Widget widget, String label) {
+                    if(widget instanceof IconNodeWidget) {
+                        LocalObjectLight lol = (LocalObjectLight)findObject(widget);
+                        lol.setName(label);
+                        ((IconNodeWidget) widget).setLabel(lol.toString());
+                    }
+                }
+            }));
             
             newNode.getActions(ACTION_SELECT).addAction(selectAction);
             newNode.getActions(ACTION_SELECT).addAction(ActionFactory.createMoveAction(moveProvider, moveProvider));

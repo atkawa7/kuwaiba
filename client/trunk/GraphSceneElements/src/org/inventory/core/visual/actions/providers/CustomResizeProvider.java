@@ -39,7 +39,7 @@ public class CustomResizeProvider implements ResizeProvider, ResizeStrategy {
 
     @Override
     public void resizingFinished(Widget widget) {
-        scene.fireChangeEvent(new ActionEvent(scene, 0, "widgetResize"));
+        scene.fireChangeEvent(new ActionEvent(scene, AbstractScene.SCENE_CHANGE, "widgetResize"));
     }    
 
     @Override
