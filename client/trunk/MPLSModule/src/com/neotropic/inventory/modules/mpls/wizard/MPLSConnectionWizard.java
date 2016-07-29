@@ -55,7 +55,7 @@ public class MPLSConnectionWizard {
                     new ConnectionGeneralInfoStep((Connections)configObject.getProperty("connectionType")),
                     new ChooseConnectionEndpointsStep(equipmentA, equipmentB)});
         
-        initWizardDescriptor(wizardDescriptor, new String[] { "Choose the endpoints" });
+        initWizardDescriptor(wizardDescriptor, new String[] { "Set a connection name", "Choose the endpoints" });
         Dialog dialog = DialogDisplayer.getDefault().createDialog(wizardDescriptor);
 
         dialog.setVisible(true);
@@ -65,7 +65,6 @@ public class MPLSConnectionWizard {
         if (wizardDescriptor.getValue() == WizardDescriptor.FINISH_OPTION) {
             LocalObjectLight sourcePort = (LocalObjectLight)wizardDescriptor.getProperty("sourcePort");
             LocalObjectLight targetPort = (LocalObjectLight)wizardDescriptor.getProperty("targetPort");
-            //LocalClassMetadataLight connectionType = (LocalClassMetadataLight)wizardDescriptor.getProperty("connectionType");
             String connectionName = (String)wizardDescriptor.getProperty("connectionName");
             LocalObjectLight newTransportLink = com.createMPLSLink(sourcePort, targetPort, "MPLSLink", connectionName);
             if (newTransportLink == null) {
