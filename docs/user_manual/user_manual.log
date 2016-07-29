@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Arch Linux) (preloaded format=pdflatex 2016.7.22)  28 JUL 2016 01:32
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Arch Linux) (preloaded format=pdflatex 2016.7.22)  29 JUL 2016 03:30
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1634,30 +1634,145 @@ File: img/icon_open.png Graphic file (type png)
 Package pdftex.def Info: img/icon_open.png used on input line 832.
 (pdftex.def)             Requested size: 14.22636pt x 14.22624pt.
  [32 <./img/topology_designer_extra_nodes.png> <./img/topology_designer_connect
-ions.png>] [33] [34] [35] (./user_manual.aux) ) 
+ions.png>] [33]
+<img/contract_manager_new_contract_pool.png, id=283, 327.2225pt x 102.3825pt>
+File: img/contract_manager_new_contract_pool.png Graphic file (type png)
+
+<use img/contract_manager_new_contract_pool.png>
+Package pdftex.def Info: img/contract_manager_new_contract_pool.png used on inp
+ut line 842.
+(pdftex.def)             Requested size: 213.39568pt x 66.7681pt.
+
+<img/contract_manager_editing_properties.png, id=284, 396.48125pt x 479.7925pt>
+File: img/contract_manager_editing_properties.png Graphic file (type png)
+<use img/contract_manager_editing_properties.png>
+Package pdftex.def Info: img/contract_manager_editing_properties.png used on in
+put line 850.
+(pdftex.def)             Requested size: 170.71393pt x 206.58495pt.
+
+<img/contract_manager_service_providers.png, id=285, 149.55875pt x 40.15pt>
+File: img/contract_manager_service_providers.png Graphic file (type png)
+
+<use img/contract_manager_service_providers.png>
+Package pdftex.def Info: img/contract_manager_service_providers.png used on inp
+ut line 860.
+(pdftex.def)             Requested size: 85.35696pt x 22.91513pt.
+
+<img/contract_manager_associate_option.png, id=286, 335.2525pt x 261.97874pt>
+File: img/contract_manager_associate_option.png Graphic file (type png)
+
+<use img/contract_manager_associate_option.png>
+Package pdftex.def Info: img/contract_manager_associate_option.png used on inpu
+t line 868.
+(pdftex.def)             Requested size: 170.71393pt x 133.39952pt.
+
+<img/contract_manager_contract_list.png, id=287, 388.45125pt x 176.66pt>
+File: img/contract_manager_contract_list.png Graphic file (type png)
+
+<use img/contract_manager_contract_list.png>
+Package pdftex.def Info: img/contract_manager_contract_list.png used on input l
+ine 875.
+(pdftex.def)             Requested size: 170.71393pt x 77.63898pt.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<img/contract_manager_elements.png, id=288, 357.335pt x 74.2775pt>
+File: img/contract_manager_elements.png Graphic file (type png)
+
+<use img/contract_manager_elements.png>
+Package pdftex.def Info: img/contract_manager_elements.png used on input line 8
+83.
+(pdftex.def)             Requested size: 170.71393pt x 35.48505pt.
+ [34 <./img/contract_manager_new_contract_pool.png> <./img/contract_manager_edi
+ting_properties.png> <./img/contract_manager_service_providers.png>]
+<img/contract_manager_release_from_contract.png, id=294, 538.01pt x 300.12125pt
+>
+File: img/contract_manager_release_from_contract.png Graphic file (type png)
+ <use img/contract_manager_release_from_contract.png>
+Package pdftex.def Info: img/contract_manager_release_from_contract.png used on
+ input line 891.
+(pdftex.def)             Requested size: 256.07741pt x 142.84758pt.
+ [35 <./img/contract_manager_associate_option.png> <./img/contract_manager_cont
+ract_list.png> <./img/contract_manager_elements.png> <./img/contract_manager_re
+lease_from_contract.png>]
+File: img/icon_task_manager.png Graphic file (type png)
+<use img/icon_task_manager.png>
+Package pdftex.def Info: img/icon_task_manager.png used on input line 898.
+(pdftex.def)             Requested size: 14.22636pt x 13.8417pt.
+
+<img/task_manager_create_task.png, id=301, 205.76875pt x 60.225pt>
+File: img/task_manager_create_task.png Graphic file (type png)
+
+<use img/task_manager_create_task.png>
+Package pdftex.def Info: img/task_manager_create_task.png used on input line 90
+1.
+(pdftex.def)             Requested size: 128.0387pt x 37.4751pt.
+
+<img/task_manager_subscribe_users.png, id=302, 360.34625pt x 118.4425pt>
+File: img/task_manager_subscribe_users.png Graphic file (type png)
+
+<use img/task_manager_subscribe_users.png>
+Package pdftex.def Info: img/task_manager_subscribe_users.png used on input lin
+e 945.
+(pdftex.def)             Requested size: 128.0387pt x 42.08443pt.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<img/task_manager_add_parameter.png, id=303, 271.0125pt x 149.55875pt>
+File: img/task_manager_add_parameter.png Graphic file (type png)
+
+<use img/task_manager_add_parameter.png>
+Package pdftex.def Info: img/task_manager_add_parameter.png used on input line 
+953.
+(pdftex.def)             Requested size: 128.0387pt x 70.66003pt.
+ [36 <./img/task_manager_create_task.png>] <img/task_manager_property_sheet.png
+, id=308, 429.605pt x 376.40625pt>
+File: img/task_manager_property_sheet.png Graphic file (type png)
+
+<use img/task_manager_property_sheet.png>
+Package pdftex.def Info: img/task_manager_property_sheet.png used on input line
+ 961.
+(pdftex.def)             Requested size: 213.39568pt x 186.97354pt.
+
+<img/task_manager_execute_task.png, id=309, 1000.73875pt x 210.7875pt>
+File: img/task_manager_execute_task.png Graphic file (type png)
+
+<use img/task_manager_execute_task.png>
+Package pdftex.def Info: img/task_manager_execute_task.png used on input line 9
+69.
+(pdftex.def)             Requested size: 426.79135pt x 89.8971pt.
+ [37 <./img/task_manager_subscribe_users.png> <./img/task_manager_add_parameter
+.png> <./img/task_manager_property_sheet.png> <./img/task_manager_execute_task.
+png>] [38] [39] (./user_manual.aux) ) 
 Here is how much of TeX's memory you used:
- 3972 strings out of 493054
- 65147 string characters out of 6140586
- 120373 words of memory out of 5000000
- 7320 multiletter control sequences out of 15000+600000
+ 4044 strings out of 493054
+ 68033 string characters out of 6140586
+ 120816 words of memory out of 5000000
+ 7380 multiletter control sequences out of 15000+600000
  8576 words of font info for 30 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  42i,13n,32p,1370b,312s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/share/texmf-dist/fonts/enc
-/dvips/cm-super/cm-super-ts1.enc}</usr/share/texmf-dist/fonts/type1/public/amsf
-onts/cm/cmbx10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12
-.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/shar
-e/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-dist/fo
-nts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texmf-dist/fonts/type1/publi
-c/amsfonts/cm/cmr6.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cm
-r7.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/sha
-re/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-dist/
-fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/texmf-dist/fonts/type1/pu
-blic/cm-super/sfrm1000.pfb>
-Output written on user_manual.pdf (39 pages, 1387960 bytes).
+{/usr/share/texmf-dist/fonts/enc/dvips/cm-
+super/cm-super-ts1.enc}</usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cm
+bx10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr
+/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-di
+st/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-dist/fonts/type1/
+public/amsfonts/cm/cmr17.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts
+/cm/cmr5.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></u
+sr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texmf-d
+ist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texmf-dist/fonts/type1/
+public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfont
+s/cm/cmti10.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb
+>
+Output written on user_manual.pdf (43 pages, 1467722 bytes).
 PDF statistics:
- 329 PDF objects out of 1000 (max. 8388607)
- 124 compressed objects within 2 object streams
+ 367 PDF objects out of 1000 (max. 8388607)
+ 136 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
- 491 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 551 words of extra memory for PDF output out of 10000 (max. 10000000)
 

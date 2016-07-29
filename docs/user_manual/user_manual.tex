@@ -171,7 +171,7 @@
 			\midrule
 			\includegraphics[width=0.5cm]{img/icon_refresh_cache.png} & Refresh local cache\\
 			\midrule
-			\includegraphics[width=0.5cm]{img/icon_object_view.png} & Default view for an object. Also, the rack view for rack objects\\
+			\includegraphics[width=0.5cm]{img/icon_object_view.png} & Physical/Rack View of an object\\
 			\midrule
 			\includegraphics[width=0.5cm]{img/icon_task_manager.png} & Create automation tasks (beta version)\\
 			\midrule
@@ -379,20 +379,20 @@
 	 
 	\newpage
 	\section{Default and Rack Views}
-	\subsection{Default View} \label{sec:default_view}
-		A view is a graphical representation of an object. There are many types of views, because an object has different perspectives, for example, a service object may have a view showing all the resources associated to it, a second view showing how all those resources are connected and a third showing statistics about such service. All instances (objects) of subclasses of \textbf{ViewableObject} have a default view that displays the direct children of the selected node. Most objects, except logical and administrative assets and a few physical ones such as slots and ports are subclasses of \textbf{ViewableObject}. To access a default view, just open the Default View window (see \nameref{tab:toolbar_icons}) and select a node in the navigation tree.
+	\subsection{Physical View} \label{sec:default_view}
+		A view is a graphical representation of an object. There are many types of views, because an object has different perspectives, for example, a service object may have a view showing all the resources associated to it, a second view showing how all those resources are connected and a third showing statistics about such service. All instances (objects) of subclasses of \textbf{ViewableObject} have a Physical View that displays the direct children of the selected node. Most objects, except logical and administrative assets and a few physical ones such as slots and ports are subclasses of \textbf{ViewableObject}. To access this view, open the Physical View window (see \nameref{tab:toolbar_icons}) and select a node in the navigation tree.
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.9\linewidth]{img/default_view.png}
-			\caption{Default view of the selected \textbf{Country} object}
+			\caption{Physical View of the selected \textbf{Country} object}
 			\label{fig:default_view}
 		\end{figure}
 		
-		In the default view, you can move and connect the nodes, add a background and export the view. It is particularly useful at Room and City levels, because it will allow you to see how the children elements are located geographically (e.g. buildings) or in an enclosed space (racks in a data center as seen in figure~\ref{fig:room_plan}).	
+		In the Physical View, you can move and connect the nodes, add a background and export the view. It is particularly useful at Room and City levels, because it will allow you to see how the children elements are located geographically (e.g. buildings) or in an enclosed space (racks in a data center as seen in figure~\ref{fig:room_plan}).	
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.7\linewidth]{img/room_plan.png}
-			\caption{Default view of the selected \textbf{Room} object}
+			\caption{Physical View of the selected \textbf{Room} object}
 			\label{fig:room_plan}
 		\end{figure}
 		
@@ -400,7 +400,7 @@
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.6\linewidth]{img/default_view_toolbar.png}
-			\caption{Default view toolbar}
+			\caption{Physical View toolbar}
 			\label{fig:default_view_toolbar}
 		\end{figure}
 		
@@ -429,7 +429,7 @@
 				\midrule
 				\includegraphics[width=0.5cm]{img/icon_refresh_view.png} & Refresh view\\
 				\midrule
-				\includegraphics[width=0.5cm]{img/icon_view_type.png} & View type. Currently, only the default view and the rack view are available (see \textbf{\nameref{sec:rack_view}} for more details on the latter)\\
+				\includegraphics[width=0.5cm]{img/icon_view_type.png} & View type. Currently, only the Physical (default) and Rack view are available (see \textbf{\nameref{sec:rack_view}} for more details on the latter)\\
 			\end{tabular}
 		\end{table}
 		
@@ -475,7 +475,7 @@
 		
 	\newpage
 	\section{Physical Connections} \label{sec:physical_connections}
-		The Physical Connections toolkit is tightly integrated to the default view module. With Kuwaiba you can create physical layer connections using cables, fiber optics or radio links very easily, navigate through the connections and inspect the resources in use.\newline
+		The Physical Connections toolkit is tightly integrated to the Physical View module. With Kuwaiba you can create physical layer connections using cables, fiber optics or radio links very easily, navigate through the connections and inspect the resources in use.\newline
 		
 		Before presenting the tools provided by the application, let's first clarify and introduce some concepts. This module deals solely with L1 topologies. It's only about cables, ports, etc. The data model provides four types of entities to represent physical layer elements:
 		\begin{itemize}
@@ -836,7 +836,143 @@
 	
 	\newpage
 	\section{Contract Manager} \label{sec:contract_manager}
-	
+		This small module allows you to organize your contracts in pools and keep track of the expiration dates and service providers. To open it, use the menu option Tools $\rightarrow$ Advanced $\rightarrow$ Contract Manager.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.5\linewidth]{img/contract_manager_new_contract_pool.png}
+			\caption{Creating a Contract Pool}
+			\label{fig:contract_manager_new_contract_pool}
+		\end{figure}
+		
+		The contracts are stored in pools, so first, you need to create your contract structure. Right click on the root node and select \textit{New Contract Pool}. Then, inside the pools create the contracts you want, and set their properties.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.4\linewidth]{img/contract_manager_editing_properties.png}
+			\caption{Editing a contract}
+			\label{fig:contract_manager_editing_properties}
+		\end{figure}		
+		\begin{framed} {\large \textbf{Important}}\\
+			If you are editing a date, so it can be set correctly, instead of just hitting the Enter key, change the focus to other attribute in the property sheet (that is, select another property with the mouse).							
+		\end{framed}
+		To create a service provider for the contracts, go to the \textbf{\nameref{sec:list_type_manager}} and create an entry under \textbf{ServiceProvider}.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.2\linewidth]{img/contract_manager_service_providers.png}
+			\caption{New service provider}
+			\label{fig:contract_manager_service_providers}
+		\end{figure}
+		
+		Any inventory object can be subject to a contract. You can associate an element to an existing contract, right click on it ans select the option \textit{Associate to contract...} and select the desired one as shown in the figure~\ref{fig:contract_manager_contract_list}.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.4\linewidth]{img/contract_manager_associate_option.png}
+			\caption{Associate to contract option}
+			\label{fig:contract_manager_associate_option}
+		\end{figure}		
+		\newline
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.4\linewidth]{img/contract_manager_contract_list.png}
+			\caption{Contract list}
+			\label{fig:contract_manager_contract_list}
+		\end{figure}
+		
+		The new elements associated to a contract are also available in the Contract Manager window.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.4\linewidth]{img/contract_manager_elements.png}
+			\caption{Elements associated to a contract}
+			\label{fig:contract_manager_elements}
+		\end{figure}
+		
+		This association can be undone either from the \textbf{\nameref{sec:navigation_tree}} or the \textbf{Contract Manager} using the node's context menu.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.6\linewidth]{img/contract_manager_release_from_contract.png}
+			\caption{Removing the association}
+			\label{fig:contract_manager_release_from_contract}
+		\end{figure}
+		
 	\newpage
 	\section{Task Manager} \label{sec:task_manager}
+		The Task Manager is the early release of a complete automation and notification module. At this stage, you can create tasks, edit a script that will be executed and execute this task either on demand or associated to a Dashboard widget that will be loaded at user login time. To open the Task Manager, select the menu option Tools $\rightarrow$ Task Manager or press the button \includegraphics[width=0.5cm]{img/icon_task_manager.png} in the main toolbar.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.3\linewidth]{img/task_manager_create_task.png}
+			\caption{Creating a new task}
+			\label{fig:task_manager_create_task}
+		\end{figure}
+		Right-clicking the root node of the task tree will present a menu to create tasks. A task object has the following attributes
+		\begin{table}[h!]
+			\centering
+			\begin{tabular}{lp{10cm}}
+				\textbf{name} & The name of the task. \\
+				\midrule
+				\textbf{description} & The description of the task. \\
+				\midrule
+				\textbf{enabled} & Is this task enabled? \\
+				\midrule
+				\textbf{script} & The Groovy script to be executed by this task.\\
+				\midrule
+				\textbf{startTime} & The exact time and date this task shoud start its execution. Applicable only to tasks with \textit{executionType} set to Loop. 
+				\textbf{Not used yet}. \\
+				\midrule
+				\textbf{everyXMinutes} & After the start time, every how many minutes should this task be executed? Applicable only to tasks with \textit{executionType} set to Loop. \textbf{Not used yet}.\\
+				\textbf{executionType} & How should the task be executed.
+					\begin{itemize}
+						\item On Demand: Run only if the user executes it manually.
+						\item User Login: Run upon subscribed users login.
+						\item Loop: Run on a periodic basis, using the parameters described above.
+						\item System Startup: Run when the system goes up.
+					\end{itemize}
+					Currently, only \textit{On Demand} and \textit{User Login} are used\\
+				\midrule
+				\textbf{email} & The email of the person or group that will receive the notification. Optional. \textbf{Not used yet}.\\
+				\midrule
+				\textbf{notificationType} & What type of notification should the subscribed users receive?
+					\begin{itemize}
+						\item No Notification: No notification.
+						\item Client Managed: The client that executes the task decides how to notify.
+						\item Email: Send an email to the address described above.
+					\end{itemize}
+					\textbf{Not used yet}.
+			\end{tabular}
+		\end{table}
+		
+		It is possible to subscribe users, so that they receive notifications with the result of the execution. Right-click on the task node, select the option \textit{Subscribe users...} and pick a user from the list.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.3\linewidth]{img/task_manager_subscribe_users.png}
+			\caption{Subscribing a user}
+			\label{fig:task_manager_subscribe_users}
+		\end{figure}
+		
+		It is out of the scope of this document to teach how to code scripts, however, in the directory \textbf{scripts} of the client installer, you will find some samples to guide you through. It's important to note, though, that most of the times, the scripts will require input parameters. This parameters can be easily added to the task so the user can fill them in before to run the task. To create parameters, right-click the task node and select the option \textit{Add Parameter...}
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.3\linewidth]{img/task_manager_add_parameter.png}
+			\caption{Adding a parameter}
+			\label{fig:task_manager_add_parameter}
+		\end{figure}
+		
+		Once added, it will be immediately available in the property sheet, under the category \textit{Task Parameters}.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.5\linewidth]{img/task_manager_property_sheet.png}
+			\caption{Subscribing a user}
+			\label{fig:task_manager_property_sheet}
+		\end{figure}
+		
+		Tasks can also be executed on-demand. To do that, select the \textit{Execute Task} option from the task node's context menu.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=\linewidth]{img/task_manager_execute_task.png}
+			\caption{Task execution}
+			\label{fig:task_manager_execute_task}
+		\end{figure}
+		\begin{framed} {\large \textbf{Important}}\\
+			The full set of methods available in a script can be found at \\ \tiny{http://kuwaiba.org/javadoc/persistence/org/kuwaiba/apis/persistence/interfaces/ApplicationEntityManager.html}
+		\end{framed}
+	\newpage
+	\section{SDH Networks Module}	
 \end{document}

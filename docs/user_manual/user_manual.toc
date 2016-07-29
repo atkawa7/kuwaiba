@@ -9,7 +9,7 @@
 \contentsline {subsection}{Relationship and Special Children Explorer}{11}
 \contentsline {section}{List Type Manager}{12}
 \contentsline {section}{Default and Rack Views}{14}
-\contentsline {subsection}{Default View}{14}
+\contentsline {subsection}{Physical View}{14}
 \contentsline {subsection}{Rack View}{15}
 \contentsline {section}{Physical Connections}{17}
 \contentsline {subsection}{Example 1}{17}
@@ -19,4 +19,5 @@
 \contentsline {section}{Topology Designer}{31}
 \contentsline {section}{Service Manager}{33}
 \contentsline {section}{Contract Manager}{34}
-\contentsline {section}{Task Manager}{35}
+\contentsline {section}{Task Manager}{36}
+\contentsline {section}{SDH Networks Module}{39}
