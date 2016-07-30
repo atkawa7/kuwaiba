@@ -14,10 +14,9 @@
 \contentsline {section}{Physical Connections}{17}
 \contentsline {subsection}{Example 1}{17}
 \contentsline {subsection}{Example 2}{20}
-\contentsline {section}{SDH Networks Module}{28}
-\contentsline {section}{Audit Trail}{29}
-\contentsline {section}{Topology Designer}{31}
-\contentsline {section}{Service Manager}{33}
-\contentsline {section}{Contract Manager}{34}
-\contentsline {section}{Task Manager}{36}
-\contentsline {section}{SDH Networks Module}{39}
+\contentsline {section}{Audit Trail}{28}
+\contentsline {section}{Topology Designer}{30}
+\contentsline {section}{Service Manager}{32}
+\contentsline {section}{Contract Manager}{33}
+\contentsline {section}{Task Manager}{35}
+\contentsline {section}{SDH Networks}{38}

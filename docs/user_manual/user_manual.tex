@@ -18,6 +18,7 @@
 \usepackage[toc,page]{appendix}
 \usepackage{nameref}
 \usepackage{textcomp}
+\usepackage{pdflscape}
 %\usepackage{hyperref}
 
 %Modify some defaults
@@ -728,9 +729,6 @@
 			\end{figure}
 			The Properties window will be updated as you select any of the blocks. This view can also be updated.
 	\newpage
-	\section{SDH Networks Module} \label{sec:sdh_module}
-	
-	\newpage
 	\section{Audit Trail} \label{sec:audit_trail}
 	Kuwaiba is capable of tracking the changes performed by the users in the database for audit purposes. These changes can be made to inventory objects (equipment, locations, etc) or application objects (pools, tasks, user properties). There are two types of events that are logged: \textbf{General events}, that is, those that are not related to any object in particular, like new logins or creation of application objects. \textbf{Object-related events}, like property changes or move operations.
 	\begin{figure}[h!]
@@ -966,7 +964,7 @@
 		Tasks can also be executed on-demand. To do that, select the \textit{Execute Task} option from the task node's context menu.
 		\begin{figure}[h!]
 			\centering
-			\includegraphics[width=\linewidth]{img/task_manager_execute_task.png}
+			\includegraphics[width=1.1\linewidth]{img/task_manager_execute_task.png}
 			\caption{Task execution}
 			\label{fig:task_manager_execute_task}
 		\end{figure}
@@ -974,5 +972,201 @@
 			The full set of methods available in a script can be found at \\ \tiny{http://kuwaiba.org/javadoc/persistence/org/kuwaiba/apis/persistence/interfaces/ApplicationEntityManager.html}
 		\end{framed}
 	\newpage
-	\section{SDH Networks Module}	
+	\section{SDH Networks}
+		This module allows to create end-to-end virtual circuits and all other logical entities required by the SDH protocol\footnote{SDH Graphical Overview http://www.cisco.com/c/en/us/support/docs/optical/synchronous-digital-hierarchy-sdh/28327-sdh-28327.html}. Let's introduce some concepts first. See figure~\ref{fig:sdh_module_description} for sample connection that illustrate the following terms.
+		\begin{enumerate}
+			\item \textbf{TransportLink:} A point-to-point logical connection that represents a single STMX. By default, the \textbf{TransportLinks} included in Kuwaiba are SMT1, STM4, STM16, STM64 and STM256.
+			\item \textbf{ContainerLink:} It's a  logical connection that may or may not have multiple hops and connects ports within the boundaries of the transport network. A \textbf{ContainerLink} ends where at least one \textbf{TransporLink} ends, but in its path, the \textbf{ContainerLink} may have used many \textbf{TransportLinks}. In simple terms, a ContainerLink is an SDH virtual circuit. By default there are defined 5 types of ContainerLinks: VC12, VC3, VC4, VC4x4 and VC4x16. The latter two provide support for concatenation.
+			\item \textbf{TributaryLink:} Objects of this types are not circuits themselves, they rather use actual virtual circuits (ContainerLinks) and end in the ports where the SDH service is delivered to the customer (usually tributary ports).
+		\end{enumerate}
+		In short, Transport and ContainerLinks provide the foundations for the hierarchy, while the TributaryLinks provide information about where the circuits are delivered (that is, what are the endpoints of the connections). Detailed information about the data model portion devoted to SDH, read the document \textit{SDH Model and Tools}.
+		\newpage
+		\begin{landscape}
+			\begin{figure}
+				\centering
+				\includegraphics[width=\linewidth]{img/sdh_module_description.png}
+				\caption{Sample multi-hop SDH circuit and its relationships with services, customers and physical resources}
+				\label{fig:sdh_module_description}
+			\end{figure}
+		\end{landscape}
+		\newpage
+		To create an SDH topology, go to the menu option Tols $\rightarrow$ Advanced $\rightarrow$ SDH Networks. This will open an empty canvas similar to the \nameref{sec:topology_designer}.
+		\begin{table}[h!]
+			\centering
+			\begin{tabular}{lp{10cm}}
+				\includegraphics[width=0.5cm]{img/icon_new_element.png} & New topology \\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_open.png} & Open topology \\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_save.png} & Save topology \\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_delete.png} & Delete topology/Clear canvas \\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_export.png} & Export topology to image file \\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_select_tool.png} & Select tool \\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_connect_tool.png} & Connect tool \\
+				\midrule
+				\includegraphics[width=0.5cm]{img/sdh_module_transport_link.png} & Create a \textbf{TransportLink} \\
+				\midrule
+				\includegraphics[width=0.5cm]{img/sdh_module_container_link.png} & Create a \textbf{ContainerLink} \\
+				\midrule
+				\includegraphics[width=0.5cm]{img/sdh_module_tributary_link.png} & Create \textbf{TributaryLink} \\
+			\end{tabular}
+			\caption{SDH module toolbar icons}
+			\label{tab:sdh_module_icons}
+		\end{table}
+		
+		Drag and drop the equipment you need from the \nameref{sec:navigation_tree} and place them on the canvas.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=\linewidth]{img/sdh_module_initial_view.png}
+			\caption{Some routers and multiplexers in an SDH topology}
+			\label{fig:sdh_module_initial_view}
+		\end{figure}
+		
+		Let's consider this 4 equipment topology. What we are going to do, is to create a ring using STM-4 on one branch and SMT-1 on the other. We will create a VC12 between \textbf{SDH-87} and \textbf{Router 1}. Each equipment has the same board/port layout: Two boards, a tributary and an aggregate one, with two ports each.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.4\linewidth]{img/sdh_module_layout.png}
+			\caption{Port/board layout}
+			\label{fig:sdh_module_layout}
+		\end{figure}
+		
+		First, we have to create the most basic support, that is the TransportLinks (STMX). Use the Connect tool \includegraphics[width=0.5cm]{img/icon_connect_tool.png} and press the Create TransportLink button \includegraphics[width=0.5cm]{img/sdh_module_transport_link.png}. Then, just like the \nameref{sec:topology_designer} and the \nameref{sec:physical_connections}, drag a line from one equipment to the other. That will start a wizard.\newline
+		
+		To change the connection color, use the \nameref{sec:data_model_manager}. Select the class corresponding to the desired TransportLink and change the attribute \textit{color}.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.6\linewidth]{img/sdh_module_transport_link_color.png}
+			\caption{Changing the color for STM1 links}
+			\label{fig:sdh_module_transport_link_color}
+		\end{figure}
+		
+		The first step of the wizard will request for the basic information: name and type
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=\linewidth]{img/sdh_module_transport_link_step_1.png}
+			\caption{Creating a TransporLink, step 1}
+			\label{fig:sdh_module_transport_link_step_1}
+		\end{figure}
+		\newpage
+		The second will request for the the connection endpoints, which will always be aggregate ports.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=\linewidth]{img/sdh_module_transport_link_step_2.png}
+			\caption{Creating a TransporLink, step 2}
+			\label{fig:sdh_module_transport_link_step_2}
+		\end{figure}
+		
+		After repeating the procedure three more time, the ring will be finished. In the figure~\ref{fig:sdh_module_ring}, the SMT4 links are colored light purple, while the SMT1 ones are blue.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.7\linewidth]{img/sdh_module_ring.png}
+			\caption{SDH ring}
+			\label{fig:sdh_module_ring}
+		\end{figure}
+		\newpage
+		The next level in the hierarchy is the set of structured high-order circuits (VC4) that will contain the E1s that we will add later. We will create three VC4: One long, \textbf{from SDH-87} to \textbf{Router 1}, other short, from \textbf{SDH-87} to \textbf{Router 2}, and finally another short between \textbf{Router 2} and \textbf{Router 1}. This will provide two paths to route the E1s later on. To create the VC4 connections (a.k.a. ContainerLinks), we will leave the Connection tool selected and press the \textit{Create ContainerLink} button \includegraphics[width=0.5cm]{img/sdh_module_container_link.png}. To create the first ContainerLink, let's drag a line between the \textbf{SDH-87} and the \textbf{Router 1}. That will start a wizard.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=\linewidth]{img/sdh_module_container_link_step_1.png}
+			\caption{New ContainerLink, step 1}
+			\label{fig:sdh_module_container_link_step_1}
+		\end{figure}
+		
+		Again, the first step is about basic information: Container name and type. We will create a simple VC4. The next step is about routes. You will find two routes. In the center panel, the detail of the chosen route will be displayed.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=\linewidth]{img/sdh_module_container_link_step_2.png}
+			\caption{New ContainerLink, step 2}
+			\label{fig:sdh_module_container_link_step_2}
+		\end{figure}
+		\newpage
+		For this example, we're going to use the lower branch composed by the STM1 TransportLinks. The next step will ask you to define what timeslots will you use from each TransportLink in the route(figure~\ref{fig:sdh_module_container_link_step_3}). Since the TransportLinks are STM1, there will be only one slot available. To select the timeslot, double-click the desired STM, and select the timeslot from the list (figure~\ref{fig:sdh_module_container_link_step_3_2}).
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=\linewidth]{img/sdh_module_container_link_step_3.png}
+			\caption{New ContainerLink, step 3}
+			\label{fig:sdh_module_container_link_step_3}
+		\end{figure}
+		\newpage
+		This list will be populated with the available timeslots, but besides, it will inform you what timelots are already in use and who's using them.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.7\linewidth]{img/sdh_module_container_link_step_3_2.png}
+			\caption{New ContainerLink, step 2}
+			\label{fig:sdh_module_container_link_step_3_2}
+		\end{figure}
+		
+		Note that after choosing a timeslot the label next to the STM's name will change from \textit{NA} to the number you chose. It's not necessary to select any endpoint ports, since they're taken from the underlying TransportLinks. Once created, you won't see anything different in the view, since the only connections to be displayed are the TransportLinks.\newline
+		
+		The last step is to create a TributaryLink, that is, the actual E1 to be delivered. For that, we have to press the Create Tributary button \includegraphics[width=0.5cm]{img/sdh_module_tributary_link.png}. As usual, drag a line between the end equipment, in this case, SDH-87 and Router 1. This will open another wizard.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=\linewidth]{img/sdh_module_tributary_link_step_1.png}
+			\caption{New TributaryLink, step 1}
+			\label{fig:sdh_module_tributary_link_step_1}
+		\end{figure}
+		
+		In the next step, it's requested to pick a route. Note that the STM4-based route won't be offered, as it doesn't have ContainerLinks to transport the TributaryLink.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=\linewidth]{img/sdh_module_tributary_link_step_2.png}
+			\caption{New TributaryLink, step 2}
+			\label{fig:sdh_module_tributary_link_step_2}
+		\end{figure}
+		\newpage
+		The third step consists of choosing the timeslot in the ContainerLink (VC4)
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=\linewidth]{img/sdh_module_tributary_link_step_3.png}
+			\caption{New TributaryLink, step 3}
+			\label{fig:sdh_module_tributary_link_step_3}
+		\end{figure}
+
+		Again, by double-clicking the ContainerLink, you can pick a timeslot
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.5\linewidth]{img/sdh_module_tributary_link_step_3_2.png}
+			\caption{Picking a timeslot from all the available ones in the ContainerLink(VC4)}
+			\label{fig:sdh_module_tributary_link_step_3_2}
+		\end{figure}
+		
+		The next step is choosing the endpoints. For this example, we're going to end the SDH connection in a tributary port of a PDHBoard. It, of course, could end in any port of any board, however this is the most common scenario.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=\linewidth]{img/sdh_module_tributary_link_step_4.png}
+			\caption{Picking a timeslot from all the available ones in the ContainerLink(VC4)}
+			\label{fig:sdh_module_tributary_link_step_4}
+		\end{figure}
+		\newpage
+		Finally, as an option, you can associate the newly created TributaryLink to a service instance. Note that this list will be populated \textbf{only} with objects of subclasses of \textbf{GenericSDHService} previously created in the \nameref{sec:service_manager}, as seen in the figure~\ref{fig:sdh_module_tributary_link_service_report}.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.7\linewidth]{img/sdh_module_tributary_link_step_5.png}
+			\caption{Optionally, relating the circuit to a service}
+			\label{fig:sdh_module_tributary_link_step_5}
+		\end{figure}
+		
+		To see the resources used by the circuit, right-click on it either in the search results or the service manager and select the option Reports $\rightarrow$ TributaryLink Resources.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=\linewidth]{img/sdh_module_tributary_link_service_report.png}
+			\caption{SDH service in the \nameref{sec:service_manager} and report execution}
+			\label{fig:sdh_module_tributary_link_service_report}
+		\end{figure}
+		
+		The result shows the timeslots, TransportLinks involved, end ports, services associated and optionally, demarcation points (next physically connected ports, usually in an ODF/DDF)
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=\linewidth]{img/sdh_module_tributary_link_report.png}
+			\caption{Report results (zoom in to read better)}
+			\label{fig:sdh_module_tributary_link_report}
+			\end{figure}
+		
+		\begin{framed} {\large \textbf{Important}}\\
+			As an exercise for the reader, create Container and TributaryLinks using the alternate STM4-based route.
+		\end{framed}	
 \end{document}
