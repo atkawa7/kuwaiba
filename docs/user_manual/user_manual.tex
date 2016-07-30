@@ -1169,4 +1169,432 @@
 		\begin{framed} {\large \textbf{Important}}\\
 			As an exercise for the reader, create Container and TributaryLinks using the alternate STM4-based route.
 		\end{framed}	
+		
+		\newpage
+		\section{IP Address Manager}\label{sec_ipam_manager}
+		The IP Address manager(IPAM) let you store and manage your subnets and their IP Addresses, kuwaiba let you integrate your IPAM to the whole network inventory allowing to relate the created subnets to existing VLANs or services, also allow you to associate the IP addresses of a subnet to an existing network device or service.
+		
+		Once you open the IPAM manager you will finds two default nodes IPv4 and IPv6.
+		These nodes has two actions you can create subnets or folders.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.4\linewidth]{img/ipam_root_nodes_actions.png}
+			\caption{IP Address manager root nodes actions}
+			\label{fig:ipam_root_nodes_actions}
+		\end{figure}
+		A folder is a way to store several subnetworks, you can create as many folders as you want, you can also create a folder inside other folder.
+		
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.4\linewidth]{img/ipam_create_new_folder.png}
+			\caption{Create a new folder}
+			\label{fig:ipam_create_new_folder}
+		\end{figure}
+		Once you create a folder, you could edit its attributes, \textbf{name} and \textbf{description} in the property sheet just like any other element in kuwaiba
+		
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.4\linewidth]{img/ipam_folder_actions.png}
+			\caption{Folder actions}
+			\label{fig:ipam_folder_actions}
+		\end{figure}
+		
+		\textbf{Important} To add a new subnet IPv4 or IPv6 you should type the subnet in the Classless Inter-Domain Routing (CIDR) format, for a IPv6 subnet you could use a compress or a expand notation for example you could use 2000::/3 or 2000:0000:0000:0000:0000:0000:0000:0000/3 both will be accepted
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.4\linewidth]{img/ipam_add_subnet.png}
+			\caption{Add Subnet}
+			\label{fig:ipam_add_subnet}
+		\end{figure}
+		Once you have created a subnet you could add IP Addresses, of course the IP address should belongs to the subnet range and you wont be able to add the network IP or the broadcast IP
+		
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.5\linewidth]{img/ipam_subnet_actions.png}
+			\caption{Subnet actions}
+			\label{fig:ipam_subnet_actions}
+		\end{figure}
+		Kuwaiba will set bye default in de text box the next available IP address, buy you could use any IP Address that belong to the subnet,  you can not use the network IP or de Broadcast IP.
+		
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.5\linewidth]{img/ipam_add_ip_address.png}
+			\caption{Add IP Address}
+			\label{fig:ipam_add_ip_address}
+		\end{figure}
+		The subnets can be associate to VLANs, just make right-click in the node and select \textit{Relate to a VLAN} then kuwaiba will display a text dialog with a list of all the existing VLANs.
+		
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.5\linewidth]{img/ipam_available_vlans.png}
+			\caption{Available VLANs}
+			\label{fig:ipam_available_vlans}
+		\end{figure}
+		The subnets and the IP Addresses can be associate to services, just make right-click in the node and select \textit{Relate to a service} then kuwaiba will display a text dialog with a list of all the existing services (see \ref{sec:service_manager})
+		
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.5\linewidth]{img/ipam_available_services.png}
+			\caption{Available Services}
+			\label{fig:ipam_available_services}
+		\end{figure}
+		
+		The IP Addresses can be associate to network devices, just make right-click in the node and select \textit{Relate to a device} then kuwaiba will display a text dialog with a list of all the existing network devices than had been created.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.5\linewidth]{img/ipam_available_devices.png}
+			\caption{Available Devices}
+			\label{fig:ipam_available_devices}
+		\end{figure}
+		
+		Once you create your subnet and IP Addresses and after associate them to services, VLANs or network devices, you could find a report about the subnet in the subnet's action menu, this report will give you a detail resume of the subnet usage, the services and VLANs associate to the subnet and every IP Address, the network devices associate to them.
+		
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=1.1\linewidth]{img/ipam_report_subnet_usage_detail.png}
+			\caption{Subnet usage report}
+			\label{fig:ipam_report_subnet_usage_detail}
+		\end{figure} 
+		
+		\begin{framed} {\large \textbf{Note}}
+			\begin{itemize}
+				\item It won't be possible delete a subnet or an IP Address if are associate to something else like a VLAN a service or a network device.
+			\end{itemize}
+		\end{framed}		 		 
+		
+		
+		\newpage
+		\section{Querying} \label{sec:querying}
+		\subsection{Graphical Query Editor}
+		The query editor let you make a search with a graphical interface, based on nodes to represent the search criteria and connections to express the relationships. Once selected, you will get a blank canvas with a toolbar on top with the following elements:
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=1.1\linewidth]{img/query_tool_bar.png}
+			\caption{Graphical query editor general tool bar}
+			\label{fig:query_tool_bar}
+		\end{figure}
+		
+		The toolbar contains the most frequently used tools. Here is an overview of what can you do with them:
+		\begin{table}[h!]
+			\centering
+			\begin{tabular}{cl}
+				\includegraphics[width=2.2cm]{img/icon_select_class_query.png} & Select the element class you want to search for. In this list you're going to find only business-related classes (network elements, cables, etc), not system classes (users, sessions, etc)\\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_open.png} & Open a previously saved query\\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_save_view.png} & Save the current query. The queries are stored in the database using an XML format\\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_delete_saved_view.png} & Deletes a saved query\\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_clean_query.png} & Cleans the current query\\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_edit_saved_query.png} & Edit details about the current query (name, description and owner)\\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_reorganize_nodes.png} & Organize the nodes automatically\\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_execute_query.png} & Executes the current query\\
+				\midrule
+				\includegraphics[width=2.2cm]{img/icon_logical_connector_query.png} & The logical connector to be used to chain the query predicates. The default connector is AND\\
+				\midrule
+				\includegraphics[width=2.2cm]{img/icon_result_limit_query.png} & Max number of results per page. The default value is 10. Only integer values are allowed\\
+			\end{tabular}	
+			\caption{Query Toolbar items}
+			\label{tab:query_toolbar_icons}
+		\end{table}
+		When you select a class from the drop-down box, a graphical representation of it will be placed on the canvas
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.9\linewidth]{img/querying_node_added.png}
+			\caption{Node added after selecting a element class}
+			\label{fig:query_node_added}
+		\end{figure}
+		
+		In the figure~\ref{fig:query_node_added} the class Router was selected, and the corresponding node is created. You can search for a wider range of elements if you select an abstract class (often called GenericSomething). In the example above will search for all Routers in the database, but if you choose GenericPhysicalNode it will search for all physical nodes, this is, all objects that can be connected using a container (see Chapter \textbf{\nameref{sec:physical_connections}} for more information about containers). That includes: buildings, rooms, floors, towers, shelters and facilities. Note that the root class node is colored green.
+		
+		\begin{framed} {\large \textbf{Important}}
+			\begin{itemize}
+				\item If you want to see all objects in the database (at least all relevant to the inventory) search for \textbf{InventoryObject}, which is the root of all classes related to the inventory. To see the complete hierarchy see related chapter \textbf{\nameref{sec:data_model_manager}}
+			\end{itemize}
+		\end{framed}
+		
+		Back to the original example, if you just leave the router without modifications and execute the query, it will search for all routers available in the database and it will show only a column with the object's display name.				
+		
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.9\linewidth]{img/query_results.png}
+			\caption{Query results for all the routers}
+			\label{fig:query_results}
+		\end{figure}
+		
+		The figure~\ref{fig:query_results} is shown in a new tab and also has a tool bar with the following buttons:
+		
+		\begin{table}[h!]
+			\centering
+			\begin{tabular}{cl}
+				\includegraphics[width=0.5cm]{img/query_result_export.png} & Export the results to popular formats like CSV, XML, ODT and DOC (Only operational for XML and CSV so far)\\
+				\midrule
+				\includegraphics[width=0.5cm]{img/query_results_previous_page.png} & Previous page\\
+				\midrule
+				\includegraphics[width=0.5cm]{img/query_results_next_page.png} & Next page\\
+				\midrule
+				\includegraphics[width=0.5cm]{img/query_results_all_results.png} & Show all results\\
+			\end{tabular}	
+			\caption{Query results toolbar items}
+			\label{tab:query_results_toolbar_icons}
+		\end{table}
+		
+		Now, if we want to see more fields related to the found elements, we should use the "field visibility icons". They're those eyes you can see along with the attributes names. By default none of them are selected, which means that no additional fields will be shown in the result list but the objects themselves. Think of them like the parts of a conventional SQL sentence that follows the SELECT clause: \textbf{SELECT creationDate, serialNumber FROM Router}, you can obtain a query like this pushing the toggle buttons with the eyes on it beside \textbf{serialNumber} and \textbf{creationDate} as you can see in the figure~\ref{fig:query_node_attributes_selected}
+		
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.9\linewidth]{img/query_node_attributes_selected.png}
+			\caption{creationDate and serialNumber to be shown in the result list}
+			\label{fig:query_node_attributes_selected}
+		\end{figure}
+		
+		When selected, the visibility icon turns into an eye crossed by a red line. If you don't want this attribute to be shown in the result list, press it again. This is what you will see when you execute the query:
+		
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.9\linewidth]{img/query_results_attributes_selected.png}
+			\caption{Result set showing some fields}
+			\label{fig:query_results_attributes_selected}
+		\end{figure}
+		
+		Now you may be wondering why the attributes \textbf{vendor}, \textbf{conditions} and \textbf{state} have their visibility icons disabled. That's because they're list type attributes (See \ref{sec:list_type_manager} for details about list type attributes).  Making again a comparison SQL, these attributes are related to other "tables" (other classes, actually). You have two ways to use these list type attributes as criteria: the first is just selecting the attribute's checkbox and choosing from a list the value that you'd like to use:
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.9\linewidth]{img/query_vendor_selected.png}
+			\caption{Using a list type attribute as filter}
+			\label{fig:query_vendor_selected}
+		\end{figure}
+		
+		Or you can pick manually what fields belonging to the relationship must be included in the result set. To do this, you first have to toggle the simple class node filter (in our example labeled as \textbf{Vendor [Filter]}) to a detailed view. You can do by right-clicking on the node's header and choosing the option \textbf{Toggle Simple/Detailed view}:
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.9\linewidth]{img/query_toggle_detail_view.png}
+			\caption{Changing the detail level on a class filter}
+			\label{fig:query_toggle_detail_view}
+		\end{figure}
+		The result is a node similar to the root one, but colored light orange
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.9\linewidth]{img/query_detail_view.png}
+			\caption{Expanded class node filter}
+			\label{fig:query_detail_view}
+		\end{figure}
+		
+		You can toggle the node to the original compress view by right-clicking on node's header and choosing the option \textbf{Toggle Simple/Detailed view} again.
+		
+		\begin{framed} {\large \textbf{Example}}
+			\begin{itemize}
+				\item We want to search for all routers and we want to see the fields creation date, serial number, vendor and operational state. That would be:
+				\\1. Enabling the visibility icon for the attribute \textbf{creationDate}
+				\\2. Checking the checkbox in the attributes  \textbf{vendor} and state and expanding the resulting nodes (we'll talk about the checkbox later in this chapter)
+				\\3. Enabling the visibility icon for the attribute  \textbf{name} in both newly spawned nodes.
+			\end{itemize}
+		\end{framed}
+		Let's see the figure~\ref{fig:query_multiple_nodes}
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.9\linewidth]{img/query_multiple_nodes.png}
+			\caption{Simple query showing three fields from different classes}
+			\label{fig:query_multiple_nodes}
+		\end{figure}
+		Resulting in a set like this:
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.9\linewidth]{img/query_results_multimple_nodes.png}
+			\caption{Simple query showing three fields from different classes}
+			\label{fig:query_results_multiple_nodes}
+		\end{figure}
+		\begin{framed} {\large \textbf{Note:}}
+			\begin{itemize}
+				\item The operational states and vendors were created using the List Manager (under OperationalState and Vendor, respectively) and their properties set in the Properties window.
+			\end{itemize}
+		\end{framed}			
+		The question now is "what are those checkboxes for?" Well, they're used to construct the query predicates. Every time you select one of them, a new node is spawned. If the attribute is a basic one (String, Integer, Float, Boolean or Date), you will get a node like these (otherwise you will get the class nodes seen above):
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.4\linewidth]{img/query_string_filter.png}
+			\caption{Filter for String values}
+			\label{fig:query_string_filter}
+		\end{figure}
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.4\linewidth]{img/query_filter_numeric.png}
+			\caption{Filter for Numeric values}
+			\label{fig:query_filter_numeric}
+		\end{figure}
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.4\linewidth]{img/query_date_filter.png}
+			\caption{Filter for Date values}
+			\label{fig:query_date_filter}
+		\end{figure}
+		\begin{framed} {\large \textbf{Example 2:}}
+			\begin{itemize}
+				\item We're going to search for Routers whose \textbf{name} contains the string \textit{AS} and the operational \textbf{state} is equal to \textit{Working} and have \textit{Cisco} as \textbf{vendor}. The fields to be shown must be \textbf{creationDate} and \textbf{operationalState}. Note that the result limit is set to 1 per page.
+				The query would look like this:
+			\end{itemize}
+		\end{framed}
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=1.1\linewidth]{img/query_example_2.png}
+			\caption{Complex query using an AND logical connector}
+			\label{fig:query_example_2}
+		\end{figure}
+		
+		The condition \textbf{Equal to} is case sensitive, while \textbf{like} it is not.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=1.1\linewidth]{img/query_example_2_results.png}
+			\caption{Result set for the complex query}
+			\label{fig:query_example_2_results}
+		\end{figure}
+		\subsection{Exporting results}
+		You can export the results in four formats: CSV, XML, Microsoft Word (DOC) and Open Document Text (ODT). So far is only possible to export to CSV and XML. This is done by pressing the Export icon (see table~\ref{tab:query_results_toolbar_icons}), which will open a window to choose the location of the output file and the format:
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.5\linewidth]{img/query_result_exportmenu.png}
+			\caption{Results export options}
+			\label{fig:query_result_exportmenu}
+		\end{figure}
+		
+		\textit{Export to}contains the file destination (once you choose a directory with the file chooser, a random name will be generated, but you can change it as you wish). Note that writing file the extension is not mandatory, since it will detect the type and append the extension before to save the file.  
+		
+		\textit{Format} to let's you choose the output format. The configure button () lets you set some particular options regarding to the selected format. Currently only CSV has advanced options:		
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.3\linewidth]{img/query_exports_settings.png}
+			\caption{CSV filter settings}
+			\label{fig:query_exports_settings}
+		\end{figure}
+		
+		There you can choose the separator character between fields. The available options are: Comma(,), Tab (	), Space ( ), Pipe (|) and Tilde (~).
+		
+		Finally textit{Range} is used to specify whether whole results should be exported or only the current page.
+		
+		Note: The XML structure used to export the results can be checked
+		
+		\subsection{Saving and restoring queries}
+		The queries can be saved as public or private. It's probable that someone wants to execute the same query on a regular basis and if that's the case for many users, he/she would want to let other users to use the such query. After you design a query, you can save it and this small window will prompt for some basic information:
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.5\linewidth]{img/query_save_menu.png}
+			\caption{Setting the query metadata before to save it}
+			\label{fig:query_save_menu}
+		\end{figure}
+		
+		\textit{Name} is the query name.
+		\textit{Description} is the query description
+		The last check box lets you to make the current query public. By default, the query is private, so you don't pollute the list of available queries for the rest of the users, you can change these settings anytime using the configure button (see \ref{tab:query_toolbar_icons}).
+		To open a query, just use the open button, then you will be asked if you want to see only your queries or both your queries and the public ones:
+		\textit{clicking in Cancel will show you both. O” will list only those owned by you}
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.7\linewidth]{img/query_save_as_private.png}
+			\caption{Dialog to choose what queries should be listed}
+			\label{fig:query_save_as_private}
+		\end{figure}
+		
+		Now you just have to select the one you need and you're done! 
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.7\linewidth]{img/query_saved_queries.png}
+			\caption{list of available queries}
+			\label{fig:query_saved_queries}
+		\end{figure}
+		
+		\begin{framed} {\large \textbf{Important}}
+			\begin{itemize}
+				\item Please note that when a query is saved the values used to filter won't be saved,since the filter nodes are used as open parameters. For example:\\
+				\includegraphics[width=4cm]{img/query_filter_value_not_saved.png}
+				\\In the query above, the value \textit{Manchester} won't be saved anywhere. Just the structure and the condition (\textbf{like}, in this case). The blue box is a parameter. It's supposed that you will fill it with the value you need depending on what you're looking for.
+				\\Note 1: Expanding a list type and not selecting anything from it has the same effect as selecting the value \textbf{None (null)} in the compact view of the filter.
+				\\Note 2: Every time you run a query, a new window with the results will be opened, so don't forget to close those you don't need to save memory.
+			\end{itemize}
+		\end{framed}
+		
+		\newpage
+		\section{IP Address Manager} \label{sec:ip_address_manager}
+		
+		\newpage
+		\section{Pools Manager} \label{sec:pools_manager}
+		This module enables you to manipulate pools of objects. Pools are entities where objects that can't be placed in the standard navigation tree are put. Most of them are logical or administrative elements such as VLANs or VPNs. You can see a pool like a bag where you put things you don't know where else to put. To use this module, click on the icon in the main toolbar or go to the menu item Tools/Pools. It will open a navigation tree similar to the one used to browse through the containment hierarchy. The first time it will be empty, you can add new pools by right-clicking the root new and selecting “New Pool”, as show in the figure below.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.7\linewidth]{img/pools_actions.png}
+			\caption{Creating a new pool}
+			\label{fig:pools_actions}
+		\end{figure}
+		
+		The dialog box will prompt you for the newly created pool name, its description and what kind of objects do you want to store inside. If you choose, say, “Router”, it will let you store only instances of Router. On the other hand, if you choose an abstract class (this is any starting with “Generic” or one of the core classes like InventoryObject or ViewableObject) you will be able to place instances of any subclass of theirs. 
+		
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.7\linewidth]{img/pools_create_new_pool.png}
+			\caption{Pool creation dialog}
+			\label{fig:pools_create_new_pool}
+		\end{figure}
+		Once it's created, you cant edit the pool attributes \textit{name} and \textit{description}
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.5\linewidth]{img/pools_pool_properties.png}
+			\caption{Pool properties}
+			\label{fig:pools_pool_properties}
+		\end{figure}
+		You can add children to it. By right-clicking the corresponding node you can access to all actions associated to it. 
+		
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.7\linewidth]{img/pools_pool_action.png}
+			\caption{Pools Actions}
+			\label{fig:pools_pool_action}
+		\end{figure}
+		
+		From that moment on, it behaves exactly like the Navigation Tree and you may have multiple containment levels as shown in the figure below.	
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.4\linewidth]{img/pools_pool_object_properties.png}
+			\caption{Pools object properties}
+			\label{fig:pools_pool_object_properties}
+		\end{figure}
+		
+		
+		\newpage
+		\section{User and Group Management} \label{sec:user_and_group_management}
+		(\textbf{Shortcut:} CTRL+U) This feature lets you define new application users and relate/unrelate them from application groups. By default there is only one user (\textbf{admin}, password \textbf{kuwaiba}) and no groups.  You can edit everything, even its username.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.7\linewidth]{img/users_and_groups_default_user.png}
+			\caption{User/Group Management main window}
+			\label{fig:users_and_groups_default_user}
+		\end{figure}
+		The module shows three buttons at its own toolbar:
+		\textbf{Add user:} Adds a new user. It's placed at the end of the list and its name is a composition of the string “user” and a random number between 0 and 10000.
+		\textbf{Add groups:} Adds a new group. It's placed at the end of the list and its name is a composition of the string “group” and a random number between 0 and 10000.
+		\textbf{Refresh:} Refreshes the selected tab (users or groups)	
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.6\linewidth]{img/users_and_groups_delete.png}
+			\caption{Deleting an user}
+			\label{fig:users_and_groups_delete}
+		\end{figure}
+		If you want to delete an user or a group, just right click the element and choose “Delete”. Deleting a group won't delete the related users.
+		If you want to change a user's password, click the  button in the “Password” or “Group” column and a custom editor will be shown.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.5\linewidth]{img/users_and_groups_change_password.png}
+			\caption{Changing a password}
+			\label{fig:users_and_groups_change_password}
+		\end{figure}
+		If you want to change a user's password, click the  button in the “Password” or “Group” column and a custom editor will be shown.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.4\linewidth]{img/users_and_groups_select_groups.png}
+			\caption{Changing an user user group association}
+			\label{fig:users_and_groups_select_groups}
+		\end{figure}
+		Currently is only possible to add/remove groups to/from a user (not vice versa)
 \end{document}
