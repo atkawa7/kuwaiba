@@ -139,7 +139,7 @@ public class CreateSubnetAction extends AbstractAction{
             btnClose.setText(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_CLOSE"));
 
             lblIpAddress.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-            lblIpAddress.setText(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_IP_ADDRESS"));
+            lblIpAddress.setText(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_SUBNET"));
 
             lblDescription.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
             lblDescription.setText(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_DESCRIPTION"));
