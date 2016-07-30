@@ -20,3 +20,11 @@
 \contentsline {section}{Contract Manager}{33}
 \contentsline {section}{Task Manager}{35}
 \contentsline {section}{SDH Networks}{38}
+\contentsline {section}{IP Address Manager}{49}
+\contentsline {section}{Querying}{52}
+\contentsline {subsection}{Graphical Query Editor}{52}
+\contentsline {subsection}{Exporting results}{58}
+\contentsline {subsection}{Saving and restoring queries}{59}
+\contentsline {section}{IP Address Manager}{62}
+\contentsline {section}{Pools Manager}{63}
+\contentsline {section}{User and Group Management}{64}
