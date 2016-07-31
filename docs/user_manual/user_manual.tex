@@ -1313,6 +1313,10 @@
 			\caption{Available Services}
 			\label{fig:ipam_available_services}
 		\end{figure}
+		\begin{framed} {\large \textbf{Note}}
+			It won't be possible delete a subnet or an IP address if are associate to something else like a VLAN a service or a network device.
+		\end{framed}		 		 
+		
 
 		\newpage
 		An IP addresses can be associate to network devices, just make right-click in the IP address and select \textit{Relate to a device} then kuwaiba will display a text dialog with a list of all the existing network devices than had been created.
@@ -1331,11 +1335,6 @@
 			\caption{Subnet usage report}
 			\label{fig:ipam_report_subnet_usage_detail}
 		\end{figure} 
-		\begin{framed} {\large \textbf{Note}}
-			\begin{itemize}
-				\item It won't be possible delete a subnet or an IP address if are associate to something else like a VLAN a service or a network device.
-			\end{itemize}
-		\end{framed}		 		 
 		
 		\newpage
 		\section{Querying} \label{sec:querying}
@@ -1573,7 +1572,7 @@
 		\textit{Description} is the query description
 		The last check box lets you to make the current query public. By default, the query is private, so you don't pollute the list of available queries for the rest of the users, you can change these settings anytime using the configure button \includegraphics[width=0.5cm]{img/icon_edit_saved_query.png}.
 		To open a query, just use the open button\includegraphics[width=0.5cm]{img/icon_open.png}, then you will be asked if you want to see only your queries or both your queries and the public ones:
-		\textit{clicking in Cancel will show you both. O” will list only those owned by you}
+		\textit{clicking in Cancel will show you both, clicking in Ok will list only those owned by you}
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.7\linewidth]{img/query_save_as_private.png}

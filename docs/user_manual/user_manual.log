@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2015/dev/Debian) (preloaded format=pdflatex 2016.7.28)  30 JUL 2016 23:44
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2015/dev/Debian) (preloaded format=pdflatex 2016.7.28)  30 JUL 2016 23:58
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -2174,7 +2174,7 @@ _ip_address.png (PNG copy)>]
 File: img/ipam_available_devices.png Graphic file (type png)
 
 <use img/ipam_available_devices.png>
-Package pdftex.def Info: img/ipam_available_devices.png used on input line 1321
+Package pdftex.def Info: img/ipam_available_devices.png used on input line 1325
 .
 (pdftex.def)             Requested size: 170.71393pt x 214.31075pt.
 
@@ -2187,247 +2187,247 @@ File: img/ipam_report_subnet_usage_detail.png Graphic file (type png)
 
 <use img/ipam_report_subnet_usage_detail.png>
 Package pdftex.def Info: img/ipam_report_subnet_usage_detail.png used on input 
-line 1330.
+line 1334.
 (pdftex.def)             Requested size: 469.47308pt x 307.21144pt.
 
-Overfull \hbox (42.68173pt too wide) in paragraph at lines 1330--1331
+Overfull \hbox (42.68173pt too wide) in paragraph at lines 1334--1335
  [][] 
  []
 
 [54 <./img/ipam_available_devices.png> <./img/ipam_report_subnet_usage_detail.p
-ng>] [55]
+ng>]
 File: img/icon_query_manager.png Graphic file (type png)
  <use img/icon_query_manager.png>
-Package pdftex.def Info: img/icon_query_manager.png used on input line 1343.
+Package pdftex.def Info: img/icon_query_manager.png used on input line 1342.
 (pdftex.def)             Requested size: 14.22636pt x 14.22624pt.
 
-<img/query_tool_bar.png, id=434, 679.03688pt x 145.29282pt>
+<img/query_tool_bar.png, id=431, 679.03688pt x 145.29282pt>
 File: img/query_tool_bar.png Graphic file (type png)
 
 <use img/query_tool_bar.png>
-Package pdftex.def Info: img/query_tool_bar.png used on input line 1346.
+Package pdftex.def Info: img/query_tool_bar.png used on input line 1345.
 (pdftex.def)             Requested size: 469.47308pt x 100.45166pt.
 
-Overfull \hbox (42.68173pt too wide) in paragraph at lines 1346--1347
+Overfull \hbox (42.68173pt too wide) in paragraph at lines 1345--1346
  [][] 
  []
 
-<img/icon_select_class_query.png, id=435, 225.84375pt x 27.85406pt>
+<img/icon_select_class_query.png, id=432, 225.84375pt x 27.85406pt>
 File: img/icon_select_class_query.png Graphic file (type png)
 
 <use img/icon_select_class_query.png>
 Package pdftex.def Info: img/icon_select_class_query.png used on input line 135
-5.
+4.
 (pdftex.def)             Requested size: 85.35826pt x 10.52768pt.
 File: img/icon_open.png Graphic file (type png)
  <use img/icon_open.png>
-Package pdftex.def Info: img/icon_open.png used on input line 1357.
+Package pdftex.def Info: img/icon_open.png used on input line 1356.
 (pdftex.def)             Requested size: 14.22636pt x 14.22624pt.
 
-<img/icon_save_view.png, id=436, 25.09375pt x 26.0975pt>
+<img/icon_save_view.png, id=433, 25.09375pt x 26.0975pt>
 File: img/icon_save_view.png Graphic file (type png)
 
 <use img/icon_save_view.png>
-Package pdftex.def Info: img/icon_save_view.png used on input line 1359.
+Package pdftex.def Info: img/icon_save_view.png used on input line 1358.
 (pdftex.def)             Requested size: 14.22636pt x 14.79567pt.
 
-<img/icon_delete_saved_view.png, id=437, 24.84282pt x 21.07875pt>
+<img/icon_delete_saved_view.png, id=434, 24.84282pt x 21.07875pt>
 File: img/icon_delete_saved_view.png Graphic file (type png)
 
 <use img/icon_delete_saved_view.png>
-Package pdftex.def Info: img/icon_delete_saved_view.png used on input line 1361
+Package pdftex.def Info: img/icon_delete_saved_view.png used on input line 1360
 .
 (pdftex.def)             Requested size: 14.22636pt x 12.07127pt.
 
-<img/icon_clean_query.png, id=438, 24.84282pt x 21.07875pt>
+<img/icon_clean_query.png, id=435, 24.84282pt x 21.07875pt>
 File: img/icon_clean_query.png Graphic file (type png)
 
 <use img/icon_clean_query.png>
-Package pdftex.def Info: img/icon_clean_query.png used on input line 1363.
+Package pdftex.def Info: img/icon_clean_query.png used on input line 1362.
 (pdftex.def)             Requested size: 14.22636pt x 12.07127pt.
 
-<img/icon_edit_saved_query.png, id=439, 24.84282pt x 21.07875pt>
+<img/icon_edit_saved_query.png, id=436, 24.84282pt x 21.07875pt>
 File: img/icon_edit_saved_query.png Graphic file (type png)
 
 <use img/icon_edit_saved_query.png>
-Package pdftex.def Info: img/icon_edit_saved_query.png used on input line 1365.
+Package pdftex.def Info: img/icon_edit_saved_query.png used on input line 1364.
 
 (pdftex.def)             Requested size: 14.22636pt x 12.07127pt.
 
-<img/icon_reorganize_nodes.png, id=440, 24.84282pt x 21.07875pt>
+<img/icon_reorganize_nodes.png, id=437, 24.84282pt x 21.07875pt>
 File: img/icon_reorganize_nodes.png Graphic file (type png)
 
 <use img/icon_reorganize_nodes.png>
-Package pdftex.def Info: img/icon_reorganize_nodes.png used on input line 1367.
+Package pdftex.def Info: img/icon_reorganize_nodes.png used on input line 1366.
 
 (pdftex.def)             Requested size: 14.22636pt x 12.07127pt.
 
-<img/icon_execute_query.png, id=441, 24.84282pt x 21.07875pt>
+<img/icon_execute_query.png, id=438, 24.84282pt x 21.07875pt>
 File: img/icon_execute_query.png Graphic file (type png)
 
 <use img/icon_execute_query.png>
-Package pdftex.def Info: img/icon_execute_query.png used on input line 1369.
+Package pdftex.def Info: img/icon_execute_query.png used on input line 1368.
 (pdftex.def)             Requested size: 14.22636pt x 12.07127pt.
 
-<img/icon_logical_connector_query.png, id=442, 152.06813pt x 22.58438pt>
+<img/icon_logical_connector_query.png, id=439, 152.06813pt x 22.58438pt>
 File: img/icon_logical_connector_query.png Graphic file (type png)
 
 <use img/icon_logical_connector_query.png>
 Package pdftex.def Info: img/icon_logical_connector_query.png used on input lin
-e 1371.
+e 1370.
 (pdftex.def)             Requested size: 62.59596pt x 9.29617pt.
 
-<img/icon_result_limit_query.png, id=443, 79.79813pt x 21.07875pt>
+<img/icon_result_limit_query.png, id=440, 79.79813pt x 21.07875pt>
 File: img/icon_result_limit_query.png Graphic file (type png)
 
 <use img/icon_result_limit_query.png>
 Package pdftex.def Info: img/icon_result_limit_query.png used on input line 137
-3.
+2.
 (pdftex.def)             Requested size: 62.59596pt x 16.53493pt.
 
-Overfull \hbox (55.62306pt too wide) in paragraph at lines 1354--1375
+Overfull \hbox (55.62306pt too wide) in paragraph at lines 1353--1374
  [][] 
  []
 
-<img/querying_node_added.png, id=444, 424.58624pt x 246.1697pt>
+<img/querying_node_added.png, id=441, 424.58624pt x 246.1697pt>
 File: img/querying_node_added.png Graphic file (type png)
 
 <use img/querying_node_added.png>
-Package pdftex.def Info: img/querying_node_added.png used on input line 1382.
+Package pdftex.def Info: img/querying_node_added.png used on input line 1381.
 (pdftex.def)             Requested size: 384.1096pt x 222.71135pt.
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[56 <./img/query_tool_bar.png> <./img/icon_select_class_query.png> <./img/icon_
+[55 <./img/query_tool_bar.png> <./img/icon_select_class_query.png> <./img/icon_
 save_view.png> <./img/icon_delete_saved_view.png> <./img/icon_clean_query.png> 
 <./img/icon_edit_saved_query.png> <./img/icon_reorganize_nodes.png> <./img/icon
 _execute_query.png> <./img/icon_logical_connector_query.png> <./img/icon_result
 _limit_query.png>]
 File: img/icon_execute_query.png Graphic file (type png)
  <use img/icon_execute_query.png>
-Package pdftex.def Info: img/icon_execute_query.png used on input line 1395.
+Package pdftex.def Info: img/icon_execute_query.png used on input line 1394.
 (pdftex.def)             Requested size: 14.22636pt x 12.07127pt.
 
-<img/query_results.png, id=458, 429.10312pt x 147.55125pt>
+<img/query_results.png, id=455, 429.10312pt x 147.55125pt>
 File: img/query_results.png Graphic file (type png)
 
 <use img/query_results.png>
-Package pdftex.def Info: img/query_results.png used on input line 1399.
+Package pdftex.def Info: img/query_results.png used on input line 1398.
 (pdftex.def)             Requested size: 384.1096pt x 132.08116pt.
- [57 <./img/querying_node_added.png> <./img/query_results.png (PNG copy)>]
-<img/query_result_export.png, id=464, 24.84282pt x 21.07875pt>
+ [56 <./img/querying_node_added.png> <./img/query_results.png (PNG copy)>]
+<img/query_result_export.png, id=460, 24.84282pt x 21.07875pt>
 File: img/query_result_export.png Graphic file (type png)
 
 <use img/query_result_export.png>
-Package pdftex.def Info: img/query_result_export.png used on input line 1410.
+Package pdftex.def Info: img/query_result_export.png used on input line 1409.
 (pdftex.def)             Requested size: 14.22636pt x 12.07127pt.
 
-<img/query_results_previous_page.png, id=465, 24.84282pt x 21.07875pt>
+<img/query_results_previous_page.png, id=461, 24.84282pt x 21.07875pt>
 File: img/query_results_previous_page.png Graphic file (type png)
 
 <use img/query_results_previous_page.png>
 Package pdftex.def Info: img/query_results_previous_page.png used on input line
- 1412.
+ 1411.
 (pdftex.def)             Requested size: 14.22636pt x 12.07127pt.
 
-<img/query_results_next_page.png, id=466, 24.84282pt x 21.07875pt>
+<img/query_results_next_page.png, id=462, 24.84282pt x 21.07875pt>
 File: img/query_results_next_page.png Graphic file (type png)
 
 <use img/query_results_next_page.png>
 Package pdftex.def Info: img/query_results_next_page.png used on input line 141
-4.
+3.
 (pdftex.def)             Requested size: 14.22636pt x 12.07127pt.
 
-<img/query_results_all_results.png, id=467, 24.84282pt x 21.07875pt>
+<img/query_results_all_results.png, id=463, 24.84282pt x 21.07875pt>
 File: img/query_results_all_results.png Graphic file (type png)
 
 <use img/query_results_all_results.png>
 Package pdftex.def Info: img/query_results_all_results.png used on input line 1
-416.
+415.
 (pdftex.def)             Requested size: 14.22636pt x 12.07127pt.
 
-<img/query_node_attributes_selected.png, id=468, 421.575pt x 257.46187pt>
+<img/query_node_attributes_selected.png, id=464, 421.575pt x 257.46187pt>
 File: img/query_node_attributes_selected.png Graphic file (type png)
 
 <use img/query_node_attributes_selected.png>
 Package pdftex.def Info: img/query_node_attributes_selected.png used on input l
-ine 1426.
+ine 1425.
 (pdftex.def)             Requested size: 384.1096pt x 234.5853pt.
 
-<img/query_results_attributes_selected.png, id=469, 602.25pt x 100.12407pt>
+<img/query_results_attributes_selected.png, id=465, 602.25pt x 100.12407pt>
 File: img/query_results_attributes_selected.png Graphic file (type png)
 
 <use img/query_results_attributes_selected.png>
 Package pdftex.def Info: img/query_results_attributes_selected.png used on inpu
-t line 1435.
+t line 1434.
 (pdftex.def)             Requested size: 384.1096pt x 63.8607pt.
 
-<img/query_vendor_selected.png, id=470, 432.86719pt x 282.30469pt>
+<img/query_vendor_selected.png, id=466, 432.86719pt x 282.30469pt>
 File: img/query_vendor_selected.png Graphic file (type png)
 
 <use img/query_vendor_selected.png>
-Package pdftex.def Info: img/query_vendor_selected.png used on input line 1443.
+Package pdftex.def Info: img/query_vendor_selected.png used on input line 1442.
 
 (pdftex.def)             Requested size: 384.1096pt x 250.51807pt.
- [58 <./img/query_result_export.png> <./img/query_results_previous_page.png> <.
+ [57 <./img/query_result_export.png> <./img/query_results_previous_page.png> <.
 /img/query_results_next_page.png> <./img/query_results_all_results.png> <./img/
 query_node_attributes_selected.png (PNG copy)> <./img/query_results_attributes_
 selected.png (PNG copy)>]
-<img/query_toggle_detail_view.png, id=478, 582.67688pt x 285.31593pt>
+<img/query_toggle_detail_view.png, id=475, 582.67688pt x 285.31593pt>
 File: img/query_toggle_detail_view.png Graphic file (type png)
 
 <use img/query_toggle_detail_view.png>
 Package pdftex.def Info: img/query_toggle_detail_view.png used on input line 14
-51.
+50.
 (pdftex.def)             Requested size: 384.1096pt x 188.08705pt.
 
-<img/query_detail_view.png, id=479, 420.82219pt x 281.55188pt>
+<img/query_detail_view.png, id=476, 420.82219pt x 281.55188pt>
 File: img/query_detail_view.png Graphic file (type png)
 
 <use img/query_detail_view.png>
-Package pdftex.def Info: img/query_detail_view.png used on input line 1459.
+Package pdftex.def Info: img/query_detail_view.png used on input line 1458.
 (pdftex.def)             Requested size: 341.43437pt x 228.43811pt.
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[59 <./img/query_vendor_selected.png> <./img/query_toggle_detail_view.png>]
-[60 <./img/query_detail_view.png (PNG copy)>]
-<img/query_multiple_nodes.png, id=488, 420.06938pt x 296.60812pt>
+[58 <./img/query_vendor_selected.png> <./img/query_toggle_detail_view.png>]
+[59 <./img/query_detail_view.png (PNG copy)>]
+<img/query_multiple_nodes.png, id=485, 420.06938pt x 296.60812pt>
 File: img/query_multiple_nodes.png Graphic file (type png)
 
 <use img/query_multiple_nodes.png>
-Package pdftex.def Info: img/query_multiple_nodes.png used on input line 1479.
+Package pdftex.def Info: img/query_multiple_nodes.png used on input line 1478.
 (pdftex.def)             Requested size: 341.43437pt x 241.08401pt.
 
-<img/query_results_multimple_nodes.png, id=489, 602.25pt x 104.64093pt>
+<img/query_results_multimple_nodes.png, id=486, 602.25pt x 104.64093pt>
 File: img/query_results_multimple_nodes.png Graphic file (type png)
 
 <use img/query_results_multimple_nodes.png>
 Package pdftex.def Info: img/query_results_multimple_nodes.png used on input li
-ne 1487.
+ne 1486.
 (pdftex.def)             Requested size: 384.1096pt x 66.74162pt.
 
-<img/query_string_filter.png, id=490, 169.38281pt x 60.97781pt>
+<img/query_string_filter.png, id=487, 169.38281pt x 60.97781pt>
 File: img/query_string_filter.png Graphic file (type png)
 
 <use img/query_string_filter.png>
-Package pdftex.def Info: img/query_string_filter.png used on input line 1500.
+Package pdftex.def Info: img/query_string_filter.png used on input line 1499.
 (pdftex.def)             Requested size: 128.0387pt x 46.09517pt.
 
-<img/query_filter_numeric.png, id=491, 255.95625pt x 97.86563pt>
+<img/query_filter_numeric.png, id=488, 255.95625pt x 97.86563pt>
 File: img/query_filter_numeric.png Graphic file (type png)
 
 <use img/query_filter_numeric.png>
-Package pdftex.def Info: img/query_filter_numeric.png used on input line 1506.
+Package pdftex.def Info: img/query_filter_numeric.png used on input line 1505.
 (pdftex.def)             Requested size: 170.71393pt x 65.27245pt.
 
-<img/query_date_filter.png, id=492, 207.02344pt x 84.315pt>
+<img/query_date_filter.png, id=489, 207.02344pt x 84.315pt>
 File: img/query_date_filter.png Graphic file (type png)
 
 <use img/query_date_filter.png>
-Package pdftex.def Info: img/query_date_filter.png used on input line 1512.
+Package pdftex.def Info: img/query_date_filter.png used on input line 1511.
 (pdftex.def)             Requested size: 128.0387pt x 52.14737pt.
 
 
@@ -2436,38 +2436,38 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[61 <./img/query_multiple_nodes.png (PNG copy)> <./img/query_results_multimple_
+[60 <./img/query_multiple_nodes.png (PNG copy)> <./img/query_results_multimple_
 nodes.png (PNG copy)> <./img/query_string_filter.png>]
-<img/query_example_2.png, id=497, 602.25pt x 332.74312pt>
+<img/query_example_2.png, id=494, 602.25pt x 332.74312pt>
 File: img/query_example_2.png Graphic file (type png)
 
 <use img/query_example_2.png>
-Package pdftex.def Info: img/query_example_2.png used on input line 1524.
+Package pdftex.def Info: img/query_example_2.png used on input line 1523.
 (pdftex.def)             Requested size: 469.47308pt x 259.39641pt.
 
-Overfull \hbox (42.68173pt too wide) in paragraph at lines 1524--1525
+Overfull \hbox (42.68173pt too wide) in paragraph at lines 1523--1524
  [][] 
  []
 
-<img/query_example_2_results.png, id=498, 602.25pt x 100.12407pt>
+<img/query_example_2_results.png, id=495, 602.25pt x 100.12407pt>
 File: img/query_example_2_results.png Graphic file (type png)
 
 <use img/query_example_2_results.png>
 Package pdftex.def Info: img/query_example_2_results.png used on input line 153
-2.
+1.
 (pdftex.def)             Requested size: 469.47308pt x 78.05367pt.
 
-Overfull \hbox (42.68173pt too wide) in paragraph at lines 1532--1533
+Overfull \hbox (42.68173pt too wide) in paragraph at lines 1531--1532
  [][] 
  []
 
 File: img/icon_next_page.png Graphic file (type png)
 <use img/icon_next_page.png>
-Package pdftex.def Info: img/icon_next_page.png used on input line 1536.
+Package pdftex.def Info: img/icon_next_page.png used on input line 1535.
 (pdftex.def)             Requested size: 14.22636pt x 13.80775pt.
 File: img/icon_retrieve_all.png Graphic file (type png)
  <use img/icon_retrieve_all.png>
-Package pdftex.def Info: img/icon_retrieve_all.png used on input line 1536.
+Package pdftex.def Info: img/icon_retrieve_all.png used on input line 1535.
 (pdftex.def)             Requested size: 14.22636pt x 14.65733pt.
 
 
@@ -2475,176 +2475,176 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 File: img/icon_export.png Graphic file (type png)
 <use img/icon_export.png>
-Package pdftex.def Info: img/icon_export.png used on input line 1539.
+Package pdftex.def Info: img/icon_export.png used on input line 1538.
 (pdftex.def)             Requested size: 14.22636pt x 13.67944pt.
 
-<img/query_result_exportmenu.png, id=499, 252.945pt x 114.4275pt>
+<img/query_result_exportmenu.png, id=496, 252.945pt x 114.4275pt>
 File: img/query_result_exportmenu.png Graphic file (type png)
 
 <use img/query_result_exportmenu.png>
 Package pdftex.def Info: img/query_result_exportmenu.png used on input line 154
-2.
+1.
 (pdftex.def)             Requested size: 213.39568pt x 96.53748pt.
- [62 <./img/query_filter_numeric.png> <./img/query_date_filter.png> <./img/quer
+ [61 <./img/query_filter_numeric.png> <./img/query_date_filter.png> <./img/quer
 y_example_2.png (PNG copy)>]
 File: img/icon_edit_saved_query.png Graphic file (type png)
 
 <use img/icon_edit_saved_query.png>
-Package pdftex.def Info: img/icon_edit_saved_query.png used on input line 1549.
+Package pdftex.def Info: img/icon_edit_saved_query.png used on input line 1548.
 
 (pdftex.def)             Requested size: 14.22636pt x 12.07127pt.
 
-<img/query_exports_settings.png, id=505, 143.78719pt x 138.5175pt>
+<img/query_exports_settings.png, id=502, 143.78719pt x 138.5175pt>
 File: img/query_exports_settings.png Graphic file (type png)
 
 <use img/query_exports_settings.png>
-Package pdftex.def Info: img/query_exports_settings.png used on input line 1552
+Package pdftex.def Info: img/query_exports_settings.png used on input line 1551
 .
 (pdftex.def)             Requested size: 128.0387pt x 123.34991pt.
 
-Overfull \hbox (33.25694pt too wide) in paragraph at lines 1561--1561
+Overfull \hbox (33.25694pt too wide) in paragraph at lines 1560--1560
 [][]\OT1/cmr/m/n/8 kuwaiba queries in xml for-mat http://neotropic.co/kuwaiba/w
 iki/index.php?title=XML_Documents##To_Save_Queries/| 
  []
 
-<img/query_save_menu.png, id=506, 255.95625pt x 122.70844pt>
+<img/query_save_menu.png, id=503, 255.95625pt x 122.70844pt>
 File: img/query_save_menu.png Graphic file (type png)
 
 <use img/query_save_menu.png>
-Package pdftex.def Info: img/query_save_menu.png used on input line 1567.
+Package pdftex.def Info: img/query_save_menu.png used on input line 1566.
 (pdftex.def)             Requested size: 213.39568pt x 102.30482pt.
- [63 <./img/query_example_2_results.png (PNG copy)> <./img/query_result_exportm
+ [62 <./img/query_example_2_results.png (PNG copy)> <./img/query_result_exportm
 enu.png (PNG copy)> <./img/query_exports_settings.png>]
 File: img/icon_edit_saved_query.png Graphic file (type png)
  <use img/icon_edit_saved_query.png>
-Package pdftex.def Info: img/icon_edit_saved_query.png used on input line 1574.
+Package pdftex.def Info: img/icon_edit_saved_query.png used on input line 1573.
 
 (pdftex.def)             Requested size: 14.22636pt x 12.07127pt.
 File: img/icon_open.png Graphic file (type png)
  <use img/icon_open.png>
-Package pdftex.def Info: img/icon_open.png used on input line 1575.
+Package pdftex.def Info: img/icon_open.png used on input line 1574.
 (pdftex.def)             Requested size: 14.22636pt x 14.22624pt.
 
-<img/query_save_as_private.png, id=512, 395.22656pt x 67.75313pt>
+<img/query_save_as_private.png, id=508, 395.22656pt x 67.75313pt>
 File: img/query_save_as_private.png Graphic file (type png)
 
 <use img/query_save_as_private.png>
-Package pdftex.def Info: img/query_save_as_private.png used on input line 1579.
+Package pdftex.def Info: img/query_save_as_private.png used on input line 1578.
 
 (pdftex.def)             Requested size: 298.75264pt x 51.2148pt.
 
-<img/query_saved_queries.png, id=513, 292.09125pt x 286.82156pt>
+<img/query_saved_queries.png, id=509, 292.09125pt x 286.82156pt>
 File: img/query_saved_queries.png Graphic file (type png)
 
 <use img/query_saved_queries.png>
-Package pdftex.def Info: img/query_saved_queries.png used on input line 1587.
+Package pdftex.def Info: img/query_saved_queries.png used on input line 1586.
 (pdftex.def)             Requested size: 213.39568pt x 209.55304pt.
 
-<img/query_filter_value_not_saved.png, id=514, 420.82219pt x 270.25969pt>
+<img/query_filter_value_not_saved.png, id=510, 420.82219pt x 270.25969pt>
 File: img/query_filter_value_not_saved.png Graphic file (type png)
 
 <use img/query_filter_value_not_saved.png>
 Package pdftex.def Info: img/query_filter_value_not_saved.png used on input lin
-e 1594.
+e 1593.
 (pdftex.def)             Requested size: 298.75264pt x 191.8651pt.
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[64 <./img/query_save_menu.png (PNG copy)> <./img/query_save_as_private.png (PN
-G copy)> <./img/query_saved_queries.png (PNG copy)>] [65 <./img/query_filter_va
+[63 <./img/query_save_menu.png (PNG copy)> <./img/query_save_as_private.png (PN
+G copy)> <./img/query_saved_queries.png (PNG copy)>] [64 <./img/query_filter_va
 lue_not_saved.png (PNG copy)>]
 File: img/icon_pools_manager.png Graphic file (type png)
  <use img/icon_pools_manager.png>
-Package pdftex.def Info: img/icon_pools_manager.png used on input line 1607.
+Package pdftex.def Info: img/icon_pools_manager.png used on input line 1606.
 (pdftex.def)             Requested size: 14.22636pt x 15.37967pt.
 
-<img/pools_actions.png, id=521, 258.21469pt x 173.89969pt>
+<img/pools_actions.png, id=518, 258.21469pt x 173.89969pt>
 File: img/pools_actions.png Graphic file (type png)
 
 <use img/pools_actions.png>
-Package pdftex.def Info: img/pools_actions.png used on input line 1610.
+Package pdftex.def Info: img/pools_actions.png used on input line 1609.
 (pdftex.def)             Requested size: 213.39568pt x 143.72107pt.
 
-<img/pools_create_new_pool.png, id=522, 313.17pt x 130.98938pt>
+<img/pools_create_new_pool.png, id=519, 313.17pt x 130.98938pt>
 File: img/pools_create_new_pool.png Graphic file (type png)
 
 <use img/pools_create_new_pool.png>
-Package pdftex.def Info: img/pools_create_new_pool.png used on input line 1618.
+Package pdftex.def Info: img/pools_create_new_pool.png used on input line 1617.
 
 (pdftex.def)             Requested size: 213.39568pt x 89.25946pt.
- [66 <./img/pools_actions.png> <./img/pools_create_new_pool.png>]
-<img/pools_pool_properties.png, id=528, 261.97874pt x 353.06906pt>
+ [65 <./img/pools_actions.png> <./img/pools_create_new_pool.png>]
+<img/pools_pool_properties.png, id=525, 261.97874pt x 353.06906pt>
 File: img/pools_pool_properties.png Graphic file (type png)
 
 <use img/pools_pool_properties.png>
-Package pdftex.def Info: img/pools_pool_properties.png used on input line 1627.
+Package pdftex.def Info: img/pools_pool_properties.png used on input line 1626.
 
 (pdftex.def)             Requested size: 213.39568pt x 287.60059pt.
 
-<img/pools_pool_action.png, id=529, 258.21469pt x 173.89969pt>
+<img/pools_pool_action.png, id=526, 258.21469pt x 173.89969pt>
 File: img/pools_pool_action.png Graphic file (type png)
 
 <use img/pools_pool_action.png>
-Package pdftex.def Info: img/pools_pool_action.png used on input line 1635.
+Package pdftex.def Info: img/pools_pool_action.png used on input line 1634.
 (pdftex.def)             Requested size: 213.39568pt x 143.72107pt.
 
-<img/pools_pool_object_properties.png, id=530, 210.03468pt x 353.06906pt>
+<img/pools_pool_object_properties.png, id=527, 210.03468pt x 353.06906pt>
 File: img/pools_pool_object_properties.png Graphic file (type png)
 
 <use img/pools_pool_object_properties.png>
 Package pdftex.def Info: img/pools_pool_object_properties.png used on input lin
-e 1643.
+e 1642.
 (pdftex.def)             Requested size: 128.0387pt x 215.23174pt.
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[67 <./img/pools_pool_properties.png (PNG copy)> <./img/pools_pool_action.png>]
-<img/users_and_groups_default_user.png, id=535, 405.01312pt x 109.1578pt>
+[66 <./img/pools_pool_properties.png (PNG copy)> <./img/pools_pool_action.png>]
+<img/users_and_groups_default_user.png, id=532, 405.01312pt x 109.1578pt>
 File: img/users_and_groups_default_user.png Graphic file (type png)
 
 <use img/users_and_groups_default_user.png>
 Package pdftex.def Info: img/users_and_groups_default_user.png used on input li
-ne 1654.
+ne 1653.
 (pdftex.def)             Requested size: 298.75264pt x 80.52066pt.
 
-<img/users_and_groups_delete.png, id=536, 511.9125pt x 146.79843pt>
+<img/users_and_groups_delete.png, id=533, 511.9125pt x 146.79843pt>
 File: img/users_and_groups_delete.png Graphic file (type png)
 
 <use img/users_and_groups_delete.png>
 Package pdftex.def Info: img/users_and_groups_delete.png used on input line 166
-4.
+3.
 (pdftex.def)             Requested size: 256.07741pt x 73.43262pt.
- [68 <./img/pools_pool_object_properties.png (PNG copy)> <./img/users_and_group
+ [67 <./img/pools_pool_object_properties.png (PNG copy)> <./img/users_and_group
 s_default_user.png> <./img/users_and_groups_delete.png>] <img/icon_edit_user.pn
-g, id=542, 12.045pt x 11.29219pt>
+g, id=539, 12.045pt x 11.29219pt>
 File: img/icon_edit_user.png Graphic file (type png)
 
 <use img/icon_edit_user.png>
-Package pdftex.def Info: img/icon_edit_user.png used on input line 1670.
+Package pdftex.def Info: img/icon_edit_user.png used on input line 1669.
 (pdftex.def)             Requested size: 14.22636pt x 13.33722pt.
 
-<img/users_and_groups_change_password.png, id=543, 283.81032pt x 156.585pt>
+<img/users_and_groups_change_password.png, id=540, 283.81032pt x 156.585pt>
 File: img/users_and_groups_change_password.png Graphic file (type png)
 
 <use img/users_and_groups_change_password.png>
 Package pdftex.def Info: img/users_and_groups_change_password.png used on input
- line 1673.
+ line 1672.
 (pdftex.def)             Requested size: 128.0387pt x 70.64418pt.
 File: img/icon_edit_user.png Graphic file (type png)
  <use img/icon_edit_user.png>
-Package pdftex.def Info: img/icon_edit_user.png used on input line 1678.
+Package pdftex.def Info: img/icon_edit_user.png used on input line 1677.
 (pdftex.def)             Requested size: 14.22636pt x 13.33722pt.
 
-<img/users_and_groups_select_groups.png, id=544, 132.495pt x 124.21407pt>
+<img/users_and_groups_select_groups.png, id=541, 132.495pt x 124.21407pt>
 File: img/users_and_groups_select_groups.png Graphic file (type png)
 
 <use img/users_and_groups_select_groups.png>
 Package pdftex.def Info: img/users_and_groups_select_groups.png used on input l
-ine 1681.
+ine 1680.
 (pdftex.def)             Requested size: 128.0387pt x 120.04396pt.
- [69 <./img/icon_edit_user.png> <./img/users_and_groups_change_password.png> <.
+ [68 <./img/icon_edit_user.png> <./img/users_and_groups_change_password.png> <.
 /img/users_and_groups_select_groups.png>] (./user_manual.aux)
 
 LaTeX Warning: There were undefined references.
@@ -2669,10 +2669,10 @@ ts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texlive/texmf-dist/fonts/type
 s/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr
 8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb>
-Output written on user_manual.pdf (73 pages, 2694239 bytes).
+Output written on user_manual.pdf (72 pages, 2693835 bytes).
 PDF statistics:
- 597 PDF objects out of 1000 (max. 8388607)
- 202 compressed objects within 3 object streams
+ 591 PDF objects out of 1000 (max. 8388607)
+ 198 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
  971 words of extra memory for PDF output out of 10000 (max. 10000000)
 

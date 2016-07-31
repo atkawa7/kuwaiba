@@ -21,9 +21,9 @@
 \contentsline {section}{Task Manager}{37}
 \contentsline {section}{SDH Networks}{40}
 \contentsline {section}{IP Address Manager}{51}
-\contentsline {section}{Querying}{56}
-\contentsline {subsection}{Graphical Query Editor}{56}
-\contentsline {subsection}{Exporting results}{63}
-\contentsline {subsection}{Saving and restoring queries}{64}
-\contentsline {section}{Pools Manager}{66}
-\contentsline {section}{User and Group Management}{68}
+\contentsline {section}{Querying}{55}
+\contentsline {subsection}{Graphical Query Editor}{55}
+\contentsline {subsection}{Exporting results}{62}
+\contentsline {subsection}{Saving and restoring queries}{63}
+\contentsline {section}{Pools Manager}{65}
+\contentsline {section}{User and Group Management}{67}
