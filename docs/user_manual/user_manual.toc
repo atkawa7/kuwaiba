@@ -5,25 +5,25 @@
 \contentsline {section}{Connection to the Server}{2}
 \contentsline {section}{Data Model Manager}{4}
 \contentsline {section}{Containment Manager}{7}
-\contentsline {section}{Navigation Tree}{9}
-\contentsline {subsection}{Relationship and Special Children Explorer}{11}
-\contentsline {section}{List Type Manager}{12}
-\contentsline {section}{Default and Rack Views}{14}
-\contentsline {subsection}{Physical View}{14}
-\contentsline {subsection}{Rack View}{15}
-\contentsline {section}{Physical Connections}{17}
-\contentsline {subsection}{Example 1}{17}
-\contentsline {subsection}{Example 2}{20}
-\contentsline {section}{Audit Trail}{28}
-\contentsline {section}{Topology Designer}{30}
-\contentsline {section}{Service Manager}{32}
-\contentsline {section}{Contract Manager}{35}
-\contentsline {section}{Task Manager}{37}
-\contentsline {section}{SDH Networks}{40}
-\contentsline {section}{IP Address Manager}{51}
-\contentsline {section}{Querying}{55}
-\contentsline {subsection}{Graphical Query Editor}{55}
-\contentsline {subsection}{Exporting results}{62}
-\contentsline {subsection}{Saving and restoring queries}{63}
-\contentsline {section}{Pools Manager}{65}
+\contentsline {section}{Navigation Tree}{8}
+\contentsline {subsection}{Relationship and Special Children Explorer}{10}
+\contentsline {section}{List Type Manager}{11}
+\contentsline {section}{Queries}{13}
+\contentsline {subsection}{Graphical Query Editor}{13}
+\contentsline {subsection}{Exporting results}{20}
+\contentsline {subsection}{Saving and restoring queries}{21}
+\contentsline {section}{Pools Manager}{23}
+\contentsline {section}{Default and Rack Views}{26}
+\contentsline {subsection}{Physical View}{26}
+\contentsline {subsection}{Rack View}{27}
+\contentsline {section}{Physical Connections}{29}
+\contentsline {subsection}{Example 1}{29}
+\contentsline {subsection}{Example 2}{32}
+\contentsline {section}{Audit Trail}{40}
+\contentsline {section}{Topology Designer}{42}
+\contentsline {section}{Service Manager}{44}
+\contentsline {section}{Contract Manager}{47}
+\contentsline {section}{Task Manager}{49}
+\contentsline {section}{SDH Networks}{52}
+\contentsline {section}{IP Address Manager}{63}
 \contentsline {section}{User and Group Management}{67}
