@@ -49,7 +49,7 @@ public class SDHModuleActionsFactory {
     private PopupMenuProvider nodeMenu;
     private PopupMenuProvider connectionMenu;
     private RemoveSDHBusinessObjectFromView removeSDHBusinessObjectFromViewAction;
-    private DeleteSDHConnection deleteSDHConnectionAction;
+    private DeleteSDHTransportLink deleteSDHTransportLink;
     private ShowSDHContainersInTransportLink showSDHContainersInTransportLinkAction;
     private ShowSDHConnectionsInGenericCommunicationsElement showSDHConnectionsInGenericCommunicationsElementAction;
     private SDHModuleScene scene;
@@ -57,7 +57,7 @@ public class SDHModuleActionsFactory {
     public SDHModuleActionsFactory(SDHModuleScene scene) {
         this.scene = scene;
         removeSDHBusinessObjectFromViewAction = new RemoveSDHBusinessObjectFromView();
-        deleteSDHConnectionAction = new DeleteSDHConnection();
+        deleteSDHTransportLink = new DeleteSDHTransportLink();
         showSDHContainersInTransportLinkAction = new ShowSDHContainersInTransportLink();
         showSDHConnectionsInGenericCommunicationsElementAction = new ShowSDHConnectionsInGenericCommunicationsElement();
     }
@@ -96,7 +96,7 @@ public class SDHModuleActionsFactory {
                 public JPopupMenu getPopupMenu(Widget widget, Point localLocation) {                   
                     List<Action> actions = new ArrayList<>();
                     actions.add(removeSDHBusinessObjectFromViewAction);
-                    actions.add(deleteSDHConnectionAction);
+                    actions.add(deleteSDHTransportLink);
                     actions.add(showSDHContainersInTransportLinkAction);
                     actions.add(null);
                     
@@ -131,10 +131,10 @@ public class SDHModuleActionsFactory {
         }
     }
     
-    public class DeleteSDHConnection extends AbstractAction {
+    public class DeleteSDHTransportLink extends AbstractAction {
         
-        public DeleteSDHConnection() {
-            this.putValue(NAME, "Delete"); 
+        public DeleteSDHTransportLink() {
+            this.putValue(NAME, "Delete Transport Link"); 
         }
 
         @Override
