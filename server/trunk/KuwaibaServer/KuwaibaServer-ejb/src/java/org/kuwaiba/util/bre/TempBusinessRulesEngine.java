@@ -63,6 +63,14 @@ public class TempBusinessRulesEngine {
         subClassOfValidators.put("ELANService", "elanservice");
         subClassOfValidators.put("ELINEService", "elineservice");
         subClassOfValidators.put("ETREEService", "etreeservice");
+        
+        //TODO: These validators will be used to enable special actions for certain type of objects
+        //Perhaps we should use some other type of solution for this in the future
+        subClassOfValidators.put("GenericSDHTransportLink", "sdhTransportLink");
+        subClassOfValidators.put("GenericSDHContainerLink", "sdhContainerLink");
+        subClassOfValidators.put("GenericSDHTributaryLink", "sdhTributaryLink");
+        subClassOfValidators.put("GenericContract", "contract");
+        subClassOfValidators.put("GenericService", "service");
     }
 
     public HashMap<String, List<String[]>> getMappings(){       
