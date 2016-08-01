@@ -4100,14 +4100,14 @@ public class KuwaibaService {
     }    
         // </editor-fold>
     
-        // <editor-fold defaultstate="collapsed" desc="Contract Manager">
+        // <editor-fold defaultstate="collapsed" desc="MPLS Module">
     /**
      * Creates an MPLS link
      * @param classNameEndpointA The class name of the endpoint A (some kind of port)
      * @param idEndpointA Id of endpoint A
      * @param classNameEndpointB  The class name of the endpoint Z (some kind of port)
      * @param idEndpointB Id of endpoint Z
-     * @param linkType Type of link (MPLS)
+     * @param linkType Type of link (MPLSLink)
      * @param defaultName The default name of th
      * @param sessionId Session token
      * @return The id of the newly created transport link
@@ -4127,7 +4127,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in createSDHTransportLink: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in createMPLSLink: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
@@ -4152,7 +4152,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in deleteSDHTributaryLink: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteMPLSLink: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
