@@ -2008,8 +2008,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateCall("createTask", ipAddress, sessionId);
-            return aem.createTask(name, description, enabled, script, parameters, schedule, notificationType);
-            
+            long res = aem.createTask(name, description, enabled, script, parameters, schedule, notificationType);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+                    String.format("Created pool %s with id %s", name, res));
+            return res;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2154,6 +2156,8 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateCall("deleteTask", ipAddress, sessionId);
             aem.deleteTask(taskId);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), ActivityLogEntry.ACTIVITY_TYPE_DELETE_APPLICATION_OBJECT, 
+                    String.format("Deleted task with id %s", taskId));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
