@@ -62,7 +62,6 @@ public class RelateToContractAction extends GenericObjectNodeAction {
 
     @Override
     public String getValidator() {
-        return "genericCommunicationsElement"; //NOI18N
+        return null; //Enable this action for any object
     }
-    
 }

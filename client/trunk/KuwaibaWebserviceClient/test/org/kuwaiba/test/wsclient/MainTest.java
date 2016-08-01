@@ -13,10 +13,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.kuwaiba.test.wsclient.fixtures.Containment;
 import org.kuwaiba.test.wsclient.fixtures.ListTypes;
-import org.kuwaiba.wsclient.Exception_Exception;
 import org.kuwaiba.wsclient.KuwaibaService;
 import org.kuwaiba.wsclient.KuwaibaService_Service;
 import org.kuwaiba.wsclient.RemoteSession;
+import org.kuwaiba.wsclient.ServerSideException_Exception;
 import org.kuwaiba.wsclient.StringArray;
 
 /**
@@ -76,7 +76,7 @@ public class MainTest {
             if (session != null && port != null)
                 try {
                 port.closeSession(session.getSessionId());
-            } catch (Exception_Exception ex1) {
+            } catch (ServerSideException_Exception ex1) {
                 Logger.getLogger(MainTest.class.getName()).log(Level.SEVERE, null, ex1);
             }
             ex.printStackTrace();

@@ -135,7 +135,8 @@ public final class DashBoardTopComponent extends TopComponent implements Refresh
             } else {
                 for (int i = 0; i < 8 ; i++) {
                     if (i < allTasks.size()) {
-                        if (allTasks.get(i).getExecutionType() == LocalTaskScheduleDescriptor.TYPE_LOGIN) {
+                        if (allTasks.get(i).getExecutionType() == LocalTaskScheduleDescriptor.TYPE_LOGIN &&
+                                allTasks.get(i).isEnabled()) {
                             TaskResultWidget aWidget = new TaskResultWidget();
                             try {
                                 HashMap<String, Object> parameters = new HashMap<>();

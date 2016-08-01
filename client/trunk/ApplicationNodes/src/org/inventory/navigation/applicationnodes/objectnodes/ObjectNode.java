@@ -244,8 +244,8 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
     @Override
     public Action[] getActions(boolean context) {
         List<Action> actions = new ArrayList<>();
+        actions.add(createAction == null ? createAction = new CreateBusinessObjectAction(this) : createAction);
         if (getParentNode() != null) {
-            actions.add(createAction == null ? createAction = new CreateBusinessObjectAction(this) : createAction);
             actions.add(SystemAction.get(CopyAction.class));
             actions.add(SystemAction.get(CutAction.class));
             actions.add(SystemAction.get(PasteAction.class));

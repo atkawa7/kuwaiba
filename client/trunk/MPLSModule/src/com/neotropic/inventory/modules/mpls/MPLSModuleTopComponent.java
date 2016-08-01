@@ -57,7 +57,7 @@ import org.openide.util.NbBundle.Messages;
 )
 @TopComponent.Registration(mode = "editor", openAtStartup = false)
 @ActionID(category = "Window", id = "com.neotropic.inventory.modules.mpls.MPLSModuleTopComponent")
-@ActionReference(path = "Menu/Tools/Commercial" /*, position = 333 */)
+@ActionReference(path = "Menu/Tools/Advanced" /*, position = 333 */)
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_MPLSModuleAction",
         preferredID = "MPLSModuleTopComponent"
