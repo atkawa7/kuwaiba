@@ -20,6 +20,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.Action;
@@ -105,7 +106,7 @@ public class PhysicalPathTopComponent extends TopComponent implements ExplorerMa
             @Override
             public void mouseReleased(MouseEvent e) {check(e);}
             public void check(MouseEvent e) {
-                if (e.isPopupTrigger()) { 
+                if ((e.getModifiers() & InputEvent.BUTTON3_MASK) == InputEvent.BUTTON3_MASK) {  //e.isPopupTrigger works differently depending on the platform, so we just check for the second button 
                     lstPath.setSelectedIndex(lstPath.locationToIndex(e.getPoint()));
                     menu.removeAll();
                     for (Action action : selectedObject.getActions(true)){

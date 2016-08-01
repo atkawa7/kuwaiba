@@ -20,6 +20,7 @@ import java.awt.BorderLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyVetoException;
@@ -256,7 +257,7 @@ public class ComplexQueryResultTopComponent extends TopComponent implements Expo
                 em.setSelectedNodes(new Node[] { node });
             } catch (PropertyVetoException ex) {} //Should never happen
             
-            if (e.isPopupTrigger()) {            
+            if ((e.getModifiers() & InputEvent.BUTTON3_MASK) == InputEvent.BUTTON3_MASK) {  //e.isPopupTrigger works differently depending on the platform, so we just check for the second button          
               JPopupMenu  menu = Utilities.actionsToPopup(node.getActions(true), e.getComponent());
               menu.show(e.getComponent(), e.getX(), e.getY());
             }
