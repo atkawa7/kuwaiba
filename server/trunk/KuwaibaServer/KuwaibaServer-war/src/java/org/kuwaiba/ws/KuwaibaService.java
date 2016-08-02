@@ -4054,46 +4054,54 @@ public class KuwaibaService {
     
         // <editor-fold defaultstate="collapsed" desc="Contract Manager">
     /**
-     * Associates a list of devices (instances of a subclass of GenericCommunicationsElement) to an existing contract (most probably a support contract)
-     * @param deviceClass Device class
-     * @param deviceId Device id
+     * Associates a list of objects (instances of a subclass of InventoryObject) to an existing contract (most probably a support contract)
+     * @param objectClass Object class
+     * @param objectId Object id
      * @param contractClass contract class
      * @param contractId contract id
      * @param sessionId Session token
      * @throws ServerSideException In case something goes wrong. A server side exception is a managed error, while a RunTimeException is something unexpected
      */
-    @WebMethod(operationName = "associateDevicesToContract")
-    public void associateDevicesToContract (
-            @WebParam(name = "deviceClass")String[] deviceClass,
-            @WebParam(name = "deviceId")long[] deviceId,
+    @WebMethod(operationName = "associateObjectsToContract")
+    public void associateObjectsToContract (
+            @WebParam(name = "objectClass")String[] objectClass,
+            @WebParam(name = "objectId")long[] objectId,
             @WebParam(name = "contractClass")String contractClass,
             @WebParam(name = "contractId")long contractId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
-            wsBean.associateDevicesToContract(deviceClass, deviceId, contractClass, contractId, getIPAddress(), sessionId);
+            wsBean.associateObjectsToContract(objectClass, objectId, contractClass, contractId, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in associateDevicesToContract: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in associateObjectsToContract: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
     }    
     
-    @WebMethod(operationName = "releaseDeviceFromContract")
-    public void releaseDeviceFromContract (
-            @WebParam(name = "deviceClass")String deviceClass,
-            @WebParam(name = "deviceId")long deviceId,
+    /**
+     * Releases an inventory object from a contract it was related to
+     * @param objectClass Class of the inventory object
+     * @param objectId Id of the inventory object
+     * @param contractId Contract id
+     * @param sessionId Session token
+     * @throws ServerSideException In case something goes wrong
+     */
+    @WebMethod(operationName = "releaseObjectFromContract")
+    public void releaseObjectFromContract (
+            @WebParam(name = "objectClass")String objectClass,
+            @WebParam(name = "objectId")long objectId,
             @WebParam(name = "contractId")long contractId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
-            wsBean.releaseDeviceFromContract(deviceClass, deviceId, contractId, getIPAddress(), sessionId);
+            wsBean.releaseObjectFromContract(objectClass, objectId, contractId, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in releaseDeviceFromContract: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in releaseObjectFromContract: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }

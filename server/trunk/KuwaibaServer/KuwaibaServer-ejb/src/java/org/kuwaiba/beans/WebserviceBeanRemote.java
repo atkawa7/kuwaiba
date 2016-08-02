@@ -397,10 +397,10 @@ public interface WebserviceBeanRemote {
         // </editor-fold>
         
         // <editor-fold defaultstate="collapsed" desc="Contract Manager">
-    public void associateDevicesToContract(String[] deviceClass, long[] deviceId, 
+    public void associateObjectsToContract(String[] deviceClass, long[] deviceId, 
             String contractClass, long contractId, String ipAddress, String sessionId) throws ServerSideException;
     
-    public void releaseDeviceFromContract(String deviceClass, long deviceId, long contractId,
+    public void releaseObjectFromContract(String deviceClass, long deviceId, long contractId,
             String ipAddress, String sessionId) throws ServerSideException;    
         //</editor-fold>
     

@@ -2671,30 +2671,30 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
         // </editor-fold>
     @Override
-    public void associateDevicesToContract(String[] deviceClass, long[] deviceId, String contractClass, long contractId, 
+    public void associateObjectsToContract(String[] objectClass, long[] objectId, String contractClass, long contractId, 
             String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         
-        if (deviceClass.length != deviceId.length)
+        if (objectClass.length != objectId.length)
             throw new ServerSideException("The arrays provided have different lengths");
         
         try {
-            aem.validateCall("associateDevicesToContract", ipAddress, sessionId);
+            aem.validateCall("associateObjectsToContract", ipAddress, sessionId);
             if (!mem.isSubClass(Constants.CLASS_GENERICCONTRACT, contractClass))
                 throw new ServerSideException(String.format("Class %s is not a contract", contractClass));
             
             boolean allEquipmentANetworkElement = true;
             
-            for (int i = 0; i < deviceId.length; i++) {
-                if (!mem.isSubClass(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, deviceClass[i]))
+            for (int i = 0; i < objectId.length; i++) {
+                if (!mem.isSubClass(Constants.CLASS_INVENTORYOBJECT, objectClass[i]))
                     allEquipmentANetworkElement = false;
                 else
-                    bem.createSpecialRelationship(deviceClass[i], deviceId[i], contractClass, contractId, "contractHas", true);
+                    bem.createSpecialRelationship(objectClass[i], objectId[i], contractClass, contractId, "contractHas", true);
             }
             
             if (!allEquipmentANetworkElement)
-                throw new InvalidArgumentException("All non-network elements were ignored");
+                throw new InvalidArgumentException("All non-inventory elements were ignored");
             
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -2703,13 +2703,13 @@ public class WebserviceBean implements WebserviceBeanRemote {
 
     // <editor-fold defaultstate="collapsed" desc="Contract Manager">
     @Override
-    public void releaseDeviceFromContract(String deviceClass, long deviceId, long contractId,
+    public void releaseObjectFromContract(String objectClass, long objectId, long contractId,
             String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
-            aem.validateCall("releaseDeviceFromContract", ipAddress, sessionId);
-            bem.releaseSpecialRelationship(deviceClass, deviceId, contractId, "contractHas");
+            aem.validateCall("releaseObjectFromContract", ipAddress, sessionId);
+            bem.releaseSpecialRelationship(objectClass, objectId, contractId, "contractHas");
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
