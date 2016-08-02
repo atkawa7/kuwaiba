@@ -16,6 +16,8 @@
 package com.neotropic.inventory.modules.ipam.nodes.actions;
 
 import com.neotropic.inventory.modules.ipam.nodes.SubnetNode;
+import com.neotropic.inventory.modules.ipam.nodes.SubnetPoolChildren;
+import com.neotropic.inventory.modules.ipam.nodes.SubnetPoolNode;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -41,10 +43,6 @@ public class DeleteSubnetAction extends GenericObjectNodeAction{
      * Reference to the communications stub singleton
      */
     private CommunicationsStub com;
-    /**
-     * Reference to the root node;
-     */
-    private SubnetNode node;
 
     public DeleteSubnetAction(){
         putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_DELETE"));
@@ -56,18 +54,21 @@ public class DeleteSubnetAction extends GenericObjectNodeAction{
         
         Iterator<? extends SubnetNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(SubnetNode.class).allInstances().iterator();
         String className = "";
-        long id = 0;
+        SubnetNode selectedNode = null;
+        SubnetPoolNode parentNode = null;
+        
         if (!selectedNodes.hasNext())
             return;
         List<Long> ids = new ArrayList<>();
         while (selectedNodes.hasNext()) {
-            node = (SubnetNode)selectedNodes.next();
-            className = node.getObject().getClassName();
-            ids.add(node.getObject().getOid());
+            selectedNode = (SubnetNode)selectedNodes.next();
+            parentNode = (SubnetPoolNode)selectedNode.getParentNode();
+            className = selectedNode.getObject().getClassName();
+            ids.add(selectedNode.getObject().getOid());
         }
         
         if (com.deleteSubnet(className, ids)){
-            node.getParentNode().getChildren().remove(new Node[]{node});
+            ((SubnetPoolChildren)parentNode.getChildren()).addNotify();
             NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
                     java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_DELETION_TEXT_OK"));
         }

@@ -15,42 +15,53 @@
  */
 package com.neotropic.inventory.modules.ipam.nodes;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPool;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.openide.nodes.Children;
+import org.inventory.navigation.applicationnodes.objectnodes.AbstractChildren;
 import org.openide.nodes.Node;
 
 /**
  * Children for subnet pool nodes
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class SubnetPoolChildren extends Children.Array{
-    
-    private LocalObjectLight subnetPool;
-    
-
-    public SubnetPoolChildren(LocalObjectLight subnetPool) {
-        this.subnetPool = subnetPool;
-    }
+public class SubnetPoolChildren extends AbstractChildren{
     
     @Override
     public void addNotify(){
-        List<LocalPool> pools = CommunicationsStub.getInstance().getSubnetPools(subnetPool.getOid(), subnetPool.getClassName());
-        if (pools == null)
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-        else{
-            for (LocalPool item : pools)
-                add(new Node[]{new SubnetPoolNode(item)});
+        LocalPool selectedPool = ((SubnetPoolNode)getNode()).getSubnetPool();
+        
+        List<LocalPool> pools = CommunicationsStub.getInstance().getSubnetPools(selectedPool.getOid(), selectedPool.getClassName());
+        List<LocalObjectLight> subnets = CommunicationsStub.getInstance().getSubnets(selectedPool.getOid());
+        List<LocalObjectLight> all = new ArrayList<>();
+        if (subnets != null){
+            for (LocalObjectLight subnet : subnets) 
+                all.add(subnet);
         }
-        List<LocalObjectLight> subnets = CommunicationsStub.getInstance().getSubnets(subnetPool.getOid());
-        if (pools == null)
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-        else{
-            for (LocalObjectLight item : subnets)
-                add(new Node[]{new SubnetNode(item)});
+        
+        if (pools != null){
+            for (LocalPool pool : pools) 
+                all.add(pool);
         }
+        Collections.sort(all);
+        setKeys(all);
+        
+    }
+    
+    @Override
+    protected void removeNotify() {
+        setKeys(Collections.EMPTY_SET);
+    } 
+
+    @Override
+    protected Node[] createNodes(LocalObjectLight key) {
+        if(key instanceof LocalPool)
+            return new Node[] { new SubnetPoolNode((LocalPool)key) };
+        else
+            return new Node[] { new SubnetNode(key) };
     }
 }

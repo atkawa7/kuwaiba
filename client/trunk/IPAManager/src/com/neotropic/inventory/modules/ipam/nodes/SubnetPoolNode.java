@@ -46,10 +46,11 @@ public class SubnetPoolNode extends AbstractNode implements PropertyChangeListen
     protected CommunicationsStub com;
 
     public SubnetPoolNode(LocalPool subnetPool) {
-        super(new SubnetPoolChildren(subnetPool), Lookups.singleton(subnetPool));
+        super(new SubnetPoolChildren(), Lookups.singleton(subnetPool));
         this.subnetPool = subnetPool;
         this.subnetPool.addPropertyChangeListener(this);
         com = CommunicationsStub.getInstance();
+        setChildren(new SubnetPoolChildren());
     }
     
     @Override
@@ -60,7 +61,7 @@ public class SubnetPoolNode extends AbstractNode implements PropertyChangeListen
         actions.add(new CreateSubnetPoolAction(this));
         actions.add(null);
         if (!(getParentNode() instanceof IPAMRootNode)) {
-            actions.add(new DeleteSubnetPoolAction(this));
+            actions.add(new DeleteSubnetPoolAction());
             actions.add(null); //Separator
         }
             
