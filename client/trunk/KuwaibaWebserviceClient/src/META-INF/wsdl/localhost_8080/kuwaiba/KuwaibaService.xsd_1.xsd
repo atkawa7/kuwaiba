@@ -16,13 +16,13 @@
 
 <xs:element name="addPossibleChildrenResponse" type="tns:addPossibleChildrenResponse"/>
 
-<xs:element name="associateDevicesToContract" type="tns:associateDevicesToContract"/>
-
-<xs:element name="associateDevicesToContractResponse" type="tns:associateDevicesToContractResponse"/>
-
 <xs:element name="associateObjectToService" type="tns:associateObjectToService"/>
 
 <xs:element name="associateObjectToServiceResponse" type="tns:associateObjectToServiceResponse"/>
+
+<xs:element name="associateObjectsToContract" type="tns:associateObjectsToContract"/>
+
+<xs:element name="associateObjectsToContractResponse" type="tns:associateObjectsToContractResponse"/>
 
 <xs:element name="associateObjectsToService" type="tns:associateObjectsToService"/>
 
@@ -528,10 +528,6 @@
 
 <xs:element name="relateSubnetToVlanResponse" type="tns:relateSubnetToVlanResponse"/>
 
-<xs:element name="releaseDeviceFromContract" type="tns:releaseDeviceFromContract"/>
-
-<xs:element name="releaseDeviceFromContractResponse" type="tns:releaseDeviceFromContractResponse"/>
-
 <xs:element name="releaseIPFromDevice" type="tns:releaseIPFromDevice"/>
 
 <xs:element name="releaseIPFromDeviceResponse" type="tns:releaseIPFromDeviceResponse"/>
@@ -539,6 +535,10 @@
 <xs:element name="releaseMirrorPort" type="tns:releaseMirrorPort"/>
 
 <xs:element name="releaseMirrorPortResponse" type="tns:releaseMirrorPortResponse"/>
+
+<xs:element name="releaseObjectFromContract" type="tns:releaseObjectFromContract"/>
+
+<xs:element name="releaseObjectFromContractResponse" type="tns:releaseObjectFromContractResponse"/>
 
 <xs:element name="releaseObjectFromService" type="tns:releaseObjectFromService"/>
 
@@ -1098,20 +1098,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="associateDevicesToContract">
-<xs:sequence>
-<xs:element name="deviceClass" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element name="deviceId" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element name="contractClass" type="xs:string" minOccurs="0"/>
-<xs:element name="contractId" type="xs:long"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="associateDevicesToContractResponse">
-<xs:sequence/>
-</xs:complexType>
-
 <xs:complexType name="createRootPool">
 <xs:sequence>
 <xs:element name="name" type="xs:string" minOccurs="0"/>
@@ -1429,19 +1415,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="releaseDeviceFromContract">
-<xs:sequence>
-<xs:element name="deviceClass" type="xs:string" minOccurs="0"/>
-<xs:element name="deviceId" type="xs:long"/>
-<xs:element name="contractId" type="xs:long"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="releaseDeviceFromContractResponse">
-<xs:sequence/>
-</xs:complexType>
-
 <xs:complexType name="getObject">
 <xs:sequence>
 <xs:element name="objectClass" type="xs:string" minOccurs="0"/>
@@ -1676,6 +1649,20 @@
 </xs:complexType>
 
 <xs:complexType name="closeSessionResponse">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="associateObjectsToContract">
+<xs:sequence>
+<xs:element name="objectClass" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="objectId" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="contractClass" type="xs:string" minOccurs="0"/>
+<xs:element name="contractId" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="associateObjectsToContractResponse">
 <xs:sequence/>
 </xs:complexType>
 
@@ -2147,6 +2134,19 @@
 <xs:sequence>
 <xs:element name="return" type="xs:base64Binary" nillable="true" minOccurs="0"/>
 </xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="releaseObjectFromContract">
+<xs:sequence>
+<xs:element name="objectClass" type="xs:string" minOccurs="0"/>
+<xs:element name="objectId" type="xs:long"/>
+<xs:element name="contractId" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="releaseObjectFromContractResponse">
+<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="createSDHContainerLink">

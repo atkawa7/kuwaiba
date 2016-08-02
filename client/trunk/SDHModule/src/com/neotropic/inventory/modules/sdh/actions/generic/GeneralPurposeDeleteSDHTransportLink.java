@@ -24,7 +24,7 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- * General purpose version of DeleteSDHTransportLink. Use it to delete transpor links outside the SDH module scene.
+ * General purpose version of DeleteSDHTransportLink. Use it to delete transport links outside the SDH module scene.
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)

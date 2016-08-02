@@ -45,7 +45,7 @@ public class ReleaseFromContractAction extends GenericObjectNodeAction implement
         boolean success = true;
         while (selectedNodes.hasNext()) {
             ObjectNode selectedNode = selectedNodes.next();
-            if (CommunicationsStub.getInstance().releaseDeviceFromContract(selectedNode.getObject().getClassName(), 
+            if (CommunicationsStub.getInstance().releaseObjectFromContract(selectedNode.getObject().getClassName(), 
                 selectedNode.getObject().getOid(), Long.valueOf(((JMenuItem)e.getSource()).getName()))) {
                 if (selectedNode.getParentNode() instanceof ContractNode)
                     ((ContractNode.ContractChildren)selectedNode.getParentNode().getChildren()).addNotify();
@@ -61,7 +61,7 @@ public class ReleaseFromContractAction extends GenericObjectNodeAction implement
 
     @Override
     public String getValidator() {
-        return "genericCommunicationsElement"; //NOI18N
+        return null;
     }
 
     @Override

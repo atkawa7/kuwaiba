@@ -303,11 +303,12 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
                 if (actualView != null) {
                     scene.clear();
                     service.setView(actualView);
+                    setHtmlDisplayName(getDisplayName());
                     scene.render(actualView.getStructure());
                     enableButtons(true);
                     btnConnect.setSelected(false);
                     configObject.setProperty("saved", true);
-                    setHtmlDisplayName(getDisplayName());
+                    
                 }
             }
         }        

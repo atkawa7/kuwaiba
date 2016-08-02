@@ -99,9 +99,11 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
 
         nodeLayer = new LayerWidget(this);
         edgeLayer = new LayerWidget(this);
+        interactionLayer = new LayerWidget(this);
         
         moduleActions = new SDHModuleActionsFactory(this);
         
+        addChild(interactionLayer);
         addChild(edgeLayer);
         addChild(nodeLayer);
         moveProvider = new CustomMoveProvider(this);
@@ -121,7 +123,7 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
         newNode.getActions(ACTION_SELECT).addAction(selectAction);
         newNode.getActions(ACTION_SELECT).addAction(ActionFactory.createMoveAction(moveProvider, moveProvider));
         newNode.getActions(ACTION_CONNECT).addAction(selectAction);
-        newNode.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(edgeLayer, connectProvider));
+        newNode.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(interactionLayer, connectProvider));
         newNode.getActions().addAction(ActionFactory.createPopupMenuAction(moduleActions.createMenuForNode()));
         return newNode;
     }
@@ -225,8 +227,12 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
                             Widget widget = addNode(lol);
                             widget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
                         }
-                        else
-                            NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.INFO_MESSAGE, String.format("Equipment of class %s and id %s could not be found and was removed from the view", objectClass, objectId));
+                        else {
+                            NotificationUtil.getInstance().showSimplePopup("Load View", 
+                                    NotificationUtil.INFO_MESSAGE, String.format("Equipment of class %s and id %s could not be found and was removed from the view", 
+                                            objectClass, objectId));
+                            fireChangeEvent(new ActionEvent(this, SCENE_CHANGE, "nodeAutomaticallyRemoved")); //NOI18N
+                        }
                     }else {
                         if (reader.getName().equals(qEdge)){
                             long objectId = Long.valueOf(reader.getAttributeValue(null, "id"));
@@ -242,8 +248,11 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
                                 LocalObjectLight bSideObject = new LocalObjectLight(bSide, null, null);
                                 Widget bSideWidget = findWidget(bSideObject);
 
-                                if (aSideWidget == null || bSideWidget == null)
-                                    NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.INFO_MESSAGE, String.format("One or both of the endpoints of connection of class %s and id %s could not be found, so the connection was removed from the view", className, objectId));
+                                if (aSideWidget == null || bSideWidget == null) {
+                                    NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.INFO_MESSAGE, 
+                                            String.format("One or both of the endpoints of connection of class %s and id %s could not be found, so the connection was removed from the view", className, objectId));
+                                    fireChangeEvent(new ActionEvent(this, SCENE_CHANGE, "connectionAutomaticallyRemoved")); //NOI18N
+                                }
                                 else {
                                     ConnectionWidget newEdge = (AbstractConnectionWidget)addEdge(container);
                                     newEdge.setLineColor(getConnectionColor(container));
@@ -262,8 +271,11 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
                                         }
                                     }
                                 }
-                            } else
-                                NotificationUtil.getInstance().showSimplePopup("Load view", NotificationUtil.INFO_MESSAGE, String.format("Connection of class %s and id %s could not be found and was removed from the view", className, objectId));
+                            } else {
+                                fireChangeEvent(new ActionEvent(this, SCENE_CHANGE, "connectionAutomaticallyRemoved")); //NOI18N
+                                NotificationUtil.getInstance().showSimplePopup("Load view", 
+                                        NotificationUtil.INFO_MESSAGE, String.format("Connection of class %s and id %s could not be found and was removed from the view", className, objectId));
+                            }
                         }
                     }
                 }

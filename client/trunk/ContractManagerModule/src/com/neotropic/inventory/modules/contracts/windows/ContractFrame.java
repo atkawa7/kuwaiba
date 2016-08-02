@@ -126,7 +126,7 @@ public class ContractFrame extends JFrame {
                     objectsId [i] = selectedObjects.get(i).getOid();
                 }
                 
-                if (CommunicationsStub.getInstance().associateDevicesToContract(
+                if (CommunicationsStub.getInstance().associateObjectsToContract(
                     objectsClassName, objectsId, 
                     ((LocalObjectLight)lstAvailableContracts.getSelectedValue()).getClassName(),
                     ((LocalObjectLight)lstAvailableContracts.getSelectedValue()).getOid())){

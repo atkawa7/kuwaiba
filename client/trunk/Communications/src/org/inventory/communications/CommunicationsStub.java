@@ -2865,13 +2865,13 @@ public class CommunicationsStub {
     }
         // </editor-fold>
         // <editor-fold defaultstate="collapsed" desc="Contract manager">
-    public boolean associateDevicesToContract(String[] objectsClass, Long[] objectsId, String contractClass, long contractId) {
+    public boolean associateObjectsToContract(String[] objectsClass, Long[] objectsId, String contractClass, long contractId) {
         try {
             List<String> objectsClassList = new ArrayList<>();
             List<Long> objectsIdList = new ArrayList<>();
             objectsClassList.addAll(Arrays.asList(objectsClass));
             objectsIdList.addAll(Arrays.asList(objectsId));
-            service.associateDevicesToContract(objectsClassList, objectsIdList, contractClass, contractId, session.getSessionId());
+            service.associateObjectsToContract(objectsClassList, objectsIdList, contractClass, contractId, session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error =  ex.getMessage();
@@ -2879,9 +2879,9 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean releaseDeviceFromContract(String contractClass, long contractId, long targetId){
+    public boolean releaseObjectFromContract(String contractClass, long contractId, long targetId){
         try{
-            service.releaseDeviceFromContract(contractClass, contractId, targetId, session.getSessionId());
+            service.releaseObjectFromContract(contractClass, contractId, targetId, session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error =  ex.getMessage();
