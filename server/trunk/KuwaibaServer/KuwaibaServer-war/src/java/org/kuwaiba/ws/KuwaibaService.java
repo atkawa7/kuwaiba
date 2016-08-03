@@ -2208,7 +2208,6 @@ public class KuwaibaService {
     
     //Services manager
     /**
-     * @deprecated Use associateObjectsToService instead
      * Associates an object (a resource) to an existing service
      * @param objectClass Object class
      * @param objectId Object id

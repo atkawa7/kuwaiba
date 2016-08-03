@@ -1284,7 +1284,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     
     @Override
     public RemoteObjectLight[] getPhysicalPath(String objectClassName, long oid, String ipAddress, String sessionId) throws ServerSideException {
-        if (aem == null)
+        if (bem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateCall("getPhysicalPath", ipAddress, sessionId);
@@ -1308,8 +1308,21 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
     
     @Override
-    public void deletePhysicalConnection(String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void deletePhysicalConnection(String objectClassName, long objectId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("deletePhysicalConnection", ipAddress, sessionId);
+            if (!mem.isSubClass("GenericPhysicalConnection", objectClassName))
+                throw new ServerSideException(String.format("Class %s is not a physical connection", objectClassName));
+            
+            bem.deleteObject(objectClassName, objectId, true);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), ActivityLogEntry.ACTIVITY_TYPE_DELETE_INVENTORY_OBJECT, 
+                    String.format("Deleted %s instance with id %s", objectClassName, objectId));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
     }
     
     //Service Manager

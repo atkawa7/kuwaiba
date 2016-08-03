@@ -72,6 +72,7 @@ public class TempBusinessRulesEngine {
         subClassOfValidators.put("GenericContract", "contract");
         subClassOfValidators.put("GenericCustomer", "customer");
         subClassOfValidators.put("GenericService", "service");
+        subClassOfValidators.put("GenericPhysicalConnection", "physicalConnection");
     }
 
     public HashMap<String, List<String[]>> getMappings(){       
