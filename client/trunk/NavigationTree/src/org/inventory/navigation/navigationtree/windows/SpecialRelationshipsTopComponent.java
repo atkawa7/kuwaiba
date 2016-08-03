@@ -16,19 +16,11 @@
 package org.inventory.navigation.navigationtree.windows;
 
 import java.awt.BorderLayout;
-import java.util.HashMap;
-import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.applicationnodes.objectnodes.LabelNode;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
-import org.inventory.navigation.applicationnodes.objectnodes.RootObjectNode;
-import org.inventory.navigation.applicationnodes.objectnodes.SpecialObjectNode;
+import org.inventory.navigation.applicationnodes.objectnodes.SpecialRelatedObjectNode;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
-import org.openide.nodes.AbstractNode;
-import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup.Result;
 import org.openide.util.LookupEvent;
@@ -87,7 +79,7 @@ public class SpecialRelationshipsTopComponent extends TopComponent
     
     @Override
     public void componentClosed() {
-        em.getRootContext().getChildren().remove(em.getRootContext().getChildren().getNodes());
+        em.setRootContext(Node.EMPTY);
         lookupResult.removeLookupListener(this);
     }
     
@@ -96,76 +88,20 @@ public class SpecialRelationshipsTopComponent extends TopComponent
         if(lookupResult.allInstances().size() == 1){
             ObjectNode node = (ObjectNode)lookupResult.allInstances().iterator().next();
             
-            if (node instanceof SpecialObjectNode) //Ignore its own nodes
+            if (node instanceof SpecialRelatedObjectNode) //Ignore its own nodes
                 return;
             
-            //If the current object is the same that the last selected object, do nothing
+            //If the current object is the same last selected object, do nothing
             if (node.equals(em.getRootContext()))
                 return;
             
-            HashMap<String, LocalObjectLight[]> relationships = CommunicationsStub.
-                   getInstance().getSpecialAttributes(node.getObject().getClassName(), node.getObject().getOid());
-            
-            if (relationships == null){
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-                return;
-            }
-            
-            SpecialRootNode rootNode = new SpecialRootNode(node.getObject(), relationships);
-            rootNode.setDisplayName(String.format("%s relationships found", relationships.size()));
+            SpecialRelatedObjectNode rootNode = new SpecialRelatedObjectNode(node.getObject());
             em.setRootContext(rootNode);
         }
     }
     
-    /**
-    * Dummy class to represent a node in the special relationships tree
-    */
-   private class SpecialRootNode extends AbstractNode {  
-       /**
-        * Current Object being displayed
-        */
-       private LocalObjectLight currentObject;
-
-       public SpecialRootNode() {
-           super (new Children.Array());
-           setIconBaseWithExtension(RootObjectNode.DEFAULT_ICON_PATH);
-       }
-
-       public SpecialRootNode (LocalObjectLight rootObject, HashMap<String, LocalObjectLight[]> children){
-           this();
-           currentObject = rootObject;
-           for (String label : children.keySet())
-               getChildren().add(new LabelNode[]{new LabelNode(label, children.get(label))});
-       }
-
-       public SpecialRootNode (LocalObjectLight rootObject){
-           this();
-           currentObject = rootObject;
-           getChildren().add(new SpecialObjectNode[]{new SpecialObjectNode(rootObject)});
-       }
-
-       public LocalObjectLight getCurrentObject() {
-           return currentObject;
-       }
-       
-       @Override
-       public boolean equals (Object anObject) {
-           if (anObject instanceof ObjectNode)
-               return ((ObjectNode)anObject).getObject().getOid() == currentObject.getOid();
-           
-           if (anObject instanceof SpecialRootNode)
-               return ((SpecialRootNode)anObject).getCurrentObject().getOid() == currentObject.getOid();
-           
-           return false;
-       }
-
-        @Override
-        public int hashCode() {
-            int hash = 5;
-            hash = 59 * hash + (this.currentObject != null ? this.currentObject.hashCode() : 0);
-            return hash;
-        }
-   }
-
-
+    
+   
+   
 }
+ 

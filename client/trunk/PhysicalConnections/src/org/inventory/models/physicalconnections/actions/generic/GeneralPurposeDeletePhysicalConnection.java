@@ -14,24 +14,31 @@
  *  limitations under the License.
  *  under the License.
  */
-package org.inventory.models.physicalconnections.actions;
+package org.inventory.models.physicalconnections.actions.generic;
 
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.openide.util.Utilities;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
- * Deletes a physical link
+ * General Purpose version of the Deletes a physical link
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class DeletePhysicalConnection extends AbstractAction {
+@ServiceProvider(service=GenericObjectNodeAction.class)
+public class GeneralPurposeDeletePhysicalConnection extends GenericObjectNodeAction {
 
-    public DeletePhysicalConnection() {
+    public GeneralPurposeDeletePhysicalConnection() {
         putValue(NAME, "Delete Physical Connection");
+    }
+       
+    @Override
+    public String getValidator() {
+        return "physicalConnection";
     }
 
     @Override

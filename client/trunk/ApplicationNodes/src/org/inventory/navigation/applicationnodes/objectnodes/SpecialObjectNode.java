@@ -20,13 +20,10 @@ import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.CreateSpecialBusinessObjectAction;
-import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteBusinessObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.EditObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.RefreshObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
-import org.openide.actions.OpenLocalExplorerAction;
 import org.openide.util.Lookup;
-import org.openide.util.actions.SystemAction;
 
 /**
  * It's like an ObjectNode, but you can filter what actions would be shown. Its children
@@ -44,10 +41,9 @@ public class SpecialObjectNode extends ObjectNode {
     @Override
     public Action[] getActions(boolean context) {
         ArrayList<Action> actions = new ArrayList<>();
-        actions.add(new CreateSpecialBusinessObjectAction(this));
+        actions.add(new CreateSpecialBusinessObjectAction(this)); //This changes from ObjectNode
         actions.add(refreshAction == null ? refreshAction = new RefreshObjectAction(this) : refreshAction);
         actions.add(editAction == null ? editAction = new EditObjectAction(this) : editAction);
-        actions.add(SystemAction.get(DeleteBusinessObjectAction.class));
         actions.add(explorerAction);
         actions.add(null); //Separator
         for (GenericObjectNodeAction action : Lookup.getDefault().lookupAll(GenericObjectNodeAction.class)){

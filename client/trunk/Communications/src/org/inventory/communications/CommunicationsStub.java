@@ -1392,7 +1392,7 @@ public class CommunicationsStub {
     public LocalObjectLight createPhysicalConnection(String endpointAClass, long endpointAId,
             String endpointBClass, long endpointBId, String parentClass, long parentId, String name, String type, String connectionClass) {
         try{
-            List<StringArray> values = new ArrayList<StringArray>();
+            List<StringArray> values = new ArrayList<>();
             StringArray valueName = new StringArray();
             valueName.getItem().add(name);
 
@@ -1450,6 +1450,16 @@ public class CommunicationsStub {
         }catch(Exception ex){
             this.error =  ex.getMessage();
             return null;
+        }
+    }
+    
+    public boolean deletePhysicalConnection(String objectClass, long objectId) {
+        try {
+            service.deletePhysicalConnection(objectClass, objectId, session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return false;
         }
     }
     
