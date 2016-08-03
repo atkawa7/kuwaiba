@@ -529,10 +529,8 @@
 		\caption{Simple query showing three fields from different classes}
 		\label{fig:query_results_multiple_nodes}
 	\end{figure}
-	\begin{framed} {\large \textbf{Important}}
-		\begin{itemize}
-			\item The operational states and vendors were created using the List Manager (under OperationalState and Vendor, respectively) and their properties set in the Properties window.
-		\end{itemize}
+	\begin{framed} {\large \textbf{Important}}\\
+		The operational states and vendors were created using the List Manager (under OperationalState and Vendor, respectively) and their properties set in the Properties window.
 	\end{framed}			
 	
 	The checkboxes are used to construct the query predicates. Every time you select one of them, a new node is spawned. If the attribute is a basic one (String, Integer, Float, Boolean or Date), you will get a node like these (otherwise you will get the class nodes seen above):
@@ -1137,6 +1135,59 @@
 		\end{figure}
 		
 		Don't forget to save the topology with pressing the Save button \includegraphics[width=0.5cm]{img/icon_save.png}. If saved, this topology can be loaded later using the Open button  \includegraphics[width=0.5cm]{img/icon_open.png}
+	
+	\newpage
+    \section{Managing Software assets} \label{sec:software_assets}
+	    
+	    With  Kuwaiba  is  possible create  software  licenses  and  associate  them  to  existing elements  or  to  keep  them  in  a  temporary  location  until  they  are  actually  used.  A  software license can only be associated to instances of subclasses of class \textbf{GenericApplicationElement}
+	    \begin{figure}[h!]
+	    	\centering
+	    	\includegraphics[width=0.5\linewidth]{img/software_asset_generic_application_element.png}
+	    	\caption{GenericApplicationElement in the the data model}
+	    	\label{fig:software_asset_generic_application_element}
+	    \end{figure}
+	    
+	    By default the data model you  will find the classes in the figure above, but of course, you can create as many more as you want and all of them will be enabled to be associated to software licenses. To customize the properties of a software license, just modify the SoftwareLicense class:
+	    \begin{figure}[h!]
+	    	\centering
+	    	\includegraphics[width=0.5\linewidth]{img/software_asset_data_model_software_asset.png}
+	    	\caption{SoftwareLicense in the context of the data model}
+	    	\label{fig:software_asset_data_model_software_asset}
+	    \end{figure}
+	    
+	    To associate a software license to an existing element, right click on it on the Navigation Tree and select Create software asset:
+		\begin{figure}[h!]
+	     	\centering
+	     	\includegraphics[width=0.5\linewidth]{img/software_asset_action.png}
+	     	\caption{Adding a software license}
+	     	\label{fig:software_asset_action}
+		\end{figure}
+	    
+	    This  will  open a new window  right  next  to the  Properties  window  with  all  the existing software  assets associated to the element:
+	    \begin{figure}[h!]
+	    	\centering
+	    	\includegraphics[width=0.4\linewidth]{img/software_asset_license_window.png}
+	    	\caption{Software licenses associated to a given element and some properties}
+	    	\label{fig:software_asset_license_window}
+	    \end{figure}
+	    
+	    You  can  also  manually  open  the  \textit{Special  Children}  window  by  going  to  the  menu  Tools $rightarrow$ Navigation $rightarrow$ Special Children. This explorer  window  can  also  be  used  to  other  things, such  as seeing  the contents  of  a Physical  Container  (ducts,  ditches, etc).  
+	    \newline
+	    It’s  also  possible  to  keep  your  spare  licenses  in  a  pool  (see for more details \textbf{\nameref{sec:pools_manager}})
+	    \begin{figure}[h!]
+	    	\centering
+	    	\includegraphics[width=0.5\linewidth]{img/software_asset_pool_liceses_not_used.png}
+	    	\caption{A new license pool}
+	    	\label{fig:software_asset_pool_liceses_not_used}
+	    \end{figure}
+
+	    And you can get something like this
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.4\linewidth]{img/software_asset_licences_not_used.png}
+			\caption{Sample pool of software licenses}
+			\label{fig:software_asset_licences_not_used}
+		\end{figure}	
 		
 	\newpage
 	\section{Service Manager} \label{sec:service_manager}
@@ -1685,4 +1736,100 @@
 		
 		Currently is only possible to add/remove groups to/from a user (not vice versa)
 		
+		\newpage
+		\section{Bulk import}\label{sec:bulk_import}
+			Kuwaiba  provides a  way  to  import  objects  and  list  types  from CVS text files with a define format.  This  module  can be  found at \textit{Tools} $\rightarrow$ \textit{Bulk Import}. Examples of these files are included in the client installer bundle under the directory \textit{Samples}.
+			\subsection{Load Objects}\label{sec:bi_load_objects}
+		    	\begin{table}[!h]
+					\centering			    		
+			    	\begin{tabular}{|l|l|l|l|l|l|}
+			    		\hline
+			    		CLASS\_N& P\_CLASS\_N  & P\_DIST\_ATT\_DEF & [ATT1\_DEF] & [ATT2\_DEF] & ...  \\ \hline
+			    	\end{tabular}
+			    	\caption{File format to load objects}
+			    	\label{tab:file_format_objects}
+			    \end{table}
+			    \begin{framed} {\large \textbf{Important}}
+			    	\begin{itemize}
+			    		\item The separator between fields is the fixed string "$\sim$t$\sim$". 
+			    		\item All class and attribute names are case sensitive.
+			    		\item You can comment lines using the fixed character "\#" at the beginning of the line.
+			    	\end{itemize}
+			    \end{framed}
+
+				\textbf{CLASS\_N}: Name of the class the object is instance of. \textbf{Example}: if you want to create a router, use \textit{Router}.
+				\newline
+				\textbf{P\_CLASS\_N}:Name of the class the object will be created under. If the object should be created under the Navigation tree root, use the fixed string \textit{root}. \textbf{Example}: If  you  want  to create an object under a country, use \textit{Country}.
+			    \newline
+				\textbf{P\_DIST\_ATT\_DEF}:The definition of the attribute used to search for the parent of the object. This field is composed by two parts: the name of the attribute of the parent and its value. These parts are separated by the fixed string "$\sim$c$\sim$" and the attribute can’t be a list type because they are not used to uniquely identify an element. \textbf{Example}:if you want to create an object whose parent is, say, the country Germany, use "name$\sim$c$\sim$Germany".
+				\newline
+				\newline
+				The following fields are optional, and consist of the definition of the value of the attributes of the object:
+			
+				\textbf{ATTX\_DEF}:These fields are composed by two parts: the name of the attribute to be set and its value. These parts are separated by the fixed string "$\sim$c$\sim$". The second part (value) can be either a primitive type (string, number, boolean) or a reference to a list type. In this case, the value can be the name of such type or its id (a number).
+				\newline 
+				\newline 
+				\textbf{Example 1}:name$\sim$c$\sim$Atomium$\sim$t$\sim$owner$\sim$c$\sim$Government
+				\newline 
+				\textbf{Example 2}:name$\sim$c$\sim$Atomium$\sim$t$\sim$owner$\sim$c$\sim$1002
+				\newline 
+				\textbf{Example 3}:name$\sim$c$\sim$Port 1$\sim$t$\sim$enabled$\sim$c$\sim$true
+				\newline 
+				\newline
+				\textbf{Sample lines}: Country$\sim$t$\sim$root$\sim$t$\sim$name$\sim$c$\sim$root$\sim$t$\sim$acronym$\sim$c$\sim$DE
+				\newline 
+				\#This is a comment 
+				\newline 
+				Router$\sim$t$\sim$Building$\sim$t$\sim$name$\sim$c$\sim$Build 1$\sim$t$\sim$serialNumber$\sim$c$\sim$123456			
+				\begin{framed} {\large \textbf{Important}}\\
+					If you plan to use the bulk import feature, avoid using numbers as list type names because they can be mistaken for ids.	
+				\end{framed}
+			\subsection{Load List Types}\label{sec:bi_load_list_types}	
+				\begin{table}[!h]
+					\centering
+					\begin{tabular}{|l|l|l|l|l|l|}
+						\hline
+						CLASS\_N& [ATT1\_DEF] & [ATT2\_DEF] & ...  \\ \hline
+					\end{tabular}
+					\caption{File format to load list types}
+					\label{tab:file_format_list_types}
+				\end{table}
+				The separator between fields is the fixed string "$\sim$t$\sim$".	
+				\textbf{CLASS\_N}:Name of the class the listtype is instance of. Example: if you want to create a new type of cable, use \textit{ElectricalLink}. For all possible values, refer to the Data Model Manager, under the class GenenericObjectList.
+				\newline
+				The following fields are optional, and consist of the definition of the value of the attributes 
+				of the object:
+				
+	  			\textbf{ATTX\_DEF}:These fields are composed by two parts: the name of the attribute to be set and its value. These parts are separated by the fixed string "$\sim$c$\sim$". The second part (value) can be either a primitive type (string, number, boolean) or a reference to a list type. In this case, the value can be the name of such type or its id (a number). 
+
+	  			\textbf{Sample line}:SoftwareType$\sim$t$\sim$name$\sim$c$\sim$Database$\sim$t$\sim$displayName$\sim$c$\sim$Database Engine
+
+			\subsection{Interface}\label{sec:bi_interface}
+			
+				\begin{figure}[h!]
+					\centering
+					\includegraphics[width=0.7\linewidth]{img/bulk_import_main_window.png}
+					\caption{Bulk import interface}
+					\label{fig:bulk_import_interface}
+				\end{figure}					
+				The interface to upload the file has two tabs: One to import objects and the other to import list types:
+				First select the file using the  \textit{Select file} button, then, to process the data, click on \textit{Process file}. This can take from a few seconds to some minutes depending on the size of the file and the I/O constraints of your server. The result will be shown in the \textit{Output} window. This window will be opened automatically, but if you close it by mistake, it’s possible to reopen it from the menu option Window Output Output or by hitting CTRL+4
+
+				Only the errors and relevant information messages will be displayed. The output can be easily processed since the fields (message type, line number and message)	are separated by tabs so it can be opened as a CSV file in a spreadsheet editor. 
+				
+				\begin{figure}[h!]
+					\centering
+					\includegraphics[width=0.7\linewidth]{img/bulk_import_output_window.png}
+					\caption{Import process output sample}
+					\label{fig:bulk_import_output_window}
+				\end{figure}	
+				
+				\begin{framed} {\large \textbf{Important}}
+					\begin{itemize}
+					\item The lines with no errors will be committed into the database. Make sure to comment out the lines uploaded correctly to avoid creating the same object many times.
+					
+					\item If you perform changes infile after loading it (that is, after pressing \textit{Select file}), you will have to select it again so it can take the changes, otherwise, it will process the old file instead. To save the output messages, right-click the window.
+					\end{itemize}
+				\end{framed}
+				
 \end{document}

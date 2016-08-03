@@ -21,9 +21,14 @@
 \contentsline {subsection}{Example 2}{32}
 \contentsline {section}{Audit Trail}{40}
 \contentsline {section}{Topology Designer}{42}
-\contentsline {section}{Service Manager}{44}
-\contentsline {section}{Contract Manager}{47}
-\contentsline {section}{Task Manager}{49}
-\contentsline {section}{SDH Networks}{52}
-\contentsline {section}{IP Address Manager}{63}
-\contentsline {section}{User and Group Management}{67}
+\contentsline {section}{Managing Software assets}{44}
+\contentsline {section}{Service Manager}{47}
+\contentsline {section}{Contract Manager}{50}
+\contentsline {section}{Task Manager}{52}
+\contentsline {section}{SDH Networks}{55}
+\contentsline {section}{IP Address Manager}{66}
+\contentsline {section}{User and Group Management}{70}
+\contentsline {section}{Bulk import}{71}
+\contentsline {subsection}{Load Objects}{71}
+\contentsline {subsection}{Load List Types}{71}
+\contentsline {subsection}{Interface}{72}
