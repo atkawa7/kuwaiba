@@ -209,6 +209,8 @@ public class Constants {
     public static final String PROPERTY_METHOD_MANAGER = "methodManager"; //NOI18N
     public static final String PROPERTY_DEPENDS_OF = "dependsOf"; //NOI18N
     public static final String PROPERTY_CATEGORY = "category"; //NOI18N
+    public static final String PROPERTY_SUPPORT_PHONE_NUMBER = "supportPhoneNumber"; //NOI18N
+    public static final String PROPERTY_SUPPORT_EMAIL = "supportEmail"; //NOI18N
     
     /**
      * Root for all business classes
@@ -238,6 +240,10 @@ public class Constants {
      * Class service instance
      */
     public static final String CLASS_SERVICE_INSTANCE = "ServiceInstance"; //NOI18N
+    /**
+     * Class service provider
+     */
+    public static final String CLASS_SERVICEPROVIDER = "ServiceProvider"; //NOI18N
     /**
      * IP Address
      */

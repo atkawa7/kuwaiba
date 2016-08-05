@@ -16,7 +16,6 @@
 package com.neotropic.kuwaiba.modules.reporting;
 
 import com.neotropic.kuwaiba.modules.ipam.IPAMModule;
-import com.neotropic.kuwaiba.modules.mpls.MPLSModule;
 import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHModule;
 import java.nio.charset.StandardCharsets;
@@ -39,6 +38,7 @@ import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.services.persistence.impl.neo4j.RelTypes;
 import org.kuwaiba.services.persistence.util.Constants;
+import org.kuwaiba.ws.toserialize.business.RemoteObject;
 
 /**
  * Temporary class that provides methods to build class reports
@@ -600,7 +600,7 @@ public class Reports {
         if (contracts.isEmpty())
             contractStatusReportText += "<div class=\"warning\">This pool does not have contracts attached</div>";
         else {
-            contractStatusReportText += "<table><tr><th>Name</th><th>Start Date</th><th>Expiration Date</th><th>Equipment</th></tr>";
+            contractStatusReportText += "<table><tr><th>Name</th><th>Start Date</th><th>Expiration Date</th><th>Equipment</th><th>Provider</th><th>Phone Number</th><th>Email</th></tr>";
             
             int i = 0;
             SimpleDateFormat formatter = new SimpleDateFormat("MMMM dd, yyyy");
@@ -649,8 +649,24 @@ public class Reports {
                         equipmentString += anEquipment + "<br/>";
                 }
                 
-                contractStatusReportText += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") + "\"><td>" + aContract.getName() + "</td>\n"
-                                                + "<td>" + startDateString + "</td><td>" + expirationDateString + "</td><td>" + equipmentString + "</td></tr>";
+                String providerName = asError("Not Set");
+                String providerPhoneNumber = asError("Not Set");
+                String providerEmail = asError("Not Set");
+                
+                List<String> serviceProviderId = fullContractInfo.getAttributes().get("provider");
+                if (serviceProviderId != null) {
+                    RemoteBusinessObject serviceProvider = bem.getObject(Constants.CLASS_SERVICEPROVIDER, Long.valueOf(serviceProviderId.get(0)));
+                    if (!serviceProvider.getName().isEmpty())
+                        providerName = serviceProvider.getName();
+                    if (serviceProvider.getAttributes().get(Constants.PROPERTY_SUPPORT_PHONE_NUMBER) != null)
+                        providerPhoneNumber = serviceProvider.getAttributes().get(Constants.PROPERTY_SUPPORT_PHONE_NUMBER).get(0);
+                    if (serviceProvider.getAttributes().get(Constants.PROPERTY_SUPPORT_EMAIL) != null)
+                        providerEmail = serviceProvider.getAttributes().get(Constants.PROPERTY_SUPPORT_EMAIL).get(0);
+                }
+                
+                contractStatusReportText += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") + "\"><td>" + aContract.getName() + "</td>"
+                                                + "<td>" + startDateString + "</td><td>" + expirationDateString + "</td><td>" + equipmentString 
+                                                + "</td><td>" + providerName + "</td><td>" + providerPhoneNumber + "</td><td>" + providerEmail + "</td></tr>\n";
                 i ++;
             }
             contractStatusReportText += "</table>";

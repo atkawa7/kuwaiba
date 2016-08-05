@@ -2023,7 +2023,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("createTask", ipAddress, sessionId);
             long res = aem.createTask(name, description, enabled, script, parameters, schedule, notificationType);
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
-                    String.format("Created pool %s with id %s", name, res));
+                    String.format("Created task %s with id %s", name, res));
             return res;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
