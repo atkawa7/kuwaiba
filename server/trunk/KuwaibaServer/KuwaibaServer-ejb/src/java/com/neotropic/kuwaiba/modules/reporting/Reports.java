@@ -38,7 +38,6 @@ import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.services.persistence.impl.neo4j.RelTypes;
 import org.kuwaiba.services.persistence.util.Constants;
-import org.kuwaiba.ws.toserialize.business.RemoteObject;
 
 /**
  * Temporary class that provides methods to build class reports
@@ -48,19 +47,14 @@ public class Reports {
     
     private ApplicationEntityManager aem;
     private BusinessEntityManager bem;
-    public String corporateLogo; // = "http://afr-ix.com/wp-content/themes/twentyfourteen/images/afrix_logo.png";
+    public String corporateLogo;
     
     public Reports(BusinessEntityManager bem, ApplicationEntityManager aem) {
         this.aem = aem;
         this.bem = bem;
         this.corporateLogo = aem.getConfiguration().getProperty("corporateLogo") == null ? "logo.jpg" : aem.getConfiguration().getProperty("corporateLogo");
     }
-    
-    
-    
-    
-    //public final String corporateLogo = "http://www.gitge.org/wp-content/themes/dzonia-lite/images/logo.png";
-    
+       
     public byte[] buildRackUsageReport(long rackId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
         RemoteBusinessObject theRack = bem.getObject("Rack", rackId);
                     
@@ -76,7 +70,7 @@ public class Reports {
                                 "    <title>Rack Usage Report " + theRack.getName() + "</title>\n" +
                                 getStyleSheet() +
                                 "  </head>\n" +
-                                "  <body><table><tr><td><h1>Rack Usage Report for " + theRack.getName() + "</h1></td><td><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
+                                "  <body><table><tr><td><h1>Rack Usage Report for " + theRack.getName() + "</h1></td><td align=\"center\"><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
 
         int totalRackUnits;
         int usedRackUnits = 0;
@@ -150,7 +144,7 @@ public class Reports {
                                 "    <title>Frame Usage Report for " + theFrame.getName() + "</title>\n" +
                                 getStyleSheet() +
                                 "  </head>\n" +
-                                "  <body><table><tr><td><h1>Frame Usage Report for " + theFrame.getName() + "</h1></td><td><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
+                                "  <body><table><tr><td><h1>Frame Usage Report for " + theFrame.getName() + "</h1></td><td align=\"center\"><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
         String portList = "";
         int usedPorts = 0;
         
@@ -251,7 +245,7 @@ public class Reports {
             title = "Transport Link Usage Report for " + theTransportLink.getName();
             transportLinkUsageReportText = getHeader(title);
             transportLinkUsageReportText += 
-                                "  <body><table><tr><td><h1>" + title + "</h1></td><td><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
+                                "  <body><table><tr><td><h1>" + title + "</h1></td><td align=\"center\"><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
             
             //General Info
             transportLinkUsageReportText += "<table><tr><td class=\"generalInfoLabel\">Name</td><td class=\"generalInfoValue\">" + theTransportLink.getName() + "</td></tr>"
@@ -316,7 +310,7 @@ public class Reports {
             title = "Tributary Link Details Report for " + theTributaryLink.getName();
             tributaryLinkUsageReportText = getHeader(title);
             tributaryLinkUsageReportText += 
-                                "  <body><table><tr><td><h1>" + title + "</h1></td><td><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
+                                "  <body><table><tr><td><h1>" + title + "</h1></td><td align=\"center\"><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
             
             //Demarcation points
             query = String.format("MATCH (tributaryLink)-[relationA:%s]-(equipmentPort)-[relationB:%s]-(physicalConnection)-[relationC:%s]-(nextEquipmentPort)-[:%s*]->(nextEquipment)-[:%s]->(class)-[:%s*]->(superClass) "
@@ -351,7 +345,7 @@ public class Reports {
             else {
                 List<AnnotatedRemoteBusinessObjectLight> structured = bem.getAnnotatedSpecialAttribute(container.get(0).getClassName(), 
                         container.get(0).getId(), SDHModule.RELATIONSHIP_SDHCONTAINS);
-                usedResources = "<table><tr><th>Structured Name</th><th>Structured Position</th><th>Transport Links</th></tr>";
+                usedResources = "<table><tr><th>Structured Name</th><th>Position in Container</th><th>Transport Links</th></tr>";
                 int i = 0;
                 for (AnnotatedRemoteBusinessObjectLight aStructured : structured) {
                     String transportLinksString = "";
@@ -363,7 +357,7 @@ public class Reports {
                         transportLinksString += transportLink.getProperties().get(SDHModule.PROPERTY_SDHPOSITION) + " - " + transportLink.getObject() + "<br/>";
                     
                     usedResources += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") +"\"><td>" + aStructured.getObject() + "</td>"
-                                    + "<td>" + aStructured.getProperties().get(SDHModule.PROPERTY_SDHPOSITION) +"</td>"
+                                    + "<td>" + asKLM((int)aStructured.getProperties().get(SDHModule.PROPERTY_SDHPOSITION)) + "</td>"
                                     + "<td>" + transportLinksString + "</td></tr>";
                     
                     i ++;
@@ -398,7 +392,7 @@ public class Reports {
             title = "Tributary Link Details Report for " + theTributaryLink.getName();
             tributaryLinkUsageReportText = getHeader(title);
             tributaryLinkUsageReportText += 
-                                "  <body><table><tr><td><h1>" + title + "</h1></td><td><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
+                                "  <body><table><tr><td><h1>" + title + "</h1></td><td align=\"center\"><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
             
             //Demarcation points
             query = String.format("MATCH (tributaryLink)-[relationA:%s]-(equipmentPort)-[relationB:%s]-(physicalConnection)-[relationC:%s]-(nextEquipmentPort)-[:%s*]->(nextEquipment)-[:%s]->(class)-[:%s*]->(superClass) "
@@ -464,11 +458,11 @@ public class Reports {
         title = "Network Equipment Report for " + location.getName();
         networkEquipmentInLocationReportText = getHeader(title);
         networkEquipmentInLocationReportText += 
-                            "  <body><table><tr><td><h1>" + title + "</h1></td><td><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
+                            "  <body><table><tr><td><h1>" + title + "</h1></td><td align=\"center\"><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
 
-        networkEquipmentInLocationReportText += "<table><tr><td class=\"generalInfoLabel\"><b>Name</b></td><td>" + location.getName() + "</td></tr>\n"
-                + "<tr><td class=\"generalInfoLabel\"><b>Type</b></td><td>" + location.getClassName() + "</td></tr>\n"
-                + "<tr><td class=\"generalInfoLabel\"><b>Location</b></td><td>" + formatLocation(bem.getParents(location.getClassName(), location.getId())) + "</td></tr>\n</table>\n";
+        networkEquipmentInLocationReportText += "<table><tr><td class=\"generalInfoLabel\">Name</td><td>" + location.getName() + "</td></tr>\n"
+                + "<tr><td class=\"generalInfoLabel\">Type</td><td>" + location.getClassName() + "</td></tr>\n"
+                + "<tr><td class=\"generalInfoLabel\">Location</td><td>" + formatLocation(bem.getParents(location.getClassName(), location.getId())) + "</td></tr>\n</table>\n";
 
         if (theResult.get("networkEquipment").getList().isEmpty())
             networkEquipmentInLocationReportText += "<div class=\"warning\">This location does not have any network equipment</div>";
@@ -529,7 +523,7 @@ public class Reports {
             title = "Subnet Usage Detail Report for " + subnet.getName();
             subnetUsageReportText = getHeader(title);
             subnetUsageReportText += 
-                                "  <body><table><tr><td><h1>" + title + "</h1></td><td><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
+                                "  <body><table><tr><td><h1>" + title + "</h1></td><td align=\"center\"><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
             
             subnetUsageReportText += pieChartScript(usedIps, freeIps);
 
@@ -595,7 +589,7 @@ public class Reports {
         String contractStatusReportText = getHeader(title);
         
         contractStatusReportText += 
-                            "  <body><table><tr><td><h1>" + title + "</h1><h2>" + contractPool.getDescription() + "</h2></td><td><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
+                            "  <body><table><tr><td><h1>" + title + "</h1><h2>" + contractPool.getDescription() + "</h2></td><td align=\"center\"><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
         
         if (contracts.isEmpty())
             contractStatusReportText += "<div class=\"warning\">This pool does not have contracts attached</div>";
@@ -696,7 +690,7 @@ public class Reports {
             title = "MPLS service detail Report for " + MPLSService.getName() + "[" + MPLSService.getClassName() + "]";
             MPLSDetailReportText = getHeader(title);
             MPLSDetailReportText += 
-                                "  <body><table><tr><td><h1>" + title + "</h1></td><td><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
+                                "  <body><table><tr><td><h1>" + title + "</h1></td><td align=\"center\"><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
         }
             String instance; 
             
@@ -744,10 +738,13 @@ public class Reports {
                     "            width: 100%;\n" +
                     "          }\n" +
                     "   th {\n" +
-                    "            background-color: #B1D2F3;\n" +
+                    "            background-color: #94b155;\n" +
+                    "            padding: 7px 7px 7px 7px;\n" +
+                    "            color: white;\n" +
+                    "            font-weight: normal;\n" +
                     "   }\n" +
                     "   td {\n" +
-                    "            padding: 5px 5px 5px 5px;\n" +
+                    "            padding: 7px 7px 7px 7px;\n" +
                     "   }\n" +
                     "   div {\n" +
                     "            padding: 5px 5px 5px 5px;\n" +
@@ -777,15 +774,14 @@ public class Reports {
                     "            color: red;\n" +
                     "   }\n" +
                     "   td.generalInfoLabel {\n" +
-                    "            background-color: #E8E8E8;\n" +
+                    "            background-color: #c2da8e;\n" +
                     "            width: 20%;\n" +
-                    "            font-weight: bold;\n" +
                     "   }\n" +
                     "   td.generalInfoValue {\n" +
                     "            background-color: white;\n" +
                     "   }\n" +
                     "   tr.even {\n" +
-                    "            background-color: #AAE033;\n" +
+                    "            background-color: #f3e270;\n" +
                     "   }\n" +
                     "   tr.odd {\n" +
                     "            background-color: #D1F680;\n" +
@@ -847,5 +843,28 @@ public class Reports {
                         "</script>\n";
         return script;
     }
+    
+    private String asKLM(int position) {
+            int k, l, m;
+            
+            if (position % 21 == 0) {
+                k = position / 21;
+                l = 7;
+                m = 3;
+            } else {
+                k = (position / 21) + 1;
+                if ((position % 21) % 3 == 0)
+                    l = (position % 21) / 3;
+                else 
+                    l = (position % 21) / 3 + 1;
+                
+                if ((position % 21) % 3 == 0)
+                    m = 3;
+                else
+                    m = (position % 21) % 3;
+            }
+            
+            return String.format("%s [%s - %s - %s]", position, k, l, m);
+        }
     //</editor-fold> 
 }

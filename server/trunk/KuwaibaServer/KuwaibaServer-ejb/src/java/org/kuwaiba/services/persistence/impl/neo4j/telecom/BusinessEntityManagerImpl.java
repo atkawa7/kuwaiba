@@ -47,8 +47,6 @@ import org.kuwaiba.services.persistence.impl.neo4j.RelTypes;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.services.persistence.util.Util;
 import org.kuwaiba.util.ChangeDescriptor;
-import org.neo4j.cypher.javacompat.ExecutionEngine;
-import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -1045,32 +1043,20 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     //TODO DELETE. This is a business dependant method, should not be here. Don't use it
     @Override
     public List<RemoteBusinessObjectLight> getPhysicalPath(String objectClass, long objectId) throws ApplicationObjectNotFoundException, NotAuthorizedException{
-        Node lastNode = null;
         List<RemoteBusinessObjectLight> path = new ArrayList<>();
-        String cypherQuery = "START o=node({oid}) "+ 
-                             "MATCH path = o-[r:" + RelTypes.RELATED_TO_SPECIAL + "*]-c "+
-                             "WHERE all(rel in r where rel.name = 'mirror' or rel.name = 'endpointA' or rel.name = 'endpointB') "+
-                             "RETURN collect(distinct c) as path";
-        Map<String, Object> params = new HashMap<>();
-        params.put("oid", objectId);
+        
+        //The first part of the query will return many paths, the longest is the one we need. The others are
+        //subsets of the longest
+        String cypherQuery = "MATCH paths = (o)-[r:" + RelTypes.RELATED_TO_SPECIAL + "*]-(c) "+
+                             "WHERE id(o) = " + objectId + " AND all(rel in r where rel.name = 'mirror' or rel.name = 'endpointA' or rel.name = 'endpointB') "+
+                             "WITH nodes(paths) as path " +
+                             "RETURN path ORDER BY length(path) DESC LIMIT 1";
         try (Transaction tx = graphDb.beginTx()){
-            ExecutionEngine engine = new ExecutionEngine(graphDb);
-            ExecutionResult result = engine.execute(cypherQuery, params);
+            
+            Result result = graphDb.execute(cypherQuery);
             Iterator<List<Node>> column = result.columnAs("path");
             
-            for (List<Node> list : IteratorUtil.asIterable(column)){
-                if (list.isEmpty())
-                    return path;
-                lastNode = list.get(list.size()-1);
-            }
-            params.clear();
-            params.put("oid", lastNode.getId());
-
-            engine = new ExecutionEngine(graphDb);
-            result = engine.execute(cypherQuery, params);
-            column = result.columnAs("path");
-            path.add(Util.createRemoteObjectLightFromNode(lastNode));
-            for (List<Node> listOfNodes : IteratorUtil.asIterable(column)){
+            for (List<Node> listOfNodes : IteratorUtil.asIterable(column)) {
                 for(Node node : listOfNodes)
                     path.add(Util.createRemoteObjectLightFromNode(node));
             }
