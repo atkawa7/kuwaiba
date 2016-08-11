@@ -112,7 +112,7 @@ public class SDHModuleActionsFactory {
     public class RemoveSDHBusinessObjectFromView extends AbstractAction {
 
         public RemoveSDHBusinessObjectFromView() {
-            this.putValue(NAME, "Remove from view"); 
+            this.putValue(NAME, "Remove From View"); 
         }
         
         @Override
@@ -160,7 +160,7 @@ public class SDHModuleActionsFactory {
     public class ShowSDHContainersInTransportLink extends AbstractAction {
 
         public ShowSDHContainersInTransportLink() {
-            this.putValue(NAME, "Show virtual circuits inside");
+            this.putValue(NAME, "Show Virtual Circuits Inside");
         }        
         
         @Override

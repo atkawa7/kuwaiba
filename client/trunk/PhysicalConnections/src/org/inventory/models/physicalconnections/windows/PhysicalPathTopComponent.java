@@ -23,7 +23,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.Action;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -38,6 +37,7 @@ import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.nodes.Node;
+import org.openide.util.Utilities;
 import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -105,14 +105,11 @@ public class PhysicalPathTopComponent extends TopComponent implements ExplorerMa
             public void mousePressed(MouseEvent e)  {check(e);}
             @Override
             public void mouseReleased(MouseEvent e) {check(e);}
+            
             public void check(MouseEvent e) {
                 if ((e.getModifiers() & InputEvent.BUTTON3_MASK) == InputEvent.BUTTON3_MASK) {  //e.isPopupTrigger works differently depending on the platform, so we just check for the second button 
                     lstPath.setSelectedIndex(lstPath.locationToIndex(e.getPoint()));
-                    menu.removeAll();
-                    for (Action action : selectedObject.getActions(true)){
-                        if (action != null)
-                            menu.add(action);
-                    }
+                    menu = Utilities.actionsToPopup(selectedObject.getActions(true), lstPath);
                     menu.show(lstPath, e.getX(), e.getY());
                 }
             }
@@ -125,10 +122,7 @@ public class PhysicalPathTopComponent extends TopComponent implements ExplorerMa
     }
 
     @Override
-    public void componentOpened() {
-        //This requires that CoreUI to be enabled in the project
-        
-    }
+    public void componentOpened() {}
     
     @Override
     public void componentClosed() {

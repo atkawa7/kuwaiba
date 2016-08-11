@@ -481,7 +481,7 @@ public class SDHConnectionWizard {
                 if (transportLinkStructure == null) 
                     JOptionPane.showMessageDialog(null, com.getError(), "Error", JOptionPane.ERROR_MESSAGE);
                 else {
-                    JComboBox<AvailablePosition> lstAvailablePositions = new JComboBox<>(buildAvailablePositionsList(hop.getLink(), transportLinkStructure));
+                    JComboBox<AvailableTransportLinkPosition> lstAvailablePositions = new JComboBox<>(buildAvailablePositionsList(hop.getLink(), transportLinkStructure));
                     lstAvailablePositions.setName("lstAvailablePositions"); //NOI18N
                     JComplexDialogPanel pnlAvailablePositions = new JComplexDialogPanel(new String[] {"Available Positions"}, new JComponent[] {lstAvailablePositions});
 
@@ -498,13 +498,13 @@ public class SDHConnectionWizard {
                                 JOptionPane.showMessageDialog(null, "There are not enough positions to transport the concatenated container", "Error", JOptionPane.ERROR_MESSAGE);
                             else {
                                 for (int i = selectedIndex; i < selectedIndex + numberOfPositionsToBeOccupied; i++) {
-                                    AvailablePosition positionToBeOcuppied = (AvailablePosition)((JComboBox)pnlAvailablePositions.getComponent("lstAvailablePositions")).getItemAt(i);
+                                    AvailableTransportLinkPosition positionToBeOcuppied = (AvailableTransportLinkPosition)((JComboBox)pnlAvailablePositions.getComponent("lstAvailablePositions")).getItemAt(i);
                                     if (positionToBeOcuppied.container != null) {
                                         JOptionPane.showMessageDialog(null, "One of the positions to be assigned is already in use", "Error", JOptionPane.ERROR_MESSAGE);
                                         return;
                                     }
                                 }
-                                hop.position = ((AvailablePosition)((JComboBox)pnlAvailablePositions.getComponent("lstAvailablePositions")).getSelectedItem()).position;
+                                hop.position = ((AvailableTransportLinkPosition)((JComboBox)pnlAvailablePositions.getComponent("lstAvailablePositions")).getSelectedItem()).position;
                             }
                         } catch (NumberFormatException ex) {
                             JOptionPane.showMessageDialog(null, "The ContainerLink class name does not allow to calculate the total number of concatenated positions", "Error", JOptionPane.ERROR_MESSAGE);
@@ -526,16 +526,16 @@ public class SDHConnectionWizard {
         @Override
         public void mouseExited(MouseEvent e) {}
         
-        public AvailablePosition[] buildAvailablePositionsList(LocalObjectLight transportLink, 
+        public AvailableTransportLinkPosition[] buildAvailablePositionsList(LocalObjectLight transportLink, 
                 List<LocalSDHContainerLinkDefinition> transportLinkStructure) {
             try {
                 int numberOfVC4 = SDHModuleService.calculateCapacity(transportLink.getClassName(), SDHModuleService.LinkType.TYPE_TRANSPORTLINK);
-                AvailablePosition[] availablePositions = new AvailablePosition[numberOfVC4];
+                AvailableTransportLinkPosition[] availablePositions = new AvailableTransportLinkPosition[numberOfVC4];
                 
                 //First, we fill the positions we know for sure that are being used
                 for (LocalSDHContainerLinkDefinition aContainerDefinition : transportLinkStructure) {
                     int position = aContainerDefinition.getPositions().get(0).getPosition(); //This container definition has always only one position: The one used in this TransportLink
-                    availablePositions[position - 1] = new AvailablePosition(position, aContainerDefinition.getContainer());
+                    availablePositions[position - 1] = new AvailableTransportLinkPosition(position, aContainerDefinition.getContainer());
                     //A container might occupy more than one slot, if it's a concatenated circuit. Now, we will fill the adjacent which are also being used
                     try {
                         int numberOfAdjacentPositions = 0;
@@ -544,23 +544,23 @@ public class SDHConnectionWizard {
                             numberOfAdjacentPositions = Math.abs(Integer.valueOf(adjacentPositions)) - 1; //Minus one, because we've already filled the first position
                                                                                                           //Absolute value, because the concatenated containers class names are like "VC4-A_NUMBER"
                         for (int j = position; j < position + numberOfAdjacentPositions; j++)
-                            availablePositions[j] = new AvailablePosition(j + 1, aContainerDefinition.getContainer());
+                            availablePositions[j] = new AvailableTransportLinkPosition(j + 1, aContainerDefinition.getContainer());
                         
                     } catch (NumberFormatException ex) {
                         JOptionPane.showMessageDialog(null, "The ContainerLink class name does not allow to calculate the total number of concatenated positions", "Error", JOptionPane.ERROR_MESSAGE);
-                        return new AvailablePosition[0];
+                        return new AvailableTransportLinkPosition[0];
                     }
                 }
                 
                 //Then we fill the rest (if any) with free slots
                 for (int i = 1; i <= numberOfVC4; i++) {
                     if (availablePositions[i - 1] == null)
-                        availablePositions[i - 1] = new AvailablePosition(i, null);
+                        availablePositions[i - 1] = new AvailableTransportLinkPosition(i, null);
                 }
                 return availablePositions;
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(null, "The TransportLink class name does not allow to calculate the total number of positions", "Error", JOptionPane.ERROR_MESSAGE);
-                return new AvailablePosition[0];
+                return new AvailableTransportLinkPosition[0];
             }
         }
     }
@@ -649,7 +649,7 @@ public class SDHConnectionWizard {
                 if (structure == null) 
                     JOptionPane.showMessageDialog(null, com.getError(), "Error", JOptionPane.ERROR_MESSAGE);
                 else {
-                    JComboBox<AvailablePosition> lstAvailablePositions;
+                    JComboBox lstAvailablePositions;
                     if (com.isSubclassOf(connectionType.getClassName(), SDHModuleService.CLASS_GENERICSDHHIGHORDERTRIBUTARYLINK))
                         lstAvailablePositions = new JComboBox<>(buildAvailablePositionsListForTransportLinks(hop.getLink(), structure));
                     else
@@ -684,13 +684,13 @@ public class SDHConnectionWizard {
                             JOptionPane.showMessageDialog(null, "There are not enough positions to transport this virtual circuit", "Error", JOptionPane.ERROR_MESSAGE);
                         else {
                             for (int i = selectedIndex; i < selectedIndex + numberOfPositionsToBeOccupied; i++) {
-                                AvailablePosition positionToBeOcuppied = (AvailablePosition)((JComboBox)pnlAvailablePositions.getComponent("lstAvailablePositions")).getItemAt(i);
+                                AvailableContainerLinkPosition positionToBeOcuppied = (AvailableContainerLinkPosition)((JComboBox)pnlAvailablePositions.getComponent("lstAvailablePositions")).getItemAt(i);
                                 if (positionToBeOcuppied.container != null) {
                                     JOptionPane.showMessageDialog(null, "One of the positions to be assigned is already in use", "Error", JOptionPane.ERROR_MESSAGE);
                                     return;
                                 }
                             }
-                            hop.position = ((AvailablePosition)((JComboBox)pnlAvailablePositions.getComponent("lstAvailablePositions")).getSelectedItem()).position;
+                            hop.position = ((AvailableContainerLinkPosition)((JComboBox)pnlAvailablePositions.getComponent("lstAvailablePositions")).getSelectedItem()).position;
                         }
                     }
                 }
@@ -709,7 +709,7 @@ public class SDHConnectionWizard {
         @Override
         public void mouseExited(MouseEvent e) {}
         
-        public AvailablePosition[] buildAvailablePositionsListForContainers(LocalObjectLight containertLink, 
+        public AvailableContainerLinkPosition[] buildAvailablePositionsListForContainers(LocalObjectLight containertLink, 
                 List<LocalSDHContainerLinkDefinition> containertLinkStructure){
             try {
                 int numberOfPositions;
@@ -720,12 +720,12 @@ public class SDHConnectionWizard {
                 else
                     numberOfPositions = Math.abs(Integer.valueOf(containerSuffix)) * 63; 
                 
-                AvailablePosition[] availablePositions = new AvailablePosition[numberOfPositions];
+                AvailableContainerLinkPosition[] availablePositions = new AvailableContainerLinkPosition[numberOfPositions];
                 
                 //First, we fill the positions we know for sure that are being used
                 for (LocalSDHContainerLinkDefinition aContainerDefinition : containertLinkStructure) {
                     int position = aContainerDefinition.getPositions().get(0).getPosition(); //This container definition has always only one position: The one used in this TransportLink
-                    availablePositions[position - 1] = new AvailablePosition(position, aContainerDefinition.getContainer());
+                    availablePositions[position - 1] = new AvailableContainerLinkPosition(position, aContainerDefinition.getContainer());
                     //A container might occupy more than one slot, if it's a concatenated circuit. Now, we will fill the adjacent which are also being used
                         int numberOfAdjacentPositions ;
                         switch (aContainerDefinition.getContainer().getClassName()) {
@@ -737,35 +737,35 @@ public class SDHConnectionWizard {
                                 break;
                             default:
                                 JOptionPane.showMessageDialog(null, "The ContainerLink class name does not allow to calculate the total number of concatenated positions", "Error", JOptionPane.ERROR_MESSAGE);
-                                return new AvailablePosition[0];
+                                return new AvailableContainerLinkPosition[0];
                         }
                         
                         for (int j = position; j < position + numberOfAdjacentPositions; j++)
-                            availablePositions[j] = new AvailablePosition(j + 1, aContainerDefinition.getContainer());                        
+                            availablePositions[j] = new AvailableContainerLinkPosition(j + 1, aContainerDefinition.getContainer());                        
                 }
                 
                 //Then we fill the rest (if any) with free slots
                 for (int i = 1; i <= numberOfPositions; i++) {
                     if (availablePositions[i - 1] == null)
-                        availablePositions[i - 1] = new AvailablePosition(i, null);
+                        availablePositions[i - 1] = new AvailableContainerLinkPosition(i, null);
                 }
                 return availablePositions;
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(null, "The ContainerLink class name does not allow to calculate the total number of positions", "Error", JOptionPane.ERROR_MESSAGE);
-                return new AvailablePosition[0];
+                return new AvailableContainerLinkPosition[0];
             }
         }
         
-        public AvailablePosition[] buildAvailablePositionsListForTransportLinks(LocalObjectLight transportLink, 
+        public AvailableTransportLinkPosition[] buildAvailablePositionsListForTransportLinks(LocalObjectLight transportLink, 
                 List<LocalSDHContainerLinkDefinition> transportLinkStructure) {
             try {
                 int numberOfVC4 = SDHModuleService.calculateCapacity(transportLink.getClassName(), SDHModuleService.LinkType.TYPE_TRANSPORTLINK);
-                AvailablePosition[] availablePositions = new AvailablePosition[numberOfVC4];
+                AvailableTransportLinkPosition[] availablePositions = new AvailableTransportLinkPosition[numberOfVC4];
                 
                 //First, we fill the positions we know for sure that are being used
                 for (LocalSDHContainerLinkDefinition aContainerDefinition : transportLinkStructure) {
                     int position = aContainerDefinition.getPositions().get(0).getPosition(); //This container definition has always only one position: The one used in this TransportLink
-                    availablePositions[position - 1] = new AvailablePosition(position, aContainerDefinition.getContainer());
+                    availablePositions[position - 1] = new AvailableTransportLinkPosition(position, aContainerDefinition.getContainer());
                     //A container might occupy more than one slot, if it's a concatenated circuit. Now, we will fill the adjacent which are also being used
                     try {
                         int numberOfAdjacentPositions = 0;
@@ -774,23 +774,23 @@ public class SDHConnectionWizard {
                             numberOfAdjacentPositions = Math.abs(Integer.valueOf(adjacentPositions)) - 1; //Minus one, because we've already filled the first position
                                                                                                           //Absolute value, because the concatenated containers class names are like "VC4-A_NUMBER"
                         for (int j = position; j < position + numberOfAdjacentPositions; j++)
-                            availablePositions[j] = new AvailablePosition(j + 1, aContainerDefinition.getContainer());
+                            availablePositions[j] = new AvailableTransportLinkPosition(j + 1, aContainerDefinition.getContainer());
                         
                     } catch (NumberFormatException ex) {
                         JOptionPane.showMessageDialog(null, "The ContainerLink class name does not allow to calculate the total number of concatenated positions", "Error", JOptionPane.ERROR_MESSAGE);
-                        return new AvailablePosition[0];
+                        return new AvailableTransportLinkPosition[0];
                     }
                 }
                 
                 //Then we fill the rest (if any) with free slots
                 for (int i = 1; i <= numberOfVC4; i++) {
                     if (availablePositions[i - 1] == null)
-                        availablePositions[i - 1] = new AvailablePosition(i, null);
+                        availablePositions[i - 1] = new AvailableTransportLinkPosition(i, null);
                 }
                 return availablePositions;
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(null, "The TransportLink class name does not allow to calculate the total number of positions", "Error", JOptionPane.ERROR_MESSAGE);
-                return new AvailablePosition[0];
+                return new AvailableTransportLinkPosition[0];
             }
         }
         
@@ -956,13 +956,13 @@ public class SDHConnectionWizard {
     }
     
     /**
-     * A class representing a position to be chosen from a container or tributary link when defining a circuit route
+     * A class representing a timeslot in a TransportLink
      */
-    public class AvailablePosition {
+    public class AvailableTransportLinkPosition {
         private int position;
         private LocalObjectLight container;
 
-        public AvailablePosition(int position, LocalObjectLight container) {
+        public AvailableTransportLinkPosition(int position, LocalObjectLight container) {
             this.position = position;
             this.container = container;
         }            
@@ -970,6 +970,47 @@ public class SDHConnectionWizard {
         @Override
         public String toString() {
             return String.format("%s - %s", position, container == null ? "Free" : container.getName());
+        }
+    }
+    
+    /**
+     * A class representing a timeslot in a ContainerLink
+     */
+    public class AvailableContainerLinkPosition {
+        private int position;
+        private LocalObjectLight container;
+
+        public AvailableContainerLinkPosition(int position, LocalObjectLight container) {
+            this.position = position;
+            this.container = container;
+        }            
+
+        @Override
+        public String toString() {
+            return String.format("%s - %s", asKLM(), container == null ? "Free" : container.getName());
+        }
+        
+        private String asKLM() {
+            int k, l, m;
+            
+            if (position % 21 == 0) {
+                k = position / 21;
+                l = 7;
+                m = 3;
+            } else {
+                k = (position / 21) + 1;
+                if ((position % 21) % 3 == 0)
+                    l = (position % 21) / 3;
+                else 
+                    l = (position % 21) / 3 + 1;
+                
+                if ((position % 21) % 3 == 0)
+                    m = 3;
+                else
+                    m = (position % 21) % 3;
+            }
+            
+            return String.format("%s [%s - %s - %s]", position, k, l, m);
         }
     }
     

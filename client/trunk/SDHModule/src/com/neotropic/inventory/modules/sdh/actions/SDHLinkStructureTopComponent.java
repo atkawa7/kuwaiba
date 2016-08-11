@@ -73,6 +73,11 @@ public class SDHLinkStructureTopComponent extends TopComponent implements Explor
         initComponents();
         associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
     }
+
+    @Override
+    public int getPersistenceType() {
+        return PERSISTENCE_NEVER;
+    }
     
     private void initComponents() {
         setLayout(new BorderLayout());

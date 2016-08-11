@@ -37,7 +37,7 @@ import org.openide.util.lookup.ServiceProvider;
 public class RelateToContractAction extends GenericObjectNodeAction {
 
     public RelateToContractAction() {
-        putValue(NAME, "Associate to contract...");
+        putValue(NAME, "Relate to Contract...");
     }
 
     

@@ -101,7 +101,7 @@ public final class TopologyViewActions {
     
     public class DeleteNodeAction extends AbstractAction {
         public DeleteNodeAction() {
-            this.putValue(NAME, "Remove from view");
+            this.putValue(NAME, "Remove From View");
         }
 
         @Override

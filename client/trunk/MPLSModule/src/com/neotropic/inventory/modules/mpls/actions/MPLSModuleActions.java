@@ -113,7 +113,7 @@ public class MPLSModuleActions {
     public class RemoveMPLSBusinessObjectFromView extends AbstractAction {
 
         public RemoveMPLSBusinessObjectFromView() {
-            this.putValue(NAME, "Remove from view"); 
+            this.putValue(NAME, "Remove From View"); 
         }
 
         @Override
