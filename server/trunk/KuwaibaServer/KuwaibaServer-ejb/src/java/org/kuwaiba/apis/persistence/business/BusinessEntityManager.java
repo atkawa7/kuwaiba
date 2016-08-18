@@ -207,7 +207,7 @@ public interface BusinessEntityManager {
      * or it is blocked or if the requested object or one of it's children have
      * relationships that should be released manually before to delete them
      */
-    public void deleteObjects(HashMap<String, long[]> oids, boolean releaseRelationships)
+    public void deleteObjects(HashMap<String, List<Long>> oids, boolean releaseRelationships)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException, NotAuthorizedException;
 
     /**

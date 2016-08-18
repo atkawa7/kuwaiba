@@ -468,7 +468,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public void deleteObjects(HashMap<String, long[]> objects, boolean releaseRelationships)
+    public void deleteObjects(HashMap<String, List<Long>> objects, boolean releaseRelationships)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException, NotAuthorizedException {
 
         try(Transaction tx = graphDb.beginTx()) {
@@ -488,9 +488,14 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     @Override
     public void deleteObject(String className, long oid, boolean releaseRelationships) throws ObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException, NotAuthorizedException {
-        HashMap<String, long[]> objectDefinition = new HashMap<>();
-        objectDefinition.put(className, new long[] { oid });
-        deleteObjects(objectDefinition, releaseRelationships);
+        try (Transaction tx = graphDb.beginTx()) {
+            if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, className))
+                        throw new OperationNotPermittedException(className, String.format("Class %s is not a business-related class", className));
+
+            Node instance = getInstanceOfClass(className, oid);
+            Util.deleteObject(instance, releaseRelationships);
+            tx.success();
+        }
     }
 
     @Override

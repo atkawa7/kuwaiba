@@ -1000,10 +1000,16 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Array sizes do not match");
         try {
             aem.validateCall("deleteObjects", ipAddress, sessionId);
-            HashMap<String,long[]> objects = new HashMap<>();
-            for (int i = 0; i< classNames.length;i++){
-                if (objects.get(classNames[i]) == null)
-                    objects.put(classNames[i], new long[]{oids[i]});
+            HashMap<String,List<Long>> objects = new HashMap<>();
+            for (int i = 0; i< classNames.length;i++) {
+                List<Long> existingObjects = objects.get(classNames[i]);
+                if (existingObjects == null){
+                    List<Long> newIdList = new ArrayList<>();
+                    newIdList.add(oids[i]);
+                    objects.put(classNames[i], newIdList);
+                }
+                else
+                    existingObjects.add(oids[i]);
             }
 
             bem.deleteObjects(objects, releaseRelationships);
