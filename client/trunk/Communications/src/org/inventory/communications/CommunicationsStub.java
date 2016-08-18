@@ -1315,8 +1315,8 @@ public class CommunicationsStub {
     public boolean moveObjects(String targetClass, long targetOid, LocalObjectLight[] objects) {
 
         try{
-            List<Long> objectOids = new ArrayList<Long>();
-            List<String> objectClasses = new ArrayList<String>();
+            List<Long> objectOids = new ArrayList<>();
+            List<String> objectClasses = new ArrayList<>();
 
             for (LocalObjectLight lol : objects){
                 objectOids.add(lol.getOid());
@@ -1332,8 +1332,8 @@ public class CommunicationsStub {
 
     public LocalObjectLight[] copyObjects(String targetClass, long targetOid, LocalObjectLight[] objects){
         try{
-            List<Long> objectOids = new ArrayList<Long>();
-            List<String> objectClasses = new ArrayList<String>();
+            List<Long> objectOids = new ArrayList<>();
+            List<String> objectClasses = new ArrayList<>();
 
             for (LocalObjectLight lol : objects){
                 objectOids.add(lol.getOid());

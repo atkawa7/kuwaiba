@@ -302,17 +302,17 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
         final ObjectNode dropNode = (ObjectNode) NodeTransfer.node(_obj,
                 NodeTransfer.DND_COPY_OR_MOVE + NodeTransfer.CLIPBOARD_CUT);
         //When there's no an actual drag/drop operation, but a simple node selection
-        if (dropNode == null) {
+        if (dropNode == null) 
             return null;
-        }
+        
         //Ignore those noisy attempts to move it to itself
-        if (dropNode.getObject().equals(object)) {
+        if (dropNode.getObject().equals(object))
             return null;
-        }
+        
         //Can't move to the same parent, only copy
-        if (this.equals(dropNode.getParentNode()) && (action == DnDConstants.ACTION_MOVE)) {
+        if (this.equals(dropNode.getParentNode()) && (action == DnDConstants.ACTION_MOVE)) 
             return null;
-        }
+        
         return new PasteType() {
             @Override
             public Transferable paste() throws IOException {
@@ -322,35 +322,35 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
                     //Check if the current object can contain the drop node
                     List<LocalClassMetadataLight> possibleChildren = com.getPossibleChildren(object.getClassName(), false);
                     for (LocalClassMetadataLight lcml : possibleChildren) {
-                        if (lcml.getClassName().equals(obj.getClassName())) {
+                        if (lcml.getClassName().equals(obj.getClassName()))
                             canMove = true;
-                        }
                     }
                     if (canMove) {
                         if (action == DnDConstants.ACTION_COPY) {
                             LocalObjectLight[] copiedNodes = com.copyObjects(getObject().getClassName(), getObject().getOid(),
                                     new LocalObjectLight[]{obj});
                             if (copiedNodes != null) {
-                                for (LocalObjectLight lol : copiedNodes) {
-                                    getChildren().add(new Node[]{new ObjectNode(lol)});
-                                }
-                            } else {
+                                if (getChildren() instanceof AbstractChildren)
+                                    ((AbstractChildren)getChildren()).addNotify();
+                            } else 
                                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
-                            }
                         } else {
                             if (action == DnDConstants.ACTION_MOVE) {
                                 if (com.moveObjects(getObject().getClassName(), getObject().getOid(), new LocalObjectLight[]{obj})) {
-                                    dropNode.getParentNode().getChildren().remove(new Node[]{dropNode});
-                                    getChildren().add(new Node[]{new ObjectNode(obj)});
-                                } else {
+                                    //Refreshes the old parent node
+                                    if (dropNode.getParentNode().getChildren() instanceof AbstractChildren)
+                                        ((AbstractChildren)dropNode.getParentNode().getChildren()).addNotify();
+                                    
+                                    //Refreshes the new parent node
+                                    if (getChildren() instanceof AbstractChildren)
+                                        ((AbstractChildren)getChildren()).addNotify();
+                                } else
                                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
-                                }
                             }
                         }
-                    } else {
+                    } else 
                         NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE,
                                 String.format(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_MOVEOPERATION_TEXT"), obj.getClassName(), object.getClassName()));
-                    }
                 } catch (Exception ex) {
                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());
                 }
