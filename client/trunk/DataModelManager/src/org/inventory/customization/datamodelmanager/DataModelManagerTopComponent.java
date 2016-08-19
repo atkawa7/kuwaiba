@@ -16,9 +16,13 @@
 
 package org.inventory.customization.datamodelmanager;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JComboBox;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.customization.classhierarchy.ClassHierarchyTopComponent;
 import org.inventory.navigation.applicationnodes.classmetadatanodes.ClassMetadataChildren;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -57,7 +61,7 @@ preferredID = "DataModelManagerTopComponent")
     "HINT_DataModelManagerTopComponent=Update the data model"
 })
 public final class DataModelManagerTopComponent extends TopComponent 
-        implements ExplorerManager.Provider, Refreshable {
+        implements ExplorerManager.Provider, Refreshable, ActionListener {
 
     private final ExplorerManager em = new ExplorerManager();
     private DataModelManagerService dmms;
@@ -85,10 +89,72 @@ public final class DataModelManagerTopComponent extends TopComponent
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        toolBarMain = new javax.swing.JToolBar();
+        btndefaultDataModelManaget = new javax.swing.JButton();
+        btnshowClassHierarchyView = new javax.swing.JButton();
+        lblSearch = new javax.swing.JLabel();
+        cmbClassList = new javax.swing.JComboBox();
+
         setLayout(new java.awt.BorderLayout());
+
+        toolBarMain.setRollover(true);
+        toolBarMain.setAlignmentY(0.5F);
+        toolBarMain.setMaximumSize(new java.awt.Dimension(392, 38));
+        toolBarMain.setMinimumSize(new java.awt.Dimension(392, 38));
+        toolBarMain.setPreferredSize(new java.awt.Dimension(392, 38));
+
+        btndefaultDataModelManaget.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/customization/datamodelmanager/res/defaultDataModelManager.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btndefaultDataModelManaget, org.openide.util.NbBundle.getMessage(DataModelManagerTopComponent.class, "DataModelManagerTopComponent.btndefaultDataModelManaget.text")); // NOI18N
+        btndefaultDataModelManaget.setToolTipText(org.openide.util.NbBundle.getMessage(DataModelManagerTopComponent.class, "DataModelManagerTopComponent.btndefaultDataModelManaget.toolTipText")); // NOI18N
+        btndefaultDataModelManaget.setFocusable(false);
+        btndefaultDataModelManaget.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btndefaultDataModelManaget.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btndefaultDataModelManaget.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btndefaultDataModelManagetActionPerformed(evt);
+            }
+        });
+        toolBarMain.add(btndefaultDataModelManaget);
+
+        btnshowClassHierarchyView.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/customization/datamodelmanager/res/classHierarchyView.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnshowClassHierarchyView, org.openide.util.NbBundle.getMessage(DataModelManagerTopComponent.class, "DataModelManagerTopComponent.btnshowClassHierarchyView.text")); // NOI18N
+        btnshowClassHierarchyView.setToolTipText(org.openide.util.NbBundle.getMessage(DataModelManagerTopComponent.class, "DataModelManagerTopComponent.btnshowClassHierarchyView.toolTipText")); // NOI18N
+        btnshowClassHierarchyView.setFocusable(false);
+        btnshowClassHierarchyView.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnshowClassHierarchyView.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnshowClassHierarchyView.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnshowClassHierarchyViewActionPerformed(evt);
+            }
+        });
+        toolBarMain.add(btnshowClassHierarchyView);
+
+        org.openide.awt.Mnemonics.setLocalizedText(lblSearch, org.openide.util.NbBundle.getMessage(DataModelManagerTopComponent.class, "DataModelManagerTopComponent.lblSearch.text")); // NOI18N
+        lblSearch.setPreferredSize(new java.awt.Dimension(70, 15));
+        toolBarMain.add(lblSearch);
+
+        toolBarMain.add(cmbClassList);
+
+        add(toolBarMain, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnshowClassHierarchyViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnshowClassHierarchyViewActionPerformed
+        TopComponent tc = new ClassHierarchyTopComponent();
+        tc.open();
+        tc.requestActive();
+        tc.requestAttention(true);
+    }//GEN-LAST:event_btnshowClassHierarchyViewActionPerformed
+
+    private void btndefaultDataModelManagetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btndefaultDataModelManagetActionPerformed
+        cmbClassList.setSelectedItem(null);
+    }//GEN-LAST:event_btndefaultDataModelManagetActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btndefaultDataModelManaget;
+    private javax.swing.JButton btnshowClassHierarchyView;
+    private javax.swing.JComboBox cmbClassList;
+    private javax.swing.JLabel lblSearch;
+    private javax.swing.JToolBar toolBarMain;
     // End of variables declaration//GEN-END:variables
     private BeanTreeView treeView;
     
@@ -96,6 +162,12 @@ public final class DataModelManagerTopComponent extends TopComponent
     public void componentOpened() {
         setRoot();
         ExplorerUtils.activateActions(em, true);
+        
+        cmbClassList.addActionListener(this);
+        
+        cmbClassList.addItem(null);
+        for (LocalClassMetadataLight node : dmms.getRoots())
+            cmbClassList.addItem(node);
     }
 
     @Override
@@ -138,5 +210,22 @@ public final class DataModelManagerTopComponent extends TopComponent
     
     public NotificationUtil getNotifier(){
          return NotificationUtil.getInstance();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if("comboBoxChanged".equals(e.getActionCommand()))
+            comboBoxChanged(e);
+    }
+    
+    public void comboBoxChanged(ActionEvent e) {
+        LocalClassMetadataLight selectedItem = (LocalClassMetadataLight) ((JComboBox)e.getSource()).getSelectedItem();
+        if (selectedItem != null) 
+            em.setRootContext(new AbstractNode(new ClassMetadataChildren(new LocalClassMetadataLight []{selectedItem})));
+        else {
+            LocalClassMetadataLight[] allMeta = dmms.getRootChildren();
+            em.setRootContext(new AbstractNode(new ClassMetadataChildren(allMeta)));
+        }
+            
     }
 }

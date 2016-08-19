@@ -30,9 +30,16 @@ public class DataModelManagerService {
 
     private DataModelManagerTopComponent dmmtc;
     private CommunicationsStub com = CommunicationsStub.getInstance();
+    LocalClassMetadataLight[] roots;
 
     public DataModelManagerService(DataModelManagerTopComponent dmmtc) {
         this.dmmtc = dmmtc;
+    }
+    
+    public LocalClassMetadataLight[] getRoots() {
+        if (roots == null)
+            roots = com.getAllLightMeta(true);
+        return roots;
     }
     
     public LocalClassMetadataLight[] getRootChildren(){
