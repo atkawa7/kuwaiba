@@ -49,12 +49,14 @@ public class CustomSelectProvider implements SelectProvider {
         Object object = scene.findObject (widget);
         scene.setFocusedObject (object);
         
+        scene.userSelectionSuggested (Collections.emptySet (), invertSelection);
+        
         if (object != null) {
             if (! invertSelection  &&  scene.getSelectedObjects ().contains (object))
                 return;
+            
             scene.userSelectionSuggested (Collections.singleton (object), invertSelection);
-        } else
-            scene.userSelectionSuggested (Collections.emptySet (), invertSelection);
+        }
         
         //Updates the lookup so that other modules are aware of this selection
         ((AbstractScene.SceneLookup)scene.getLookup()).updateLookup(widget);
