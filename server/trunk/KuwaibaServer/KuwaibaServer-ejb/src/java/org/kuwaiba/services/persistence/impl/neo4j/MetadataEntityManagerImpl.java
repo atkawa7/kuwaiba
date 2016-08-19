@@ -343,12 +343,27 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     {
         List<ClassMetadataLight> cml = new ArrayList<>();
         try (Transaction tx = graphDb.beginTx()) {
-            Node myClassNode =  classIndex.get(Constants.PROPERTY_NAME, Constants.CLASS_INVENTORYOBJECT).getSingle();
-
-            if(myClassNode == null){
+            Node myClassInventoryObjectNode =  classIndex.get(Constants.PROPERTY_NAME, Constants.CLASS_INVENTORYOBJECT).getSingle();
+            Node myClassGenericObjectListNode = null;
+            
+            if (includeListTypes)
+                myClassGenericObjectListNode =  classIndex.get(Constants.PROPERTY_NAME, Constants.CLASS_GENERICOBJECTLIST).getSingle();
+            
+            if (myClassInventoryObjectNode == null) {
                 throw new MetadataObjectNotFoundException(String.format(
                          "Can not find a class with name %s", Constants.CLASS_INVENTORYOBJECT));
             }
+            else
+                cml.add(Util.createClassMetadataLightFromNode(myClassInventoryObjectNode));
+                            
+            if (includeListTypes && myClassGenericObjectListNode == null) {
+                throw new MetadataObjectNotFoundException(String.format(
+                         "Can not find a class with name %s", Constants.CLASS_GENERICOBJECTLIST));
+            }
+            
+            if (includeListTypes && myClassGenericObjectListNode != null)
+                cml.add(Util.createClassMetadataLightFromNode(myClassGenericObjectListNode));
+            
             String cypherQuery = "START inventory = node:classes({className}) ".concat(
                                  "MATCH inventory <-[:").concat(RelTypes.EXTENDS.toString()).concat("*]-classmetadata ").concat(
                                  "RETURN classmetadata,inventory ").concat(
@@ -363,11 +378,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             
             Result result = graphDb.execute(cypherQuery, params);
             Iterator<Node> n_column = result.columnAs("classmetadata"); 
-            //First, we inject the InventoryObject class (for some reason, the 
-            //start node can't be retrieved as part of the path, so it can be sorted)
-            Iterator<Node> roots = result.columnAs("inventory");
-            cml.add(Util.createClassMetadataLightFromNode(roots.next()));
-
+            
             for (Node node : IteratorUtil.asIterable(n_column))
                  cml.add(Util.createClassMetadataLightFromNode(node));
         }

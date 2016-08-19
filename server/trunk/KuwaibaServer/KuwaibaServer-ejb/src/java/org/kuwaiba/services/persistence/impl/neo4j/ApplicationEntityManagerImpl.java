@@ -1197,7 +1197,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             ByteArrayOutputStream bas = new ByteArrayOutputStream();
             WAX xmlWriter = new WAX(bas);
             StartTagWAX rootTag = xmlWriter.start("hierarchy");
-            rootTag.attr("documentVersion", Constants.CLASS_HIERARCHY_DOCUMENT_VERSION);
+            rootTag.attr("documentVersion", Constants.CLASS_HIERARCHY_NEXT_DOCUMENT_VERSION);
             rootTag.attr("serverVersion", Constants.PERSISTENCE_SERVICE_VERSION);
             rootTag.attr("date", Calendar.getInstance().getTimeInMillis());
             StartTagWAX inventoryTag = rootTag.start("inventory");
@@ -2067,8 +2067,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         int applicationModifiers = 0;
         int javaModifiers = 0;
         StartTagWAX currentTag = parentTag.start("class"); //NOI18N
-        currentTag.attr("name", classNode.getProperty(Constants.PROPERTY_NAME));
-        
+        currentTag.attr("id", classNode.getId());
+        currentTag.attr("name", classNode.getProperty(Constants.PROPERTY_NAME));        
         currentTag.attr("classPackage", "");
         
         //Application modifiers
@@ -2082,7 +2082,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
         //Language modifiers
         if ((Boolean)classNode.getProperty(Constants.PROPERTY_ABSTRACT))
-            applicationModifiers |= Modifier.ABSTRACT;
+            javaModifiers |= Modifier.ABSTRACT;
         
         currentTag.attr("javaModifiers",javaModifiers);
         
@@ -2093,14 +2093,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (Util.isSubClass("InventoryObject", classNode))
                 currentTag.attr("classType",Constants.CLASS_TYPE_INVENTORY);
             else{
-                if (Util.isSubClass("MetadataObject", classNode))
-                    currentTag.attr("classType",Constants.CLASS_TYPE_METADATA);
-                else{
-                    if (Util.isSubClass("ApplicationObject", classNode))
-                        currentTag.attr("classType",Constants.CLASS_TYPE_APPLICATION);
-                    else
-                        currentTag.attr("classType",Constants.CLASS_TYPE_OTHER);
-                }
+                if (Util.isSubClass("ApplicationObject", classNode))
+                    currentTag.attr("classType",Constants.CLASS_TYPE_APPLICATION);
+                else
+                    currentTag.attr("classType",Constants.CLASS_TYPE_OTHER);
             }
         }
 
