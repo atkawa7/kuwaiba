@@ -10,17 +10,13 @@
  */
 package com.neotropic.inventory.modules.ipam.nodes.actions;
 
-import com.neotropic.inventory.modules.ipam.nodes.SubnetNode;
 import com.neotropic.inventory.modules.ipam.nodes.SubnetPoolChildren;
 import com.neotropic.inventory.modules.ipam.nodes.SubnetPoolNode;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import javax.swing.AbstractAction;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.openide.nodes.Node;
 import org.openide.util.Utilities;
 
 /**

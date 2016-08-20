@@ -27,7 +27,6 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.openide.nodes.Node;
 import org.openide.util.Utilities;
 import org.openide.util.lookup.ServiceProvider;
 
