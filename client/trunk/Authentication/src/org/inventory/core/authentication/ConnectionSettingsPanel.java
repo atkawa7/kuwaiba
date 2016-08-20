@@ -35,6 +35,9 @@ public class ConnectionSettingsPanel extends javax.swing.JPanel {
                 txtServerPort.setText(loginProperties.getProperty("port")); //NOI18N
             if (loginProperties.getProperty("path") != null) //NOI18N
                 txtWSDLPath.setText(loginProperties.getProperty("path")); //NOI18N
+            
+            //Only visible if HTTPS is selected
+            chkHostVerification.setEnabled(radBtnHttps.isSelected());
         }
         
     }
@@ -57,6 +60,7 @@ public class ConnectionSettingsPanel extends javax.swing.JPanel {
         txtWSDLPath = new javax.swing.JTextField();
         radBtnHttps = new javax.swing.JRadioButton();
         radBtnHttp = new javax.swing.JRadioButton();
+        chkHostVerification = new javax.swing.JCheckBox();
 
         txtServerPort.setText(org.openide.util.NbBundle.getMessage(ConnectionSettingsPanel.class, "ConnectionSettingsPanel.txtServerPort.text")); // NOI18N
 
@@ -87,14 +91,17 @@ public class ConnectionSettingsPanel extends javax.swing.JPanel {
             }
         });
 
+        chkHostVerification.setText(org.openide.util.NbBundle.getMessage(ConnectionSettingsPanel.class, "ConnectionSettingsPanel.chkHostVerification.text")); // NOI18N
+        chkHostVerification.setToolTipText(org.openide.util.NbBundle.getMessage(ConnectionSettingsPanel.class, "ConnectionSettingsPanel.chkHostVerification.toolTipText")); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap(31, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(20, 20, 20)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblWSDLPath)
                             .addGroup(layout.createSequentialGroup()
@@ -106,18 +113,21 @@ public class ConnectionSettingsPanel extends javax.swing.JPanel {
                                     .addComponent(txtWSDLPath, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                         .addComponent(txtServerPort)
-                                        .addComponent(txtServerAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(84, 84, 84)
-                        .addComponent(radBtnHttps)
-                        .addGap(57, 57, 57)
-                        .addComponent(radBtnHttp)))
-                .addContainerGap(22, Short.MAX_VALUE))
+                                        .addComponent(txtServerAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(64, 64, 64)
+                                .addComponent(radBtnHttps)
+                                .addGap(57, 57, 57)
+                                .addComponent(radBtnHttp)))
+                        .addGap(20, 20, 20))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(chkHostVerification)
+                        .addGap(67, 67, 67))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblServerAddress)
                     .addComponent(txtServerAddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -132,20 +142,26 @@ public class ConnectionSettingsPanel extends javax.swing.JPanel {
                 .addGap(8, 8, 8)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(radBtnHttps)
-                    .addComponent(radBtnHttp)))
+                    .addComponent(radBtnHttp))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(chkHostVerification)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void radBtnHttpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radBtnHttpActionPerformed
         this.txtServerPort.setText("8080"); //NOI18N
+        chkHostVerification.setEnabled(false);
     }//GEN-LAST:event_radBtnHttpActionPerformed
 
     private void radBtnHttpsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radBtnHttpsActionPerformed
         this.txtServerPort.setText("8181"); //NOI18N
+        chkHostVerification.setEnabled(true);
     }//GEN-LAST:event_radBtnHttpsActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox chkHostVerification;
     private javax.swing.ButtonGroup grpBtnProtocol;
     private javax.swing.JLabel lblServerAddress;
     private javax.swing.JLabel lblServerPort;
@@ -210,5 +226,13 @@ public class ConnectionSettingsPanel extends javax.swing.JPanel {
     
     public void setProtocol(boolean protocol) {
         radBtnHttps.setSelected(protocol);
+    }
+    
+    public boolean getHostVerification(){
+        return chkHostVerification.isSelected();
+    }
+    
+    public void setHostVerification(boolean selected) {
+        chkHostVerification.setSelected(selected);
     }
 }

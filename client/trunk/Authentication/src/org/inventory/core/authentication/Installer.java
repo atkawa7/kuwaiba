@@ -125,7 +125,8 @@ public class Installer extends ModuleInstall {
             return false;
         }
         try{
-            if (!CommunicationsStub.getInstance().createSession(pnlAuthentication.getTxtUser().getText(), new String(pnlAuthentication.getTxtPassword().getPassword()))){
+            if (!CommunicationsStub.getInstance().createSession(pnlAuthentication.getTxtUser().getText(), 
+                    new String(pnlAuthentication.getTxtPassword().getPassword()), connSettings.getHostVerification())){
                showExceptions(CommunicationsStub.getInstance().getError());
                return false;
             }else{

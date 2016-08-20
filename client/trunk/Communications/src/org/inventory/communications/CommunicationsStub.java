@@ -26,6 +26,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
 import javax.xml.ws.soap.SOAPFaultException;
 import org.inventory.communications.core.LocalApplicationLogEntry;
 import org.inventory.communications.core.LocalClassMetadata;
@@ -137,8 +139,9 @@ public class CommunicationsStub {
      * This method closes the current session
      */
     public void closeSession(){
-        try{
+        try {
             service.closeSession(this.session.getSessionId());
+            session = null;
         }catch(Exception ex){
             this.error =  ex.getMessage();
         }
@@ -148,10 +151,22 @@ public class CommunicationsStub {
      * Creates a session
      * @param user The user for this session
      * @param password The password for the user
+     * @param disableHostNameValidation Checks if the CN in the certificate matches the server we're trying to connect to. Set to true when using self signed certificate and connecting to an IP address instead of a FQDN
      * @return Success or failure
      */
-    public boolean createSession(String user, String password){
-        try{
+    public boolean createSession(String user, String password, boolean disableHostNameValidation){
+        try {
+            
+            if (disableHostNameValidation) {
+                javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier(
+                    new HostnameVerifier(){
+                        @Override
+                        public boolean verify(String hostname, SSLSession sslSession) {
+                            return true;
+                        }
+                    });
+            }
+                
             if (serverURL == null)
                 serverURL = new URL("http", "localhost", 8080,"/kuwaiba/KuwaibaService?wsdl"); //NOI18n
 
