@@ -14,7 +14,7 @@
    height="1052.3622047"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.3.1 r9886"
+   inkscape:version="0.48.4 r9939"
    sodipodi:docname="icons.svg">
   <defs
      id="defs4">
@@ -565,14 +565,14 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.5600001"
-     inkscape:cx="582.63198"
-     inkscape:cy="502.88195"
+     inkscape:zoom="0.64000003"
+     inkscape:cx="540.21819"
+     inkscape:cy="560.79113"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1366"
-     inkscape:window-height="722"
+     inkscape:window-width="1280"
+     inkscape:window-height="756"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -1365,9 +1365,9 @@
        sodipodi:ry="9.375"
        d="m 70.3125,585.17468 a 10.839844,9.375 0 1 1 -21.679688,0 10.839844,9.375 0 1 1 21.679688,0 z"
        transform="matrix(1.2316764,0,0,1.4241258,-11.985442,-258.67209)"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ApplicationNodes/src/org/inventory/navigation/applicationnodes/res/default_32.png"
-       inkscape:export-xdpi="91.669876"
-       inkscape:export-ydpi="91.669876" />
+       inkscape:export-filename="/home/gir/workspace/java/KuwaibaRCP/trunk/ApplicationNodes/src/org/inventory/navigation/applicationnodes/res/default.png"
+       inkscape:export-xdpi="27.778751"
+       inkscape:export-ydpi="27.778751" />
     <path
        sodipodi:type="arc"
        style="fill:#80b3ff;fill-opacity:1;stroke:none"
@@ -1662,5 +1662,16 @@
          x="468.25366"
          y="594.41669"
          style="font-size:20px;font-weight:bold;fill:#ffffff">ONT</tspan></text>
+    <rect
+       style="fill:#80b3ff;fill-opacity:0.97254901999999999;stroke:#80b3ff;stroke-width:4;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect3190-04-22-6"
+       width="31.030304"
+       height="31.030304"
+       x="75.109848"
+       y="607.15955"
+       ry="0"
+       inkscape:export-filename="/home/gir/workspace/java/KuwaibaRCP/trunk/ApplicationNodes/src/org/inventory/navigation/applicationnodes/res/default_32.png"
+       inkscape:export-xdpi="56.520962"
+       inkscape:export-ydpi="56.520962" />
   </g>
 </svg>

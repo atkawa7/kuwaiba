@@ -482,7 +482,7 @@
      inkscape:cy="112.15661"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
-     showgrid="false"
+     showgrid="true"
      inkscape:window-width="1366"
      inkscape:window-height="727"
      inkscape:window-x="0"
@@ -2296,96 +2296,10 @@
        sodipodi:rx="32.5"
        sodipodi:ry="29.5"
        d="m 247,120.59447 c 0,16.2924 -14.55075,29.5 -32.5,29.5 -17.94925,0 -32.5,-13.2076 -32.5,-29.5 0,-16.2924 14.55075,-29.500003 32.5,-29.500003 17.94925,0 32.5,13.207603 32.5,29.500003 z"
-       transform="matrix(0.74400118,0,0,0.81966231,-108.67655,888.46161)"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/NavigationTree/src/org/inventory/navigation/navigationtree/res/icon.png"
-       inkscape:export-xdpi="44.664955"
-       inkscape:export-ydpi="44.664955" />
-    <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:#cccccc"
-       id="rect4169-5-9"
-       width="9"
-       height="9"
-       x="38.391125"
-       y="969.6709"
-       ry="1.1277466"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/NavigationTree/src/org/inventory/navigation/navigationtree/res/icon.png"
-       inkscape:export-xdpi="44.664955"
-       inkscape:export-ydpi="44.664955" />
-    <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:#cccccc"
-       id="rect4169-5-4-5"
-       width="7.5"
-       height="7.5"
-       x="48.951794"
-       y="978.95258"
-       ry="0.93978876"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/NavigationTree/src/org/inventory/navigation/navigationtree/res/icon.png"
-       inkscape:export-xdpi="44.664955"
-       inkscape:export-ydpi="44.664955" />
-    <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:#cccccc"
-       id="rect4169-5-7-7"
-       width="7.5"
-       height="7.5"
-       x="48.907604"
-       y="999.26825"
-       ry="0.93978882"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/NavigationTree/src/org/inventory/navigation/navigationtree/res/icon.png"
-       inkscape:export-xdpi="44.664955"
-       inkscape:export-ydpi="44.664955" />
-    <path
-       style="fill:#e6e6e6;stroke:#e6e6e6;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 42.402587,982.81225 6.54765,0.0953"
-       id="path4288-6"
-       inkscape:connector-curvature="0"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/NavigationTree/src/org/inventory/navigation/navigationtree/res/icon.png"
-       inkscape:export-xdpi="44.664955"
-       inkscape:export-ydpi="44.664955" />
-    <path
-       style="fill:#e6e6e6;stroke:#e6e6e6;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 51.931247,992.27885 8.98738,-0.0235"
-       id="path4288-4-3"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cc"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/NavigationTree/src/org/inventory/navigation/navigationtree/res/icon.png"
-       inkscape:export-xdpi="44.664955"
-       inkscape:export-ydpi="44.664955" />
-    <path
-       style="fill:#e6e6e6;stroke:#e6e6e6;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 42.050827,1002.7456 6.85343,0.092"
-       id="path4288-9-3"
-       inkscape:connector-curvature="0"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/NavigationTree/src/org/inventory/navigation/navigationtree/res/icon.png"
-       inkscape:export-xdpi="44.664955"
-       inkscape:export-ydpi="44.664955" />
-    <path
-       style="fill:#e6e6e6;stroke:#e6e6e6;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 42.597127,978.64716 -0.0286,24.82564"
-       id="path4288-8-2"
-       inkscape:connector-curvature="0"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/NavigationTree/src/org/inventory/navigation/navigationtree/res/icon.png"
-       inkscape:export-xdpi="44.664955"
-       inkscape:export-ydpi="44.664955" />
-    <path
-       style="fill:#ffffff;stroke:#e6e6e6;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 52.688127,986.44263 0.0117,6.33239"
-       id="path4288-8-8-4"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cc"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/NavigationTree/src/org/inventory/navigation/navigationtree/res/icon.png"
-       inkscape:export-xdpi="44.664955"
-       inkscape:export-ydpi="44.664955" />
-    <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:#cccccc"
-       id="rect4169-5-3-7"
-       width="7.5"
-       height="7.5"
-       x="58.907604"
-       y="988.64258"
-       ry="0.93978882"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/NavigationTree/src/org/inventory/navigation/navigationtree/res/icon.png"
-       inkscape:export-xdpi="44.664955"
-       inkscape:export-ydpi="44.664955" />
+       transform="matrix(0.74400118,0,0,0.81966231,440.03826,976.14284)"
+       inkscape:export-filename="/home/gir/workspace/java/KuwaibaRCP/trunk/PhysicalConnections/src/org/inventory/models/physicalconnections/res/graphical_path.png"
+       inkscape:export-xdpi="40.942863"
+       inkscape:export-ydpi="40.942863" />
     <path
        style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.1875;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        d="m 482.22805,796.38943 c 2.9327,-2.45256 3.79609,-3.73195 3.4781,-7.19664 l -1.7747,-3.78125 5.60359,-6.3438 c 0.23329,-0.26411 5.94733,6.2718 5.94733,6.45022 0,0.11012 -1.90425,2.49293 -1.82536,3.5 -0.54843,3.961 1.25041,4.64014 3.65882,7.68639 -5.09212,-0.0878 -8.90219,-0.1001 -14.42721,-0.0937 l -1,0.0692 0.33947,-0.29038 z"
@@ -2500,17 +2414,6 @@
          y="362.39743"
          style="font-size:16px"
          id="tspan5581-6">Notifications</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="24.457697"
-       y="942.22498"
-       id="text4012-4-8"><tspan
-         sodipodi:role="line"
-         x="24.457697"
-         y="942.22498"
-         style="font-size:16px"
-         id="tspan5581-0">Tests</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
@@ -3876,7 +3779,115 @@
        x="-99.999992"
        y="612.86224"
        ry="0"
-       inkscape:export-filename="/home/gir/workspace/java/KuwaibaRCP/trunk/ApplicationNodes/src/org/inventory/navigation/applicationnodes/res/relationship.png"
+       inkscape:export-filename="/home/gir/workspace/java/KuwaibaRCP/trunk/Dashboard/src/org/inventory/navigation/dashboard/res/greenSquare.png"
+       inkscape:export-xdpi="45"
+       inkscape:export-ydpi="45" />
+    <rect
+       style="fill:#ff6600;fill-opacity:1;stroke:#ffffff;stroke-width:2.25200009;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect3401"
+       width="8.499999"
+       height="8.499999"
+       x="580.96478"
+       y="1070.5435"
+       inkscape:export-filename="/home/gir/workspace/java/KuwaibaRCP/trunk/PhysicalConnections/src/org/inventory/models/physicalconnections/res/graphical_path.png"
+       inkscape:export-xdpi="40.942863"
+       inkscape:export-ydpi="40.942863" />
+    <rect
+       style="fill:#aad400;fill-opacity:1;stroke:#ffffff;stroke-width:2.25200009;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect3401-2"
+       width="8.499999"
+       height="8.499999"
+       x="610.71478"
+       y="1070.0435"
+       inkscape:export-filename="/home/gir/workspace/java/KuwaibaRCP/trunk/PhysicalConnections/src/org/inventory/models/physicalconnections/res/graphical_path.png"
+       inkscape:export-xdpi="40.942863"
+       inkscape:export-ydpi="40.942863" />
+    <path
+       style="fill:#000000;stroke:#ffffff;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 589.46478,1074.722 21.25,-0.3571"
+       id="path4189"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#rect3401"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#rect3401-2"
+       inkscape:connection-end-point="d4"
+       inkscape:export-filename="/home/gir/workspace/java/KuwaibaRCP/trunk/PhysicalConnections/src/org/inventory/models/physicalconnections/res/graphical_path.png"
+       inkscape:export-xdpi="40.942863"
+       inkscape:export-ydpi="40.942863" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+       id="path3435-6-6-0-4-9-6-7-2-7-2"
+       sodipodi:cx="214.5"
+       sodipodi:cy="120.59447"
+       sodipodi:rx="32.5"
+       sodipodi:ry="29.5"
+       d="m 247,120.59447 c 0,16.2924 -14.55075,29.5 -32.5,29.5 -17.94925,0 -32.5,-13.2076 -32.5,-29.5 0,-16.2924 14.55075,-29.500003 32.5,-29.500003 17.94925,0 32.5,13.207603 32.5,29.500003 z"
+       transform="matrix(0.74400118,0,0,0.81966231,869.95911,407.62906)"
+       inkscape:export-filename="/home/gir/workspace/java/KuwaibaRCP/trunk/NavigationTree/src/org/inventory/navigation/navigationtree/res/special_children_explorer.png"
+       inkscape:export-xdpi="29.776646"
+       inkscape:export-ydpi="29.776646" />
+    <rect
+       style="fill:#d40000;fill-opacity:1;stroke:#ffffff;stroke-width:2.25200009000000012;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect3401-0"
+       width="8.499999"
+       height="8.499999"
+       x="1015.1357"
+       y="492.40466"
+       inkscape:export-filename="/home/gir/workspace/java/KuwaibaRCP/trunk/NavigationTree/src/org/inventory/navigation/navigationtree/res/special_children_explorer.png"
+       inkscape:export-xdpi="29.776646"
+       inkscape:export-ydpi="29.776646" />
+    <rect
+       style="fill:#d40000;fill-opacity:1;stroke:#ffffff;stroke-width:2.25200009000000012;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect3401-2-5"
+       width="8.499999"
+       height="8.499999"
+       x="1035.0106"
+       y="492.02966"
+       inkscape:export-filename="/home/gir/workspace/java/KuwaibaRCP/trunk/NavigationTree/src/org/inventory/navigation/navigationtree/res/special_children_explorer.png"
+       inkscape:export-xdpi="29.776646"
+       inkscape:export-ydpi="29.776646" />
+    <rect
+       style="fill:#d40000;fill-opacity:1;stroke:#ffffff;stroke-width:2.25200009000000012;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect3401-2-5-7"
+       width="8.499999"
+       height="8.499999"
+       x="1035.2499"
+       y="512.23724"
+       inkscape:export-filename="/home/gir/workspace/java/KuwaibaRCP/trunk/NavigationTree/src/org/inventory/navigation/navigationtree/res/special_children_explorer.png"
+       inkscape:export-xdpi="29.776646"
+       inkscape:export-ydpi="29.776646" />
+    <rect
+       style="fill:#ff0000;fill-opacity:1"
+       id="rect3396-5-7-1"
+       width="39.999996"
+       height="39.999996"
+       x="-165.66399"
+       y="650.52454"
+       ry="0"
+       inkscape:export-filename="/home/gir/workspace/java/KuwaibaRCP/trunk/Dashboard/src/org/inventory/navigation/dashboard/res/redSquare.png"
+       inkscape:export-xdpi="45"
+       inkscape:export-ydpi="45" />
+    <rect
+       style="fill:#d40000;fill-opacity:1;stroke:#ffffff;stroke-width:2.25200009000000012;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect3401-0-7"
+       width="8.499999"
+       height="8.499999"
+       x="1015.7499"
+       y="512.23724"
+       inkscape:export-filename="/home/gir/workspace/java/KuwaibaRCP/trunk/NavigationTree/src/org/inventory/navigation/navigationtree/res/special_children_explorer.png"
+       inkscape:export-xdpi="29.776646"
+       inkscape:export-ydpi="29.776646" />
+    <rect
+       style="fill:#ff00cc;fill-opacity:1"
+       id="rect3396-5-7-1-2"
+       width="39.999996"
+       height="39.999996"
+       x="-139.49998"
+       y="698.86224"
+       ry="0"
+       inkscape:export-filename="/home/gir/workspace/java/KuwaibaRCP/trunk/GISView/src/org/inventory/views/gis/res/default.png"
        inkscape:export-xdpi="22.500002"
        inkscape:export-ydpi="22.500002" />
     <path

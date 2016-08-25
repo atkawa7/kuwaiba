@@ -13,7 +13,7 @@
    height="1052.3622047"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.3.1 r9886"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="icons_views.svg">
   <sodipodi:namedview
      id="base"
@@ -22,14 +22,14 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.4849242"
-     inkscape:cx="386.32591"
-     inkscape:cy="565.69297"
+     inkscape:zoom="5.9396968"
+     inkscape:cx="326.2767"
+     inkscape:cy="610.34332"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
-     inkscape:window-width="1280"
-     inkscape:window-height="750"
+     inkscape:window-width="1440"
+     inkscape:window-height="844"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -240,7 +240,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -821,86 +821,80 @@
        id="rect3840"
        style="color:#000000;fill:#00ff00;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
     <rect
-       inkscape:export-ydpi="44.998253"
-       inkscape:export-xdpi="44.998253"
+       inkscape:export-ydpi="89.996506"
+       inkscape:export-xdpi="89.996506"
        inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/router.png"
-       y="401.84076"
-       x="289.43146"
+       y="424.56918"
+       x="337.91879"
        height="13.213974"
        width="27.331116"
        id="rect3432"
-       style="fill:#8080ff;fill-opacity:1;stroke:none" />
-    <path
-       inkscape:export-ydpi="44.998253"
-       inkscape:export-xdpi="44.998253"
+       style="fill:#cccccc;fill-opacity:1;stroke:none" />
+    <ellipse
+       inkscape:export-ydpi="89.996506"
+       inkscape:export-xdpi="89.996506"
        inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/router.png"
-       transform="matrix(0.58205417,0,0,0.60679397,120.93653,162.65156)"
-       d="m 336.42814,394.69766 a 23.478155,7.4577665 0 1 1 -46.95631,0 23.478155,7.4577665 0 1 1 46.95631,0 z"
-       sodipodi:ry="7.4577665"
-       sodipodi:rx="23.478155"
-       sodipodi:cy="394.69766"
-       sodipodi:cx="312.94998"
        id="path3412"
-       style="fill:#3737c8;fill-opacity:1;stroke:none"
-       sodipodi:type="arc" />
+       style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+       cx="351.5777"
+       cy="424.88016"
+       rx="13.665558"
+       ry="4.5253277" />
     <path
-       inkscape:export-ydpi="44.998253"
-       inkscape:export-xdpi="44.998253"
+       inkscape:export-ydpi="89.996506"
+       inkscape:export-xdpi="89.996506"
        inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/router.png"
        sodipodi:nodetypes="cccc"
        inkscape:connector-curvature="0"
        id="path3452-8"
-       d="m 311.07277,399.77463 -4.39378,-0.14545 -6.53285,4.3631 -4.68283,0.0728"
+       d="m 359.56009,422.50306 -4.39378,-0.14545 -6.53285,4.3631 -4.68283,0.0728"
        style="fill:none;stroke:#ffffff;stroke-width:0.93896365px;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1" />
     <path
-       inkscape:export-ydpi="44.998253"
-       inkscape:export-xdpi="44.998253"
+       inkscape:export-ydpi="89.996506"
+       inkscape:export-xdpi="89.996506"
        inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/router.png"
        sodipodi:nodetypes="cccc"
        inkscape:connector-curvature="0"
        id="path3452-8-4"
-       d="m 295.52112,399.70192 4.39377,-0.14544 6.53285,4.3631 4.68284,0.0728"
-       style="fill:none;stroke:#ffffff;stroke-width:0.93930733;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
-    <path
-       inkscape:export-ydpi="44.998253"
-       inkscape:export-xdpi="44.998253"
+       d="m 344.00844,422.43035 4.39377,-0.14544 6.53285,4.3631 4.68284,0.0728"
+       style="fill:none;stroke:#ffffff;stroke-width:0.93930733;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <ellipse
+       inkscape:export-ydpi="89.996506"
+       inkscape:export-xdpi="89.996506"
        inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/router.png"
-       transform="matrix(0.58205417,0,0,0.60679397,120.93667,175.60178)"
-       d="m 336.42814,394.69766 a 23.478155,7.4577665 0 1 1 -46.95631,0 23.478155,7.4577665 0 1 1 46.95631,0 z"
-       sodipodi:ry="7.4577665"
-       sodipodi:rx="23.478155"
-       sodipodi:cy="394.69766"
-       sodipodi:cx="312.94998"
        id="path3412-5"
-       style="fill:#8080ff;fill-opacity:1;stroke:none"
-       sodipodi:type="arc" />
+       style="fill:#cccccc;fill-opacity:1;stroke:none"
+       cx="351.57785"
+       cy="437.83038"
+       rx="13.665558"
+       ry="4.5253277" />
     <rect
-       inkscape:export-ydpi="44.998253"
-       inkscape:export-xdpi="44.998253"
+       inkscape:export-ydpi="89.996506"
+       inkscape:export-xdpi="89.996506"
        inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/router.png"
        ry="0.71522009"
-       y="412.73431"
-       x="308.51651"
+       y="435.46274"
+       x="357.00385"
        height="4.4701252"
        width="12.778296"
        id="rect3809"
-       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.25857273;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.25857273;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <text
-       inkscape:export-ydpi="44.998253"
-       inkscape:export-xdpi="44.998253"
+       inkscape:export-ydpi="89.996506"
+       inkscape:export-xdpi="89.996506"
        inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/router.png"
-       transform="scale(0.99475695,1.0052707)"
+       transform="scale(0.99475694,1.0052707)"
        sodipodi:linespacing="125%"
        id="text3805"
-       y="413.8905"
-       x="310.37976"
-       style="font-size:34.34396744px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       y="436.49979"
+       x="359.12265"
+       style="font-style:normal;font-weight:normal;font-size:34.34396744px;line-height:125%;font-family:'Bitstream Vera Sans';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
        xml:space="preserve"><tspan
-         style="font-size:3.43439627px;font-weight:bold"
-         y="413.8905"
-         x="310.37976"
+         style="font-weight:bold;font-size:3.43439627px"
+         y="436.49979"
+         x="359.12265"
          id="tspan3807"
-         sodipodi:role="line">router</tspan></text>
+         sodipodi:role="line">  ext</tspan></text>
     <g
        inkscape:export-ydpi="46.57262"
        inkscape:export-xdpi="46.57262"
