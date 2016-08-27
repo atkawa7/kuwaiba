@@ -140,7 +140,8 @@
 		\item \textbf{Server Address} Refers to the server IP address or canonical name.
 		\item \textbf{Server Port} is the port Glassfish (the application server) is listening to.
 		\item \textbf{WSDL Path} is the path within the application server the web service interface definition can be found. Usually this value should remain unchanged.
-		\item Protocol is the transport protocol to be used. By default is HTTP, but is highly advisable to request your administrator to setup a secure connection, otherwise your credentials will be transmitted in plain text over the network. 
+		\item \textbf{Protocol} is the transport protocol to be used. By default is HTTP, but is highly advisable to request your administrator to setup a secure connection, otherwise your credentials will be transmitted in plain text over the network.
+		\item \textbf{Disable hostname verification} is disabled by default and applies only to HTTPS connections. If checked, the hostname in the digital certificate does not have to have to match the hostname you've typed in the "Server Address" field. This is useful if, for example, you are trying to connect to a server using its IP address, but the certificate was generated using its FQDN. You won't have to touch this checkbox in most cases.
 	\end{itemize}
 	Except for the password, the last successful settings will be saved upon clicking OK.
 	\begin{framed} {\large \textbf{Important}} \\
@@ -207,55 +208,95 @@
 			\caption{Part of the data model tree}
 			\label{fig:data_model_manager}
 		\end{figure}
-		The data model is represented as a tree because it's a hierarchical structure. Technically, it's a class hierarchy\footnote{Class Hierarchy https://en.wikipedia.org/wiki/Class\_hierarchy}. The top of the hierarchy (\textbf{InventoryObject}) is the most general type of element in the data model and its subclasses represent all the possible elements that will be treated as inventory assets. As you dig deeper into the tree, the classes become more and more specialized and each level inherits the attributes of the parent classes. This kind of structure has two purposes: First, it helps you to organize your classes based on what characteristics they have in common. Secondly, as you will see later in this manual, you can apply operations over top level classes, and they will be propagated to all subclasses. Another root of the data model tree is \textbf{GenericObjectList}, and its subclasses are all possible list types (see more details on the subject in the chapter \textbf{\nameref{sec:list_type_manager}}).\newline
-		
-		\begin{framed} {\large \textbf{Important}} \\
-				The \textbf{Properties} window allows you to modify the attributes of a selected object in a tree, list or view. If not already open, it's available from the Windows $\rightarrow$ Properties menu.
-		\end{framed}
-		The properties of a class can be edited by using the \textbf{Properties} window, selecting the class from the tree (see figure~\ref{fig:properties_class_node}). 
-		\begin{figure}[h!]
+		\begin{table}[h!]
 			\centering
-			\includegraphics[width=0.5\linewidth]{img/properties_class_node.png}
-			\caption{Properties of class \textbf{Router}}
-			\label{fig:properties_class_node}
-		\end{figure}
-		The  property  sheet  is  divided  in  two  sections: 
-		\begin{itemize}
-			\item \textbf{General:} Contains the intrinsic properties  of  the class: \textbf{name} (can contain only letters and numbers with no special characters  or  blank  spaces). The  \textbf{display name} of the class, that's how the  will be displayed everywhere else (useful  for  internationalization  purposes, for example) and can contain any kind of UTF-8 character. A \textbf{description} (useful  to  document  the  data  model). If  the class is \textbf{abstract} (abstract classes  cannot  be  instantiated, they're only used to give consistency to the  data  model). The attribute \textbf{countable} is not used currently, but it should be used to mark classes whose instances can have graphical representations, but  they're  not really  part  of  the  inventory,  such  as  \textbf{Slots}. \textbf{In Design Stage} is just a way to mark a class as part of an ongoing data model intervention, and thus, classes with that attribute set to true can not be instantiated. \textbf{Color} is the color of the default square icon used to display the object in a tree or view. This icon will be used as long as the \textbf{Small Icon} attribute is null. \textbf{Small Icon} is the icon that will be used in trees and its size can't exceed 16x16 pixels. \textbf{Icon} is the icon used in views, and has a maximum size of 32x32 pixels.
-			\begin{framed} {\large \textbf{Important}}
-				\begin{itemize}
-					\item All user-created classes are set In Design Stage = \textbf{\textcolor{green}{true}} by default. You won't be able to create objects of these classes until you set it to \textbf{\textcolor{blue}{false}}.
-					\item As a convention, all abstract classes have the prefix \textbf{Generic}. Note that a few core classes (like \textbf{InventoryObject} or \textbf{\textcolor{green}{true}}) are abstract are the exception to this rule. You, however, should try to follow this convention as much as possible.
-				\end{itemize}
+			\begin{tabular}{cp{10cm}}
+				\includegraphics[width=0.7cm]{img/icon_data_model_default_layout.png} & Resets the tree to its initial position (that is, with two root nodes: \textbf{GenericObjectList} and \textbf{InventoryObject}).\\
+				\midrule
+				\includegraphics[width=0.7cm]{img/icon_data_model_class_hierarchy_view.png} & Opens a window with a graphical representation of the data model tree,  easier to navigate.\\
+				\midrule
+				\includegraphics[width=5cm]{img/data_model_manager_search.png} & Searches for a particular class.\\
+			\end{tabular}
+			\caption{Data Model manager toolbar items}
+			\label{tab:data_model_manager_toolbar_icons}
+		\end{table}
+		\subsection{Class Tree}
+			The data model is represented as a tree because it's a hierarchical structure. Technically, it's a class hierarchy\footnote{Class Hierarchy https://en.wikipedia.org/wiki/Class\_hierarchy}. The top of the hierarchy (\textbf{InventoryObject}) is the most general type of element in the data model and its subclasses represent all the possible elements that will be treated as inventory assets. As you dig deeper into the tree, the classes become more and more specialized and each level inherits the attributes of the parent classes. This kind of structure has two purposes: First, it helps you to organize your classes based on what characteristics they have in common. Secondly, as you will see later in this manual, you can apply operations over top level classes, and they will be propagated to all subclasses. Another root of the data model tree is \textbf{GenericObjectList}, and its subclasses are all possible list types (see more details on the subject in the chapter \textbf{\nameref{sec:list_type_manager}}).\newline
+			
+			\begin{framed} {\large \textbf{Important}} \\
+					The \textbf{Properties} window allows you to modify the attributes of a selected object in a tree, list or view. If not already open, it's available from the Windows $\rightarrow$ Properties menu.
 			\end{framed}
-			\item The second section  contains the class fields (attributes). In the  figure\ref{fig:properties_class_node}, class Router  has six attributes: name, state, conditions, vendor, serialNumber and creationDate. Click the button next to the attribute name to customize it (see figure~\ref{fig:class_attribute_details}).
+			The properties of a class can be edited by using the \textbf{Properties} window, selecting the class from the tree (see figure~\ref{fig:properties_class_node}). 
 			\begin{figure}[h!]
 				\centering
-				\includegraphics[width=0.4\linewidth]{img/class_attribute_details.png}
-				\caption{Properties of attribute \textbf{name} in class \textbf{Router}}
-				\label{fig:class_attribute_details}
+				\includegraphics[width=0.5\linewidth]{img/properties_class_node.png}
+				\caption{Properties of class \textbf{Router}}
+				\label{fig:properties_class_node}
 			\end{figure}
-		\end{itemize}
-		In this window, you can modify the attribute's name, display name, description, type  (the drop-down list will show you primitive types -String, Integer, Float, Long, etc- and all available non-abstract list types). When you change an attribute's type, all existing instances will be	modified to reflect the change, which means that the values of the modified attribute will be converted to the new type if possible (say, from Integers to Strings). If the conversion is not possible, the new value will be set to null. You  can  also  manage  the  attribute  visibility. Attributes marked as “Administrative” will be shown in a separate tab in the object's property sheet. Sometimes, there are  attributes that are used only for administrative purposes and might confuse the end user if mixed with the regular attributes. Finally, you can choose what attributes shouldn't be transferred from one object to another in a copy operation.
-		
-		\begin{framed} {\large \textbf{Important}}
+			The  property  sheet  is  divided  in  two  sections: 
 			\begin{itemize}
-				\item You may lose information when changing an attribute's type. make sure the conversion to the new type is possible before you do it.
-				\item Although there's a Cancel button at the bottom of the window, it does not	really work. When you perform a change, it's saved immediately.
+				\item \textbf{General:} Contains the intrinsic properties  of  the class: \textbf{name} (can contain only letters and numbers with no special characters  or  blank  spaces). The  \textbf{display name} of the class, that's how the  will be displayed everywhere else (useful  for  internationalization  purposes, for example) and can contain any kind of UTF-8 character. A \textbf{description} (useful  to  document  the  data  model). If  the class is \textbf{abstract} (abstract classes  cannot  be  instantiated, they're only used to give consistency to the  data  model). The attribute \textbf{countable} is not used currently, but it should be used to mark classes whose instances can have graphical representations, but  they're  not really  part  of  the  inventory,  such  as  \textbf{Slots}. \textbf{In Design Stage} is just a way to mark a class as part of an ongoing data model intervention, and thus, classes with that attribute set to true can not be instantiated. \textbf{Color} is the color of the default square icon used to display the object in a tree or view. This icon will be used as long as the \textbf{Small Icon} attribute is null. \textbf{Small Icon} is the icon that will be used in trees and its size can't exceed 16x16 pixels. \textbf{Icon} is the icon used in views, and has a maximum size of 32x32 pixels.
+				\begin{framed} {\large \textbf{Important}}
+					\begin{itemize}
+						\item All user-created classes are set In Design Stage = \textbf{\textcolor{green}{true}} by default. You won't be able to create objects of these classes until you set it to \textbf{\textcolor{blue}{false}}.
+						\item As a convention, all abstract classes have the prefix \textbf{Generic}. Note that a few core classes (like \textbf{InventoryObject} or \textbf{\textcolor{green}{true}}) are abstract are the exception to this rule. You, however, should try to follow this convention as much as possible.
+					\end{itemize}
+				\end{framed}
+				\item The second section  contains the class fields (attributes). In the  figure\ref{fig:properties_class_node}, class Router  has six attributes: name, state, conditions, vendor, serialNumber and creationDate. Click the button next to the attribute name to customize it (see figure~\ref{fig:class_attribute_details}).
+				\begin{figure}[h!]
+					\centering
+					\includegraphics[width=0.4\linewidth]{img/class_attribute_details.png}
+					\caption{Properties of attribute \textbf{name} in class \textbf{Router}}
+					\label{fig:class_attribute_details}
+				\end{figure}
 			\end{itemize}
-		\end{framed}
-		You can also create and delete classes and attributes by right-clicking a class node (see figure~\ref{fig:class_node_menu})
-		\begin{figure}[h!]
-			\centering
-			\includegraphics[width=0.4\linewidth]{img/class_node_menu.png}
-			\caption{Class \textbf{Router} context menu}
-			\label{fig:class_node_menu}
-		\end{figure}
-		New subclasses inherit the parent class attributes. Classes with instances or subclasses can not be deleted (this is  a  feature to avoid unintended loss of  data). Also, attribute \textbf{name} can not be deleted.
-		\begin{framed} {\large \textbf{Important}}
-			It's highly recommended \textbf{\textcolor{red}{NOT}} to rename abstract core classes, as some of them are used internally to support many features and renaming them may turn the system unstable.
-		\end{framed}
-		
+			In this window, you can modify the attribute's name, display name, description, type  (the drop-down list will show you primitive types -String, Integer, Float, Long, etc- and all available non-abstract list types). When you change an attribute's type, all existing instances will be	modified to reflect the change, which means that the values of the modified attribute will be converted to the new type if possible (say, from Integers to Strings). If the conversion is not possible, the new value will be set to null. You  can  also  manage  the  attribute  visibility. Attributes marked as “Administrative” will be shown in a separate tab in the object's property sheet. Sometimes, there are  attributes that are used only for administrative purposes and might confuse the end user if mixed with the regular attributes. Finally, you can choose what attributes shouldn't be transferred from one object to another in a copy operation.
+			
+			\begin{framed} {\large \textbf{Important}}
+				\begin{itemize}
+					\item You may lose information when changing an attribute's type. make sure the conversion to the new type is possible before you do it.
+					\item Although there's a Cancel button at the bottom of the window, it does not	really work. When you perform a change, it's saved immediately.
+				\end{itemize}
+			\end{framed}
+			You can also create and delete classes and attributes by right-clicking a class node (see figure~\ref{fig:class_node_menu})
+			\begin{figure}[h!]
+				\centering
+				\includegraphics[width=0.4\linewidth]{img/class_node_menu.png}
+				\caption{Class \textbf{Router} context menu}
+				\label{fig:class_node_menu}
+			\end{figure}
+			New subclasses inherit the parent class attributes. Classes with instances or subclasses can not be deleted (this is  a  feature to avoid unintended loss of  data). Also, attribute \textbf{name} can not be deleted.
+			\begin{framed} {\large \textbf{Important}}
+				It's highly recommended \textbf{\textcolor{red}{NOT}} to rename abstract core classes, as some of them are used internally to support many features and renaming them may turn the system unstable.
+			\end{framed}
+		\subsection{Class Hierarchy View}
+			The data model can also be displayed on a canvas to improve the visualization and navigation. You can perform the same actions available in the standard tree view. To use it, click on the \textit{Class Hierarchy View} icon \includegraphics[width=0.7cm]{img/icon_data_model_class_hierarchy_view.png}, as seen in the Table~\ref{tab:data_model_manager_toolbar_icons}.
+			\begin{table}[h!]
+				\centering
+				\begin{tabular}{cp{10cm}}
+					\includegraphics[width=0.7cm]{img/icon_expand_all.png} & Show all classes, without displaying the attributes\\
+					\midrule
+					\includegraphics[width=0.7cm]{img/icon_collapse_all.png} & Collapse the tree, showing only the root class (\textbf{RootObject})\\
+					\midrule
+					\includegraphics[width=0.7cm]{img/icon_expand_all_with_attributes.png} & Show all classes, displaying also their attributes\\
+					\midrule
+					\includegraphics[width=0.7cm]{img/icon_organize.png} & If after expanding a class node it overlaps with another, use this button to organize again the tree\\
+					\midrule
+					\includegraphics[width=3cm]{img/data_model_manager_locate.png} & Locate a class in the tree\\
+				\end{tabular}
+				\caption{Class Hierarchy View toolbar icons}
+				\label{tab:class_hierarchy_view_icons}
+			\end{table}
+			
+			Each node of the tree represents a class and you can display/hide its attributes by expanding the node using the small triangle \includegraphics[width=0.5cm]{img/data_model_manager_triangle.png} at the top left corner of it. By default, and taking into account that the data model may have a considerable amount of classes, only the root class (\textbf{RootObject}) is displayed. You can either display the whole hierarchy by pressing the buttons \includegraphics[width=0.7cm]{img/icon_expand_all.png}/\includegraphics[width=0.7cm]{img/icon_expand_all_with_attributes.png} or expanding one level at a time, using the right-click menu:
+			\begin{figure}[h!]
+				\centering
+				\includegraphics[width=0.5\linewidth]{img/data_model_manager_menu.png}
+				\caption{Class node context menu}
+				\label{fig:class_hierarchy_context_menu}
+			\end{figure}
+			
+			
 	\newpage
 	\section{Containment Manager} \label{sec:containment_manager}
 	Another key concept in Kuwaiba is containment. It consists of the ability to define what kind of objects can be created within others. For example, a \textbf{Country} can be inside a \textbf{Continent}, but can't be inside a \textbf{Rack}. A \textbf{Port} is usually within a \textbf{Board}, and not inside a \textbf{City}. These business rules can be defined using the Containment Manager.
@@ -660,7 +701,7 @@
 	\end{figure}
 	
 	\newpage
-	Once it's created, you cant edit the pool attributes \textit{name} and \textit{description} in the property sheet.
+	Once it's created, you can edit the pool attributes \textit{name} and \textit{description} in the property sheet.
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.5\linewidth]{img/pools_pool_properties.png}
