@@ -397,17 +397,17 @@ public class Util {
                 (Integer)instance.getProperty(Constants.PROPERTY_TYPE));
     }
     
+    public static RemoteBusinessObjectLight createRemoteObjectLightFromPoolNode (Node instance) {
+        return new RemoteBusinessObjectLight(instance.getId(), 
+                (String)instance.getProperty(Constants.PROPERTY_NAME), 
+                String.format("%s", Constants.MSG_POOL_OF).concat((String)instance.getProperty(Constants.PROPERTY_CLASS_NAME)));
+    }
+    
     public static RemoteBusinessObjectLight createRemoteObjectLightFromNode (Node instance) {
-        //if has no relationship is a pool
-        if(!instance.hasRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING))
-            return new RemoteBusinessObjectLight(instance.getId(), 
-                (String)instance.getProperty(Constants.PROPERTY_NAME), (String)instance.getProperty(Constants.PROPERTY_CLASS_NAME));
-        else{    
-            Node classNode = instance.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode();
+        Node classNode = instance.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode();
         
-            return new RemoteBusinessObjectLight(instance.getId(), 
-                (String)instance.getProperty(Constants.PROPERTY_NAME), (String)classNode.getProperty(Constants.PROPERTY_NAME));
-        }
+        return new RemoteBusinessObjectLight(instance.getId(), 
+            (String)instance.getProperty(Constants.PROPERTY_NAME), (String)classNode.getProperty(Constants.PROPERTY_NAME));
     }
     
     public static RemoteBusinessObject createRemoteObjectFromNode (Node instance) throws InvalidArgumentException {

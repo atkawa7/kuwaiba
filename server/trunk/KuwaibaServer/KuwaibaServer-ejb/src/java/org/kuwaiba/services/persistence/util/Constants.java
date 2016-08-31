@@ -170,6 +170,10 @@ public class Constants {
      */
     public static final String REL_PROPERTY_POOL = "pool";
     /**
+     * Message to complement the ClassName in a RemoteObjectLight class when it's represent a pool 
+     */
+    public static final String MSG_POOL_OF = "Pool of ";
+    /**
      * Property "structure" for views
      */
     public static final String PROPERTY_STRUCTURE = "structure"; //NOI18N
