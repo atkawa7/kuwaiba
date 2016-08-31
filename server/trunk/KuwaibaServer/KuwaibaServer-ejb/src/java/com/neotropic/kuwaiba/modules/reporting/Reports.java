@@ -807,7 +807,7 @@ public class Reports {
     private String formatLocation (List<RemoteBusinessObjectLight> containmentHierarchy) {
         String location = "";
         if (containmentHierarchy.size() == 1 && !(Constants.NODE_DUMMYROOT).equals((containmentHierarchy.get(0).getClassName())))
-            location += containmentHierarchy.get(0).toString()+" (<b>Pool</b>) ";
+            location += containmentHierarchy.get(0).toString();
         else{
             for (int i = 0; i < containmentHierarchy.size() - 1; i ++)
                 location += containmentHierarchy.get(i).toString() + " | ";
