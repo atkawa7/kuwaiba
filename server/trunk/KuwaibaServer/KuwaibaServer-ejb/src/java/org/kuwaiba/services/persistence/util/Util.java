@@ -398,9 +398,16 @@ public class Util {
     }
     
     public static RemoteBusinessObjectLight createRemoteObjectLightFromNode (Node instance) {
-        Node classNode = instance.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode();
-        return new RemoteBusinessObjectLight(instance.getId(), 
+        //if has no relationship is a pool
+        if(!instance.hasRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING))
+            return new RemoteBusinessObjectLight(instance.getId(), 
+                (String)instance.getProperty(Constants.PROPERTY_NAME), (String)instance.getProperty(Constants.PROPERTY_CLASS_NAME));
+        else{    
+            Node classNode = instance.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode();
+        
+            return new RemoteBusinessObjectLight(instance.getId(), 
                 (String)instance.getProperty(Constants.PROPERTY_NAME), (String)classNode.getProperty(Constants.PROPERTY_NAME));
+        }
     }
     
     public static RemoteBusinessObject createRemoteObjectFromNode (Node instance) throws InvalidArgumentException {
