@@ -38,6 +38,10 @@ public class Constants {
      */
     public static final int CLASS_TYPE_ROOT = 0;
     /**
+     * Class Pool
+     */
+    public static final String CLASS_POOL = "Pool";
+    /**
      * IP address type for IPv4
      */
     public static final int IPV4_TYPE = 4;
@@ -169,10 +173,6 @@ public class Constants {
      * Property CHILD_OF_SPECIAL relationship type
      */
     public static final String REL_PROPERTY_POOL = "pool";
-    /**
-     * Message to complement the ClassName in a RemoteObjectLight class when it's represent a pool 
-     */
-    public static final String MSG_POOL_OF = "Pool of ";
     /**
      * Property "structure" for views
      */
