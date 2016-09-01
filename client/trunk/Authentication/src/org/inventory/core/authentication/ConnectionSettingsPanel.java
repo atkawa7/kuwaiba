@@ -93,6 +93,7 @@ public class ConnectionSettingsPanel extends javax.swing.JPanel {
 
         chkHostVerification.setText(org.openide.util.NbBundle.getMessage(ConnectionSettingsPanel.class, "ConnectionSettingsPanel.chkHostVerification.text")); // NOI18N
         chkHostVerification.setToolTipText(org.openide.util.NbBundle.getMessage(ConnectionSettingsPanel.class, "ConnectionSettingsPanel.chkHostVerification.toolTipText")); // NOI18N
+        chkHostVerification.setEnabled(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);

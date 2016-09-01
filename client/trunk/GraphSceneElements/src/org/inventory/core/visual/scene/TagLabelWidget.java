@@ -18,10 +18,10 @@ package org.inventory.core.visual.scene;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Point;
+import org.inventory.communications.core.LocalObjectLight;
 import org.netbeans.api.visual.border.Border;
 import org.netbeans.api.visual.border.BorderFactory;
 import org.netbeans.api.visual.widget.LabelWidget;
-import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
@@ -75,17 +75,17 @@ public class TagLabelWidget extends LabelWidget implements Widget.Dependency {
      */
     private int position;
     
-    public TagLabelWidget(Scene scene, AbstractNodeWidget widget) {
+    public TagLabelWidget(AbstractScene<LocalObjectLight, LocalObjectLight> scene, AbstractNodeWidget widget) {
         super(scene);
         this.widget = widget;
         setForeground(Color.BLACK);
         setBorder(DEFAULT_BORDER);
         setFont(DEFAULT_SMALL_FONT);
         this.position = BOTTOM;
-        setLabel(widget.getNode().getObject().toString());
+        setLabel(scene.findObject(widget).toString());
     }
 
-    public TagLabelWidget(Scene scene, AbstractNodeWidget widget, 
+    public TagLabelWidget(AbstractScene<LocalObjectLight, LocalObjectLight> scene, AbstractNodeWidget widget, 
             String label, int position) {
         this(scene, widget);
         setLabel(label);

@@ -52,6 +52,12 @@ public class PhysicalConnectionProvider implements ConnectProvider {
      * Object to be used as parent to the new connections
      */
     private LocalObjectLight currentParentObject;
+    
+    private AbstractScene<LocalObjectLight, LocalObjectLight> scene;
+
+    public PhysicalConnectionProvider(AbstractScene scene) {
+        this.scene = scene;
+    }
 
     public void setConnectionClass(String connectionClass) {
         this.connectionClass = connectionClass;
@@ -90,16 +96,15 @@ public class PhysicalConnectionProvider implements ConnectProvider {
 
     @Override
     public void createConnection(Widget sourceWidget, Widget targetWidget) {
-
-        ConnectionWizard myWizard = new ConnectionWizard(wizardType,((AbstractNodeWidget)sourceWidget).getNode().getObject(),
-                ((AbstractNodeWidget)targetWidget).getNode().getObject(), connectionClass,
-                currentParentObject);
+        
+      
+        ConnectionWizard myWizard = new ConnectionWizard(wizardType, (LocalObjectLight)scene.findObject(sourceWidget),
+                (LocalObjectLight)scene.findObject(sourceWidget), connectionClass, currentParentObject);
         
         myWizard.show();
         
         if (myWizard.getNewConnection() != null){
 
-            AbstractScene scene = (AbstractScene)sourceWidget.getScene();
             ConnectionWidget line = (ConnectionWidget)scene.addEdge(myWizard.getNewConnection());
 
             line.setTargetAnchor(AnchorFactory.createCenterAnchor(targetWidget));

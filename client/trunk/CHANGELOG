@@ -101,3 +101,5 @@
 * Most of the deprecated calls to add(Node[]) and remove(Node[]) to update the children of a node were fixed
 * Pool properties are now editable
 * Date fields can be edited
+* Data Model Manager has been improved, adding a graphical view and means to search for classes
+* Added modules to managing SDH networks, and IPAddress Manager, a Contract Manager and a Dashboard

@@ -33,20 +33,10 @@ public abstract class SelectableNodeWidget extends Widget {
     
     public SelectableNodeWidget(Scene scene, LocalObjectLight businessObject) {
         super(scene);
-        node = new ObjectNode(businessObject);
-        lookup = Lookups.singleton(node);
+        lookup = Lookups.singleton(new ObjectNode(businessObject));
+        setToolTipText(businessObject.toString());
     }
-    
-    public ObjectNode getNode() {
-        return node;
-    }
-    
-    public void setNode(ObjectNode node) {
-        this.node = node;
-        lookup = Lookups.singleton(node);
-        setToolTipText(node.getObject().toString());
-    }
-    
+ 
     @Override
     public Lookup getLookup() {
         return lookup;

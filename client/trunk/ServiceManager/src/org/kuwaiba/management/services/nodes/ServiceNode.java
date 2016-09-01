@@ -40,14 +40,4 @@ public class ServiceNode extends ObjectNode {
             showObjectIdAction == null ? showObjectIdAction = new ShowObjectIdAction(object.getOid(), object.getClassName()) : showObjectIdAction
         };        
     }
-
-//    @Override
-//    public Image getIcon(int i){
-//        return icon;
-//    }
-//    
-//    @Override
-//    public Image getOpenedIcon(int i){
-//        return getIcon(i);
-//    }
 }

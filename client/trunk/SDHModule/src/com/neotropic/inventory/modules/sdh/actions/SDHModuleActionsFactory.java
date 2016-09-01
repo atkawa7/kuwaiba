@@ -34,6 +34,7 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.visual.scene.AbstractConnectionWidget;
 import org.inventory.core.visual.scene.AbstractNodeWidget;
 import org.inventory.core.visual.scene.AbstractScene;
+import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteBusinessObjectAction;
 import org.netbeans.api.visual.action.PopupMenuProvider;
 import org.netbeans.api.visual.widget.Widget;
@@ -78,7 +79,7 @@ public class SDHModuleActionsFactory {
                         actions.add(null);
 
                         AbstractNodeWidget nodeWidget = (AbstractNodeWidget)widget;
-                        actions.addAll(Arrays.asList(nodeWidget.getNode().getActions(true)));
+                        actions.addAll(Arrays.asList(nodeWidget.getLookup().lookup(ObjectNode.class).getActions(true)));
 
                         return Utilities.actionsToPopup(actions.toArray(new Action[0]), scene.getView()); 
                         

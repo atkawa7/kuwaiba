@@ -26,10 +26,6 @@ import org.kuwaiba.management.services.nodes.actions.ServiceManagerActionFactory
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class CustomerNode extends ObjectNode {
-    /**
-     * Node icon
-     */
-    //private static Image icon = ImageUtilities.loadImage("org/kuwaiba/management/services/res/customer.png");
     
     public CustomerNode(LocalObjectLight customer) {
         super(customer);
@@ -45,14 +41,4 @@ public class CustomerNode extends ObjectNode {
             showObjectIdAction == null ? showObjectIdAction = new ShowObjectIdAction(object.getOid(), object.getClassName()) : showObjectIdAction
         };        
     }
-
-//    @Override
-//    public Image getIcon(int i){
-//        return icon;
-//    }
-//    
-//    @Override
-//    public Image getOpenedIcon(int i){
-//        return getIcon(i);
-//    }
 }

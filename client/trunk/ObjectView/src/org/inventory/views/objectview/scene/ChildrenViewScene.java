@@ -31,6 +31,7 @@ import org.inventory.core.visual.scene.AbstractConnectionWidget;
 import org.inventory.core.visual.scene.AbstractNodeWidget;
 import org.inventory.core.visual.actions.CustomAddRemoveControlPointAction;
 import org.inventory.core.visual.actions.CustomMoveAction;
+import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.PopupMenuProvider;
@@ -75,7 +76,7 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
         nodeLayer = new LayerWidget(this);
         edgeLayer = new LayerWidget(this);
         labelsLayer = new LayerWidget(this);
-        myConnectionProvider = new PhysicalConnectionProvider();
+        myConnectionProvider = new PhysicalConnectionProvider(this);
         
         addChild(backgroundLayer);
         addChild(edgeLayer);
@@ -171,8 +172,8 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
         for (Widget nodeWidget : nodeLayer.getChildren())
             nodesTag.start("node").attr("x", nodeWidget.getPreferredLocation().x).
             attr("y", nodeWidget.getPreferredLocation().y).
-            attr("class", ((AbstractNodeWidget)nodeWidget).getNode().getObject().getClassName()).
-            text(String.valueOf(((AbstractNodeWidget)nodeWidget).getNode().getObject().getOid()) ).end();
+            attr("class", nodeWidget.getLookup().lookup(ObjectNode.class).getLookup().lookup(LocalObjectLight.class).getClassName()).
+            text(String.valueOf(nodeWidget.getLookup().lookup(ObjectNode.class).getLookup().lookup(LocalObjectLight.class).getOid()) ).end();
         nodesTag.end();
 
         StartTagWAX edgesTag = mainTag.start("edges");
@@ -184,10 +185,10 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
             //"solution", but I expect to solve it once we rewrite this module
             if (((AbstractConnectionWidget)edgeWidget).getSourceAnchor() == null)
                 continue;
-            edgeTag.attr("aside", ((AbstractNodeWidget)((AbstractConnectionWidget)edgeWidget).getSourceAnchor().getRelatedWidget()).getNode().getObject().getOid());
+            edgeTag.attr("aside", edgeWidget.getLookup().lookup(ObjectNode.class).getLookup().lookup(LocalObjectLight.class).getOid());
             if (((AbstractConnectionWidget)edgeWidget).getTargetAnchor() == null)
                 continue;
-            edgeTag.attr("bside", ((AbstractNodeWidget)((AbstractConnectionWidget)edgeWidget).getTargetAnchor().getRelatedWidget()).getNode().getObject().getOid());
+            edgeTag.attr("bside", edgeWidget.getLookup().lookup(ObjectNode.class).getLookup().lookup(LocalObjectLight.class).getOid());
             for (Point point : ((AbstractConnectionWidget)edgeWidget).getControlPoints())
                 edgeTag.start("controlpoint").attr("x", point.x).attr("y", point.y).end();
             edgeTag.end();

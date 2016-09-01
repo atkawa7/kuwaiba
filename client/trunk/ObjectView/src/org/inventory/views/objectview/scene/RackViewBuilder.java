@@ -23,7 +23,6 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
-import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.views.objectview.ObjectViewService;
 import org.netbeans.api.visual.widget.Widget;
 
@@ -42,7 +41,7 @@ public class RackViewBuilder implements AbstractViewBuilder {
     }
 
     @Override
-    public AbstractScene getScene() {
+    public RackViewScene getScene() {
         return scene;
     }
     

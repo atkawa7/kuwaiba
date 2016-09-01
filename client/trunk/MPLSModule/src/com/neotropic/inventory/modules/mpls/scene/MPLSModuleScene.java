@@ -46,6 +46,7 @@ import org.inventory.core.visual.actions.providers.SceneConnectProvider;
 import org.inventory.core.visual.scene.AbstractConnectionWidget;
 import org.inventory.core.visual.scene.AbstractNodeWidget;
 import org.inventory.core.visual.scene.AbstractScene;
+import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.WidgetAction;
@@ -122,8 +123,8 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
         for (Widget nodeWidget : nodeLayer.getChildren())
             nodesTag.start("node").attr("x", nodeWidget.getPreferredLocation().x).
             attr("y", nodeWidget.getPreferredLocation().y).
-            attr("class", ((AbstractNodeWidget)nodeWidget).getNode().getObject().getClassName()).
-            text(String.valueOf(((AbstractNodeWidget)nodeWidget).getNode().getObject().getOid())).end();
+            attr("class", nodeWidget.getLookup().lookup(ObjectNode.class).getLookup().lookup(LocalObjectLight.class).getClassName()).
+            text(String.valueOf(nodeWidget.getLookup().lookup(ObjectNode.class).getLookup().lookup(LocalObjectLight.class).getOid())).end();
         nodesTag.end();
 
         StartTagWAX edgesTag = mainTag.start("edges");

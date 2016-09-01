@@ -34,6 +34,7 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.visual.scene.AbstractConnectionWidget;
 import org.inventory.core.visual.scene.AbstractNodeWidget;
 import org.inventory.core.visual.scene.AbstractScene;
+import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteBusinessObjectAction;
 import org.netbeans.api.visual.action.PopupMenuProvider;
 import org.netbeans.api.visual.widget.Widget;
@@ -92,8 +93,7 @@ public class MPLSModuleActions {
                     theMenu.add(new JSeparator());
                     Widget theWidget = scene.getFocusedWidget();
                     if (theWidget instanceof AbstractNodeWidget) { //For some reason, a right click selects automatically an edge, but not a node (!)
-                        AbstractNodeWidget nodeWidget = (AbstractNodeWidget)theWidget;
-                        for (Action action : nodeWidget.getNode().getActions(true)) {
+                        for (Action action : theWidget.getLookup().lookup(ObjectNode.class).getActions(true)) {
                             if (action instanceof Presenter.Popup) //For some reason, these kind of actions are not properly display, so we ignore them
                                 continue;
                             if(action == null)

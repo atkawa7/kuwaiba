@@ -17,8 +17,7 @@ package org.inventory.core.visual.menu;
 
 import java.awt.Point;
 import javax.swing.JPopupMenu;
-import org.inventory.core.visual.scene.SelectableConnectionWidget;
-import org.inventory.core.visual.scene.SelectableNodeWidget;
+import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.netbeans.api.visual.action.PopupMenuProvider;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Utilities;
@@ -31,11 +30,7 @@ public class ObjectWidgetMenu implements PopupMenuProvider {
 
     @Override
     public JPopupMenu getPopupMenu(Widget widget, Point localLocation) {
-        if (widget instanceof SelectableNodeWidget)
-            return Utilities.actionsToPopup(((SelectableNodeWidget)widget).getNode().getActions(true), 
-                    widget.getScene().getView());
-        
-        return Utilities.actionsToPopup(((SelectableConnectionWidget)widget).getNode().getActions(true), 
-                    widget.getScene().getView());
+        return Utilities.actionsToPopup(widget.getLookup().lookup(ObjectNode.class).getActions(true), 
+                widget.getScene().getView());        
     }
 }
