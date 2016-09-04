@@ -15,7 +15,7 @@
  */
 package com.neotropic.inventory.modules.ipam.nodes.actions;
 
-import com.neotropic.inventory.modules.ipam.windows.DevicesFrame;
+import com.neotropic.inventory.modules.ipam.windows.SubnetsFrame;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalPool;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -31,40 +32,38 @@ import org.openide.util.Utilities;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- * Actions to relate an IP address to a generic communications element
+ * Actions to relate a Generic port to an IP address
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class RelateToDeviceAction extends GenericObjectNodeAction{
-    
-    
-    public RelateToDeviceAction(){
+public class RelateToIPAddressAction extends GenericObjectNodeAction{
+
+    public RelateToIPAddressAction(){
         putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELATE_IP"));
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        List<LocalObjectLight> devices = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
+        List<LocalPool> subnets = CommunicationsStub.getInstance().getSubnetPools(-1, null);
         Lookup.Result<LocalObjectLight> selectedNodes = Utilities.actionsGlobalContext().lookupResult(LocalObjectLight.class);
         
-        if (devices ==  null)
+        if(subnets == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-        
         else{
             Collection<? extends LocalObjectLight> lookupResult = selectedNodes.allInstances();
-            List<LocalObjectLight> selectedObjects = new ArrayList<>();
+            List<LocalObjectLight> selectedPorts = new ArrayList<>();
             Iterator<? extends LocalObjectLight> iterator = lookupResult.iterator();
             
             while (iterator.hasNext())
-                selectedObjects.add((LocalObjectLight)iterator.next());
-
-            DevicesFrame frame = new DevicesFrame(selectedObjects, devices);
+                selectedPorts.add((LocalObjectLight)iterator.next());
+            
+            SubnetsFrame frame = new SubnetsFrame(subnets, selectedPorts);
             frame.setVisible(true);
-        }    
+        }
     }
-
+    
     @Override
     public String getValidator() {
-        return Constants.VALIDATOR_IP_ADDRESS;
+        return Constants.VALIDATOR_GENERIC_PORT;
     }
 }

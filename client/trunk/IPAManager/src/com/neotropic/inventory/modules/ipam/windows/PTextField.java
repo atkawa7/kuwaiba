@@ -21,8 +21,7 @@ import java.awt.event.FocusListener;
 import javax.swing.JTextField;
 
 /**
- * Prompt text for JTextfields taken from. 
- * http://stackoverflow.com/questions/11200585/adding-a-prompt-text-property-to-jtextfield
+ * Prompt text for JTextfields taken from http://stackoverflow.com/questions/11200585/adding-a-prompt-text-property-to-jtextfield
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class PTextField extends JTextField {

@@ -28,15 +28,15 @@ import org.openide.util.actions.Presenter;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- * Release an IP Address from a device
+ * Release a port from an IP address
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ReleaseFromDeviceAction extends GenericObjectNodeAction implements Presenter.Popup {
+public class ReleaseFromIPAddresAction  extends GenericObjectNodeAction implements Presenter.Popup {
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (CommunicationsStub.getInstance().releaseIPfromDevice(object.getClassName(), 
+        if (CommunicationsStub.getInstance().releasePortFromIPAddress(object.getClassName(), 
                 object.getOid(), Long.valueOf(((JMenuItem)e.getSource()).getName())))
             NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
                     java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_SUCCESS"));
@@ -46,12 +46,12 @@ public class ReleaseFromDeviceAction extends GenericObjectNodeAction implements 
 
     @Override
     public String getValidator() {
-        return Constants.VALIDATOR_IP_ADDRESS;
+        return Constants.VALIDATOR_GENERIC_PORT;
     }
 
     @Override
     public JMenuItem getPopupPresenter() {
-        JMenu mnuServices = new JMenu(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELEASE_DEVICE"));
+        JMenu mnuServices = new JMenu(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELEASE_IP"));
         List<LocalObjectLight> services = CommunicationsStub.getInstance().getSpecialAttribute(object.getClassName(), 
                 object.getOid(), Constants.RELATIONSHIP_IPAMHASADDRESS);
         
