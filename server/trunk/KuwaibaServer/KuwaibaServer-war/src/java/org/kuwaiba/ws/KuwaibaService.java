@@ -3851,6 +3851,7 @@ public class KuwaibaService {
     /**
      * Adds an ip to a Subnet
      * @param id ipAddres id
+     * @param parentClassName the parent class name
      * @param attributeNames IP Address Attributes
      * @param attributeValues IP Addres values
      * @param sessionId
@@ -3902,7 +3903,8 @@ public class KuwaibaService {
      * Retrieves the IP addresses of a subnet
      * @param id subnet id
      * @param limit limit of returned subnets
-     * @param sessionId
+     * @param className the class name
+     * @param sessionId the session id
      * @return a set of subnets
      * @throws ServerSideException 
      */
@@ -3974,26 +3976,26 @@ public class KuwaibaService {
     }
     
     /**
-     * Associates an IP address to device
+     * Associates a port to an IP address
      * @param id IP address id
-     * @param deviceClassName device class
-     * @param deviceId device id
+     * @param portClassName port class
+     * @param portId port id
      * @param sessionId Session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
      */
-    @WebMethod(operationName = "relateIPtoDevice")
-    public void relateIPtoDevice (
+    @WebMethod(operationName = "relateIPtoPort")
+    public void relateIPtoPort (
             @WebParam(name = "id")long id,
-            @WebParam(name = "deviceClassName")String deviceClassName,
-            @WebParam(name = "deviceId")long deviceId,
+            @WebParam(name = "portClassName")String portClassName,
+            @WebParam(name = "portId")long portId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
-            wsBean.relateIPtoDevice(id, deviceClassName, deviceId, getIPAddress(), sessionId);
+            wsBean.relateIPtoPort(id, portClassName, portId, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in relateIPtoDevice: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in relateIPtoPort: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
@@ -4025,26 +4027,26 @@ public class KuwaibaService {
     }
     
     /**
-     * Releases an subnet from a VLAN that is using it
+     * Releases a port from an IP address that is using it
      * @param deviceClassName device class name
      * @param deviceId device id
      * @param id Subnet id
      * @param sessionId Session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime    
      */
-    @WebMethod(operationName = "releaseIPFromDevice")
-    public void releaseIPFromDevice (
+    @WebMethod(operationName = "releasePortFromIP")
+    public void releasePortFromIP (
             @WebParam(name = "deviceClassName")String deviceClassName,
             @WebParam(name = "deviceId")long deviceId,
             @WebParam(name = "id")long id,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
-            wsBean.releaseIPfromDevice(deviceClassName, deviceId, id, getIPAddress(), sessionId);
+            wsBean.releasePortFromIP(deviceClassName, deviceId, id, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in releaseIPFromDevice: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in releasePortFromIP: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
