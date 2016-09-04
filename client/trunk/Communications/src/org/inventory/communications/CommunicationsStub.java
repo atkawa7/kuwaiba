@@ -2832,9 +2832,9 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean relateIPtoDevice(long id, String classDevice, long deviceId){
+    public boolean relateIPtoPort(long id, String portClassName, long PortId){
         try{
-            service.relateIPtoDevice(id, classDevice, deviceId, this.session.getSessionId());
+            service.relateIPtoPort(id, portClassName, PortId, this.session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -2863,9 +2863,9 @@ public class CommunicationsStub {
             return false;
         }
     }
-    public boolean releaseIPfromDevice(String deviceClassName, long deviceId, long id){
+    public boolean releasePortFromIPAddress(String deviceClassName, long deviceId, long id){
         try{
-            service.releaseIPFromDevice(deviceClassName, deviceId, id, this.session.getSessionId());
+            service.releasePortFromIP(deviceClassName, deviceId, id, this.session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = ex.getMessage();

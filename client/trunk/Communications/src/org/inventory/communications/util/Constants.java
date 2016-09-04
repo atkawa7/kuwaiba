@@ -58,9 +58,13 @@ public class Constants {
      */
     public static final String VALIDATOR_APPLICATION_ELEMENT = "applicationElement";
     /**
-     * All instances of classes tagged with this validator may be related to a ip address
+     * All instances of classes tagged with this validator may be related to a network device
      */
     public static final String VALIDATOR_IP_ADDRESS = "ipaddress";
+    /**
+     * All instances of classes tagged with this validator may be related to a ip address
+     */
+    public static final String VALIDATOR_GENERIC_PORT = "genericport";
     /**
      * All instances of classes tagged with this validator may be related to a subnet
      */
@@ -322,6 +326,11 @@ public class Constants {
      * List type class for operational state
      */
     public static final String LIST_TYPE_OPERATIONAL_STATE = "OperationalState";
+    /**
+     * Physical connection classes
+     */
+    public static final String CLASS_IP_ADDRESS = "IPAddress";
+    
     /**
      * Generic classes
      */
