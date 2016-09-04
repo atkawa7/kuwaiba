@@ -357,15 +357,15 @@ public class IPAMModule implements GenericCommercialModule{
     /**
      * Relates a subnet with a generic communications element
      * @param id subnet id
-     * @param deviceClass Generic communications element
-     * @param deviceId generic communications id
+     * @param portClassName Generic communications element
+     * @param portId generic communications id
      * @throws ObjectNotFoundException
      * @throws OperationNotPermittedException
      * @throws MetadataObjectNotFoundException 
      */
-    public void relateIPtoDevice(long id, String deviceClass, long deviceId) throws ObjectNotFoundException,
+    public void relateIPtoPort(long id, String portClassName, long portId) throws ObjectNotFoundException,
             OperationNotPermittedException, MetadataObjectNotFoundException{
-        bem.createSpecialRelationship(deviceClass, deviceId, Constants.CLASS_IP_ADDRESS, id, RELATIONSHIP_IPAMHASADDRESS, true);
+        bem.createSpecialRelationship(portClassName, portId, Constants.CLASS_IP_ADDRESS, id, RELATIONSHIP_IPAMHASADDRESS, true);
     }
     
     /**
@@ -384,7 +384,7 @@ public class IPAMModule implements GenericCommercialModule{
     }
     
     /**
-     * Release the relationship between a GenericCommunicationElement and an 
+     * Release the relationship between a GenericPort and an 
      * IP Address.
      * @param deviceClass GenericCommunications Element
      * @param deviceId GenericCommunications id
@@ -394,7 +394,7 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws ApplicationObjectNotFoundException
      * @throws NotAuthorizedException 
      */
-    public void releaseIPfromDevice(String deviceClass, long deviceId, long id)
+    public void releasePortFromIP(String deviceClass, long deviceId, long id)
             throws ObjectNotFoundException, MetadataObjectNotFoundException,
             ApplicationObjectNotFoundException, NotAuthorizedException
     {

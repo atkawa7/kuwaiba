@@ -2626,11 +2626,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
     
     @Override
-    public void relateIPtoDevice(long ipId, String deviceClassName, long deviceId, String ipAddress, String sessionId) throws ServerSideException{
+    public void relateIPtoPort(long ipId, String portClassName, long portId, String ipAddress, String sessionId) throws ServerSideException{
         try{
             aem.validateCall("relateIPtoDevice", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            ipamModule.relateIPtoDevice(ipId, deviceClassName, deviceId);
+            ipamModule.relateIPtoPort(ipId, portClassName, portId);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2647,11 +2647,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
         }
     }
     @Override
-    public void releaseIPfromDevice(String deviceClassName, long deviceId, long id, String ipAddress, String sessionId) throws ServerSideException{
+    public void releasePortFromIP(String deviceClassName, long deviceId, long id, String ipAddress, String sessionId) throws ServerSideException{
         try{
-            aem.validateCall("releaseIPfromDevice", ipAddress, sessionId);
+            aem.validateCall("releasePortFromIP", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            ipamModule.releaseIPfromDevice(deviceClassName, deviceId, id);
+            ipamModule.releasePortFromIP(deviceClassName, deviceId, id);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }

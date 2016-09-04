@@ -400,7 +400,7 @@ public class Util {
     public static RemoteBusinessObjectLight createRemoteObjectLightFromPoolNode (Node instance) {
         return new RemoteBusinessObjectLight(instance.getId(), 
                 (String)instance.getProperty(Constants.PROPERTY_NAME), 
-                String.format("%s of %s", Constants.CLASS_POOL, instance.getProperty(Constants.PROPERTY_NAME)));
+                String.format("%s of %s", Constants.CLASS_POOL, instance.getProperty(Constants.PROPERTY_CLASS_NAME)));
     }
     
     public static RemoteBusinessObjectLight createRemoteObjectLightFromNode (Node instance) {

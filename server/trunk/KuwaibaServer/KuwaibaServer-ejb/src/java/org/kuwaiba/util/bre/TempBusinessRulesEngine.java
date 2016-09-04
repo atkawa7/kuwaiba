@@ -59,6 +59,7 @@ public class TempBusinessRulesEngine {
         subClassOfValidators.put("GenericApplicationElement", "applicationElement");
         subClassOfValidators.put("GenericCommunicationsElement", "genericCommunicationsElement");
         subClassOfValidators.put("IPAddress", "ipaddress");
+        subClassOfValidators.put("GenericPort", "genericport");
         subClassOfValidators.put("Subnet", "subnet");
         subClassOfValidators.put("ELANService", "elanservice");
         subClassOfValidators.put("ELINEService", "elineservice");

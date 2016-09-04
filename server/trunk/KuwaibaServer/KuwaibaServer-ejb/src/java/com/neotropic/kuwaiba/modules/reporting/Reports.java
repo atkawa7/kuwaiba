@@ -543,7 +543,7 @@ public class Reports {
         if (ips.isEmpty())
             ipAddresses = "<div class=\"error\">There are no IPs Addresses in use</div>";
         else {
-            ipAddresses = "<table><tr><th>IP Address</th><th>Description</th><th>Host name</th><th>Location</th><th>Service</th></tr>";
+            ipAddresses = "<table><tr><th>IP Address</th><th>Description</th><th>Port</th><th>Location</th><th>Service</th></tr>";
 
             int i = 0;
             for (RemoteBusinessObjectLight ip : ips) {
