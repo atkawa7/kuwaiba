@@ -749,20 +749,20 @@ public class Reports {
             if (networkElements == null) {
                 //title = "Error";
                 //DetailReportText = getHeader(title);
-                DetailReportText += "<div class=\"error\">No information for" + listOflogicalConfiguration.getName() + "could be found</div>";
+                DetailReportText += "<div class=\"error\">No information for" + listOflogicalConfiguration.getName() + " could be found</div>";
             }
             else {
                 //title = "Detail Report for " + logicalConfigurationObject.getName() + "[" + logicalConfigurationObject.getClassName() + "]";
                 //DetailReportText = getHeader(title);
 
                 DetailReportText += "<table><tr><td class=\"generalInfoLabel\">Name</td><td class=\"generalInfoValue\"><b>" + logicalConfigurationObject.getName() + "[" + logicalConfigurationObject.getClassName() + "]</b></td>"
-                        + "<tr><td class=\"generalInfoLabel\">Creation date</td><td class=\"generalInfoValue\"><b>" + attributes.get("creationDate").get(0) + "</b> </td></tr></table>";
+                        + "<tr><td class=\"generalInfoLabel\">Creation date</td><td class=\"generalInfoValue\"><b>" + new Date(Long.valueOf(attributes.get("creationDate").get(0))) + "</b> </td></tr></table>";
             }
 
             if (networkElements.isEmpty())
-                    instance = "<div class=\"error\">There are no network elements asossiate to this "+ listOflogicalConfiguration.getName() +"</div>";
+                    instance = "<div class=\"error\">There are no network elements associated to this " + listOflogicalConfiguration.getName() +"</div>";
             else {
-                    instance = "<table><tr><th>"+logicalConfigurationClassName+"</th><th>Location</th></tr>";
+                    instance = "<table><tr><th>Network Element</th><th>Location</th></tr>";
 
                 int i = 0;
                 for (RemoteBusinessObjectLight networkElement : networkElements) {
