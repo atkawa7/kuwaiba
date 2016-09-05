@@ -124,8 +124,8 @@ public class IPAMModule implements GenericCommercialModule{
         this.bem = bem;
         
         //Registers the display names
-        this.mem.setSpecialRelationshipDisplayName(RELATIONSHIP_IPAMBELONGSTOVLAN, "IPAM Subnet belong to a VLAN");
-        this.mem.setSpecialRelationshipDisplayName(RELATIONSHIP_IPAMHASADDRESS, "IPAM GenericCommunicationElement has an IP Address");
+        this.mem.setSpecialRelationshipDisplayName(RELATIONSHIP_IPAMBELONGSTOVLAN, "Belongs to a VLAN");
+        this.mem.setSpecialRelationshipDisplayName(RELATIONSHIP_IPAMHASADDRESS, "Element's IP Address");
 
     }
     
@@ -135,14 +135,14 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws NotAuthorizedException 
      */
     private List<RemotePool> getDefaultIPAMRootNodes() throws NotAuthorizedException, MetadataObjectNotFoundException{
-        List<Pool> ipv4RootPools = aem.getRootPools(Constants.CLASS_SUBNET_IPV4, 2);
-        List<Pool> ipv6RootPools = aem.getRootPools(Constants.CLASS_SUBNET_IPV6, 2);
+        List<Pool> ipv4RootPools = aem.getRootPools(Constants.CLASS_SUBNET_IPV4, 2, false);
+        List<Pool> ipv6RootPools = aem.getRootPools(Constants.CLASS_SUBNET_IPV6, 2, false);
         
         List<RemotePool> rootSubnetPools = new ArrayList<>();
         if(ipv4RootPools.isEmpty() || ipv6RootPools.isEmpty()){
             createRootNodes();
-            ipv4RootPools = aem.getRootPools(Constants.CLASS_SUBNET_IPV4, 2);
-            ipv6RootPools = aem.getRootPools(Constants.CLASS_SUBNET_IPV6, 2);
+            ipv4RootPools = aem.getRootPools(Constants.CLASS_SUBNET_IPV4, 2, false);
+            ipv6RootPools = aem.getRootPools(Constants.CLASS_SUBNET_IPV6, 2, false);
         }
         
         for (Pool rootPool : ipv4RootPools) 
@@ -238,8 +238,7 @@ public class IPAMModule implements GenericCommercialModule{
      */
     public List<RemotePool> getSubnetPools(int limit, 
             long parentId, String className) throws NotAuthorizedException, ObjectNotFoundException, 
-            ApplicationObjectNotFoundException, MetadataObjectNotFoundException
-    {
+            ApplicationObjectNotFoundException, MetadataObjectNotFoundException {
         List<RemotePool> remotePools = new ArrayList<>();
         if(parentId == -1 && className == null)
             return getDefaultIPAMRootNodes();
@@ -267,6 +266,7 @@ public class IPAMModule implements GenericCommercialModule{
     /**
      * create a subnet
      * @param parentId subnet pool id
+     * @param className subnet class name
      * @param attributeNames subnet attributes, networkIP, broadcastIP, hosts
      * @param attributeValues subnet attribute values
      * @return new subnet id
@@ -286,8 +286,9 @@ public class IPAMModule implements GenericCommercialModule{
     
     
     /**
-     * deletes a subnet
+     * Deletes a subnet
      * @param ids subnet ids
+     * @param className subnets class name
      * @param releaseRelationships release any relationship 
      * @throws ObjectNotFoundException
      * @throws MetadataObjectNotFoundException

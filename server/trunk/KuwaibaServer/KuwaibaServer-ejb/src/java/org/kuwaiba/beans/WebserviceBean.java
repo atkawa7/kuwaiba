@@ -1915,13 +1915,13 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
     
     @Override
-    public List<RemotePool> getRootPools(String className, int type, String ipAddress, String sessionId) throws ServerSideException {
+    public List<RemotePool> getRootPools(String className, int type, boolean includeSubclasses, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateCall("getRootPools", ipAddress, sessionId);
             List<RemotePool> res = new ArrayList<>();
-            List<Pool> rootPools = aem.getRootPools(className, type);
+            List<Pool> rootPools = aem.getRootPools(className, type, includeSubclasses);
             
             for (Pool aPool : rootPools)
                 res.add(new RemotePool(aPool));
@@ -2304,6 +2304,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
                     return new ReportDescriptor[] {
                             new ReportDescriptor(9, "Subnet details", className, "Shows the IPs created in that subnet and some of their attributes")
                     };
+                case "Building":
                 case "Country":
                 case "Continent":
                 case "City":
@@ -2311,9 +2312,9 @@ public class WebserviceBean implements WebserviceBeanRemote {
                             new ReportDescriptor(10, "Network Equipment", className, "Presents a list and details of all network equipment in a particular location"),
                             /*new ReportDescriptor(11, "Racks and Distribution Frames", className, "Presents a list and details of all racks and distribution frames in that particular location")*/
                     };
-                case "GenericContract": //Not an actual instanceable class
+                case "SupportContract":
                     return new ReportDescriptor[] {
-                            new ReportDescriptor(12, "Support Contract Status", className, "Shows the status of the support contracts in the inventory")
+                            new ReportDescriptor(12, "Contract Status", className, "Shows the status of the support contracts in the inventory")
                     };
                 case "ELANService":
                 case "ELINEService":
@@ -2324,7 +2325,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 case "BridgeDomainInterface":
                 case "FrameRelay":
                 case "MPLSTunnel":
-                case "VRF": 
+                case "VRFInstance": 
                     return new ReportDescriptor[]{
                         new ReportDescriptor(14, "Config details", className, "Shows the resources used by the logical Configuration and some of its attributes")
                     };

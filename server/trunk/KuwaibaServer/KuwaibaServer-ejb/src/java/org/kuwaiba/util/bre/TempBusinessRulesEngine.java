@@ -62,7 +62,7 @@ public class TempBusinessRulesEngine {
         subClassOfValidators.put("BridgeDomainInterface", "networkElementLogicalConfiguration");
         subClassOfValidators.put("FrameRelay", "networkElementLogicalConfiguration");
         subClassOfValidators.put("MPLSTunnel", "networkElementLogicalConfiguration");
-        subClassOfValidators.put("VRF", "networkElementLogicalConfiguration");
+        subClassOfValidators.put("VRFInstance", "networkElementLogicalConfiguration");
         subClassOfValidators.put("Subnet", "subnet");
         subClassOfValidators.put("ELANService", "elanservice");
         subClassOfValidators.put("ELINEService", "elineservice");

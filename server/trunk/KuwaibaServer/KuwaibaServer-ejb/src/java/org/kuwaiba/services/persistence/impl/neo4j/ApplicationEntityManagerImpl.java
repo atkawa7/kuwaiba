@@ -1340,7 +1340,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
        
     @Override
-    public List<Pool> getRootPools(String className, int type) 
+    public List<Pool> getRootPools(String className, int type, boolean includeSubclasses) 
             throws NotAuthorizedException {
         try(Transaction tx = graphDb.beginTx()) {
             List<Pool> pools  = new ArrayList<>();
@@ -1352,10 +1352,19 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 
                 if (!poolNode.hasRelationship(Direction.OUTGOING, RelTypes.CHILD_OF_SPECIAL)) { //Root pools don't have parents
                     if ((int)poolNode.getProperty(Constants.PROPERTY_TYPE) == type) {
-                        if (className != null) { //We will return only those matching with the specified class name
-                            if (className.equals((String)poolNode.getProperty(Constants.PROPERTY_CLASS_NAME)))
-                                pools.add(Util.createPoolFromNode(poolNode));
-                        } else
+                        
+                        //The following conditions could probably normalized, but I think this way,
+                        //the code is a bit more readable
+                        if (className != null) { //We will return only those matching with the specified class name or its subclasses, depending on the value of includeSubclasses
+                            String poolClass = (String)poolNode.getProperty(Constants.PROPERTY_CLASS_NAME);
+                            if (includeSubclasses) {
+                                if (cm.isSubClass(className, poolClass))
+                                    pools.add(Util.createPoolFromNode(poolNode));
+                            } else {
+                                if (className.equals(poolClass))
+                                    pools.add(Util.createPoolFromNode(poolNode));
+                            }
+                        } else //All pools with no parent are returned
                             pools.add(Util.createPoolFromNode(poolNode));
                     }
                 }

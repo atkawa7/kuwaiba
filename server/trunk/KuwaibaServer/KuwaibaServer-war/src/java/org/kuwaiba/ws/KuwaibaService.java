@@ -1018,6 +1018,7 @@ public class KuwaibaService {
      * Retrieves the pools that don't have any parent and are normally intended to be managed by the Pool Manager
      * @param className The class name used to filter the results. Only the pools with a className attribute matching the provided value will be returned. Use null if you want to get all
      * @param type The type of pools that should be retrieved. Root pools can be for general purpose, or as roots in models
+     * @param includeSubclasses Use <code>true</code> if you want to get only the pools whose <code>className</code> property matches exactly the one provided, and <code>false</code> if you want to also include the subclasses
      * @param sessionId Session token
      * @return A set of pools
      * @throws ServerSideException In case something goes wrong
@@ -1025,9 +1026,10 @@ public class KuwaibaService {
     @WebMethod(operationName = "getRootPools")
     public List<RemotePool> getRootPools(@WebParam(name = "className")String className, 
                                          @WebParam(name = "type")int type, 
+                                         @WebParam(name = "includeSubclasses")boolean includeSubclasses, 
                                          @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
-            return wsBean.getRootPools(className, type, getIPAddress(), sessionId);
+            return wsBean.getRootPools(className, type, includeSubclasses, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;

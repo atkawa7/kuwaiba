@@ -270,7 +270,7 @@ public interface WebserviceBeanRemote {
     
     public RemotePool getPool(long poolId, String ipAddress, String sessionId) throws ServerSideException;
     
-    public List<RemotePool> getRootPools(String className, int type, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemotePool> getRootPools(String className, int type, boolean includeSubclasses, String ipAddress, String sessionId) throws ServerSideException;
     
     public List<RemotePool> getPoolsInObject(String objectClassName, long objectId, String poolClass, String ipAddress, String sessionId) throws ServerSideException;
     
