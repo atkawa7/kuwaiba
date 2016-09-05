@@ -120,6 +120,4 @@ public class MPLSModuleService {
         NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         return false;
     }
-    
-    
 }
