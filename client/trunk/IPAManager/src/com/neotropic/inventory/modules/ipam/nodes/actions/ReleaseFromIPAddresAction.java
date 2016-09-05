@@ -32,7 +32,7 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ReleaseFromIPAddresAction  extends GenericObjectNodeAction implements Presenter.Popup {
+public class ReleaseFromIPAddresAction extends GenericObjectNodeAction implements Presenter.Popup {
     
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -46,7 +46,7 @@ public class ReleaseFromIPAddresAction  extends GenericObjectNodeAction implemen
 
     @Override
     public String getValidator() {
-        return Constants.VALIDATOR_GENERIC_PORT;
+        return Constants.VALIDATOR_PHYSICAL_ENDPOINT;
     }
 
     @Override

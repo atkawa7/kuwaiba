@@ -20,8 +20,10 @@ import java.awt.Image;
 import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
 import com.neotropic.inventory.modules.ipam.nodes.actions.DeleteSubnetAction;
+import com.neotropic.inventory.modules.ipam.nodes.actions.RelateSubnetToVRFAction;
 import com.neotropic.inventory.modules.ipam.nodes.actions.RelateToVlanAction;
 import com.neotropic.inventory.modules.ipam.nodes.actions.ReleaseFromVlanAction;
+import com.neotropic.inventory.modules.ipam.nodes.actions.ReleaseSubnetFromVRFAction;
 import com.neotropic.inventory.modules.ipam.nodes.properties.GeneralProperty;
 import com.neotropic.inventory.modules.ipam.nodes.properties.NotEditableProperty;
 import org.inventory.communications.core.LocalObject;
@@ -56,9 +58,11 @@ public class SubnetNode extends ObjectNode {
             null,
             new RelateToServiceAction(),
             new RelateToVlanAction(),
+            new RelateSubnetToVRFAction(),
             null,
-            new ReleaseFromVlanAction(),
             new ReleaseFromServiceAction(),
+            new ReleaseFromVlanAction(),
+            new ReleaseSubnetFromVRFAction(),
             ExecuteClassReportAction.createExecuteReportAction(),
             null,
             new DeleteSubnetAction()

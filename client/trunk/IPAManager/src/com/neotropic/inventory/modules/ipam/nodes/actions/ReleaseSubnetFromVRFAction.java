@@ -15,7 +15,6 @@
  */
 package com.neotropic.inventory.modules.ipam.nodes.actions;
 
-
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
 import java.util.List;
@@ -32,32 +31,32 @@ import org.openide.util.actions.Presenter;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- * Release a relation between a subnet and a VLAN
+ * Relates a subnet with a VLAN
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ReleaseFromVlanAction  extends GenericObjectNodeAction implements Presenter.Popup {
-    
+public class ReleaseSubnetFromVRFAction extends GenericObjectNodeAction implements Presenter.Popup {
+
     private long id;
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (CommunicationsStub.getInstance().releaseSubnetFromVLAN( 
+        if (CommunicationsStub.getInstance().releaseSubnetFromVRF( 
                 id, Long.valueOf(((JMenuItem)e.getSource()).getName())))
             NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
                     java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_SUCCESS"));
         else
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
     }
-
+    
     @Override
     public String getValidator() {
-        return Constants.VALIDATOR_SUBNET; //Enable this action for any object
+        return Constants.VALIDATOR_SUBNET;
     }
 
     @Override
     public JMenuItem getPopupPresenter() {
-        JMenu mnuServices = new JMenu(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELEASE_VLAN"));
+        JMenu mnuServices = new JMenu(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELEASE_VRF"));
         Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
         String className = "";
         
@@ -71,7 +70,7 @@ public class ReleaseFromVlanAction  extends GenericObjectNodeAction implements P
         }
         
         List<LocalObjectLight> services = CommunicationsStub.getInstance().getSpecialAttribute(className, 
-                id, Constants.RELATIONSHIP_IPAMBELONGSTOVLAN);
+                id, Constants.RELATIONSHIP_IPAMBELONGSTOVRF);
 
         if (services != null) {
         
@@ -91,5 +90,4 @@ public class ReleaseFromVlanAction  extends GenericObjectNodeAction implements P
             return null;
         } 
     }
-    
 }

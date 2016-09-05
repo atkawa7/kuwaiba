@@ -15,7 +15,7 @@
  */
 package com.neotropic.inventory.modules.ipam.nodes.actions;
 
-import com.neotropic.inventory.modules.ipam.windows.SubnetsFrame;
+import com.neotropic.inventory.modules.ipam.windows.VRFsFrame;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.communications.core.LocalPool;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -32,38 +31,40 @@ import org.openide.util.Utilities;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- * Actions to relate a Generic port to an IP address
+ * Relates a VRF with a subnet
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class RelateToIPAddressAction extends GenericObjectNodeAction{
+public class RelateSubnetToVRFAction extends GenericObjectNodeAction{
 
-    public RelateToIPAddressAction(){
-        putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELATE_IP"));
+    public RelateSubnetToVRFAction(){
+        putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELATE_VRF"));
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        List<LocalPool> subnets = CommunicationsStub.getInstance().getSubnetPools(-1, null);
+                List<LocalObjectLight> devices = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_VRF);
         Lookup.Result<LocalObjectLight> selectedNodes = Utilities.actionsGlobalContext().lookupResult(LocalObjectLight.class);
         
-        if(subnets == null)
+        if (devices ==  null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+        
         else{
             Collection<? extends LocalObjectLight> lookupResult = selectedNodes.allInstances();
-            List<LocalObjectLight> selectedPorts = new ArrayList<>();
+            List<LocalObjectLight> selectedObjects = new ArrayList<>();
             Iterator<? extends LocalObjectLight> iterator = lookupResult.iterator();
             
             while (iterator.hasNext())
-                selectedPorts.add((LocalObjectLight)iterator.next());
-            
-            SubnetsFrame frame = new SubnetsFrame(subnets, selectedPorts);
+                selectedObjects.add((LocalObjectLight)iterator.next());
+
+            VRFsFrame frame = new VRFsFrame(selectedObjects, devices);
             frame.setVisible(true);
-        }
+        }    
+
     }
-    
+
     @Override
     public String getValidator() {
-        return Constants.VALIDATOR_PHYSICAL_ENDPOINT;
-    }
+        return Constants.VALIDATOR_SUBNET;
+    }    
 }
