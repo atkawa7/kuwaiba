@@ -99,7 +99,7 @@ public class PhysicalConnectionProvider implements ConnectProvider {
         
       
         ConnectionWizard myWizard = new ConnectionWizard(wizardType, (LocalObjectLight)scene.findObject(sourceWidget),
-                (LocalObjectLight)scene.findObject(sourceWidget), connectionClass, currentParentObject);
+                (LocalObjectLight)scene.findObject(targetWidget), connectionClass, currentParentObject);
         
         myWizard.show();
         
