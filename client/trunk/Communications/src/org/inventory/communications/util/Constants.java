@@ -58,17 +58,17 @@ public class Constants {
      */
     public static final String VALIDATOR_APPLICATION_ELEMENT = "applicationElement";
     /**
-     * All instances of classes tagged with this validator may be related to a network device
+     * All instances of classes tagged with this validator may be related to a software asset
      */
-    public static final String VALIDATOR_IP_ADDRESS = "ipaddress";
-    /**
-     * All instances of classes tagged with this validator may be related to a ip address
-     */
-    public static final String VALIDATOR_GENERIC_PORT = "genericport";
+    public static final String VALIDATOR_GENERIC_NETWORK_ELEMENT = "genericNetworkElement";
     /**
      * All instances of classes tagged with this validator may be related to a subnet
      */
     public static final String VALIDATOR_SUBNET = "subnet";
+    /**
+     * All instances of classes tagged with this validator may be related to bridgeDomainInterface, VRF, MPLSTunnel; FrameRelay
+     */
+    public static final String VALIDATOR_NETWORK_ELEMENT_LOGICAL_CONFIGURATION = "networkElementLogicalConfiguration";
     /**
      * DummyRoot constant. It's a pseudo class
      */
@@ -86,6 +86,10 @@ public class Constants {
      */
     public static final String CLASS_GENERICSERVICE = "GenericService";
     /**
+     * Name for the class GenericService
+     */
+    public static final String CLASS_VRF = "VRF";
+    /**
      * Name for the class GenericCustomer
      */
     public static final String CLASS_GENERICCUSTOMER = "GenericCustomer";
@@ -101,6 +105,10 @@ public class Constants {
      * Root class of all communications equipment (GenericDataLinkLayerElement, GenericNetworkElement, etc)
      */
     public static final String CLASS_GENERICCOMMUNICATIONSELEMENT = "GenericCommunicationsElement";
+    /**
+     * Root class of all network elements
+     */
+    public static final String CLASS_GENERICNETWORKELEMENT = "GenericNetworkElement";
     /**
      * Class Rack
      */
@@ -170,16 +178,21 @@ public class Constants {
      */
     public static final int MAPPING_MANYTOMANY = 6;
     /**
-     * This relationship is used to connect a GenericCommunicationElement with
-     * a subnet's IP address 
+     * This relationship is used to relate a GenericPort with an IP address 
      */
     public static final String RELATIONSHIP_IPAMHASADDRESS = "ipamHasIpAddress";
-    
+    /**
+     * This relationship is used to relate a VLAN with a Subnet
+     */
+    public static final String RELATIONSHIP_IPAMBELONGSTOVLAN = "ipamBelongsToVlan";
+    /**
+     * This relationship is used to relate a VRF with a Subnet
+     */
+    public static final String RELATIONSHIP_IPAMBELONGSTOVRF = "ipamBelongsToVrf";
     /**
      * This relationship is used to connect a VLAN with a Subnet
      */
-    public static final String RELATIONSHIP_IPAMBELONGSTOVLAN = "ipamBelongsToVlan";
-    
+    public static final String RELATIONSHIP_MPLSDEVICEHASCONFIGURATION = "mplsdevicehasconfiguration";
     /**
      * A fixed label to indicate a given node doesn't have a name set
      */

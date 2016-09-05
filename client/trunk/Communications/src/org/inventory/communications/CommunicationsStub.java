@@ -2863,6 +2863,17 @@ public class CommunicationsStub {
             return false;
         }
     }
+    
+    public boolean relateSubnetToVRF(long subnetId, String className, long vlanId){
+        try{
+            service.relateSubnetToVrf(subnetId, className, vlanId, this.session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
     public boolean releasePortFromIPAddress(String deviceClassName, long deviceId, long id){
         try{
             service.releasePortFromIP(deviceClassName, deviceId, id, this.session.getSessionId());
@@ -2872,9 +2883,20 @@ public class CommunicationsStub {
             return false;
         }
     }
+    
     public boolean releaseSubnetFromVLAN(long vlanId, long id){
         try{
             service.releaseSubnetFromVlan(vlanId, id, this.session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        } 
+    }
+    
+    public boolean releaseSubnetFromVRF(long vlanId, long id){
+        try{
+            service.releaseSubnetFromVrf(vlanId, id, this.session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -2914,6 +2936,7 @@ public class CommunicationsStub {
         }
     }
         // </editor-fold>
+    
         // <editor-fold defaultstate="collapsed" desc="MPLS Module">
     public LocalObjectLight createMPLSLink(LocalObjectLight endpointA, LocalObjectLight endpointB, String transportLinkType, String defaultName){
         try { 
@@ -2935,6 +2958,27 @@ public class CommunicationsStub {
             return false;
         }
     }
+    
+    public boolean relateToNetworkElement(long id, String className, String networkElementClassName, long networkElementId){
+        try{
+            service.relateToNetworkElement(id, className, networkElementClassName, networkElementId, this.session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    public boolean releaseFromNetworkElement(String networkElementClassName, long networkElementId, long id){
+        try{
+            service.releaseFromNetworkElement(networkElementClassName, networkElementId,  id, this.session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
         // </editor-fold>
     // </editor-fold>
 
