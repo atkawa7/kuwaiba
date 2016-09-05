@@ -73,11 +73,14 @@ public class IPAMModule implements GenericCommercialModule{
      * a subnet's IP address 
      */
     public static final String RELATIONSHIP_IPAMHASADDRESS = "ipamHasIpAddress";
-    
     /**
      * This relationship is used to connect a VLAN with a Subnet
      */
     public static final String RELATIONSHIP_IPAMBELONGSTOVLAN = "ipamBelongsToVlan";
+    /**
+     * This relationship is used to relate a VRF with a Subnet
+     */
+    public static final String RELATIONSHIP_IPAMBELONGSTOVRF = "ipamBelongsToVrf";
     
     @Override
     public String getName() {
@@ -355,7 +358,7 @@ public class IPAMModule implements GenericCommercialModule{
     }
     
     /**
-     * Relates a subnet with a generic communications element
+     * Relates an IP address with a generic communication port
      * @param id subnet id
      * @param portClassName Generic communications element
      * @param portId generic communications id
@@ -384,22 +387,52 @@ public class IPAMModule implements GenericCommercialModule{
     }
     
     /**
+     * Relate a Subnet with a VRF
+     * @param id subnet id
+     * @param className if the subnet has IPv4 or IPv6 addresses
+     * @param vrfId VLAN id
+     * @throws ObjectNotFoundException
+     * @throws OperationNotPermittedException
+     * @throws MetadataObjectNotFoundException 
+     */
+    public void relateSubnetToVRF(long id, String className, long vrfId)
+        throws ObjectNotFoundException,
+            OperationNotPermittedException, MetadataObjectNotFoundException{
+        bem.createSpecialRelationship(Constants.CLASS_VRF, vrfId, className, id, RELATIONSHIP_IPAMBELONGSTOVRF, true);
+    }
+    
+    /**
      * Release the relationship between a GenericPort and an 
      * IP Address.
-     * @param deviceClass GenericCommunications Element
-     * @param deviceId GenericCommunications id
+     * @param portClass GenericCommunications Element
+     * @param portId GenericCommunications id
      * @param id IP address id 
      * @throws ObjectNotFoundException
      * @throws MetadataObjectNotFoundException
      * @throws ApplicationObjectNotFoundException
      * @throws NotAuthorizedException 
      */
-    public void releasePortFromIP(String deviceClass, long deviceId, long id)
+    public void releasePortFromIP(String portClass, long portId, long id)
             throws ObjectNotFoundException, MetadataObjectNotFoundException,
             ApplicationObjectNotFoundException, NotAuthorizedException
     {
-        bem.releaseSpecialRelationship(deviceClass, deviceId, id, RELATIONSHIP_IPAMHASADDRESS);
+        bem.releaseSpecialRelationship(portClass, portId, id, RELATIONSHIP_IPAMHASADDRESS);
         
+    }
+    
+    /**
+     * Release a relationship between a subnet and a VRF
+     * @param vrfId the VRF Id
+     * @param id the subnet id
+     * @throws ObjectNotFoundException
+     * @throws MetadataObjectNotFoundException
+     * @throws ApplicationObjectNotFoundException
+     * @throws NotAuthorizedException 
+     */
+    public void releaseSubnetFromVRF(long vrfId, long id)throws ObjectNotFoundException, MetadataObjectNotFoundException,
+            ApplicationObjectNotFoundException, NotAuthorizedException
+    {
+        bem.releaseSpecialRelationship(Constants.CLASS_VRF, vrfId, id, RELATIONSHIP_IPAMBELONGSTOVRF);
     }
     
     /**

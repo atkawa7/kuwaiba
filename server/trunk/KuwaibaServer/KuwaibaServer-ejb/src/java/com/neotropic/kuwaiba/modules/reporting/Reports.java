@@ -647,7 +647,7 @@ public class Reports {
                 String providerPhoneNumber = asError("Not Set");
                 String providerEmail = asError("Not Set");
                 
-                List<String> serviceProviderId = fullContractInfo.getAttributes().get("provider");
+                List<String> serviceProviderId = fullContractInfo.getAttributes().get("serviceProvider");
                 if (serviceProviderId != null) {
                     RemoteBusinessObject serviceProvider = bem.getObject(Constants.CLASS_SERVICEPROVIDER, Long.valueOf(serviceProviderId.get(0)));
                     if (!serviceProvider.getName().isEmpty())

@@ -2646,6 +2646,17 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(ex.getMessage());
         }
     }
+    
+    @Override
+    public void relateSubnetToVrf(long id, String className, long vrfId, String ipAddress, String sessionId) throws ServerSideException{
+    try{
+            aem.validateCall("relateSubnetToVRF", ipAddress, sessionId);
+            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+            ipamModule.relateSubnetToVRF(id, className, vrfId);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
     @Override
     public void releasePortFromIP(String deviceClassName, long deviceId, long id, String ipAddress, String sessionId) throws ServerSideException{
         try{
@@ -2656,12 +2667,24 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(ex.getMessage());
         }
     }
+
     @Override
     public void releaseSubnetFromVlan(long vlanId, long id, String ipAddress, String sessionId) throws ServerSideException{
         try{
             aem.validateCall("releaseSubnetFromVLAN", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
             ipamModule.releaseSubnetFromVLAN(vlanId, id);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void releaseSubnetFromVrf(long vrfId, long id, String ipAddress, String sessionId) throws ServerSideException{
+        try{
+            aem.validateCall("releaseSubnetFromVRF", ipAddress, sessionId);
+            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+            ipamModule.releaseSubnetFromVRF(vrfId, id);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2755,6 +2778,28 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateCall("deleteMPLSLink", ipAddress, sessionId);
             MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
             mplsModule.deleteMPLSLink(linkClass, linkId, forceDelete);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void relateToNetworkElement(long id, String className, String networkElementClassName, long networkElementId, String ipAddress, String sessionId) throws ServerSideException{
+        try {
+            aem.validateCall("relateToNetworkElement", ipAddress, sessionId);
+            MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
+            mplsModule.relateToNetworkElement(id, className, networkElementClassName, networkElementId);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void releaseFromNetworkElement(String networkElementClassName, long networkElementId ,long id, String ipAddress, String sessionId) throws ServerSideException{
+        try {
+            aem.validateCall("releaseFromNetworkElement", ipAddress, sessionId);
+            MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
+            mplsModule.releaseFromNetworkElement(networkElementClassName, networkElementId, id);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }

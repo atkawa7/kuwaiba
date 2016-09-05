@@ -268,6 +268,10 @@ public class Constants {
      * Class VLAN
      */
     public static final String CLASS_VLAN = "VLAN"; //NOI18N
+     /**
+     * Class VRF
+     */
+    public static final String CLASS_VRF = "VRF"; //NOI18N
     /**
      * Class Generic Communications Equipment
      */

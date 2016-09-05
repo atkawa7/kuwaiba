@@ -25,8 +25,12 @@ import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
+import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
+import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
+import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.services.persistence.util.Constants;
@@ -61,6 +65,11 @@ public class MPLSModule implements GenericCommercialModule {
      * This is used to ease the way to find routes between elements
      */
     public static String RELATIONSHIP_MPLSLINK = "mplsLink";
+    /**
+     * TODO: place this relationships in other place
+     * This relationship is used to relate a network element with extra logical configuration
+     */
+    public static final String RELATIONSHIP_MPLSDEVICEHASCONFIGURATION = "mplsdevicehasconfiguration";
     
     @Override
     public String getName() {
@@ -167,6 +176,39 @@ public class MPLSModule implements GenericCommercialModule {
         List<RemoteBusinessObjectLight> containerLinks = bem.getSpecialAttribute(linkClass, linkId, RELATIONSHIP_MPLSLINK);
         
         bem.deleteObject(linkClass, linkId, forceDelete);
+    }
+    /**
+     * Relates an IP address with a generic communication port
+     * @param id subnet id
+     * @param className the classname of the configuration you want to relate with
+     * @param networkElementClassName Generic communications element
+     * @param networkElementId generic communications id
+     * @throws ObjectNotFoundException
+     * @throws OperationNotPermittedException
+     * @throws MetadataObjectNotFoundException 
+     */
+    public void relateToNetworkElement(long id, String className, String networkElementClassName, long networkElementId) throws ObjectNotFoundException,
+            OperationNotPermittedException, MetadataObjectNotFoundException{
+        bem.createSpecialRelationship(networkElementClassName, networkElementId, className, id, RELATIONSHIP_MPLSDEVICEHASCONFIGURATION, true);
+    }
+    
+    /**
+     * Release the relationship between a GenericPort and an 
+     * IP Address.
+     * @param networkElementClassName GenericCommunications Element
+     * @param networkElementId GenericCommunications id
+     * @param id IP address id 
+     * @throws ObjectNotFoundException
+     * @throws MetadataObjectNotFoundException
+     * @throws ApplicationObjectNotFoundException
+     * @throws NotAuthorizedException 
+     */
+    public void releaseFromNetworkElement(String networkElementClassName, long networkElementId ,long id)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException,
+            ApplicationObjectNotFoundException, NotAuthorizedException
+    {
+        bem.releaseSpecialRelationship(networkElementClassName, networkElementId, id, RELATIONSHIP_MPLSDEVICEHASCONFIGURATION);
+        
     }
     
 }
