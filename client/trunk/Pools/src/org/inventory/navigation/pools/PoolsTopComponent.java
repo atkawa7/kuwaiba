@@ -15,7 +15,6 @@
  */
 package org.inventory.navigation.pools;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.swing.ActionMap;
@@ -23,9 +22,6 @@ import javax.swing.text.DefaultEditorKit;
 import org.inventory.communications.core.LocalPool;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
-import org.inventory.navigation.applicationnodes.objectnodes.RootObjectNode;
 import org.inventory.navigation.applicationnodes.pools.PoolRootNode;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -57,7 +53,7 @@ persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.OpenActionRegistration(
     displayName = "#CTL_PoolsAction",
 preferredID = "PoolsTopComponent")
-public final class PoolsTopComponent extends TopComponent implements ExplorerManager.Provider, Refreshable{
+public final class PoolsTopComponent extends TopComponent implements ExplorerManager.Provider, Refreshable {
     
     private static final String PREFERRED_ID = "PoolsTopComponent";
     private static PoolsTopComponent instance;
@@ -170,18 +166,7 @@ public final class PoolsTopComponent extends TopComponent implements ExplorerMan
 
     @Override
     public void refresh() {
-        if (em.getRootContext() instanceof RootObjectNode){
-            List<Node> toBeDeleted = new ArrayList<>();
-            for (Node child : em.getRootContext().getChildren().getNodes()){
-                if (!((ObjectNode)child).refresh())
-                    toBeDeleted.add(child);
-            }
-            for (Node deadNode : toBeDeleted)
-                ((ObjectChildren)em.getRootContext().getChildren()).remove(new Node[]{deadNode});
-        }else{
-            setRoot();
-            revalidate();
-        }
+        setRoot();
     }
 
     public NotificationUtil getNotifier() {

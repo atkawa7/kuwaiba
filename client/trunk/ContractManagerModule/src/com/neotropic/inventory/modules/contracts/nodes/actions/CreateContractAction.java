@@ -25,7 +25,6 @@ import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter;
@@ -51,7 +50,8 @@ public class CreateContractAction extends AbstractAction implements Presenter.Po
         
         ContractPoolNode selectedNode = selectedNodes.next();
         
-        LocalObjectLight newPoolItem = com.createPoolItem(selectedNode.getPool().getOid(), ((JMenuItem)e.getSource()).getText());
+        LocalObjectLight newPoolItem = com.createPoolItem(selectedNode.getPool().getOid(), 
+                ((JMenuItem)e.getSource()).getText());
 
         if (newPoolItem == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
@@ -64,17 +64,26 @@ public class CreateContractAction extends AbstractAction implements Presenter.Po
     @Override
     public JMenuItem getPopupPresenter() {
         JMenu mnuPossibleContracts = new JMenu(this);
-        List<LocalClassMetadataLight> possibleContracts = com.getLightSubclasses(Constants.CLASS_GENERICCONTRACT, false, false);
-        if (possibleContracts == null)
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
-        else {
-            if (possibleContracts.isEmpty())
-                mnuPossibleContracts.setEnabled(false);
+        
+        Iterator<? extends ContractPoolNode> selectedNodes = 
+                Utilities.actionsGlobalContext().lookupResult(ContractPoolNode.class).allInstances().iterator();
+
+        if (selectedNodes.hasNext()) {
+            ContractPoolNode selectedNode = selectedNodes.next();
+
+            List<LocalClassMetadataLight> possibleContracts = com.getLightSubclasses(selectedNode.getPool().getClassName(), 
+                    false, true);
+            if (possibleContracts == null)
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             else {
-                for (LocalClassMetadataLight possibleContract : possibleContracts) {
-                    JMenuItem mnuItemPossibleContract = new JMenuItem(possibleContract.getClassName()); 
-                    mnuItemPossibleContract.addActionListener(this);
-                    mnuPossibleContracts.add(mnuItemPossibleContract);
+                if (possibleContracts.isEmpty())
+                    mnuPossibleContracts.setEnabled(false);
+                else {
+                    for (LocalClassMetadataLight possibleContract : possibleContracts) {
+                        JMenuItem mnuItemPossibleContract = new JMenuItem(possibleContract.getClassName()); 
+                        mnuItemPossibleContract.addActionListener(this);
+                        mnuPossibleContracts.add(mnuItemPossibleContract);
+                    }
                 }
             }
         }

@@ -20,6 +20,7 @@ import com.neotropic.inventory.modules.contracts.nodes.ContractPoolNode;
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
 import javax.swing.AbstractAction;
+import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.util.Utilities;
@@ -36,20 +37,24 @@ public class DeleteContractPoolAction extends AbstractAction {
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        Iterator<? extends ContractPoolNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ContractPoolNode.class).allInstances().iterator();
-            
-        if (!selectedNodes.hasNext())
-            return;
-    
-        ContractPoolNode selectedNode = selectedNodes.next();
         
-        if (CommunicationsStub.getInstance().deletePool(selectedNode.getPool().getOid())) {
-            NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "The selected pool was deleted");
-            ((ContractManagerRootNode.ContractManagerRootChildren)selectedNode.getParentNode().getChildren()).addNotify();
+        if (JOptionPane.showConfirmDialog(null, "Are you sure you wan to delete this pool? All children will be removed as well", 
+                "Warning", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+        
+            Iterator<? extends ContractPoolNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ContractPoolNode.class).allInstances().iterator();
+
+            if (!selectedNodes.hasNext())
+                return;
+
+            ContractPoolNode selectedNode = selectedNodes.next();
+
+            if (CommunicationsStub.getInstance().deletePool(selectedNode.getPool().getOid())) {
+                NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "The selected pool was deleted");
+                ((ContractManagerRootNode.ContractManagerRootChildren)selectedNode.getParentNode().getChildren()).addNotify();
+            }
+            else
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE, CommunicationsStub.getInstance().getError());
         }
-        else
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE, CommunicationsStub.getInstance().getError());
-            
     }
     
 }

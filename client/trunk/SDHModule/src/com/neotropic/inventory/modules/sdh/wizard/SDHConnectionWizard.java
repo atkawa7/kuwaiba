@@ -684,13 +684,13 @@ public class SDHConnectionWizard {
                             JOptionPane.showMessageDialog(null, "There are not enough positions to transport this virtual circuit", "Error", JOptionPane.ERROR_MESSAGE);
                         else {
                             for (int i = selectedIndex; i < selectedIndex + numberOfPositionsToBeOccupied; i++) {
-                                AvailableContainerLinkPosition positionToBeOcuppied = (AvailableContainerLinkPosition)((JComboBox)pnlAvailablePositions.getComponent("lstAvailablePositions")).getItemAt(i);
+                                AbstractPosition positionToBeOcuppied = (AbstractPosition)((JComboBox)pnlAvailablePositions.getComponent("lstAvailablePositions")).getItemAt(i);
                                 if (positionToBeOcuppied.container != null) {
                                     JOptionPane.showMessageDialog(null, "One of the positions to be assigned is already in use", "Error", JOptionPane.ERROR_MESSAGE);
                                     return;
                                 }
                             }
-                            hop.position = ((AvailableContainerLinkPosition)((JComboBox)pnlAvailablePositions.getComponent("lstAvailablePositions")).getSelectedItem()).position;
+                            hop.position = ((AbstractPosition)((JComboBox)pnlAvailablePositions.getComponent("lstAvailablePositions")).getSelectedItem()).position;
                         }
                     }
                 }
@@ -956,16 +956,29 @@ public class SDHConnectionWizard {
     }
     
     /**
-     * A class representing a timeslot in a TransportLink
+     * Simple root class for all types of SDH positions. Subclasses will simply overwrite the method toString
      */
-    public class AvailableTransportLinkPosition {
-        private int position;
-        private LocalObjectLight container;
+    public abstract class AbstractPosition {
+        protected int position;
+        protected LocalObjectLight container;
 
-        public AvailableTransportLinkPosition(int position, LocalObjectLight container) {
+        public AbstractPosition(int position, LocalObjectLight container) {
             this.position = position;
             this.container = container;
-        }            
+        }
+        
+        @Override
+        public abstract String toString();
+    }
+    
+    /**
+     * A class representing a timeslot in a TransportLink
+     */
+    public class AvailableTransportLinkPosition extends AbstractPosition{
+
+        public AvailableTransportLinkPosition(int position, LocalObjectLight container) {
+            super(position, container);
+        }
 
         @Override
         public String toString() {
@@ -976,13 +989,10 @@ public class SDHConnectionWizard {
     /**
      * A class representing a timeslot in a ContainerLink
      */
-    public class AvailableContainerLinkPosition {
-        private int position;
-        private LocalObjectLight container;
-
+    public class AvailableContainerLinkPosition extends AbstractPosition {
+        
         public AvailableContainerLinkPosition(int position, LocalObjectLight container) {
-            this.position = position;
-            this.container = container;
+            super(position, container);
         }            
 
         @Override

@@ -20,6 +20,7 @@ import java.awt.event.ActionEvent;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.AbstractAction;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -59,18 +60,24 @@ public class CreateContractPoolAction extends AbstractAction {
             JTextField txtPoolName = new JTextField();
             txtPoolName.setName("txtPoolName");
             txtPoolName.setColumns(10);
-                    
+            
+            JComboBox cmbPoolType = new JComboBox(possibleContractClasses.toArray(new LocalClassMetadataLight[0]));
+            cmbPoolType.setName("cmbPoolType");
+            
             JTextField txtPoolDescription = new JTextField();
             txtPoolDescription.setName("txtPoolDescription");
             txtPoolDescription.setColumns(10);
             
-            JComplexDialogPanel pnlPoolProperties = new JComplexDialogPanel(new String[] { "Pool Name", "Pool Description" }, 
-                    new JComponent[] { txtPoolName, txtPoolDescription });
+            JComplexDialogPanel pnlPoolProperties = new JComplexDialogPanel(new String[] { "Pool Name", "Pool Type", "Pool Description" }, 
+                    new JComponent[] { txtPoolName, cmbPoolType, txtPoolDescription });
             
             if (JOptionPane.showConfirmDialog(null, pnlPoolProperties, "New Contract Pool", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+                
+                LocalClassMetadataLight poolType = (LocalClassMetadataLight)((JComboBox)pnlPoolProperties.getComponent("cmbPoolType")).getSelectedItem();
+                
                 LocalPool newPool = com.createRootPool(((JTextField)pnlPoolProperties.getComponent("txtPoolName")).getText(), 
                                         ((JTextField)pnlPoolProperties.getComponent("txtPoolDescription")).getText(), 
-                                        Constants.CLASS_GENERICCONTRACT, 
+                                        poolType == null ? Constants.CLASS_GENERICCONTRACT : poolType.getClassName(), 
                                         LocalPool.POOL_TYPE_MODULE_ROOT);
                 
                 if (newPool == null)

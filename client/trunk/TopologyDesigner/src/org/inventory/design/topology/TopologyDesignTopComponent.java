@@ -194,6 +194,7 @@ public final class TopologyDesignTopComponent extends TopComponent implements Ex
         jToolBar1.add(btnExport);
 
         btnSelect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/design/topology/res/select.png"))); // NOI18N
+        btnSelect.setSelected(true);
         org.openide.awt.Mnemonics.setLocalizedText(btnSelect, org.openide.util.NbBundle.getMessage(TopologyDesignTopComponent.class, "TopologyDesignTopComponent.btnSelect.text")); // NOI18N
         btnSelect.setToolTipText(org.openide.util.NbBundle.getMessage(TopologyDesignTopComponent.class, "TopologyDesignTopComponent.btnSelect.toolTipText")); // NOI18N
         btnSelect.setEnabled(false);

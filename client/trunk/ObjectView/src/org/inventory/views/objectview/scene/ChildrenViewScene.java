@@ -179,17 +179,23 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
         StartTagWAX edgesTag = mainTag.start("edges");
         for (Widget edgeWidget : edgeLayer.getChildren()){
             StartTagWAX edgeTag = edgesTag.start("edge");
-            edgeTag.attr("id", ((AbstractConnectionWidget)edgeWidget).getNode().getObject().getOid());
-            edgeTag.attr("class", ((AbstractConnectionWidget)edgeWidget).getNode().getObject().getClassName());
+            AbstractConnectionWidget castedEdgeWidget = (AbstractConnectionWidget)edgeWidget;
+            
+            LocalObjectLight edge = edgeWidget.getLookup().lookup(ObjectNode.class).getLookup().lookup(LocalObjectLight.class);
+            
+            edgeTag.attr("id", edge.getOid());
+            edgeTag.attr("class", edge.getClassName());
+            
             //I haven't managed to find out why sometimes the view gets screwed. This is a dirty
             //"solution", but I expect to solve it once we rewrite this module
-            if (((AbstractConnectionWidget)edgeWidget).getSourceAnchor() == null)
+            if (castedEdgeWidget.getSourceAnchor() == null)
                 continue;
-            edgeTag.attr("aside", edgeWidget.getLookup().lookup(ObjectNode.class).getLookup().lookup(LocalObjectLight.class).getOid());
-            if (((AbstractConnectionWidget)edgeWidget).getTargetAnchor() == null)
+            edgeTag.attr("aside", castedEdgeWidget.getSourceAnchor().getRelatedWidget().getLookup().lookup(ObjectNode.class).getLookup().lookup(LocalObjectLight.class).getOid());
+            
+            if (castedEdgeWidget.getTargetAnchor().getRelatedWidget() == null)
                 continue;
-            edgeTag.attr("bside", edgeWidget.getLookup().lookup(ObjectNode.class).getLookup().lookup(LocalObjectLight.class).getOid());
-            for (Point point : ((AbstractConnectionWidget)edgeWidget).getControlPoints())
+            edgeTag.attr("bside", castedEdgeWidget.getTargetAnchor().getRelatedWidget().getLookup().lookup(ObjectNode.class).getLookup().lookup(LocalObjectLight.class).getOid());
+            for (Point point : castedEdgeWidget.getControlPoints())
                 edgeTag.start("controlpoint").attr("x", point.x).attr("y", point.y).end();
             edgeTag.end();
         }

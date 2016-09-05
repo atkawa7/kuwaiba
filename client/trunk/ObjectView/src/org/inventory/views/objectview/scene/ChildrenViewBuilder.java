@@ -90,15 +90,14 @@ public class ChildrenViewBuilder implements AbstractViewBuilder {
             List<LocalObject> myConnections = com.getChildrenOfClass(object.getOid(),object.getClassName(), Constants.CLASS_GENERICCONNECTION);
 
             if(views.isEmpty()){ //There are no saved views
-                
                 buildDefaultView(myChildren, myConnections);
                 currentView = null;
-            }else{
+            } else {
                 currentView = com.getObjectRelatedView(object.getOid(),object.getClassName(), views.get(0).getId());
                 
                 /*Comment this out for debugging purposes
                 try{
-                    FileOutputStream fos = new FileOutputStream("/home/zim/oview_"+currentView.getId()+".xml");
+                    FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_"+currentView.getId()+".xml");
                     fos.write(currentView.getStructure());
                     fos.close();
                 }catch(Exception e){}*/
@@ -135,11 +134,12 @@ public class ChildrenViewBuilder implements AbstractViewBuilder {
                             }
                             else
                                 currentView.setDirty(true);
-                        }else{
+                        }else {
                             if (reader.getName().equals(qEdge)){
                                 long objectId = Long.valueOf(reader.getAttributeValue(null,"id"));
-                                long aSide = Long.valueOf(reader.getAttributeValue(null,"aside"));
-                                long bSide = Long.valueOf(reader.getAttributeValue(null,"bside"));
+                                
+                                long aSide = Long.valueOf(reader.getAttributeValue(null, "aside"));
+                                long bSide = Long.valueOf(reader.getAttributeValue(null, "bside"));
 
                                 String className = reader.getAttributeValue(null,"class");
                                 LocalObjectLight container = com.getObjectInfoLight(className, objectId);
@@ -158,7 +158,7 @@ public class ChildrenViewBuilder implements AbstractViewBuilder {
                                         newEdge.setLineColor(Utils.getConnectionColor(container.getClassName()));
                                         newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideWidget));
                                         newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideWidget));
-                                        List<Point> localControlPoints = new ArrayList<Point>();
+                                        List<Point> localControlPoints = new ArrayList<>();
                                         while(true){
                                             reader.nextTag();
 

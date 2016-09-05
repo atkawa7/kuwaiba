@@ -39,7 +39,7 @@ public class PoolsService {
     }
     
     public List<LocalPool> getRootChildren(){
-        List<LocalPool> rootChildren = com.getRootPools(null, LocalPool.POOL_TYPE_GENERAL_PURPOSE);
+        List<LocalPool> rootChildren = com.getRootPools(null, LocalPool.POOL_TYPE_GENERAL_PURPOSE, false);
         if(rootChildren != null)
             return rootChildren;
         else {

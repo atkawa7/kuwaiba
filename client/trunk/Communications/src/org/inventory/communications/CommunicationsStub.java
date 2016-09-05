@@ -2294,12 +2294,13 @@ public class CommunicationsStub {
      * Retrieves the pools that don't have any parent and are normally intended to be managed by the Pool Manager
      * @param className The class name used to filter the results. Only the pools with a className attribute matching the provided value will be returned. Use null if you want to get all
      * @param type The type of pools that should be retrieved. Root pools can be for general purpose, or as roots in models
+     * @param includeSubclasses Use <code>true</code> if you want to get only the pools whose <code>className</code> property matches exactly the one provided, and <code>false</code> if you want to also include the subclasses
      * @return A set of pools
      */
-    public List<LocalPool> getRootPools(String className, int type)  {
+    public List<LocalPool> getRootPools(String className, int type, boolean includeSubclasses)  {
         try {
             List<LocalPool> res = new ArrayList<>();
-            List<RemotePool> rootPools = service.getRootPools(className, type, session.getSessionId());
+            List<RemotePool> rootPools = service.getRootPools(className, type, includeSubclasses, session.getSessionId());
             
             for (RemotePool aPool : rootPools)
                 res.add(new LocalPool(aPool.getId(), aPool.getName(), aPool.getClassName(), aPool.getDescription(), aPool.getType()));

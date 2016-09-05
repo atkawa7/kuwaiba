@@ -17,11 +17,9 @@ package org.inventory.navigation.applicationnodes.objectnodes;
 
 import java.awt.Color;
 import java.awt.Image;
-import java.util.Collections;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Utils;
 import org.openide.nodes.AbstractNode;
-import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 
 /**
@@ -44,21 +42,18 @@ public class LabelNode extends AbstractNode {
         return getIcon(type);
     }
     
-    public static class LabelChildren extends Children.Keys<LocalObjectLight> {
-        private LocalObjectLight[] children;
+    public static class LabelChildren extends AbstractChildren {
 
         public LabelChildren(LocalObjectLight[] children) {
             setKeys(children);
         }
         
         @Override
-        public void removeNotify(){
-            setKeys(Collections.EMPTY_LIST);
-        }
-        
-        @Override
         protected Node[] createNodes(LocalObjectLight key) {
             return new Node[] { new SpecialRelatedObjectNode(key) };
         }
+
+        @Override
+        public void addNotify() {}
     }
 }

@@ -122,7 +122,7 @@ public final class ObjectViewTopComponent extends TopComponent
         btnSelect.setSelected(true);
         
         FileInputStream input;
-        try{
+        try {
             input = new FileInputStream(System.getProperty("user.dir") + "/.viewproperties"); //NOI18N
             Properties properties = new Properties();
             properties.load(input);
@@ -131,7 +131,12 @@ public final class ObjectViewTopComponent extends TopComponent
             currentFont = currentFont.deriveFont(properties.getProperty("fontSize") == null ? 
                 currentFont.getSize() : Float.valueOf(properties.getProperty("fontSize")));
             input.close();
-        }catch (IOException e) {}
+        } catch (IOException e) {}
+        
+        //Default connection settings
+        service.getViewBuilder().getScene().setNewLineColor(Color.GREEN);
+        ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setConnectionClass(Constants.CLASS_OPTICALLINK);
+        ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setWizardType(PhysicalConnectionProvider.WIZARD_LINK);
     }
 
     /** This method is called from within the constructor to
@@ -252,6 +257,7 @@ public final class ObjectViewTopComponent extends TopComponent
         barMain.add(btnSelect);
 
         btnConnect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/objectview/res/connect.png"))); // NOI18N
+        btnConnect.setSelected(true);
         org.openide.awt.Mnemonics.setLocalizedText(btnConnect, org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnConnect.text")); // NOI18N
         btnConnect.setToolTipText(org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnConnect.toolTipText")); // NOI18N
         btnConnect.setEnabled(false);
@@ -309,6 +315,7 @@ public final class ObjectViewTopComponent extends TopComponent
         barContainers.setRollover(true);
 
         btnWireContainer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/objectview/res/wire-container.png"))); // NOI18N
+        btnWireContainer.setSelected(true);
         org.openide.awt.Mnemonics.setLocalizedText(btnWireContainer, org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnWireContainer.text")); // NOI18N
         btnWireContainer.setToolTipText(org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnWireContainer.toolTipText")); // NOI18N
         btnWireContainer.setFocusable(false);
@@ -391,10 +398,8 @@ public final class ObjectViewTopComponent extends TopComponent
         if (service.getViewBuilder().getScene().getConnectProvider() == null)
             JOptionPane.showMessageDialog(null, "This view does not support the selected action", 
                     "Information", JOptionPane.INFORMATION_MESSAGE);
-        else{
+        else
             service.getViewBuilder().getScene().setActiveTool(ChildrenViewScene.ACTION_CONNECT);
-            btnWireContainer.doClick();
-        }
     }//GEN-LAST:event_btnConnectActionPerformed
 
     private void btnAddBackgroundImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddBackgroundImageActionPerformed

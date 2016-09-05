@@ -53,7 +53,7 @@ public class ContractPoolNode extends PoolNode {
     
     @Override
     public String getDisplayName() {
-        return getPool().getName() + " [Contract Pool]";
+        return String.format("%s [Pool of %s]", getPool().getName(), getPool().getClassName());
     }
     
     @Override
