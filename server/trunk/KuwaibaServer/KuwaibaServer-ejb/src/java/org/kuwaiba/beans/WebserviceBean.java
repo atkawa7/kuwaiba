@@ -2321,6 +2321,13 @@ public class WebserviceBean implements WebserviceBeanRemote {
                     return new ReportDescriptor[] {
                             new ReportDescriptor(13, "Service details", className, "Shows the resources used by the service and some of its attributes")
                     };
+                case "BridgeDomainInterface":
+                case "FrameRelay":
+                case "MPLSTunnel":
+                case "VRF": 
+                    return new ReportDescriptor[]{
+                        new ReportDescriptor(14, "Config details", className, "Shows the resources used by the logical Configuration and some of its attributes")
+                    };
             }
             return new ReportDescriptor[0];
         } catch (InventoryException ex) {
@@ -2368,6 +2375,9 @@ public class WebserviceBean implements WebserviceBeanRemote {
                     return reports.buildContractStatusReport(locationId);
                 case 13:
                     return reports.buildMPLSServiceReport(StringPair.get(arguments, "objectClass"), 
+                            Long.valueOf(StringPair.get(arguments, "objectId")));
+                case 14:
+                    return reports.buildLogicalConfiguratinInterfacesReport(StringPair.get(arguments, "objectClass"), 
                             Long.valueOf(StringPair.get(arguments, "objectId")));
             }
         } catch (InventoryException ex) {

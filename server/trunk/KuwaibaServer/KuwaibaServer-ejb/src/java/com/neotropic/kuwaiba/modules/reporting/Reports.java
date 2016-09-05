@@ -16,6 +16,7 @@
 package com.neotropic.kuwaiba.modules.reporting;
 
 import com.neotropic.kuwaiba.modules.ipam.IPAMModule;
+import com.neotropic.kuwaiba.modules.mpls.MPLSModule;
 import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHModule;
 import java.nio.charset.StandardCharsets;
@@ -684,7 +685,7 @@ public class Reports {
         if (MPLSService == null) {
             title = "Error";
             MPLSDetailReportText = getHeader(title);
-            MPLSDetailReportText += "<div class=\"error\">No information about this subnet could be found</div>";
+            MPLSDetailReportText += "<div class=\"error\">No information about this MPLS service could be found</div>";
         }
         else {
             title = "MPLS service detail Report for " + MPLSService.getName() + "[" + MPLSService.getClassName() + "]";
@@ -723,6 +724,75 @@ public class Reports {
         MPLSDetailReportText += getFooter();
         
         return MPLSDetailReportText.getBytes(StandardCharsets.UTF_8);
+    }
+    
+    public byte[] buildLogicalConfiguratinInterfacesReport(String logicalConfigurationClassName, long logicalConfigurationId) 
+            throws MetadataObjectNotFoundException, ObjectNotFoundException,
+            InvalidArgumentException, ApplicationObjectNotFoundException, 
+            NotAuthorizedException
+    {
+        String logicalConfiguration, title, DetailReportText = "", instance = ""; 
+        
+        title = "Detail Report for all " + logicalConfigurationClassName + " instances";
+        DetailReportText = getHeader(title);
+        DetailReportText += "<body><table><tr><td><h1>" + title + "</h1></td><td align=\"center\"><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
+        
+        List<RemoteBusinessObjectLight> listOflogicalConfigurations = bem.getObjectsOfClassLight(logicalConfigurationClassName, 0);
+        
+        for (RemoteBusinessObjectLight listOflogicalConfiguration : listOflogicalConfigurations) {
+            instance = "";
+            RemoteBusinessObject logicalConfigurationObject = bem.getObject(listOflogicalConfiguration.getClassName(), listOflogicalConfiguration.getId());
+            
+            HashMap<String, List<String>> attributes = logicalConfigurationObject.getAttributes();
+            List<RemoteBusinessObjectLight> networkElements = bem.getSpecialAttribute(listOflogicalConfiguration.getClassName(), listOflogicalConfiguration.getId(), MPLSModule.RELATIONSHIP_MPLSDEVICEHASCONFIGURATION);
+            
+            if (networkElements == null) {
+                //title = "Error";
+                //DetailReportText = getHeader(title);
+                DetailReportText += "<div class=\"error\">No information for" + listOflogicalConfiguration.getName() + "could be found</div>";
+            }
+            else {
+                //title = "Detail Report for " + logicalConfigurationObject.getName() + "[" + logicalConfigurationObject.getClassName() + "]";
+                //DetailReportText = getHeader(title);
+
+                DetailReportText += "<table><tr><td class=\"generalInfoLabel\">Name</td><td class=\"generalInfoValue\"><b>" + logicalConfigurationObject.getName() + "[" + logicalConfigurationObject.getClassName() + "]</b></td>"
+                        + "<tr><td class=\"generalInfoLabel\">Creation date</td><td class=\"generalInfoValue\"><b>" + attributes.get("creationDate").get(0) + "</b> </td></tr></table>";
+            }
+
+            if (networkElements.isEmpty())
+                    instance = "<div class=\"error\">There are no network elements asossiate to this "+ listOflogicalConfiguration.getName() +"</div>";
+            else {
+                    instance = "<table><tr><th>"+logicalConfigurationClassName+"</th><th>Location</th></tr>";
+
+                int i = 0;
+                for (RemoteBusinessObjectLight networkElement : networkElements) {
+                    String device = "";
+                    logicalConfiguration = "";
+
+                    RemoteBusinessObject ports = bem.getObject(networkElement.getClassName(), networkElement.getId());
+                    String location = "";
+                    if(ports != null){
+                        device = ports.getName() + " [" + ports.getClassName()+"]";
+                        List<RemoteBusinessObjectLight> parents = bem.getParents(ports.getClassName(), ports.getId());
+                        location =  formatLocation(parents);
+                    }
+
+                    instance += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") +"\"><td>" + networkElement.getName() + " [" + networkElement.getClassName()+"] </td>"
+                                  + "<td>" + location +"</td>";
+
+                    i ++;
+                }
+                instance += "</table>";
+            }
+            
+            DetailReportText += instance;
+            DetailReportText += "<hr>";
+        }
+        DetailReportText = DetailReportText.substring(0, DetailReportText.length()-4);
+        
+        DetailReportText += getFooter();
+        
+        return DetailReportText.getBytes(StandardCharsets.UTF_8);
     }
     
     //<editor-fold desc="Helpers" defaultstate="collapsed">
@@ -786,7 +856,17 @@ public class Reports {
                     "   tr.odd {\n" +
                     "            background-color: #D1F680;\n" +
                     "   }" +
-                     "</style>\n";
+                    "   hr { \n" +
+                    "            display: block; \n"+
+                    "            margin-top: 0.5em; \n"+
+                    "            margin-bottom: 0.5em; \n"+
+                    "            margin-left: auto; \n"+
+                    "            margin-right: auto; \n"+
+                    "            border-style: inset; \n"+
+                    "            border-width: 1px; \n"+
+                    "            color: #A5DF00; \n"+
+                    "       }  \n"+
+                    "</style>\n";
     }
     
     private String getHeader(String title){
