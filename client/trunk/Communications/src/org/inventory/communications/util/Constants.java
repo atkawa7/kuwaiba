@@ -88,7 +88,7 @@ public class Constants {
     /**
      * Name for the class GenericService
      */
-    public static final String CLASS_VRF = "VRF";
+    public static final String CLASS_VRFINSTANCE = "VRFInstance";
     /**
      * Name for the class GenericCustomer
      */

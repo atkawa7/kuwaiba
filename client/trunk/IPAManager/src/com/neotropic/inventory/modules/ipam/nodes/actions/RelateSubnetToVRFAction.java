@@ -43,13 +43,13 @@ public class RelateSubnetToVRFAction extends GenericObjectNodeAction{
     
     @Override
     public void actionPerformed(ActionEvent e) {
-                List<LocalObjectLight> devices = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_VRF);
-        Lookup.Result<LocalObjectLight> selectedNodes = Utilities.actionsGlobalContext().lookupResult(LocalObjectLight.class);
+        List<LocalObjectLight> devices = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_VRFINSTANCE);
         
         if (devices ==  null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         
-        else{
+        else {
+            Lookup.Result<LocalObjectLight> selectedNodes = Utilities.actionsGlobalContext().lookupResult(LocalObjectLight.class);
             Collection<? extends LocalObjectLight> lookupResult = selectedNodes.allInstances();
             List<LocalObjectLight> selectedObjects = new ArrayList<>();
             Iterator<? extends LocalObjectLight> iterator = lookupResult.iterator();
