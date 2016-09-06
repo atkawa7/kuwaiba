@@ -2855,9 +2855,9 @@ public class CommunicationsStub {
         return null;
     }
     
-    public boolean relateSubnetToVLAN(long subnetId, String className, long vlanId){
+    public boolean relateToVLAN(long subnetId, String className, long vlanId){
         try{
-            service.relateSubnetToVlan(subnetId, className, vlanId, this.session.getSessionId());
+            service.relateToVlan(subnetId, className, vlanId, this.session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -2885,9 +2885,9 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean releaseSubnetFromVLAN(long vlanId, long id){
+    public boolean releaseFromVLAN(long vlanId, long id){
         try{
-            service.releaseSubnetFromVlan(vlanId, id, this.session.getSessionId());
+            service.releaseFromVlan(vlanId, id, this.session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -2960,9 +2960,9 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean relateToNetworkElement(long id, String className, String networkElementClassName, long networkElementId){
+    public boolean relatePortToInterface(long id, String className, String interfaceClassName, long interfaceId){
         try{
-            service.relateToNetworkElement(id, className, networkElementClassName, networkElementId, this.session.getSessionId());
+            service.relatePortToInterface(id, className, interfaceClassName, interfaceId, this.session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -2970,15 +2970,17 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean releaseFromNetworkElement(String networkElementClassName, long networkElementId, long id){
+    public boolean releasePortFromInterface(String interfaceClassName, long interfaceId, long id){
         try{
-            service.releaseFromNetworkElement(networkElementClassName, networkElementId,  id, this.session.getSessionId());
+            service.releasePortFromInterface(interfaceClassName, interfaceId,  id, this.session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = ex.getMessage();
             return false;
         }
     }
+    
+    
     
         // </editor-fold>
     // </editor-fold>

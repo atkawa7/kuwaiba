@@ -54,6 +54,10 @@ public class Constants {
      */
     public static final String VALIDATOR_PHYSICAL_ENDPOINT = "physicalEndpoint";
     /**
+     * Name of the validator to indicate if a given class is the endpoint to a link
+     */
+    public static final String VALIDATOR_SERVICE_INSTANCE = "serviceInstance";
+    /**
      * All instances of classes tagged with this validator may be related to a software asset
      */
     public static final String VALIDATOR_APPLICATION_ELEMENT = "applicationElement";
@@ -68,7 +72,11 @@ public class Constants {
     /**
      * All instances of classes tagged with this validator may be related to bridgeDomainInterface, VRF, MPLSTunnel; FrameRelay
      */
-    public static final String VALIDATOR_NETWORK_ELEMENT_LOGICAL_CONFIGURATION = "networkElementLogicalConfiguration";
+    //public static final String VALIDATOR_NETWORK_ELEMENT_LOGICAL_CONFIGURATION = "networkElementLogicalConfiguration";
+    /**
+     * All instances of classes tagged with this validator may be related to VLANs
+     */
+    public static final String VALIDATOR_VRFINSTANCE = "vrfinstance";
     /**
      * DummyRoot constant. It's a pseudo class
      */
@@ -86,7 +94,11 @@ public class Constants {
      */
     public static final String CLASS_GENERICSERVICE = "GenericService";
     /**
-     * Name for the class GenericService
+     * Name for the class Service Instance
+     */
+    public static final String CLASS_SERVICEINSTANCE = "ServiceInstance";
+    /**
+     * Name for the class VRFInstance
      */
     public static final String CLASS_VRFINSTANCE = "VRFInstance";
     /**
@@ -150,6 +162,14 @@ public class Constants {
      */
     public static final String CLASS_VIEWABLEOBJECT = "ViewableObject";
     /**
+     * Class BridgeDomainInterface
+     */
+    public static final String CLASS_BRIDGEDOMAININTERFACE = "BridgeDomainInterface";
+    /**
+     * Class MPLSTunnel
+     */
+    public static final String CLASS_MPLSTUNEL = "MPLSTunnel";
+    /**
      * Default type for a new attribute
      */
     public static final String DEFAULT_ATTRIBUTE_TYPE = "String";
@@ -188,11 +208,11 @@ public class Constants {
     /**
      * This relationship is used to relate a VRF with a Subnet
      */
-    public static final String RELATIONSHIP_IPAMBELONGSTOVRF = "ipamBelongsToVrf";
+    public static final String RELATIONSHIP_IPAMBELONGSTOVRFINSTANCE = "ipamBelongsToVrfInstance";
     /**
-     * This relationship is used to connect a VLAN with a Subnet
+     * This relationship is used to connect a generic port(service instances) with an interface
      */
-    public static final String RELATIONSHIP_MPLSDEVICEHASCONFIGURATION = "mplsdevicehasconfiguration";
+    public static final String RELATIONSHIP_MPLSPORTBELONGSTOINTERFACE = "mplsportbelongtointerface";
     /**
      * A fixed label to indicate a given node doesn't have a name set
      */
