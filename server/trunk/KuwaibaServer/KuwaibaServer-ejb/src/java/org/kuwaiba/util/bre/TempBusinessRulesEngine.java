@@ -59,9 +59,7 @@ public class TempBusinessRulesEngine {
         subClassOfValidators.put("GenericApplicationElement", "applicationElement");
         subClassOfValidators.put("GenericCommunicationsElement", "genericCommunicationsElement");
         subClassOfValidators.put("GenericNetworkElement", "genericNetworkElement");
-        //subClassOfValidators.put("BridgeDomainInterface", "networkElementLogicalConfiguration");
-        //subClassOfValidators.put("FrameRelay", "networkElementLogicalConfiguration");
-        //subClassOfValidators.put("MPLSTunnel", "networkElementLogicalConfiguration");
+        subClassOfValidators.put("IPTransit", "servicereporttemp");
         subClassOfValidators.put("VRFInstance", "vrfinstance");
         subClassOfValidators.put("ServiceInstance", "serviceInstance");
         subClassOfValidators.put("Subnet", "subnet");

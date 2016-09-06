@@ -2291,10 +2291,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
                     return new ReportDescriptor[] {
                             new ReportDescriptor(6, "TributaryLink Resources", className, "Shows the resources used by a TributaryLink")
                     };
-                case "IPTransit":
-                     return new ReportDescriptor[] {
-                            new ReportDescriptor(7, "Service details", className, "Shows the resources used by the service and some of its attributes")
+                case "IPTransitService":
+                case "VPLSPWService":
+                    return new ReportDescriptor[]{
+                        new ReportDescriptor(7, "Service details", className, "Shows the resources used by the logical Configuration and some of its attributes")
                     };
+                    
                 case "VPLSService":
                     return new ReportDescriptor[] {
                             new ReportDescriptor(8, "Service details", className, "Shows the resources used by the service and some of its attributes")
@@ -2323,12 +2325,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
                             new ReportDescriptor(13, "Service details", className, "Shows the resources used by the service and some of its attributes")
                     };
                 case "BridgeDomainInterface":
-                case "FrameRelay":
                 case "MPLSTunnel":
                 case "VRFInstance": 
                     return new ReportDescriptor[]{
                         new ReportDescriptor(14, "Config details", className, "Shows the resources used by the logical Configuration and some of its attributes")
                     };
+                
             }
             return new ReportDescriptor[0];
         } catch (InventoryException ex) {
@@ -2362,6 +2364,8 @@ public class WebserviceBean implements WebserviceBeanRemote {
                     tributaryLinkId = Long.valueOf(StringPair.get(arguments, "objectId"));
                     tributaryLinkClass = StringPair.get(arguments, "objectClass");
                     return reports.buildHighOrderTributaryLinkDetailReport(tributaryLinkClass, tributaryLinkId);
+                case 7://Temporal report for MPLS services (Elan, Etree and Eline) 
+                    return reports.buildServicesReport(StringPair.get(arguments, "objectClass"),Long.valueOf(StringPair.get(arguments, "objectId")));
                 case 9: //Subnet usage
                     return reports.subnetUsageReport(StringPair.get(arguments, "objectClass"), Long.valueOf(StringPair.get(arguments, "objectId")));
                 case 10:
@@ -2374,10 +2378,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 case 12:
                     locationId = Long.valueOf(StringPair.get(arguments, "objectId"));
                     return reports.buildContractStatusReport(locationId);
-                case 13:
+                case 13://Temporal report for MPLS services (Elan, Etree and Eline) 
                     return reports.buildMPLSServiceReport(StringPair.get(arguments, "objectClass"), 
                             Long.valueOf(StringPair.get(arguments, "objectId")));
-                case 14:
+                case 14://Temporal report for BridgeDomains, VRFs, MPLSTunnels
                     return reports.buildLogicalConfiguratinInterfacesReport(StringPair.get(arguments, "objectClass"), 
                             Long.valueOf(StringPair.get(arguments, "objectId")));
             }
@@ -2826,7 +2830,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             mem = persistenceService.getMetadataEntityManager();
             bem = persistenceService.getBusinessEntityManager();
             aem = persistenceService.getApplicationEntityManager();
-            reports = new Reports(bem, aem);
+            reports = new Reports(mem, bem, aem);
         } catch(Exception ex){
             mem = null;
             bem = null;

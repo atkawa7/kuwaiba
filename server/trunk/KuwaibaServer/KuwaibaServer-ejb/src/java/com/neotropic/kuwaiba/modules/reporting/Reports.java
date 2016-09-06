@@ -24,7 +24,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.application.Pool;
 import org.kuwaiba.apis.persistence.business.AnnotatedRemoteBusinessObjectLight;
@@ -37,6 +40,9 @@ import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
+import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
+import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
+import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.services.persistence.impl.neo4j.RelTypes;
 import org.kuwaiba.services.persistence.util.Constants;
 
@@ -46,11 +52,13 @@ import org.kuwaiba.services.persistence.util.Constants;
  */
 public class Reports {
     
+    private MetadataEntityManager mem;
     private ApplicationEntityManager aem;
     private BusinessEntityManager bem;
     public String corporateLogo;
     
-    public Reports(BusinessEntityManager bem, ApplicationEntityManager aem) {
+    public Reports(MetadataEntityManager mem, BusinessEntityManager bem, ApplicationEntityManager aem) {
+        this.mem = mem;
         this.aem = aem;
         this.bem = bem;
         this.corporateLogo = aem.getConfiguration().getProperty("corporateLogo") == null ? "logo.jpg" : aem.getConfiguration().getProperty("corporateLogo");
@@ -775,7 +783,7 @@ public class Reports {
             }
 
             if (ports.isEmpty())
-                    instance = "<div class=\"error\">There are no network elements associated to this " + listOflogicalConfiguration.getName() +"</div>";
+                    instance = "<div class=\"error\">There is nothing related to " + listOflogicalConfiguration.toString() +"</div>";
             else {
                     instance = "<table><tr><th>Port</th><th>IP Address</th><th>Device Location</th></tr>";
 
@@ -815,6 +823,86 @@ public class Reports {
         DetailReportText += getFooter();
         
         return DetailReportText.getBytes(StandardCharsets.UTF_8);
+    }
+    
+    public byte[] buildServicesReport(String serviceClassName, long serviceId) 
+            throws MetadataObjectNotFoundException, ObjectNotFoundException,
+            InvalidArgumentException, ApplicationObjectNotFoundException, 
+            NotAuthorizedException
+    {
+        RemoteBusinessObject theService = bem.getObject(serviceClassName, serviceId);
+        
+        List<RemoteBusinessObjectLight> serviceInstances = bem.getSpecialAttribute(serviceClassName, serviceId, "uses");
+        HashMap<String, List<String>> serviceAttributes = theService.getAttributes();
+        Set<AttributeMetadata> serviceClassAttributes = mem.getClass(serviceClassName).getAttributes();
+        String service="", title, ServiceDetailReportText;
+        
+        if (theService == null) {
+            title = "Error";
+            ServiceDetailReportText = getHeader(title);
+            ServiceDetailReportText += "<div class=\"error\">No information about this service could be found</div>";
+        }
+        else {
+            title = "Service detail Report for " + theService.getName() + "[" + theService.getClassName() + "]";
+            ServiceDetailReportText = getHeader(title);
+            ServiceDetailReportText += 
+                                "  <body><table><tr><td><h1>" + title + "</h1></td><td align=\"center\"><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
+                        
+            ServiceDetailReportText += "<table>";
+            String value = "";
+            List<RemoteBusinessObjectLight> parents = bem.getParents(serviceClassName, serviceId);
+            
+            RemoteBusinessObject serviceCustomer = null;
+                    
+            for (RemoteBusinessObjectLight parent : parents) {
+                if(mem.isSubClass(Constants.CLASS_GENERICCUSTOMER, parent.getClassName())){
+                    serviceCustomer = bem.getObject(parent.getClassName(), parent.getId());
+                    break;
+                }
+            }
+            
+            HashMap<String, List<String>> customerAttributes = serviceCustomer.getAttributes();
+            ClassMetadata customerClass = mem.getClass(serviceCustomer.getClassName());
+            Set<AttributeMetadata> customerClassAttributes = customerClass.getAttributes();
+            
+            ServiceDetailReportText += createAttributesOfClass(serviceAttributes, serviceClassAttributes);
+            ServiceDetailReportText += "<tr><td colspan=\"2\" class=\"generalInfoValue\"><b>Customer Details: "+serviceCustomer.toString()+"</b></td></tr>";
+            ServiceDetailReportText += createAttributesOfClass(customerAttributes, customerClassAttributes);
+            
+            ServiceDetailReportText += "</table>";
+
+        }
+            String instance; 
+
+            if (serviceInstances.isEmpty())
+                instance = "<div class=\"error\">There are no instances asossiate to this service</div>";
+            else {
+                instance = "<table><tr><th>Related Instances</th><th>Location</th></tr>";
+
+            int i = 0;
+            for (RemoteBusinessObjectLight serviceInstance : serviceInstances) {
+                String objectName = "";
+                service = "";
+                
+                RemoteBusinessObject inventoryObject = bem.getObject(serviceInstance.getClassName(), serviceInstance.getId());
+                String location = "";
+                if(inventoryObject != null){
+                    objectName = inventoryObject.getName() + " [" + inventoryObject.getClassName()+"]";
+                    List<RemoteBusinessObjectLight> parents = bem.getParents(inventoryObject.getClassName(), inventoryObject.getId());
+                    location =  formatLocation(parents);
+                }
+                
+                instance += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") +"\"><td>" + serviceInstance.getName() + " [" + serviceInstance.getClassName()+"] </td>"
+                              + "<td>" + location +"</td>";
+                              
+                i ++;
+            }
+            instance += "</table>";
+        }
+        ServiceDetailReportText += instance;
+        ServiceDetailReportText += getFooter();
+        
+        return ServiceDetailReportText.getBytes(StandardCharsets.UTF_8);
     }
     
     //<editor-fold desc="Helpers" defaultstate="collapsed">
@@ -971,5 +1059,27 @@ public class Reports {
             
             return String.format("%s [%s - %s - %s]", position, k, l, m);
         }
+    
+    private String createAttributesOfClass(HashMap<String, List<String>> attributes, Set<AttributeMetadata> classAttributes) 
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, 
+            InvalidArgumentException, ApplicationObjectNotFoundException, 
+            NotAuthorizedException
+    {
+        String ServiceDetailReportText = "", value = "";
+        for (AttributeMetadata a : classAttributes) {
+            List<String> values = attributes.get(a.getName());
+                
+            if(values != null){
+                if(!AttributeMetadata.isPrimitive(a.getType()))
+                    value = bem.getObject(a.getType(), Long.valueOf(values.get(0))).getName();
+                else if(a.getType().equals("Date"))
+                    value = new Date(Long.valueOf(values.get(0))).toString();
+                else 
+                    value = values.get(0);
+                ServiceDetailReportText += "<tr><td class=\"generalInfoLabel\"><b></b>"+a.getName()+"</b></td><td class=\"generalInfoValue\"><b>" + value + "</b></td></tr>";
+            }
+        }
+        return ServiceDetailReportText;
+    }
     //</editor-fold> 
 }
