@@ -389,10 +389,10 @@ public interface WebserviceBeanRemote {
             String attributeValues[][], String ipAddress, String sessionId) throws ServerSideException;
         public void removeIP(long[] ids, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
         public void relateIPtoPort(long id, String deviceClassName, long deviceId, String ipAddress, String sessionId) throws ServerSideException;
-        public void relateSubnetToVlan(long id, String className, long vlanId, String ipAddress, String sessionId) throws ServerSideException;
+        public void relateToVlan(long id, String className, long vlanId, String ipAddress, String sessionId) throws ServerSideException;
         public void relateSubnetToVrf(long id, String className, long vrfId, String ipAddress, String sessionId) throws ServerSideException;
         public void releasePortFromIP(String deviceClassName, long deviceId, long id, String ipAddress, String sessionId) throws ServerSideException;
-        public void releaseSubnetFromVlan(long vlanId, long id, String ipAddress, String sessionId) throws ServerSideException;
+        public void releaseFromVlan(long vlanId, long id, String ipAddress, String sessionId) throws ServerSideException;
         public void releaseSubnetFromVrf(long vrfId, long id, String ipAddress, String sessionId) throws ServerSideException;
         public RemoteObjectLight[] getSubnetUsedIps(long id, String className, int limit, String ipAddress, String sessionId) throws ServerSideException;
         public boolean itOverlaps(String networkIp, String broadcastIp, String ipAddress, String sessionId) throws ServerSideException;
@@ -411,8 +411,8 @@ public interface WebserviceBeanRemote {
             String classNameEndpointB, long idEndpointB, String linkType, String defaultName, String ipAddress, String sessionId) throws ServerSideException;
     
          public void deleteMPLSLink(String linkClass, long linkId, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException;
-         public void relateToNetworkElement(long id, String className, String networkElementClassName, long networkElementId, String ipAddress, String sessionId) throws ServerSideException;
-         public void releaseFromNetworkElement(String networkElementClassName, long networkElementId ,long id, String ipAddress, String sessionId) throws ServerSideException;
+         public void relatePortToInterface(long portId, String portClassName, String interfaceClassName, long interfaceId, String ipAddress, String sessionId) throws ServerSideException;
+         public void releasePortFromInterface(String interfaceClassName, long interfaceId ,long portId, String ipAddress, String sessionId) throws ServerSideException;
     // </editor-fold>
     // </editor-fold>
     

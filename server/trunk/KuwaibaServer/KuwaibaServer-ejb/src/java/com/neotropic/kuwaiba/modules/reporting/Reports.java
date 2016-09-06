@@ -499,18 +499,29 @@ public class Reports {
         List<RemoteBusinessObjectLight> ips = bem.getObjectSpecialChildren(className, subnetId);
         HashMap<String, List<String>> subnetAttributes = subnet.getAttributes();
         int hosts = Integer.parseInt(subnetAttributes.get("hosts").get(0));
-        int usedIps = ips.size();
+        
+        
+        int usedIps = 0;
+        
+        for (RemoteBusinessObjectLight ip : ips) {
+            List<RemoteBusinessObjectLight> ipDevices = bem.getSpecialAttribute(Constants.CLASS_IP_ADDRESS, ip.getId(), IPAMModule.RELATIONSHIP_IPAMHASADDRESS);
+            if(!ipDevices.isEmpty())
+                usedIps++;
+        }
 
         int freeIps = hosts - usedIps;
         
-        String vlan = "", service="", title, subnetUsageReportText;
+        String vrf="", vlan = "", service="", title, subnetUsageReportText;
         List<RemoteBusinessObjectLight> vlans = bem.getSpecialAttribute(className, subnetId, IPAMModule.RELATIONSHIP_IPAMBELONGSTOVLAN);
+        List<RemoteBusinessObjectLight> vrfs = bem.getSpecialAttribute(className, subnetId, IPAMModule.RELATIONSHIP_IPAMBELONGSTOVRFINSTACE);
         List<RemoteBusinessObjectLight> services = bem.getSpecialAttribute(className, subnetId, "uses");
         
-        if(!vlans.isEmpty()){
+        if(!vlans.isEmpty())
             vlan = "<b>" + vlans.get(0).getName() + " ["+ vlans.get(0).getClassName()+ "]</b> |"+
             formatLocation(bem.getParents(vlans.get(0).getClassName(), vlans.get(0).getId()));
-        }    
+        
+        if(!vrfs.isEmpty())
+            vrf = "<b>" + vrfs.get(0).getName() + " ["+ vrfs.get(0).getClassName()+ "]</b>";
 
         if(!services.isEmpty())
             service = services.get(0).getName() + " ["+ services.get(0).getClassName()+ "]";
@@ -533,9 +544,10 @@ public class Reports {
                     + "<tr><td class=\"generalInfoLabel\">Broadcast IP Address</td><td class=\"generalInfoValue\"><b>" + subnetAttributes.get("broadcastIp").get(0) + "</b> </td></tr>"
                     + "<tr><td class=\"generalInfoLabel\">Description </td><td class=\"generalInfoValue\">" + subnetAttributes.get("description").get(0) + "</td></tr>"
                     + "<tr><td class=\"generalInfoLabel\">Number of hosts</td><td class=\"generalInfoValue\">" + hosts + "</td></tr>"
-                    + "<tr><td class=\"generalInfoLabel\">Used IPs</td><td class=\"generalInfoValue\"><b>" + (usedIps*100)/hosts + "%</b> ("+ usedIps +")</td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">IPs Related to some port</td><td class=\"generalInfoValue\"><b>" + (usedIps*100)/hosts + "%</b> ("+ usedIps +")</td></tr>"
                     + "<tr><td class=\"generalInfoLabel\">Free IPs</td><td class=\"generalInfoValue\"><b>" + (freeIps*100)/hosts +"%</b> ("+ freeIps +")</td></tr>"
                     + "<tr><td class=\"generalInfoLabel\">VLAN</td><td class=\"generalInfoValue\">" + vlan + "</td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">VRF</td><td class=\"generalInfoValue\">" + vrf + "</td></tr>"
                     + "<tr><td class=\"generalInfoLabel\">Service</td><td class=\"generalInfoValue\">" + service + "</td></tr></table>";
         }
         
@@ -731,7 +743,7 @@ public class Reports {
             InvalidArgumentException, ApplicationObjectNotFoundException, 
             NotAuthorizedException
     {
-        String logicalConfiguration, title, DetailReportText = "", instance = ""; 
+        String logicalConfiguration, title, DetailReportText = "", instance = "", vlan = "  "; 
         
         title = "Detail Report for all " + logicalConfigurationClassName + " instances";
         DetailReportText = getHeader(title);
@@ -744,41 +756,51 @@ public class Reports {
             RemoteBusinessObject logicalConfigurationObject = bem.getObject(listOflogicalConfiguration.getClassName(), listOflogicalConfiguration.getId());
             
             HashMap<String, List<String>> attributes = logicalConfigurationObject.getAttributes();
-            List<RemoteBusinessObjectLight> networkElements = bem.getSpecialAttribute(listOflogicalConfiguration.getClassName(), listOflogicalConfiguration.getId(), MPLSModule.RELATIONSHIP_MPLSDEVICEHASCONFIGURATION);
+            List<RemoteBusinessObjectLight> ports = bem.getSpecialAttribute(listOflogicalConfiguration.getClassName(), listOflogicalConfiguration.getId(), MPLSModule.RELATIONSHIP_MPLSPORTBELONGSTOINTERFACE);
             
-            if (networkElements == null) {
-                //title = "Error";
-                //DetailReportText = getHeader(title);
+            if (ports == null) 
                 DetailReportText += "<div class=\"error\">No information for" + listOflogicalConfiguration.getName() + " could be found</div>";
-            }
+            
+            
             else {
-                //title = "Detail Report for " + logicalConfigurationObject.getName() + "[" + logicalConfigurationObject.getClassName() + "]";
-                //DetailReportText = getHeader(title);
-
+                if (listOflogicalConfiguration.getClassName().equals(Constants.CLASS_VRF_INSTANCE)){
+                    List<RemoteBusinessObjectLight> vlans = bem.getSpecialAttribute(listOflogicalConfiguration.getClassName(), listOflogicalConfiguration.getId(), IPAMModule.RELATIONSHIP_IPAMBELONGSTOVLAN);
+                    for (RemoteBusinessObjectLight vlanInstance : vlans) 
+                        vlan += vlanInstance.toString() + ", ";  
+                
+                }
                 DetailReportText += "<table><tr><td class=\"generalInfoLabel\">Name</td><td class=\"generalInfoValue\"><b>" + logicalConfigurationObject.getName() + "[" + logicalConfigurationObject.getClassName() + "]</b></td>"
+                        + "<tr><td class=\"generalInfoLabel\">VLAN</td><td class=\"generalInfoValue\"><b>" + vlan.substring(0, vlan.length()-2) + "</b> </td></tr>"
                         + "<tr><td class=\"generalInfoLabel\">Creation date</td><td class=\"generalInfoValue\"><b>" + new Date(Long.valueOf(attributes.get("creationDate").get(0))) + "</b> </td></tr></table>";
             }
 
-            if (networkElements.isEmpty())
+            if (ports.isEmpty())
                     instance = "<div class=\"error\">There are no network elements associated to this " + listOflogicalConfiguration.getName() +"</div>";
             else {
-                    instance = "<table><tr><th>Network Element</th><th>Location</th></tr>";
+                    instance = "<table><tr><th>Port</th><th>IP Address</th><th>Device Location</th></tr>";
 
                 int i = 0;
-                for (RemoteBusinessObjectLight networkElement : networkElements) {
+                for (RemoteBusinessObjectLight relatedPort : ports) {
                     String device = "";
                     logicalConfiguration = "";
-
-                    RemoteBusinessObject ports = bem.getObject(networkElement.getClassName(), networkElement.getId());
+                    List<RemoteBusinessObjectLight> ipAddresses = bem.getSpecialAttribute(relatedPort.getClassName(), relatedPort.getId(), IPAMModule.RELATIONSHIP_IPAMHASADDRESS);
+                    RemoteBusinessObject port = bem.getObject(relatedPort.getClassName(), relatedPort.getId());
                     String location = "";
-                    if(ports != null){
-                        device = ports.getName() + " [" + ports.getClassName()+"]";
-                        List<RemoteBusinessObjectLight> parents = bem.getParents(ports.getClassName(), ports.getId());
+                    if(port != null){
+                        device = port.getName() + " [" + port.getClassName()+"]";
+                        List<RemoteBusinessObjectLight> parents = bem.getParents(port.getClassName(), port.getId());
                         location =  formatLocation(parents);
                     }
 
-                    instance += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") +"\"><td>" + networkElement.getName() + " [" + networkElement.getClassName()+"] </td>"
-                                  + "<td>" + location +"</td>";
+                    String ips = "  ";
+                    for (RemoteBusinessObjectLight ipAddress : ipAddresses) 
+                        ips += ipAddress.getName() + ", ";
+                    
+                    
+                    instance += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd")
+                            + "\"><td>" + relatedPort.getName() + " [" + relatedPort.getClassName()+"] </td>"
+                            + "<td>" + ips.substring(0, ips.length()-2) +"</td>"
+                            + "<td>" + location +"</td>";
 
                     i ++;
                 }

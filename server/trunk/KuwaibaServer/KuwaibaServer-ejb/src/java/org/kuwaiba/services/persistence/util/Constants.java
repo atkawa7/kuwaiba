@@ -271,7 +271,7 @@ public class Constants {
      /**
      * Class VRF
      */
-    public static final String CLASS_VRF = "VRF"; //NOI18N
+    public static final String CLASS_VRF_INSTANCE = "VRFInstance"; //NOI18N
     /**
      * Class Generic Communications Equipment
      */

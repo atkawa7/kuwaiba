@@ -69,7 +69,7 @@ public class MPLSModule implements GenericCommercialModule {
      * TODO: place this relationships in other place
      * This relationship is used to relate a network element with extra logical configuration
      */
-    public static final String RELATIONSHIP_MPLSDEVICEHASCONFIGURATION = "mplsdevicehasconfiguration";
+    public static final String RELATIONSHIP_MPLSPORTBELONGSTOINTERFACE = "mplsportbelongtointerface";
     
     @Override
     public String getName() {
@@ -178,37 +178,35 @@ public class MPLSModule implements GenericCommercialModule {
         bem.deleteObject(linkClass, linkId, forceDelete);
     }
     /**
-     * Relates an IP address with a generic communication port
-     * @param id subnet id
-     * @param className the classname of the configuration you want to relate with
-     * @param networkElementClassName Generic communications element
-     * @param networkElementId generic communications id
+     * Relates an interface with a generic communication port
+     * @param portId port id
+     * @param portClassName the classname of the configuration you want to relate with
+     * @param interfaceClassName interface's class
+     * @param interfaceId interface id
      * @throws ObjectNotFoundException
      * @throws OperationNotPermittedException
      * @throws MetadataObjectNotFoundException 
      */
-    public void relateToNetworkElement(long id, String className, String networkElementClassName, long networkElementId) throws ObjectNotFoundException,
+    public void relatePortToInterface(long portId, String portClassName, String interfaceClassName, long interfaceId) throws ObjectNotFoundException,
             OperationNotPermittedException, MetadataObjectNotFoundException{
-        bem.createSpecialRelationship(networkElementClassName, networkElementId, className, id, RELATIONSHIP_MPLSDEVICEHASCONFIGURATION, true);
+        bem.createSpecialRelationship(interfaceClassName, interfaceId, portClassName, portId, RELATIONSHIP_MPLSPORTBELONGSTOINTERFACE, true);
     }
     
     /**
-     * Release the relationship between a GenericPort and an 
-     * IP Address.
-     * @param networkElementClassName GenericCommunications Element
-     * @param networkElementId GenericCommunications id
-     * @param id IP address id 
+     * Release the relationship between a GenericPort and an interface
+     * @param interfaceClassName interface's class
+     * @param interfaceId interface id
+     * @param portId port id 
      * @throws ObjectNotFoundException
      * @throws MetadataObjectNotFoundException
      * @throws ApplicationObjectNotFoundException
      * @throws NotAuthorizedException 
      */
-    public void releaseFromNetworkElement(String networkElementClassName, long networkElementId ,long id)
+    public void releasePortFromInterface(String interfaceClassName, long interfaceId ,long portId)
             throws ObjectNotFoundException, MetadataObjectNotFoundException,
             ApplicationObjectNotFoundException, NotAuthorizedException
     {
-        bem.releaseSpecialRelationship(networkElementClassName, networkElementId, id, RELATIONSHIP_MPLSDEVICEHASCONFIGURATION);
-        
+        bem.releaseSpecialRelationship(interfaceClassName, interfaceId, portId, RELATIONSHIP_MPLSPORTBELONGSTOINTERFACE);
     }
     
 }

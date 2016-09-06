@@ -80,7 +80,7 @@ public class IPAMModule implements GenericCommercialModule{
     /**
      * This relationship is used to relate a VRF with a Subnet
      */
-    public static final String RELATIONSHIP_IPAMBELONGSTOVRF = "ipamBelongsToVrf";
+    public static final String RELATIONSHIP_IPAMBELONGSTOVRFINSTACE = "ipamBelongsToVrfInstance";
     
     @Override
     public String getName() {
@@ -381,7 +381,7 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws OperationNotPermittedException
      * @throws MetadataObjectNotFoundException 
      */
-    public void relateSubnetToVLAN(long id, String className, long vlanId)
+    public void relateToVLAN(long id, String className, long vlanId)
         throws ObjectNotFoundException,
             OperationNotPermittedException, MetadataObjectNotFoundException{
         bem.createSpecialRelationship(Constants.CLASS_VLAN, vlanId, className, id, RELATIONSHIP_IPAMBELONGSTOVLAN, true);
@@ -399,7 +399,7 @@ public class IPAMModule implements GenericCommercialModule{
     public void relateSubnetToVRF(long id, String className, long vrfId)
         throws ObjectNotFoundException,
             OperationNotPermittedException, MetadataObjectNotFoundException{
-        bem.createSpecialRelationship(Constants.CLASS_VRF, vrfId, className, id, RELATIONSHIP_IPAMBELONGSTOVRF, true);
+        bem.createSpecialRelationship(Constants.CLASS_VRF_INSTANCE, vrfId, className, id, RELATIONSHIP_IPAMBELONGSTOVRFINSTACE, true);
     }
     
     /**
@@ -433,7 +433,7 @@ public class IPAMModule implements GenericCommercialModule{
     public void releaseSubnetFromVRF(long vrfId, long id)throws ObjectNotFoundException, MetadataObjectNotFoundException,
             ApplicationObjectNotFoundException, NotAuthorizedException
     {
-        bem.releaseSpecialRelationship(Constants.CLASS_VRF, vrfId, id, RELATIONSHIP_IPAMBELONGSTOVRF);
+        bem.releaseSpecialRelationship(Constants.CLASS_VRF_INSTANCE, vrfId, id, RELATIONSHIP_IPAMBELONGSTOVRFINSTACE);
     }
     
     /**
@@ -445,7 +445,7 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws ApplicationObjectNotFoundException
      * @throws NotAuthorizedException 
      */
-    public void releaseSubnetFromVLAN(long vlanId, long id)throws ObjectNotFoundException, MetadataObjectNotFoundException,
+    public void releaseFromVLAN(long vlanId, long id)throws ObjectNotFoundException, MetadataObjectNotFoundException,
             ApplicationObjectNotFoundException, NotAuthorizedException
     {
         bem.releaseSpecialRelationship(Constants.CLASS_VLAN, vlanId, id, RELATIONSHIP_IPAMBELONGSTOVLAN);
