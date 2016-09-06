@@ -3928,25 +3928,25 @@ public class KuwaibaService {
     }
     
     /**
-     * releaseSubnetFromVlan
+     * release an element From a VLAN
      * Releases an subnet from a VLAN that is using it
      * @param id Subnet id
      * @param vlanId the VLAN id
      * @param sessionId Session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime    
      */
-    @WebMethod(operationName = "releaseSubnetFromVlan")
-    public void releaseSubnetFromVlan (
+    @WebMethod(operationName = "releaseFromVlan")
+    public void releaseFromVlan (
             @WebParam(name = "id")long id,
             @WebParam(name = "vlanId")long vlanId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
-            wsBean.releaseSubnetFromVlan(vlanId, id, getIPAddress(), sessionId);
+            wsBean.releaseFromVlan(vlanId, id, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in releaseSubnetFromVlan: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in releaseFromVlan: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
@@ -3978,26 +3978,26 @@ public class KuwaibaService {
     }
     
     /**
-     * Associates a subnet to existing VLAN
+     * Associates a element to existing VLAN
      * @param id Subnet id
      * @param className if the subnet has IPv4 or IPv6 IP addresses
      * @param vlanId VLAN id
      * @param sessionId Session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
      */
-    @WebMethod(operationName = "relateSubnetToVlan")
-    public void relateSubnetToVlan (
+    @WebMethod(operationName = "relateToVlan")
+    public void relateToVlan (
             @WebParam(name = "id")long id,
             @WebParam(name = "className")String className,
             @WebParam(name = "vlanId")long vlanId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
-            wsBean.relateSubnetToVlan(id, className, vlanId, getIPAddress(), sessionId);
+            wsBean.relateToVlan(id, className, vlanId, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in relateSubnetToVlan: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in relateToVlan: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
@@ -4222,29 +4222,28 @@ public class KuwaibaService {
     }
     
     /**
-     * Associates a network element to existing MPLSTunnel or BridgeDomain or 
-     * FrameRelay or VRF
-     * @param id MPLSTunnel or BridgeDomain or FrameRelay or VRF id
-     * @param className if is a MPLSTunnel or BridgeDomain or FrameRelay or VRF
-     * @param networkElementClassName network element class name
-     * @param networkElementId network element id
+     * Associates any GenericCommunicationsPort to existing BridgeDomainInterface
+     * @param portId MPLSTunnel or BridgeDomain or FrameRelay or VRF id
+     * @param portClassName if is a MPLSTunnel or BridgeDomain or FrameRelay or VRF
+     * @param interfaceClassName network element class name
+     * @param interfaceId network element id
      * @param sessionId Session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
      */
-    @WebMethod(operationName = "relateToNetworkElement")
-    public void relateToNetworkElement (
-            @WebParam(name = "id")long id,
-            @WebParam(name = "className")String className,
-            @WebParam(name = "networkElementClassName")String networkElementClassName,
-            @WebParam(name = "networkElementId")long networkElementId,
+    @WebMethod(operationName = "relatePortToInterface")
+    public void relatePortToInterface (
+            @WebParam(name = "portId")long portId,
+            @WebParam(name = "portClassName")String portClassName,
+            @WebParam(name = "interfaceClassName")String interfaceClassName,
+            @WebParam(name = "interfaceId")long interfaceId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
-            wsBean.relateToNetworkElement(id, className, networkElementClassName, networkElementId, getIPAddress(), sessionId);
+            wsBean.relatePortToInterface(portId, portClassName, interfaceClassName, interfaceId, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in relateToNetworkElement: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in relatePortToInterface: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
@@ -4253,27 +4252,27 @@ public class KuwaibaService {
     /**
      * Release the association between a network element and a MPLSTunnel or BridgeDomain or 
      * FrameRelay or VRF
-     * @param id MPLSTunnel or BridgeDomain or FrameRelay or VRF id
-     * @param networkElementClassName network element class name
-     * @param networkElementId network element id
+     * @param portId MPLSTunnel or BridgeDomain or FrameRelay or VRF id
+     * @param releasePortFromInterfaceClassName network element class name
+     * @param releasePortFromInterfaceId network element id
      * @param sessionId Session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
      */
     
     //String networkElementClass, long networkElementId ,long id
-    @WebMethod(operationName = "releaseFromNetworkElement")
-    public void releaseFromNetworkElement (
-            @WebParam(name = "networkElementClassName")String networkElementClassName,
-            @WebParam(name = "networkElementId")long networkElementId,
-            @WebParam(name = "id")long id,
+    @WebMethod(operationName = "releasePortFromInterface")
+    public void releasePortFromInterface (
+            @WebParam(name = "interfaceClassName")String interfaceClassName,
+            @WebParam(name = "interfaceId")long interfaceId,
+            @WebParam(name = "portId")long portId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
-            wsBean.releaseFromNetworkElement(networkElementClassName, networkElementId, id, getIPAddress(), sessionId);
+            wsBean.releasePortFromInterface(interfaceClassName, interfaceId, portId, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in releaseFromNetworkElement: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in releasePortFromInterface: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
