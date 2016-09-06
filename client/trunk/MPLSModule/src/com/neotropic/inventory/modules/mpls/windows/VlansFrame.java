@@ -1,12 +1,17 @@
-/*
- * Copyright (c) 2016 adrian.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
+/**
+ * Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
+ *
+ * Licensed under the EPL License, Version 1.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the
+ * License at
+ *
  * http://www.eclipse.org/legal/epl-v10.html
  *
- * Contributors:
- *    adrian - initial API and implementation and/or initial documentation
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package com.neotropic.inventory.modules.mpls.windows;
 
@@ -33,32 +38,33 @@ import javax.swing.event.DocumentListener;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 
+
 /**
- * Show the existing generic communications elements that can be associated to 
+ * Show the existing VLANS that can be associated to a subnet
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class DevicesFrame extends JFrame{
+public class VlansFrame extends JFrame{
     private JTextField txtField;
     private JScrollPane pnlScrollMain;
-    private JList<LocalObjectLight> lstAvailableDevices;
+    private JList<LocalObjectLight> lstAvailableVlans;
     private List<LocalObjectLight> selectedObjects;
-    private List<LocalObjectLight> devices;
+    private List<LocalObjectLight> vlans;
     
-    public DevicesFrame(List<LocalObjectLight> selectedObjects, List<LocalObjectLight> devices) {
+    public VlansFrame(List<LocalObjectLight> selectedObjects, List<LocalObjectLight> vlans, String className) {
         this.selectedObjects = selectedObjects;
-        this.devices = devices;
+        this.vlans = vlans;
         setLayout(new BorderLayout());
-        setTitle(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/mpls/Bundle").getString("LBL_TITLE_AVAILABLE_DEVICES"));
+        setTitle(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/mpls/Bundle").getString("LBL_TITLE_AVAILABLE") + className);
         setSize(400, 650);
         setLocationRelativeTo(null);
-        JLabel lblInstructions = new JLabel(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/mpls/Bundle").getString("LBL_INSTRUCTIONS_SELECT_DEVICE"));
+        JLabel lblInstructions = new JLabel(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/mpls/Bundle").getString("LBL_INSTRUCTIONS_SELECT"));
         lblInstructions.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         
                 
         JPanel pnlSearch = new JPanel();
         pnlSearch.setLayout(new GridLayout(1, 2));
-        lstAvailableDevices = new JList<>(devices.toArray(new LocalObjectLight[0]));
-        lstAvailableDevices.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        lstAvailableVlans = new JList<>(vlans.toArray(new LocalObjectLight[0]));
+        lstAvailableVlans.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         pnlScrollMain = new JScrollPane();
         txtField = new JTextField();
         txtField.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 2));
@@ -84,14 +90,14 @@ public class DevicesFrame extends JFrame{
         pnlSearch.add(txtField);
         add(pnlSearch, BorderLayout.NORTH);
         
-        pnlScrollMain.setViewportView(lstAvailableDevices);
-        add(lstAvailableDevices, BorderLayout.CENTER);
+        pnlScrollMain.setViewportView(lstAvailableVlans);
+        add(lstAvailableVlans, BorderLayout.CENTER);
         
         JPanel pnlButtons = new JPanel();
         pnlButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
         JButton btnRelate = new JButton("Create relationship");
         pnlButtons.add(btnRelate);
-        btnRelate.addActionListener(new DevicesFrame.BtnConnectActionListener());
+        btnRelate.addActionListener(new VlansFrame.BtnConnectActionListener());
         JButton btnClose = new JButton("Close");
         btnClose.addActionListener(new ActionListener() {
 
@@ -102,23 +108,22 @@ public class DevicesFrame extends JFrame{
         });
         pnlButtons.add(btnClose);
         add(pnlButtons, BorderLayout.SOUTH);
+    
     }
     
-     private class BtnConnectActionListener implements ActionListener {
+    private class BtnConnectActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (lstAvailableDevices.getSelectedValue() == null)
-                JOptionPane.showMessageDialog(null, "Select a Netowrk element from the list");
-            else {                
-                
-                if (CommunicationsStub.getInstance().relateToNetworkElement(selectedObjects.get(0).getOid(), 
-                        selectedObjects.get(0).getClassName(), 
-                        lstAvailableDevices.getSelectedValue().getClassName(),
-                        lstAvailableDevices.getSelectedValue().getOid())){
-                    JOptionPane.showMessageDialog(null, String.format("The %s  was related to %s", 
-                            selectedObjects.get(0).toString(), lstAvailableDevices.getSelectedValue().getName()));
+            if (lstAvailableVlans.getSelectedValue() == null)
+                JOptionPane.showMessageDialog(null, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/mpls/Bundle").getString("LBL_INSTRUCTIONS_SELECT"));
+            else {
+                if (CommunicationsStub.getInstance().relateToVLAN(
+                        selectedObjects.get(0).getOid(), selectedObjects.get(0).getClassName(), lstAvailableVlans.getSelectedValue().getOid())){
+                    JOptionPane.showMessageDialog(null, String.format("The %s VRF was related to VLAN %s", selectedObjects.get(0).getName(), 
+                            lstAvailableVlans.getSelectedValue().getName()));
                         dispose();
-                }else 
+                }
+                else 
                     JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError(), 
                         "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -127,14 +132,12 @@ public class DevicesFrame extends JFrame{
     
     public void servicesFilter(String text){
         List<LocalObjectLight> filteredServices = new ArrayList<>();
-        for(LocalObjectLight device : devices){
-            if(device.getClassName().toLowerCase().contains(text.toLowerCase()) 
-                    || device.getName().toLowerCase().contains(text.toLowerCase()))
-                filteredServices.add(device);
+        for(LocalObjectLight vlan : vlans){
+            if(vlan.getClassName().toLowerCase().contains(text.toLowerCase()) 
+                    || vlan.getName().toLowerCase().contains(text.toLowerCase()))
+                filteredServices.add(vlan);
         }
         LocalObjectLight[] toArray = filteredServices.toArray(new LocalObjectLight[filteredServices.size()]);
-        lstAvailableDevices.setListData(toArray);
+        lstAvailableVlans.setListData(toArray);
     }
-
-    
 }

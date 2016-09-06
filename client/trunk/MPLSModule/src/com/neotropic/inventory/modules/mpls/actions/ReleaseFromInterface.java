@@ -16,6 +16,7 @@
 package com.neotropic.inventory.modules.mpls.actions;
 
 import java.awt.event.ActionEvent;
+import java.util.Iterator;
 import java.util.List;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -24,20 +25,25 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- * Relates a GenericNetworkElement with a FrameRelayInterface
+ * Release a relation between service instance and an interface
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ReleaseFromNetworkDeviceAction extends GenericObjectNodeAction implements Presenter.Popup {
-
+public class ReleaseFromInterface extends GenericObjectNodeAction implements Presenter.Popup {
+    
+    private long id;
+    private String className;
+    
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (CommunicationsStub.getInstance().releaseFromNetworkElement(object.getClassName(), 
-                object.getOid(), Long.valueOf(((JMenuItem)e.getSource()).getName())))
+        if (CommunicationsStub.getInstance().releasePortFromInterface(className,
+                id, Long.valueOf(((JMenuItem)e.getSource()).getName())))
             NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
                     java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/mpls/Bundle").getString("LBL_SUCCESS"));
         else
@@ -46,21 +52,32 @@ public class ReleaseFromNetworkDeviceAction extends GenericObjectNodeAction impl
 
     @Override
     public String getValidator() {
-        return Constants.VALIDATOR_NETWORK_ELEMENT_LOGICAL_CONFIGURATION;
+        return Constants.VALIDATOR_PHYSICAL_ENDPOINT;
     }
 
     @Override
     public JMenuItem getPopupPresenter() {
-        JMenu mnuServices = new JMenu(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/mpls/Bundle").getString("LBL_RELEASE_DEVICE"));
-        List<LocalObjectLight> configurations = CommunicationsStub.getInstance().getSpecialAttribute(object.getClassName(), 
-                object.getOid(), Constants.RELATIONSHIP_MPLSDEVICEHASCONFIGURATION);
+        JMenu mnuServices = new JMenu(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/mpls/Bundle").getString("LBL_RELEASE_INTERFACE"));
+        Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
         
-        if (configurations != null) {
+        if (!selectedNodes.hasNext())
+            return null;
         
-            if (configurations.isEmpty())
+        while (selectedNodes.hasNext()) {
+            ObjectNode selectedNode = (ObjectNode)selectedNodes.next();
+            className = selectedNode.getObject().getClassName();
+            id = selectedNode.getObject().getOid();
+        }
+        
+        List<LocalObjectLight> services = CommunicationsStub.getInstance().getSpecialAttribute(className, 
+                id, Constants.RELATIONSHIP_MPLSPORTBELONGSTOINTERFACE);
+
+        if (services != null) {
+        
+            if (services.isEmpty())
                 mnuServices.setEnabled(false);
             else {
-                for (LocalObjectLight service : configurations){
+                for (LocalObjectLight service : services){
                     JMenuItem smiServices = new JMenuItem(service.toString());
                     smiServices.setName(String.valueOf(service.getOid()));
                     smiServices.addActionListener(this);
@@ -73,5 +90,5 @@ public class ReleaseFromNetworkDeviceAction extends GenericObjectNodeAction impl
             return null;
         } 
     }
-
+    
 }
