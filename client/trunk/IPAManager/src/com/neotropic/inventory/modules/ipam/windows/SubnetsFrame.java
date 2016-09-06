@@ -56,6 +56,7 @@ public class SubnetsFrame extends JFrame{
         
         pnlSubnets = new ExplorablePanel();
         BeanTreeView treeSubnets = new BeanTreeView();
+        treeSubnets.setRootVisible(false);
         pnlScrollMain = new JScrollPane();
         JPanel pnlInstructions = new JPanel();
         pnlInstructions.setLayout(new GridLayout(1, 1));

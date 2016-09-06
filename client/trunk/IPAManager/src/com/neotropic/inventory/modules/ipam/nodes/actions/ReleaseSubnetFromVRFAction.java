@@ -70,7 +70,7 @@ public class ReleaseSubnetFromVRFAction extends GenericObjectNodeAction implemen
         }
         
         List<LocalObjectLight> services = CommunicationsStub.getInstance().getSpecialAttribute(className, 
-                id, Constants.RELATIONSHIP_IPAMBELONGSTOVRF);
+                id, Constants.RELATIONSHIP_IPAMBELONGSTOVRFINSTANCE);
 
         if (services != null) {
         

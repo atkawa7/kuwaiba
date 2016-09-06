@@ -42,7 +42,7 @@ public class ReleaseFromVlanAction  extends GenericObjectNodeAction implements P
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (CommunicationsStub.getInstance().releaseSubnetFromVLAN( 
+        if (CommunicationsStub.getInstance().releaseFromVLAN( 
                 id, Long.valueOf(((JMenuItem)e.getSource()).getName())))
             NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
                     java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_SUCCESS"));
@@ -52,7 +52,7 @@ public class ReleaseFromVlanAction  extends GenericObjectNodeAction implements P
 
     @Override
     public String getValidator() {
-        return Constants.VALIDATOR_SUBNET; //Enable this action for any object
+        return Constants.VALIDATOR_SUBNET;
     }
 
     @Override

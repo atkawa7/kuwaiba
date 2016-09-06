@@ -47,11 +47,11 @@ public class VlansFrame extends JFrame{
     private JTextField txtField;
     private JScrollPane pnlScrollMain;
     private JList<LocalObjectLight> lstAvailableVlans;
-    private List<LocalObjectLight> selectedSubnets;
+    private List<LocalObjectLight> selectedObjects;
     private List<LocalObjectLight> vlans;
     
-    public VlansFrame(List<LocalObjectLight> selectedSubnets, List<LocalObjectLight> vlans) {
-        this.selectedSubnets = selectedSubnets;
+    public VlansFrame(List<LocalObjectLight> selectedObjects, List<LocalObjectLight> vlans) {
+        this.selectedObjects = selectedObjects;
         this.vlans = vlans;
         setLayout(new BorderLayout());
         setTitle(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_TITLE_AVAILABLE_VLANS"));
@@ -115,11 +115,11 @@ public class VlansFrame extends JFrame{
         @Override
         public void actionPerformed(ActionEvent e) {
             if (lstAvailableVlans.getSelectedValue() == null)
-                JOptionPane.showMessageDialog(null, "Select a service from the list");
+                JOptionPane.showMessageDialog(null, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_INSTRUCTIONS_SELECT_VLAN"));
             else {
-                if (CommunicationsStub.getInstance().relateSubnetToVLAN(
-                        selectedSubnets.get(0).getOid(), selectedSubnets.get(0).getClassName(), lstAvailableVlans.getSelectedValue().getOid())){
-                    JOptionPane.showMessageDialog(null, String.format("The %s subnet was related to VLAN %s", selectedSubnets.get(0).getName(), 
+                if (CommunicationsStub.getInstance().relateToVLAN(
+                        selectedObjects.get(0).getOid(), selectedObjects.get(0).getClassName(), lstAvailableVlans.getSelectedValue().getOid())){
+                    JOptionPane.showMessageDialog(null, String.format("The %s subnet was related to VLAN %s", selectedObjects.get(0).getName(), 
                             lstAvailableVlans.getSelectedValue().getName()));
                         dispose();
                 }
