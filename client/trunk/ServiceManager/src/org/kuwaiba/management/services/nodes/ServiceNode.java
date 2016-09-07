@@ -18,6 +18,7 @@ package org.kuwaiba.management.services.nodes;
 import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.ExecuteClassReportAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
 import org.kuwaiba.management.services.nodes.actions.ServiceManagerActionFactory;
 
@@ -36,6 +37,7 @@ public class ServiceNode extends ObjectNode {
     @Override
     public Action[] getActions(boolean context) {
         return new Action [] { 
+            ExecuteClassReportAction.createExecuteReportAction(),
             ServiceManagerActionFactory.getDeleteServiceAction(),
             showObjectIdAction == null ? showObjectIdAction = new ShowObjectIdAction(object.getOid(), object.getClassName()) : showObjectIdAction
         };        
