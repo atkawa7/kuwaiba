@@ -70,10 +70,6 @@ public class Constants {
      */
     public static final String VALIDATOR_SUBNET = "subnet";
     /**
-     * All instances of classes tagged with this validator may be related to bridgeDomainInterface, VRF, MPLSTunnel; FrameRelay
-     */
-    //public static final String VALIDATOR_NETWORK_ELEMENT_LOGICAL_CONFIGURATION = "networkElementLogicalConfiguration";
-    /**
      * All instances of classes tagged with this validator may be related to VLANs
      */
     public static final String VALIDATOR_VRFINSTANCE = "vrfinstance";
