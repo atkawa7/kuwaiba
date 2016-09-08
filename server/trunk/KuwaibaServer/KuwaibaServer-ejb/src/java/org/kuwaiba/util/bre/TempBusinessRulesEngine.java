@@ -59,14 +59,13 @@ public class TempBusinessRulesEngine {
         subClassOfValidators.put("GenericApplicationElement", "applicationElement");
         subClassOfValidators.put("GenericCommunicationsElement", "genericCommunicationsElement");
         subClassOfValidators.put("GenericNetworkElement", "genericNetworkElement");
-        subClassOfValidators.put("IPTransit", "servicereporttemp");
-        subClassOfValidators.put("VRFInstance", "vrfinstance");
+        subClassOfValidators.put("VRFInstance", "vlanrule");
+        subClassOfValidators.put("BridgeDomainInterface", "vlanrule");
         subClassOfValidators.put("ServiceInstance", "serviceInstance");
         subClassOfValidators.put("Subnet", "subnet");
         subClassOfValidators.put("ELANService", "elanservice");
         subClassOfValidators.put("ELINEService", "elineservice");
         subClassOfValidators.put("ETREEService", "etreeservice");
-        
         //TODO: These validators will be used to enable special actions for certain type of objects
         //Perhaps we should use some other type of solution for this in the future
         subClassOfValidators.put("GenericSDHTransportLink", "sdhTransportLink");

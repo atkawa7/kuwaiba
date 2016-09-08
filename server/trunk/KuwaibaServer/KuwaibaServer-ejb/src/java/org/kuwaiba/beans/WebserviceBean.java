@@ -2282,7 +2282,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
                     return new ReportDescriptor[] {
                             new ReportDescriptor(4, "TransportLink Structure", className, "Shows the TransportLink Structure")
                     };
-                case "VC12TributaryLink":
+                case "VC1vp2TributaryLink":
                 case "VC3TributaryLink":
                     return new ReportDescriptor[] {
                             new ReportDescriptor(5, "TributaryLink Resources", className, "Shows the resources used by a TributaryLink")
@@ -2295,11 +2295,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 case "VPLSPWService":
                     return new ReportDescriptor[]{
                         new ReportDescriptor(7, "Service details", className, "Shows the resources used by the logical Configuration and some of its attributes")
-                    };
-                    
-                case "VPLSService":
-                    return new ReportDescriptor[] {
-                            new ReportDescriptor(8, "Service details", className, "Shows the resources used by the service and some of its attributes")
                     };
                 case "SubnetIPv4":
                 case "SubnetIPv6":
@@ -2327,6 +2322,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 case "BridgeDomainInterface":
                 case "MPLSTunnel":
                 case "VRFInstance": 
+                case "FrameRelay":
                     return new ReportDescriptor[]{
                         new ReportDescriptor(14, "Config details", className, "Shows the resources used by the logical Configuration and some of its attributes")
                     };

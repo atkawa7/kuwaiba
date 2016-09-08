@@ -771,15 +771,14 @@ public class Reports {
             
             
             else {
-                if (listOflogicalConfiguration.getClassName().equals(Constants.CLASS_VRF_INSTANCE)){
-                    List<RemoteBusinessObjectLight> vlans = bem.getSpecialAttribute(listOflogicalConfiguration.getClassName(), listOflogicalConfiguration.getId(), IPAMModule.RELATIONSHIP_IPAMBELONGSTOVLAN);
+                DetailReportText += "<table><tr><td class=\"generalInfoLabel\">Name</td><td class=\"generalInfoValue\"><b>" + logicalConfigurationObject.getName() + "[" + logicalConfigurationObject.getClassName() + "]</b></td>";
+                List<RemoteBusinessObjectLight> vlans = bem.getSpecialAttribute(listOflogicalConfiguration.getClassName(), listOflogicalConfiguration.getId(), IPAMModule.RELATIONSHIP_IPAMBELONGSTOVLAN);
+                if (!vlans.isEmpty()){
                     for (RemoteBusinessObjectLight vlanInstance : vlans) 
                         vlan += vlanInstance.toString() + ", ";  
-                
+                    DetailReportText +=  "<tr><td class=\"generalInfoLabel\">VLAN</td><td class=\"generalInfoValue\"><b>" + vlan.substring(0, vlan.length()-2) + "</b> </td></tr>";
                 }
-                DetailReportText += "<table><tr><td class=\"generalInfoLabel\">Name</td><td class=\"generalInfoValue\"><b>" + logicalConfigurationObject.getName() + "[" + logicalConfigurationObject.getClassName() + "]</b></td>"
-                        + "<tr><td class=\"generalInfoLabel\">VLAN</td><td class=\"generalInfoValue\"><b>" + vlan.substring(0, vlan.length()-2) + "</b> </td></tr>"
-                        + "<tr><td class=\"generalInfoLabel\">Creation date</td><td class=\"generalInfoValue\"><b>" + new Date(Long.valueOf(attributes.get("creationDate").get(0))) + "</b> </td></tr></table>";
+                DetailReportText +=  "<tr><td class=\"generalInfoLabel\">Creation date</td><td class=\"generalInfoValue\"><b>" + new Date(Long.valueOf(attributes.get("creationDate").get(0))) + "</b> </td></tr></table>";
             }
 
             if (ports.isEmpty())
@@ -845,9 +844,9 @@ public class Reports {
         else {
             title = "Service detail Report for " + theService.getName() + "[" + theService.getClassName() + "]";
             ServiceDetailReportText = getHeader(title);
-            ServiceDetailReportText += 
-                                "  <body><table><tr><td><h1>" + title + "</h1></td><td align=\"center\"><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
-                        
+            ServiceDetailReportText += "<body>"
+                    + "<table><tr><td><h2>" + title +"</h2></td><td align=\"center\"><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
+
             ServiceDetailReportText += "<table>";
             String value = "";
             List<RemoteBusinessObjectLight> parents = bem.getParents(serviceClassName, serviceId);
@@ -866,7 +865,8 @@ public class Reports {
             Set<AttributeMetadata> customerClassAttributes = customerClass.getAttributes();
             
             ServiceDetailReportText += createAttributesOfClass(serviceAttributes, serviceClassAttributes);
-            ServiceDetailReportText += "<tr><td colspan=\"2\" class=\"generalInfoValue\"><b>Customer Details: "+serviceCustomer.toString()+"</b></td></tr>";
+            ServiceDetailReportText += "<table><tr><td><h2>Customer Details: "+serviceCustomer.toString()+"</h1></td><td></td></tr></table>\n"
+                    + "<table>";
             ServiceDetailReportText += createAttributesOfClass(customerAttributes, customerClassAttributes);
             
             ServiceDetailReportText += "</table>";
