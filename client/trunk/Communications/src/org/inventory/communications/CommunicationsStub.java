@@ -99,6 +99,13 @@ public class CommunicationsStub {
     private Cache cache;
     private LocalSession session;
     
+    private static String[] classesWithCustomDeleteActions = new String[] {"ElectricalLink", "RadioLink", "OpticalLink",
+                                                                    "VC4", "VC4-04", "VC4-16", "VC4TributaryLink", "VC12TributaryLink", "VC3TributaryLink",
+                                                                    "STM1", "STM4", "STM16", "STM64", "STM256",
+                                                                    "WireContainer", "WirelessContainer",
+                                                                    "CorporateCustomer", "TelecomOperator", "Provider", "HomeCustomer"
+                                                                    };
+    
     private CommunicationsStub() {
         cache = Cache.getInstace();
     }
@@ -2984,5 +2991,21 @@ public class CommunicationsStub {
     
         // </editor-fold>
     // </editor-fold>
-
+    
+    // <editor-fold desc="Helper Methods" defaultstate="collapsed">
+    /**
+     * Tells if the instances of a class have a custom delete method or if the generic delete action should be used instead
+     * @param className Class to be evaluated
+     * @return True if the instances of the class provided as argument have a custom delete method or false if the generic delete method should be used instead
+     * @deprecated This functionality should be integrated with the data model manager in future versions
+     */
+    public boolean hasCustomDeleteAction(String className) {
+        for (String classWihCustomDeleteAction : classesWithCustomDeleteActions) {
+            if(classWihCustomDeleteAction.equals(className))
+                return true;
+        }
+        
+        return false;
+    }
+    // </editor-fold>
 }

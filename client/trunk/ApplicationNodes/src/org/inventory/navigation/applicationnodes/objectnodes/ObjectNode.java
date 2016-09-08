@@ -33,6 +33,7 @@ import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalObjectListItem;
+import org.inventory.communications.core.caching.Cache;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -255,7 +256,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
         
         actions.add(null); //Separator
         
-        if (getParentNode() != null) {
+        if (!com.hasCustomDeleteAction(getLookup().lookup(LocalObjectLight.class).getClassName())) {
             actions.add(SystemAction.get(DeleteBusinessObjectAction.class));
             actions.add(null); //Separator
         }

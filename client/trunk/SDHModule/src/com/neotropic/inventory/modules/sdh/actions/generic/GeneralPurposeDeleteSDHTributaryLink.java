@@ -20,6 +20,9 @@ import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.navigation.applicationnodes.objectnodes.AbstractChildren;
+import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.openide.util.Utilities;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -35,14 +38,24 @@ public class GeneralPurposeDeleteSDHTributaryLink extends GenericObjectNodeActio
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (JOptionPane.showConfirmDialog(null, 
-                "This will all relevante relationships. \n Are you sure you want to do this?", 
-                "Delete Tributary Link", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
+        ObjectNode selectedNode = Utilities.actionsGlobalContext().lookup(ObjectNode.class);
+        
+        if (selectedNode == null)
+            JOptionPane.showMessageDialog(null, "You must select a node first");
+        else {
+            if (JOptionPane.showConfirmDialog(null, 
+                    "This will delete all relevant relationships. \n Are you sure you want to do this?", 
+                    "Delete Tributary Link", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
 
-            if (CommunicationsStub.getInstance().deleteSDHTributaryLink(object.getClassName(), object.getOid()))
-                NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Tributary link deleted successfully");
-            else 
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE, CommunicationsStub.getInstance().getError());
+                if (CommunicationsStub.getInstance().deleteSDHTributaryLink(object.getClassName(), object.getOid())) {
+                    //If the node is on a tree, update the list
+                    if (selectedNode.getParentNode() != null && AbstractChildren.class.isInstance(selectedNode.getParentNode().getChildren()))
+                        ((AbstractChildren)selectedNode.getParentNode().getChildren()).addNotify();
+                    NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Tributary link deleted successfully");
+                }
+                else 
+                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE, CommunicationsStub.getInstance().getError());
+            }
         }
     }
 

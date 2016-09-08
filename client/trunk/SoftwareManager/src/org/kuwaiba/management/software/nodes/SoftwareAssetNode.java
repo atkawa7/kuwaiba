@@ -17,7 +17,6 @@ package org.kuwaiba.management.software.nodes;
 
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
-import org.openide.nodes.Children;
 
 /**
  * A node representing a software asset (typically a software license)
@@ -27,6 +26,6 @@ import org.openide.nodes.Children;
 class SoftwareAssetNode extends ObjectNode {
 
     public SoftwareAssetNode(LocalObjectLight softwareAsset) {
-        super (Children.LEAF);
+        super (softwareAsset, true);
     }
 }

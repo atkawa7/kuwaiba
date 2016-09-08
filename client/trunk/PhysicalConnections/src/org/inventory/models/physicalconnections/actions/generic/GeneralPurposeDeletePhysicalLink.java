@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
@@ -12,8 +12,9 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ *  under the License.
  */
-package com.neotropic.inventory.modules.sdh.actions.generic;
+package org.inventory.models.physicalconnections.actions.generic;
 
 import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
@@ -26,44 +27,44 @@ import org.openide.util.Utilities;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- * Deletes a ContainerLink and all its contents
+ * General Purpose version of the Deletes a physical link
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class GeneralPurposeDeleteSDHContainerLink extends GenericObjectNodeAction {
+public class GeneralPurposeDeletePhysicalLink extends GenericObjectNodeAction {
 
-    public GeneralPurposeDeleteSDHContainerLink() {
-        this.putValue(NAME, "Delete Container Link"); 
+    public GeneralPurposeDeletePhysicalLink() {
+        putValue(NAME, "Delete Physical Link");
+    }
+       
+    @Override
+    public String getValidator() {
+        return "physicalLink";
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        
+    public void actionPerformed(ActionEvent ae) {
         ObjectNode selectedNode = Utilities.actionsGlobalContext().lookup(ObjectNode.class);
-        
         if (selectedNode == null)
             JOptionPane.showMessageDialog(null, "You must select a node first");
-        else {       
-            if (JOptionPane.showConfirmDialog(null, 
-                    "This will delete all the containers and tributary links \n Are you sure you want to do this?", 
-                    "Delete Container Link", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
-
-                if (CommunicationsStub.getInstance().deleteSDHContainerLink(object.getClassName(), object.getOid())) {
+        else {
+            
+            if (JOptionPane.showConfirmDialog(null, "This will delete the connection. Are you sure you want to do it?", 
+                    "Delete Link", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+            
+                if (CommunicationsStub.getInstance().deletePhysicalConnection(selectedNode.getObject().getClassName(), 
+                        selectedNode.getObject().getOid())) {
+                    
                     //If the node is on a tree, update the list
                     if (selectedNode.getParentNode() != null && AbstractChildren.class.isInstance(selectedNode.getParentNode().getChildren()))
                         ((AbstractChildren)selectedNode.getParentNode().getChildren()).addNotify();
                     
-                    NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Container link deleted successfully");
+                    NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Link deleted successfully");
                 }
-                else 
-                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE, CommunicationsStub.getInstance().getError());
+                else
+                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             }
         }
     }
-
-    @Override
-    public String getValidator() {
-        return "sdhContainerLink";
-    }
-}
     
+}

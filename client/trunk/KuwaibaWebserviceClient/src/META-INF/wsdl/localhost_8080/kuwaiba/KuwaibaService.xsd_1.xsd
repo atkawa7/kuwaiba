@@ -524,21 +524,21 @@
 
 <xs:element name="relateIPtoPortResponse" type="tns:relateIPtoPortResponse"/>
 
-<xs:element name="relateSubnetToVlan" type="tns:relateSubnetToVlan"/>
+<xs:element name="relatePortToInterface" type="tns:relatePortToInterface"/>
 
-<xs:element name="relateSubnetToVlanResponse" type="tns:relateSubnetToVlanResponse"/>
+<xs:element name="relatePortToInterfaceResponse" type="tns:relatePortToInterfaceResponse"/>
 
 <xs:element name="relateSubnetToVrf" type="tns:relateSubnetToVrf"/>
 
 <xs:element name="relateSubnetToVrfResponse" type="tns:relateSubnetToVrfResponse"/>
 
-<xs:element name="relateToNetworkElement" type="tns:relateToNetworkElement"/>
+<xs:element name="relateToVlan" type="tns:relateToVlan"/>
 
-<xs:element name="relateToNetworkElementResponse" type="tns:relateToNetworkElementResponse"/>
+<xs:element name="relateToVlanResponse" type="tns:relateToVlanResponse"/>
 
-<xs:element name="releaseFromNetworkElement" type="tns:releaseFromNetworkElement"/>
+<xs:element name="releaseFromVlan" type="tns:releaseFromVlan"/>
 
-<xs:element name="releaseFromNetworkElementResponse" type="tns:releaseFromNetworkElementResponse"/>
+<xs:element name="releaseFromVlanResponse" type="tns:releaseFromVlanResponse"/>
 
 <xs:element name="releaseMirrorPort" type="tns:releaseMirrorPort"/>
 
@@ -556,9 +556,9 @@
 
 <xs:element name="releasePortFromIPResponse" type="tns:releasePortFromIPResponse"/>
 
-<xs:element name="releaseSubnetFromVlan" type="tns:releaseSubnetFromVlan"/>
+<xs:element name="releasePortFromInterface" type="tns:releasePortFromInterface"/>
 
-<xs:element name="releaseSubnetFromVlanResponse" type="tns:releaseSubnetFromVlanResponse"/>
+<xs:element name="releasePortFromInterfaceResponse" type="tns:releasePortFromInterfaceResponse"/>
 
 <xs:element name="releaseSubnetFromVrf" type="tns:releaseSubnetFromVrf"/>
 
@@ -888,19 +888,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="releaseFromNetworkElement">
-<xs:sequence>
-<xs:element name="networkElementClassName" type="xs:string" minOccurs="0"/>
-<xs:element name="networkElementId" type="xs:long"/>
-<xs:element name="id" type="xs:long"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="releaseFromNetworkElementResponse">
-<xs:sequence/>
-</xs:complexType>
-
 <xs:complexType name="getQuery">
 <xs:sequence>
 <xs:element name="queryOid" type="xs:long"/>
@@ -931,18 +918,6 @@
 <xs:element name="description" type="xs:string" minOccurs="0"/>
 <xs:element name="isPublic" type="xs:boolean"/>
 </xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="releaseSubnetFromVlan">
-<xs:sequence>
-<xs:element name="id" type="xs:long"/>
-<xs:element name="vlanId" type="xs:long"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="releaseSubnetFromVlanResponse">
-<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="getObjectRelatedView">
@@ -1127,18 +1102,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="deleteAttributeForClassWithId">
-<xs:sequence>
-<xs:element name="classId" type="xs:long"/>
-<xs:element name="attributeName" type="xs:string" minOccurs="0"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="deleteAttributeForClassWithIdResponse">
-<xs:sequence/>
-</xs:complexType>
-
 <xs:complexType name="createRootPool">
 <xs:sequence>
 <xs:element name="name" type="xs:string" minOccurs="0"/>
@@ -1153,6 +1116,18 @@
 <xs:sequence>
 <xs:element name="return" type="xs:long"/>
 </xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteAttributeForClassWithId">
+<xs:sequence>
+<xs:element name="classId" type="xs:long"/>
+<xs:element name="attributeName" type="xs:string" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteAttributeForClassWithIdResponse">
+<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="createService">
@@ -1365,6 +1340,21 @@
 <xs:sequence/>
 </xs:complexType>
 
+<xs:complexType name="getSubnetPools">
+<xs:sequence>
+<xs:element name="limit" type="xs:int"/>
+<xs:element name="parentId" type="xs:long"/>
+<xs:element name="className" type="xs:string" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getSubnetPoolsResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remotePool" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="setAttributePropertiesForClassWithId">
 <xs:sequence>
 <xs:element name="classId" type="xs:long"/>
@@ -1384,21 +1374,6 @@
 
 <xs:complexType name="setAttributePropertiesForClassWithIdResponse">
 <xs:sequence/>
-</xs:complexType>
-
-<xs:complexType name="getSubnetPools">
-<xs:sequence>
-<xs:element name="limit" type="xs:int"/>
-<xs:element name="parentId" type="xs:long"/>
-<xs:element name="className" type="xs:string" minOccurs="0"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getSubnetPoolsResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:remotePool" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="createTask">
@@ -1884,6 +1859,24 @@
 <xs:sequence/>
 </xs:complexType>
 
+<xs:complexType name="createSpecialObject">
+<xs:sequence>
+<xs:element name="className" type="xs:string" minOccurs="0"/>
+<xs:element name="parentObjectClassName" type="xs:string" minOccurs="0"/>
+<xs:element name="parentOid" type="xs:long"/>
+<xs:element name="attributeNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="attributeValues" type="ns1:stringArray" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="templateId" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createSpecialObjectResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:long"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="createAttributeForClassWithId">
 <xs:sequence>
 <xs:element name="classId" type="xs:long"/>
@@ -1904,24 +1897,6 @@
 <xs:sequence/>
 </xs:complexType>
 
-<xs:complexType name="createSpecialObject">
-<xs:sequence>
-<xs:element name="className" type="xs:string" minOccurs="0"/>
-<xs:element name="parentObjectClassName" type="xs:string" minOccurs="0"/>
-<xs:element name="parentOid" type="xs:long"/>
-<xs:element name="attributeNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element name="attributeValues" type="ns1:stringArray" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element name="templateId" type="xs:long"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="createSpecialObjectResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:long"/>
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="getPossibleChildren">
 <xs:sequence>
 <xs:element name="parentClassName" type="xs:string" minOccurs="0"/>
@@ -1933,19 +1908,6 @@
 <xs:sequence>
 <xs:element name="return" type="tns:classInfoLight" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="relateSubnetToVlan">
-<xs:sequence>
-<xs:element name="id" type="xs:long"/>
-<xs:element name="className" type="xs:string" minOccurs="0"/>
-<xs:element name="vlanId" type="xs:long"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="relateSubnetToVlanResponse">
-<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="setClassProperties">
@@ -2353,6 +2315,19 @@
 <xs:sequence/>
 </xs:complexType>
 
+<xs:complexType name="relateToVlan">
+<xs:sequence>
+<xs:element name="id" type="xs:long"/>
+<xs:element name="className" type="xs:string" minOccurs="0"/>
+<xs:element name="vlanId" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="relateToVlanResponse">
+<xs:sequence/>
+</xs:complexType>
+
 <xs:complexType name="updateTaskSchedule">
 <xs:sequence>
 <xs:element name="taskId" type="xs:long"/>
@@ -2362,6 +2337,18 @@
 </xs:complexType>
 
 <xs:complexType name="updateTaskScheduleResponse">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="releaseFromVlan">
+<xs:sequence>
+<xs:element name="id" type="xs:long"/>
+<xs:element name="vlanId" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="releaseFromVlanResponse">
 <xs:sequence/>
 </xs:complexType>
 
@@ -2436,20 +2423,6 @@
 </xs:complexType>
 
 <xs:complexType name="deleteSubnetPoolsResponse">
-<xs:sequence/>
-</xs:complexType>
-
-<xs:complexType name="relateToNetworkElement">
-<xs:sequence>
-<xs:element name="id" type="xs:long"/>
-<xs:element name="className" type="xs:string" minOccurs="0"/>
-<xs:element name="networkElementClassName" type="xs:string" minOccurs="0"/>
-<xs:element name="networkElementId" type="xs:long"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="relateToNetworkElementResponse">
 <xs:sequence/>
 </xs:complexType>
 
@@ -2598,6 +2571,20 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="relatePortToInterface">
+<xs:sequence>
+<xs:element name="portId" type="xs:long"/>
+<xs:element name="portClassName" type="xs:string" minOccurs="0"/>
+<xs:element name="interfaceClassName" type="xs:string" minOccurs="0"/>
+<xs:element name="interfaceId" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="relatePortToInterfaceResponse">
+<xs:sequence/>
+</xs:complexType>
+
 <xs:complexType name="getSiblings">
 <xs:sequence>
 <xs:element name="objectClassName" type="xs:string" minOccurs="0"/>
@@ -2704,19 +2691,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="getClassWithId">
-<xs:sequence>
-<xs:element name="classId" type="xs:long"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getClassWithIdResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:classInfo" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="releaseObjectFromService">
 <xs:sequence>
 <xs:element name="serviceClass" type="xs:string" minOccurs="0"/>
@@ -2728,6 +2702,19 @@
 
 <xs:complexType name="releaseObjectFromServiceResponse">
 <xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="getClassWithId">
+<xs:sequence>
+<xs:element name="classId" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getClassWithIdResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:classInfo" minOccurs="0"/>
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="getServices">
@@ -2780,6 +2767,19 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="releasePortFromInterface">
+<xs:sequence>
+<xs:element name="interfaceClassName" type="xs:string" minOccurs="0"/>
+<xs:element name="interfaceId" type="xs:long"/>
+<xs:element name="portId" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="releasePortFromInterfaceResponse">
+<xs:sequence/>
+</xs:complexType>
+
 <xs:complexType name="getObjectChildrenForClassWithId">
 <xs:sequence>
 <xs:element name="oid" type="xs:long"/>
@@ -2823,18 +2823,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="addPossibleChildrenForClassWithId">
-<xs:sequence>
-<xs:element name="parentClassId" type="xs:long"/>
-<xs:element name="childrenToBeAdded" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="addPossibleChildrenForClassWithIdResponse">
-<xs:sequence/>
-</xs:complexType>
-
 <xs:complexType name="createPoolInObject">
 <xs:sequence>
 <xs:element name="parentClassname" type="xs:string" minOccurs="0"/>
@@ -2851,6 +2839,18 @@
 <xs:sequence>
 <xs:element name="return" type="xs:long"/>
 </xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="addPossibleChildrenForClassWithId">
+<xs:sequence>
+<xs:element name="parentClassId" type="xs:long"/>
+<xs:element name="childrenToBeAdded" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="addPossibleChildrenForClassWithIdResponse">
+<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="itOverlaps">

@@ -25,7 +25,6 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
-import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.util.Lookup;
 import org.openide.util.Utilities;
 import org.openide.util.lookup.ServiceProvider;
@@ -48,26 +47,21 @@ public class RelateToInterface extends GenericObjectNodeAction{
             interfaces.add(o);
         for(LocalObjectLight o : CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_VRFINSTANCE))
             interfaces.add(o);
-        for(LocalObjectLight o : CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_MPLSTUNEL))
+        for(LocalObjectLight o : CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_MPLSTUNNEL))
             interfaces.add(o);
-        for(LocalObjectLight o : CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_FRAMERELAY))
+        for(LocalObjectLight o : CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_FRAMERELAYCIRCUIT))
             interfaces.add(o);
-        
-        if (interfaces ==  null)
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-        
-        else{
-            Lookup.Result<LocalObjectLight> selectedNodes = Utilities.actionsGlobalContext().lookupResult(LocalObjectLight.class);
-            Collection<? extends LocalObjectLight> lookupResult = selectedNodes.allInstances();
-            List<LocalObjectLight> selectedObjects = new ArrayList<>();
-            Iterator<? extends LocalObjectLight> iterator = lookupResult.iterator();
-            
-            while (iterator.hasNext())
-                selectedObjects.add((LocalObjectLight)iterator.next());
+                
+        Lookup.Result<LocalObjectLight> selectedNodes = Utilities.actionsGlobalContext().lookupResult(LocalObjectLight.class);
+        Collection<? extends LocalObjectLight> lookupResult = selectedNodes.allInstances();
+        List<LocalObjectLight> selectedObjects = new ArrayList<>();
+        Iterator<? extends LocalObjectLight> iterator = lookupResult.iterator();
 
-            InterfaceFrame frame = new InterfaceFrame(selectedObjects, interfaces);
-            frame.setVisible(true);
-        } 
+        while (iterator.hasNext())
+            selectedObjects.add((LocalObjectLight)iterator.next());
+
+        InterfaceFrame frame = new InterfaceFrame(selectedObjects, interfaces);
+        frame.setVisible(true);
     }
     
     @Override

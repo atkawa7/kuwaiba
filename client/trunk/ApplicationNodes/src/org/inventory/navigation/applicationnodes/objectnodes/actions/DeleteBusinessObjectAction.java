@@ -57,13 +57,16 @@ public final class DeleteBusinessObjectAction extends CallbackSystemAction {
                 ObjectNode selectedNode = (ObjectNode)selectedNodes.next();
                 classNames.add(selectedNode.getObject().getClassName());
                 oids.add(selectedNode.getObject().getOid());
-                parents.add(selectedNode.getParentNode());
+                if (selectedNode.getParentNode() != null)
+                    parents.add(selectedNode.getParentNode());
             }
                         
             if (CommunicationsStub.getInstance().deleteObjects(classNames, oids)){
                 
-                for (Node parent : parents)
-                    ((AbstractChildren)parent.getChildren()).addNotify();
+                for (Node parent : parents) {
+                    if (AbstractChildren.class.isInstance(parent.getChildren()))
+                        ((AbstractChildren)parent.getChildren()).addNotify();
+                }
                 
                 NotificationUtil.getInstance().showSimplePopup("Success", 
                         NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TEXT_OK"));

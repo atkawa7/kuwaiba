@@ -21,6 +21,7 @@ import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.navigation.applicationnodes.objectnodes.AbstractChildren;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.openide.util.Utilities;
 import org.openide.util.lookup.ServiceProvider;
@@ -30,15 +31,15 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class GeneralPurposeDeletePhysicalConnection extends GenericObjectNodeAction {
+public class GeneralPurposeDeletePhysicalContainer extends GenericObjectNodeAction {
 
-    public GeneralPurposeDeletePhysicalConnection() {
-        putValue(NAME, "Delete Physical Connection");
+    public GeneralPurposeDeletePhysicalContainer() {
+        putValue(NAME, "Delete Physical Container");
     }
        
     @Override
     public String getValidator() {
-        return "physicalConnection";
+        return "physicalContainer";
     }
 
     @Override
@@ -48,12 +49,18 @@ public class GeneralPurposeDeletePhysicalConnection extends GenericObjectNodeAct
             JOptionPane.showMessageDialog(null, "You must select a node first");
         else {
             
-            if (JOptionPane.showConfirmDialog(null, "This will delete the connection and all possible children. Are you sure you want to do it?", 
-                    "Delete Connection", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+            if (JOptionPane.showConfirmDialog(null, "This will delete the connection and all its existing children. Are you sure you want to do it?", 
+                    "Delete Container", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             
                 if (CommunicationsStub.getInstance().deletePhysicalConnection(selectedNode.getObject().getClassName(), 
-                        selectedNode.getObject().getOid()))
-                    NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Connection deleted successfully");
+                        selectedNode.getObject().getOid())) {
+                    
+                    //If the node is on a tree, update the list
+                    if (selectedNode.getParentNode() != null && AbstractChildren.class.isInstance(selectedNode.getParentNode().getChildren()))
+                        ((AbstractChildren)selectedNode.getParentNode().getChildren()).addNotify();
+                    
+                    NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Container deleted successfully");
+                }
                 else
                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             }

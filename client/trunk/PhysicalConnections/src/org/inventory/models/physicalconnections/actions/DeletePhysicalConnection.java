@@ -45,7 +45,7 @@ public class DeletePhysicalConnection extends AbstractAction {
                     "Delete Connection", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             
                 if (CommunicationsStub.getInstance().deletePhysicalConnection(selectedNode.getObject().getClassName(), 
-                        selectedNode.getObject().getOid()))
+                        selectedNode.getObject().getOid()))                        
                     NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Connection deleted successfully");
                 else
                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());

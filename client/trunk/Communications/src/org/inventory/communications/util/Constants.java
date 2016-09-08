@@ -60,11 +60,7 @@ public class Constants {
     /**
      * All instances of classes tagged with this validator may be related to a software asset
      */
-    public static final String VALIDATOR_APPLICATION_ELEMENT = "applicationElement";
-    /**
-     * All instances of classes tagged with this validator may be related to a software asset
-     */
-    public static final String VALIDATOR_GENERIC_NETWORK_ELEMENT = "genericNetworkElement";
+    public static final String VALIDATOR_APPLICATION_ELEMENT = "genericApplicationElement";
     /**
      * All instances of classes tagged with this validator may be related to a subnet
      */
@@ -114,10 +110,6 @@ public class Constants {
      */
     public static final String CLASS_GENERICCOMMUNICATIONSELEMENT = "GenericCommunicationsElement";
     /**
-     * Root class of all network elements
-     */
-    public static final String CLASS_GENERICNETWORKELEMENT = "GenericNetworkElement";
-    /**
      * Class Rack
      */
     public static final String CLASS_RACK = "Rack";
@@ -164,11 +156,11 @@ public class Constants {
     /**
      * Class MPLSTunnel
      */
-    public static final String CLASS_MPLSTUNEL = "MPLSTunnel";
+    public static final String CLASS_MPLSTUNNEL = "MPLSTunnel";
     /**
      * Class FrameRelay
      */
-    public static final String CLASS_FRAMERELAY = "FrameRelay";
+    public static final String CLASS_FRAMERELAYCIRCUIT = "FrameRelayCircuit";
     /**
      * Default type for a new attribute
      */

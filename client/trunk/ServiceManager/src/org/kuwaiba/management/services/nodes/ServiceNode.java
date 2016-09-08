@@ -27,7 +27,6 @@ import org.kuwaiba.management.services.nodes.actions.ServiceManagerActionFactory
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ServiceNode extends ObjectNode {
-    //private static Image icon = ImageUtilities.loadImage("org/kuwaiba/management/services/res/service.png");
     
     public ServiceNode(LocalObjectLight service) {
         super(service);

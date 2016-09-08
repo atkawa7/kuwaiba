@@ -38,6 +38,7 @@ public class Cache{
     private HashMap<String,List<LocalClassMetadataLight>> possibleChildrenIndex; //Cache for possible children
     private HashMap<String,List<LocalObjectListItem>> listIndex; //Cache for list-type attributes
     private HashMap<String, List<LocalReportDescriptor>> reportIndex; //Cache for class reports
+    
     private Long rootClassId = null;
     /**
      * Information about the current logged user

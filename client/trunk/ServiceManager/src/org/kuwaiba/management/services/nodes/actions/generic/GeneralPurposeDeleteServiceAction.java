@@ -21,13 +21,13 @@ import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.openide.util.lookup.ServiceProvider;
+//import org.openide.util.lookup.ServiceProvider;
 
 /**
  * General purpose version of the DeleteServiceAction, to be used outside the Service Manager module
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-@ServiceProvider(service=GenericObjectNodeAction.class)
+//@ServiceProvider(service=GenericObjectNodeAction.class)
 public class GeneralPurposeDeleteServiceAction extends GenericObjectNodeAction {
 
     public GeneralPurposeDeleteServiceAction() {
