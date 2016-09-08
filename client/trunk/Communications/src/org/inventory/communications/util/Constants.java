@@ -72,7 +72,7 @@ public class Constants {
     /**
      * All instances of classes tagged with this validator may be related to VLANs
      */
-    public static final String VALIDATOR_VRFINSTANCE = "vrfinstance";
+    public static final String VALIDATOR_VLAN = "vlanrule";
     /**
      * DummyRoot constant. It's a pseudo class
      */
@@ -165,6 +165,10 @@ public class Constants {
      * Class MPLSTunnel
      */
     public static final String CLASS_MPLSTUNEL = "MPLSTunnel";
+    /**
+     * Class FrameRelay
+     */
+    public static final String CLASS_FRAMERELAY = "FrameRelay";
     /**
      * Default type for a new attribute
      */
