@@ -82,7 +82,7 @@ public class PersistenceService {
             applicationConfiguration.put("corporateLogo", configuration.getProperty("corporateLogo"));
             aem.setConfiguration(applicationConfiguration);
             mem = plf.createMetadataEntityManager(connectionManager, aem);
-            bem = plf.createBusinessEntityManager(connectionManager, aem);
+            bem = plf.createBusinessEntityManager(connectionManager, aem, mem);
             dataModelLoader = new DataModelLoader(connectionManager, mem);
             //dataIntegrityService = new DataIntegrityService(connectionManager);
             //dataIntegrityService.checkIntegrity();

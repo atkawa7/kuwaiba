@@ -865,8 +865,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     @Override
     public List<ClassMetadataLight> getPossibleChildren(String parentClassName) 
             throws MetadataObjectNotFoundException, NotAuthorizedException   {
+        
         List<ClassMetadataLight> classMetadataResultList = new ArrayList<>();
         List<String> cachedPossibleChildren = cm.getPossibleChildren(parentClassName);
+        
         if (cachedPossibleChildren != null) {
             for (String cachedPossibleChild : cachedPossibleChildren)
                 classMetadataResultList.add(cm.getClass(cachedPossibleChild));
@@ -875,7 +877,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         cachedPossibleChildren = new ArrayList<>();
         String cypherQuery;
         Map<String, Object> params = new HashMap<>();
-        if (parentClassName.equals(Constants.NODE_DUMMYROOT)){
+        if (parentClassName == null || parentClassName.equals(Constants.NODE_DUMMYROOT)) {
             cypherQuery = "MATCH (n:root {name:\"" + Constants.NODE_DUMMYROOT + "\"})-[:POSSIBLE_CHILD]->directChild " +
                     "OPTIONAL MATCH directChild<-[:EXTENDS*]-subClass " +
                     "WHERE subClass.abstract = false OR subClass IS NULL " +
@@ -906,7 +908,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     cachedPossibleChildren.add((String)indirectChildNode.getProperty(Constants.PROPERTY_NAME));
                 }
             }
-            cm.putPossibleChildren(parentClassName, cachedPossibleChildren);
+            cm.putPossibleChildren(parentClassName == null ? 
+                    Constants.NODE_DUMMYROOT : parentClassName, cachedPossibleChildren);
         }
         return classMetadataResultList;
     }

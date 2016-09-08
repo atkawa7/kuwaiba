@@ -17,6 +17,7 @@
 package org.kuwaiba.apis.persistence.metadata;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Contains the basic meta data information about a class
@@ -200,4 +201,20 @@ public class ClassMetadataLight implements Serializable{
         this.color = color;
     }
     // </editor-fold>
+    
+    @Override
+    public boolean equals(Object obj) {
+        if(obj != null && obj instanceof ClassMetadataLight)
+            return id == ((ClassMetadataLight)obj).getId();
+        
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 59 * hash + (int) (this.id ^ (this.id >>> 32));
+        hash = 59 * hash + Objects.hashCode(this.name);
+        return hash;
+    }
 }

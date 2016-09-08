@@ -49,7 +49,7 @@ public class PersistenceLayerFactory{
     /**
      * Dynamically creates a metadata entity manager
      * @param connectionManager
-     * @param aem
+     * @param aem Application Entity Manager reference
      * @return The manager
      * @throws InstantiationException
      * @throws IllegalAccessException
@@ -99,6 +99,7 @@ public class PersistenceLayerFactory{
      * Dynamically creates a business entity manager
      * @param connectionManager
      * @param aem
+     * @param mem Metadata Entity Manager reference
      * @return The manager
      * @throws InstantiationException
      * @throws IllegalAccessException
@@ -106,14 +107,14 @@ public class PersistenceLayerFactory{
      * @throws IllegalArgumentException
      * @throws InvocationTargetException 
      */
-    public BusinessEntityManager createBusinessEntityManager(ConnectionManager connectionManager, ApplicationEntityManager aem) 
+    public BusinessEntityManager createBusinessEntityManager(ConnectionManager connectionManager, ApplicationEntityManager aem, MetadataEntityManager mem) 
             throws InstantiationException, IllegalAccessException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException {
         try {
             Class myClass = (Class) Class.forName(
                     "org.kuwaiba.services.persistence.impl.neo4j.telecom.BusinessEntityManagerImpl");
             
-            Constructor bemConstructor = myClass.getConstructor(ConnectionManager.class, ApplicationEntityManager.class);
-            return (BusinessEntityManager)bemConstructor.newInstance(connectionManager, aem);
+            Constructor bemConstructor = myClass.getConstructor(ConnectionManager.class, ApplicationEntityManager.class, MetadataEntityManager.class);
+            return (BusinessEntityManager)bemConstructor.newInstance(connectionManager, aem, mem);
         }
         catch (ClassNotFoundException cnfe) {
             throw new IllegalArgumentException ("BusinessEntityManager implementation not found: " + cnfe.getMessage());

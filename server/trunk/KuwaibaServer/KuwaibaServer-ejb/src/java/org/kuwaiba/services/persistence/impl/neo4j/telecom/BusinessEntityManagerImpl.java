@@ -42,6 +42,7 @@ import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
+import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.services.persistence.cache.CacheManager;
 import org.kuwaiba.services.persistence.impl.neo4j.RelTypes;
 import org.kuwaiba.services.persistence.util.Constants;
@@ -69,6 +70,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      * Reference to the Application Entity Manager
      */
     private ApplicationEntityManager aem;
+    /**
+     * Reference to the Metadata Entity Manager
+     */
+    private MetadataEntityManager mem;
     /**
      * Reference to the db handler
      */
@@ -98,9 +103,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         cm = CacheManager.getInstance();
     }
 
-    public BusinessEntityManagerImpl(ConnectionManager cmn, ApplicationEntityManager aem) {
+    public BusinessEntityManagerImpl(ConnectionManager cmn, ApplicationEntityManager aem, MetadataEntityManager mem) {
         this();
         this.aem = aem;
+        this.mem = mem;
         this.graphDb = (GraphDatabaseService)cmn.getConnectionHandler();
         try(Transaction tx = graphDb.beginTx()) {
             this.classIndex = graphDb.index().forNodes(Constants.INDEX_CLASS);
@@ -118,6 +124,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException, DatabaseException, ApplicationObjectNotFoundException, NotAuthorizedException {
         
         ClassMetadata myClass= cm.getClass(className);
+        
+        if (!mem.getPossibleChildren(parentClassName).contains(myClass)) 
+            throw new OperationNotPermittedException("Create Object", 
+                    String.format("An instance of class %s can't be created as child of %s", className, parentClassName == null ? Constants.NODE_DUMMYROOT : parentClassName));
+        
         try (Transaction tx = graphDb.beginTx()) {        
             Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
             if (classNode == null)
@@ -143,10 +154,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 if (myParentObjectClass == null)
                     throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
             }
-
-            if (!cm.getPossibleChildren(parentClassName).contains(className))
-                throw new OperationNotPermittedException("Create Object", 
-                        String.format("An instance of class %s can't be created as child of %s", className, parentClassName == null ? Constants.NODE_DUMMYROOT : parentClassName));
 
             Node parentNode;
             if (parentOid != -1){

@@ -56,9 +56,7 @@ public class TempBusinessRulesEngine {
         subClassOfValidators.put("GenericPort", "physicalEndpoint");
         subClassOfValidators.put("GenericPhysicalContainer", "physicalContainer");
         subClassOfValidators.put("GenericPhysicalLink", "physicalLink");
-        subClassOfValidators.put("GenericApplicationElement", "applicationElement");
-        subClassOfValidators.put("GenericCommunicationsElement", "genericCommunicationsElement");
-        subClassOfValidators.put("GenericNetworkElement", "genericNetworkElement");
+        subClassOfValidators.put("GenericApplicationElement", "genericApplicationElement");
         subClassOfValidators.put("VRFInstance", "vlanrule");
         subClassOfValidators.put("BridgeDomainInterface", "vlanrule");
         subClassOfValidators.put("ServiceInstance", "serviceInstance");
@@ -73,8 +71,6 @@ public class TempBusinessRulesEngine {
         subClassOfValidators.put("GenericSDHTributaryLink", "sdhTributaryLink");
         subClassOfValidators.put("GenericContract", "contract");
         subClassOfValidators.put("GenericCustomer", "customer");
-        subClassOfValidators.put("GenericService", "service");
-        subClassOfValidators.put("GenericPhysicalConnection", "physicalConnection");
     }
 
     public HashMap<String, List<String[]>> getMappings(){       
