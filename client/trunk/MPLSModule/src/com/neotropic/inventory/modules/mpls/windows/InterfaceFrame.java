@@ -135,6 +135,5 @@ public class InterfaceFrame extends JFrame{
         LocalObjectLight[] toArray = filteredServices.toArray(new LocalObjectLight[filteredServices.size()]);
         lstAvailableDevices.setListData(toArray);
     }
-
     
 }

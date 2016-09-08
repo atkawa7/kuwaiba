@@ -67,6 +67,6 @@ public class RelateToVlanAction extends GenericObjectNodeAction{
 
     @Override
     public String getValidator() {
-        return Constants.VALIDATOR_VRFINSTANCE;
+        return Constants.VALIDATOR_VLAN;
     }
 }

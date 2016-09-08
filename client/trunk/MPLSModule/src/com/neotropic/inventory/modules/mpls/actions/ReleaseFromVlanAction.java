@@ -52,7 +52,7 @@ public class ReleaseFromVlanAction  extends GenericObjectNodeAction implements P
 
     @Override
     public String getValidator() {
-        return Constants.VALIDATOR_VRFINSTANCE;
+        return Constants.VALIDATOR_VLAN;
     }
 
     @Override

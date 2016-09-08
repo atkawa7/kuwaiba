@@ -44,12 +44,14 @@ public class RelateToInterface extends GenericObjectNodeAction{
     @Override
     public void actionPerformed(ActionEvent e) {
         List<LocalObjectLight> interfaces = new ArrayList<>();
-        for(LocalObjectLight object : CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_BRIDGEDOMAININTERFACE))
-            interfaces.add(object);
-        for(LocalObjectLight object : CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_VRFINSTANCE))
-            interfaces.add(object);
-        for(LocalObjectLight object : CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_MPLSTUNEL))
-            interfaces.add(object);
+        for(LocalObjectLight o : CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_BRIDGEDOMAININTERFACE))
+            interfaces.add(o);
+        for(LocalObjectLight o : CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_VRFINSTANCE))
+            interfaces.add(o);
+        for(LocalObjectLight o : CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_MPLSTUNEL))
+            interfaces.add(o);
+        for(LocalObjectLight o : CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_FRAMERELAY))
+            interfaces.add(o);
         
         if (interfaces ==  null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
