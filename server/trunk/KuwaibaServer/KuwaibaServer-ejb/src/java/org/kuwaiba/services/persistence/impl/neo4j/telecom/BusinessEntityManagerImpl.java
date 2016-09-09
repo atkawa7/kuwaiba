@@ -172,49 +172,82 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         }
     }
     
-    //TODO: This method could be optimized, since it forces to search for the parent object twice
+    //TODO: Rewrite this!
     @Override
-    public long createObject(String className, String parentClassName, String criteria, HashMap<String,List<String>> attributes, long template)
+    public long createObject(String className, String parentClassName, String criteria, HashMap<String, List<String>> attributes, long template)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, DatabaseException, ApplicationObjectNotFoundException, NotAuthorizedException {
+        
+        ClassMetadata objectClass = cm.getClass(className);
+        if (objectClass == null)
+            throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
+        
+        if (objectClass.isInDesign())
+            throw new OperationNotPermittedException("Create Object", "Can not create instances of classes marked as isDesign");
 
+        if (objectClass.isAbstract())
+            throw new OperationNotPermittedException("Create Object", "Can not create instances of abstract classes");
+
+        if (!cm.isSubClass("InventoryObject", className))
+            throw new OperationNotPermittedException("Create Object", "Can not create non-inventory objects");
+        
+        if (!mem.getPossibleChildren(parentClassName).contains(objectClass))
+            throw new OperationNotPermittedException("Create Object", 
+                    String.format("An instance of class %s can't be created as child of %s", className, parentClassName == null ? Constants.NODE_DUMMYROOT : parentClassName));
+        
+        String[] splitCriteria = criteria.split(":");
+        if (splitCriteria.length != 2)
+            throw new InvalidArgumentException("The criteria is not valid, two components expected (attributeName:attributeValue)");
+
+        if (splitCriteria[0].equals(Constants.PROPERTY_OID)) //The user is providing the id of te parent node explicitely
+            return createObject(className, parentClassName, Long.parseLong(splitCriteria[1]), attributes, template);
+
+        ClassMetadata parentClass = cm.getClass(parentClassName);
+        if (parentClass == null)
+            throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", parentClassName));
+
+        AttributeMetadata filterAttribute = parentClass.getAttribute(splitCriteria[0]);
+
+        if (filterAttribute == null)
+            throw new MetadataObjectNotFoundException(String.format("Attribute %s could not be found in class %s", splitCriteria[0], parentClassName));
+
+        if (!AttributeMetadata.isPrimitive(filterAttribute.getType()))
+            throw new InvalidArgumentException(String.format(
+                    "The filter provided (%s) is not a primitive type. Non-primitive types are not supported as they typically don't uniquely identify an object", 
+                    splitCriteria[0]));
+        
         try (Transaction tx = graphDb.beginTx()) {
-            String[] splitCriteria = criteria.split(":");
-            if (splitCriteria.length != 2)
-                throw new InvalidArgumentException("The criteria is not valid, two components expected (attributeName:attributeValue)");
+           
+            Node parentClassNode, parentNode = null;
+            
+            if (Constants.NODE_DUMMYROOT.equals(parentClassName))
+                parentNode = specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
+            else {
+                
+                parentClassNode = classIndex.get(Constants.PROPERTY_NAME, parentClassName).getSingle();
+                
+                Iterator<Relationship> instances = parentClassNode.getRelationships(RelTypes.INSTANCE_OF).iterator();
 
-            if (splitCriteria[0].equals(Constants.PROPERTY_OID))
-                return createObject(className, parentClassName, Long.parseLong(splitCriteria[1]), attributes, template);
-
-            ClassMetadata parentClass = cm.getClass(parentClassName);
-            if (parentClass == null)
-                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", parentClassName));
-
-            AttributeMetadata filterAttribute = parentClass.getAttribute(splitCriteria[0]);
-
-            if (filterAttribute == null)
-                throw new MetadataObjectNotFoundException(String.format("Attribute %s could not be found", splitCriteria[1]));
-
-            if (!AttributeMetadata.isPrimitive(filterAttribute.getType()))
-                throw new InvalidArgumentException(String.format(
-                        "The filter provided (%s) is not a primitive type. Non-primitive types are not supported as they typically don't uniquely identify an object", 
-                        splitCriteria[0]));
-
-            long parentOid = -1;
-            Node parentClassNode = classIndex.get(Constants.PROPERTY_NAME, parentClassName).getSingle();
-            Iterator<Relationship> instances = parentClassNode.getRelationships(RelTypes.INSTANCE_OF).iterator();
-
-            while (instances.hasNext()){
-                Node possibleParentNode = instances.next().getStartNode();                   
-                if (possibleParentNode.getProperty(splitCriteria[0]).toString().equals(splitCriteria[1])) {
-                    parentOid = possibleParentNode.getId();
-                    break;
+                while (instances.hasNext()){
+                    Node possibleParentNode = instances.next().getStartNode();                   
+                    if (possibleParentNode.getProperty(splitCriteria[0]).toString().equals(splitCriteria[1])) {
+                        parentNode = possibleParentNode;
+                        break;
+                    }
                 }
             }
-            if (parentOid != -1)
-                return createObject(className, parentClassName, parentOid, attributes, template);
+            
+            if(parentNode == null)
+                throw new InvalidArgumentException(String.format("A parent object of class %s and %s = %s could not be found", parentClassName, splitCriteria[0], splitCriteria[1]));
+                
+            Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
+            if (classNode == null)
+                throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
 
-            throw new InvalidArgumentException(String.format("A parent with %s %s of class %s could not be found", 
-                    splitCriteria[0], splitCriteria[1], parentClassName));
+            Node newObject = createObject(classNode, objectClass, attributes, template);
+            newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF);
+                      
+            tx.success();
+            return newObject.getId();
         }
     }
     
@@ -1199,7 +1232,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                         String attributeType = classToMap.getType(attributeName);
                         if (AttributeMetadata.isPrimitive(attributeType))
                                 newObject.setProperty(attributeName, Util.getRealValue(attributes.get(attributeName).get(0), classToMap.getType(attributeName)));
-                        else{
+                        else {
                         //If it's not a primitive type, maybe it's a relationship
 
                             if (!cm.isSubClass(Constants.CLASS_GENERICOBJECTLIST, attributeType))
@@ -1213,7 +1246,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                             List<Node> listTypeNodes = Util.getRealValue(attributes.get(attributeName), listTypeNode);
 
                             if (listTypeNodes.isEmpty())
-                                throw new InvalidArgumentException(String.format("At least one of the list type items could not be found. Check attribute definition for %s", attributeName));
+                                throw new InvalidArgumentException(String.format("At least one of the list type items could not be found. Check attribute definition for \"%s\"", attributeName));
 
                             //Create the new relationships
                             for (Node item : listTypeNodes){

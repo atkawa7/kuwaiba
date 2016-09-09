@@ -169,6 +169,6 @@ public class ClassMetadata extends ClassMetadataLight {
             if (eachAttribute.getName().equals(attributeName))
                 return eachAttribute.getType();
         }
-        throw new InvalidArgumentException("Attribute cannot be found in this class");
+        throw new InvalidArgumentException(String.format ("Attribute %s could not be found in class %s", attributeName, getName()));
     }
 }

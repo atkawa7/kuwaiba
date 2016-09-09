@@ -156,8 +156,8 @@ public final class LoadDataFromFile{
              **/
             while ((line = input.readLine()) != null) {
                 currentLine ++;
-                if (line.startsWith("#")) { //Comments are ignored
-                    errorsMsgs += String.format("INFO\t%s\tComment line detected, ignored.\n", currentLine);
+                if (line.startsWith("#") || line.trim().isEmpty()) { //Comments are ignored
+                    errorsMsgs += String.format("INFO\t%s\tComment or empty line detected, ignored.\n", currentLine);
                     hasErrors = true;
                     continue;
                 }
