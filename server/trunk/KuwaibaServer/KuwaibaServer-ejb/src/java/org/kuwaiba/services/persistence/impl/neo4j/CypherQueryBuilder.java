@@ -264,8 +264,12 @@ public class CypherQueryBuilder {
             cypherQuery = cypherQuery.concat(" RETURN ".concat(_return));
 
             cypherQuery = cypherQuery.concat(" ORDER BY instance.name ASC");
-            if(query.getPage() > 0)
-                cypherQuery = cypherQuery.concat(" skip 0 limit 10");//NOI18N
+
+            if(query.getPage() > 0){
+                int min = ((query.getPage() - 1) * query.getLimit()) + (query.getPage() - 1);
+                int max = min + (query.getLimit());
+                cypherQuery = cypherQuery.concat(" skip " + min + " limit " + max);//NOI18N
+            }
 
             readVissibleAttributes(query);
             executeQuery(classNode, cypherQuery);
