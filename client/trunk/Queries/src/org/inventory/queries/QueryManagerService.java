@@ -180,45 +180,59 @@ public class QueryManagerService implements ActionListener {
                 if (lam.getType().equals(LocalObjectLight.class)){
                     LocalClassMetadataLight myMetadata;
                     if (lam.getName().equals("parent")){ //NOI18N
-                        List<LocalClassMetadataLight> los = com.getUpstreamContainmentHierarchy(qbtc.getQueryScene().getCurrentSearchedClass().getClassName(), true);
-                        if (los == null){
-                            qbtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
-                            return;
-                        }
-                        
-                        if (los.isEmpty()){
-                            JOptionPane.showMessageDialog(null, "This class is not a possible child to another");
-                            return;
-                        }
-                        
-                        JComboBox lstPossibleParentClasses = new JComboBox(los.toArray());
-                        lstPossibleParentClasses.setName("possibleParentClasses");
-                        JComplexDialogPanel pnlMyDialog = new JComplexDialogPanel(
-                                new String[] {"Select the possible parent class"}, 
-                                new JComponent[] {lstPossibleParentClasses});
-                        pnlMyDialog.setLayout(new BoxLayout(pnlMyDialog, BoxLayout.PAGE_AXIS));
-                        insideCheck.setEnabled(false);
+                        if(qbtc.getQueryScene().getCurrentSearchedClass() != null){
+                            List<LocalClassMetadataLight> los = com.getUpstreamContainmentHierarchy(qbtc.getQueryScene().getCurrentSearchedClass().getClassName(), true);
+                            if (los == null){
+                                qbtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+                                return;
+                            }
 
-                        if (JOptionPane.showConfirmDialog(
-                                null,
-                                pnlMyDialog,
-                                "Possible parent filter",
-                                JOptionPane.OK_CANCEL_OPTION,
-                                JOptionPane.QUESTION_MESSAGE) == JOptionPane.CANCEL_OPTION){
-                            insideCheck.setSelected(false);
+                            if (los.isEmpty()){
+                                JOptionPane.showMessageDialog(null, "This class is not a possible child to another");
+                                return;
+                            }
+
+                            JComboBox lstPossibleParentClasses = new JComboBox(los.toArray());
+                            lstPossibleParentClasses.setName("possibleParentClasses");
+                            JComplexDialogPanel pnlMyDialog = new JComplexDialogPanel(
+                                    new String[] {"Select the possible parent class"}, 
+                                    new JComponent[] {lstPossibleParentClasses});
+                            pnlMyDialog.setLayout(new BoxLayout(pnlMyDialog, BoxLayout.PAGE_AXIS));
+                            insideCheck.setEnabled(false);
+
+                            if (JOptionPane.showConfirmDialog(
+                                    null,
+                                    pnlMyDialog,
+                                    "Possible parent filter",
+                                    JOptionPane.OK_CANCEL_OPTION,
+                                    JOptionPane.QUESTION_MESSAGE) == JOptionPane.CANCEL_OPTION){
+                                insideCheck.setSelected(false);
+                                insideCheck.setEnabled(true);
+                                return;
+                            }
                             insideCheck.setEnabled(true);
-                            return;
+                            LocalClassMetadataLight selectedValue = (LocalClassMetadataLight)((JComboBox)pnlMyDialog.getComponent("possibleParentClasses")).getSelectedItem();
+                            if (selectedValue == null){
+                                JOptionPane.showMessageDialog(null, "Searching for objects with a null parent is not supported yet");
+                                insideCheck.setSelected(false);
+                                return;
+                            }
+                            myMetadata = com.getMetaForClass(selectedValue.getClassName(),false);
+                            isParentMenu = true;
                         }
-                        insideCheck.setEnabled(true);
-                        LocalClassMetadataLight selectedValue = (LocalClassMetadataLight)((JComboBox)pnlMyDialog.getComponent("possibleParentClasses")).getSelectedItem();
-                        if (selectedValue == null){
-                            JOptionPane.showMessageDialog(null, "Searching for objects with a null parent is not supported yet");
-                            insideCheck.setSelected(false);
-                            return;
+                        else{
+                            int i = 0;
+                            for (String attributeName : currentTransientQuery.getAttributeNames()) {
+                                if(attributeName.equals("parent"))
+                                    break;
+                                i++;
+                            }
+                            myMetadata = com.getMetaForClass(currentTransientQuery.getJoins().get(i).getClassName(),false);
+                            isParentMenu = true;
                         }
-                        myMetadata = com.getMetaForClass(selectedValue.getClassName(),false);
-                        isParentMenu = true;
-                    } else
+                    }
+                    
+                    else
                         myMetadata = com.getMetaForClass((String)insideCheck.getClientProperty("className"),false);
                     
                     LocalClassMetadataLight myMetadataLight;
@@ -275,9 +289,9 @@ public class QueryManagerService implements ActionListener {
             return;
         }
         try {
-            LocalTransientQuery transientQuery = new LocalTransientQuery(localQuery);
+            currentTransientQuery = new LocalTransientQuery(localQuery);
             qbtc.getQueryScene().clear();
-            ClassNodeWidget rootNode = renderClassNode(transientQuery);
+            ClassNodeWidget rootNode = renderClassNode(currentTransientQuery);
             qbtc.getQueryScene().setCurrentSearchedClass(rootNode.getWrappedClass());
             qbtc.getQueryScene().organizeNodes(rootNode.getWrappedClass(), QueryEditorScene.X_OFFSET, QueryEditorScene.Y_OFFSET);
             qbtc.getQueryScene().validate();
@@ -304,7 +318,7 @@ public class QueryManagerService implements ActionListener {
         //Marking the scene to validate is necessary for the newlycreated node to be painted
         //providing the clientArea necessary to calculate locations of new nodes
         qbtc.getQueryScene().validate();
-
+        
         for (LocalTransientQuery join : subQuery.getJoins()){
             if (join != null){
                 if (join.getAttributeNames().size() > 0 || join.getVisibleAttributeNames().size() > 0){
