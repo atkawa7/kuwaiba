@@ -43,15 +43,26 @@ public class RelateToInterface extends GenericObjectNodeAction{
     @Override
     public void actionPerformed(ActionEvent e) {
         List<LocalObjectLight> interfaces = new ArrayList<>();
-        for(LocalObjectLight o : CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_BRIDGEDOMAININTERFACE))
-            interfaces.add(o);
-        for(LocalObjectLight o : CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_VRFINSTANCE))
-            interfaces.add(o);
-        for(LocalObjectLight o : CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_MPLSTUNNEL))
-            interfaces.add(o);
-        for(LocalObjectLight o : CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_FRAMERELAYCIRCUIT))
-            interfaces.add(o);
-                
+        List<LocalObjectLight> objects = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_BRIDGEDOMAININTERFACE);
+        if(objects != null){
+            for(LocalObjectLight o : objects)
+                interfaces.add(o);
+        }
+        objects = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_VRFINSTANCE);
+        if(objects != null){
+            for(LocalObjectLight o : objects)
+                interfaces.add(o);
+        }
+        objects = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_MPLSTUNNEL);
+        if(objects != null){
+            for(LocalObjectLight o : objects)
+                interfaces.add(o);
+        }
+        objects = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_FRAMERELAYCIRCUIT);
+        if(objects != null){
+            for(LocalObjectLight o : objects)
+                interfaces.add(o);
+        }        
         Lookup.Result<LocalObjectLight> selectedNodes = Utilities.actionsGlobalContext().lookupResult(LocalObjectLight.class);
         Collection<? extends LocalObjectLight> lookupResult = selectedNodes.allInstances();
         List<LocalObjectLight> selectedObjects = new ArrayList<>();
