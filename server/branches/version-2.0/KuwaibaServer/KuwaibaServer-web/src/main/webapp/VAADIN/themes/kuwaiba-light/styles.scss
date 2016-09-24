@@ -1,0 +1,9 @@
+@import "addons.scss";
+@import "kuwaiba-light.scss";
+
+@include v-font(Ubuntu,'../../kuwaiba-light/res/ubuntu_r');
+
+.kuwaiba-light {
+    @include addons;
+    @include kuwaiba-light;
+}

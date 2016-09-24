@@ -1,0 +1,17 @@
+@import "../reindeer/reindeer.scss";
+@mixin kuwaiba-light {
+    
+    @include reindeer;
+    
+    .v-label {
+        font: 15px Ubuntu;
+    }
+        
+    .kuwaiba-light-official-background {
+        background-color: #88aa00;
+    }
+    
+    .kuwaiba-light-white-color {
+        color: white;
+    }
+}
