@@ -20,7 +20,7 @@ import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
 import java.util.List;
 import javax.annotation.Resource;
-import javax.inject.Inject;
+import javax.ejb.EJB;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
@@ -64,7 +64,7 @@ public class KuwaibaService {
     /**
      * The main session bean in charge of providing the business logic
      */
-    //@Inject
+    //@EJB
     private WebserviceBeanLocal wsBean;
    /**
      * The context to get information about each request

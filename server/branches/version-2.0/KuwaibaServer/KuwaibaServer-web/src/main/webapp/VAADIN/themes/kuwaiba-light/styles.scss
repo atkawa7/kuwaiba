@@ -1,7 +1,8 @@
 @import "addons.scss";
 @import "kuwaiba-light.scss";
 
-@include v-font(Ubuntu,'../../kuwaiba-light/res/ubuntu_r');
+//@include v-font(Ubuntu,'../../kuwaiba-light/res/ubuntu_r'); <-- reindeer theme and others might need less ..
+@include v-font(Ubuntu,'../../../../kuwaiba-light/res/ubuntu_r');
 
 .kuwaiba-light {
     @include addons;
