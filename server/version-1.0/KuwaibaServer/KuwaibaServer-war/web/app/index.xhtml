@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+    
+    <ui:composition template="/app/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.GeneralTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="pageTitle">
+            <h:outputText value="#{bundle.IndexTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h1>Welcome</h1>
+            <p>
+                This is the temporary web management interface of <b style="color: #aad400">Kuwaiba Open Network Inventory</b>.
+               Please select the action you want to perform from the menu below. 
+               You might also find interesting information following the links in the menu above.
+            </p>
+            <div class="infoBox"><b style="color: #aad400">Important:</b> For security reasons, these actions can only be performed from the same computer where the server is running</div>
+            <br />
+            <h:form id="form" prependId="false">
+                <table style="width: 100%">
+                    <tr>
+                        <td class="tileOption">
+                            <h:commandLink style="color: white" action="#{Tools.prepareResetDatabase}" value="#{bundle.IndexResetDatabase}"  immediate="true" />
+                        </td>
+                        <td  class="tileOption">
+                            <h:commandLink style="color: white" action="#{Tools.createResetAdminAccount}" value="#{bundle.IndexCreateResetAdminAccount}" immediate="true" />
+                        </td>
+                        <td  class="tileOption">
+                            <a style="color: white" href="/kuwaiba/KuwaibaService?wsdl">#{bundle.IndexWebServiceWSDL}</a>
+                        </td>
+                    </tr>
+                </table>
+            </h:form>
+            <br />
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" layout="list" class="infoBox"/>
+            </h:panelGroup>
+        </ui:define>
+    </ui:composition>
+</html>
+

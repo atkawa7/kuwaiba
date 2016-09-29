@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ejb-jar xmlns = "http://java.sun.com/xml/ns/javaee" 
+         version = "3.1"
+         xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation = "http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_1.xsd">
+<enterprise-beans>
+    <session>
+        <ejb-name>StartupBean</ejb-name>
+        <env-entry>
+           <description>Database user name, if applicable</description>
+           <env-entry-name>dbUsername</env-entry-name>
+           <env-entry-type>java.lang.String</env-entry-type>
+           <env-entry-value></env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Database password, if applicable</description>
+           <env-entry-name>dbPassword</env-entry-name>
+           <env-entry-type>java.lang.String</env-entry-type>
+           <env-entry-value></env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Database path</description>
+           <env-entry-name>dbPath</env-entry-name>
+           <env-entry-type>java.lang.String</env-entry-type>
+           <env-entry-value>/data/db/kuwaiba.db</env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Database host, if applicable</description>
+           <env-entry-name>dbHost</env-entry-name>
+           <env-entry-type>java.lang.String</env-entry-type>
+           <env-entry-value></env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Database port, if applicable</description>
+           <env-entry-name>dbPort</env-entry-name>
+           <env-entry-type>java.lang.Integer</env-entry-type>
+           <env-entry-value></env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Background path</description>
+           <env-entry-name>backgroundsPath</env-entry-name>
+           <env-entry-type>java.lang.String</env-entry-type>
+           <env-entry-value>/data/img/backgrounds</env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Corporate Logo</description>
+           <env-entry-name>corporateLogo</env-entry-name>
+           <env-entry-type>java.lang.String</env-entry-type>
+           <env-entry-value>http://neotropic.co/img/logo_small.png</env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Enable the default security manager</description>
+           <env-entry-name>enableSecurityManager</env-entry-name>
+           <env-entry-type>java.lang.Boolean</env-entry-type>
+           <env-entry-value>false</env-entry-value>
+        </env-entry>
+     </session>
+</enterprise-beans>
+</ejb-jar>
