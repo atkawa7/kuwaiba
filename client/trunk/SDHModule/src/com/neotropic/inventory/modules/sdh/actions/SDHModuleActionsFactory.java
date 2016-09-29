@@ -94,17 +94,17 @@ public class SDHModuleActionsFactory {
             connectionMenu = new PopupMenuProvider() {
 
                 @Override
-                public JPopupMenu getPopupMenu(Widget widget, Point localLocation) {                   
-                    List<Action> actions = new ArrayList<>();
-                    actions.add(removeSDHBusinessObjectFromViewAction);
-                    actions.add(deleteSDHTransportLink);
-                    actions.add(showSDHContainersInTransportLinkAction);
-                    actions.add(null);
+                public JPopupMenu getPopupMenu(Widget widget, Point localLocation) {
+                    JPopupMenu mnuActions = new JPopupMenu();
+                    mnuActions.add(removeSDHBusinessObjectFromViewAction);
+                    mnuActions.add(deleteSDHTransportLink);
+                    mnuActions.add(showSDHContainersInTransportLinkAction);
                     
-                    AbstractConnectionWidget connectionWidget = (AbstractConnectionWidget)widget;
-                    actions.addAll(Arrays.asList(connectionWidget.getNode().getActions(true)));
+                    //AbstractConnectionWidget connectionWidget = (AbstractConnectionWidget)widget;
+                    //actions.addAll(Arrays.asList(connectionWidget.getNode().getActions(true)));
                     
-                    return Utilities.actionsToPopup(actions.toArray(new Action[0]), scene.getView());                    
+                    //return Utilities.actionsToPopup(actions.toArray(new Action[0]), scene.getView());
+                    return mnuActions;
                 }
             };
         return connectionMenu;

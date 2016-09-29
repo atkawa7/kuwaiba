@@ -13,34 +13,31 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.inventory.design.topology.scene;
 
 import org.inventory.communications.core.LocalObjectLight;
-import org.netbeans.api.visual.graph.GraphScene;
-import org.netbeans.api.visual.widget.ConnectionWidget;
+import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.netbeans.api.visual.widget.Scene;
+import org.netbeans.api.visual.widget.general.IconNodeWidget;
+import org.openide.util.Lookup;
+import org.openide.util.lookup.Lookups;
 
 /**
- * A connection widget representing a link or a container
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * Temporary widget used to represent a node in the topology designer module
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ObjectConnectionWidget extends ConnectionWidget{
-    /**
-     * Edge name
-     */
-    private String name;
+public class ObjectNodeWidget extends IconNodeWidget {
 
-    public ObjectConnectionWidget(GraphScene<LocalObjectLight, String> scene, String name) {
+    private Lookup lookup;
+    
+    public ObjectNodeWidget(Scene scene, LocalObjectLight object) {
         super(scene);
-        this.name = name;
-        createActions(TopologyViewScene.ACTION_SELECT);
+        lookup = Lookups.singleton(new ObjectNode(object, true));
+        getLabelWidget().setFont(null);
     }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    
+    @Override
+    public Lookup getLookup() {
+        return lookup;
     }
 }

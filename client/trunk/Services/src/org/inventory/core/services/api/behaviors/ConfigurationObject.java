@@ -26,7 +26,7 @@ public abstract class ConfigurationObject {
     protected HashMap<String, Object> properties;
 
     public ConfigurationObject() {
-        properties = new HashMap<String, Object>();
+        properties = new HashMap<>();
     }    
         
     public void setProperty(String propertyName, Object value) {

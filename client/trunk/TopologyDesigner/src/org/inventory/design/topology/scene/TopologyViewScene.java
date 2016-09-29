@@ -114,6 +114,8 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
         selectAction = ActionFactory.createSelectAction(new CustomSelectProvider(this), true);
         addRemoveControlPointAction = new CustomAddRemoveControlPointAction(this);
         moveControlPointAction = new CustomMoveControlPointAction(this);
+        
+        initSelectionListener();
     }    
     
     public void addFreeFrame() {
@@ -405,7 +407,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
                 (!node.getName().contains(CLOUD_ICON) && 
                     !node.getName().contains(FREE_FRAME))) {
             
-            IconNodeWidget newNode = new IconNodeWidget(this);
+            ObjectNodeWidget newNode = new ObjectNodeWidget(this, node);
             nodeLayer.addChild(newNode);
             
             newNode.setImage(CommunicationsStub.getInstance().getMetaForClass(node.getClassName(), false).getIcon());

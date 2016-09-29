@@ -20,7 +20,6 @@ import java.awt.event.ActionEvent;
 import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.JPopupMenu;
-import javax.swing.JSeparator;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
@@ -30,7 +29,7 @@ import org.netbeans.api.visual.action.PopupMenuProvider;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
- *
+ *  Action manager for the topology designer module
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public final class TopologyViewActions {
@@ -59,7 +58,6 @@ public final class TopologyViewActions {
                 public JPopupMenu getPopupMenu(Widget widget, Point point) {
                     JPopupMenu theMenu = new JPopupMenu("Options");
                     theMenu.add(deleteNode);
-                    theMenu.add(new JSeparator());
                     return theMenu;
                 }
             };
@@ -75,7 +73,6 @@ public final class TopologyViewActions {
                 public JPopupMenu getPopupMenu(Widget widget, Point point) {
                     JPopupMenu theMenu = new JPopupMenu("Connection Menu");
                     theMenu.add(deleteConnection);
-                    theMenu.add(new JSeparator());
                     return theMenu;
                 }
             };
@@ -91,7 +88,6 @@ public final class TopologyViewActions {
                 public JPopupMenu getPopupMenu(Widget widget, Point point) {
                     JPopupMenu theMenu = new JPopupMenu("Frame Menu");
                     theMenu.add(deleteFrame);
-                    theMenu.add(new JSeparator());
                     return theMenu;
                 }
             };
@@ -101,7 +97,7 @@ public final class TopologyViewActions {
     
     public class DeleteNodeAction extends AbstractAction {
         public DeleteNodeAction() {
-            this.putValue(NAME, "Remove From View");
+            this.putValue(NAME, "Remove Node from View");
         }
 
         @Override
@@ -119,7 +115,7 @@ public final class TopologyViewActions {
     public class DeleteConnectionAction extends AbstractAction {
         
         DeleteConnectionAction() {
-            this.putValue(NAME, "Delete Connection");
+            this.putValue(NAME, "Remove Connection from View");
         }
 
         @Override

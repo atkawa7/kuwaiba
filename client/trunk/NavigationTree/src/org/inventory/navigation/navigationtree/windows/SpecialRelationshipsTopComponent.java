@@ -91,10 +91,6 @@ public class SpecialRelationshipsTopComponent extends TopComponent
             if (node instanceof SpecialRelatedObjectNode) //Ignore its own nodes
                 return;
             
-            //If the current object is the same last selected object, do nothing
-            if (node.equals(em.getRootContext()))
-                return;
-            
             SpecialRelatedObjectNode rootNode = new SpecialRelatedObjectNode(node.getObject());
             em.setRootContext(rootNode);
         }

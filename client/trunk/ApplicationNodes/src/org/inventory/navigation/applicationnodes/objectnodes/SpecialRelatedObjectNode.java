@@ -27,7 +27,7 @@ import org.openide.nodes.Node;
 
 /**
  * A node in the Special Relationships explorer
- * @author duckman
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class SpecialRelatedObjectNode extends ObjectNode {
 

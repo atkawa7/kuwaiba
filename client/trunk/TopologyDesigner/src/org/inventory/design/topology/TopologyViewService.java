@@ -24,8 +24,6 @@ import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.design.topology.scene.TopologyViewScene;
-import static org.inventory.design.topology.scene.TopologyViewScene.FREE_FRAME;
-import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Lookup;
 
 /**

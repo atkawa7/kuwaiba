@@ -183,6 +183,7 @@ public class FormatTextPanel extends javax.swing.JPanel {
 
             cmbFontSize.setRenderer(new ListCellRenderer() {
 
+                @Override
                 public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                     JLabel item = new JLabel();
                     if (value != null)
@@ -202,6 +203,7 @@ public class FormatTextPanel extends javax.swing.JPanel {
 
             cmbFontColor.setRenderer(new ListCellRenderer() {
 
+                @Override
                 public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                     JLabel item = new JLabel();
                     if (value != null){
