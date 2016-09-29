@@ -2282,7 +2282,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
                     return new ReportDescriptor[] {
                             new ReportDescriptor(4, "TransportLink Structure", className, "Shows the TransportLink Structure")
                     };
-                case "VC1vp2TributaryLink":
+                case "VC12TributaryLink":
                 case "VC3TributaryLink":
                     return new ReportDescriptor[] {
                             new ReportDescriptor(5, "TributaryLink Resources", className, "Shows the resources used by a TributaryLink")

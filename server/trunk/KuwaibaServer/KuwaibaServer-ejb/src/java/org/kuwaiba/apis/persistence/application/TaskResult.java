@@ -57,7 +57,7 @@ public class TaskResult implements Serializable {
         return new ResultMessage(ResultMessage.STATUS_ERROR, message);
     }
     
-    public static ResultMessage createSuccessMessage(String message) {
+    public static ResultMessage createInformationMessage(String message) {
         return new ResultMessage(ResultMessage.STATUS_SUCCESS, message);
     }
     
