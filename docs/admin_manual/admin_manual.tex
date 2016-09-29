@@ -258,7 +258,7 @@
 			\end{itemize}
 			
 			\newpage
-			\section{Troubleshooting} \label{sec:Troubleshooting}
+			\section{Server Side Troubleshooting} \label{sec:Troubleshooting}
 				\begin{enumerate}
 					\item If you get a \textit{Cant't reach backend} error, it means that the Persistence Service didn't start. The most probable cause is that the database path was not set correctly, or the service does not have write access to it. Check Glassfish log files and search for the "[KUWAIBA]" tag to see the service startup messages. The log file is typically located at:
 					\begin{verbbox}
@@ -303,6 +303,10 @@
 						\end{figure}	
 						
 					\end{enumerate}
+				\subsection{Client Side Troubleshooting}
+				\begin{enumerate}
+					\item You are getting an \textit{Unexpected end of file from server} error at login time. You are trying to use HTTP connect to an HTTPS port. Check the connection settings and select "HTTPS".
+				\end{enumerate}
 		\newpage
 		\begin{appendices}
 			\appendix
@@ -333,7 +337,65 @@
 			\newpage
 			\appendix
 			\section{Appendix B. How to Configure a Secure Connection} \label{app:AppendixB}
-			sadsadsad
+				\subsection{Importing a Digital Certificate}
+				\textbf{Note:} You can find detailed information about how to manage digital certificates in Glassfish in the Oracle's Java EE documentation \footnote{Working with Digital Certificates https://docs.oracle.com/javaee/6/tutorial/doc/bnbyb.html}. \\
+				
+				\begin{enumerate}
+					\item If you already own a certificate issued by a Certification Authority, skip this step. Otherwise, it means you will use a self-signed certificate. The first time you run Glassfish and/or create a domain, a certificate is generated, you can use that one or generate another with your own corporate information. To do this, execute the following command (the command is located in the \textit{bin} directory of you JDK installation):\\
+					
+					\small keytool -genkey -keyalg RSA -alias [alias] -keystore [keystore\_filename] -validity 3600 -keysize 2048\\
+					
+					Where \textit{alias} is the certificate alias (use \textbf{s1as} to match the default settings) and \textit{keystore\_filename} is the name of the file where the certificate keys will be stored (the default name is \textbf{keystore.jks}). Read the command documentation for more information about the other options. Note that this certificate could also be created using other third-party tools, like the \textbf{openssl} command. Take into account that the field \textbf{CN} (the answer to the question \textit{What is your first and last name?}) must match the name of your server. Also, the default password used by Glassfish for the keystore is \textbf{changeit}. If you are OK with the default configuration, use that one, if not, you will have to edit the file [gf-installation]/glassfish/domains/domain1/config/domain.xml file.
+					\begin{figure}[h!]
+						\centering
+						\includegraphics[width=0.7\linewidth]{img/certificate_generation.png} 	
+						\caption{Certificate generation}
+						\label{fig:certificate_generation}
+					\end{figure}
+					
+					\item If you plan to use more than one certificate in your server or if your certificate was issued by a CA, you need to import it into a keystore that Glassfish can read, otherwise, you can skip this step.  To do that, execute the following command: \\
+					
+					keytool -import -alias [alias] -keystore [keystore\_filename] -file [CERTIFICATE\_FILE\_NAME]\\
+					
+					Same recommendations from the past step apply here.
+					\item Backup and replace the default keystore in Glassfish [gf-installation]/glassfish/domains/domain1/config/keystore.jks and copy the file created in step 1 (or 2 if you have a certificate issued by a CA). Don't forget to rename the file you generated to \textbf{keystore.jks}. If you use a custom name, you will have to change it as well in the \textbf{domains.xml} file.
+					\item Restart the server, open a browser window and go to the URL \textbf{https://[your\_server]:8181/kuwaiba}. You will get a self-signed certificate error. If you open the certificate details, you should see fields you filled in previously. Add this certificate as an exception.
+					\newpage
+					\begin{figure}[h!]
+						\centering
+						\includegraphics[width=0.7\linewidth]{img/certificate_info.png} 	
+						\caption{Self-signed certificate}
+						\label{fig:self-signed-certificate}
+					\end{figure}
+				\end{enumerate}				
+				\newpage
+				\subsection{Configuring the Client}
+				If you are using a certificate issued by a CA, the client does not need any additional configuration (don't forget to use the port \textbf{8181} in your connection settings. This port can also be configured using the \textbf{domain.xml} file). If it's a self-signed certificate, you need to tell the client application that the certificate can be trusted (just like you did manually when you added the exception in the web browser). To do this, follow these steps:
+				\begin{enumerate}
+					\item In the certificate window you opened in the last step there is a \textit{details} tab. The location differs depending on the browser, but it's always there. This example shows the Firefox way:
+					
+					\begin{figure}[h!]
+						\centering
+						\includegraphics[width=0.6\linewidth]{img/certificate_details.png} 	
+						\caption{Certificate details}
+						\label{fig:certificate-details}
+					\end{figure}
+					
+					Click on \textit{Export} and export it in a DER format
+					\item Using again the \textbf{keytool} command, import it\\
+					
+					keytool -import -alias [alias] -keystore kuwaiba\_keystore.jks -file [DER\_CERTIFICATE\_FILE\_NAME]\\
+					
+					Make sure to use as keystore name \textbf{kuwaiba\_keystore.jks}. Copy the resulting file in the directory \textbf{etc} of your client installation.\\
+					
+					\begin{figure}[h!]
+						\centering
+						\includegraphics[width=0.2\linewidth]{img/etc_contents.png} 	
+						\caption{Contents of \textbf{etc} directory}
+						\label{fig:etc-contents}
+					\end{figure}
+					In the file \textbf{kuwaiba.conf} you can configure the name of the keystore file. The same file can be used in as many clients as you need.
+				\end{enumerate}
 		\end{appendices}
 					
 \end{document}
