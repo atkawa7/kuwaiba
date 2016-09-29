@@ -198,3 +198,5 @@
 * GenericSDHService is now the superclass of SDHService, EoSDHService and SONETService and PDHService
 * Added class GenericContract, now superclass of SLA, OLA and the new SupportContract
 * Added class SupportContract
+* VirtualMachine is now subclass of GenericSoftwareAsset
+* Added class MPLSLink

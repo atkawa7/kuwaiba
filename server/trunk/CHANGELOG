@@ -97,3 +97,5 @@
 * The general views are no longer referenced by type (an integer), but by class name (it's more intuitive to know how to retrieved them)
 * The way the exceptions are raised and caught changed. It's all handled at webservice level
 * Added preliminary support for commercial modules
+* Webservice API improved and extended
+* HTTPS support now documented
