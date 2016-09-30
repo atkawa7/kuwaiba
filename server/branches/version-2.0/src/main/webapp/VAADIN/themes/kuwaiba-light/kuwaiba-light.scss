@@ -1,0 +1,28 @@
+@import "../valo/valo.scss";
+@mixin kuwaiba-light {
+    
+    @include valo;
+    
+    .title-1 {
+        font-size: x-large;
+        font-weight: bolder;
+        text-align: center;
+        color: white;
+    }
+    
+    .v-ui {
+        font: 15px Ubuntu;
+    }
+        
+    .kuwaiba-light-official-background {
+        background-color: #88aa00;
+    }
+    
+    .kuwaiba-light-application-background {
+        background-color: white;
+    }
+    
+    .kuwaiba-light-white-color {
+        color: white;
+    }
+}
