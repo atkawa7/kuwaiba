@@ -629,7 +629,7 @@ public class SubnetEngine {
     }
     
     /**
-     * calculate if a given networkIp for a subnet is inside of another subnet 
+     * calculate if a given IP for a subnet is inside of another subnet 
      * taking as parameters the broadcastIp an de networkIp
      * @param netwrokIp the network IP
      * @param broadcastIp the broadcast IP
@@ -651,7 +651,7 @@ public class SubnetEngine {
                     flag=true;
                     break;
                 }
-                for (int k = 1; k < maskIpSegment.get(j).length(); k++) {
+                for (int k = 1; k <= maskIpSegment.get(j).length(); k++) {
                     int x = Integer.parseInt(maskIpSegment.get(j).substring(k-1,k),2) - Integer.parseInt(ipSegment.get(j).substring(k-1,k),2);
                     int y = Integer.parseInt(maskIpSegment.get(j).substring(k-1,k),2) - Integer.parseInt(networkIpSegment.get(j).substring(k-1,k),2);
                     if(bit == maskBits){
