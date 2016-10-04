@@ -94,17 +94,8 @@ public class SubnetsFrame extends JFrame{
                 JOptionPane.showMessageDialog(null, "You have to select an IP address");
             else { 
                 
-                List<LocalObjectLight> relatedIPAddressToPort = CommunicationsStub.getInstance().getSpecialAttribute(selectedPorts.get(0).getClassName(), 
-                selectedPorts.get(0).getOid(), Constants.RELATIONSHIP_IPAMHASADDRESS);
-                
                 List<LocalObjectLight> relatedPortsToIPAddresses = CommunicationsStub.getInstance().getSpecialAttribute(Constants.CLASS_IP_ADDRESS, 
                 selectedIPAddress.getOid(), Constants.RELATIONSHIP_IPAMHASADDRESS);
-                
-                if(relatedIPAddressToPort.size()>0){
-                    JOptionPane.showMessageDialog(null, String.format("The port %s is already related to IP %s", selectedPorts.get(0).getName(), relatedIPAddressToPort.get(0).getName()), 
-                                "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
                 
                 if(relatedPortsToIPAddresses.size()>0){
                     List<LocalObjectLight> parents = CommunicationsStub.getInstance().getParents(selectedPorts.get(0).getClassName(), selectedPorts.get(0).getOid());
