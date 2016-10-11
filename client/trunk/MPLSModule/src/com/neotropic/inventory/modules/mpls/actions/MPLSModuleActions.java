@@ -27,7 +27,6 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
-import javax.swing.JSeparator;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -39,7 +38,6 @@ import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteBusin
 import org.netbeans.api.visual.action.PopupMenuProvider;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Utilities;
-import org.openide.util.actions.Presenter;
 import org.openide.util.actions.SystemAction;
 
 
@@ -87,24 +85,15 @@ public class MPLSModuleActions {
 
                 @Override
                 public JPopupMenu getPopupMenu(Widget widget, Point localLocation) {
-                    JPopupMenu theMenu = new JPopupMenu("Options");
-                    theMenu.add(removeMPLSBusinessObjectFromViewAction);
-                    theMenu.add(SystemAction.get(DeleteBusinessObjectAction.class));
-                    theMenu.add(new JSeparator());
-                    Widget theWidget = scene.getFocusedWidget();
-                    if (theWidget instanceof AbstractNodeWidget) { //For some reason, a right click selects automatically an edge, but not a node (!)
-                        for (Action action : theWidget.getLookup().lookup(ObjectNode.class).getActions(true)) {
-                            if (action instanceof Presenter.Popup) //For some reason, these kind of actions are not properly display, so we ignore them
-                                continue;
-                            if(action == null)
-                                theMenu.add(new JSeparator());
-                            else
-                                theMenu.add(action);
-                        }
-                        return theMenu;
-                    }
-                    else
-                        return null;
+                    List<Action> actions = new ArrayList<>();
+                    actions.add(removeMPLSBusinessObjectFromViewAction);
+                    actions.add(SystemAction.get(DeleteBusinessObjectAction.class));
+                    actions.add(null);
+
+                    AbstractNodeWidget nodeWidget = (AbstractNodeWidget)widget;
+                    actions.addAll(Arrays.asList(nodeWidget.getLookup().lookup(ObjectNode.class).getActions(true)));
+
+                    return Utilities.actionsToPopup(actions.toArray(new Action[0]), scene.getView()); 
                 }
             };
         return nodeMenu;
@@ -134,7 +123,7 @@ public class MPLSModuleActions {
     
     public class DeleteMPLSConnection extends AbstractAction {
       public DeleteMPLSConnection() {
-            this.putValue(NAME, "Delete"); 
+            this.putValue(NAME, "Delete MPLS Link"); 
         }  
 
         @Override

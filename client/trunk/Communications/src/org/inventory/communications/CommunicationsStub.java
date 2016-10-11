@@ -99,7 +99,7 @@ public class CommunicationsStub {
     private Cache cache;
     private LocalSession session;
     
-    private static String[] classesWithCustomDeleteActions = new String[] {"ElectricalLink", "RadioLink", "OpticalLink",
+    private static String[] classesWithCustomDeleteActions = new String[] {"ElectricalLink", "RadioLink", "OpticalLink", "MPLSLink",
                                                                     "VC4", "VC4-04", "VC4-16", "VC4TributaryLink", "VC12TributaryLink", "VC3TributaryLink",
                                                                     "STM1", "STM4", "STM16", "STM64", "STM256",
                                                                     "WireContainer", "WirelessContainer",

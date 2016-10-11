@@ -20,6 +20,8 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import javax.swing.ImageIcon;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -37,6 +39,18 @@ import org.openide.util.actions.CallbackSystemAction;
 public final class DeleteBusinessObjectAction extends CallbackSystemAction {
    
     public static String ACTION_MAP_KEY = "DeleteBusinessObject"; //NOI18N
+    private JMenuItem popupPresenter;
+
+    public DeleteBusinessObjectAction() {
+        popupPresenter = new JMenuItem(getName(), new ImageIcon(DeleteBusinessObjectAction.class.getResource("/org/inventory/navigation/applicationnodes/res/warning.gif")));
+        popupPresenter.addActionListener(this);
+    }
+    
+    @Override
+    public JMenuItem getPopupPresenter() { super.getPopupPresenter();
+        return popupPresenter;
+    }
+       
     
     @Override
     public void actionPerformed(ActionEvent ev) {
