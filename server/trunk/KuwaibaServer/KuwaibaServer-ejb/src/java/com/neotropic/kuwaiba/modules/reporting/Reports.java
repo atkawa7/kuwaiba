@@ -24,9 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.application.Pool;
@@ -496,9 +494,35 @@ public class Reports {
         
         return networkEquipmentInLocationReportText.getBytes(StandardCharsets.UTF_8);
     }
+    
+    public byte[] buildServiceResourcesReport(String className, long serviceId) throws MetadataObjectNotFoundException, ObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+        RemoteBusinessObjectLight service = bem.getObjectLight(className, serviceId);
+        String serviceResourcesReportText, title = "Resources Used By " + service.getName();
+        serviceResourcesReportText = getHeader(title);
+        serviceResourcesReportText += 
+                            "  <body><table><tr><td><h1>" + title + "</h1></td><td align=\"center\"><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
 
-    public byte[] buildBoxesInLocationReport(long locationId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        serviceResourcesReportText += "<table><tr><td class=\"generalInfoLabel\">Name</td><td>" + service.getName() + "</td></tr>\n"
+                + "<tr><td class=\"generalInfoLabel\">Type</td><td>" + service.getClassName() + "</td></tr>\n"
+                + "<tr><td class=\"generalInfoLabel\">Location</td><td>" + formatLocation(bem.getParents(service.getClassName(), service.getId())) + "</td></tr>\n</table>\n";
+        List<RemoteBusinessObjectLight> resources = bem.getSpecialAttribute(service.getClassName(), service.getId(), "uses");
+        if (resources.isEmpty()) {
+            serviceResourcesReportText += "<div class=\"warning\">This service does not use any network resources</div>";
+        } else {
+            serviceResourcesReportText += "<table><tr><th>Name</th><th>Type</th><th>Location</th></tr>";
+            int i = 0;
+            for (RemoteBusinessObjectLight resource : resources) {
+                serviceResourcesReportText += "<tr class=\"" + (i % 2 == 0 ? "even" :"odd") + "\">"
+                                                            + "<td>" + resource.getName() + "</td>"
+                                                            + "<td>" + resource.getClassName() + "</td>"
+                                                            + "<td>" + formatLocation(bem.getParents(resource.getClassName(), resource.getId())) + "</td></tr>";
+                i ++;
+            }
+            serviceResourcesReportText += "</table>";
+        }
+        
+        serviceResourcesReportText += getFooter();
+        return serviceResourcesReportText.getBytes(StandardCharsets.UTF_8);
     }
     
     public byte[] subnetUsageReport(String className, long subnetId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {

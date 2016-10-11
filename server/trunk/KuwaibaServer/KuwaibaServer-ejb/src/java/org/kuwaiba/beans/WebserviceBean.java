@@ -2294,12 +2294,13 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 case "IPTransitService":
                 case "VPLSPWService":
                     return new ReportDescriptor[]{
-                        new ReportDescriptor(7, "Service details", className, "Shows the resources used by the logical Configuration and some of its attributes")
+                        new ReportDescriptor(7, "Service Details", className, "Shows the resources used by the logical Configuration and some of its attributes"),
+                        new ReportDescriptor(15, "Service Resources", className, "Shows the resources used by this service")
                     };
                 case "SubnetIPv4":
                 case "SubnetIPv6":
                     return new ReportDescriptor[] {
-                            new ReportDescriptor(9, "Subnet details", className, "Shows the IPs created in that subnet and some of their attributes")
+                            new ReportDescriptor(9, "Subnet Details", className, "Shows the IPs created in that subnet and some of their attributes")
                     };
                 case "Building":
                 case "Country":
@@ -2307,7 +2308,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 case "City":
                     return new ReportDescriptor[] {
                             new ReportDescriptor(10, "Network Equipment", className, "Presents a list and details of all network equipment in a particular location"),
-                            /*new ReportDescriptor(11, "Racks and Distribution Frames", className, "Presents a list and details of all racks and distribution frames in that particular location")*/
                     };
                 case "SupportContract":
                     return new ReportDescriptor[] {
@@ -2317,16 +2317,33 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 case "ELINEService":
                 case "ETREEService":
                     return new ReportDescriptor[] {
-                            new ReportDescriptor(13, "Service details", className, "Shows the resources used by the service and some of its attributes")
+                            new ReportDescriptor(13, "Service Details", className, "Shows the resources used by the service and some of its attributes"),
+                            new ReportDescriptor(15, "Service Resources", className, "Shows the resources used by this service")
                     };
                 case "BridgeDomainInterface":
                 case "MPLSTunnel":
                 case "VRFInstance": 
                 case "FrameRelay":
                     return new ReportDescriptor[]{
-                        new ReportDescriptor(14, "Config details", className, "Shows the resources used by the logical Configuration and some of its attributes")
+                        new ReportDescriptor(14, "Configuration Details", className, "Shows the resources used by the logical Configuration and some of its attributes")
                     };
-                
+                case "BurstableService":
+                case "DIAService":
+                case "FTTHService":
+                case "EoSDHService":        
+                case "PDHService":
+                case "SDHService":    
+                case "SONETService":    
+                case "GigaEthernetService":    
+                case "L2TPServiceService":    
+                case "SatelliteDataService":    
+                case "ELINE-InterAS-Service":    
+                case "HostingService":
+                case "HousingService":
+                case "VPSService":
+                    return new ReportDescriptor[]{
+                        new ReportDescriptor(15, "Service Resources", className, "Shows the resources used by this service")
+                    };
             }
             return new ReportDescriptor[0];
         } catch (InventoryException ex) {
@@ -2368,9 +2385,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
                     long locationId = Long.valueOf(StringPair.get(arguments, "objectId"));
                     String locationClass = StringPair.get(arguments, "objectClass");
                     return reports.buildNetworkEquipmentInLocationReport(locationClass,locationId);
-                case 11:
-                    locationId = Long.valueOf(StringPair.get(arguments, "objectId"));
-                    return reports.buildBoxesInLocationReport(locationId);
                 case 12:
                     locationId = Long.valueOf(StringPair.get(arguments, "objectId"));
                     return reports.buildContractStatusReport(locationId);
@@ -2379,6 +2393,9 @@ public class WebserviceBean implements WebserviceBeanRemote {
                             Long.valueOf(StringPair.get(arguments, "objectId")));
                 case 14://Temporal report for BridgeDomains, VRFs, MPLSTunnels
                     return reports.buildLogicalConfiguratinInterfacesReport(StringPair.get(arguments, "objectClass"), 
+                            Long.valueOf(StringPair.get(arguments, "objectId")));
+                case 15:
+                    return reports.buildServiceResourcesReport(StringPair.get(arguments, "objectClass"), 
                             Long.valueOf(StringPair.get(arguments, "objectId")));
             }
         } catch (InventoryException ex) {
