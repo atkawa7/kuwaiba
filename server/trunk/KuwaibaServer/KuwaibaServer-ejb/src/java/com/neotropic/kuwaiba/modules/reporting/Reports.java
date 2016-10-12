@@ -808,7 +808,7 @@ public class Reports {
             if (ports.isEmpty())
                     instance = "<div class=\"error\">There is nothing related to " + listOflogicalConfiguration.toString() +"</div>";
             else {
-                    instance = "<table><tr><th>Port</th><th>IP Address</th><th>Device Location</th></tr>";
+                    instance = "<table><tr><th>Port / Device</th><th>IP Address</th><th>Device Location</th></tr>";
 
                 int i = 0;
                 for (RemoteBusinessObjectLight relatedPort : ports) {

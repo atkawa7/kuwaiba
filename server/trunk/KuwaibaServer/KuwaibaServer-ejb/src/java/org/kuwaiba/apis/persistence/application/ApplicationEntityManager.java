@@ -408,6 +408,7 @@ public interface ApplicationEntityManager {
      * @return a set of objects matching the specified criteria as ResultRecord array
      * @throws MetadataObjectNotFoundException
      * @throws InvalidArgumentException 
+     * @throws NotAuthorizedException 
      */
     public List<ResultRecord> executeQuery(ExtendedQuery query)
             throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException;
