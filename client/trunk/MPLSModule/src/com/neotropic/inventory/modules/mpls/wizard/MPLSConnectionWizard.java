@@ -20,7 +20,6 @@ import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.GridLayout;
 import java.text.MessageFormat;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;

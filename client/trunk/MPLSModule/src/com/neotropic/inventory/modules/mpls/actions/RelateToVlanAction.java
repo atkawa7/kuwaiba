@@ -15,7 +15,6 @@
  */
 package com.neotropic.inventory.modules.mpls.actions;
 
-import com.neotropic.inventory.modules.mpls.windows.InterfaceFrame;
 import com.neotropic.inventory.modules.mpls.windows.VlansFrame;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;

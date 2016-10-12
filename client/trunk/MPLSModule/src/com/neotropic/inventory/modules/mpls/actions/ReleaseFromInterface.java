@@ -52,7 +52,7 @@ public class ReleaseFromInterface extends GenericObjectNodeAction implements Pre
 
     @Override
     public String getValidator() {
-        return Constants.VALIDATOR_PHYSICAL_ENDPOINT;
+        return Constants.VALIDATOR_LOGICAL_ENDPOINT;
     }
 
     @Override
