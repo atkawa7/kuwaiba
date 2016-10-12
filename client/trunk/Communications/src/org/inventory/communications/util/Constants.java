@@ -56,6 +56,10 @@ public class Constants {
     /**
      * Name of the validator to indicate if a given class is the endpoint to a link
      */
+    public static final String VALIDATOR_LOGICAL_ENDPOINT = "logicalEndpoint";
+    /**
+     * Name of the validator to indicate if a given class is the endpoint to a link
+     */
     public static final String VALIDATOR_SERVICE_INSTANCE = "serviceInstance";
     /**
      * All instances of classes tagged with this validator may be related to a software asset
