@@ -17,11 +17,14 @@
 package org.inventory.views.objectview.scene;
 
 import org.inventory.core.visual.scene.PhysicalConnectionProvider;
-import com.ociweb.xml.StartTagWAX;
-import com.ociweb.xml.WAX;
 import java.awt.Color;
 import java.awt.Point;
 import java.io.ByteArrayOutputStream;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLEventFactory;
+import javax.xml.stream.XMLEventWriter;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.visual.scene.AbstractScene;
@@ -31,7 +34,6 @@ import org.inventory.core.visual.scene.AbstractConnectionWidget;
 import org.inventory.core.visual.scene.AbstractNodeWidget;
 import org.inventory.core.visual.actions.CustomAddRemoveControlPointAction;
 import org.inventory.core.visual.actions.CustomMoveAction;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.PopupMenuProvider;
@@ -39,6 +41,7 @@ import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.router.RouterFactory;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Widget;
+import org.openide.util.Exceptions;
 
 /**
  * This is the main scene for an object's view
@@ -162,46 +165,73 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
 
     @Override
     public byte[] getAsXML() {
-        ByteArrayOutputStream bas = new ByteArrayOutputStream();
-        WAX xmlWriter = new WAX(bas);
-        StartTagWAX mainTag = xmlWriter.start("view");
-        mainTag.attr("version", Constants.VIEW_FORMAT_VERSION); //NOI18N
-        //TODO: Get the class name from some else
-        mainTag.start("class").text("DefaultView").end();
-        StartTagWAX nodesTag = mainTag.start("nodes");
-        for (Widget nodeWidget : nodeLayer.getChildren())
-            nodesTag.start("node").attr("x", nodeWidget.getPreferredLocation().x).
-            attr("y", nodeWidget.getPreferredLocation().y).
-            attr("class", nodeWidget.getLookup().lookup(ObjectNode.class).getLookup().lookup(LocalObjectLight.class).getClassName()).
-            text(String.valueOf(nodeWidget.getLookup().lookup(ObjectNode.class).getLookup().lookup(LocalObjectLight.class).getOid()) ).end();
-        nodesTag.end();
-
-        StartTagWAX edgesTag = mainTag.start("edges");
-        for (Widget edgeWidget : edgeLayer.getChildren()){
-            StartTagWAX edgeTag = edgesTag.start("edge");
-            AbstractConnectionWidget castedEdgeWidget = (AbstractConnectionWidget)edgeWidget;
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
+            XMLEventWriter xmlew = xmlof.createXMLEventWriter(baos);
+            XMLEventFactory xmlef = XMLEventFactory.newInstance();
             
-            LocalObjectLight edge = edgeWidget.getLookup().lookup(ObjectNode.class).getLookup().lookup(LocalObjectLight.class);
+            QName qnameView = new QName("view");
+            xmlew.add(xmlef.createStartElement(qnameView, null, null));
+            xmlew.add(xmlef.createAttribute(new QName("version"), Constants.VIEW_FORMAT_VERSION));
             
-            edgeTag.attr("id", edge.getOid());
-            edgeTag.attr("class", edge.getClassName());
+            QName qnameClass = new QName("class");
+            xmlew.add(xmlef.createStartElement(qnameClass, null, null));
+            xmlew.add(xmlef.createCharacters("DefaultView"));
+            xmlew.add(xmlef.createEndElement(qnameClass, null));
             
-            //I haven't managed to find out why sometimes the view gets screwed. This is a dirty
-            //"solution", but I expect to solve it once we rewrite this module
-            if (castedEdgeWidget.getSourceAnchor() == null)
-                continue;
-            edgeTag.attr("aside", castedEdgeWidget.getSourceAnchor().getRelatedWidget().getLookup().lookup(ObjectNode.class).getLookup().lookup(LocalObjectLight.class).getOid());
+            QName qnameNodes = new QName("nodes");
+            xmlew.add(xmlef.createStartElement(qnameNodes, null, null));
             
-            if (castedEdgeWidget.getTargetAnchor().getRelatedWidget() == null)
-                continue;
-            edgeTag.attr("bside", castedEdgeWidget.getTargetAnchor().getRelatedWidget().getLookup().lookup(ObjectNode.class).getLookup().lookup(LocalObjectLight.class).getOid());
-            for (Point point : castedEdgeWidget.getControlPoints())
-                edgeTag.start("controlpoint").attr("x", point.x).attr("y", point.y).end();
-            edgeTag.end();
+            for (Widget nodeWidget : nodeLayer.getChildren()) {
+                QName qnameNode = new QName("node");
+                xmlew.add(xmlef.createStartElement(qnameNode, null, null));
+                xmlew.add(xmlef.createAttribute(new QName("x"), Integer.toString(nodeWidget.getPreferredLocation().x)));
+                xmlew.add(xmlef.createAttribute(new QName("y"), Integer.toString(nodeWidget.getPreferredLocation().y)));
+                LocalObjectLight lolNode = (LocalObjectLight) findObject(nodeWidget);
+                xmlew.add(xmlef.createAttribute(new QName("class"), lolNode.getClassName()));
+                xmlew.add(xmlef.createCharacters(Long.toString(lolNode.getOid())));
+                xmlew.add(xmlef.createEndElement(qnameNode, null));
+            }
+            xmlew.add(xmlef.createEndElement(qnameNodes, null));
+            
+            QName qnameEdges = new QName("edges");
+            xmlew.add(xmlef.createStartElement(qnameEdges, null, null));
+            
+            for (Widget edgeWidget : edgeLayer.getChildren()) {
+                QName qnameEdge = new QName("edge");
+                xmlew.add(xmlef.createStartElement(qnameEdge, null, null));
+                
+                AbstractConnectionWidget acwEdge = (AbstractConnectionWidget) edgeWidget;
+                LocalObjectLight lolEdge = (LocalObjectLight) findObject(acwEdge);
+                xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(lolEdge.getOid())));
+                xmlew.add(xmlef.createAttribute(new QName("class"), lolEdge.getClassName()));
+                
+                if(acwEdge.getSourceAnchor().getRelatedWidget() == null)
+                    continue;
+                xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(((LocalObjectLight) findObject(acwEdge.getSourceAnchor().getRelatedWidget())).getOid())));
+                if (acwEdge.getTargetAnchor().getRelatedWidget() == null)
+                    continue;
+                xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(((LocalObjectLight) findObject(acwEdge.getTargetAnchor().getRelatedWidget())).getOid())));
+                
+                for (Point point : acwEdge.getControlPoints()) {
+                    QName qnameControlpoint = new QName("controlpoint");
+                    xmlew.add(xmlef.createStartElement(qnameControlpoint, null, null));
+                    xmlew.add(xmlef.createAttribute(new QName("x"), Integer.toString(point.x)));
+                    xmlew.add(xmlef.createAttribute(new QName("y"), Integer.toString(point.y)));
+                    xmlew.add(xmlef.createEndElement(qnameControlpoint, null));
+                }
+                xmlew.add(xmlef.createEndElement(qnameEdge, null));
+            }
+            xmlew.add(xmlef.createEndElement(qnameEdges, null));
+            
+            xmlew.add(xmlef.createEndElement(qnameView, null));
+            xmlew.close();
+            return baos.toByteArray();
+        } catch (XMLStreamException ex) {
+            Exceptions.printStackTrace(ex);
         }
-        edgesTag.end();
-        mainTag.end().close();
-        return bas.toByteArray();
+        return null;
     }
 
     @Override

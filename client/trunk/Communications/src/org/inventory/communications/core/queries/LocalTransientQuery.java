@@ -17,13 +17,16 @@
 
 package org.inventory.communications.core.queries;
 
-import com.ociweb.xml.StartTagWAX;
-import com.ociweb.xml.WAX;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLEventFactory;
+import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -194,48 +197,77 @@ public class LocalTransientQuery {
      * Creates a valid XML document describing this object in the format exposed at the <a href="http://is.gd/kcl1a">project's wiki</a>
      * @return a byte array ready serialized somehow (file, webservice, etc)
      */
-    public byte[] toXML(){
-        ByteArrayOutputStream writer = new ByteArrayOutputStream();
-        WAX xmlWriter = new WAX(writer);
-        StartTagWAX mainTag = xmlWriter.start("query");     //NOI18N
-        mainTag.attr("version", version);      //NOI18N
-        mainTag.attr("logicalconnector", logicalConnector);      //NOI18N
-        mainTag.attr("limit", limit);      //NOI18N
+    public byte[] toXML() {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
+        
+            XMLEventWriter xmlew;
+            xmlew = xmlof.createXMLEventWriter(baos);
+            
+            XMLEventFactory xmlef = XMLEventFactory.newInstance();
+            
+            QName qnameQuery = new QName("query");
 
-        buildClassNode(mainTag, this);
+            xmlew.add(xmlef.createStartElement(qnameQuery, null, null));
+            // query attributes
+            xmlew.add(xmlef.createAttribute(new QName("version"), version));
+            xmlew.add(xmlef.createAttribute(new QName("logicalconnector"), Integer.toString(logicalConnector)));
+            xmlew.add(xmlef.createAttribute(new QName("limit"), Integer.toString(limit)));
 
-        mainTag.end().close();
-        return writer.toByteArray();
-    }
+            bulidClassNode(xmlew, xmlef, this);
 
-    private void buildClassNode(StartTagWAX rootTag, LocalTransientQuery currentJoin){
-        StartTagWAX classTag = rootTag.start("class");     //NOI18N
-        rootTag.attr("name", currentJoin.getClassName());     //NOI18N
-        StartTagWAX visibleAttributesTag = classTag.start("visibleattributes");     //NOI18N
-        for (String attr : currentJoin.getVisibleAttributeNames()){
-            StartTagWAX attributeTag = visibleAttributesTag.start("attribute");     //NOI18N
-            attributeTag.attr("name", attr); //NO18N
-            attributeTag.end();
+            xmlew.add(xmlef.createEndElement(qnameQuery, null));
+
+            xmlew.close();
+            return baos.toByteArray();
+        } catch (XMLStreamException ex) {
+            Logger.getLogger(LocalTransientQuery.class.getName()).log(Level.SEVERE, null, ex);
         }
-        visibleAttributesTag.end();
-
-        StartTagWAX filtersTag = classTag.start("filters");     //NOI18N
-
-        //Filters for simple attributes (numbers, strings, etc)
-        for (int i = 0; i< currentJoin.getAttributeNames().size(); i++){
-            StartTagWAX filterTag = filtersTag.start("filter");     //NOI18N
-            filterTag.attr("attribute", currentJoin.getAttributeNames().get(i));     //NOI18N
-            filterTag.attr("condition", currentJoin.getConditions().get(i) == null ?      //NOI18N
-                                            0 : currentJoin.getConditions().get(i));
-            if (currentJoin.getJoins().get(i) != null)
-                buildClassNode(filterTag, currentJoin.getJoins().get(i));
-
-            filterTag.end();
-        }
-        filtersTag.end();
-        classTag.end();
+        return null;
     }
-
+    private void bulidClassNode(XMLEventWriter xmlew, XMLEventFactory xmlef, LocalTransientQuery currentJoin) throws XMLStreamException {
+        QName qnameClass = new QName("class");
+        
+        xmlew.add(xmlef.createStartElement(qnameClass, null, null));
+        xmlew.add(xmlef.createAttribute(new QName("name"), currentJoin.getClassName()));
+        // Visible attributes                
+        QName qnameVisibleattrs = new QName("visibleattributes");
+        
+        xmlew.add(xmlef.createStartElement(qnameVisibleattrs, null, null));
+                
+        for (String visibleAttrName : currentJoin.getVisibleAttributeNames()) {
+            QName qnameAttr = new QName("attribute");
+            
+            xmlew.add(xmlef.createStartElement(qnameAttr, null, null));
+            xmlew.add(xmlef.createAttribute(new QName("name"), visibleAttrName));
+            xmlew.add(xmlef.createEndElement(qnameAttr, null));
+        }
+        xmlew.add(xmlef.createEndElement(qnameVisibleattrs, null));
+        // Filters                        
+        QName qnameFilters = new QName("filters");
+        
+        xmlew.add(xmlef.createStartElement(qnameFilters, null, null));
+                        
+        for (int i = 0; i < currentJoin.getAttributeNames().size(); i += 1) {
+            QName qnameFilter = new QName("filter");
+            
+            xmlew.add(xmlef.createStartElement(qnameFilter, null, null));
+            
+            xmlew.add(xmlef.createAttribute(new QName("attribute"), currentJoin.getAttributeNames().get(i)));
+            xmlew.add(xmlef.createAttribute(new QName("condition"), 
+                    currentJoin.getConditions().get(i) == null ? 
+                            "0" : Integer.toString(currentJoin.getConditions().get(i))));
+            
+            if (currentJoin.getJoins().get(i) != null) 
+                bulidClassNode(xmlew, xmlef, currentJoin.getJoins().get(i));
+            xmlew.add(xmlef.createEndElement(qnameFilter, null));
+        }
+        xmlew.add(xmlef.createEndElement(qnameFilters, null));
+                        
+        xmlew.add(xmlef.createEndElement(qnameClass, null));
+    }
+    
     private void parseXML(byte[] structure) throws XMLStreamException {
         /*
          * Use this for debugging purposes

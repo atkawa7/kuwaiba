@@ -15,8 +15,6 @@
  */
 package org.inventory.design.topology.scene;
 
-import com.ociweb.xml.StartTagWAX;
-import com.ociweb.xml.WAX;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -31,7 +29,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLEventFactory;
+import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -144,84 +145,132 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
 
     @Override
     public byte[] getAsXML() {
-        ByteArrayOutputStream bas = new ByteArrayOutputStream();
-        WAX xmlWriter = new WAX(bas);
-        StartTagWAX mainTag = xmlWriter.start("view");
-        mainTag.attr("version", FORMAT_VERSION); //NOI18N
-        mainTag.start("class").text("TopologyView").end();
-        //nodes
-        StartTagWAX nodesTag = mainTag.start("nodes");
-        for (Widget nodeWidget : nodeLayer.getChildren())
-            nodesTag.start("node").attr("x", nodeWidget.getPreferredLocation().getX()).
-            attr("y", nodeWidget.getPreferredLocation().getY()).
-            attr("class", ((LocalObjectLight)findObject(nodeWidget)).getClassName()).
-            text(Long.toString(((LocalObjectLight)findObject(nodeWidget)).getOid())).end();
-        nodesTag.end();
-        //free icons
-        StartTagWAX iconsTag = mainTag.start("icons");
-        for (Widget iconWidget : iconsLayer.getChildren()){
-             iconsTag.start("icon").attr("type", 1).
-                     attr("id",((LocalObjectLight)findObject(iconWidget)).getOid()).
-                     attr("x", iconWidget.getPreferredLocation().getX()).
-                     attr("y",iconWidget.getPreferredLocation().getY()).
-                     text(((LocalObjectLight)findObject(iconWidget)).getName()).end();
-        }
-        iconsTag.end();
-        //edges
-        StartTagWAX edgesTag = mainTag.start("edges");
-        for (Widget edgeWidget : edgeLayer.getChildren()){
-            StartTagWAX edgeTag = edgesTag.start("edge");
-            edgeTag.attr("id", "");
-            edgeTag.attr("class", "");
-            edgeTag.attr("name", ((ObjectConnectionWidget)edgeWidget).getName());
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
+            XMLEventWriter xmlew = xmlof.createXMLEventWriter(baos);
+            XMLEventFactory xmlef = XMLEventFactory.newInstance();
             
-            String edgeObject = (String)findObject(edgeWidget);
+            QName qnameView = new QName("view");
+            xmlew.add(xmlef.createStartElement(qnameView, null, null));
+            xmlew.add(xmlef.createAttribute(new QName("version"), FORMAT_VERSION));
+            QName qnameClass = new QName("class");
+            xmlew.add(xmlef.createStartElement(qnameClass, null, null));
+            xmlew.add(xmlef.createCharacters("TopologyView"));
+            xmlew.add(xmlef.createEndElement(qnameClass, null));
+            // nodes
+            QName qnameNodes = new QName("nodes");
+            xmlew.add(xmlef.createStartElement(qnameNodes, null, null));
             
-            edgeTag.attr("aside", getEdgeSource(edgeObject).getOid());
-            edgeTag.attr("bside", getEdgeTarget(edgeObject).getOid());
+            for (Widget nodeWidget : nodeLayer.getChildren()) {
+                QName qnameNode = new QName("node");
+                xmlew.add(xmlef.createStartElement(qnameNode, null, null));
+                xmlew.add(xmlef.createAttribute(new QName("x"), Double.toString(nodeWidget.getPreferredLocation().getX())));
+                xmlew.add(xmlef.createAttribute(new QName("y"), Double.toString(nodeWidget.getPreferredLocation().getY())));
+                xmlew.add(xmlef.createAttribute(new QName("class"), ((LocalObjectLight)findObject(nodeWidget)).getClassName()));
+                xmlew.add(xmlef.createCharacters(Long.toString(((LocalObjectLight)findObject(nodeWidget)).getOid())));
+                xmlew.add(xmlef.createEndElement(qnameNode, null));
+            }
+            xmlew.add(xmlef.createEndElement(qnameNodes, null));
+            // free icons
+            QName qnameIcons = new QName("icons");
+            xmlew.add(xmlef.createStartElement(qnameIcons, null, null));
+            for (Widget iconWidget : iconsLayer.getChildren()) {
+                QName qnameIcon = new QName("icon");
+                xmlew.add(xmlef.createStartElement(qnameIcon, null, null));
+                xmlew.add(xmlef.createAttribute(new QName("type"), "1"));
+                xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(((LocalObjectLight)findObject(iconWidget)).getOid())));
+                xmlew.add(xmlef.createAttribute(new QName("x"), Double.toString(iconWidget.getPreferredLocation().getX())));
+                xmlew.add(xmlef.createAttribute(new QName("y"), Double.toString(iconWidget.getPreferredLocation().getY())));
+                xmlew.add(xmlef.createCharacters(((LocalObjectLight)findObject(iconWidget)).getName()));
+                xmlew.add(xmlef.createEndElement(qnameIcon, null));
+            }
+            xmlew.add(xmlef.createEndElement(qnameIcons, null));
+            // edges
+            QName qnameEdges = new QName("edges");
+            xmlew.add(xmlef.createStartElement(qnameEdges, null, null));
+            for (Widget edgeWidget : edgeLayer.getChildren()) {
+                QName qnameEdge = new QName("edge");
+                xmlew.add(xmlef.createStartElement(qnameEdge, null, null));
+                xmlew.add(xmlef.createAttribute(new QName("id"), ""));
+                xmlew.add(xmlef.createAttribute(new QName("class"), ""));
+                xmlew.add(xmlef.createAttribute(new QName("name"), ((ObjectConnectionWidget)edgeWidget).getName()));
+                
+                String edgeObject = (String)findObject(edgeWidget);
+                
+                xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(getEdgeSource(edgeObject).getOid())));
+                xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(getEdgeTarget(edgeObject).getOid())));
+                
+                for (Point point : ((ObjectConnectionWidget)edgeWidget).getControlPoints()) {
+                    QName qnameControlpoint = new QName("controlpoint");
+                    xmlew.add(xmlef.createStartElement(qnameControlpoint, null, null));
+                    xmlew.add(xmlef.createAttribute(new QName("x"), Double.toString(point.getX())));
+                    xmlew.add(xmlef.createAttribute(new QName("y"), Double.toString(point.getY())));
+                    xmlew.add(xmlef.createEndElement(qnameControlpoint, null));
+                }
+                xmlew.add(xmlef.createEndElement(qnameEdge, null));
+            }
+            xmlew.add(xmlef.createEndElement(qnameEdges, null));
+            // polygons
+            QName qnamePolygons = new QName("polygons");
+            xmlew.add(xmlef.createStartElement(qnamePolygons, null, null));
+            for (Widget framesWidget : framesLayer.getChildren()) {
+                QName qnamePolygon = new QName("polygon");
+                LocalObjectLight lolFrame = (LocalObjectLight)findObject(framesWidget);
+                xmlew.add(xmlef.createStartElement(qnamePolygon, null, null));
+                xmlew.add(xmlef.createAttribute(new QName("title"), lolFrame.getName().substring(lolFrame.getName().indexOf(FREE_FRAME) + 9)));
+                xmlew.add(xmlef.createAttribute(new QName("color"), "#000000"));
+                xmlew.add(xmlef.createAttribute(new QName("border"), "8"));
+                xmlew.add(xmlef.createAttribute(new QName("fill"), "none"));
+                
+                xmlew.add(xmlef.createAttribute(new QName("x"), Double.toString(framesWidget.getPreferredLocation().getX())));
+                xmlew.add(xmlef.createAttribute(new QName("y"), Double.toString(framesWidget.getPreferredLocation().getY())));
+                xmlew.add(xmlef.createAttribute(new QName("w"), Integer.toString(framesWidget.getBounds().width)));
+                xmlew.add(xmlef.createAttribute(new QName("h"), Integer.toString(framesWidget.getBounds().height)));
+                
+                QName qnameVertex_w = new QName("vertex");
+                xmlew.add(xmlef.createStartElement(qnameVertex_w, null, null));
+                xmlew.add(xmlef.createAttribute(new QName("x0"), Double.toString(framesWidget.getPreferredLocation().getX())));
+                xmlew.add(xmlef.createAttribute(new QName("x1"), Double.toString(framesWidget.getPreferredLocation().getX() + framesWidget.getBounds().width)));
+                xmlew.add(xmlef.createAttribute(new QName("y0"), Double.toString(framesWidget.getPreferredLocation().getY())));
+                xmlew.add(xmlef.createAttribute(new QName("y1"), Double.toString(framesWidget.getPreferredLocation().getY())));
+                xmlew.add(xmlef.createEndElement(qnameVertex_w, null));
+                
+                QName qnameVertex_x = new QName("vertex");
+                xmlew.add(xmlef.createStartElement(qnameVertex_x, null, null));
+                xmlew.add(xmlef.createAttribute(new QName("x0"), Double.toString(framesWidget.getPreferredLocation().getX() + framesWidget.getBounds().getWidth())));
+                xmlew.add(xmlef.createAttribute(new QName("x1"), Double.toString(framesWidget.getPreferredLocation().getX() + framesWidget.getBounds().width)));
+                xmlew.add(xmlef.createAttribute(new QName("y0"), Double.toString(framesWidget.getPreferredLocation().getY())));
+                xmlew.add(xmlef.createAttribute(new QName("y1"), Double.toString(framesWidget.getPreferredLocation().getY() - framesWidget.getBounds().height)));
+                xmlew.add(xmlef.createEndElement(qnameVertex_x, null));
+                
+                QName qnameVertex_y = new QName("vertex");
+                xmlew.add(xmlef.createStartElement(qnameVertex_y, null, null));
+                xmlew.add(xmlef.createAttribute(new QName("x0"), Double.toString(framesWidget.getPreferredLocation().getX() + framesWidget.getBounds().width)));
+                xmlew.add(xmlef.createAttribute(new QName("x1"), Double.toString(framesWidget.getPreferredLocation().getX())));
+                xmlew.add(xmlef.createAttribute(new QName("y0"), Double.toString(framesWidget.getPreferredLocation().getY())));
+                xmlew.add(xmlef.createAttribute(new QName("y1"), Double.toString(framesWidget.getPreferredLocation().getY())));
+                xmlew.add(xmlef.createEndElement(qnameVertex_y, null));
+                
+                QName qnameVertex_z = new QName("vertex");
+                xmlew.add(xmlef.createStartElement(qnameVertex_z, null, null));
+                xmlew.add(xmlef.createAttribute(new QName("x0"), Double.toString(framesWidget.getPreferredLocation().getX())));
+                xmlew.add(xmlef.createAttribute(new QName("x1"), Double.toString(framesWidget.getPreferredLocation().getX())));
+                xmlew.add(xmlef.createAttribute(new QName("y0"), Double.toString(framesWidget.getPreferredLocation().getY() - framesWidget.getBounds().height)));
+                xmlew.add(xmlef.createAttribute(new QName("y1"), Double.toString(framesWidget.getPreferredLocation().getY())));
+                xmlew.add(xmlef.createEndElement(qnameVertex_z, null));
+                
+                xmlew.add(xmlef.createEndElement(qnamePolygon, null));
+            }
+            xmlew.add(xmlef.createEndElement(qnamePolygons, null));
             
-            for (Point point : ((ObjectConnectionWidget)edgeWidget).getControlPoints())
-                edgeTag.start("controlpoint").attr("x", point.getX()).attr("y", point.getY()).end();
-            edgeTag.end();
+            xmlew.add(xmlef.createEndElement(qnameView, null));
+            xmlew.close();
+            return baos.toByteArray();
+        } catch (XMLStreamException ex) {
+            Exceptions.printStackTrace(ex);
         }
-        edgesTag.end();
-        StartTagWAX polygonsTag = mainTag.start("poligons");
-        for (Widget framesWidget : framesLayer.getChildren()){
-
-            StartTagWAX polygonTag = mainTag.start("polygon");
-            LocalObjectLight lolFrame = (LocalObjectLight)findObject(framesWidget);
-            polygonTag.attr("title", lolFrame.getName().substring(lolFrame.getName().indexOf(FREE_FRAME) + 9));
-            polygonTag.attr("color", "#000000");
-            polygonTag.attr("border", "8");
-            polygonTag.attr("fill", "none");
-
-            polygonTag.attr("x", framesWidget.getPreferredLocation().getX());
-            polygonTag.attr("y", framesWidget.getPreferredLocation().getY());
-            polygonTag.attr("w", framesWidget.getBounds().width);
-            polygonTag.attr("h", framesWidget.getBounds().height);
-
-            polygonTag.start("vertex").attr("x0", framesWidget.getPreferredLocation().getX()).
-                    attr("x1", framesWidget.getPreferredLocation().getX() + framesWidget.getBounds().width).
-                    attr("y0", framesWidget.getPreferredLocation().getY()).
-                    attr("y1", framesWidget.getPreferredLocation().getY()).end();
-            polygonTag.start("vertex").attr("x0", framesWidget.getPreferredLocation().getX() + framesWidget.getBounds().getWidth()).
-                    attr("x1", framesWidget.getPreferredLocation().getX() + framesWidget.getBounds().width).
-                    attr("y0", framesWidget.getPreferredLocation().getY()).
-                    attr("y1", framesWidget.getPreferredLocation().getY() - framesWidget.getBounds().height).end();
-            polygonTag.start("vertex").attr("x0", framesWidget.getPreferredLocation().getX() + framesWidget.getBounds().width).
-                    attr("x1", framesWidget.getPreferredLocation().getX()).
-                    attr("y0", framesWidget.getPreferredLocation().getY()).
-                    attr("y1", framesWidget.getPreferredLocation().getY()).end();
-            polygonTag.start("vertex").attr("x0", framesWidget.getPreferredLocation().getX()).
-                    attr("x1", framesWidget.getPreferredLocation().getX()).
-                    attr("y0", framesWidget.getPreferredLocation().getY() - framesWidget.getBounds().height).
-                    attr("y1", framesWidget.getPreferredLocation().getY()).end();
-            polygonTag.end();
-        }
-        polygonsTag.end();
-        
-        mainTag.end().close();
-        return bas.toByteArray();
+        return null;
     }
 
     @Override

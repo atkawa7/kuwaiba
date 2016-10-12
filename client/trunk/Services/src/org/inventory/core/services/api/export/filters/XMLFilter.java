@@ -16,11 +16,15 @@
 
 package org.inventory.core.services.api.export.filters;
 
-import com.ociweb.xml.StartTagWAX;
-import com.ociweb.xml.WAX;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import javax.swing.JPanel;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLEventFactory;
+import javax.xml.stream.XMLEventWriter;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import org.openide.util.Exceptions;
 
 /**
  * Exports to XML as explained <a href="http://www.kuwaiba.org/kuwaiba/wiki/index.php?title=XML_Documents">here</a>
@@ -57,35 +61,51 @@ public class XMLFilter extends TextExportFilter {
 
     @Override
     public boolean export(Object[][] result, FileOutputStream os) throws IOException {
-        WAX xmlWriter = new WAX(os);
-        StartTagWAX mainTag = xmlWriter.start("result");     //NOI18N
-        mainTag.attr("version", FORMAT_VERSION);      //NOI18N
-
-        StartTagWAX headerTag = mainTag.start("header");     //NOI18N
-        if (result.length != 0){
-            for (Object header : result[0]){
-                StartTagWAX currentColumn = headerTag.start("column");      //NOI18N
-                currentColumn.attr("type", "");      //NOI18N
-                currentColumn.text(header==null ? "" : header.toString());  //NOI18N
-                currentColumn.end();
+        try {
+            XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
+            XMLEventWriter xmlew = xmlof.createXMLEventWriter(os);
+            XMLEventFactory xmlef = XMLEventFactory.newFactory();
+            
+            QName qnameResult = new QName("result");
+            xmlew.add(xmlef.createStartElement(qnameResult, null, null));
+            xmlew.add(xmlef.createAttribute(new QName("version"), FORMAT_VERSION));
+                        
+            QName qnameHeader = new QName("header");
+            xmlew.add(xmlef.createStartElement(qnameHeader, null, null));
+            if (result.length != 0) {
+                for (Object column : result[0]) {
+                    QName qnameColumn = new QName("column");
+                    xmlew.add(xmlef.createStartElement(qnameColumn, null, null));
+                    xmlew.add(xmlef.createAttribute(new QName("type"), ""));
+                    xmlew.add(xmlef.createCharacters(column == null ? "" : column.toString()));
+                    xmlew.add(xmlef.createEndElement(qnameColumn, null));
+                }
             }
-        }
-        headerTag.end();
-
-        StartTagWAX recordsTag = mainTag.start("records");     //NOI18N
-        for (int i = 1; i < result.length; i++){
-            StartTagWAX currentRecord = recordsTag.start("record");     //NOI18N
-            for (int j = 0; j < result[i].length; j++){
-                StartTagWAX value = currentRecord.start("value");     //NOI18N
-                value.text(result[i][j].toString());
-                value.end();
+            xmlew.add(xmlef.createEndElement(qnameHeader, null));
+            
+            QName qnameRecords = new QName("records");
+            xmlew.add(xmlef.createStartElement(qnameRecords, null, null));
+            for (int i = 1; i < result.length; i += 1) {
+                QName qnameRecord = new QName("record");
+                xmlew.add(xmlef.createStartElement(qnameRecord, null, null));
+                for (Object value : result[i]) {
+                    QName qnameValue = new QName("value");
+                    xmlew.add(xmlef.createStartElement(qnameValue, null, null));
+                    xmlew.add(xmlef.createCharacters(value.toString()));
+                    xmlew.add(xmlef.createEndElement(qnameValue, null));
+                }
+                xmlew.add(xmlef.createEndElement(qnameRecord, null));
             }
-            currentRecord.end();
+            xmlew.add(xmlef.createEndElement(qnameRecords, null));
+            
+            xmlew.add(xmlef.createEndElement(qnameResult, null));
+            
+            xmlew.close();
+            return true;
+        } catch (XMLStreamException ex) {
+            Exceptions.printStackTrace(ex);
         }
-        recordsTag.end();
-        mainTag.end().close();
-        //It's not necessary to close the stream, since the line above closes it automatically
-        return true;
+        return false;
     }
 
     @Override

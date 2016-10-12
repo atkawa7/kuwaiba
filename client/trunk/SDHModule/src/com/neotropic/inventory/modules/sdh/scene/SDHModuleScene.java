@@ -17,8 +17,6 @@ package com.neotropic.inventory.modules.sdh.scene;
 
 import com.neotropic.inventory.modules.sdh.actions.SDHModuleActionsFactory;
 import com.neotropic.inventory.modules.sdh.wizard.SDHConnectionWizard;
-import com.ociweb.xml.StartTagWAX;
-import com.ociweb.xml.WAX;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Point;
@@ -28,7 +26,10 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLEventFactory;
+import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -168,38 +169,70 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
 
     @Override
     public byte[] getAsXML() {
-        ByteArrayOutputStream bas = new ByteArrayOutputStream();
-        WAX xmlWriter = new WAX(bas);
-        StartTagWAX mainTag = xmlWriter.start("view");
-        mainTag.attr("version", VIEW_FORMAT_VERSION); //NOI18N
-        //TODO: Get the class name from somewhere else
-        mainTag.start("class").text("SDHModuleView").end();
-        StartTagWAX nodesTag = mainTag.start("nodes");
-        for (Widget nodeWidget : nodeLayer.getChildren())
-            nodesTag.start("node").attr("x", nodeWidget.getPreferredLocation().x).
-            attr("y", nodeWidget.getPreferredLocation().y).
-            attr("class", nodeWidget.getLookup().lookup(ObjectNode.class).getLookup().lookup(LocalObjectLight.class).getClassName()).
-            text(String.valueOf(nodeWidget.getLookup().lookup(ObjectNode.class).getLookup().lookup(LocalObjectLight.class).getOid())).end();
-        nodesTag.end();
-
-        StartTagWAX edgesTag = mainTag.start("edges");
-        for (Widget edgeWidget : edgeLayer.getChildren()) {
-            StartTagWAX edgeTag = edgesTag.start("edge");
-            edgeTag.attr("id", ((AbstractConnectionWidget)edgeWidget).getNode().getObject().getOid());
-            edgeTag.attr("class", ((AbstractConnectionWidget)edgeWidget).getNode().getObject().getClassName());
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
+            XMLEventWriter xmlew = xmlof.createXMLEventWriter(baos);
+            XMLEventFactory xmlef = XMLEventFactory.newInstance();
             
-            LocalObjectLight edgeObject = (LocalObjectLight)findObject(edgeWidget);
+            QName qnameView = new QName("view");
+            xmlew.add(xmlef.createStartElement(qnameView, null, null));
+            xmlew.add(xmlef.createAttribute(new QName("version"), VIEW_FORMAT_VERSION)); // NOI18N
             
-            edgeTag.attr("aside", getEdgeSource(edgeObject).getOid());
-            edgeTag.attr("bside", getEdgeTarget(edgeObject).getOid());
-
-            for (Point point : ((AbstractConnectionWidget)edgeWidget).getControlPoints())
-                edgeTag.start("controlpoint").attr("x", point.x).attr("y", point.y).end();
-            edgeTag.end();
+            QName qnameClass = new QName("class");
+            xmlew.add(xmlef.createStartElement(qnameClass, null, null));
+            xmlew.add(xmlef.createCharacters("SDHModuleView"));
+            xmlew.add(xmlef.createEndElement(qnameClass, null));
+            
+            QName qnameNodes = new QName("nodes");
+            xmlew.add(xmlef.createStartElement(qnameNodes, null, null));
+            for (Widget nodeWidget : nodeLayer.getChildren()) {
+                QName qnameNode = new QName("node");
+                xmlew.add(xmlef.createStartElement(qnameNode, null, null));
+                xmlew.add(xmlef.createAttribute(new QName("x"), Integer.toString(nodeWidget.getPreferredLocation().x)));
+                xmlew.add(xmlef.createAttribute(new QName("y"), Integer.toString(nodeWidget.getPreferredLocation().y)));
+                
+                LocalObjectLight nodeObject = (LocalObjectLight) findObject(nodeWidget);
+                
+                xmlew.add(xmlef.createAttribute(new QName("class"), nodeObject.getClassName()));
+                
+                xmlew.add(xmlef.createCharacters(Long.toString(nodeObject.getOid())));
+                
+                xmlew.add(xmlef.createEndElement(qnameNode, null));
+            }
+            xmlew.add(xmlef.createEndElement(qnameNodes, null));
+            
+            QName qnameEdges = new QName("edges");
+            xmlew.add(xmlef.createStartElement(qnameEdges, null, null));
+            for (Widget edgeWidget : edgeLayer.getChildren()) {
+                LocalObjectLight edgeObject = (LocalObjectLight) findObject(edgeWidget);
+                
+                QName qnameEdge = new QName("edge");
+                xmlew.add(xmlef.createStartElement(qnameEdge, null, null));
+                xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(edgeObject.getOid())));
+                xmlew.add(xmlef.createAttribute(new QName("class"), edgeObject.getClassName()));
+                
+                xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(getEdgeSource(edgeObject).getOid())));
+                xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(getEdgeTarget(edgeObject).getOid())));
+                
+                for (Point point : ((AbstractConnectionWidget)edgeWidget).getControlPoints()) {
+                    QName qnameControlpoint = new QName("controlpoint");
+                    xmlew.add(xmlef.createStartElement(qnameControlpoint, null, null));
+                    xmlew.add(xmlef.createAttribute(new QName("x"), Integer.toString(point.x)));
+                    xmlew.add(xmlef.createAttribute(new QName("y"), Integer.toString(point.y)));
+                    xmlew.add(xmlef.createEndElement(qnameControlpoint, null));
+                }
+                xmlew.add(xmlef.createEndElement(qnameEdge, null));
+            }
+            xmlew.add(xmlef.createEndElement(qnameEdges, null));
+            
+            xmlew.add(xmlef.createEndElement(qnameView, null));
+            xmlew.close();
+            return baos.toByteArray();
+        } catch (XMLStreamException ex) {
+            Exceptions.printStackTrace(ex);
         }
-        edgesTag.end();
-        mainTag.end().close();
-        return bas.toByteArray();
+        return null;
     }
     
     @Override
