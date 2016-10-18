@@ -284,6 +284,13 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 rel.delete();
                 attributeNode.delete();
             }
+            
+            //Delete the existing templates
+            Iterable<Relationship> templateRelationshipsRelationships = node.getRelationships(RelTypes.HAS_TEMPLATE);
+            for (Relationship rel : templateRelationshipsRelationships)
+                Util.deleteTemplateObject(rel.getEndNode());
+            
+            
             //Release the rest of relationships
             for (Relationship rel : node.getRelationships())
                 rel.delete();
@@ -324,6 +331,11 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 rel.delete();
                 attributeNode.delete();
             }
+            
+            //Delete the existing templates
+            Iterable<Relationship> templateRelationshipsRelationships = node.getRelationships(RelTypes.HAS_TEMPLATE);
+            for (Relationship rel : templateRelationshipsRelationships)
+                Util.deleteTemplateObject(rel.getEndNode());
             
             //Release the rest of relationships
             for (Relationship rel : node.getRelationships())

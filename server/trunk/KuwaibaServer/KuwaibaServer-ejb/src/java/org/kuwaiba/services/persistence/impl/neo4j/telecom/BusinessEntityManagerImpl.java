@@ -126,8 +126,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         ClassMetadata myClass= cm.getClass(className);
         
         if (!mem.getPossibleChildren(parentClassName).contains(myClass)) 
-            throw new OperationNotPermittedException("Create Object", 
-                    String.format("An instance of class %s can't be created as child of %s", className, parentClassName == null ? Constants.NODE_DUMMYROOT : parentClassName));
+            throw new OperationNotPermittedException(String.format("An instance of class %s can't be created as child of %s", className, parentClassName == null ? Constants.NODE_DUMMYROOT : parentClassName));
         
         try (Transaction tx = graphDb.beginTx()) {        
             Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
@@ -140,13 +139,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             }
 
             if (myClass.isInDesign())
-                throw new OperationNotPermittedException("Create Object", "Can not create instances of classes marked as isDesign");
+                throw new OperationNotPermittedException("Can not create instances of classes marked as isDesign");
 
             if (myClass.isAbstract())
-                throw new OperationNotPermittedException("Create Object", "Can not create instances of abstract classes");
+                throw new OperationNotPermittedException(String.format("Abstract class %s can not be instantiated", className));
 
             if (!cm.isSubClass("InventoryObject", className))
-                throw new OperationNotPermittedException("Create Object", "Can not create non-inventory objects");
+                throw new OperationNotPermittedException("Can not create non-inventory objects");
 
             //The object should be created under an instance other than the dummy root
             if (parentClassName != null) {
@@ -182,17 +181,16 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
         
         if (objectClass.isInDesign())
-            throw new OperationNotPermittedException("Create Object", "Can not create instances of classes marked as isDesign");
+            throw new OperationNotPermittedException("Can not create instances of classes marked as isDesign");
 
         if (objectClass.isAbstract())
-            throw new OperationNotPermittedException("Create Object", "Can not create instances of abstract classes");
+            throw new OperationNotPermittedException("Can not create instances of abstract classes");
 
         if (!cm.isSubClass("InventoryObject", className))
-            throw new OperationNotPermittedException("Create Object", "Can not create non-inventory objects");
+            throw new OperationNotPermittedException("Can not create non-inventory objects");
         
         if (!mem.getPossibleChildren(parentClassName).contains(objectClass))
-            throw new OperationNotPermittedException("Create Object", 
-                    String.format("An instance of class %s can't be created as child of %s", className, parentClassName == null ? Constants.NODE_DUMMYROOT : parentClassName));
+            throw new OperationNotPermittedException(String.format("An instance of class %s can't be created as child of %s", className, parentClassName == null ? Constants.NODE_DUMMYROOT : parentClassName));
         
         String[] splitCriteria = criteria.split(":");
         if (splitCriteria.length != 2)
@@ -260,10 +258,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
 
         if (myClass.isInDesign())
-            throw new OperationNotPermittedException("Create Object", "Can not create instances of classes marked as isDesign");
+            throw new OperationNotPermittedException("Can not create instances of classes marked as isDesign");
         
         if (myClass.isAbstract())
-            throw new OperationNotPermittedException("Create Object", "Can not create objects of abstract classes");
+            throw new OperationNotPermittedException("Can not create objects of abstract classes");
         
         try(Transaction tx = graphDb.beginTx()) {
             Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
@@ -348,13 +346,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
 
         if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, className))
-            throw new OperationNotPermittedException("Create Object", String.format("Class %s is not an business class", className));
+            throw new OperationNotPermittedException(String.format("Class %s is not an business class", className));
         
         if (myClass.isInDesign())
-            throw new OperationNotPermittedException("Create Object", "Can not create instances of classes marked as isDesign");
+            throw new OperationNotPermittedException("Can not create instances of classes marked as isDesign");
         
         if (myClass.isAbstract())
-            throw new OperationNotPermittedException("Create Object", "Can't create objects from an abstract classes");
+            throw new OperationNotPermittedException("Can't create objects from an abstract classes");
 
         try(Transaction tx =graphDb.beginTx())
         {
@@ -520,7 +518,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             for (String className : objects.keySet()){
                 for (long oid : objects.get(className)){
                     if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, className))
-                        throw new OperationNotPermittedException(className, String.format("Class %s is not a business-related class", className));
+                        throw new OperationNotPermittedException(String.format("Class %s is not a business-related class", className));
 
                     Node instance = getInstanceOfClass(className, oid);
                     Util.deleteObject(instance, releaseRelationships);
@@ -534,7 +532,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     public void deleteObject(String className, long oid, boolean releaseRelationships) throws ObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException, NotAuthorizedException {
         try (Transaction tx = graphDb.beginTx()) {
             if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, className))
-                        throw new OperationNotPermittedException(className, String.format("Class %s is not a business-related class", className));
+                        throw new OperationNotPermittedException(String.format("Class %s is not a business-related class", className));
 
             Node instance = getInstanceOfClass(className, oid);
             Util.deleteObject(instance, releaseRelationships);
@@ -625,14 +623,14 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             long bObjectId, String name, boolean unique, HashMap<String, Object> properties) throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
         
         if (aObjectId == bObjectId)
-            throw new OperationNotPermittedException("Relate Objects", "An object can not be related with itself");
+            throw new OperationNotPermittedException("An object can not be related with itself");
         
         try(Transaction tx = graphDb.beginTx()) {
             Node nodeA = getInstanceOfClass(aObjectClass, aObjectId);
             for (Relationship rel : nodeA.getRelationships(RelTypes.RELATED_TO_SPECIAL)){
                 if (rel.getOtherNode(nodeA).getId() == bObjectId 
                         && rel.getProperty(Constants.PROPERTY_NAME).equals(name) && unique)
-                    throw new OperationNotPermittedException("Relate Objects", "These elements are already related");
+                    throw new OperationNotPermittedException("These elements are already related");
             }
             Node nodeB = getInstanceOfClass(bObjectClass, bObjectId);
             Relationship rel = nodeA.createRelationshipTo(nodeB, RelTypes.RELATED_TO_SPECIAL);
@@ -688,7 +686,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             Node newParentNode = getInstanceOfClass(targetClassName, targetOid);
             for (String myClass : objects.keySet()){
                 if (!cm.canBeChild(targetClassName, myClass))
-                    throw new OperationNotPermittedException("moveObjects", String.format("An instance of class %s can not be child of an instance of class %s", myClass,targetClassName));
+                    throw new OperationNotPermittedException(String.format("An instance of class %s can not be child of an instance of class %s", myClass,targetClassName));
 
                 Node instanceClassNode = classIndex.get(Constants.PROPERTY_NAME, myClass).getSingle();
                 if (instanceClassNode == null)
@@ -729,7 +727,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             int i = 0;
             for (String myClass : objects.keySet()){
                 if (!cm.canBeChild(targetClassName, myClass))
-                    throw new OperationNotPermittedException("copyObjects", String.format("An instance of class %s can not be child of an instance of class %s", myClass,targetClassName));
+                    throw new OperationNotPermittedException(String.format("An instance of class %s can not be child of an instance of class %s", myClass,targetClassName));
 
                 Node instanceClassNode = classIndex.get(Constants.PROPERTY_NAME, myClass).getSingle();
                 if (instanceClassNode == null)

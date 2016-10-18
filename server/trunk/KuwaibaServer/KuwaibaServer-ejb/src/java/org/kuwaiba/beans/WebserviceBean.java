@@ -2254,6 +2254,77 @@ public class WebserviceBean implements WebserviceBeanRemote {
     
     // </editor-fold>
     
+    //<editor-fold desc="Templates" defaultstate="collapsed">
+    @Override
+    public long createTemplate(String templateClass, String templateName, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("createTemplate", ipAddress, sessionId);
+            return aem.createTemplate(templateClass, templateName);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public long createTemplateElement(String templateElementClass, String templateElementParentClassName, 
+            long templateElementParentId, String templateElementName, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("createTemplateElement", ipAddress, sessionId);
+            return aem.createTemplateElement(templateElementClass, templateElementParentClassName, 
+                    templateElementParentId, templateElementName);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void updateTemplateElement(String templateElementClass, long templateElementId, String[] attributeNames, String[] attributeValues, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("updateTemplateElement", ipAddress, sessionId);
+            aem.updateTemplateElement(templateElementClass, templateElementId, attributeNames, attributeValues);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void deleteTemplateElement(String templateElementClass, long templateElementId, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("deleteTemplateElement", ipAddress, sessionId);
+            aem.deleteTemplateElement(templateElementClass, templateElementId);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public List<RemoteObjectLight> getTemplatesForClass(String className, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("getTemplatesForClass", ipAddress, sessionId);
+            List<RemoteBusinessObjectLight> templates = aem.getTemplatesForClass(className);
+            List<RemoteObjectLight> remoteTemplates = new ArrayList<>();
+            
+            for (RemoteBusinessObjectLight template : templates)
+                remoteTemplates.add(new RemoteObjectLight(template));
+            
+            return remoteTemplates;
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    //</editor-fold>
+    
     //<editor-fold defaultstate="collapsed" desc="Reporting methods">
     @Override
     public ReportDescriptor[] getReportsForClass(String className, int limit, String ipAddress, String sessionId) throws ServerSideException {
@@ -2891,5 +2962,5 @@ public class WebserviceBean implements WebserviceBeanRemote {
             return null;
         return aSession.getUser().getUserName();
     }
-    // </editor-fold>
+    // </editor-fold>    
 }

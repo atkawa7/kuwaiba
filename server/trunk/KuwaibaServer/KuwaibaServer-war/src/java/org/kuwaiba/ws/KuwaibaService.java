@@ -1520,11 +1520,11 @@ public class KuwaibaService {
     /**
      * Gets all children of an object of a given class
      * @param parentOid Parent whose children are requested
-     * @param parentClass
-     * @param childrenClass
+     * @param parentClass Class name of the element we want the children from
+     * @param childrenClass The type of children we want to retrieve
      * @param maxResults Max number of children to be returned. O for all
      * @param sessionId Session token
-     * @return An array with children
+     * @return An array with the children objects
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName="getChildrenOfClass")
@@ -3328,6 +3328,135 @@ public class KuwaibaService {
         }
     }
     // </editor-fold>
+    
+    //<editor-fold desc="Templates" defaultstate="collapsed">
+    /**
+     * Creates a template.
+     * @param templateClass The class you want to create a template for.
+     * @param templateName The name of the template.
+     * @param sessionId Session token.
+     * @return The id of the newly created template.
+     * @throws ServerSideException If something goes wrong
+     */
+    @WebMethod(operationName = "createTemplate")
+    public long createTemplate(@WebParam(name = "templateClass")String templateClass, 
+            @WebParam(name = "templateName")String templateName, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.createTemplate(templateClass, templateName, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createTemplate: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Creates an object inside a template.
+     * @param templateElementClass Class of the object you want to create.
+     * @param templateElementParentClassName Class of the parent to the obejct you want to create.
+     * @param templateElementParentId Id of the parent to the obejct you want to create.
+     * @param templateElementName Name of the element.
+     * @param sessionId Session token.
+     * @return The id of the new object.
+     * @throws ServerSideException If something goes wrong.
+     */
+    @WebMethod(operationName = "createTemplateElement")
+    public long createTemplateElement(@WebParam(name = "templateElementClass")String templateElementClass, 
+            @WebParam(name = "templateElementParentClassName")String templateElementParentClassName,
+            @WebParam(name = "templateElementParentId")long templateElementParentId,
+            @WebParam(name = "templateElementName")String templateElementName,
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.createTemplateElement(templateElementClass, templateElementParentClassName, 
+                    templateElementParentId, templateElementName, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createTemplateElement: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Updates the value of an attribute of a template element.
+     * @param templateElementClass Class of the element you want to update.
+     * @param templateElementId Id of the element you want to update.
+     * @param attributeNames Names of the attributes that you want to be updated as an array of strings.
+     * @param attributeValues The values of the attributes you want to upfate. For list types, it's the id of the related type
+     * @param sessionId Session token.
+     * @throws ServerSideException If something goes wrong.
+     */
+    @WebMethod(operationName = "updateTemplateElement")
+    public void updateTemplateElement(@WebParam(name = "templateElementClass")String templateElementClass, 
+            @WebParam(name = "templateElementId")long templateElementId,
+            @WebParam(name = "attributeNames")String[] attributeNames,
+            @WebParam(name = "attributeValues")String[] attributeValues,
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            wsBean.updateTemplateElement(templateElementClass, templateElementId, 
+                    attributeNames, attributeValues, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in updateTemplateElement: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Deletes an element within a template or a template itself.
+     * @param templateElementClass The template element class.
+     * @param templateElementId The template element id.
+     * @param sessionId Session token.
+     * @throws ServerSideException 
+     */
+    @WebMethod(operationName = "deleteTemplateElement")
+    public void deleteTemplateElement(@WebParam(name = "templateElementClass")String templateElementClass, 
+            @WebParam(name = "templateElementId")long templateElementId,
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            wsBean.deleteTemplateElement(templateElementClass, templateElementId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteTemplateElement: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Gets the templates available for a given class
+     * @param className Class whose templates we need
+     * @param sessionId Session token
+     * @return A list of templates (actually, the top element) as a list of RemoteOObjects
+     * @throws ServerSideException If somethings goes wrong
+     */
+    @WebMethod(operationName = "getTemplatesForClass")
+    public List<RemoteObjectLight> getTemplatesForClass(@WebParam(name = "className")String className, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getTemplatesForClass(className, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getTemplatesForClass: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    //</editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Reporting methods">
     /**

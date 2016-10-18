@@ -115,7 +115,7 @@ public class Util {
      * @param listType Node the list items are supposed to be instance of
      * @return A list of nodes representing the list type items
      */
-    public static List<Node> getRealValue(List<String> values, Node listType) throws InvalidArgumentException{
+    public static List<Node> getRealValue(List<String> values, Node listType) {
         Iterable<Relationship> listTypeItems = listType.getRelationships(RelTypes.INSTANCE_OF, Direction.INCOMING);
         List<Node> res = new ArrayList<>();
         
@@ -163,14 +163,15 @@ public class Util {
      * Deletes recursively and object and all its children. Note that the transaction should be handled by the caller
      * @param instance The object to be deleted
      * @param unsafeDeletion True if you want the object to be deleted no matter if it has RELATED_TO and RELATED_TO_SPECIAL relationships
+     * @throws org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException If the object already has relationships
      */
     public static void deleteObject(Node instance, boolean unsafeDeletion) throws OperationNotPermittedException {
         if(!unsafeDeletion){
             if (instance.getRelationships(RelTypes.RELATED_TO, Direction.INCOMING).iterator().hasNext())
-                throw new OperationNotPermittedException("deleteObject",String.format("The object with id %s can not be deleted since it has relationships", instance.getId()));
+                throw new OperationNotPermittedException(String.format("The object with id %s can not be deleted since it has relationships", instance.getId()));
 
             if (instance.getRelationships(RelTypes.RELATED_TO_SPECIAL, Direction.INCOMING).iterator().hasNext())
-                throw new OperationNotPermittedException("deleteObject",String.format("The object with id %s can not be deleted since it has relationships", instance.getId()));
+                throw new OperationNotPermittedException(String.format("The object with id %s can not be deleted since it has relationships", instance.getId()));
         }
 
         for (Relationship rel : instance.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF, RelTypes.CHILD_OF_SPECIAL))
@@ -182,11 +183,22 @@ public class Util {
         instance.getGraphDatabase().index().forNodes(Constants.INDEX_OBJECTS).remove(instance);
         instance.delete();
     }
+    
+    public static void deleteTemplateObject(Node instance) {
+        for (Relationship rel : instance.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF))
+            deleteTemplateObject(rel.getStartNode());
+
+        for (Relationship rel : instance.getRelationships())
+            rel.delete();
+
+        instance.delete();
+    }
 
     /**
      * Read and returns the bytes of a given file
      * @param fileName file to be opened
      * @return bytes on that file
+     * @throws java.io.FileNotFoundException If the file could not be found
      */
     public static byte[] readBytesFromFile(String fileName) throws FileNotFoundException, IOException{
         byte[] bytes = null;
@@ -1008,5 +1020,5 @@ public class Util {
         }catch (NumberFormatException ex){} //Does nothing
         
         return null;
-    }  
+    }
 }

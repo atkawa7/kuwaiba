@@ -795,5 +795,54 @@ public interface ApplicationEntityManager {
      * @throws InvalidArgumentException  If the task doesn't have a script
      */
     public TaskResult executeTask(long taskId) throws ApplicationObjectNotFoundException, InvalidArgumentException;
-    
+    /**
+     * Creates a template.
+     * @param templateClass The class you want to create a template for.
+     * @param templateName The name of the template. It can not be null.
+     * @return The id of the newly created template.
+     * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException If the provided class does not exist
+     * @throws org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException If the template class is abstract.
+     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException
+     */
+    public long createTemplate(String templateClass, String templateName) throws MetadataObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException;
+    /**
+     * Creates an object inside a template.
+     * @param templateElementClass Class of the object you want to create.
+     * @param templateElementParentClassName Class of the parent to the obejct you want to create.
+     * @param templateElementParentId Id of the parent to the obejct you want to create.
+     * @param templateElementName Name of the element.
+     * @return The id of the new object.
+     * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException If the object (or its parent) class could not be found
+     * @throws org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException If the parent object could not be found
+     * @throws org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException If the class provided to create the new element from is abstract.
+     */
+    public long createTemplateElement(String templateElementClass, String templateElementParentClassName, 
+            long templateElementParentId, String templateElementName) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, OperationNotPermittedException;
+    /**
+     * Updates the value of an attribute of a template element.
+     * @param templateElementClass Class of the element you want to update.
+     * @param templateElementId Id of the element you want to update.
+     * @param attributeNames Names of the attributes that you want to be updated as an array of strings.
+     * @param attributeValues The values of the attributes you want to upfate. For list types, it's the id of the related type
+     * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException If any of the classes provided as arguments do not exist
+     * @throws org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException If the template element could not be found
+     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If the arrays attributeNames and attributeValues have different sizes
+     */
+    public void updateTemplateElement(String templateElementClass, long templateElementId, 
+            String[] attributeNames, String[] attributeValues) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException;
+    /**
+     * Deletes an element within a template or a template itself.
+     * @param templateElementClass The template element class.
+     * @param templateElementId The template element id.
+     * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException If the element's class could not be found.
+     * @throws org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException If the element could not be found.
+     */
+    public void deleteTemplateElement(String templateElementClass, long templateElementId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException;
+    /**
+     * Gets the templates available for a given class
+     * @param className Class whose templates we need
+     * @return A list of templates (actually, the top element) as a list of RemoteOObjects
+     * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException If the class provided could not be found.
+     */
+    public List<RemoteBusinessObjectLight> getTemplatesForClass(String className) throws MetadataObjectNotFoundException;
 }

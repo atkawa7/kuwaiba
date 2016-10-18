@@ -22,7 +22,7 @@ package org.kuwaiba.apis.persistence.exceptions;
  */
 public class OperationNotPermittedException extends InventoryException{
 
-    public OperationNotPermittedException(String operationName, String reason) {
+    public OperationNotPermittedException(String reason) {
         super(reason);
     }
 
