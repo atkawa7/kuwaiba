@@ -74,11 +74,6 @@
             <artifactId>groovy-all</artifactId>
             <version>2.4.7</version>
         </dependency>
-        <dependency>
-            <groupId>WAX</groupId>
-            <artifactId>WAX</artifactId>
-            <version>wax_1.0.5</version>
-        </dependency>
     </dependencies>
 
     <build>

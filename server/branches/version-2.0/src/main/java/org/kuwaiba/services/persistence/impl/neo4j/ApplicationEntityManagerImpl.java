@@ -17,8 +17,6 @@
 package org.kuwaiba.services.persistence.impl.neo4j;
 
 import com.neotropic.kuwaiba.modules.GenericCommercialModule;
-import com.ociweb.xml.StartTagWAX;
-import com.ociweb.xml.WAX;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import java.io.BufferedReader;
@@ -37,6 +35,11 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLEventFactory;
+import javax.xml.stream.XMLEventWriter;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
@@ -1191,26 +1194,40 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override
     public byte[] getClassHierachy(boolean showAll) 
             throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException{
-        
-        try(Transaction tx = graphDb.beginTx())
-        {
-            ByteArrayOutputStream bas = new ByteArrayOutputStream();
-            WAX xmlWriter = new WAX(bas);
-            StartTagWAX rootTag = xmlWriter.start("hierarchy");
-            rootTag.attr("documentVersion", Constants.CLASS_HIERARCHY_NEXT_DOCUMENT_VERSION);
-            rootTag.attr("serverVersion", Constants.PERSISTENCE_SERVICE_VERSION);
-            rootTag.attr("date", Calendar.getInstance().getTimeInMillis());
-            StartTagWAX inventoryTag = rootTag.start("inventory");
-            StartTagWAX classesTag = inventoryTag.start("classes");
+        try (Transaction tx = graphDb.beginTx()) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
+            XMLEventWriter xmlew = xmlof.createXMLEventWriter(baos);
+            XMLEventFactory xmlef = XMLEventFactory.newInstance();
+            
+            QName qnameHierarchy = new QName("hierarchy");
+            xmlew.add(xmlef.createStartElement(qnameHierarchy, null, null));
+            xmlew.add(xmlef.createAttribute(new QName("documentVersion"), Constants.CLASS_HIERARCHY_NEXT_DOCUMENT_VERSION));
+            xmlew.add(xmlef.createAttribute(new QName("serverVersion"), Constants.PERSISTENCE_SERVICE_VERSION));
+            xmlew.add(xmlef.createAttribute(new QName("date"), Long.toString(Calendar.getInstance().getTimeInMillis())));
+            
+            QName qnameInventory = new QName("inventory");
+            xmlew.add(xmlef.createStartElement(qnameInventory, null, null));
+            
+            QName qnameClasses = new QName("classes");
+            xmlew.add(xmlef.createStartElement(qnameClasses, null, null));
+            
             Node rootObjectNode = classIndex.get(Constants.PROPERTY_NAME, Constants.CLASS_ROOTOBJECT).getSingle(); //NOI18N
             if (rootObjectNode == null)
                 throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", Constants.CLASS_ROOTOBJECT));
-            getXMLNodeForClass(rootObjectNode, rootTag);
-            classesTag.end();
-            inventoryTag.end();
-            rootTag.end().close();
-            return bas.toByteArray();
+            getXMLNodeForClass(rootObjectNode, xmlew, xmlef);
+            
+            xmlew.add(xmlef.createEndElement(qnameClasses, null));
+            
+            xmlew.add(xmlef.createEndElement(qnameInventory, null));
+            
+            xmlew.add(xmlef.createEndElement(qnameHierarchy, null));
+            xmlew.close();
+            return baos.toByteArray();
+        } catch (XMLStreamException ex) {
+            Logger.getLogger(ApplicationEntityManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return null;
     }
     
     //Pools
@@ -2072,13 +2089,15 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
      * @param classNode Node representing the class to be added
      * @param paretTag Parent to attach the new class node
      */
-    private void getXMLNodeForClass(Node classNode, StartTagWAX parentTag) {
+    private void getXMLNodeForClass(Node classNode, XMLEventWriter xmlew, XMLEventFactory xmlef) throws XMLStreamException {
         int applicationModifiers = 0;
         int javaModifiers = 0;
-        StartTagWAX currentTag = parentTag.start("class"); //NOI18N
-        currentTag.attr("id", classNode.getId());
-        currentTag.attr("name", classNode.getProperty(Constants.PROPERTY_NAME));        
-        currentTag.attr("classPackage", "");
+        QName qnameClass = new QName("class"); // NOI18N
+        xmlew.add(xmlef.createStartElement(qnameClass, null, null));
+        
+        xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(classNode.getId())));
+        xmlew.add(xmlef.createAttribute(new QName("name"), classNode.getProperty(Constants.PROPERTY_NAME).toString()));
+        xmlew.add(xmlef.createAttribute(new QName("classPackage"), ""));
         
         //Application modifiers
         if ((Boolean)classNode.getProperty(Constants.PROPERTY_COUNTABLE))
@@ -2086,37 +2105,39 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
         if ((Boolean)classNode.getProperty(Constants.PROPERTY_CUSTOM))
             applicationModifiers |= Constants.CLASS_MODIFIER_CUSTOM;
-
-        currentTag.attr("applicationModifiers",applicationModifiers);
-
+        xmlew.add(xmlef.createAttribute(new QName("applicationModifiers"), Integer.toString(applicationModifiers)));
+        
         //Language modifiers
         if ((Boolean)classNode.getProperty(Constants.PROPERTY_ABSTRACT))
             javaModifiers |= Modifier.ABSTRACT;
-        
-        currentTag.attr("javaModifiers",javaModifiers);
+        xmlew.add(xmlef.createAttribute(new QName("javaModifiers"), Integer.toString(javaModifiers)));
         
         //Class type
-        if (classNode.getProperty(Constants.PROPERTY_NAME).equals(Constants.CLASS_ROOTOBJECT)){
-            currentTag.attr("classType",Constants.CLASS_TYPE_ROOT);
+        if (classNode.getProperty(Constants.PROPERTY_NAME).equals(Constants.CLASS_ROOTOBJECT)) {
+            xmlew.add(xmlef.createAttribute(new QName("classType"), Integer.toString(Constants.CLASS_TYPE_ROOT)));
         }else{
             if (Util.isSubClass("InventoryObject", classNode))
-                currentTag.attr("classType",Constants.CLASS_TYPE_INVENTORY);
+                xmlew.add(xmlef.createAttribute(new QName("classType"), Integer.toString(Constants.CLASS_TYPE_INVENTORY)));
             else{
                 if (Util.isSubClass("ApplicationObject", classNode))
-                    currentTag.attr("classType",Constants.CLASS_TYPE_APPLICATION);
+                    xmlew.add(xmlef.createAttribute(new QName("classType"), Integer.toString(Constants.CLASS_TYPE_APPLICATION)));
                 else
-                    currentTag.attr("classType",Constants.CLASS_TYPE_OTHER);
+                    xmlew.add(xmlef.createAttribute(new QName("classType"), Integer.toString(Constants.CLASS_TYPE_OTHER)));
             }
         }
-
-        StartTagWAX attributesTag = currentTag.start("attributes");
+        
+        QName qnameAttributes = new QName("attributes");
+        xmlew.add(xmlef.createStartElement(qnameAttributes, null, null));
         for (Relationship relWithAttributes : classNode.getRelationships(RelTypes.HAS_ATTRIBUTE, Direction.OUTGOING)){
-            StartTagWAX attributeTag = attributesTag.start("attribute");
+            QName qnameAttribute = new QName("attribute");
+            xmlew.add(xmlef.createStartElement(qnameAttribute, null, null));
+            
             Node attributeNode = relWithAttributes.getEndNode();
             int attributeApplicationModifiers = 0;
-            attributeTag.attr("name", attributeNode.getProperty(Constants.PROPERTY_NAME));
-            attributeTag.attr("type", attributeNode.getProperty(Constants.PROPERTY_TYPE));
-            attributeTag.attr("javaModifiers", 0); //Not used
+            
+            xmlew.add(xmlef.createAttribute(new QName("name"), attributeNode.getProperty(Constants.PROPERTY_NAME).toString()));
+            xmlew.add(xmlef.createAttribute(new QName("type"), attributeNode.getProperty(Constants.PROPERTY_TYPE).toString()));
+            xmlew.add(xmlef.createAttribute(new QName("javaModifiers"), "0")); // Not used
             //Application modifiers
             if ((Boolean)attributeNode.getProperty(Constants.PROPERTY_NO_COPY))
                 attributeApplicationModifiers |= Constants.ATTRIBUTE_MODIFIER_NOCOPY;
@@ -2126,17 +2147,18 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 attributeApplicationModifiers |= Constants.ATTRIBUTE_MODIFIER_ADMINISTRATIVE;
             if ((Boolean)attributeNode.getProperty(Constants.PROPERTY_READ_ONLY))
                 attributeApplicationModifiers |= Constants.ATTRIBUTE_MODIFIER_READONLY;
-            attributeTag.attr("applicationModifiers", attributeApplicationModifiers);
-            attributeTag.end();
+            xmlew.add(xmlef.createAttribute(new QName("applicationModifiers"), Integer.toString(attributeApplicationModifiers)));
+            xmlew.add(xmlef.createEndElement(qnameAttribute, null));
         }
-        attributesTag.end();
-
-        StartTagWAX subclassesTag = currentTag.start("subclasses");
+        xmlew.add(xmlef.createEndElement(qnameAttributes, null));
+        
+        QName qnameSubclasses = new QName("subclasses");
+        xmlew.add(xmlef.createStartElement(qnameSubclasses, null, null));
         for (Relationship relWithSubclasses : classNode.getRelationships(RelTypes.EXTENDS, Direction.INCOMING))
-            getXMLNodeForClass(relWithSubclasses.getStartNode(), currentTag);
-
-        subclassesTag.end();
-        currentTag.end();
+            getXMLNodeForClass(relWithSubclasses.getStartNode(), xmlew, xmlef);
+        xmlew.add(xmlef.createEndElement(qnameSubclasses, null));
+        
+        xmlew.add(xmlef.createEndElement(qnameClass, null));
     }
     /**
      * Reads a ExtendedQuery looking for the classes involved in the query and returns all class nodes
