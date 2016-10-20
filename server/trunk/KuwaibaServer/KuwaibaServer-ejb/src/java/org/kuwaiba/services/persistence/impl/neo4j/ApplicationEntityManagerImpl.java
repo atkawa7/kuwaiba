@@ -82,6 +82,7 @@ import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.QueryExecutionException;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
@@ -2201,20 +2202,62 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public List<RemoteBusinessObjectLight> getTemplatesForClass(String className) throws MetadataObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             List<RemoteBusinessObjectLight> templates = new ArrayList<>();
-            String query = "MATCH (classNode)-[:" + RelTypes.HAS_TEMPLATE + "]->(templateObject) WHERE classNode.name={className} RETURN templateObject ORDER BY templateObject.name ASC"; //NOI18N
+            String query = "MATCH (classNode)-[:" + RelTypes.HAS_TEMPLATE + "]->(templateObject) WHERE classNode.name=\"{className}\" RETURN templateObject ORDER BY templateObject.name ASC"; //NOI18N
             HashMap<String, Object> parameters = new HashMap<>();
             parameters.put("className", className); //NOI18N
-            Result queryResult = graphDb.execute(query, parameters);
-            while (queryResult.hasNext()) {
-                Map<String, Object> row = queryResult.next();
-                //templates.add(Util.createRemoteObjectLightFromNode(row.))
-                System.out.println(row.get("templateObject")); //NOI18N
-            }
-            tx.success();
+            ResourceIterator<Node> queryResult = graphDb.execute(query, parameters).columnAs("templateObject");
+            
+            while (queryResult.hasNext()) 
+                templates.add(Util.createTemplateElementLightFromNode(queryResult.next()));
             return templates;
         }
     }
-
+    
+    @Override
+    public List<RemoteBusinessObjectLight> getTemplateElementChildren(String templateElementClass, long templateElementId)  {
+        try (Transaction tx = graphDb.beginTx()) {
+            String query = "MATCH (classNode)<-[:" + RelTypes.INSTANCE_OF_SPECIAL + 
+                    "]-(templateElement)<-[:" + RelTypes.CHILD_OF + "]-(templateElementChild) "
+                    + "WHERE classNode.name=\"{templateElementClass}\" AND id(templateElement) = {templateElementId} "
+                    + "RETURN templateElementChild ORDER BY templateElementChild.name ASC"; //NOI18N
+            HashMap<String, Object> parameters = new HashMap<>();
+            parameters.put("className", templateElementClass); //NOI18N
+            parameters.put("templateElementId", templateElementId); //NOI18N
+            ResourceIterator<Node> queryResult = graphDb.execute(query, parameters).columnAs("templateObject");
+            
+            List<RemoteBusinessObjectLight> templateElementChildren = new ArrayList<>();
+            while (queryResult.hasNext()) 
+                templateElementChildren.add(Util.createTemplateElementLightFromNode(queryResult.next()));
+            return templateElementChildren; 
+        }
+    }
+    
+    @Override
+    public RemoteBusinessObject getTemplateElement(String templateElementClass, long templateElementId)
+        throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node classNode = classIndex.get(Constants.PROPERTY_NAME, templateElementClass).getSingle();
+            
+            if (classNode == null)
+                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", templateElementClass));
+            
+            Node templateObjectNode = null;
+            
+            for (Relationship instanceOfSpecialRelationship : classNode.getRelationships(Direction.INCOMING, RelTypes.INSTANCE_OF_SPECIAL)) {
+                Node startNode = instanceOfSpecialRelationship.getStartNode();
+                if (startNode.getId() == templateElementId) {
+                    templateObjectNode = startNode;
+                    break;
+                }
+            }
+            
+            if (templateObjectNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Template object %s of class %s could not be found", templateElementId, templateElementClass));
+            
+            return Util.createTemplateElementFromNode(templateObjectNode);
+        }
+    }
+    
     @Override
     public void registerCommercialModule(GenericCommercialModule module) throws NotAuthorizedException {
         commercialModules.put(module.getName(), module);

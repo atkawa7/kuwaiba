@@ -2323,6 +2323,38 @@ public class WebserviceBean implements WebserviceBeanRemote {
         }
     }
     
+    @Override
+    public List<RemoteObjectLight> getTemplateElementChildren(String templateElementClass, 
+            long templateElementId, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("getTemplateElementChildren", ipAddress, sessionId);
+            List<RemoteBusinessObjectLight> templateElementChildren = aem.getTemplateElementChildren(templateElementClass, templateElementId);
+            List<RemoteObjectLight> remoteTemplateElementChildren = new ArrayList<>();
+            
+            for (RemoteBusinessObjectLight templateElementChild : templateElementChildren)
+                remoteTemplateElementChildren.add(new RemoteObjectLight(templateElementChild));
+            
+            return remoteTemplateElementChildren;
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public RemoteObject getTemplateElement(String templateElementClass, long templateElementId, 
+            String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("getTemplateElement", ipAddress, sessionId);
+            return new RemoteObject(aem.getTemplateElement(templateElementClass, templateElementId));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="Reporting methods">

@@ -422,8 +422,21 @@ public class Util {
             (String)instance.getProperty(Constants.PROPERTY_NAME), (String)classNode.getProperty(Constants.PROPERTY_NAME));
     }
     
+    public static RemoteBusinessObjectLight createTemplateElementLightFromNode (Node instance) {
+        Node classNode = instance.getSingleRelationship(RelTypes.INSTANCE_OF_SPECIAL, Direction.OUTGOING).getEndNode();
+        
+        return new RemoteBusinessObjectLight(instance.getId(), 
+            (String)instance.getProperty(Constants.PROPERTY_NAME), (String)classNode.getProperty(Constants.PROPERTY_NAME));
+    }
+    
     public static RemoteBusinessObject createRemoteObjectFromNode (Node instance) throws InvalidArgumentException {
         Node classNode = instance.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode();
+        ClassMetadata classMetadata = createClassMetadataFromNode(classNode);
+        return createRemoteObjectFromNode(instance, classMetadata);
+    }
+    
+    public static RemoteBusinessObject createTemplateElementFromNode (Node instance) throws InvalidArgumentException {
+        Node classNode = instance.getSingleRelationship(RelTypes.INSTANCE_OF_SPECIAL, Direction.OUTGOING).getEndNode();
         ClassMetadata classMetadata = createClassMetadataFromNode(classNode);
         return createRemoteObjectFromNode(instance, classMetadata);
     }
@@ -470,10 +483,10 @@ public class Util {
     
     /**
      * Builds a RemoteBusinessObject instance from a node representing a business object
-     * @param instance
-     * @param myClass
-     * @return
-     * @throws InvalidArgumentException if an attribute value can't be mapped into value
+     * @param instance The object as a Node instance.
+     * @param myClass The class metadata to map the node's properties into a RemoteBussinessObject.
+     * @return The business object.
+     * @throws InvalidArgumentException If an attribute value can't be mapped into value.
      */
     public static RemoteBusinessObject createRemoteObjectFromNode(Node instance, ClassMetadata myClass) throws InvalidArgumentException {
         

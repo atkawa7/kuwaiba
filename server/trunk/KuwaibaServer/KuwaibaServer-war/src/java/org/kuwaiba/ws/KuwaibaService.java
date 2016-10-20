@@ -3456,6 +3456,53 @@ public class KuwaibaService {
         }
     }
     
+    /**
+     * Retrieves the children of a given template element.
+     * @param templateElementClass Template element class.
+     * @param templateElementId Template element id.
+     * @param sessionId 
+     * @return The template element's children as a list of RemoteBusinessObjectLight instances.
+     * @throws org.kuwaiba.exceptions.ServerSideException
+     */
+    @WebMethod(operationName = "getTemplateElementChildren")
+    public List<RemoteObjectLight> getTemplateElementChildren(@WebParam(name = "templateElementClass")String templateElementClass, 
+            @WebParam(name = "templateElementId")long templateElementId, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getTemplateElementChildren(templateElementClass, templateElementId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getTemplateElementChildren: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    /**
+     * Retrives all the information of a given template element.
+     * @param templateElementClass Template element class.
+     * @param templateElementId Template element id.
+     * @param sessionId session token
+     * @return The template element information
+     * @throws org.kuwaiba.exceptions.ServerSideException In case someting goes wrong.
+     */
+    @WebMethod(operationName = "getTemplateElement")
+    public RemoteObject getTemplateElement(@WebParam(name = "templateElementClass")String templateElementClass, 
+            @WebParam(name = "templateElementId")long templateElementId, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getTemplateElement(templateElementClass, templateElementId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getTemplateElement: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
     //</editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Reporting methods">

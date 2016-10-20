@@ -335,6 +335,24 @@ public interface WebserviceBeanRemote {
     public byte[] downloadBulkLoadLog(String fileName, String ipAddress, String sessionId) throws ServerSideException;
     // </editor-fold>
     
+    //<editor-fold desc="Templates" defaultstate="collapsed">
+    public long createTemplate(String templateClass, String templateName, String ipAddress, String sessionId) throws ServerSideException;
+
+    public long createTemplateElement(String templateElementClass, String templateElementParentClassName, long templateElementParentId, String templateElementName, String ipAddress, String sessionId) throws ServerSideException;
+
+    public void updateTemplateElement(String templateElementClass, long templateElementId, String[] attributeNames, String[] attributeValues, String ipAddress, String sessionId) throws ServerSideException;
+
+    public void deleteTemplateElement(String templateElementClass, long templateElementId, String ipAddress, String sessionId) throws ServerSideException;
+
+    public List<RemoteObjectLight> getTemplatesForClass(String className, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public List<RemoteObjectLight> getTemplateElementChildren(String templateElementClass, 
+            long templateElementId, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public RemoteObject getTemplateElement(String templateElementClass, long templateElementId, 
+            String ipAddress, String sessionId) throws ServerSideException;
+    //</editor-fold>
+    
     // <editor-fold defaultstate="collapsed" desc="Reporting methods.">
     public ReportDescriptor[] getReportsForClass(String className, int limit, String ipAddress, String sessionId) throws ServerSideException;
     
@@ -419,16 +437,4 @@ public interface WebserviceBeanRemote {
     // <editor-fold defaultstate="collapsed" desc="Help methods. Click on the + sign on the left to edit the code.">
     public boolean isSubclassOf(String className, String subclassOf, String remoteAddress, String sessionId);
     // </editor-fold>
-
-    //<editor-fold desc="Templates" defaultstate="collapsed">
-    public long createTemplate(String templateClass, String templateName, String ipAddress, String sessionId) throws ServerSideException;
-
-    public long createTemplateElement(String templateElementClass, String templateElementParentClassName, long templateElementParentId, String templateElementName, String ipAddress, String sessionId) throws ServerSideException;
-
-    public void updateTemplateElement(String templateElementClass, long templateElementId, String[] attributeNames, String[] attributeValues, String ipAddress, String sessionId) throws ServerSideException;
-
-    public void deleteTemplateElement(String templateElementClass, long templateElementId, String ipAddress, String sessionId) throws ServerSideException;
-
-    public List<RemoteObjectLight> getTemplatesForClass(String className, String ipAddress, String sessionId) throws ServerSideException;
-    //</editor-fold>
 }

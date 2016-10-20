@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectList;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
@@ -845,4 +846,22 @@ public interface ApplicationEntityManager {
      * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException If the class provided could not be found.
      */
     public List<RemoteBusinessObjectLight> getTemplatesForClass(String className) throws MetadataObjectNotFoundException;
+    /**
+     * Retrieves the children of a given template element.
+     * @param templateElementClass Template element class.
+     * @param templateElementId Template element id.
+     * @return The template element's children as a list of RemoteBusinessObjectLight instances.
+     */
+    public List<RemoteBusinessObjectLight> getTemplateElementChildren(String templateElementClass, long templateElementId);
+    /**
+     * Retrives all the information of a given template element.
+     * @param templateElementClass Template element class.
+     * @param templateElementId Template element id.
+     * @return The template element information
+     * @throws MetadataObjectNotFoundException If the template class does not exist
+     * @throws ApplicationObjectNotFoundException If the template element could not be found.
+     * @throws InvalidArgumentException If the information stored 
+     */
+    public RemoteBusinessObject getTemplateElement(String templateElementClass, long templateElementId)
+        throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException;
 }
