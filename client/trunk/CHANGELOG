@@ -106,3 +106,8 @@
 * Relationship explorer improved
 * Query results are selection-sensible
 * Topology designer was rewritten
+
+1.1 (01122016)
+* WAX dependency removed
+* Added support for templates
+* It's possible to create reports from scripts

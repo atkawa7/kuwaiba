@@ -2496,6 +2496,133 @@ public class CommunicationsStub {
     }
     //</editor-fold>
     
+    //<editor-fold desc="Templates" defaultstate="collapsed">
+    /**
+     * Creates a template.
+     * @param templateClass The class you want to create a template for.
+     * @param templateName The name of the template. It can not be null.
+     * @return The newly created template as a LocalObjectLight object.
+     */
+    public LocalObjectLight createTemplate(String templateClass, String templateName) {
+        try {
+            return new LocalObjectLight(service.createTemplate(templateClass, templateName, session.getSessionId()), templateName, templateClass);
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    /**
+     * Creates an object inside a template.
+     * @param templateElementClass Class of the object you want to create.
+     * @param templateElementParentClassName Class of the parent to the obejct you want to create.
+     * @param templateElementParentId Id of the parent to the obejct you want to create.
+     * @param templateElementName Name of the element.
+     * @return The id of the new object.
+     */
+    public LocalObjectLight createTemplateElement(String templateElementClass, String templateElementParentClassName, long templateElementParentId, String templateElementName) {
+            try {
+            return new LocalObjectLight(service.createTemplateElement(templateElementClass, templateElementParentClassName, 
+                    templateElementParentId, templateElementName, session.getSessionId()), templateElementName, templateElementClass);
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    /**
+     * Updates the value of an attribute of a template element.
+     * @param templateElementClass Class of the element you want to update.
+     * @param templateElementId Id of the element you want to update.
+     * @param attributeNames Names of the attributes that you want to be updated as an array of strings.
+     * @param attributeValues The values of the attributes you want to upfate. For list types, it's the id of the related type
+     * @return <code>true</code> if the update was successful, <code>false</code> otherwise.
+     */
+    public boolean updateTemplateElement(String templateElementClass, long templateElementId, 
+            String[] attributeNames, String[] attributeValues) {
+        try {
+            service.updateTemplateElement(templateElementClass, templateElementId, 
+                    Arrays.asList(attributeNames), Arrays.asList(attributeValues), session.getSessionId());
+            return true;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    /**
+     * Deletes an element within a template or a template itself.
+     * @param templateElementClass The template element class.
+     * @param templateElementId The template element id.
+     * @return <code>true</code> if the update was successful, <code>false</code> otherwise.
+     */
+    public boolean deleteTemplateElement(String templateElementClass, long templateElementId) {
+        try {
+            service.deleteTemplateElement(templateElementClass, templateElementId, session.getSessionId());
+            return true;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    /**
+     * Gets the templates available for a given class
+     * @param className Class whose templates we need
+     * @return A list of templates (actually, the top element) as a list of RemoteOObjects
+     */
+    public List<LocalObjectLight> getTemplatesForClass(String className) {
+        try {
+            List<LocalObjectLight> localTemplates = new ArrayList<>();
+            List<RemoteObjectLight> remoteTemplates = service.getTemplatesForClass(className, session.getSessionId());
+            for (RemoteObjectLight remoteTemplate : remoteTemplates)
+                localTemplates.add(new LocalObjectLight(remoteTemplate.getOid(), remoteTemplate.getName(), remoteTemplate.getClassName()));
+            return localTemplates;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Retrieves the children of a given template element.
+     * @param templateElementClass Template element class.
+     * @param templateElementId Template element id.
+     * @return The template element's children as a list of LocalObjectLight instances. It will return null if something went wrong.
+     */
+    public List<LocalObjectLight> getTemplateElementChildren(String templateElementClass, long templateElementId) {
+        try {
+            List<LocalObjectLight> localTemplateElementChildren = new ArrayList<>();
+            List<RemoteObjectLight> remoteTemplateElementChildren = service.getTemplateElementChildren(templateElementClass, templateElementId, session.getSessionId());
+            for (RemoteObjectLight remoteTemplateElementChild : remoteTemplateElementChildren)
+                localTemplateElementChildren.add(new LocalObjectLight(remoteTemplateElementChild.getOid(), remoteTemplateElementChild.getName(), remoteTemplateElementChild.getClassName()));
+            return localTemplateElementChildren;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Retrives all the information of a given template element.
+     * @param templateElementClass Template element class.
+     * @param templateElementId Template element id.
+     * @return The template element information. It will return null if something went wrong.
+     */
+    public LocalObject getTemplateElement(String templateElementClass, long templateElementId) {
+        try {
+            RemoteObject remoteTemplateElement = service.getTemplateElement(templateElementClass, templateElementId, session.getSessionId());
+            LocalClassMetadata lcmd = getMetaForClass(templateElementClass, false);
+            List<List<String>> values = new ArrayList<>();
+            for (StringArray value : remoteTemplateElement.getValues())
+                values.add(value.getItem());
+            
+            return new LocalObject(remoteTemplateElement.getClassName(), remoteTemplateElement.getOid(), 
+                    remoteTemplateElement.getAttributes(), values,lcmd);
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    //</editor-fold>
+    
     // <editor-fold defaultstate="collapsed" desc="Sync/bulk load data methods. Click on the + sign on the left to edit the code.">
     /**
      * Load data from a file 
