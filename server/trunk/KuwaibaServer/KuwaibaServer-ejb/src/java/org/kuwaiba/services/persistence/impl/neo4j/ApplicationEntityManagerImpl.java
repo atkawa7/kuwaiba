@@ -2099,6 +2099,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 throw new ApplicationObjectNotFoundException(String.format("Parent object %s of class %s not found", templateElementParentId, templateElementParentClassName));
             
             Node templateObjectNode = graphDb.createNode();
+            templateObjectNode.setProperty(Constants.PROPERTY_NAME, templateElementName == null ? "" : templateElementName);
+            
             templateObjectNode.createRelationshipTo(parentNode, RelTypes.CHILD_OF);
             Relationship specialInstanceRelationship = templateObjectNode.createRelationshipTo(classNode, RelTypes.INSTANCE_OF_SPECIAL);
             specialInstanceRelationship.setProperty(Constants.PROPERTY_NAME, "template");
@@ -2202,7 +2204,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public List<RemoteBusinessObjectLight> getTemplatesForClass(String className) throws MetadataObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             List<RemoteBusinessObjectLight> templates = new ArrayList<>();
-            String query = "MATCH (classNode)-[:" + RelTypes.HAS_TEMPLATE + "]->(templateObject) WHERE classNode.name=\"{className}\" RETURN templateObject ORDER BY templateObject.name ASC"; //NOI18N
+            String query = "MATCH (classNode)-[:" + RelTypes.HAS_TEMPLATE + "]->(templateObject) WHERE classNode.name={className} RETURN templateObject ORDER BY templateObject.name ASC"; //NOI18N
             HashMap<String, Object> parameters = new HashMap<>();
             parameters.put("className", className); //NOI18N
             ResourceIterator<Node> queryResult = graphDb.execute(query, parameters).columnAs("templateObject");
@@ -2218,12 +2220,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         try (Transaction tx = graphDb.beginTx()) {
             String query = "MATCH (classNode)<-[:" + RelTypes.INSTANCE_OF_SPECIAL + 
                     "]-(templateElement)<-[:" + RelTypes.CHILD_OF + "]-(templateElementChild) "
-                    + "WHERE classNode.name=\"{templateElementClass}\" AND id(templateElement) = {templateElementId} "
+                    + "WHERE classNode.name={templateElementClass} AND id(templateElement) = {templateElementId} "
                     + "RETURN templateElementChild ORDER BY templateElementChild.name ASC"; //NOI18N
             HashMap<String, Object> parameters = new HashMap<>();
-            parameters.put("className", templateElementClass); //NOI18N
+            parameters.put("templateElementClass", templateElementClass); //NOI18N
             parameters.put("templateElementId", templateElementId); //NOI18N
-            ResourceIterator<Node> queryResult = graphDb.execute(query, parameters).columnAs("templateObject");
+            ResourceIterator<Node> queryResult = graphDb.execute(query, parameters).columnAs("templateElementChild");
             
             List<RemoteBusinessObjectLight> templateElementChildren = new ArrayList<>();
             while (queryResult.hasNext()) 
