@@ -15,6 +15,7 @@
  */
 package org.inventory.core.templates;
 
+import org.inventory.core.services.api.behaviors.Refreshable;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -45,11 +46,11 @@ import org.openide.util.NbBundle.Messages;
         preferredID = "TemplatesTopComponent"
 )
 @Messages({
-    "CTL_TemplatesAction=Templates",
-    "CTL_TemplatesTopComponent=Templates",
+    "CTL_TemplatesAction=Template Manager",
+    "CTL_TemplatesTopComponent=Template Manager",
     "HINT_TemplatesTopComponent=Manage Object Templates with this module"
 })
-public final class TemplatesTopComponent extends TopComponent implements ExplorerManager.Provider {
+public final class TemplatesTopComponent extends TopComponent implements ExplorerManager.Provider, Refreshable {
 
     private ExplorerManager em;
     private BeanTreeView treeMain;
@@ -70,6 +71,7 @@ public final class TemplatesTopComponent extends TopComponent implements Explore
         
         treeMain = new BeanTreeView();
         treeMain.setRootVisible(false);
+        add(treeMain);
     }
     
     /**
@@ -87,7 +89,7 @@ public final class TemplatesTopComponent extends TopComponent implements Explore
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
-        
+        service.setRoot();
     }
 
     @Override
@@ -110,5 +112,11 @@ public final class TemplatesTopComponent extends TopComponent implements Explore
     @Override
     public ExplorerManager getExplorerManager() {
         return em;
+    }
+
+    @Override
+    public void refresh() {
+        componentClosed();
+        componentOpened();
     }
 }

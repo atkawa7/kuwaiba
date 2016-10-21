@@ -1,45 +1,66 @@
-/*
- * Copyright (c) 2016 gir.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/**
+ *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
  *
- * Contributors:
- *    gir - initial API and implementation and/or initial documentation
+ *  Licensed under the EPL License, Version 1.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.eclipse.org/legal/epl-v10.html
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.inventory.core.templates.nodes;
 
+import java.awt.Image;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.util.Utils;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.templates.nodes.actions.TemplateActionsFactory;
+import org.inventory.navigation.applicationnodes.objectnodes.AbstractChildren;
 import org.openide.nodes.AbstractNode;
-import org.openide.nodes.Children;
 import org.openide.nodes.Node;
-import org.openide.util.actions.SystemAction;
 import org.openide.util.lookup.Lookups;
 
 /**
- *
- * @author gir
+ * A node representing a template element.
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class TemplateElementNode extends AbstractNode {
 
+    private final Image defaultIcon = Utils.createRectangleIcon(Utils.DEFAULT_ICON_COLOR, 
+            Utils.DEFAULT_ICON_WIDTH, Utils.DEFAULT_ICON_HEIGHT);
+    
     public TemplateElementNode(LocalObjectLight object) {
         super(new TemplateElementChildren(), Lookups.singleton(object));
+        setDisplayName(object.toString());
     }
 
     @Override
     public Action[] getActions(boolean context) {
-        return null;
+        return new Action[] {TemplateActionsFactory.getCreateTemplateElementAction(), 
+                             null,
+                             TemplateActionsFactory.getDeleteTemplateElementAction()};
     }
     
+    @Override
+    public Image getOpenedIcon(int type) {
+        return defaultIcon;
+    }
+
+    @Override
+    public Image getIcon(int type) {
+        return defaultIcon;
+    }
     
-    
-    public static class TemplateElementChildren extends Children.Keys<LocalObjectLight> {
+    public static class TemplateElementChildren extends AbstractChildren {
         @Override
         public void addNotify() {
             LocalObjectLight templateElement = getNode().getLookup().lookup(LocalObjectLight.class);

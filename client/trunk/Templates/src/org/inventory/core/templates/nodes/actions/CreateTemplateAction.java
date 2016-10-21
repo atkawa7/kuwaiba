@@ -13,58 +13,57 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.inventory.automation.tasks.nodes.actions;
+package org.inventory.core.templates.nodes.actions;
 
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
-import org.inventory.automation.tasks.nodes.TaskManagerRootNode;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalTask;
+import org.inventory.communications.core.LocalClassMetadataLight;
+import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
+import org.inventory.core.templates.nodes.ClassNode;
+import org.inventory.navigation.applicationnodes.objectnodes.AbstractChildren;
 import org.openide.util.Utilities;
 
 /**
- * Creates a task
+ * Creates a template
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-class CreateTaskAction extends AbstractAction {
+class CreateTemplateAction extends AbstractAction {
     
-    CreateTaskAction() {
-        putValue(NAME, "Create Task");
+    private CommunicationsStub com = CommunicationsStub.getInstance();
+    
+    CreateTemplateAction() {
+        putValue(NAME, "New Template");
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        CommunicationsStub com = CommunicationsStub.getInstance();
         
-        JTextField txtName = new JTextField(20);
-        txtName.setName("txtName");
-        
-        JTextField txtDescription = new JTextField(20);
-        txtDescription.setName("txtDescription");
+        JTextField txtTemplateName = new JTextField(20);
+        txtTemplateName.setName("txtTemplateName"); //NOI18N
         
         JComplexDialogPanel pnlGeneralInfo = new JComplexDialogPanel(
-                                    new String[] { "Name" , "Description" }, new JComponent[] { txtName, txtDescription });
+                                    new String[] { "Name" }, new JComponent[] { txtTemplateName });
         
-        if (JOptionPane.showConfirmDialog(null, pnlGeneralInfo, "New Task", 
+        if (JOptionPane.showConfirmDialog(null, pnlGeneralInfo, "New Template", 
                 JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-            LocalTask newTask = com.createTask(((JTextField)pnlGeneralInfo.getComponent("txtName")).getText(), 
-                    ((JTextField)pnlGeneralInfo.getComponent("txtDescription")).getText(), 
-                    true, "", null, null, null);
             
-            if (newTask == null)
+            ClassNode selectedNode = Utilities.actionsGlobalContext().lookup(ClassNode.class);
+            LocalClassMetadataLight selectedObject = selectedNode.getLookup().lookup(LocalClassMetadataLight.class);
+            
+            LocalObjectLight newTemplate = com.createTemplate(selectedObject.getClassName(), ((JTextField)pnlGeneralInfo.getComponent("txtTemplateName")).getText());
+            
+            if (newTemplate == null)
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             else {
-                ((TaskManagerRootNode.TaskManagerRootChildren)Utilities.actionsGlobalContext().lookup (TaskManagerRootNode.class).getChildren()).addNotify();
-                NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Task created successfully");
+                ((AbstractChildren)selectedNode.getChildren()).addNotify();
+                NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Template created successfully");
             }
         }
-            
-        
     }
-    
 }

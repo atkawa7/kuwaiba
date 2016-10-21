@@ -20,8 +20,10 @@ import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.util.Constants;
-
-
+import org.inventory.core.templates.nodes.ClassNode;
+import org.openide.nodes.AbstractNode;
+import org.openide.nodes.Children;
+import org.openide.nodes.Node;
 
 /**
  * Service class for this module. 
@@ -37,7 +39,17 @@ public class TemplatesService  {
     }
     
     public void setRoot() {
-        List<LocalClassMetadataLight> allClasses = com.getLightSubclasses(Constants.CLASS_INVENTORYOBJECT, false, false);
+        final List<LocalClassMetadataLight> allClasses = com.getLightSubclasses(Constants.CLASS_INVENTORYOBJECT, false, false);
+        topComponent.getExplorerManager().setRootContext(
+                new AbstractNode(new Children.Keys<LocalClassMetadataLight>() {
+                    {
+                        setKeys(allClasses);
+                    }
+                    @Override
+                    protected Node[] createNodes(LocalClassMetadataLight t) {
+                        return new Node[] {new ClassNode(t)};
+                    }
+                }));
     }
 
 }

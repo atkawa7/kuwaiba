@@ -26,10 +26,6 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.MenuScroller;
-import org.inventory.navigation.applicationnodes.objectnodes.AbstractChildren;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
-import org.inventory.navigation.applicationnodes.objectnodes.RootObjectNode;
-import org.openide.nodes.AbstractNode;
 import org.openide.util.Lookup;
 import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter.Popup;
@@ -44,7 +40,7 @@ public final class CreateBusinessObjectFromTemplateAction extends AbstractAction
     @Override
     public void actionPerformed(ActionEvent ev) {
         
-        LocalObjectLight selectedObject = Lookup.getDefault().lookup(LocalObjectLight.class);
+        LocalObjectLight selectedObject = Utilities.actionsGlobalContext().lookup(LocalObjectLight.class);
         
         List<LocalObjectLight> templates = com.getTemplatesForClass(((JMenuItem)ev.getSource()).getName());
         
