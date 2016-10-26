@@ -163,9 +163,15 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             else
                 parentNode = specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
 
-            Node newObject = createObject(classNode, myClass, attributes, template);
+            Node newObject;
+            //if (template == -1)
+                newObject = createObject(classNode, myClass, attributes);
+                
+            //else {
+//                classNode
+//                copyObject(newObject, true);
+            //}
             newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF);
-                      
             tx.success();
             return newObject.getId();
         }
@@ -241,7 +247,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
 
-            Node newObject = createObject(classNode, objectClass, attributes, template);
+            Node newObject = createObject(classNode, objectClass, attributes);
             newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF);
                       
             tx.success();
@@ -282,7 +288,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     throw new ObjectNotFoundException(parentClassName, parentOid);
             }
         
-            Node newObject = createObject(classNode, myClass, attributes, template);
+            Node newObject = createObject(classNode, myClass, attributes);
             if (parentNode !=null)
                 newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF_SPECIAL);
 
@@ -329,7 +335,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     attributes.put(attributeNames[i], Arrays.asList(attributeValues[i]));
             }
             
-            Node newObject = createObject(classNode, classMetadata, attributes, templateId);
+            Node newObject = createObject(classNode, classMetadata, attributes);
             newObject.createRelationshipTo(pool, RelTypes.CHILD_OF_SPECIAL).setProperty(Constants.PROPERTY_NAME, Constants.REL_PROPERTY_POOL);
             
             tx.success();
@@ -379,7 +385,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
             long res[] = new long[numberOfObjects];
             for (int i = 0; i < numberOfObjects; i++){
-                Node newObject = createObject(classNode, myClass, null, 0);
+                Node newObject = createObject(classNode, myClass, null);
                 newObject.setProperty(Constants.PROPERTY_NAME, String.valueOf(i + 1));
                 if (parentNode != null)
                     newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF_SPECIAL);
@@ -1211,7 +1217,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         throw new ObjectNotFoundException((String)classNode.getProperty(Constants.PROPERTY_NAME), oid);
     }
     
-    public Node createObject(Node classNode, ClassMetadata classToMap, HashMap<String,List<String>> attributes, long template) 
+    public Node createObject(Node classNode, ClassMetadata classToMap, HashMap<String,List<String>> attributes) 
             throws InvalidArgumentException, MetadataObjectNotFoundException {
  
         if (classToMap.isAbstract())

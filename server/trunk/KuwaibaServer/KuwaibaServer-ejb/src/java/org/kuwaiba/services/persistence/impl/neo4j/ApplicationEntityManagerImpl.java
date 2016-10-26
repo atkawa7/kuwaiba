@@ -2155,7 +2155,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                         }
                     }
                     
-                    if (attributeValues[i] != null) {
+                    if (attributeValues[i] != null && !attributeValues[i].equals("0") ) { //NOI18N 
                         Node listTypeItemNode = listTypeItemsIndex.get(Constants.PROPERTY_ID, Long.valueOf(attributeValues[i])).getSingle();
                         
                         if (listTypeItemNode == null)
