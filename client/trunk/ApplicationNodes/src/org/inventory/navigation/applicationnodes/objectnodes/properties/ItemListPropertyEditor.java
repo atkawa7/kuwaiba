@@ -18,7 +18,6 @@ package org.inventory.navigation.applicationnodes.objectnodes.properties;
 import java.beans.PropertyEditorSupport;
 import java.util.List;
 import org.inventory.communications.core.LocalObjectListItem;
-import org.inventory.communications.util.Constants;
 
 
 /**
@@ -35,7 +34,7 @@ public class ItemListPropertyEditor extends PropertyEditorSupport {
 
     @Override
     public String getAsText(){
-        return getValue() == null ? Constants.LABEL_NONAME : getValue().toString();
+        return getValue() == null ? list.get(0).toString() : getValue().toString();
     }
 
     @Override

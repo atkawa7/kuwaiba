@@ -96,7 +96,7 @@ public class ServicesFrame extends JFrame {
         
         JPanel pnlButtons = new JPanel();
         pnlButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
-        JButton btnRelate = new JButton("Create relationship");
+        JButton btnRelate = new JButton("Create Relationship");
         pnlButtons.add(btnRelate);
         btnRelate.addActionListener(new BtnConnectActionListener());
         JButton btnClose = new JButton("Close");

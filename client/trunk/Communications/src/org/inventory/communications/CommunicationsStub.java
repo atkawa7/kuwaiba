@@ -307,10 +307,9 @@ public class CommunicationsStub {
                 StringArray value = new StringArray();
                 attributeNames.add(key);
                 Object theValue = obj.getAttribute(key);
-                if (theValue instanceof List) {
-                    for (long itemId : (List<Long>)theValue)
-                        value.getItem().add(String.valueOf(itemId));
-                } else {
+                if (theValue instanceof LocalObjectListItem)
+                    value.getItem().add(String.valueOf(((LocalObjectListItem)theValue).getId()));
+                else {
                     if (theValue instanceof Date)
                         value.getItem().add(String.valueOf(((Date)theValue).getTime()));
                     else

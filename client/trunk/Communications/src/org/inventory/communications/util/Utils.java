@@ -37,6 +37,7 @@ import javax.swing.JFileChooser;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalObjectListItem;
 
 /**
  * Misc helpers
@@ -174,17 +175,18 @@ public class Utils {
                     if (type.equals("Timestamp"))
                         return Timestamp.valueOf(valueAsString.get(0));
 
-                    //In any other case we treat it as a LocalObjectListItem, returning its id
-                    return Long.valueOf(valueAsString.get(0));
+                    //In any other case we rise an IllegalArgumentException
+                    throw new IllegalArgumentException(String.format("The type %s has a wrong mapping and will be ignored", type));
                 case Constants.MAPPING_MANYTOMANY:
-                    List<Long> res = new ArrayList<Long>();
+                    List<Long> res = new ArrayList<>();
                     for (String value : valueAsString)
                         res.add(Long.valueOf(value));
                     return res;
                 case Constants.MAPPING_MANYTOONE:
                     if (valueAsString.isEmpty())
                         return null;
-                    return Long.valueOf(valueAsString.get(0));
+                    //return Long.valueOf(valueAsString.get(0));
+                    return Utils.getListTypeItem(type, Long.valueOf(valueAsString.get(0)));
                 default:
                     throw new Exception();
             }
@@ -249,9 +251,9 @@ public class Utils {
             }
 
             // Ensure all the bytes have been read in
-            if (offset < bytes.length) {
+            if (offset < bytes.length) 
                 throw new IOException("Could not completely read file "+f.getName());
-            }
+            
         }else{
             throw new IOException("File too big "+f.getName());
         }
@@ -272,7 +274,7 @@ public class Utils {
             return null;
 
         //PNG by default
-        String myFormat = format ==null?"png":format;
+        String myFormat = format == null ? "png" : format;
 
         BufferedImage bu = new BufferedImage(im.getWidth(null), im.getHeight(null), BufferedImage.TYPE_INT_ARGB);
         bu.getGraphics().drawImage(im, 0, 0, null);
@@ -377,5 +379,18 @@ public class Utils {
         
         if(!CommunicationsStub.getInstance().saveObject(theUpdate))
             throw new Exception(CommunicationsStub.getInstance().getError());
+    }
+    
+    public static LocalObjectListItem getListTypeItem(String listTypeClass, long listTypeItemId) throws IllegalAccessException {
+        List<LocalObjectListItem> list = CommunicationsStub.getInstance().getList(listTypeClass, true, false);
+        if (list == null)
+            throw new IllegalAccessException(CommunicationsStub.getInstance().getError());
+        
+        for (LocalObjectListItem listItem : list) {
+            if (listItem.getId() == listTypeItemId)
+                return listItem;
+        }
+        
+        throw new IllegalArgumentException(String.format("List type %s with id %s could not be found", listTypeClass, listTypeItemId));
     }
 }

@@ -36,7 +36,7 @@ import org.openide.util.NbBundle.Messages;
 )
 @TopComponent.Description(
         preferredID = "TemplatesTopComponent",
-        //iconBase="SET/PATH/TO/ICON/HERE", 
+        iconBase="org/inventory/core/templates/res/icon.png", 
         persistenceType = TopComponent.PERSISTENCE_NEVER
 )
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
