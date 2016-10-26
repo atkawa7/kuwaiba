@@ -179,7 +179,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
                         }
                         property = new ListTypeProperty(
                                 lam.getName(),
-                                lam.getDisplayName().equals("") ? lam.getName() : lam.getDisplayName(),
+                                lam.getDisplayName(),
                                 lam.getDescription(),
                                 list,
                                 this,
@@ -424,9 +424,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
             object = (LocalObjectLight) evt.getSource();
             if (evt.getPropertyName().equals(Constants.PROPERTY_NAME)) {
                 setDisplayName(getDisplayName());
-                //fireDisplayNameChange((String)evt.getOldValue(), (String)evt.getNewValue());
-                fireNameChange(null, object.getName());
-                //firePropertyChange(Constants.PROPERTY_NAME, null, object.getName());
+                fireNameChange(null, object.getName()); //Weird, this should be fireDisplayNameChange, but it isn't
             }
         }
     }

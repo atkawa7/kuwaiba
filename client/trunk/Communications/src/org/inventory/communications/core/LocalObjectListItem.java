@@ -22,7 +22,9 @@ import org.inventory.communications.util.Constants;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class LocalObjectListItem extends LocalObjectLight {
-    //id for null values
+    /**
+     * Id for null values
+     */
     public static final long NULL_ID = 0;
     private String displayName;
 

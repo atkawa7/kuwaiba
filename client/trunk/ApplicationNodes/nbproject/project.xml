@@ -96,6 +96,7 @@
                 </dependency>
             </module-dependencies>
             <public-packages>
+                <package>org.inventory.navigation.applicationnodes</package>
                 <package>org.inventory.navigation.applicationnodes.attributemetadatanodes</package>
                 <package>org.inventory.navigation.applicationnodes.attributemetadatanodes.customeditor</package>
                 <package>org.inventory.navigation.applicationnodes.attributemetadatanodes.properties</package>
@@ -110,7 +111,7 @@
                 <package>org.inventory.navigation.applicationnodes.objectnodes.windows</package>
                 <package>org.inventory.navigation.applicationnodes.pools</package>
                 <package>org.inventory.navigation.applicationnodes.pools.actions</package>
-                <package>org.inventory.navigation.applicationnodes.querynodes</package>
+                <package>org.inventory.navigation.applicationnodes.pools.properties</package>
             </public-packages>
         </data>
     </configuration>

@@ -370,7 +370,7 @@ public class Utils {
      * @param objectId Object Id
      * @param propertyName Name of the property to be set
      * @param propertyValue Value of the property to be set
-     * @throws Exception The same exception capture in the CommunicationsStub
+     * @throws Exception The same exception captured in the CommunicationsStub
      */
     public static void updateObject(String className, long objectId, String propertyName, Object propertyValue) throws Exception {
         LocalObject theUpdate = new LocalObject(className, objectId, new String [] { propertyName }, new Object [] { propertyValue });

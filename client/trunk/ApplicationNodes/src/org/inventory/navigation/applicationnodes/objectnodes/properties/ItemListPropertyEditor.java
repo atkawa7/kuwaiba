@@ -18,13 +18,14 @@ package org.inventory.navigation.applicationnodes.objectnodes.properties;
 import java.beans.PropertyEditorSupport;
 import java.util.List;
 import org.inventory.communications.core.LocalObjectListItem;
+import org.inventory.communications.util.Constants;
 
 
 /**
  * Provides a custom property editor for list-type values
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ItemListPropertyEditor extends PropertyEditorSupport{
+public class ItemListPropertyEditor extends PropertyEditorSupport {
 
     private List<LocalObjectListItem> list;
 
@@ -34,16 +35,17 @@ public class ItemListPropertyEditor extends PropertyEditorSupport{
 
     @Override
     public String getAsText(){
-        return getValue().toString();
+        return getValue() == null ? Constants.LABEL_NONAME : getValue().toString();
     }
 
     @Override
     public void setAsText(String text){
-        for (LocalObjectListItem loli : list)
-            if (text.equals(loli.getName())){
+        for (LocalObjectListItem loli : list) {
+            if (text.equals(loli.getName())) {
                 setValue(loli);
                 break;
             }
+        }
     }
 
     @Override
@@ -52,8 +54,9 @@ public class ItemListPropertyEditor extends PropertyEditorSupport{
         //so it's not necessary to add it here
         String [] res = new String[list.size()];
     
-        for (int i = 0; i <list.size(); i++)
-            res[i] = list.get(i).getDisplayName() == null ? list.get(i).getName() : list.get(i).getDisplayName();
+        for (int i = 0; i < list.size(); i++)
+            res[i] = list.get(i).toString();
+        
         return res;
     }
 

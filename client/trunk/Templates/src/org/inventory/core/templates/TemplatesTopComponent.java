@@ -15,6 +15,7 @@
  */
 package org.inventory.core.templates;
 
+import javax.swing.ActionMap;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -67,7 +68,7 @@ public final class TemplatesTopComponent extends TopComponent implements Explore
     private void initCustomComponents() {
         service = new TemplatesService(this);
         em = new ExplorerManager();
-        associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
+        associateLookup(ExplorerUtils.createLookup(em, new ActionMap()));
         
         treeMain = new BeanTreeView();
         treeMain.setRootVisible(false);
@@ -97,17 +98,9 @@ public final class TemplatesTopComponent extends TopComponent implements Explore
         em.setRootContext(Node.EMPTY);
     }
 
-    void writeProperties(java.util.Properties p) {
-        // better to version settings since initial version as advocated at
-        // http://wiki.apidesign.org/wiki/PropertyFiles
-        p.setProperty("version", "1.0");
-        // TODO store your settings
-    }
+    void writeProperties(java.util.Properties p) {}
 
-    void readProperties(java.util.Properties p) {
-        String version = p.getProperty("version");
-        // TODO read your settings according to their version
-    }
+    void readProperties(java.util.Properties p) {}
 
     @Override
     public ExplorerManager getExplorerManager() {

@@ -59,7 +59,6 @@ public class ListTypeProperty extends PropertySupport.ReadWrite<LocalObjectListI
             value = t;
     }
 
-    
     @Override
     public PropertyEditor getPropertyEditor(){
         return propertyEditor;
