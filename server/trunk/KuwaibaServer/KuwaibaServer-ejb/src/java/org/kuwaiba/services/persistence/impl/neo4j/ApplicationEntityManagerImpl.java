@@ -2259,6 +2259,29 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             return Util.createTemplateElementFromNode(templateObjectNode);
         }
     }
+
+    @Override
+    public long[] copyTemplateElements(String[] sourceObjectsClassNames, long[] sourceObjectsIds, String newParentClassName, 
+            long newParentId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException {
+        
+        if (sourceObjectsClassNames.length != sourceObjectsIds.length)
+            throw new InvalidArgumentException("The sourceObjectsClassNames and sourceObjectsIds arrays have different sizes");
+        try (Transaction tx = graphDb.beginTx()) {
+            long[] newTemplateElements = new long[sourceObjectsClassNames.length];
+            
+            Node newParentNode = getTemplateElementInstance(newParentClassName, newParentId);
+            
+            for (int i = 0; i < sourceObjectsClassNames.length; i++) {
+                Node templateObjectNode = getTemplateElementInstance(sourceObjectsClassNames[i], sourceObjectsIds[i]);
+                Node newTemplateElementInstance = copyTemplateElement(templateObjectNode, true);
+                newTemplateElementInstance.createRelationshipTo(newParentNode, RelTypes.CHILD_OF);
+                newTemplateElements[i] = newTemplateElementInstance.getId();
+            }
+            tx.success();
+            return newTemplateElements;
+        }
+    }
+    
     
     @Override
     public void registerCommercialModule(GenericCommercialModule module) throws NotAuthorizedException {
@@ -2453,6 +2476,48 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             poolsIndex.remove(poolNode);
             poolNode.delete();
+    }
+    
+    private Node getTemplateElementInstance(String templateElementClassName, long templateElementId) throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException {
+        Node classNode = classIndex.get(Constants.PROPERTY_NAME, templateElementClassName).getSingle();
+            
+        if (classNode == null)
+            throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", templateElementClassName));
+
+        Node templateElementNode = null;
+
+        for (Relationship instanceOfSpecialRelationship : classNode.getRelationships(Direction.INCOMING, RelTypes.INSTANCE_OF_SPECIAL)) {
+            Node startNode = instanceOfSpecialRelationship.getStartNode();
+            if (startNode.getId() == templateElementId) {
+                templateElementNode = startNode;
+                break;
+            }
+        }
+
+        if (templateElementNode == null)
+            throw new ApplicationObjectNotFoundException(String.format("Template object %s of class %s could not be found", templateElementId, templateElementClassName));
+
+        return templateElementNode;
+    }
+    
+    private Node copyTemplateElement(Node templateObject, boolean recursive) {
+        
+        Node newTemplateElementInstance = graphDb.createNode();
+        for (String property : templateObject.getPropertyKeys())
+            newTemplateElementInstance.setProperty(property, templateObject.getProperty(property));
+        
+        for (Relationship rel : templateObject.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING))
+            newTemplateElementInstance.createRelationshipTo(rel.getEndNode(), RelTypes.RELATED_TO).setProperty(Constants.PROPERTY_NAME, rel.getProperty(Constants.PROPERTY_NAME));
+        
+        newTemplateElementInstance.createRelationshipTo(templateObject.getRelationships(RelTypes.INSTANCE_OF_SPECIAL).iterator().next().getEndNode(), RelTypes.INSTANCE_OF_SPECIAL);
+
+        if (recursive){
+            for (Relationship rel : templateObject.getRelationships(RelTypes.CHILD_OF, Direction.INCOMING)){
+                Node newChild = copyTemplateElement(rel.getStartNode(), true);
+                newChild.createRelationshipTo(newTemplateElementInstance, RelTypes.CHILD_OF);
+            }
+        }
+        return newTemplateElementInstance;
     }
     
     //End of Helpers   

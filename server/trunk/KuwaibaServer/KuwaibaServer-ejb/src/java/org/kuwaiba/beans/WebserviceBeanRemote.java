@@ -351,6 +351,9 @@ public interface WebserviceBeanRemote {
     
     public RemoteObject getTemplateElement(String templateElementClass, long templateElementId, 
             String ipAddress, String sessionId) throws ServerSideException;
+    
+    public long[] copyTemplateElements(String[] sourceObjectsClassNames, long[] sourceObjectsIds, 
+            String newParentClassName,long newParentId, String ipAddress, String sessionId) throws ServerSideException;
     //</editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Reporting methods.">

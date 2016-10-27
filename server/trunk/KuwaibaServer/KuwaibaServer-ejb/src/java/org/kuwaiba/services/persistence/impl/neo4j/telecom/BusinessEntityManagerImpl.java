@@ -148,10 +148,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 throw new OperationNotPermittedException("Can not create non-inventory objects");
 
             //The object should be created under an instance other than the dummy root
-            if (parentClassName != null) {
+            if (parentClassName != null && parentOid != -1) {
                 ClassMetadata myParentObjectClass= cm.getClass(parentClassName);
                 if (myParentObjectClass == null)
-                    throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
+                    throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", parentClassName));
             }
 
             Node parentNode;
@@ -164,13 +164,23 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 parentNode = specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
 
             Node newObject;
-            //if (template == -1)
+            if (template <= 0)
                 newObject = createObject(classNode, myClass, attributes);
+            else {
+                Node templateNode = null;
+                for (Relationship hasTemplateRelationship : classNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_TEMPLATE)) {
+                    Node endNode = hasTemplateRelationship.getEndNode();
+                    if (endNode.getId() == template){
+                        templateNode = endNode;
+                        break;
+                    }
+                }
                 
-            //else {
-//                classNode
-//                copyObject(newObject, true);
-            //}
+                if (templateNode == null)
+                    throw new ApplicationObjectNotFoundException(String.format("No template with id %s was found for class %s", template, className));
+                
+                newObject = copyTemplateElement(templateNode, true);
+            }
             newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF);
             tx.success();
             return newObject.getId();
@@ -247,7 +257,25 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
 
-            Node newObject = createObject(classNode, objectClass, attributes);
+            Node newObject;
+            if (template <= 0)
+                newObject = createObject(classNode, objectClass, attributes);
+            else {
+                Node templateNode = null;
+                for (Relationship hasTemplateRelationship : classNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_TEMPLATE)) {
+                    Node endNode = hasTemplateRelationship.getEndNode();
+                    if (endNode.getId() == template){
+                        templateNode = endNode;
+                        break;
+                    }
+                }
+                
+                if (templateNode == null)
+                    throw new ApplicationObjectNotFoundException(String.format("No template with id %s was found for class %s", template, className));
+                
+                newObject = copyTemplateElement(templateNode, true);
+            }
+            
             newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF);
                       
             tx.success();
@@ -1282,12 +1310,43 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         for (Relationship rel : templateObject.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING))
             newInstance.createRelationshipTo(rel.getEndNode(), RelTypes.RELATED_TO).setProperty(Constants.PROPERTY_NAME, rel.getProperty(Constants.PROPERTY_NAME));
         
+        newInstance.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
+        
         objectIndex.putIfAbsent(newInstance, Constants.PROPERTY_ID, newInstance.getId());
         newInstance.createRelationshipTo(templateObject.getRelationships(RelTypes.INSTANCE_OF).iterator().next().getEndNode(), RelTypes.INSTANCE_OF);
 
         if (recursive){
             for (Relationship rel : templateObject.getRelationships(RelTypes.CHILD_OF, Direction.INCOMING)){
                 Node newChild = copyObject(rel.getStartNode(), true);
+                newChild.createRelationshipTo(newInstance, RelTypes.CHILD_OF);
+            }
+        }
+        return newInstance;
+    }
+    
+    /**
+     * Spawns [recursively] an inventory object from a template element
+     * @param templateObject The template object used to create the inventory object
+     * @param recursive Should the spawn operation be recursive?
+     * @return The root copied object
+     */
+    private Node copyTemplateElement(Node templateObject, boolean recursive) {
+        
+        Node newInstance = graphDb.createNode();
+        for (String property : templateObject.getPropertyKeys())
+            newInstance.setProperty(property, templateObject.getProperty(property));
+        
+        for (Relationship rel : templateObject.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING))
+            newInstance.createRelationshipTo(rel.getEndNode(), RelTypes.RELATED_TO).setProperty(Constants.PROPERTY_NAME, rel.getProperty(Constants.PROPERTY_NAME));
+        
+        newInstance.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
+        
+        objectIndex.putIfAbsent(newInstance, Constants.PROPERTY_ID, newInstance.getId());
+        newInstance.createRelationshipTo(templateObject.getRelationships(RelTypes.INSTANCE_OF_SPECIAL).iterator().next().getEndNode(), RelTypes.INSTANCE_OF);
+
+        if (recursive){
+            for (Relationship rel : templateObject.getRelationships(RelTypes.CHILD_OF, Direction.INCOMING)){
+                Node newChild = copyTemplateElement(rel.getStartNode(), true);
                 newChild.createRelationshipTo(newInstance, RelTypes.CHILD_OF);
             }
         }

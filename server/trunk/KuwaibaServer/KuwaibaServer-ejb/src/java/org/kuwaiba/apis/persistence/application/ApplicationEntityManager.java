@@ -864,4 +864,18 @@ public interface ApplicationEntityManager {
      */
     public RemoteBusinessObject getTemplateElement(String templateElementClass, long templateElementId)
         throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException;
+    
+    /**
+     * Copy template elements within templates. Should not be used to copy entire templates.
+     * @param sourceObjectsClassNames Array with the class names of the elements to be copied.
+     * @param sourceObjectsIds  Array with the ids of the elements to be copied.
+     * @param newParentClassName Class of the parent of the copied objects.
+     * @param newParentId Id of the parent of the copied objects.
+     * @return An array with the ids of the newly created elements in the same order they were provided.
+     * @throws MetadataObjectNotFoundException If any of the classes could not be found.
+     * @throws ApplicationObjectNotFoundException If any of the source template elements could not be found.
+     * @throws InvalidArgumentException If the arrays provided as arguments have different sizes.
+     */
+    public long[] copyTemplateElements(String[] sourceObjectsClassNames, long[] sourceObjectsIds, 
+            String newParentClassName, long newParentId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException;
 }
