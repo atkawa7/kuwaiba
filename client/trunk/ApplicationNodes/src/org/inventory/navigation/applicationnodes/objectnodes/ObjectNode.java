@@ -300,16 +300,22 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
         return object;
     }
 
+    //This method is called when the node is copied or cut
     @Override
     public PasteType getDropType(Transferable _obj, final int action, int index) {
-        final ObjectNode dropNode = (ObjectNode) NodeTransfer.node(_obj,
+        final Node dropNode = NodeTransfer.node(_obj,
                 NodeTransfer.DND_COPY_OR_MOVE + NodeTransfer.CLIPBOARD_CUT);
+        
         //When there's no an actual drag/drop operation, but a simple node selection
         if (dropNode == null) 
             return null;
         
+        //The clipboard does not contain an ObjectNode
+        if (!ObjectNode.class.isInstance(dropNode))
+            return null;
+            
         //Ignore those noisy attempts to move it to itself
-        if (dropNode.getObject().equals(object))
+        if (dropNode.getLookup().lookup(LocalObjectLight.class).equals(object))
             return null;
         
         //Can't move to the same parent, only copy
@@ -321,7 +327,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
             public Transferable paste() throws IOException {
                 boolean canMove = false;
                 try {
-                    LocalObjectLight obj = dropNode.getObject();
+                    LocalObjectLight obj = dropNode.getLookup().lookup(LocalObjectLight.class);
                     //Check if the current object can contain the drop node
                     List<LocalClassMetadataLight> possibleChildren = com.getPossibleChildren(object.getClassName(), false);
                     for (LocalClassMetadataLight lcml : possibleChildren) {

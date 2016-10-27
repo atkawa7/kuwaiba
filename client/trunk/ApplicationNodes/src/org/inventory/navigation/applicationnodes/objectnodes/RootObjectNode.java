@@ -17,9 +17,14 @@
 package org.inventory.navigation.applicationnodes.objectnodes;
 
 import javax.swing.Action;
+import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.util.Constants;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.CreateBusinessObjectAction;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.CreateBusinessObjectFromTemplateAction;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
+
+import org.openide.util.lookup.Lookups;
 
 /**
  * Simple class to represent the root node
@@ -30,13 +35,13 @@ public class RootObjectNode extends AbstractNode {
    public static final String DEFAULT_ICON_PATH = "org/inventory/navigation/applicationnodes/res/root.png";
 
     public RootObjectNode(Children children) {
-        super(children); //Dummy object
+        super(children, Lookups.singleton(new LocalObjectLight(-1, Constants.DUMMYROOT, Constants.DUMMYROOT))); //Dummy object
         setDisplayName(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_ROOT"));
         setIconBaseWithExtension(DEFAULT_ICON_PATH);
     }
 
     @Override
     public Action[] getActions(boolean context){
-        return new Action[]{new CreateBusinessObjectAction(this)/*, null, SystemAction.get(PasteAction.class)*/};
+        return new Action[]{new CreateBusinessObjectAction(this), new CreateBusinessObjectFromTemplateAction()/*, null, SystemAction.get(PasteAction.class)*/};
     }
 }

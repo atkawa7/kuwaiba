@@ -95,7 +95,7 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
     }
 
     public void setName(String name) {
-        String oldName = name;
+        String oldName = this.name;
         this.name = name;
         firePropertyChangeEvent(Constants.PROPERTY_NAME, oldName, name);
     }

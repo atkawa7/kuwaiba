@@ -2620,6 +2620,32 @@ public class CommunicationsStub {
         }
     }
     
+    /**
+     * Copy template elements within templates. Should not be used to copy entire templates.
+     * @param sourceObjectsClassNames Array with the class names of the elements to be copied.
+     * @param sourceObjectsIds  Array with the ids of the elements to be copied.
+     * @param newParentClassName Class of the parent of the copied objects.
+     * @param newParentId Id of the parent of the copied objects.
+     * @return An array with the ids of the newly created elements in the same order they were provided. Null in case of error.
+     */
+    public List<LocalObjectLight> copyTemplateElements(List<String> sourceObjectsClassNames, List<Long> sourceObjectsIds, 
+            String newParentClassName, long newParentId) {
+        try {
+            List<Long> remoteTemplateElements = service.copyTemplateElements(sourceObjectsClassNames, 
+                    sourceObjectsIds, newParentClassName, newParentId, session.getSessionId());
+            
+            List<LocalObjectLight> localTemplateElements = new ArrayList<>();
+            
+            for (int i = 0; i < sourceObjectsClassNames.size(); i++) 
+                localTemplateElements.add(new LocalObjectLight(sourceObjectsIds.get(i), "", sourceObjectsClassNames.get(i)));
+            
+            return localTemplateElements;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
     //</editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Sync/bulk load data methods. Click on the + sign on the left to edit the code.">

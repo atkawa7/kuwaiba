@@ -17,7 +17,6 @@ package org.inventory.navigation.applicationnodes.objectnodes.actions;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -36,6 +35,8 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.MenuScroller;
+import org.inventory.navigation.applicationnodes.objectnodes.AbstractChildren;
+import org.openide.nodes.AbstractNode;
 import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter.Popup;
 
@@ -48,10 +49,8 @@ public final class CreateBusinessObjectFromTemplateAction extends AbstractAction
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        
-        LocalObjectLight selectedObject = Utilities.actionsGlobalContext().lookup(LocalObjectLight.class);
-        
-        List<LocalObjectLight> templates = com.getTemplatesForClass(((JMenuItem)ev.getSource()).getName());
+        String className = ((JMenuItem)ev.getSource()).getName();
+        List<LocalObjectLight> templates = com.getTemplatesForClass(className);
         
         if (templates == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
@@ -59,7 +58,7 @@ public final class CreateBusinessObjectFromTemplateAction extends AbstractAction
             if (templates.isEmpty())
                 JOptionPane.showMessageDialog(null, "No templates were defined for this class", "Error", JOptionPane.INFORMATION_MESSAGE);
             else {
-                TemplateListFrame templatesFrame = new TemplateListFrame(selectedObject.getClassName(), templates);
+                TemplateListFrame templatesFrame = new TemplateListFrame(className, templates);
                 templatesFrame.setVisible(true);
             }
         }
@@ -128,8 +127,9 @@ public final class CreateBusinessObjectFromTemplateAction extends AbstractAction
                             NotificationUtil.getInstance().showSimplePopup("Error", 
                                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                         else {
-//                            if (node.getChildren() instanceof AbstractChildren) //Some nodes are created on the fly and does not have children. For those cases, let's avoid refreshing their children lists
-//                                ((AbstractChildren)node.getChildren()).addNotify();
+                            AbstractNode selectedNode = Utilities.actionsGlobalContext().lookup(AbstractNode.class);
+                            if (selectedNode.getChildren() instanceof AbstractChildren) //Some nodes are created on the fly and does not have children. For those cases, let's avoid refreshing their children lists
+                                ((AbstractChildren)selectedNode.getChildren()).addNotify();
 
                             NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE,
                                 java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATED"));

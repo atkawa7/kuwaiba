@@ -48,6 +48,10 @@
 
 <xs:element name="copyObjectsResponse" type="tns:copyObjectsResponse"/>
 
+<xs:element name="copyTemplateElements" type="tns:copyTemplateElements"/>
+
+<xs:element name="copyTemplateElementsResponse" type="tns:copyTemplateElementsResponse"/>
+
 <xs:element name="createAttribute" type="tns:createAttribute"/>
 
 <xs:element name="createAttributeForClassWithId" type="tns:createAttributeForClassWithId"/>
@@ -2889,6 +2893,22 @@
 
 <xs:complexType name="releasePortFromInterfaceResponse">
 <xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="copyTemplateElements">
+<xs:sequence>
+<xs:element name="sourceObjectsClassNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="sourceObjectsIds" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="newParentClassName" type="xs:string" minOccurs="0"/>
+<xs:element name="newParentId" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="copyTemplateElementsResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="getObjectChildrenForClassWithId">

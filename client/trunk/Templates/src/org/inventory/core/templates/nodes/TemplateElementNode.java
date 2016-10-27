@@ -17,13 +17,18 @@ package org.inventory.core.templates.nodes;
 
 import org.inventory.core.templates.nodes.properties.DateTypeProperty;
 import java.awt.Image;
+import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DnDConstants;
 import java.beans.PropertyChangeEvent;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalAttributeMetadata;
 import org.inventory.communications.core.LocalClassMetadata;
+import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalObjectListItem;
@@ -35,10 +40,15 @@ import org.inventory.core.templates.nodes.properties.ListTypeProperty;
 import org.inventory.core.templates.nodes.properties.PrimitiveTypeProperty;
 import org.inventory.core.templates.nodes.properties.TemplateElementPropertyListener;
 import org.inventory.navigation.applicationnodes.objectnodes.AbstractChildren;
+import org.openide.actions.CopyAction;
+import org.openide.actions.PasteAction;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Node;
+import org.openide.nodes.NodeTransfer;
 import org.openide.nodes.PropertySupport;
 import org.openide.nodes.Sheet;
+import org.openide.util.datatransfer.ExTransferable;
+import org.openide.util.datatransfer.PasteType;
 import org.openide.util.lookup.Lookups;
 
 /**
@@ -47,8 +57,9 @@ import org.openide.util.lookup.Lookups;
  */
 public class TemplateElementNode extends AbstractNode {
 
-    private final Image defaultIcon = Utils.createRectangleIcon(Utils.DEFAULT_ICON_COLOR, 
+    private static Image defaultIcon = Utils.createRectangleIcon(Utils.DEFAULT_ICON_COLOR, 
             Utils.DEFAULT_ICON_WIDTH, Utils.DEFAULT_ICON_HEIGHT);
+    
     
     public TemplateElementNode(LocalObjectLight object) {
         super(new TemplateElementChildren(), Lookups.singleton(object));
@@ -57,8 +68,10 @@ public class TemplateElementNode extends AbstractNode {
     @Override
     public Action[] getActions(boolean context) {
         return new Action[] {TemplateActionsFactory.getCreateTemplateElementAction(), 
+                             TemplateActionsFactory.getDeleteTemplateElementAction(),
                              null,
-                             TemplateActionsFactory.getDeleteTemplateElementAction()};
+                             CopyAction.get(CopyAction.class),
+                             PasteAction.get(PasteAction.class)};
     }
     
     @Override
@@ -84,9 +97,8 @@ public class TemplateElementNode extends AbstractNode {
             if (templateElement == null) 
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             else {
-                templateElement.addPropertyChangeListener(TemplateElementPropertyListener.getInstance());
                 Sheet.Set generalSet = Sheet.createPropertiesSet();
-
+                templateElement.addPropertyChangeListener(TemplateElementPropertyListener.getInstance());
                 for (LocalAttributeMetadata attributeMetadata : classmetadata.getAttributes()) {
                     PropertySupport property = null;
                     if (!attributeMetadata.isUnique()) { //Unique attributes are not shown
@@ -128,6 +140,21 @@ public class TemplateElementNode extends AbstractNode {
     }
     
     @Override
+    public boolean canCopy() {
+        return true;
+    }
+    
+    @Override
+    public boolean canDestroy() {
+        return true;
+    }
+    
+     @Override
+    public void destroy() throws IOException {
+        getLookup().lookup(LocalObjectLight.class).removePropertyChangeListener(TemplateElementPropertyListener.getInstance());
+    }
+    
+    @Override
     public String getName(){
         return getLookup().lookup(LocalObjectLight.class).getName();
     }
@@ -139,12 +166,108 @@ public class TemplateElementNode extends AbstractNode {
 
     @Override
     public void setName(String s) {
+        getLookup().lookup(LocalObjectLight.class).setName(s);
         TemplateElementPropertyListener.getInstance().propertyChange(
-                new PropertyChangeEvent(getLookup().lookup(LocalObjectLight.class), PROP_NAME, getName(), s));
-        fireNameChange(getLookup().lookup(LocalObjectLight.class).getName(), s);
+                new PropertyChangeEvent(getLookup().lookup(LocalObjectLight.class), PROP_NAME, s, s));
+        
+        //Guess what? neither fireNameChange nor fireDisplayNameChange do anything, so we have to set the display name manually
+        setDisplayName(getDisplayName());
         
         if (getSheet() != null)
             setSheet(createSheet());
+    }
+    
+    @Override
+    public Transferable clipboardCopy() throws IOException {
+        Transferable deflt = super.clipboardCopy();
+        ExTransferable added = ExTransferable.create(deflt);
+        added.put(new ExTransferable.Single(LocalObjectLight.DATA_FLAVOR) {
+            @Override
+            protected LocalObjectLight getData() {
+                return getLookup().lookup(LocalObjectLight.class);
+            }
+        });
+        return added;
+    }
+    
+    @Override
+    protected void createPasteTypes(Transferable t, List s) {
+        super.createPasteTypes(t, s);
+        //From the transferable we figure out if it comes from a copy or a cut operation
+        PasteType paste = getDropType(t, DnDConstants.ACTION_COPY, -1);
+        //It's also possible to define many paste types (like "normal paste" and "special paste")
+        //by adding more entries to the list. Those will appear as options in the context menu
+        if (paste != null) {
+            s.add(paste);
+        }
+    }
+    
+    @Override
+    public Transferable drag() throws IOException {
+        return getLookup().lookup(LocalObjectLight.class);
+    }
+
+    @Override
+    public PasteType getDropType(Transferable obj, final int action, int index) {
+        Node dropNode = NodeTransfer.node(obj, NodeTransfer.DND_COPY);
+        final LocalObjectLight currentObject = getLookup().lookup(LocalObjectLight.class);
+        
+        //When there's no an actual drag/drop operation, but a simple node selection
+        if (dropNode == null) 
+            return null;
+        
+        //The clipboard does not contain an ObjectNode
+        if (!TemplateElementNode.class.isInstance(dropNode))
+            return null;
+        
+        final LocalObjectLight incomingObject = dropNode.getLookup().lookup(LocalObjectLight.class);
+        
+        //Ignore those noisy attempts to move it to itself
+        if (incomingObject.equals(currentObject))
+            return null;
+        
+        return new PasteType() {
+            @Override
+            public Transferable paste() throws IOException {
+                boolean canMove = false;
+                try {
+                    
+                    //Check if the current object can contain the drop node
+                    List<LocalClassMetadataLight> possibleChildren = CommunicationsStub.getInstance().getPossibleChildren(currentObject.getClassName(), false);
+                    
+                    for (LocalClassMetadataLight lcml : possibleChildren) {
+                        if (lcml.getClassName().equals(incomingObject.getClassName())) {
+                            canMove = true;
+                            break;
+                        }
+                    }
+                    
+                    if (canMove) {
+                        List<String> classNames = new ArrayList<String>();
+                        List<Long> ids = new ArrayList<Long>();
+                        
+                        classNames.add(incomingObject.getClassName());
+                        ids.add(incomingObject.getOid());
+                        
+                        List<LocalObjectLight> copiedNodes = CommunicationsStub.getInstance().
+                                copyTemplateElements(classNames, ids, currentObject.getClassName(), currentObject.getOid());
+                        
+                        if (copiedNodes != null) {
+                            if (getChildren() instanceof AbstractChildren)
+                                ((AbstractChildren)getChildren()).addNotify();
+                        } else 
+                            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                        
+                    } else 
+                        NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE,
+                                String.format(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_MOVEOPERATION_TEXT"), 
+                                        incomingObject.getClassName(), currentObject.getClassName()));
+                } catch (Exception ex) {
+                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());
+                }
+                return null;
+            }
+        };
     }
     
     public static class TemplateElementChildren extends AbstractChildren {

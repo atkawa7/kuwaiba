@@ -15,7 +15,11 @@
  */
 package org.inventory.core.templates;
 
+import java.awt.event.KeyEvent;
 import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import javax.swing.KeyStroke;
+import javax.swing.text.DefaultEditorKit;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -68,7 +72,18 @@ public final class TemplatesTopComponent extends TopComponent implements Explore
     private void initCustomComponents() {
         service = new TemplatesService(this);
         em = new ExplorerManager();
-        associateLookup(ExplorerUtils.createLookup(em, new ActionMap()));
+        
+        //Global actions
+        ActionMap map = getActionMap();
+        map.put(DefaultEditorKit.copyAction, ExplorerUtils.actionCopy(em));
+        map.put(DefaultEditorKit.pasteAction, ExplorerUtils.actionPaste(em));
+        
+        //Now the keystrokes
+        InputMap keys = getInputMap(WHEN_IN_FOCUSED_WINDOW);
+        keys.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK), DefaultEditorKit.copyAction);
+        keys.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK), DefaultEditorKit.pasteAction);
+        
+        associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
         
         treeMain = new BeanTreeView();
         treeMain.setRootVisible(false);
@@ -97,7 +112,7 @@ public final class TemplatesTopComponent extends TopComponent implements Explore
     public void componentClosed() {
         em.setRootContext(Node.EMPTY);
     }
-
+    
     void writeProperties(java.util.Properties p) {}
 
     void readProperties(java.util.Properties p) {}
