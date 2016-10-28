@@ -27,7 +27,6 @@ import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.DragAndDropWrapper;
 import com.vaadin.ui.HorizontalSplitPanel;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.Tree.TreeDragMode;
 import com.vaadin.ui.VerticalLayout;
@@ -39,7 +38,7 @@ import com.vaadin.ui.VerticalLayout;
 public class MapView extends CustomComponent implements View  {
     public static String NAME = "mapView";
     
-    private final String apiKey = "AIzaSyDdSZZu-XWKVw1yoj81xJKrv9RNJsKL4WM ";
+    private final String apiKey = null;
     private final GoogleMap googleMap = new GoogleMap(apiKey, null, "english");
     
     @Override

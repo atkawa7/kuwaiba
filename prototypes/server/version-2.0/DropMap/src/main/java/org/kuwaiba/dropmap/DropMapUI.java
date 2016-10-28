@@ -29,7 +29,7 @@ import com.vaadin.ui.UI;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 @Theme("mytheme")
-public class DrapMapUI extends UI {
+public class DropMapUI extends UI {
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
@@ -38,8 +38,8 @@ public class DrapMapUI extends UI {
         navigator.navigateTo(MapView.NAME);
     }
 
-    @WebServlet(urlPatterns = "/*", name = "DrapMapUIServlet", asyncSupported = true)
-    @VaadinServletConfiguration(productionMode = false, ui = DrapMapUI.class, widgetset = "org.kuwaiba.KuwaibaWidgetSet")
+    @WebServlet(urlPatterns = "/*", name = "DropMapUIServlet", asyncSupported = true)
+    @VaadinServletConfiguration(productionMode = false, ui = DropMapUI.class, widgetset = "org.kuwaiba.KuwaibaWidgetSet")
     public static class MyUIServlet extends VaadinServlet {
     }
 }
