@@ -17,6 +17,10 @@
 package org.kuwaiba.services.persistence.impl.neo4j;
 
 import com.neotropic.kuwaiba.modules.GenericCommercialModule;
+import com.neotropic.kuwaiba.modules.reporting.RemoteClassLevelReport;
+import com.neotropic.kuwaiba.modules.reporting.RemoteClassLevelReportLight;
+import com.neotropic.kuwaiba.modules.reporting.RemoteInventoryLevelReport;
+import com.neotropic.kuwaiba.modules.reporting.RemoteInventoryLevelReportLight;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import java.io.BufferedReader;
@@ -2318,6 +2322,68 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             return thePaths;
         }
+    }
+    
+    //Reports
+
+    @Override
+    public long createClassLevelReport(String className, String reportName, String reportDescription, String script, int outputType, boolean enabled) throws MetadataObjectNotFoundException, InvalidArgumentException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public long createInventoryLevelReport(String reportName, String reportDescription, String script, int outputType, boolean enabled, String[] parameterNames) throws InvalidArgumentException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void deleteClassLevelReport(String className, long reportId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void deleteInventoryLevelReport(long reportId) throws ApplicationObjectNotFoundException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void updateClassLevelReport(String className, long reportId, RemoteClassLevelReport reportDescriptor) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void updateInventoryLevelReport(long reportId, RemoteInventoryLevelReport reportDescriptor) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<RemoteClassLevelReportLight> getReportsForClass(String className, boolean recursive, boolean includeDisabled) throws MetadataObjectNotFoundException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<RemoteInventoryLevelReportLight> getInventoryClassReports(boolean includeDisabled) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public RemoteClassLevelReport getClassLevelReport(String className, long reportId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public RemoteInventoryLevelReport getInventoryLevelReport(long reportId) throws ApplicationObjectNotFoundException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public byte[] executeClassLevelReport(String objectClassName, long objectId, long reportId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public byte[] executeInventoryLevelReport(long reportId, String[] parameterNames, String[] parameterValues) throws ApplicationObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 
