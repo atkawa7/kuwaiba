@@ -4,10 +4,10 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.kuwaiba</groupId>
-	<artifactId>DropMap</artifactId>
+	<artifactId>vaadin_dragndrop_map</artifactId>
 	<packaging>war</packaging>
 	<version>2.0</version>
-	<name>DropMap</name>
+	<name>vaadin_dragndrop_map</name>
 
 	<prerequisites>
 		<maven>3</maven>
