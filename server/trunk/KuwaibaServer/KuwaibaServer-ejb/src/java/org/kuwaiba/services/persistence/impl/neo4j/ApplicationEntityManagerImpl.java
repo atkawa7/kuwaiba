@@ -17,10 +17,9 @@
 package org.kuwaiba.services.persistence.impl.neo4j;
 
 import com.neotropic.kuwaiba.modules.GenericCommercialModule;
-import com.neotropic.kuwaiba.modules.reporting.RemoteClassLevelReport;
-import com.neotropic.kuwaiba.modules.reporting.RemoteClassLevelReportLight;
-import com.neotropic.kuwaiba.modules.reporting.RemoteInventoryLevelReport;
-import com.neotropic.kuwaiba.modules.reporting.RemoteInventoryLevelReportLight;
+import com.neotropic.kuwaiba.modules.reporting.RemoteReport;
+import com.neotropic.kuwaiba.modules.reporting.RemoteReportLight;
+import com.neotropic.kuwaiba.modules.reporting.ReportResult;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import java.io.BufferedReader;
@@ -29,9 +28,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -44,6 +45,7 @@ import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
+import org.apache.commons.lang3.StringUtils;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
@@ -156,6 +158,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
      */
     private Index<Node> specialNodesIndex;
     /**
+     * Index for reports
+     */
+    private Index<Node> reportsIndex;
+    /**
      * Reference to the singleton instance of CacheManager
      */
     private CacheManager cm;
@@ -188,6 +194,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             this.poolsIndex = graphDb.index().forNodes(Constants.INDEX_POOLS);
             this.privilegeIndex = graphDb.index().forNodes(Constants.INDEX_PRIVILEGE_NODES);
             this.taskIndex = graphDb.index().forNodes(Constants.INDEX_TASKS);
+            this.reportsIndex = graphDb.index().forNodes(Constants.INDEX_REPORTS);
             this.specialNodesIndex = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES);
             for (Node listTypeNode : listTypeItemsIndex.query(Constants.PROPERTY_ID, "*")){
                 GenericObjectList aListType = Util.createGenericObjectListFromNode(listTypeNode);
@@ -2325,55 +2332,199 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     //Reports
-
     @Override
-    public long createClassLevelReport(String className, String reportName, String reportDescription, String script, int outputType, boolean enabled) throws MetadataObjectNotFoundException, InvalidArgumentException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public long createClassLevelReport(String className, String reportName, String reportDescription, 
+            String script, int outputType, boolean enabled) throws MetadataObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
+            
+            if (classNode == null)
+                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
+            
+            Node newReport = graphDb.createNode();
+            newReport.setProperty(Constants.PROPERTY_NAME, reportName == null ? "" : reportName);
+            newReport.setProperty(Constants.PROPERTY_DESCRIPTION, reportDescription == null ? "" : reportDescription);
+            newReport.setProperty(Constants.PROPERTY_SCRIPT, script == null ? "" : script);
+            newReport.setProperty(Constants.PROPERTY_TYPE, Math.abs(outputType) > 4 ? RemoteReportLight.TYPE_HTML : outputType);
+            newReport.setProperty(Constants.PROPERTY_ENABLED, enabled);
+            
+            classNode.createRelationshipTo(newReport, RelTypes.HAS_REPORT);
+            reportsIndex.putIfAbsent(newReport, Constants.PROPERTY_ID, newReport.getId());
+            
+            tx.success();
+            return newReport.getId();
+        }
     }
 
     @Override
-    public long createInventoryLevelReport(String reportName, String reportDescription, String script, int outputType, boolean enabled, String[] parameterNames) throws InvalidArgumentException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public long createInventoryLevelReport(String reportName, String reportDescription, String script, 
+            int outputType, boolean enabled, String[] parameterNames) throws ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node dummyRootNode = specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
+            
+            if (dummyRootNode == null)
+                throw new ApplicationObjectNotFoundException("Dummy Root could not be found");
+            
+            Node newReport = graphDb.createNode();
+            newReport.setProperty(Constants.PROPERTY_NAME, reportName == null ? "" : reportName);
+            newReport.setProperty(Constants.PROPERTY_DESCRIPTION, reportDescription == null ? "" : reportDescription);
+            newReport.setProperty(Constants.PROPERTY_SCRIPT, script == null ? "" : script);
+            newReport.setProperty(Constants.PROPERTY_TYPE, Math.abs(outputType) > 4 ? RemoteReportLight.TYPE_HTML : outputType);
+            newReport.setProperty(Constants.PROPERTY_ENABLED, enabled);
+            
+            if (parameterNames != null)
+                newReport.setProperty(Constants.PROPERTY_PARAMETERS, StringUtils.join(parameterNames, ','));
+            
+            
+            dummyRootNode.createRelationshipTo(newReport, RelTypes.HAS_REPORT);
+            reportsIndex.putIfAbsent(newReport, Constants.PROPERTY_ID, newReport.getId());
+            
+            tx.success();
+            return newReport.getId();
+        }
     }
 
     @Override
     public void deleteClassLevelReport(String className, long reportId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try (Transaction tx = graphDb.beginTx()){
+            Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
+            
+            if (classNode == null)
+                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
+            
+            Node reportNode = getReportInstance(classNode, reportId);
+            for (Relationship rel : reportNode.getRelationships())
+                rel.delete();
+
+            reportsIndex.remove(reportNode, Constants.PROPERTY_ID, reportNode.getId());
+            reportNode.delete();
+            
+            tx.success();
+        }
     }
 
     @Override
     public void deleteInventoryLevelReport(long reportId) throws ApplicationObjectNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try (Transaction tx = graphDb.beginTx()){
+            Node dummyRootNode = specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
+            
+            if (dummyRootNode == null)
+                throw new ApplicationObjectNotFoundException("Dummy Root could not be found");
+            
+            Node reportNode = getReportInstance(dummyRootNode, reportId);
+            for (Relationship rel : reportNode.getRelationships())
+                rel.delete();
+
+            reportsIndex.remove(reportNode, Constants.PROPERTY_ID, reportNode.getId());
+            reportNode.delete();
+            
+            tx.success();
+        }
     }
 
     @Override
-    public void updateClassLevelReport(String className, long reportId, RemoteClassLevelReport reportDescriptor) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void updateReport(RemoteReport reportDescriptor) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node reportNode = reportsIndex.get(Constants.PROPERTY_ID, reportDescriptor.getId()).getSingle();
+            
+            if (reportNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("The report with id %s could not be found", reportDescriptor.getId()));
+            
+            if (reportDescriptor.getName() != null)
+               reportNode.setProperty(Constants.PROPERTY_NAME, reportDescriptor.getName());
+            if (reportDescriptor.getDescription() != null)
+               reportNode.setProperty(Constants.PROPERTY_DESCRIPTION, reportDescriptor.getDescription());
+            if (reportDescriptor.isEnabled() != null)
+               reportNode.setProperty(Constants.PROPERTY_ENABLED, reportDescriptor.isEnabled());
+            if (reportDescriptor.getType() != null)
+               reportNode.setProperty(Constants.PROPERTY_TYPE, reportDescriptor.getType());
+            if (reportDescriptor.isEnabled() != null)
+               reportNode.setProperty(Constants.PROPERTY_ENABLED, reportDescriptor.isEnabled());
+            if (reportDescriptor.getType() != null)
+               reportNode.setProperty(Constants.PROPERTY_TYPE, reportDescriptor.getType());
+            if (reportDescriptor.getScript() != null)
+               reportNode.setProperty(Constants.PROPERTY_SCRIPT, reportDescriptor.getScript());
+            
+            tx.success();
+        }
     }
 
     @Override
-    public void updateInventoryLevelReport(long reportId, RemoteInventoryLevelReport reportDescriptor) throws ApplicationObjectNotFoundException, InvalidArgumentException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public List<RemoteReportLight> getClassLevelReports(String className, boolean recursive, boolean includeDisabled) throws MetadataObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            
+            String query;
+            if (recursive)
+                query = "MATCH (superReportNode)<-[:" + RelTypes.HAS_REPORT + "]-(superClassNode)<-[:" +
+                            RelTypes.EXTENDS + "]-(classNode)-[:" + RelTypes.HAS_REPORT + 
+                            "]->(reportNode) WHERE classNode.name = {className} " + 
+                            (includeDisabled ? "" : "AND reportNode.enabled = true ") +
+                            "RETURN reportNode, superReportNode ORDER BY reportNode.name";
+            else
+                query = "MATCH (classNode)-[:" + RelTypes.HAS_REPORT + 
+                            "]->(reportNode) WHERE classNode.name = {className} " + 
+                            (includeDisabled ? "" : "AND reportNode.enabled = true ") +
+                            "RETURN reportNode, superReportNode ORDER BY reportNode.name";
+            
+            HashMap<String, Object> parameters = new HashMap<>();
+            parameters.put("className", className); //NOI18N
+            ResourceIterator<Node> queryResult = graphDb.execute(query, parameters).columnAs("reportNode"); //NOI18N
+            
+            List<RemoteReportLight> remoteReports = new ArrayList<>();
+            while (queryResult.hasNext()) {
+                Node reportNode = queryResult.next();
+                remoteReports.add(new RemoteReportLight(reportNode.getId(), 
+                                                        (String)reportNode.getProperty(Constants.PROPERTY_NAME), 
+                                                        (String)reportNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
+                                                        (boolean)reportNode.getProperty(Constants.PROPERTY_ENABLED),
+                                                        (int)reportNode.getProperty(Constants.PROPERTY_TYPE)));
+            }
+            
+            return remoteReports;
+        }
     }
 
     @Override
-    public List<RemoteClassLevelReportLight> getReportsForClass(String className, boolean recursive, boolean includeDisabled) throws MetadataObjectNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public List<RemoteReportLight> getInventoryLevelReports(boolean includeDisabled) throws ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node dummyRootNode = specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
+            
+            if (dummyRootNode == null)
+                throw new ApplicationObjectNotFoundException("Dummy Root could not be found");
+            
+            List<RemoteReportLight> remoteReports = new ArrayList<>();
+            
+            for (Relationship hasReportRelationship : dummyRootNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_REPORT)) {
+                if (!includeDisabled && (boolean)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_ENABLED))
+                    remoteReports.add(new RemoteReportLight(hasReportRelationship.getEndNode().getId(), 
+                                                        (String)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_NAME), 
+                                                        (String)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_DESCRIPTION), 
+                                                        (boolean)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_ENABLED),
+                                                        (int)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_TYPE)));
+            }
+            
+            Collections.sort(remoteReports);
+            
+            return remoteReports;
+        }
     }
 
     @Override
-    public List<RemoteInventoryLevelReportLight> getInventoryClassReports(boolean includeDisabled) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public RemoteClassLevelReport getClassLevelReport(String className, long reportId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public RemoteInventoryLevelReport getInventoryLevelReport(long reportId) throws ApplicationObjectNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public RemoteReport getReport(long reportId) throws ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node reportNode = reportsIndex.get(Constants.PROPERTY_ID, reportId).getSingle();
+            
+            if (reportNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("The report with id %s could not be found", reportId)); 
+            
+            return new RemoteReport(reportNode.getId(), (String)reportNode.getProperty(Constants.PROPERTY_NAME), 
+                                    (String)reportNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
+                                    (boolean)reportNode.getProperty(Constants.PROPERTY_ENABLED),
+                                    (int)reportNode.getProperty(Constants.PROPERTY_TYPE),
+                                    (String)reportNode.getProperty(Constants.PROPERTY_SCRIPT), 
+                                    reportNode.hasProperty(Constants.PROPERTY_PARAMETERS) ?
+                                                StringUtils.split((String)reportNode.getProperty(Constants.PROPERTY_PARAMETERS)) : new String[0]);
+        }
     }
 
     @Override
@@ -2383,7 +2534,43 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
     @Override
     public byte[] executeInventoryLevelReport(long reportId, String[] parameterNames, String[] parameterValues) throws ApplicationObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (parameterNames.length != parameterValues.length)
+            throw new InvalidArgumentException("The arrays with parameters have different sizes");
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            Node reportNode = reportsIndex.get(Constants.PROPERTY_ID, reportId).getSingle();
+            
+            if (reportNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("The report with id %s could not be found", reportId)); 
+            
+            if (!reportNode.hasProperty(Constants.PROPERTY_SCRIPT))
+                throw new InvalidArgumentException(String.format("The report with id %s does not have a script", reportId));
+            
+            String script = (String)reportNode.getProperty(Constants.PROPERTY_SCRIPT);
+            HashMap<String, String> scriptParameters = new HashMap<>();
+            for(int i = 0; i < parameterNames.length; i++)
+                scriptParameters.put(parameterNames[i], parameterValues[i]);
+            
+            Binding environmentParameters = new Binding();
+            environmentParameters.setVariable("graphDb", graphDb); //NOI18N
+            environmentParameters.setVariable("objectIndex", objectIndex); //NOI18N
+            environmentParameters.setVariable("classIndex", classIndex); //NOI18N           
+            environmentParameters.setVariable("scriptParameters", scriptParameters); //NOI18N
+            try {
+                GroovyShell shell = new GroovyShell(environmentParameters);
+                Object theResult = shell.evaluate(script);
+                
+                if (theResult == null)
+                    throw new InvalidArgumentException("The script returned a null object. Please check the syntax.");
+                else if (!ReportResult.class.isInstance(theResult))
+                    throw new InvalidArgumentException("The script does not return a ReportResult object. Please check the return value.");
+                
+                return ((ReportResult)theResult).asByteArray();
+                
+            } catch(Exception ex) {
+                return ex.getMessage().getBytes(StandardCharsets.UTF_8);
+            }
+        }
     }
     
 
@@ -2584,6 +2771,22 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             }
         }
         return newTemplateElementInstance;
+    }
+    
+    private Node getReportInstance(Node relatedNode, long reportId) throws ApplicationObjectNotFoundException {
+        Node reportNode = null;
+        for (Relationship hasReportRelationship : relatedNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_REPORT)) {
+            Node endNode = hasReportRelationship.getEndNode();
+            if (endNode.getId() == reportId) {
+                reportNode = endNode;
+                break;
+            }
+        }
+        
+        if (reportNode == null)
+            throw new ApplicationObjectNotFoundException(String.format("The report with with id %s could not be found.", reportId));
+        
+        return reportNode;
     }
     
     //End of Helpers   

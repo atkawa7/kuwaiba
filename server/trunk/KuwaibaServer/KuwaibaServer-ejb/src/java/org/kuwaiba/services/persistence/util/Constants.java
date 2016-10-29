@@ -130,6 +130,10 @@ public class Constants {
      */
     public static final String INDEX_TASKS = "tasks"; //NOI18N
     /**
+     * Name of the index for reports
+     */
+    public static final String INDEX_REPORTS = "reports"; //NOI18N
+    /**
      * Label used for the class index
      */
     public static final String INDEX_CLASS = "classes"; //NOI18N
@@ -219,6 +223,7 @@ public class Constants {
     public static final String PROPERTY_CATEGORY = "category"; //NOI18N
     public static final String PROPERTY_SUPPORT_PHONE_NUMBER = "supportPhoneNumber"; //NOI18N
     public static final String PROPERTY_SUPPORT_EMAIL = "supportEmail"; //NOI18N
+    public static final String PROPERTY_PARAMETERS = "parameters"; //NOI18N
     
     /**
      * Root for all business classes

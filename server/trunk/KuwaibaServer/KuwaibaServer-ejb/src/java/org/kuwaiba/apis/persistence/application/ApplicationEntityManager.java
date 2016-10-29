@@ -17,10 +17,8 @@
 package org.kuwaiba.apis.persistence.application;
 
 import com.neotropic.kuwaiba.modules.GenericCommercialModule;
-import com.neotropic.kuwaiba.modules.reporting.RemoteClassLevelReport;
-import com.neotropic.kuwaiba.modules.reporting.RemoteClassLevelReportLight;
-import com.neotropic.kuwaiba.modules.reporting.RemoteInventoryLevelReport;
-import com.neotropic.kuwaiba.modules.reporting.RemoteInventoryLevelReportLight;
+import com.neotropic.kuwaiba.modules.reporting.RemoteReport;
+import com.neotropic.kuwaiba.modules.reporting.RemoteReportLight;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -894,10 +892,9 @@ public interface ApplicationEntityManager {
      * @param enabled If enabled, a report can be executed.
      * @return The id of the newly created report.
      * @throws MetadataObjectNotFoundException If the class provided could not be found.
-     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If the outputType does not exist
      */
     public long createClassLevelReport(String className, String reportName, String reportDescription, String script, 
-            int outputType, boolean enabled) throws MetadataObjectNotFoundException, InvalidArgumentException;
+            int outputType, boolean enabled) throws MetadataObjectNotFoundException;
     
     /**
      * Creates an inventory level report (a report that is not tied to a particlar instance or class. In most cases, they also receive parameters)
@@ -908,10 +905,10 @@ public interface ApplicationEntityManager {
      * @param enabled If enabled, a report can be executed.
      * @param parameterNames Optional (it might be either null or an empty array). The list of the names parameters that this report will support. They will always be captured as strings, so it's up to the author of the report the sanitization and conversion of the inputs
      * @return The id of the newly created report.
-     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If the outputType does not exist
+     * @throws ApplicationObjectNotFoundException If the dummy root could not be found, which is actually a severe problem.
      */
     public long createInventoryLevelReport(String reportName, String reportDescription, String script, int outputType, 
-            boolean enabled, String[] parameterNames) throws InvalidArgumentException;
+            boolean enabled, String[] parameterNames) throws ApplicationObjectNotFoundException;
     
     /**
      * Deletes a class level report
@@ -931,24 +928,11 @@ public interface ApplicationEntityManager {
     
     /**
      * Updates the properties of an existing class level report.
-     * @param className The class the report is associated to.
-     * @param reportId The id of the report (purposely left outside the report descriptor).
-     * @param reportDescriptor Object with the information to be updated. ONly the non-null properties will be changed.
-     * @throws MetadataObjectNotFoundException If the class could not be found.
+     * @param reportDescriptor Object with the information to be updated. Only the non-null properties will be changed.
      * @throws ApplicationObjectNotFoundException If the report could not be found.
      * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If any of the report properties has a wrong or unexpected format.
      */
-    public void updateClassLevelReport(String className, long reportId, RemoteClassLevelReport reportDescriptor) 
-            throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException;
-    
-    /**
-     * Updates the properties of an existing inventory level report.
-     * @param reportId The id of the report
-     * @param reportDescriptor Object with the information to be updated. ONly the non-null properties will be changed.
-     * @throws ApplicationObjectNotFoundException If the report could not be found.
-     * @throws InvalidArgumentException If any of the report properties has a wrong or unexpected format.
-     */
-    public void updateInventoryLevelReport(long reportId, RemoteInventoryLevelReport reportDescriptor) 
+    public void updateReport(RemoteReport reportDescriptor) 
             throws ApplicationObjectNotFoundException, InvalidArgumentException;
     
     /**
@@ -959,31 +943,22 @@ public interface ApplicationEntityManager {
      * @return The list of reports.
      * @throws MetadataObjectNotFoundException If the class could not be found
      */
-    public List<RemoteClassLevelReportLight> getReportsForClass(String className, boolean recursive, boolean includeDisabled) throws MetadataObjectNotFoundException;
+    public List<RemoteReportLight> getClassLevelReports(String className, boolean recursive, boolean includeDisabled) throws MetadataObjectNotFoundException;
     /**
      * Gets the inventory class reports.
      * @param includeDisabled True to also include the reports marked as disabled. False to return only the enabled ones.
      * @return The list of reports.
+     * @throws ApplicationObjectNotFoundException f the dummy root could not be found, which is actually a severe problem.
      */
-    public List<RemoteInventoryLevelReportLight> getInventoryClassReports(boolean includeDisabled);
+    public List<RemoteReportLight> getInventoryLevelReports(boolean includeDisabled) throws ApplicationObjectNotFoundException;
     
     /**
      * Gets the information related to a class level report.
-     * @param className The class the report is associated to.
      * @param reportId The id of the report.
      * @return  The report.
-     * @throws MetadataObjectNotFoundException If the class could not be found.
      * @throws ApplicationObjectNotFoundException If the report could not be found.
      */
-    public RemoteClassLevelReport getClassLevelReport(String className, long reportId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException;
-    
-    /**
-     * Gets the information related to an inventory level report.
-     * @param reportId The id of the report.
-     * @return The report.
-     * @throws ApplicationObjectNotFoundException If the report could not be found.
-     */
-    public RemoteInventoryLevelReport getInventoryLevelReport(long reportId) throws ApplicationObjectNotFoundException;
+    public RemoteReport getReport(long reportId) throws ApplicationObjectNotFoundException;
     
     /**
      * Executes a class level report and returns the result.

@@ -277,12 +277,12 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 throw new InvalidArgumentException(String.format(
                         "Class %s has subclasses and can not be deleted", node.getProperty(Constants.PROPERTY_NAME)));
             
-            //Deletes the attribute nodes and their relationships to the class node
-            Iterable<Relationship> attRelationships = node.getRelationships(RelTypes.HAS_ATTRIBUTE);
-            for (Relationship rel : attRelationships){
-                Node attributeNode = rel.getEndNode();
+            //Delete the related elements that don't require any complex Remove operation
+            Iterable<Relationship> outgoingSimpleRelationships = node.getRelationships(RelTypes.HAS_ATTRIBUTE, RelTypes.HAS_REPORT);
+            for (Relationship rel : outgoingSimpleRelationships){
+                Node relatedNode = rel.getEndNode();
                 rel.delete();
-                attributeNode.delete();
+                relatedNode.delete();
             }
             
             //Delete the existing templates
@@ -324,12 +324,12 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 throw new InvalidArgumentException(String.format(
                         "The class with name %s has subclasses and can not be deleted", className));
             
-            //Deletes the attribute nodes and their relationships to the class node
-            Iterable<Relationship> attRelationships = node.getRelationships(RelTypes.HAS_ATTRIBUTE);
-            for (Relationship rel : attRelationships){
-                Node attributeNode = rel.getEndNode();
+            //Delete the related elements that don't require any complex Remove operation
+            Iterable<Relationship> outgoingSimpleRelationships = node.getRelationships(RelTypes.HAS_ATTRIBUTE, RelTypes.HAS_REPORT);
+            for (Relationship rel : outgoingSimpleRelationships){
+                Node relatedNode = rel.getEndNode();
                 rel.delete();
-                attributeNode.delete();
+                relatedNode.delete();
             }
             
             //Delete the existing templates

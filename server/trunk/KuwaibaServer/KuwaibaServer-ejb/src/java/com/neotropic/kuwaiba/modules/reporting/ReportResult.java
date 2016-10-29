@@ -1,4 +1,4 @@
-/*
+/**
  *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
@@ -12,14 +12,15 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  under the License.
  */
 package com.neotropic.kuwaiba.modules.reporting;
 
 /**
- * A remote representation of a class level report. Inventory level reports are not tied to a particlar instance or class. In most cases, they also receive parameters.
+ * The result of a report execution
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class RemoteInventoryLevelReportLight {
-    
+public class ReportResult {
+    public byte[] asByteArray() {
+        return new byte[0];
+    }
 }
