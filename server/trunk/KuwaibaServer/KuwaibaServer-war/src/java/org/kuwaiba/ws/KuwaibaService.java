@@ -16,6 +16,8 @@
 
 package org.kuwaiba.ws;
 
+import com.neotropic.kuwaiba.modules.reporting.RemoteReport;
+import com.neotropic.kuwaiba.modules.reporting.RemoteReportLight;
 import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
 import java.util.List;
@@ -41,7 +43,6 @@ import org.kuwaiba.ws.toserialize.application.GroupInfo;
 import org.kuwaiba.ws.toserialize.application.RemotePool;
 import org.kuwaiba.ws.toserialize.application.RemoteTask;
 import org.kuwaiba.ws.toserialize.application.RemoteTaskResult;
-import org.kuwaiba.ws.toserialize.application.ReportDescriptor;
 import org.kuwaiba.ws.toserialize.application.TaskNotificationDescriptor;
 import org.kuwaiba.ws.toserialize.application.TaskScheduleDescriptor;
 import org.kuwaiba.ws.toserialize.application.UserInfo;
@@ -3532,42 +3533,231 @@ public class KuwaibaService {
     
     //</editor-fold>
     
-    // <editor-fold defaultstate="collapsed" desc="Reporting methods">
+    // <editor-fold defaultstate="collapsed" desc="Reporting API methods">
     /**
-     * 
-     * @param className The name of the class to check for reports against
-     * @param limit Limit of results. Use -1 to retrieve all
+     * Creates a class level report (a report that will be available for all instances of a given class -and its subclasses-)
+     * @param className Class this report is going to be related to. It can be ab abstract class and the report will be available for all its subclasses
+     * @param reportName Name of the report.
+     * @param reportDescription Report description.
+     * @param script Script text.
+     * @param outputType What will be the default output of this report? See ClassLevelReportDescriptor for possible values
+     * @param enabled If enabled, a report can be executed.
      * @param sessionId Session token
-     * @return A list of objects with the basic information about the available reports
-     * @throws ServerSideException In case something goes wrong
+     * @return The id of the newly created report.
+     * @throws ServerSideException If the class provided could not be found.
      */
-    @WebMethod(operationName = "getReportsForClass")
-    public ReportDescriptor[] getReportsForClass(@WebParam(name = "className") String className, 
-            @WebParam(name = "limit") int limit, 
-            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
-        try{
-            return wsBean.getReportsForClass(className, limit, getIPAddress(), sessionId);
+    @WebMethod(operationName = "createClassLevelReport")
+    public long createClassLevelReport(@WebParam(name = "className")String className, 
+            @WebParam(name = "reportName")String reportName, @WebParam(name = "reportDescription")String reportDescription, 
+            @WebParam(name = "script")String script, @WebParam(name = "outputType")int outputType, 
+            @WebParam(name = "enabled")boolean enabled, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.createClassLevelReport(className, reportName, reportDescription, 
+                    script, outputType, enabled, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in getReportsForClass: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in createClassLevelReport: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
     }
     
-    @WebMethod(operationName = "executeReport")
-    public byte[] executeReport(@WebParam(name = "reportId") long reportId, 
-            @WebParam(name = "arguments") List<StringPair> arguments, 
-            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
-        try{
-            return wsBean.executeReport(reportId, arguments, getIPAddress(), sessionId);
+    /**
+     * Creates an inventory level report (a report that is not tied to a particlar instance or class. In most cases, they also receive parameters)
+     * @param reportName Name of the report.
+     * @param reportDescription Report description.
+     * @param script Script text.
+     * @param outputType What will be the default output of this report? See InventoryLevelReportDescriptor for possible values
+     * @param enabled If enabled, a report can be executed.
+     * @param parameterNames Optional (it might be either null or an empty array). The list of the names parameters that this report will support. They will always be captured as strings, so it's up to the author of the report the sanitization and conversion of the inputs
+     * @param sessionId Session token
+     * @return The id of the newly created report.
+     * @throws ServerSideException If the dummy root could not be found, which is actually a severe problem.
+     */
+    @WebMethod(operationName = "createInventoryLevelReport")
+    public long createInventoryLevelReport(@WebParam(name = "reportName")String reportName, 
+            @WebParam(name = "reportDescription")String reportDescription, @WebParam(name = "script")String script, 
+            @WebParam(name = "outputType")int outputType, @WebParam(name = "enabled")boolean enabled, 
+            @WebParam(name = "parameterNames")String[] parameterNames, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.createInventoryLevelReport(reportName, reportDescription, script, 
+                    outputType, enabled, parameterNames, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in executeReport: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in createInventoryLevelReport: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Deletes a report
+     * @param reportId The id of the report.
+     * @param sessionId Session token.
+     * @throws ServerSideException If the report could not be found.
+     */
+    @WebMethod(operationName = "deleteReport")
+    public void deleteReport(@WebParam(name = "reportId")long reportId, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            wsBean.deleteReport(reportId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteReport: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Updates the properties of an existing class level report.
+     * @param reportId Id of the report.
+     * @param reportName The name of the report. Null to leave it unchanged.
+     * @param reportDescription The description of the report. Null to leave it unchanged.
+     * @param enabled Is the report enabled? . Null to leave it unchanged.
+     * @param type Type of the output of the report. See LocalReportLight for possible values
+     * @param script Text of the script. 
+     * @param parameters A comma-separated list of the parameters that will be requested to generate this report. Null to leave it unchanged.
+     * @param sessionId Session token.
+     * @throws ServerSideException If any of the report properties has a wrong or unexpected format or if the report could not be found.
+     */
+    @WebMethod(operationName = "updateReport")
+    public void updateReport(@WebParam(name = "reportId")long reportId, @WebParam(name = "reportName")String reportName, 
+            @WebParam(name = "reportDescription")String reportDescription, @WebParam(name = "enabled")Boolean enabled,
+            @WebParam(name = "type")Integer type, @WebParam(name = "script")String script, 
+            @WebParam(name = "parameters")List<String> parameters, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            wsBean.updateReport(reportId, reportName, reportDescription, enabled,
+                                    type, script, parameters, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in updateReport: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Gets the class level reports associated to the given class (or its superclasses)
+     * @param className The class to extract the reports from.
+     * @param recursive False to get only the directly associated reports. True top get also the reports associate top its superclasses
+     * @param includeDisabled True to also include the reports marked as disabled. False to return only the enabled ones.
+     * @param sessionId Session token.
+     * @return The list of reports.
+     * @throws ServerSideException If the class could not be found
+     */
+    @WebMethod(operationName = "getClassLevelReports")
+    public List<RemoteReportLight> getClassLevelReports(@WebParam(name = "className")String className, 
+            @WebParam(name = "recursive")boolean recursive, @WebParam(name = "includeDisabled")boolean includeDisabled, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getClassLevelReports(className, recursive, includeDisabled, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getClassLevelReports: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Gets the inventory class reports.
+     * @param includeDisabled True to also include the reports marked as disabled. False to return only the enabled ones.
+     * @param sessionId Session token.
+     * @return The list of reports.
+     * @throws ServerSideException If the dummy root could not be found, which is actually a severe problem.
+     */
+    @WebMethod(operationName = "getInventoryLevelReports")
+    public List<RemoteReportLight> getInventoryLevelReports(@WebParam(name = "includeDisabled")boolean includeDisabled, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getInventoryLevelReports(includeDisabled, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getInventoryLevelReports: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Gets the information related to a class level report.
+     * @param reportId The id of the report.
+     * @param sessionId Session token.
+     * @return  The report.
+     * @throws ServerSideException If the report could not be found.
+     */
+    @WebMethod(operationName = "getReport")
+    public RemoteReport getReport(@WebParam(name = "reportId")long reportId, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getReport(reportId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getReport: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Executes a class level report and returns the result.
+     * @param objectClassName The class of the instance that will be used as input for the report.
+     * @param objectId The id of the instance that will be used as input for the report.
+     * @param reportId The id of the report.
+     * @param sessionId Session token.
+     * @return The result of the report execution.
+     * @throws ServerSideException If the class could not be found or if the report could not be found or if the inventory object could not be found or if there's an error during the execution of the report. 
+     */
+    @WebMethod(operationName = "executeClassLevelReport")
+    public byte[] executeClassLevelReport(@WebParam(name = "objectClassName")String objectClassName, 
+            @WebParam(name = "objectId")long objectId, @WebParam(name = "reportId")long reportId, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.executeClassLevelReport(objectClassName, objectId, reportId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in executeClassLevelReport: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+   
+    /**
+     * Executes an inventory level report and returns the result.
+     * @param reportId The id of the report.
+     * @param parameterNames The names of the parameters to be used as inputs to the report.
+     * @param parameterValues The values of the parameters to be used as inputs to the report. As they're always captured as strings, it's up to the author of the report the sanitization and conversion of the inputs.
+     * @param sessionId Session token.
+     * @return The result of the report execution.
+     * @throws ServerSideException If the report could not be found or if the associated script exits with error.
+     */
+    @WebMethod(operationName = "executeInventoryLevelReport")
+    public byte[] executeInventoryLevelReport(@WebParam(name = "reportId")long reportId, 
+            @WebParam(name = "parameterNames")List<String> parameterNames, @WebParam(name = "parameterValues")List<String> parameterValues,
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.executeInventoryLevelReport(reportId, parameterNames, parameterValues, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in executeInventoryLevelReport: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }

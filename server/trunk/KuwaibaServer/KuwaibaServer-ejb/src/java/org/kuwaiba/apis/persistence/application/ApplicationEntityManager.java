@@ -911,28 +911,26 @@ public interface ApplicationEntityManager {
             boolean enabled, String[] parameterNames) throws ApplicationObjectNotFoundException;
     
     /**
-     * Deletes a class level report
-     * @param className The class the report is associated to.
-     * @param reportId The id of the report.
-     * @throws MetadataObjectNotFoundException If the class provided could not be found.
-     * @throws ApplicationObjectNotFoundException If the report could not be found.
-     */
-    public void deleteClassLevelReport(String className, long reportId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException;
-    
-    /**
-     * Deletes an inventory level report
+     * Deletes a report
      * @param reportId The id of the report.
      * @throws ApplicationObjectNotFoundException If the report could not be found.
      */
-    public void deleteInventoryLevelReport(long reportId) throws ApplicationObjectNotFoundException;
+    public void deleteReport(long reportId) throws ApplicationObjectNotFoundException;
     
     /**
      * Updates the properties of an existing class level report.
-     * @param reportDescriptor Object with the information to be updated. Only the non-null properties will be changed.
+     * @param reportId Id of the report.
+     * @param reportName The name of the report. Null to leave it unchanged.
+     * @param reportDescription The description of the report. Null to leave it unchanged.
+     * @param enabled Is the report enabled? . Null to leave it unchanged.
+     * @param type Type of the output of the report. See LocalReportLight for possible values
+     * @param script Text of the script. 
+     * @param parameters The list of parameters that will be requested to generate this report. Null to leave it unchanged.
      * @throws ApplicationObjectNotFoundException If the report could not be found.
      * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If any of the report properties has a wrong or unexpected format.
      */
-    public void updateReport(RemoteReport reportDescriptor) 
+    public void updateReport(long reportId, String reportName, String reportDescription, Boolean enabled,
+            Integer type, String script, List<String> parameters) 
             throws ApplicationObjectNotFoundException, InvalidArgumentException;
     
     /**
@@ -980,10 +978,9 @@ public interface ApplicationEntityManager {
      * @param parameterNames The names of the parameters to be used as inputs to the report.
      * @param parameterValues The values of the parameters to be used as inputs to the report. As they're always captured as strings, it's up to the author of the report the sanitization and conversion of the inputs.
      * @return The result of the report execution.
-     * @throws ApplicationObjectNotFoundException
-     * @throws ObjectNotFoundException
-     * @throws InvalidArgumentException 
+     * @throws ApplicationObjectNotFoundException If the report could not be found.
+     * @throws InvalidArgumentException If the associated script exits with error.
      */
-    public byte[] executeInventoryLevelReport(long reportId, String[] parameterNames, String parameterValues[])
-            throws ApplicationObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException;;
+    public byte[] executeInventoryLevelReport(long reportId, List<String> parameterNames, List<String> parameterValues)
+            throws ApplicationObjectNotFoundException, InvalidArgumentException;
 }

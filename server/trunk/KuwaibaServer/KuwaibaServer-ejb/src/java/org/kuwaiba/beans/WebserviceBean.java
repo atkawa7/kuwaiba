@@ -18,6 +18,8 @@ package org.kuwaiba.beans;
 
 import com.neotropic.kuwaiba.modules.ipam.IPAMModule;
 import com.neotropic.kuwaiba.modules.mpls.MPLSModule;
+import com.neotropic.kuwaiba.modules.reporting.RemoteReport;
+import com.neotropic.kuwaiba.modules.reporting.RemoteReportLight;
 import com.neotropic.kuwaiba.modules.reporting.Reports;
 import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHModule;
@@ -70,7 +72,6 @@ import org.kuwaiba.ws.toserialize.application.RemoteResultMessage;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.ws.toserialize.application.RemoteTask;
 import org.kuwaiba.ws.toserialize.application.RemoteTaskResult;
-import org.kuwaiba.ws.toserialize.application.ReportDescriptor;
 import org.kuwaiba.ws.toserialize.application.ResultRecord;
 import org.kuwaiba.ws.toserialize.application.TaskNotificationDescriptor;
 import org.kuwaiba.ws.toserialize.application.TaskScheduleDescriptor;
@@ -2366,165 +2367,128 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(ex.getMessage());
         }
     }
-    
+
     //</editor-fold>
-    
     //<editor-fold defaultstate="collapsed" desc="Reporting methods">
-    @Override
-    public ReportDescriptor[] getReportsForClass(String className, int limit, String ipAddress, String sessionId) throws ServerSideException {
+    @Override    
+    public long createClassLevelReport(String className, String reportName, String reportDescription, 
+            String script, int outputType, boolean enabled, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
-            
-            aem.validateCall("getReportsForClass", ipAddress, sessionId); //NOI18N
-            
-            //This is a dummy, hard-coded implementation. This will be changed in the short future
-            switch (className) {
-                case "Rack":
-                    return new ReportDescriptor[] {
-                        new ReportDescriptor(1, "Rack Usage", className, "Shows the rack usage and the elements contained within")
-                        };
-                case "ODF":
-                case "DDF":
-                    return new ReportDescriptor[] {
-                        new ReportDescriptor(2, "Frame Details", className, "Shows the distribution frame usage")
-                        };
-                case "STM1":
-                case "STM4":
-                case "STM16":
-                case "STM64":
-                case "STM256":
-                    return new ReportDescriptor[] {
-                            new ReportDescriptor(4, "TransportLink Structure", className, "Shows the TransportLink Structure")
-                    };
-                case "VC12TributaryLink":
-                case "VC3TributaryLink":
-                    return new ReportDescriptor[] {
-                            new ReportDescriptor(5, "TributaryLink Resources", className, "Shows the resources used by a TributaryLink")
-                    };
-                case "VC4TributaryLink":
-                    return new ReportDescriptor[] {
-                            new ReportDescriptor(6, "TributaryLink Resources", className, "Shows the resources used by a TributaryLink")
-                    };
-                case "IPTransitService":
-                case "VPLSPWService":
-                    return new ReportDescriptor[]{
-                        new ReportDescriptor(7, "Service Details", className, "Shows the resources used by the logical Configuration and some of its attributes"),
-                        new ReportDescriptor(15, "Service Resources", className, "Shows the resources used by this service")
-                    };
-                case "SubnetIPv4":
-                case "SubnetIPv6":
-                    return new ReportDescriptor[] {
-                            new ReportDescriptor(9, "Subnet Details", className, "Shows the IPs created in that subnet and some of their attributes")
-                    };
-                case "Building":
-                case "Country":
-                case "Continent":
-                case "City":
-                    return new ReportDescriptor[] {
-                            new ReportDescriptor(10, "Network Equipment", className, "Presents a list and details of all network equipment in a particular location"),
-                    };
-                case "SupportContract":
-                    return new ReportDescriptor[] {
-                            new ReportDescriptor(12, "Contract Status", className, "Shows the status of the support contracts in the inventory")
-                    };
-                case "ELANService":
-                case "ELINEService":
-                case "ETREEService":
-                    return new ReportDescriptor[] {
-                            new ReportDescriptor(13, "Service Details", className, "Shows the resources used by the service and some of its attributes"),
-                            new ReportDescriptor(15, "Service Resources", className, "Shows the resources used by this service")
-                    };
-                case "BridgeDomainInterface":
-                case "MPLSTunnel":
-                case "VRFInstance": 
-                case "FrameRelay":
-                    return new ReportDescriptor[]{
-                        new ReportDescriptor(14, "Configuration Details", className, "Shows the resources used by the logical Configuration and some of its attributes")
-                    };
-                case "BurstableService":
-                case "DIAService":
-                case "FTTHService":
-                case "EoSDHService":        
-                case "PDHService":
-                case "SDHService":    
-                case "SONETService":    
-                case "GigaEthernetService":    
-                case "L2TPServiceService":    
-                case "SatelliteDataService":    
-                case "ELINE-InterAS-Service":    
-                case "HostingService":
-                case "HousingService":
-                case "VPSService":
-                    return new ReportDescriptor[]{
-                        new ReportDescriptor(15, "Service Resources", className, "Shows the resources used by this service")
-                    };
-            }
-            return new ReportDescriptor[0];
+            aem.validateCall("createClassLevelReport", ipAddress, sessionId);
+            return aem.createClassLevelReport(className, reportName, reportDescription, script, outputType, enabled);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
 
     @Override
-    public byte[] executeReport(long reportId, List<StringPair> arguments, String ipAddress, String sessionId) throws ServerSideException {
+    public long createInventoryLevelReport(String reportName, String reportDescription, 
+            String script, int outputType, boolean enabled, String[] parameterNames, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
-            aem.validateCall("executeReport", ipAddress, sessionId); //NOI18N
-            switch ((int)reportId) {
-                case 1: //Rack usage
-                    long rackId = Long.valueOf(StringPair.get(arguments, "objectId"));
-                    return reports.buildRackUsageReport(rackId);
-                case 2: //ODF/DDF Report
-                    long frameId = Long.valueOf(StringPair.get(arguments, "objectId"));
-                    String frameClass = StringPair.get(arguments, "objectClass");
-                    return reports.buildDistributionFrameDetailReport(frameClass, frameId);
-                case 4: //Transport link usage
-                    long transportLinkId = Long.valueOf(StringPair.get(arguments, "objectId"));
-                    String transportLinkClass = StringPair.get(arguments, "objectClass");
-                    return reports.buildTransportLinkUsageReport(transportLinkClass, transportLinkId);
-                case 5: //Tributary link details (VC12/VC3)
-                    long tributaryLinkId = Long.valueOf(StringPair.get(arguments, "objectId"));
-                    String tributaryLinkClass = StringPair.get(arguments, "objectClass");
-                    return reports.buildLowOrderTributaryLinkDetailReport(tributaryLinkClass, tributaryLinkId);
-                case 6: //Tributary link details (VC4)
-                    tributaryLinkId = Long.valueOf(StringPair.get(arguments, "objectId"));
-                    tributaryLinkClass = StringPair.get(arguments, "objectClass");
-                    return reports.buildHighOrderTributaryLinkDetailReport(tributaryLinkClass, tributaryLinkId);
-                case 7://Temporal report for MPLS services (Elan, Etree and Eline) 
-                    return reports.buildServicesReport(StringPair.get(arguments, "objectClass"),Long.valueOf(StringPair.get(arguments, "objectId")));
-                case 9: //Subnet usage
-                    return reports.subnetUsageReport(StringPair.get(arguments, "objectClass"), Long.valueOf(StringPair.get(arguments, "objectId")));
-                case 10:
-                    long locationId = Long.valueOf(StringPair.get(arguments, "objectId"));
-                    String locationClass = StringPair.get(arguments, "objectClass");
-                    return reports.buildNetworkEquipmentInLocationReport(locationClass,locationId);
-                case 12:
-                    locationId = Long.valueOf(StringPair.get(arguments, "objectId"));
-                    return reports.buildContractStatusReport(locationId);
-                case 13://Temporal report for MPLS services (Elan, Etree and Eline) 
-                    return reports.buildMPLSServiceReport(StringPair.get(arguments, "objectClass"), 
-                            Long.valueOf(StringPair.get(arguments, "objectId")));
-                case 14://Temporal report for BridgeDomains, VRFs, MPLSTunnels
-                    return reports.buildLogicalConfiguratinInterfacesReport(StringPair.get(arguments, "objectClass"), 
-                            Long.valueOf(StringPair.get(arguments, "objectId")));
-                case 15:
-                    return reports.buildServiceResourcesReport(StringPair.get(arguments, "objectClass"), 
-                            Long.valueOf(StringPair.get(arguments, "objectId")));
-            }
+            aem.validateCall("createInventoryLevelReport", ipAddress, sessionId);
+            return aem.createInventoryLevelReport(reportName, reportDescription, script, outputType, enabled, parameterNames);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
-        return null;
     }
-    //</editor-fold>
-    
-    // <editor-fold defaultstate="collapsed" desc="Commercial modules data methods">
-        // <editor-fold defaultstate="collapsed" desc="SDH Networks Module">
+
     @Override
-    public long createSDHTransportLink(String classNameEndpointA, long idEndpointA, 
-            String classNameEndpointB, long idEndpointB, String linkType, String defaultName, String ipAddress, String sessionId) throws ServerSideException {
+    public void deleteReport(long reportId, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("deleteReport", ipAddress, sessionId);
+            aem.deleteReport(reportId);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void updateReport(long reportId, String reportName, String reportDescription, Boolean enabled,
+            Integer type, String script, List<String> parameters, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("updateReport", ipAddress, sessionId);
+            aem.updateReport(reportId, reportName, reportDescription, enabled, type, script, parameters);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public List<RemoteReportLight> getClassLevelReports(String className, boolean recursive, 
+            boolean includeDisabled, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("getClassLevelReports", ipAddress, sessionId);
+            return aem.getClassLevelReports(className, recursive, includeDisabled);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public List<RemoteReportLight> getInventoryLevelReports(boolean includeDisabled, 
+            String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("getInventoryLevelReports", ipAddress, sessionId);
+            return aem.getInventoryLevelReports(includeDisabled);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public RemoteReport getReport(long reportId, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("getReport", ipAddress, sessionId);
+            return aem.getReport(reportId);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public byte[] executeClassLevelReport(String objectClassName, long objectId, long reportId, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("executeClassLevelReport", ipAddress, sessionId);
+            return aem.executeClassLevelReport(objectClassName, objectId, reportId);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public byte[] executeInventoryLevelReport(long reportId, List<String> parameterNames, 
+            List<String> parameterValues, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("executeInventoryLevelReport", ipAddress, sessionId);
+            return aem.executeInventoryLevelReport(reportId, parameterNames, parameterValues);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    //</editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Commercial modules data methods">
+    // <editor-fold defaultstate="collapsed" desc="SDH Networks Module">
+    @Override
+    public long createSDHTransportLink(String classNameEndpointA, long idEndpointA, String classNameEndpointB, long idEndpointB, String linkType, String defaultName, String ipAddress, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("createSDHTransportLink", ipAddress, sessionId);
             SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
