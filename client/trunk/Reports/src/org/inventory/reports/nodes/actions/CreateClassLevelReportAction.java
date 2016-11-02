@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.inventory.core.templates.nodes.actions;
+package org.inventory.reports.nodes.actions;
 
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
@@ -22,47 +22,53 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
-import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalReportLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
-import org.inventory.core.templates.nodes.TemplatesModuleClassNode;
-import org.inventory.navigation.applicationnodes.objectnodes.AbstractChildren;
+import org.inventory.reports.nodes.ReportsModuleClassNode;
 import org.openide.util.Utilities;
 
 /**
- * Creates a template
+ * Creates a class level report
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-class CreateTemplateAction extends AbstractAction {
+class CreateClassLevelReportAction extends AbstractAction {
     
     private CommunicationsStub com = CommunicationsStub.getInstance();
     
-    CreateTemplateAction() {
-        putValue(NAME, "New Template");
+    CreateClassLevelReportAction() {
+        putValue(NAME, "New Report");
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
         
-        JTextField txtTemplateName = new JTextField(20);
-        txtTemplateName.setName("txtTemplateName"); //NOI18N
+        JTextField txtReportName = new JTextField(20);
+        txtReportName.setName("txtReportName"); //NOI18N
+        
+        JTextField txtReportDescription = new JTextField(20);
+        txtReportDescription.setName("txtReportDescription"); //NOI18N
         
         JComplexDialogPanel pnlGeneralInfo = new JComplexDialogPanel(
-                                    new String[] { "Name" }, new JComponent[] { txtTemplateName });
+                                    new String[] { "Name", "txtReportDescription" }, 
+                                    new JComponent[] { txtReportName, txtReportDescription });
         
-        if (JOptionPane.showConfirmDialog(null, pnlGeneralInfo, "New Template", 
+        if (JOptionPane.showConfirmDialog(null, pnlGeneralInfo, "New Report", 
                 JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             
-            TemplatesModuleClassNode selectedNode = Utilities.actionsGlobalContext().lookup(TemplatesModuleClassNode.class);
+            ReportsModuleClassNode selectedNode = Utilities.actionsGlobalContext().lookup(ReportsModuleClassNode.class);
             LocalClassMetadataLight selectedObject = selectedNode.getLookup().lookup(LocalClassMetadataLight.class);
             
-            LocalObjectLight newTemplate = com.createTemplate(selectedObject.getClassName(), ((JTextField)pnlGeneralInfo.getComponent("txtTemplateName")).getText());
+            LocalReportLight newTemplate = com.createClassLevelReport(selectedObject.getClassName(), 
+                                                ((JTextField)pnlGeneralInfo.getComponent("txtReportName")).getText(),
+                                                ((JTextField)pnlGeneralInfo.getComponent("txtReportDescription")).getText(), 
+                                                "", LocalReportLight.TYPE_HTML, true);
             
             if (newTemplate == null)
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             else {
-                ((AbstractChildren)selectedNode.getChildren()).addNotify();
-                NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Template created successfully");
+                ((ReportsModuleClassNode.ReportsModuleClassChildren)selectedNode.getChildren()).addNotify();
+                NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Report created successfully");
             }
         }
     }

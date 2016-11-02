@@ -14,13 +14,14 @@
  *  limitations under the License.
  *  under the License.
  */
-package org.inventory.core.templates;
+package org.inventory.reports;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalClassMetadataLight;
-import org.inventory.communications.util.Constants;
-import org.inventory.core.templates.nodes.TemplatesModuleClassNode;
+import org.inventory.reports.nodes.ClassLevelReportsRootNode;
+import org.inventory.reports.nodes.InventoryLevelReportsRootNode;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
@@ -29,26 +30,31 @@ import org.openide.nodes.Node;
  * Service class for this module. 
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class TemplatesService  {
-    private static TemplatesService instance;
-    private TemplatesTopComponent topComponent;
+public class ReportsService  {
+    private static ReportsService instance;
+    private ReportsTopComponent topComponent;
     private CommunicationsStub com = CommunicationsStub.getInstance();
     
-    public TemplatesService(TemplatesTopComponent topComponent) {
+    public ReportsService(ReportsTopComponent topComponent) {
         this.topComponent = topComponent;
     }
     
     public void setRoot() {
-        final List<LocalClassMetadataLight> allClasses = com.getLightSubclasses(Constants.CLASS_INVENTORYOBJECT, false, false);
-        topComponent.getExplorerManager().setRootContext(new AbstractNode(new Children.Keys<LocalClassMetadataLight>() {
-                    {
-                        setKeys(allClasses);
-                    }
+        
+        topComponent.getExplorerManager().setRootContext(
+                new AbstractNode(new Children.Array() {
+
                     @Override
-                    protected Node[] createNodes(LocalClassMetadataLight t) {
-                        return new Node[] {new TemplatesModuleClassNode(t)};
+                    protected Collection<Node> initCollection() {
+                        List<Node> reportRootNodes = new ArrayList<>();
+                        reportRootNodes.add(new ClassLevelReportsRootNode());
+                        reportRootNodes.add(new InventoryLevelReportsRootNode());
+
+                        return reportRootNodes;
                     }
-                }));
+                    
+                })
+        );
     }
 
 }

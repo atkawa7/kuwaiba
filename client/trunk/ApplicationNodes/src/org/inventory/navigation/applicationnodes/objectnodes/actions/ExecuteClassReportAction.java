@@ -28,7 +28,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.communications.core.LocalReportDescriptor;
+import org.inventory.communications.core.LocalReportLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.MenuScroller;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
@@ -75,7 +75,8 @@ public class ExecuteClassReportAction extends AbstractAction implements Presente
         arguments.put("objectId", theObject.getOid());
         arguments.put("objectClass", theObject.getClassName());
         
-        byte[] theReport = CommunicationsStub.getInstance().executeReport(reportId, arguments);
+        byte[] theReport = CommunicationsStub.getInstance().executeClassLevelReport(theObject.getClassName(),
+                theObject.getOid(), reportId);
         
         if (theReport == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
@@ -103,14 +104,14 @@ public class ExecuteClassReportAction extends AbstractAction implements Presente
     public JMenuItem getPopupPresenter (LocalObjectLight theObject) {
         JMenu mnuPossibleChildren = new JMenu("Reports");
         mnuPossibleChildren.setEnabled(false);
-        List<LocalReportDescriptor> reportDescriptors = CommunicationsStub.getInstance().
-                    getReportsForClass(theObject.getClassName(), -1);
+        List<LocalReportLight> reportDescriptors = CommunicationsStub.getInstance().
+                    getClassLevelReports(theObject.getClassName(), true, false);
             
         if (reportDescriptors == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.WARNING_MESSAGE, CommunicationsStub.getInstance().getError());
         else {
             if (!reportDescriptors.isEmpty()) {
-                for (LocalReportDescriptor reportDescriptor : reportDescriptors) {
+                for (LocalReportLight reportDescriptor : reportDescriptors) {
                     JMenuItem mnuReport = new JMenuItem(reportDescriptor.getName());
                     mnuReport.setToolTipText(reportDescriptor.getDescription());
                     mnuReport.setName(String.valueOf(reportDescriptor.getId()));

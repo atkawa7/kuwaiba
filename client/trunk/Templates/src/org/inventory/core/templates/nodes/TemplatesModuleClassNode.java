@@ -34,12 +34,12 @@ import org.openide.util.lookup.Lookups;
  * A simple node representing an instanceable inventory class
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ClassNode extends AbstractNode {
+public class TemplatesModuleClassNode extends AbstractNode {
 
-    private final Image defaultIcon = Utils.createRectangleIcon(Utils.DEFAULT_CLASS_ICON_COLOR, 
+    private static final Image defaultIcon = Utils.createRectangleIcon(Utils.DEFAULT_CLASS_ICON_COLOR, 
             Utils.DEFAULT_ICON_WIDTH, Utils.DEFAULT_ICON_HEIGHT);
     
-    public ClassNode(LocalClassMetadataLight aClass) {
+    public TemplatesModuleClassNode(LocalClassMetadataLight aClass) {
         super(new ClassChildren(), Lookups.singleton(aClass));
         setDisplayName(aClass.getClassName());
     }

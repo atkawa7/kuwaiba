@@ -14,39 +14,37 @@
  *  limitations under the License.
  *  under the License.
  */
-package org.inventory.core.templates.nodes.properties;
+package org.inventory.reports.nodes.properties;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.communications.core.LocalObjectListItem;
+import org.inventory.communications.core.LocalReport;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 
 /**
- * Listener that commits a change performed to a template element. It's a singleton, and you should add it to the listeners list of your LocalObject if you want the changes to be properly saved into the data base
+ * Listener that commits a change performed in a LocalReport instance
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class TemplateElementPropertyListener implements PropertyChangeListener {
+public class ReportPropertyListener implements PropertyChangeListener {
     private static CommunicationsStub com = CommunicationsStub.getInstance();
-    private static TemplateElementPropertyListener instance;
+    private static ReportPropertyListener instance;
     
-    private TemplateElementPropertyListener() {}
+    private ReportPropertyListener() {}
     
-    public static TemplateElementPropertyListener getInstance() {
+    public static ReportPropertyListener getInstance() {
         if (instance == null)
-            instance = new TemplateElementPropertyListener();
+            instance = new ReportPropertyListener();
         return instance;
     }
     
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        LocalObjectLight affectedObject = (LocalObjectLight)evt.getSource();
-        if (!com.updateTemplateElement(affectedObject.getClassName(), affectedObject.getOid(),
-            new String[] {evt.getPropertyName()}, 
-            new String[] {evt.getNewValue() == null ? null : (evt.getNewValue() instanceof LocalObjectListItem ? String.valueOf(((LocalObjectListItem)evt.getNewValue()).getId()) : String.valueOf(evt.getNewValue())) }))
+        LocalReport affectedReport = (LocalReport)evt.getSource();
+        if (!com.updateReport(affectedReport.getId(), affectedReport.getName(),
+                affectedReport.getDescription(), affectedReport.isEnabled(), affectedReport.getType(),
+                affectedReport.getScript(), affectedReport.getParameters()))
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
-        
     }
     
 }

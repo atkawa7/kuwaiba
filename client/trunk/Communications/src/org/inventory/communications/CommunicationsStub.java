@@ -37,7 +37,8 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalObjectLightList;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.core.LocalPool;
-import org.inventory.communications.core.LocalReportDescriptor;
+import org.inventory.communications.core.LocalReport;
+import org.inventory.communications.core.LocalReportLight;
 import org.inventory.communications.core.LocalTaskResultMessage;
 import org.inventory.communications.core.LocalTask;
 import org.inventory.communications.core.LocalTaskNotificationDescriptor;
@@ -67,10 +68,11 @@ import org.kuwaiba.wsclient.RemoteObjectLightArray;
 import org.kuwaiba.wsclient.RemoteObjectSpecialRelationships;
 import org.kuwaiba.wsclient.RemotePool;
 import org.kuwaiba.wsclient.RemoteQueryLight;
+import org.kuwaiba.wsclient.RemoteReport;
+import org.kuwaiba.wsclient.RemoteReportLight;
 import org.kuwaiba.wsclient.RemoteResultMessage;
 import org.kuwaiba.wsclient.RemoteTask;
 import org.kuwaiba.wsclient.RemoteTaskResult;
-import org.kuwaiba.wsclient.ReportDescriptor;
 import org.kuwaiba.wsclient.ResultRecord;
 import org.kuwaiba.wsclient.SdhContainerLinkDefinition;
 import org.kuwaiba.wsclient.SdhPosition;
@@ -2443,52 +2445,180 @@ public class CommunicationsStub {
     
     // </editor-fold>
     
-    //<editor-fold defaultstate="collapsed" desc="Reporting methods">
+    //<editor-fold defaultstate="collapsed" desc="Reporting API methods">
     /**
-     * Retrieves the list of reports for a particular class
-     * @param className The class to evaluate
-     * @param limit The limit of results. Use -1 to retrieve all
-     * @return A list of report descriptors or null if something went wrong
+     * Creates a class level report (a report that will be available for all instances of a given class -and its subclasses-)
+     * @param className Class this report is going to be related to. It can be ab abstract class and the report will be available for all its subclasses
+     * @param reportName Name of the report.
+     * @param reportDescription Report description.
+     * @param script Script text.
+     * @param outputType What will be the default output of this report? See ClassLevelReportDescriptor for possible values
+     * @param enabled If enabled, a report can be executed.
+     * @return The local representation of the newly created report. Null in case of error
      */
-    public List<LocalReportDescriptor> getReportsForClass(String className, int limit) {
+    public LocalReportLight createClassLevelReport(String className, String reportName, String reportDescription, String script, 
+            int outputType, boolean enabled) { 
         try {
-            
-            List<LocalReportDescriptor> localDescriptors = cache.getCachedReports(className);
-            
-            if (localDescriptors == null) {
-                List<ReportDescriptor> remoteDescriptors = service.getReportsForClass(className, limit, session.getSessionId());
-                localDescriptors = new ArrayList<>();
-                
-                for (ReportDescriptor aRemoteDescriptor : remoteDescriptors)
-                    localDescriptors.add(new LocalReportDescriptor(aRemoteDescriptor.getClassName(), aRemoteDescriptor.getId(),
-                                                    aRemoteDescriptor.getName(), aRemoteDescriptor.getDescription()));
-                cache.addReport(className, localDescriptors);
-            }
-            return localDescriptors;
-        }catch(Exception ex) {
+            long newPoolId  = service.createClassLevelReport(className, reportName, 
+                    reportDescription, script, outputType, enabled,session.getSessionId());
+            return new LocalReportLight(newPoolId, reportName, reportDescription, enabled, outputType);
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }    
+    /**
+     * Creates an inventory level report (a report that is not tied to a particlar instance or class. In most cases, they also receive parameters)
+     * @param reportName Name of the report.
+     * @param reportDescription Report description.
+     * @param script Script text.
+     * @param outputType What will be the default output of this report? See InventoryLevelReportDescriptor for possible values
+     * @param enabled If enabled, a report can be executed.
+     * @param parameterNames Optional (it might be either null or an empty array). The list of the names parameters that this report will support. They will always be captured as strings, so it's up to the author of the report the sanitization and conversion of the inputs
+     * @return The local representation of the newly created report. Null in case of error.
+     */
+    public LocalReportLight createInventoryLevelReport(String reportName, String reportDescription, String script, int outputType, 
+            boolean enabled, List<String> parameterNames) {
+        try {
+            long newPoolId  = service.createInventoryLevelReport(reportName, reportDescription, 
+                    script, outputType, enabled, parameterNames,session.getSessionId());
+            return new LocalReportLight(newPoolId, reportName, reportDescription, enabled, outputType);
+        }catch(Exception ex){
             this.error =  ex.getMessage();
             return null;
         }
     }
     
     /**
-     * Executes a report
-     * @param reportId Report id
-     * @param arguments Arguments for this report as a key-value structure.
-     * @return the html structure to be rendered
+     * Deletes a report
+     * @param reportId The id of the report.
+     * @return True if successful. False in case of error.
      */
-    public byte[] executeReport(long reportId, HashMap<String, Object> arguments) {
+    public boolean deleteReport(long reportId) {
         try {
-            List<StringPair> remoteArguments = new ArrayList<>();
+            service.deleteReport(reportId, session.getSessionId());
+            return true;
+        } catch(Exception ex){
+            this.error =  ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Updates the properties of an existing class level report.
+     * @param reportId Id of the report.
+     * @param reportName The name of the report. Null to leave it unchanged.
+     * @param reportDescription The description of the report. Null to leave it unchanged.
+     * @param enabled Is the report enabled? . Null to leave it unchanged.
+     * @param type Type of the output of the report. See LocalReportLight for possible values
+     * @param script Text of the script. 
+     * @param parameters The list of parameters that will be requested to generate this report. Null to leave it unchanged.
+     * @return True if successful. False in case of error.
+     */
+    public boolean updateReport(long reportId, String reportName, String reportDescription, Boolean enabled,
+            Integer type, String script, List<String> parameters) {
+        try {
+            service.updateReport(reportId, reportName, reportDescription, enabled,
+                                    type, script, parameters, session.getSessionId());
+            return true;
+        } catch(Exception ex){
+            this.error =  ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Gets the class level reports associated to the given class (or its superclasses)
+     * @param className The class to extract the reports from.
+     * @param recursive False to get only the directly associated reports. True top get also the reports associate top its superclasses
+     * @param includeDisabled True to also include the reports marked as disabled. False to return only the enabled ones.
+     * @return The list of reports. Null in case of error.
+     */
+    public List<LocalReportLight> getClassLevelReports(String className, boolean recursive, boolean includeDisabled) {
+        try {
+            List<RemoteReportLight> remoteClassLevelReports = 
+                    service.getClassLevelReports(className, recursive, includeDisabled, session.getSessionId());
             
-            for (String key : arguments.keySet()) {
-                StringPair remoteArgument = new StringPair();
-                remoteArgument.setKey(key);
-                remoteArgument.setValue(String.valueOf(arguments.get(key)));
-                remoteArguments.add(remoteArgument);
-            }
-            return service.executeReport(reportId, remoteArguments, session.getSessionId());
-        }catch(Exception ex){
+            List<LocalReportLight> localClassLevelReports = new ArrayList<>();
+            
+            for (RemoteReportLight remoteReport : remoteClassLevelReports)
+                localClassLevelReports.add(new LocalReportLight(remoteReport.getId(), 
+                        remoteReport.getName(), remoteReport.getDescription(), remoteReport.isEnabled(), remoteReport.getType()));
+            
+            return localClassLevelReports;
+        } catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    /**
+     * Gets the inventory class reports.
+     * @param includeDisabled True to also include the reports marked as disabled. False to return only the enabled ones.
+     * @return The list of reports. Null in case of error.
+     */
+    public List<LocalReportLight> getInventoryLevelReports(boolean includeDisabled) {
+        try {
+            List<RemoteReportLight> remoteClassLevelReports = 
+                    service.getInventoryLevelReports(includeDisabled, session.getSessionId());
+            
+            List<LocalReportLight> localClassLevelReports = new ArrayList<>();
+            
+            for (RemoteReportLight remoteReport : remoteClassLevelReports)
+                localClassLevelReports.add(new LocalReportLight(remoteReport.getId(), 
+                        remoteReport.getName(), remoteReport.getDescription(), remoteReport.isEnabled(), remoteReport.getType()));
+            
+            return localClassLevelReports;
+        } catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Gets the information related to a class level report.
+     * @param reportId The id of the report.
+     * @return  The report. Null in case of error.
+     */
+    public LocalReport getReport(long reportId) {
+        try {
+            RemoteReport remoteReport = service.getReport(reportId, session.getSessionId());
+            
+            return new LocalReport(reportId, remoteReport.getName(), remoteReport.getDescription(), 
+                    remoteReport.isEnabled(), remoteReport.getType(), remoteReport.getScript(), remoteReport.getParameters());
+            
+        } catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Executes a class level report and returns the result.
+     * @param objectClassName The class of the instance that will be used as input for the report.
+     * @param objectId The id of the instance that will be used as input for the report.
+     * @param reportId The id of the report.
+     * @return The result of the report execution. Null in case of error.
+     */
+    public byte[] executeClassLevelReport(String objectClassName, long objectId, long reportId) {
+        try {
+            return service.executeClassLevelReport(objectClassName, objectId, reportId, session.getSessionId());
+        } catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Executes an inventory level report and returns the result.
+     * @param reportId The id of the report.
+     * @param parameterNames The names of the parameters to be used as inputs to the report.
+     * @param parameterValues The values of the parameters to be used as inputs to the report. As they're always captured as strings, it's up to the author of the report the sanitization and conversion of the inputs.
+     * @return The result of the report execution. Null in case of error.
+     */
+    public byte[] executeInventoryLevelReport(long reportId, List<String> parameterNames, List<String> parameterValues) {
+        try {
+            return service.executeInventoryLevelReport(reportId, parameterNames, parameterValues, session.getSessionId());
+        } catch(Exception ex){
             this.error =  ex.getMessage();
             return null;
         }

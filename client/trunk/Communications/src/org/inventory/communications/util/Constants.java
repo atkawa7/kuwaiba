@@ -264,6 +264,10 @@ public class Constants {
      */
     public static final String PROPERTY_NOTIFICATION_TYPE = "notificationType"; //NOI18N
     /**
+     * 
+     */
+    public static final String PROPERTY_PARAMETERS = "parameters"; //NOI18N
+    /**
      * Property email
      */
     public static final String PROPERTY_EMAIL = "email"; //NOI18N
