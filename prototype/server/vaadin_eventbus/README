@@ -1,0 +1,29 @@
+Prototype Description
+A simple interaction between components and widgets with event bus
+
+The application have tree section
+1st tree of nodes
+2nd A map view
+3rd A field that charge information about an element selected
+
+The interaction implemented are
+Can select one node on the tree and see the name in the section 3
+Can select one mark on the map and see the name in the section 3
+Can change the value temporary of a node in the tree
+
+Information
+  When you run the Web application for the first time please be patient this process take long time
+  about three minutes  that you computer can no be used, to make faster the process we
+  removed maven-dependency-plugin and removed jetty-maven-plugin
+
+Requirements
+   jdk1.8.0
+   Glassfish Server 4.1
+   For class MapView configure the apiKey you can get one in https://console.developers.google.com/
+   Firefox web browser (or modified tag set-property in file /resources/org/kuwaiba/KuwaibaWidgetSet.gwt.xml and change for you current browser)
+
+ToDo Task
+   Accelerate the build of the application when used widgets, there are two option use the cores in the CPU or configure the vaadin.widgetset.mode with fetch or cdn
+   Reduce the space used by the .war
+   Configure the use of a horizontal layout for the three sections, the problem
+    of use the default horizontal layout are that the map is not shown
