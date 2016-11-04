@@ -18,8 +18,8 @@ package org.kuwaiba.beans;
 
 import com.neotropic.kuwaiba.modules.ipam.IPAMModule;
 import com.neotropic.kuwaiba.modules.mpls.MPLSModule;
-import com.neotropic.kuwaiba.modules.reporting.RemoteReport;
-import com.neotropic.kuwaiba.modules.reporting.RemoteReportLight;
+import com.neotropic.kuwaiba.modules.reporting.model.RemoteReport;
+import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
 import com.neotropic.kuwaiba.modules.reporting.Reports;
 import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHModule;
@@ -2385,12 +2385,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
 
     @Override
     public long createInventoryLevelReport(String reportName, String reportDescription, 
-            String script, int outputType, boolean enabled, String[] parameterNames, String ipAddress, String sessionId) throws ServerSideException {
+            String script, int outputType, boolean enabled, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateCall("createInventoryLevelReport", ipAddress, sessionId);
-            return aem.createInventoryLevelReport(reportName, reportDescription, script, outputType, enabled, parameterNames);
+            return aem.createInventoryLevelReport(reportName, reportDescription, script, outputType, enabled, parameters);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2410,12 +2410,24 @@ public class WebserviceBean implements WebserviceBeanRemote {
 
     @Override
     public void updateReport(long reportId, String reportName, String reportDescription, Boolean enabled,
-            Integer type, String script, List<String> parameters, String ipAddress, String sessionId) throws ServerSideException {
+            Integer type, String script, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateCall("updateReport", ipAddress, sessionId);
-            aem.updateReport(reportId, reportName, reportDescription, enabled, type, script, parameters);
+            aem.updateReport(reportId, reportName, reportDescription, enabled, type, script);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void updateReportParameters(long reportId, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("updateReportParameters", ipAddress, sessionId);
+            aem.updateReportParameters(reportId, parameters);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2472,13 +2484,13 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public byte[] executeInventoryLevelReport(long reportId, List<String> parameterNames, 
-            List<String> parameterValues, String ipAddress, String sessionId) throws ServerSideException {
+    public byte[] executeInventoryLevelReport(long reportId, List<StringPair> parameters, 
+            String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateCall("executeInventoryLevelReport", ipAddress, sessionId);
-            return aem.executeInventoryLevelReport(reportId, parameterNames, parameterValues);
+            return aem.executeInventoryLevelReport(reportId, parameters);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }

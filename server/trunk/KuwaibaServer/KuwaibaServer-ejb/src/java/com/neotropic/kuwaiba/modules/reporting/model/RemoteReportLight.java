@@ -14,7 +14,7 @@
  *  limitations under the License.
  *  under the License.
  */
-package com.neotropic.kuwaiba.modules.reporting;
+package com.neotropic.kuwaiba.modules.reporting.model;
 
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;

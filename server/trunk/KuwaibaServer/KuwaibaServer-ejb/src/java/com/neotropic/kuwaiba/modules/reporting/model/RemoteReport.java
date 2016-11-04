@@ -14,10 +14,12 @@
  *  limitations under the License.
  *  under the License.
  */
-package com.neotropic.kuwaiba.modules.reporting;
+package com.neotropic.kuwaiba.modules.reporting.model;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import org.kuwaiba.ws.todeserialize.StringPair;
 
 /**
  * A remote representation of a report (class or inventory level). 
@@ -32,12 +34,12 @@ public class RemoteReport extends RemoteReportLight {
     /**
      * Parameters list.
      */
-    private String[] parameters;
+    private List<StringPair> parameters;
 
     public RemoteReport() {}
 
     public RemoteReport(long id, String name, String description, boolean enabled,
-            int type, String script, String[] parameters) {
+            int type, String script, List<StringPair> parameters) {
         super(id, name, description, enabled, type);
         this.script = script;
         this.parameters = parameters;
@@ -51,11 +53,11 @@ public class RemoteReport extends RemoteReportLight {
         this.script = script;
     }
 
-    public String[] getParameters() {
+    public List<StringPair> getParameters() {
         return parameters;
     }
 
-    public void setParameters(String[] parameters) {
+    public void setParameters(List<StringPair> parameters) {
         this.parameters = parameters;
     }
 }

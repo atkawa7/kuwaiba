@@ -16,8 +16,8 @@
 
 package org.kuwaiba.beans;
 
-import com.neotropic.kuwaiba.modules.reporting.RemoteReport;
-import com.neotropic.kuwaiba.modules.reporting.RemoteReportLight;
+import com.neotropic.kuwaiba.modules.reporting.model.RemoteReport;
+import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
 import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
 import java.util.List;
@@ -362,12 +362,14 @@ public interface WebserviceBeanRemote {
             String script, int outputType, boolean enabled, String ipAddress, String sessionId) throws ServerSideException;
     
     public long createInventoryLevelReport(String reportName, String reportDescription, String script, int outputType, 
-            boolean enabled, String[] parameterNames, String ipAddress, String sessionId) throws ServerSideException;
+            boolean enabled, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException;
     
     public void deleteReport(long reportId, String ipAddress, String sessionId) throws ServerSideException;
     
     public void updateReport(long reportId, String reportName, String reportDescription, Boolean enabled,
-            Integer type, String script, List<String> parameters, String ipAddress, String sessionId) throws ServerSideException;
+            Integer type, String script, String ipAddress, String sessionId) throws ServerSideException;
+
+    public void updateReportParameters(long reportId, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException;
     
     public List<RemoteReportLight> getClassLevelReports(String className, boolean recursive, 
             boolean includeDisabled, String ipAddress, String sessionId) throws ServerSideException;
@@ -380,8 +382,8 @@ public interface WebserviceBeanRemote {
     public byte[] executeClassLevelReport(String objectClassName, long objectId, 
             long reportId, String ipAddress, String sessionId) throws ServerSideException;
    
-    public byte[] executeInventoryLevelReport(long reportId, List<String> parameterNames, 
-            List<String> parameterValues, String ipAddress, String sessionId) throws ServerSideException;
+    public byte[] executeInventoryLevelReport(long reportId, List<StringPair> parameters, 
+            String ipAddress, String sessionId) throws ServerSideException;
     
     // </editor-fold>
     

@@ -17,8 +17,8 @@
 package org.kuwaiba.apis.persistence.application;
 
 import com.neotropic.kuwaiba.modules.GenericCommercialModule;
-import com.neotropic.kuwaiba.modules.reporting.RemoteReport;
-import com.neotropic.kuwaiba.modules.reporting.RemoteReportLight;
+import com.neotropic.kuwaiba.modules.reporting.model.RemoteReport;
+import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -903,12 +903,13 @@ public interface ApplicationEntityManager {
      * @param script Script text.
      * @param outputType What will be the default output of this report? See InventoryLevelReportDescriptor for possible values
      * @param enabled If enabled, a report can be executed.
-     * @param parameterNames Optional (it might be either null or an empty array). The list of the names parameters that this report will support. They will always be captured as strings, so it's up to the author of the report the sanitization and conversion of the inputs
+     * @param parameters Optional (it might be either null or an empty list). The list of the parameters that this report will support and optional default values. They will always be captured as strings, so it's up to the author of the report the sanitization and conversion of the inputs
      * @return The id of the newly created report.
      * @throws ApplicationObjectNotFoundException If the dummy root could not be found, which is actually a severe problem.
+     * @throws InvalidArgumentException If any of the parameter names is null or empty
      */
     public long createInventoryLevelReport(String reportName, String reportDescription, String script, int outputType, 
-            boolean enabled, String[] parameterNames) throws ApplicationObjectNotFoundException;
+            boolean enabled, List<StringPair> parameters) throws ApplicationObjectNotFoundException, InvalidArgumentException;
     
     /**
      * Deletes a report
@@ -925,12 +926,21 @@ public interface ApplicationEntityManager {
      * @param enabled Is the report enabled? . Null to leave it unchanged.
      * @param type Type of the output of the report. See LocalReportLight for possible values
      * @param script Text of the script. 
-     * @param parameters The list of parameters that will be requested to generate this report. Null to leave it unchanged.
      * @throws ApplicationObjectNotFoundException If the report could not be found.
      * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If any of the report properties has a wrong or unexpected format.
      */
     public void updateReport(long reportId, String reportName, String reportDescription, Boolean enabled,
-            Integer type, String script, List<String> parameters) 
+            Integer type, String script) 
+            throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    
+    /**
+     * Updates the parameters of a report
+     * @param reportId The id of the report
+     * @param parameters The list of parameters and optional default values. Those with null values will be deleted and the ones that didn't exist previously will be created.
+     * @throws ApplicationObjectNotFoundException If the report was not found.
+     * @throws InvalidArgumentException If the any of the parameters has an invalid name.
+     */
+    public void updateReportParameters(long reportId, List<StringPair> parameters) 
             throws ApplicationObjectNotFoundException, InvalidArgumentException;
     
     /**
@@ -975,12 +985,11 @@ public interface ApplicationEntityManager {
     /**
      * Executes an inventory level report and returns the result.
      * @param reportId The id of the report.
-     * @param parameterNames The names of the parameters to be used as inputs to the report.
-     * @param parameterValues The values of the parameters to be used as inputs to the report. As they're always captured as strings, it's up to the author of the report the sanitization and conversion of the inputs.
+     * @param parameters List of pairs param name - param value.
      * @return The result of the report execution.
      * @throws ApplicationObjectNotFoundException If the report could not be found.
      * @throws InvalidArgumentException If the associated script exits with error.
      */
-    public byte[] executeInventoryLevelReport(long reportId, List<String> parameterNames, List<String> parameterValues)
+    public byte[] executeInventoryLevelReport(long reportId, List<StringPair> parameters)
             throws ApplicationObjectNotFoundException, InvalidArgumentException;
 }

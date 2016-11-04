@@ -16,8 +16,8 @@
 
 package org.kuwaiba.ws;
 
-import com.neotropic.kuwaiba.modules.reporting.RemoteReport;
-import com.neotropic.kuwaiba.modules.reporting.RemoteReportLight;
+import com.neotropic.kuwaiba.modules.reporting.model.RemoteReport;
+import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
 import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
 import java.util.List;
@@ -1208,7 +1208,7 @@ public class KuwaibaService {
     /**
      * Updates the parameters of a task. If any of the values is null, that parameter will be deleted, if the parameter does not exist, it will be created
      * @param taskId Task id
-     * @param parameters The parameters to be modified as pairs paramName/paramValue
+     * @param parameters The parameters to be modified as pairs paramName/paramValue. A null value means that that parameter should be deleted
      * @param sessionId The session token
      * @throws ServerSideException In case something goes wrong
      */
@@ -3571,7 +3571,7 @@ public class KuwaibaService {
      * @param script Script text.
      * @param outputType What will be the default output of this report? See InventoryLevelReportDescriptor for possible values
      * @param enabled If enabled, a report can be executed.
-     * @param parameterNames Optional (it might be either null or an empty array). The list of the names parameters that this report will support. They will always be captured as strings, so it's up to the author of the report the sanitization and conversion of the inputs
+     * @param parameters Optional (it might be either null or an empty array). The list of the names parameters that this report will support. They will always be captured as strings, so it's up to the author of the report the sanitization and conversion of the inputs
      * @param sessionId Session token
      * @return The id of the newly created report.
      * @throws ServerSideException If the dummy root could not be found, which is actually a severe problem.
@@ -3580,10 +3580,10 @@ public class KuwaibaService {
     public long createInventoryLevelReport(@WebParam(name = "reportName")String reportName, 
             @WebParam(name = "reportDescription")String reportDescription, @WebParam(name = "script")String script, 
             @WebParam(name = "outputType")int outputType, @WebParam(name = "enabled")boolean enabled, 
-            @WebParam(name = "parameterNames")String[] parameterNames, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+            @WebParam(name = "parameters")List<StringPair> parameters, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             return wsBean.createInventoryLevelReport(reportName, reportDescription, script, 
-                    outputType, enabled, parameterNames, getIPAddress(), sessionId);
+                    outputType, enabled, parameters, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -3623,18 +3623,31 @@ public class KuwaibaService {
      * @param enabled Is the report enabled? . Null to leave it unchanged.
      * @param type Type of the output of the report. See LocalReportLight for possible values
      * @param script Text of the script. 
-     * @param parameters A comma-separated list of the parameters that will be requested to generate this report. Null to leave it unchanged.
      * @param sessionId Session token.
      * @throws ServerSideException If any of the report properties has a wrong or unexpected format or if the report could not be found.
      */
     @WebMethod(operationName = "updateReport")
     public void updateReport(@WebParam(name = "reportId")long reportId, @WebParam(name = "reportName")String reportName, 
             @WebParam(name = "reportDescription")String reportDescription, @WebParam(name = "enabled")Boolean enabled,
-            @WebParam(name = "type")Integer type, @WebParam(name = "script")String script, 
-            @WebParam(name = "parameters")List<String> parameters, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+            @WebParam(name = "type")Integer type, @WebParam(name = "script")String script, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             wsBean.updateReport(reportId, reportName, reportDescription, enabled,
-                                    type, script, parameters, getIPAddress(), sessionId);
+                                    type, script, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in updateReport: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    @WebMethod(operationName = "updateReportParameters")
+    public void updateReportParameters(@WebParam(name = "reportId")long reportId, @WebParam(name = "parameters")List<StringPair> parameters, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            wsBean.updateReportParameters(reportId, parameters, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -3741,18 +3754,17 @@ public class KuwaibaService {
     /**
      * Executes an inventory level report and returns the result.
      * @param reportId The id of the report.
-     * @param parameterNames The names of the parameters to be used as inputs to the report.
-     * @param parameterValues The values of the parameters to be used as inputs to the report. As they're always captured as strings, it's up to the author of the report the sanitization and conversion of the inputs.
+     * @param parameters List of pairs param name - param value
      * @param sessionId Session token.
      * @return The result of the report execution.
      * @throws ServerSideException If the report could not be found or if the associated script exits with error.
      */
     @WebMethod(operationName = "executeInventoryLevelReport")
     public byte[] executeInventoryLevelReport(@WebParam(name = "reportId")long reportId, 
-            @WebParam(name = "parameterNames")List<String> parameterNames, @WebParam(name = "parameterValues")List<String> parameterValues,
+            @WebParam(name = "parameters")List<StringPair> parameters, 
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
-            return wsBean.executeInventoryLevelReport(reportId, parameterNames, parameterValues, getIPAddress(), sessionId);
+            return wsBean.executeInventoryLevelReport(reportId, parameters, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
