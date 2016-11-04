@@ -40,7 +40,7 @@ import org.inventory.navigation.applicationnodes.objectnodes.actions.CreateBusin
 import org.inventory.navigation.applicationnodes.objectnodes.actions.CreateBusinessObjectFromTemplateAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteBusinessObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.EditObjectAction;
-import org.inventory.navigation.applicationnodes.objectnodes.actions.ExecuteClassReportAction;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.ExecuteClassLevelReportAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.RefreshObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
 import org.inventory.navigation.applicationnodes.objectnodes.properties.DateTypeProperty;
@@ -263,7 +263,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
             actions.add(null); //Separator
         }
         
-        actions.add(ExecuteClassReportAction.createExecuteReportAction());
+        actions.add(ExecuteClassLevelReportAction.createExecuteReportAction());
         
         for (GenericObjectNodeAction action : Lookup.getDefault().lookupAll(GenericObjectNodeAction.class)) {
             if (action.getValidator() == null) {

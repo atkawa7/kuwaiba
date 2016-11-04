@@ -20,7 +20,6 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.AbstractAction;
@@ -40,16 +39,16 @@ import org.openide.util.actions.Presenter;
  * Shows the class reports available for the selected node (if any) and run any of them
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ExecuteClassReportAction extends AbstractAction implements Presenter.Popup {
-    private static ExecuteClassReportAction instance;
+public class ExecuteClassLevelReportAction extends AbstractAction implements Presenter.Popup {
+    private static ExecuteClassLevelReportAction instance;
     
-    private ExecuteClassReportAction() {
+    private ExecuteClassLevelReportAction() {
         putValue(NAME, "Reports");
     }
     
-    public static ExecuteClassReportAction createExecuteReportAction() {
+    public static ExecuteClassLevelReportAction createExecuteReportAction() {
         if (instance == null)
-            instance = new ExecuteClassReportAction();
+            instance = new ExecuteClassLevelReportAction();
         return instance;
     }
     
@@ -70,10 +69,6 @@ public class ExecuteClassReportAction extends AbstractAction implements Presente
     }
     
     public void actionPerformed(LocalObjectLight theObject, long reportId) {
-        
-        HashMap<String, Object> arguments = new HashMap<>();
-        arguments.put("objectId", theObject.getOid());
-        arguments.put("objectClass", theObject.getClassName());
         
         byte[] theReport = CommunicationsStub.getInstance().executeClassLevelReport(theObject.getClassName(),
                 theObject.getOid(), reportId);
@@ -141,7 +136,7 @@ public class ExecuteClassReportAction extends AbstractAction implements Presente
         }
     }
     
-    public static class ExecutePoolReportAction extends ExecuteClassReportAction {
+    public static class ExecutePoolReportAction extends ExecuteClassLevelReportAction {
         private static ExecutePoolReportAction instance;
         
         private ExecutePoolReportAction() {

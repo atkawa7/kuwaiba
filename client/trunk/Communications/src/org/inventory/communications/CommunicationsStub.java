@@ -2480,8 +2480,19 @@ public class CommunicationsStub {
     public LocalReportLight createInventoryLevelReport(String reportName, String reportDescription, String script, int outputType, 
             boolean enabled, List<String> parameterNames) {
         try {
+            List<StringPair> parameters = new ArrayList<>();
+            
+            if (parameterNames != null) {
+                for (String parameter : parameterNames) {
+                    StringPair stringPair = new StringPair();
+                    stringPair.setKey(parameter);
+                    stringPair.setValue("");
+                    parameters.add(stringPair);
+                }
+            }
+            
             long newPoolId  = service.createInventoryLevelReport(reportName, reportDescription, 
-                    script, outputType, enabled, parameterNames,session.getSessionId());
+                    script, outputType, enabled, parameters,session.getSessionId());
             return new LocalReportLight(newPoolId, reportName, reportDescription, enabled, outputType);
         }catch(Exception ex){
             this.error =  ex.getMessage();
@@ -2512,14 +2523,50 @@ public class CommunicationsStub {
      * @param enabled Is the report enabled? . Null to leave it unchanged.
      * @param type Type of the output of the report. See LocalReportLight for possible values
      * @param script Text of the script. 
-     * @param parameters The list of parameters that will be requested to generate this report. Null to leave it unchanged.
      * @return True if successful. False in case of error.
      */
     public boolean updateReport(long reportId, String reportName, String reportDescription, Boolean enabled,
-            Integer type, String script, List<String> parameters) {
+            Integer type, String script) {
         try {
             service.updateReport(reportId, reportName, reportDescription, enabled,
-                                    type, script, parameters, session.getSessionId());
+                                    type, script, session.getSessionId());
+            return true;
+        } catch(Exception ex){
+            this.error =  ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Adds or removes parameters in a report.
+     * @param reportId Id of the report
+     * @param parametersToAddOrModify List of parameters to add or modify. Set to null to not add anything
+     * @param parametersToDelete List of parameters to delete. Set to null to not delete anything
+     * @return 
+     */
+    public boolean updateReportParameters(long reportId, String[] parametersToAddOrModify, String[] parametersToDelete) {
+        try {
+            List<StringPair> parameters = new ArrayList<>();
+            
+            if (parametersToAddOrModify != null) {
+                for (String parameter : parametersToAddOrModify) {
+                    StringPair entry = new StringPair();
+                    entry.setKey(parameter);
+                    entry.setValue("");
+                    parameters.add(entry);
+                }
+            }
+            
+            if (parametersToDelete != null) {
+                for (String parameter : parametersToDelete) {
+                    StringPair entry = new StringPair();
+                    entry.setKey(parameter);
+                    entry.setValue(null);
+                    parameters.add(entry);
+                }
+            }
+                
+            service.updateReportParameters(reportId, parameters, session.getSessionId());
             return true;
         } catch(Exception ex){
             this.error =  ex.getMessage();
@@ -2582,9 +2629,13 @@ public class CommunicationsStub {
     public LocalReport getReport(long reportId) {
         try {
             RemoteReport remoteReport = service.getReport(reportId, session.getSessionId());
+            List<String> parameters = new ArrayList<>();
+            
+            for (StringPair remoteParameter : remoteReport.getParameters())
+                parameters.add(remoteParameter.getKey());
             
             return new LocalReport(reportId, remoteReport.getName(), remoteReport.getDescription(), 
-                    remoteReport.isEnabled(), remoteReport.getType(), remoteReport.getScript(), remoteReport.getParameters());
+                    remoteReport.isEnabled(), remoteReport.getType(), remoteReport.getScript(), parameters);
             
         } catch(Exception ex){
             this.error =  ex.getMessage();
@@ -2611,13 +2662,21 @@ public class CommunicationsStub {
     /**
      * Executes an inventory level report and returns the result.
      * @param reportId The id of the report.
-     * @param parameterNames The names of the parameters to be used as inputs to the report.
-     * @param parameterValues The values of the parameters to be used as inputs to the report. As they're always captured as strings, it's up to the author of the report the sanitization and conversion of the inputs.
+     * @param parameters List of pairs param name - param value
      * @return The result of the report execution. Null in case of error.
      */
-    public byte[] executeInventoryLevelReport(long reportId, List<String> parameterNames, List<String> parameterValues) {
+    public byte[] executeInventoryLevelReport(long reportId, HashMap<String, String> parameters) {
         try {
-            return service.executeInventoryLevelReport(reportId, parameterNames, parameterValues, session.getSessionId());
+            List<StringPair> remoteParameters = new ArrayList<>();
+            
+            for (String paramName : parameters.keySet()) {
+                StringPair parameter = new StringPair();
+                parameter.setKey(paramName);
+                parameter.setValue(parameters.get(paramName));
+                remoteParameters.add(parameter);
+            }
+            
+            return service.executeInventoryLevelReport(reportId, remoteParameters, session.getSessionId());
         } catch(Exception ex){
             this.error =  ex.getMessage();
             return null;

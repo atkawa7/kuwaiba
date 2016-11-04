@@ -67,7 +67,7 @@ public class LocalReportLight {
      */
     private List<PropertyChangeListener> propertyChangeListeners;
     
-    public LocalReportLight(long id, String name, String description, boolean enabled, int type) {
+    public LocalReportLight(long id, String name, String description, Boolean enabled, Integer type) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -139,6 +139,6 @@ public class LocalReportLight {
     
     public void firePropertyChangeListener(Object source, String propertyName, Object oldValue, Object newValue) {
         for (PropertyChangeListener aListener : propertyChangeListeners)
-            aListener.propertyChange(new PropertyChangeEvent(source, name, oldValue, newValue));
+            aListener.propertyChange(new PropertyChangeEvent(source, propertyName, oldValue, newValue));
     }
 }

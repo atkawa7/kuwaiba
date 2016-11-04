@@ -15,24 +15,37 @@
  */
 package org.inventory.reports.nodes.properties;
 
+import java.beans.PropertyEditor;
 import java.lang.reflect.InvocationTargetException;
 import org.inventory.communications.core.LocalReport;
 import org.openide.nodes.PropertySupport;
 
 /**
- * This class allows to edit the properties corresponding to the report parameters, which are always taken as Strings.
+ * This class allows to edit a groovy script
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ReportParameterProperty extends PropertySupport.ReadOnly<String> {
+public class ScriptEditorProperty extends PropertySupport.ReadWrite<Object> {
     private LocalReport report;
     
-    public ReportParameterProperty(String propertyName, LocalReport report) {
-        super(propertyName, String.class, propertyName, propertyName);
+    public ScriptEditorProperty(String propertyName, Class propertyType, LocalReport report) {
+        super(propertyName, propertyType, propertyName, propertyName);
         this.report = report;
     }
     
     @Override
-    public String getValue() throws IllegalAccessException, InvocationTargetException {
-        return "";
+    public Object getValue() throws IllegalAccessException, InvocationTargetException {
+        return report.getScript();
     }
+
+    @Override
+    public void setValue(Object value) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        report.setScript((String)value);
+    }
+
+    @Override
+    public PropertyEditor getPropertyEditor() {
+        return null;
+    }
+    
+    //public class
 }

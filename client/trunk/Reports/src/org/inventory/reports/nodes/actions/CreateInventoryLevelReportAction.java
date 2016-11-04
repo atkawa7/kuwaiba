@@ -51,7 +51,7 @@ class CreateInventoryLevelReportAction extends AbstractAction {
         txtReportDescription.setName("txtReportDescription"); //NOI18N
         
         JComplexDialogPanel pnlGeneralInfo = new JComplexDialogPanel(
-                                    new String[] { "Name", "txtReportDescription" }, 
+                                    new String[] { "Name", "Description" }, 
                                     new JComponent[] { txtReportName, txtReportDescription });
         
         if (JOptionPane.showConfirmDialog(null, pnlGeneralInfo, "New Report", 

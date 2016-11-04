@@ -24,7 +24,7 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPool;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.applicationnodes.objectnodes.actions.ExecuteClassReportAction;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.ExecuteClassLevelReportAction;
 import org.inventory.navigation.applicationnodes.pools.PoolNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
@@ -46,7 +46,7 @@ public class ContractPoolNode extends PoolNode {
     @Override
     public Action[] getActions(boolean context) {
         return new Action[] { ContractManagerActionFactory.getCreateContractAction(), 
-                              ExecuteClassReportAction.ExecutePoolReportAction.createExecutePoolReportAction(),
+                              ExecuteClassLevelReportAction.createExecuteReportAction(),
                                 ContractManagerActionFactory.getDeleteContractPoolAction(),
                             };
     }

@@ -17,40 +17,52 @@ package org.inventory.reports.nodes.actions;
 
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalReportLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.reports.nodes.AbstractReportChildren;
+import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.reports.nodes.ReportNode;
 import org.openide.util.Utilities;
 
 /**
- * Deletes a class level report
+ * Adds a parameter to a report
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-class DeleteReportAction extends AbstractAction {
+class AddParameterToReportAction extends AbstractAction {
     
     private CommunicationsStub com = CommunicationsStub.getInstance();
     
-    public DeleteReportAction() {
-        putValue(NAME, "Delete Report");
+    public AddParameterToReportAction() {
+        putValue(NAME, "Add parameter");
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
+        JTextField txtParameterName = new JTextField(20);
+        txtParameterName.setName("txtParameterName"); //NOI18N
         
-        if (JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this report?", 
-                "Delete Report", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-                
-                ReportNode selectedNode = Utilities.actionsGlobalContext().lookup(ReportNode.class);
-                
-                if (!com.deleteReport(selectedNode.getLookup().lookup(LocalReportLight.class).getId()))
-                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+        JComplexDialogPanel pnlForm = new JComplexDialogPanel(new String[] {"Parameter Name"}, 
+                                                    new JComponent[] {txtParameterName});
+        
+        if (JOptionPane.showConfirmDialog(null, pnlForm, "New Parameter", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+            String parameterName = ((JTextField)pnlForm.getComponent("txtParameterName")).getText(); //NOI18N
+            if (parameterName.isEmpty())
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, "Parameter names can not be empty strings");
             else {
-                ((AbstractReportChildren)selectedNode.getParentNode().getChildren()).addNotify();
-                NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Report deleted successfully");
+                ReportNode selectedNode = Utilities.actionsGlobalContext().lookup(ReportNode.class);
+
+                if (com.updateReportParameters(selectedNode.getLookup().lookup(LocalReportLight.class).getId(), 
+                        new String[] {parameterName}, null)) {
+                    selectedNode.resetPropertySheet();
+                    NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Parameter added successfully");
+                }
+                else
+                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             }
         }
+        
     }
 }

@@ -23,6 +23,9 @@ public class ReportActionsFactory {
     private static CreateClassLevelReportAction createClassLevelReportAction;
     private static CreateInventoryLevelReportAction createInventoryLevelReportAction;
     private static DeleteReportAction deleteClassLevelReportAction;
+    private static AddParameterToReportAction addParameterToReportAction;
+    private static RemoveParameterFromReportAction removeParameterFromReportAction;
+    private static ExecuteInventoryLevelReportAction executeInventoryLevelReportAction;
     
     public static DeleteReportAction getDeleteClassLevelReportAction() {
         if (deleteClassLevelReportAction == null)
@@ -40,5 +43,23 @@ public class ReportActionsFactory {
         if (createInventoryLevelReportAction == null)
             createInventoryLevelReportAction = new CreateInventoryLevelReportAction();
         return createInventoryLevelReportAction;
+    }
+    
+    public static AddParameterToReportAction getAddParameterToReportAction() {
+        if (addParameterToReportAction == null)
+            addParameterToReportAction = new AddParameterToReportAction();
+        return addParameterToReportAction;
+    }
+    
+    public static RemoveParameterFromReportAction getRemoveParameterFromReportAction() {
+        if (removeParameterFromReportAction == null)
+            removeParameterFromReportAction = new RemoveParameterFromReportAction();
+        return removeParameterFromReportAction;
+    }
+    
+    public static ExecuteInventoryLevelReportAction getExecuteInventoryLevelReportAction() {
+        if (executeInventoryLevelReportAction == null)
+            executeInventoryLevelReportAction = new ExecuteInventoryLevelReportAction();
+        return executeInventoryLevelReportAction;
     }
 }

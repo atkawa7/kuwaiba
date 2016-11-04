@@ -39,6 +39,6 @@ public class PrimitiveTypeProperty extends PropertySupport.ReadWrite<Object> {
 
     @Override
     public void setValue(Object value) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        businessObject.setAttribute(getName(), value);        
+        businessObject.setAttribute(getName(), value);    
     }
 }

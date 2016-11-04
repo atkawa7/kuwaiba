@@ -33,8 +33,8 @@ public class LocalReport extends LocalReportLight {
     private List<String> parameters;
 
 
-    public LocalReport(long id, String name, String description, boolean enabled,
-            int type, String script, List<String> parameters) {
+    public LocalReport(long id, String name, String description, Boolean enabled,
+            Integer type, String script, List<String> parameters) {
         super(id, name, description, enabled, type);
         this.script = script;
         this.parameters = parameters;

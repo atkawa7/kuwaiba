@@ -20,6 +20,7 @@ import java.awt.Image;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DnDConstants;
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,7 +39,6 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.templates.nodes.actions.TemplateActionsFactory;
 import org.inventory.core.templates.nodes.properties.ListTypeProperty;
 import org.inventory.core.templates.nodes.properties.PrimitiveTypeProperty;
-import org.inventory.core.templates.nodes.properties.TemplateElementPropertyListener;
 import org.inventory.navigation.applicationnodes.objectnodes.AbstractChildren;
 import org.openide.actions.CopyAction;
 import org.openide.actions.PasteAction;
@@ -47,6 +47,7 @@ import org.openide.nodes.Node;
 import org.openide.nodes.NodeTransfer;
 import org.openide.nodes.PropertySupport;
 import org.openide.nodes.Sheet;
+import org.openide.util.WeakListeners;
 import org.openide.util.datatransfer.ExTransferable;
 import org.openide.util.datatransfer.PasteType;
 import org.openide.util.lookup.Lookups;
@@ -55,14 +56,16 @@ import org.openide.util.lookup.Lookups;
  * A node representing a template element.
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class TemplateElementNode extends AbstractNode {
+public class TemplateElementNode extends AbstractNode implements PropertyChangeListener {
 
     private static Image defaultIcon = Utils.createRectangleIcon(Utils.DEFAULT_ICON_COLOR, 
             Utils.DEFAULT_ICON_WIDTH, Utils.DEFAULT_ICON_HEIGHT);
     
+    private CommunicationsStub com = CommunicationsStub.getInstance();
     
     public TemplateElementNode(LocalObjectLight object) {
         super(new TemplateElementChildren(), Lookups.singleton(object));
+        setDisplayName(object.toString());
     }
 
     @Override
@@ -88,7 +91,7 @@ public class TemplateElementNode extends AbstractNode {
     protected Sheet createSheet() {
         Sheet sheet = Sheet.createDefault();
         LocalObjectLight currentObject = getLookup().lookup(LocalObjectLight.class);
-        CommunicationsStub com = CommunicationsStub.getInstance();
+        
         LocalClassMetadata classmetadata = com.getMetaForClass(currentObject.getClassName(), false);
         if (classmetadata == null) 
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
@@ -98,7 +101,7 @@ public class TemplateElementNode extends AbstractNode {
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             else {
                 Sheet.Set generalSet = Sheet.createPropertiesSet();
-                templateElement.addPropertyChangeListener(TemplateElementPropertyListener.getInstance());
+                templateElement.addPropertyChangeListener(WeakListeners.propertyChange(this, templateElement));
                 for (LocalAttributeMetadata attributeMetadata : classmetadata.getAttributes()) {
                     PropertySupport property = null;
                     if (!attributeMetadata.isUnique()) { //Unique attributes are not shown
@@ -149,30 +152,11 @@ public class TemplateElementNode extends AbstractNode {
         return true;
     }
     
-     @Override
-    public void destroy() throws IOException {
-        getLookup().lookup(LocalObjectLight.class).removePropertyChangeListener(TemplateElementPropertyListener.getInstance());
-    }
-    
-    @Override
-    public String getName(){
-        return getLookup().lookup(LocalObjectLight.class).getName();
-    }
-    
-    @Override
-    public String getDisplayName() {
-        return getLookup().lookup(LocalObjectLight.class).toString();
-    }
-
     @Override
     public void setName(String s) {
         getLookup().lookup(LocalObjectLight.class).setName(s);
-        TemplateElementPropertyListener.getInstance().propertyChange(
-                new PropertyChangeEvent(getLookup().lookup(LocalObjectLight.class), PROP_NAME, s, s));
-        
-        //Guess what? neither fireNameChange nor fireDisplayNameChange do anything, so we have to set the display name manually
-        setDisplayName(getDisplayName());
-        
+        propertyChange(new PropertyChangeEvent(getLookup().lookup(LocalObjectLight.class), Constants.PROPERTY_NAME, s, s));
+
         if (getSheet() != null)
             setSheet(createSheet());
     }
@@ -243,8 +227,8 @@ public class TemplateElementNode extends AbstractNode {
                     }
                     
                     if (canMove) {
-                        List<String> classNames = new ArrayList<String>();
-                        List<Long> ids = new ArrayList<Long>();
+                        List<String> classNames = new ArrayList<>();
+                        List<Long> ids = new ArrayList<>();
                         
                         classNames.add(incomingObject.getClassName());
                         ids.add(incomingObject.getOid());
@@ -268,6 +252,19 @@ public class TemplateElementNode extends AbstractNode {
                 return null;
             }
         };
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        LocalObjectLight affectedObject = (LocalObjectLight)evt.getSource();
+        if (!com.updateTemplateElement(affectedObject.getClassName(), affectedObject.getOid(),
+            new String[] {evt.getPropertyName()}, 
+            new String[] {evt.getNewValue() == null ? null : (evt.getNewValue() instanceof LocalObjectListItem ? String.valueOf(((LocalObjectListItem)evt.getNewValue()).getId()) : String.valueOf(evt.getNewValue())) }))
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+        else {
+            if (evt.getPropertyName().equals(Constants.PROPERTY_NAME))
+                setDisplayName(affectedObject.toString());
+        }
     }
     
     public static class TemplateElementChildren extends AbstractChildren {
