@@ -2583,6 +2583,12 @@ public class CommunicationsStub {
      */
     public List<LocalReportLight> getClassLevelReports(String className, boolean recursive, boolean includeDisabled) {
         try {
+            
+            List<LocalReportLight> cachedClassLevelReportsForClass = cache.getClassLevelReportForClass(className);
+            
+            if (cachedClassLevelReportsForClass != null)
+                return cachedClassLevelReportsForClass;
+            
             List<RemoteReportLight> remoteClassLevelReports = 
                     service.getClassLevelReports(className, recursive, includeDisabled, session.getSessionId());
             
@@ -2592,6 +2598,7 @@ public class CommunicationsStub {
                 localClassLevelReports.add(new LocalReportLight(remoteReport.getId(), 
                         remoteReport.getName(), remoteReport.getDescription(), remoteReport.isEnabled(), remoteReport.getType()));
             
+            cache.addClassLevelReportsForClass(className, localClassLevelReports);            
             return localClassLevelReports;
         } catch(Exception ex){
             this.error =  ex.getMessage();

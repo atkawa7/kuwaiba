@@ -22,7 +22,7 @@ import java.util.List;
 import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectListItem;
-import org.inventory.communications.core.LocalReport;
+import org.inventory.communications.core.LocalReportLight;
 import org.inventory.communications.core.LocalUserGroupObject;
 import org.inventory.communications.core.LocalUserObject;
 
@@ -37,7 +37,7 @@ public class Cache{
     private HashMap<String,LocalClassMetadataLight> lightMetadataIndex; //Cache for lightmetadata (usually for administrative purposes)
     private HashMap<String,List<LocalClassMetadataLight>> possibleChildrenIndex; //Cache for possible children
     private HashMap<String,List<LocalObjectListItem>> listIndex; //Cache for list-type attributes
-    private HashMap<String, List<LocalReport>> reportIndex; //Cache for class reports
+    private HashMap<String, List<LocalReportLight>> reportIndex; //Cache for class reports
     
     private Long rootClassId = null;
     /**
@@ -132,7 +132,7 @@ public class Cache{
         return listIndex.get(className);
     }
     
-    public List<LocalReport> getCachedReports(String className) {
+    public List<LocalReportLight> getClassLevelReportForClass(String className) {
         return reportIndex.get(className);
     }
 
@@ -140,7 +140,7 @@ public class Cache{
         listIndex.put(className, items);
     }
     
-    public void addReport(String className, List<LocalReport> reports) {
+    public void addClassLevelReportsForClass(String className, List<LocalReportLight> reports) {
         reportIndex.put(className, reports);
     }
 
@@ -148,7 +148,7 @@ public class Cache{
         return listIndex;
     }
     
-    public HashMap<String, List<LocalReport>> getReports() {
+    public HashMap<String, List<LocalReportLight>> getClassLevelReports() {
         return reportIndex;
     }
 
