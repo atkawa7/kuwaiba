@@ -25,10 +25,6 @@ public abstract class InventoryReport {
      */
     protected String title;
     /**
-     * Text of the copyright notice.
-     */
-    protected String copyrightNotice;
-    /**
      * Author of the script.
      */
     protected String author;
@@ -43,14 +39,6 @@ public abstract class InventoryReport {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getCopyrightNotice() {
-        return copyrightNotice;
-    }
-
-    public void setCopyrightNotice(String copyrightNotice) {
-        this.copyrightNotice = copyrightNotice;
     }
 
     public String getAuthor() {
@@ -69,9 +57,8 @@ public abstract class InventoryReport {
         this.version = version;
     }
 
-    public InventoryReport(String title, String copyrightNotice, String author, String version) {
+    public InventoryReport(String title, String author, String version) {
         this.title = title;
-        this.copyrightNotice = copyrightNotice;
         this.author = author;
         this.version = version;
     }

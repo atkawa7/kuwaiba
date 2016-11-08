@@ -17,9 +17,6 @@
 package org.kuwaiba.services.persistence.impl.neo4j;
 
 import com.neotropic.kuwaiba.modules.GenericCommercialModule;
-import com.neotropic.kuwaiba.modules.reporting.InventoryReport;
-import com.neotropic.kuwaiba.modules.reporting.model.RemoteReport;
-import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import java.io.BufferedReader;
@@ -28,11 +25,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -157,10 +152,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
      */
     private Index<Node> specialNodesIndex;
     /**
-     * Index for reports
-     */
-    private Index<Node> reportsIndex;
-    /**
      * Reference to the singleton instance of CacheManager
      */
     private CacheManager cm;
@@ -193,7 +184,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             this.poolsIndex = graphDb.index().forNodes(Constants.INDEX_POOLS);
             this.privilegeIndex = graphDb.index().forNodes(Constants.INDEX_PRIVILEGE_NODES);
             this.taskIndex = graphDb.index().forNodes(Constants.INDEX_TASKS);
-            this.reportsIndex = graphDb.index().forNodes(Constants.INDEX_REPORTS);
             this.specialNodesIndex = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES);
             for (Node listTypeNode : listTypeItemsIndex.query(Constants.PROPERTY_ID, "*")){
                 GenericObjectList aListType = Util.createGenericObjectListFromNode(listTypeNode);
@@ -2330,296 +2320,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         }
     }
     
-    //Reports
-    @Override
-    public long createClassLevelReport(String className, String reportName, String reportDescription, 
-            String script, int outputType, boolean enabled) throws MetadataObjectNotFoundException {
-        try (Transaction tx = graphDb.beginTx()) {
-            Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
-            
-            if (classNode == null)
-                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
-            
-            Node newReport = graphDb.createNode();
-            newReport.setProperty(Constants.PROPERTY_NAME, reportName == null ? "" : reportName);
-            newReport.setProperty(Constants.PROPERTY_DESCRIPTION, reportDescription == null ? "" : reportDescription);
-            newReport.setProperty(Constants.PROPERTY_SCRIPT, script == null ? "" : script);
-            newReport.setProperty(Constants.PROPERTY_TYPE, Math.abs(outputType) > 4 ? RemoteReportLight.TYPE_HTML : outputType);
-            newReport.setProperty(Constants.PROPERTY_ENABLED, enabled);
-            
-            classNode.createRelationshipTo(newReport, RelTypes.HAS_REPORT);
-            reportsIndex.putIfAbsent(newReport, Constants.PROPERTY_ID, newReport.getId());
-            
-            tx.success();
-            return newReport.getId();
-        }
-    }
-
-    @Override
-    public long createInventoryLevelReport(String reportName, String reportDescription, String script, 
-            int outputType, boolean enabled, List<StringPair> parameters) throws ApplicationObjectNotFoundException, InvalidArgumentException {
-        try (Transaction tx = graphDb.beginTx()) {
-            Node dummyRootNode = specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
-            
-            if (dummyRootNode == null)
-                throw new ApplicationObjectNotFoundException("Dummy Root could not be found");
-            
-            Node newReport = graphDb.createNode();
-            newReport.setProperty(Constants.PROPERTY_NAME, reportName == null ? "" : reportName);
-            newReport.setProperty(Constants.PROPERTY_DESCRIPTION, reportDescription == null ? "" : reportDescription);
-            newReport.setProperty(Constants.PROPERTY_SCRIPT, script == null ? "" : script);
-            newReport.setProperty(Constants.PROPERTY_TYPE, Math.abs(outputType) > 4 ? RemoteReportLight.TYPE_HTML : outputType);
-            newReport.setProperty(Constants.PROPERTY_ENABLED, enabled);
-            
-            if (parameters != null) {
-                for (StringPair parameter : parameters) {
-                    if (parameter.getKey() == null || parameter.getKey().trim().isEmpty())
-                        throw new InvalidArgumentException("Parameter names can not be empty strings");
-                    
-                    newReport.setProperty("PARAM_" + parameter.getKey(), 
-                            parameter.getValue() == null ? "" : parameter.getValue());
-                }
-            }
-            
-            
-            dummyRootNode.createRelationshipTo(newReport, RelTypes.HAS_REPORT);
-            reportsIndex.putIfAbsent(newReport, Constants.PROPERTY_ID, newReport.getId());
-            
-            tx.success();
-            return newReport.getId();
-        }
-    }
-
-    @Override
-    public void deleteReport(long reportId) throws ApplicationObjectNotFoundException {
-        try (Transaction tx = graphDb.beginTx()){
-            
-            Node reportNode = reportsIndex.get(Constants.PROPERTY_ID, reportId).getSingle();
-            
-            if (reportNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("The report with id %s could not be found", reportId));
-            
-            for (Relationship rel : reportNode.getRelationships())
-                rel.delete();
-
-            reportsIndex.remove(reportNode, Constants.PROPERTY_ID, reportNode.getId());
-            reportNode.delete();
-            
-            tx.success();
-        }
-    }
-
-    @Override
-    public void updateReport(long reportId, String reportName, String reportDescription, Boolean enabled,
-            Integer type, String script) throws ApplicationObjectNotFoundException, InvalidArgumentException {
-        try (Transaction tx = graphDb.beginTx()) {
-            Node reportNode = reportsIndex.get(Constants.PROPERTY_ID, reportId).getSingle();
-            
-            if (reportNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("The report with id %s could not be found", reportId));
-            
-            if (reportName != null)
-               reportNode.setProperty(Constants.PROPERTY_NAME, reportName);
-            if (reportDescription != null)
-               reportNode.setProperty(Constants.PROPERTY_DESCRIPTION, reportDescription);
-            if (enabled != null)
-               reportNode.setProperty(Constants.PROPERTY_ENABLED, enabled);
-            if (type != null)
-               reportNode.setProperty(Constants.PROPERTY_TYPE, type);
-            if (script != null)
-               reportNode.setProperty(Constants.PROPERTY_SCRIPT, script);
-
-            tx.success();
-        }
-    }
-    
-    @Override
-    public void updateReportParameters(long reportId, List<StringPair> parameters) throws ApplicationObjectNotFoundException, InvalidArgumentException {
-        try (Transaction tx = graphDb.beginTx()) {
-            Node reportNode = reportsIndex.get(Constants.PROPERTY_ID, reportId).getSingle();
-            if (reportNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("A report with id %s could not be found", reportId));
-
-            for (StringPair parameter : parameters) {
-                
-                if (parameter.getKey() == null || parameter.getKey().trim().isEmpty())
-                        throw new InvalidArgumentException("Parameter names can not be empty strings");
-                
-                String actualParameterName = "PARAM_" + parameter.getKey();
-                //The parameters are stored with a prefix PARAM_
-                //params set to null, must be deleted
-                if (reportNode.hasProperty(actualParameterName) && parameter.getValue() == null)
-                    reportNode.removeProperty(actualParameterName);
-                else
-                    reportNode.setProperty(actualParameterName, parameter.getValue());
-            }
-            
-            tx.success();
-        }
-    }
-
-    @Override
-    public List<RemoteReportLight> getClassLevelReports(String className, boolean recursive, boolean includeDisabled) throws MetadataObjectNotFoundException {
-        try (Transaction tx = graphDb.beginTx()) {
-            
-            Node mainClassNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
-            List<RemoteReportLight> remoteReports = new ArrayList<>();
-            
-            if (mainClassNode == null)
-                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
-            
-            if (recursive) {
-                Node classNode = mainClassNode;
-                do {
-                    for (Relationship hasReportRelationship : classNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_REPORT)) 
-                        remoteReports.add(new RemoteReportLight(hasReportRelationship.getEndNode().getId(), 
-                                                            (String)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_NAME), 
-                                                            (String)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_DESCRIPTION), 
-                                                            (boolean)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_ENABLED),
-                                                            (int)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_TYPE)));
-                    
-                    if (classNode.hasRelationship(RelTypes.EXTENDS, Direction.OUTGOING)) //This should not happen, but let's check it anyway
-                        classNode = classNode.getSingleRelationship(RelTypes.EXTENDS, Direction.OUTGOING).getEndNode();
-                    else
-                        classNode = null;
-                } while (classNode != null && !Constants.CLASS_ROOTOBJECT.equals(classNode.getProperty(Constants.PROPERTY_NAME)));
-            }
-            else {
-                for (Relationship hasReportRelationship : mainClassNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_REPORT)) 
-                    remoteReports.add(new RemoteReportLight(hasReportRelationship.getEndNode().getId(), 
-                                                        (String)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_NAME), 
-                                                        (String)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_DESCRIPTION), 
-                                                        (boolean)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_ENABLED),
-                                                        (int)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_TYPE)));
-            }
-            
-            return remoteReports;
-        }
-    }
-
-    @Override
-    public List<RemoteReportLight> getInventoryLevelReports(boolean includeDisabled) throws ApplicationObjectNotFoundException {
-        try (Transaction tx = graphDb.beginTx()) {
-            Node dummyRootNode = specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
-            
-            if (dummyRootNode == null)
-                throw new ApplicationObjectNotFoundException("Dummy Root could not be found");
-            
-            List<RemoteReportLight> remoteReports = new ArrayList<>();
-            
-            for (Relationship hasReportRelationship : dummyRootNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_REPORT)) {
-                if (includeDisabled || (boolean)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_ENABLED))
-                    remoteReports.add(new RemoteReportLight(hasReportRelationship.getEndNode().getId(), 
-                                                        (String)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_NAME), 
-                                                        (String)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_DESCRIPTION), 
-                                                        (boolean)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_ENABLED),
-                                                        (int)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_TYPE)));
-            }
-            
-            Collections.sort(remoteReports);
-            
-            return remoteReports;
-        }
-    }
-
-    @Override
-    public RemoteReport getReport(long reportId) throws ApplicationObjectNotFoundException {
-        try (Transaction tx = graphDb.beginTx()) {
-            Node reportNode = reportsIndex.get(Constants.PROPERTY_ID, reportId).getSingle();
-            
-            if (reportNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("The report with id %s could not be found", reportId)); 
-            
-            List<StringPair> parameters = new ArrayList<>();
-            for (String property : reportNode.getPropertyKeys()) {
-                if (property.startsWith("PARAM_"))
-                    parameters.add(new StringPair(property.replace("PARAM_", ""), (String)reportNode.getProperty(property)));
-            }
-                
-            return new RemoteReport(reportNode.getId(), (String)reportNode.getProperty(Constants.PROPERTY_NAME), 
-                                    (String)reportNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
-                                    (boolean)reportNode.getProperty(Constants.PROPERTY_ENABLED),
-                                    (int)reportNode.getProperty(Constants.PROPERTY_TYPE),
-                                    (String)reportNode.getProperty(Constants.PROPERTY_SCRIPT), 
-                                    parameters);
-        }
-    }
-
-    @Override
-    public byte[] executeClassLevelReport(String objectClassName, long objectId, long reportId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException {
-        try (Transaction tx = graphDb.beginTx()) {
-            Node reportNode = reportsIndex.get(Constants.PROPERTY_ID, reportId).getSingle();
-            
-            if (reportNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("The report with id %s could not be found", reportId)); 
-            
-            Node instanceNode = getInstanceOfClass(objectClassName, objectId);
-            
-            String script = (String)reportNode.getProperty(Constants.PROPERTY_SCRIPT);
-            
-            Binding environmentParameters = new Binding();
-            environmentParameters.setVariable("instanceNode", instanceNode); //NOI18N
-            environmentParameters.setVariable("graphDb", graphDb); //NOI18N
-            environmentParameters.setVariable("objectIndex", objectIndex); //NOI18N
-            environmentParameters.setVariable("classIndex", classIndex); //NOI18N
-            
-            try {
-                GroovyShell shell = new GroovyShell(ApplicationEntityManagerImpl.class.getClassLoader(), environmentParameters);
-                Object theResult = shell.evaluate(script);
-                
-                if (theResult == null)
-                    throw new InvalidArgumentException("The script returned a null object. Please check the syntax.");
-                else {
-                    if (theResult instanceof InventoryReport)
-                        return ((InventoryReport)theResult).asByteArray();
-                    else
-                        throw new InvalidArgumentException("The script does not return an InventoryReport object. Please check the return value.");
-                }
-            } catch(Exception ex) {
-                return ("<html><head><title>Error</title></head><body><center>" + ex.getMessage() + "</center></body></html>").getBytes(StandardCharsets.UTF_8);
-            }
-        }
-    }
-
-    @Override
-    public byte[] executeInventoryLevelReport(long reportId, List<StringPair> parameters) throws ApplicationObjectNotFoundException, InvalidArgumentException {
-        try (Transaction tx = graphDb.beginTx()) {
-            Node reportNode = reportsIndex.get(Constants.PROPERTY_ID, reportId).getSingle();
-            
-            if (reportNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("The report with id %s could not be found", reportId)); 
-                     
-            String script = (String)reportNode.getProperty(Constants.PROPERTY_SCRIPT);
-            
-            HashMap<String, String> scriptParameters = new HashMap<>();
-            for(StringPair parameter : parameters)
-                scriptParameters.put(parameter.getKey(), parameter.getValue());
-            
-            Binding environmentParameters = new Binding();
-            environmentParameters.setVariable("parameters", parameters); //NOI18N
-            environmentParameters.setVariable("graphDb", graphDb); //NOI18N
-            environmentParameters.setVariable("objectIndex", objectIndex); //NOI18N
-            environmentParameters.setVariable("classIndex", classIndex); //NOI18N
-            
-            try {
-                GroovyShell shell = new GroovyShell(ApplicationEntityManagerImpl.class.getClassLoader(), environmentParameters);
-                Object theResult = shell.evaluate(script);
-                
-                if (theResult == null)
-                    throw new InvalidArgumentException("The script returned a null object. Please check the syntax.");
-                else {
-                    if (theResult instanceof InventoryReport)
-                        return ((InventoryReport)theResult).asByteArray();
-                    else
-                        throw new InvalidArgumentException("The script does not return an InventoryReport object. Please check the return value.");
-                }
-            } catch(Exception ex) {
-                return ("<html><head><title>Error</title></head><body><center>" + ex.getMessage() + "</center></body></html>").getBytes(StandardCharsets.UTF_8);
-            }
-        }
-    }
-    
-
     // Helpers
     /**
      * recursive method used to generate a single "class" node (see the <a href="http://neotropic.co/kuwaiba/wiki/index.php?title=XML_Documents#To_describe_the_data_model">wiki</a> for details)

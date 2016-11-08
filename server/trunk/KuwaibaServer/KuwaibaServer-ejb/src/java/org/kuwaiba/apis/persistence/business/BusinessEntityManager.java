@@ -16,6 +16,8 @@
 
 package org.kuwaiba.apis.persistence.business;
 
+import com.neotropic.kuwaiba.modules.reporting.model.RemoteReport;
+import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
 import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
@@ -28,6 +30,7 @@ import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
 import org.kuwaiba.util.ChangeDescriptor;
+import org.kuwaiba.ws.todeserialize.StringPair;
 
 /**
  * This is the entity in charge of manipulating business objects
@@ -511,4 +514,120 @@ public interface BusinessEntityManager {
      * @deprecated This method shouldn't be here since it's context dependant. Don't use it, will be removed in the future
      */
     public List<RemoteBusinessObjectLight> getPhysicalPath(String objectClass, long objectId) throws ApplicationObjectNotFoundException, NotAuthorizedException;
+    
+    /**
+     * Reporting API. Reports are actually Application Objects, however, the BEM has many utility methods that can be used in the scripts to query for inventory objects
+     */
+    //<editor-fold desc="Reporting API" defaultstate="collapsed">
+    /**
+     * Creates a class level report (a report that will be available for all instances of a given class -and its subclasses-)
+     * @param className Class this report is going to be related to. It can be ab abstract class and the report will be available for all its subclasses
+     * @param reportName Name of the report.
+     * @param reportDescription Report description.
+     * @param script Script text.
+     * @param outputType What will be the default output of this report? See ClassLevelReportDescriptor for possible values
+     * @param enabled If enabled, a report can be executed.
+     * @return The id of the newly created report.
+     * @throws MetadataObjectNotFoundException If the class provided could not be found.
+     */
+    public long createClassLevelReport(String className, String reportName, String reportDescription, String script, 
+            int outputType, boolean enabled) throws MetadataObjectNotFoundException;
+    
+    /**
+     * Creates an inventory level report (a report that is not tied to a particlar instance or class. In most cases, they also receive parameters)
+     * @param reportName Name of the report.
+     * @param reportDescription Report description.
+     * @param script Script text.
+     * @param outputType What will be the default output of this report? See InventoryLevelReportDescriptor for possible values
+     * @param enabled If enabled, a report can be executed.
+     * @param parameters Optional (it might be either null or an empty list). The list of the parameters that this report will support and optional default values. They will always be captured as strings, so it's up to the author of the report the sanitization and conversion of the inputs
+     * @return The id of the newly created report.
+     * @throws ApplicationObjectNotFoundException If the dummy root could not be found, which is actually a severe problem.
+     * @throws InvalidArgumentException If any of the parameter names is null or empty
+     */
+    public long createInventoryLevelReport(String reportName, String reportDescription, String script, int outputType, 
+            boolean enabled, List<StringPair> parameters) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    
+    /**
+     * Deletes a report
+     * @param reportId The id of the report.
+     * @throws ApplicationObjectNotFoundException If the report could not be found.
+     */
+    public void deleteReport(long reportId) throws ApplicationObjectNotFoundException;
+    
+    /**
+     * Updates the properties of an existing class level report.
+     * @param reportId Id of the report.
+     * @param reportName The name of the report. Null to leave it unchanged.
+     * @param reportDescription The description of the report. Null to leave it unchanged.
+     * @param enabled Is the report enabled? . Null to leave it unchanged.
+     * @param type Type of the output of the report. See LocalReportLight for possible values
+     * @param script Text of the script. 
+     * @throws ApplicationObjectNotFoundException If the report could not be found.
+     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If any of the report properties has a wrong or unexpected format.
+     */
+    public void updateReport(long reportId, String reportName, String reportDescription, Boolean enabled,
+            Integer type, String script) 
+            throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    
+    /**
+     * Updates the parameters of a report
+     * @param reportId The id of the report
+     * @param parameters The list of parameters and optional default values. Those with null values will be deleted and the ones that didn't exist previously will be created.
+     * @throws ApplicationObjectNotFoundException If the report was not found.
+     * @throws InvalidArgumentException If the any of the parameters has an invalid name.
+     */
+    public void updateReportParameters(long reportId, List<StringPair> parameters) 
+            throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    
+    /**
+     * Gets the class level reports associated to the given class (or its superclasses)
+     * @param className The class to extract the reports from.
+     * @param recursive False to get only the directly associated reports. True top get also the reports associate top its superclasses
+     * @param includeDisabled True to also include the reports marked as disabled. False to return only the enabled ones.
+     * @return The list of reports.
+     * @throws MetadataObjectNotFoundException If the class could not be found
+     */
+    public List<RemoteReportLight> getClassLevelReports(String className, boolean recursive, boolean includeDisabled) throws MetadataObjectNotFoundException;
+    /**
+     * Gets the inventory class reports.
+     * @param includeDisabled True to also include the reports marked as disabled. False to return only the enabled ones.
+     * @return The list of reports.
+     * @throws ApplicationObjectNotFoundException f the dummy root could not be found, which is actually a severe problem.
+     */
+    public List<RemoteReportLight> getInventoryLevelReports(boolean includeDisabled) throws ApplicationObjectNotFoundException;
+    
+    /**
+     * Gets the information related to a class level report.
+     * @param reportId The id of the report.
+     * @return  The report.
+     * @throws ApplicationObjectNotFoundException If the report could not be found.
+     */
+    public RemoteReport getReport(long reportId) throws ApplicationObjectNotFoundException;
+    
+    /**
+     * Executes a class level report and returns the result.
+     * @param objectClassName The class of the instance that will be used as input for the report.
+     * @param objectId The id of the instance that will be used as input for the report.
+     * @param reportId The id of the report.
+     * @return The result of the report execution.
+     * @throws MetadataObjectNotFoundException If the class could not be found.
+     * @throws ApplicationObjectNotFoundException If the report could not be found.
+     * @throws ObjectNotFoundException If the inventory object could not be found.
+     * @throws InvalidArgumentException If there's an error during the execution of the report.
+     */
+    public byte[] executeClassLevelReport(String objectClassName, long objectId, long reportId) 
+            throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException;
+    
+    /**
+     * Executes an inventory level report and returns the result.
+     * @param reportId The id of the report.
+     * @param parameters List of pairs param name - param value.
+     * @return The result of the report execution.
+     * @throws ApplicationObjectNotFoundException If the report could not be found.
+     * @throws InvalidArgumentException If the associated script exits with error.
+     */
+    public byte[] executeInventoryLevelReport(long reportId, List<StringPair> parameters)
+            throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    //</editor-fold>
 }

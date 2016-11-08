@@ -20,7 +20,6 @@ import com.neotropic.kuwaiba.modules.ipam.IPAMModule;
 import com.neotropic.kuwaiba.modules.mpls.MPLSModule;
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReport;
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
-import com.neotropic.kuwaiba.modules.reporting.Reports;
 import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHModule;
 import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
@@ -114,10 +113,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
      * Sync/load data reference
      */
     private SyncManager sync;
-    /**
-     * Reference to the report generator
-     */
-    private Reports reports;
+
     
     public WebserviceBean() {
         super();
@@ -2356,6 +2352,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
         }
     }
     
+    @Override
     public long[] copyTemplateElements(String[] sourceObjectsClassNames, long[] sourceObjectsIds, 
             String newParentClassName,long newParentId, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
@@ -2373,11 +2370,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
     @Override    
     public long createClassLevelReport(String className, String reportName, String reportDescription, 
             String script, int outputType, boolean enabled, String ipAddress, String sessionId) throws ServerSideException {
-        if (aem == null)
+        if (bem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateCall("createClassLevelReport", ipAddress, sessionId);
-            return aem.createClassLevelReport(className, reportName, reportDescription, script, outputType, enabled);
+            return bem.createClassLevelReport(className, reportName, reportDescription, script, outputType, enabled);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2386,11 +2383,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
     @Override
     public long createInventoryLevelReport(String reportName, String reportDescription, 
             String script, int outputType, boolean enabled, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException {
-        if (aem == null)
+        if (bem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateCall("createInventoryLevelReport", ipAddress, sessionId);
-            return aem.createInventoryLevelReport(reportName, reportDescription, script, outputType, enabled, parameters);
+            return bem.createInventoryLevelReport(reportName, reportDescription, script, outputType, enabled, parameters);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2398,11 +2395,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
 
     @Override
     public void deleteReport(long reportId, String ipAddress, String sessionId) throws ServerSideException {
-        if (aem == null)
+        if (bem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateCall("deleteReport", ipAddress, sessionId);
-            aem.deleteReport(reportId);
+            bem.deleteReport(reportId);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2411,11 +2408,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
     @Override
     public void updateReport(long reportId, String reportName, String reportDescription, Boolean enabled,
             Integer type, String script, String ipAddress, String sessionId) throws ServerSideException {
-        if (aem == null)
+        if (bem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateCall("updateReport", ipAddress, sessionId);
-            aem.updateReport(reportId, reportName, reportDescription, enabled, type, script);
+            bem.updateReport(reportId, reportName, reportDescription, enabled, type, script);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2423,11 +2420,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
 
     @Override
     public void updateReportParameters(long reportId, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException {
-        if (aem == null)
+        if (bem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateCall("updateReportParameters", ipAddress, sessionId);
-            aem.updateReportParameters(reportId, parameters);
+            bem.updateReportParameters(reportId, parameters);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2436,11 +2433,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
     @Override
     public List<RemoteReportLight> getClassLevelReports(String className, boolean recursive, 
             boolean includeDisabled, String ipAddress, String sessionId) throws ServerSideException {
-        if (aem == null)
+        if (bem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateCall("getClassLevelReports", ipAddress, sessionId);
-            return aem.getClassLevelReports(className, recursive, includeDisabled);
+            return bem.getClassLevelReports(className, recursive, includeDisabled);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2449,11 +2446,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
     @Override
     public List<RemoteReportLight> getInventoryLevelReports(boolean includeDisabled, 
             String ipAddress, String sessionId) throws ServerSideException {
-        if (aem == null)
+        if (bem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateCall("getInventoryLevelReports", ipAddress, sessionId);
-            return aem.getInventoryLevelReports(includeDisabled);
+            return bem.getInventoryLevelReports(includeDisabled);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2461,11 +2458,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
 
     @Override
     public RemoteReport getReport(long reportId, String ipAddress, String sessionId) throws ServerSideException {
-        if (aem == null)
+        if (bem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateCall("getReport", ipAddress, sessionId);
-            return aem.getReport(reportId);
+            return bem.getReport(reportId);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2473,11 +2470,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
 
     @Override
     public byte[] executeClassLevelReport(String objectClassName, long objectId, long reportId, String ipAddress, String sessionId) throws ServerSideException {
-        if (aem == null)
+        if (bem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateCall("executeClassLevelReport", ipAddress, sessionId);
-            return aem.executeClassLevelReport(objectClassName, objectId, reportId);
+            return bem.executeClassLevelReport(objectClassName, objectId, reportId);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2486,11 +2483,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
     @Override
     public byte[] executeInventoryLevelReport(long reportId, List<StringPair> parameters, 
             String ipAddress, String sessionId) throws ServerSideException {
-        if (aem == null)
+        if (bem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateCall("executeInventoryLevelReport", ipAddress, sessionId);
-            return aem.executeInventoryLevelReport(reportId, parameters);
+            return bem.executeInventoryLevelReport(reportId, parameters);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2934,7 +2931,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             mem = persistenceService.getMetadataEntityManager();
             bem = persistenceService.getBusinessEntityManager();
             aem = persistenceService.getApplicationEntityManager();
-            reports = new Reports(mem, bem, aem);
         } catch(Exception ex){
             mem = null;
             bem = null;

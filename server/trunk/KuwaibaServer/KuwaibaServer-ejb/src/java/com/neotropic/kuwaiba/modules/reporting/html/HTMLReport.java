@@ -13,8 +13,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.kuwaiba.modules.reporting;
+package com.neotropic.kuwaiba.modules.reporting.html;
 
+import com.neotropic.kuwaiba.modules.reporting.InventoryReport;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,8 +46,8 @@ public class HTMLReport extends InventoryReport {
      */
     private List<HTMLComponent> components;
   
-    public HTMLReport(String title, String copyrightNotice, String author, String version) {
-        super(title, copyrightNotice, author, version);
+    public HTMLReport(String title, String author, String version) {
+        super(title, author, version);
         this.components = new ArrayList<>();
     }
 
@@ -212,172 +213,4 @@ public class HTMLReport extends InventoryReport {
                     "       }  \n";
     }
     
-    public static abstract class HTMLComponent {
-        /**
-         * Component in-line style
-         */
-        protected String style;
-        /**
-         * Component's class
-         */
-        protected String cssClass;
-
-        public HTMLComponent() {}
-        
-        public HTMLComponent(String style, String cssClass) {
-            this.style = style;
-            this.cssClass = cssClass;
-        }
-
-        public String getStyle() {
-            return style;
-        }
-
-        public void setStyle(String style) {
-            this.style = style;
-        }
-
-        public String getCssClass() {
-            return cssClass;
-        }
-
-        public void setCssClass(String cssClass) {
-            this.cssClass = cssClass;
-        }
-        
-        public abstract String asHTML();
-    }
-    
-    public static class HTMLTable extends HTMLComponent {
-        
-        private String[] columnHeaders;
-        private List<HTMLRow> rows;
-
-        public HTMLTable(String[] columnHeaders) {
-            this.columnHeaders = columnHeaders;
-            this.rows = new ArrayList<>();
-        }
-
-        public HTMLTable(String style, String cssClass, String[] columnHeaders) {
-            super(style, cssClass);
-            this.columnHeaders = columnHeaders;
-            this.rows = new ArrayList<>();
-        }
-
-        public String[] getColumnHeaders() {
-            return columnHeaders;
-        }
-
-        public void setColumnHeaders(String[] columnHeaders) {
-            this.columnHeaders = columnHeaders;
-        }
-
-        public List<HTMLRow> getRows() {
-            return rows;
-        }
-
-        public void setRows(List<HTMLRow> rows) {
-            this.rows = rows;
-        }
-        
-        @Override
-        public String asHTML() {
-            StringBuilder builder = new StringBuilder();
-            builder.append("<table").append(style == null ? "" : " style=\"" + style + "\"") //NOI18N
-                    .append(cssClass == null ? "" : " class=\"" + cssClass + "\"").append(">"); //NOI18N
-            if (columnHeaders != null) {
-                builder.append("<tr>"); //NOI18N
-                for (String columnHeader : columnHeaders)
-                    builder.append("<th>").append(columnHeader).append("</th>"); //NOI18N
-                builder.append("</tr>"); //NOI18N
-            }
-            
-            for (HTMLRow row : rows)
-                builder.append(row.asHTML());
-                
-            builder.append("</table>"); //NOI18N
-            
-            return builder.toString();
-        }
-    }
-    
-    public static class HTMLRow extends HTMLComponent {
-        private HTMLColumn[] columns;
-        
-        public HTMLRow(HTMLColumn[] columns) {
-            this.columns = columns;
-        }
-        
-        public HTMLRow(String style, String cssClass, HTMLColumn[] columns) {
-            super(style, cssClass);
-            this.columns = columns;
-        }
-
-        public HTMLColumn[] getColumns() {
-            return columns;
-        }
-
-        public HTMLRow setColumns(HTMLColumn[] columns) {
-            this.columns = columns;
-            return this;
-        }
-        
-        @Override
-        public String asHTML() {
-            StringBuilder builder = new StringBuilder();
-            builder.append("<tr").append(style == null ? "" : " style=\"" + style + "\"") //NOI18N
-                    .append(cssClass == null ? "" : " class=\"" + cssClass + "\"").append(">"); //NOI18N
-            for (HTMLColumn column : columns)
-                builder.append(column.asHTML());
-            builder.append("</tr>"); //NOI18N
-            
-            return builder.toString();
-        }
-    }
-    
-    public static class HTMLColumn extends HTMLComponent {
-        private Object content;
-
-        public HTMLColumn(Object content) {
-            this.content = content;
-        }
-        
-        public HTMLColumn(String style, String cssClass, String content) {
-            super(style, cssClass);
-            this.content = content;
-        }
-
-        public Object getContent() {
-            return content;
-        }
-
-        public void setContent(Object content) {
-            this.content = content;
-        }
-        
-        @Override
-        public String asHTML() {
-            return new StringBuilder().append("<td").append(style == null ? "" : " style=\"" + style + "\"")   //NOI18N
-                                        .append(cssClass == null ? "" : " class=\"" + cssClass + "\"").append(">")  //NOI18N
-                                        .append(content).append("</td>").toString(); //NOI18N
-        }
-    }
-    
-    public static class HTMLImage extends HTMLComponent {
-        
-        private String location;
-        
-        public HTMLImage(String style, String cssClass, String location) {
-            super(style, cssClass);
-            this.location = location;
-        }
-
-        @Override
-        public String asHTML() {
-            return new StringBuilder().append("<img").append(style == null ? "" : " style=\"" + style + "\"")   //NOI18N
-                                        .append(cssClass == null ? "" : " class=\"" + cssClass + "\"").append(" src=\"")  //NOI18N
-                                        .append(location).append("\"/>").toString(); //NOI18N
-        }
-        
-    }
 }

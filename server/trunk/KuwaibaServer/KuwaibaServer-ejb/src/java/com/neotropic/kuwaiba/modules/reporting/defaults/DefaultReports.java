@@ -13,13 +13,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.kuwaiba.modules.reporting;
+package com.neotropic.kuwaiba.modules.reporting.defaults;
 
 import com.neotropic.kuwaiba.modules.ipam.IPAMModule;
 import com.neotropic.kuwaiba.modules.mpls.MPLSModule;
 import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHModule;
-import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -27,7 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
-import org.kuwaiba.apis.persistence.application.Pool;
 import org.kuwaiba.apis.persistence.business.AnnotatedRemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
@@ -48,21 +46,21 @@ import org.kuwaiba.services.persistence.util.Constants;
  * Temporary class that provides methods to build class reports
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class Reports {
+public class DefaultReports {
     
     private MetadataEntityManager mem;
     private ApplicationEntityManager aem;
     private BusinessEntityManager bem;
     public String corporateLogo;
     
-    public Reports(MetadataEntityManager mem, BusinessEntityManager bem, ApplicationEntityManager aem) {
+    public DefaultReports(MetadataEntityManager mem, BusinessEntityManager bem, ApplicationEntityManager aem) {
         this.mem = mem;
         this.aem = aem;
         this.bem = bem;
         this.corporateLogo = aem.getConfiguration().getProperty("corporateLogo") == null ? "logo.jpg" : aem.getConfiguration().getProperty("corporateLogo");
     }
        
-    public byte[] buildRackUsageReport(long rackId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+    public RawReport buildRackUsageReport(long rackId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
         RemoteBusinessObject theRack = bem.getObject("Rack", rackId);
                     
         String query = String.format("MATCH (rack)<-[:%s*1..2]-(rackable)-[:%s]->(childClass)-[:%s*]->(superClass) "
@@ -137,10 +135,10 @@ public class Reports {
         rackUsageReportBody += "  <div class=\"footer\">This report is powered by <a href=\"http://www.kuwaiba.org\">Kuwaiba Open Network Inventory</a></div></body>\n" +
                                 "</html>";
 
-        return rackUsageReportBody.getBytes(StandardCharsets.UTF_8);
+        return new RawReport("Rack Usage", "Neotropic SAS","1.1", rackUsageReportBody);
     }
 
-    public byte[] buildDistributionFrameDetailReport(String frameClass, long frameId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+    public RawReport buildDistributionFrameDetailReport(String frameClass, long frameId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
         RemoteBusinessObject theFrame =  bem.getObject(frameClass, frameId);
         List<RemoteBusinessObjectLight> frameChildren = bem.getObjectChildren(frameClass, frameId, -1);
         
@@ -160,6 +158,7 @@ public class Reports {
         else {
             portList += "<table><tr><th>Port Name</th><th>Operational State</th><th>Connected Equipment</th><th>Services</th></tr>\n";
             int i = 0;
+            //Collecti
             for (RemoteBusinessObjectLight aPort : frameChildren) {
                 String serviceString = "", connectedEquipmentString;
                 
@@ -228,10 +227,10 @@ public class Reports {
         frameUsageReportText += "  <div class=\"footer\">This report is powered by <a href=\"http://www.kuwaiba.org\">Kuwaiba Open Network Inventory</a></div></body>\n" +
                                 "</html>";
         
-        return frameUsageReportText.getBytes(StandardCharsets.UTF_8);
+        return new RawReport("Distribution Frame Detail", "Neotropic SAS","1.1", frameUsageReportText);
     }
 
-    public byte[] buildTransportLinkUsageReport (String transportLinkClass, long transportLinkId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+    public RawReport buildTransportLinkUsageReport (String transportLinkClass, long transportLinkId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
         String query = String.format("MATCH (transportLink)-[relation:%s]-(port)-[:%s*]->(equipment)-[:%s]->(class)-[:%s*]->(superClass) "
                     + "WHERE id(transportLink) = %s AND superClass.name = \"%s\" AND (relation.name = \"%s\" OR relation.name = \"%s\")"
                     + "RETURN transportLink, equipment, port",  RelTypes.RELATED_TO_SPECIAL, RelTypes.CHILD_OF, RelTypes.INSTANCE_OF, 
@@ -293,10 +292,10 @@ public class Reports {
         
         transportLinkUsageReportText += getFooter();
         
-        return transportLinkUsageReportText.getBytes(StandardCharsets.UTF_8);
+        return new RawReport("Transport Link Usage", "Neotropic SAS","1.1", transportLinkUsageReportText);
     }
     
-    public byte[] buildLowOrderTributaryLinkDetailReport (String tributaryLinkClass, long tributaryLinkId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+    public RawReport buildLowOrderTributaryLinkDetailReport (String tributaryLinkClass, long tributaryLinkId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
         String query = String.format("MATCH (customerSuperClass)<-[:%s*]-(customerClass)<-[:%s]-(customer)<-[:%s*]-(service)-[relationA:%s]->(tributaryLink)-[relationB:%s]-(port)-[:%s*]->(equipment)-[:%s]->(class)-[:%s*]->(superClass) "
                 + "WHERE id(tributaryLink) = %s AND superClass.name=\"%s\" AND relationA.name = \"%s\" AND (relationB.name = \"%s\" OR relationB.name = \"%s\") AND customerSuperClass.name=\"%s\" RETURN tributaryLink, customer, service, port, equipment", 
                     RelTypes.EXTENDS, RelTypes.INSTANCE_OF, RelTypes.CHILD_OF_SPECIAL, RelTypes.RELATED_TO_SPECIAL, RelTypes.RELATED_TO_SPECIAL, 
@@ -375,10 +374,10 @@ public class Reports {
         }
         tributaryLinkUsageReportText += getFooter();
         
-        return tributaryLinkUsageReportText.getBytes(StandardCharsets.UTF_8);
+        return new RawReport("Tributary Link Details", "Neotropic SAS","1.1", tributaryLinkUsageReportText);
     }
 
-    public byte[] buildHighOrderTributaryLinkDetailReport (String tributaryLinkClass, long tributaryLinkId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+    public RawReport buildHighOrderTributaryLinkDetailReport (String tributaryLinkClass, long tributaryLinkId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
         String query = String.format("MATCH (customerSuperClass)<-[:%s*]-(customerClass)<-[:%s]-(customer)<-[:%s*]-(service)-[relationA:%s]->(tributaryLink)-[relationB:%s]-(port)-[:%s*]->(equipment)-[:%s]->(class)-[:%s*]->(superClass) "
                 + "WHERE id(tributaryLink) = %s AND superClass.name=\"%s\" AND relationA.name = \"%s\" AND (relationB.name = \"%s\" OR relationB.name = \"%s\") AND customerSuperClass.name=\"%s\" RETURN tributaryLink, customer, service, port, equipment", 
                     RelTypes.EXTENDS, RelTypes.INSTANCE_OF, RelTypes.CHILD_OF_SPECIAL, RelTypes.RELATED_TO_SPECIAL, RelTypes.RELATED_TO_SPECIAL, 
@@ -448,10 +447,10 @@ public class Reports {
         }
         tributaryLinkUsageReportText += getFooter();
         
-        return tributaryLinkUsageReportText.getBytes(StandardCharsets.UTF_8);
+        return new RawReport("Tributary Link Details", "Neotropic SAS","1.1", tributaryLinkUsageReportText);
     }
     
-    public byte[] buildNetworkEquipmentInLocationReport(String locationClass, long locationId) throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+    public RawReport buildNetworkEquipmentInLocationReport(String locationClass, long locationId) throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
         String query = String.format("MATCH (location)<-[:%s*]-(networkEquipment)-[:%s]->(class)-[:%s*]->(superclass) "
                 + "WHERE id(location) = %s AND superclass.name = \"%s\" "
                 + "RETURN networkEquipment", RelTypes.CHILD_OF, RelTypes.INSTANCE_OF, RelTypes.EXTENDS, 
@@ -492,10 +491,10 @@ public class Reports {
         
         networkEquipmentInLocationReportText += getFooter();
         
-        return networkEquipmentInLocationReportText.getBytes(StandardCharsets.UTF_8);
+        return new RawReport("Network Equipment", "Neotropic SAS","1.1", networkEquipmentInLocationReportText);
     }
     
-    public byte[] buildServiceResourcesReport(String className, long serviceId) throws MetadataObjectNotFoundException, ObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+    public RawReport buildServiceResourcesReport(String className, long serviceId) throws MetadataObjectNotFoundException, ObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
         RemoteBusinessObjectLight service = bem.getObjectLight(className, serviceId);
         String serviceResourcesReportText, title = "Resources Used By " + service.getName();
         serviceResourcesReportText = getHeader(title);
@@ -522,10 +521,10 @@ public class Reports {
         }
         
         serviceResourcesReportText += getFooter();
-        return serviceResourcesReportText.getBytes(StandardCharsets.UTF_8);
+        return new RawReport("Service Resources", "Neotropic SAS","1.1", serviceResourcesReportText);
     }
     
-    public byte[] subnetUsageReport(String className, long subnetId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+    public RawReport subnetUsageReport(String className, long subnetId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
     
         RemoteBusinessObject subnet = bem.getObject(className, subnetId);
         List<RemoteBusinessObjectLight> ips = bem.getObjectSpecialChildren(className, subnetId);
@@ -623,18 +622,18 @@ public class Reports {
         subnetUsageReportText += ipAddresses;
         subnetUsageReportText += getFooter();
         
-        return subnetUsageReportText.getBytes(StandardCharsets.UTF_8);
+        return new RawReport("Subnet Usage", "Neotropic SAS", "1.1", subnetUsageReportText);
     }
     
-    public byte[] buildContractStatusReport(long contractPoolId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
-        Pool contractPool = aem.getPool(contractPoolId);
-        List<RemoteBusinessObjectLight> contracts = aem.getPoolItems(contractPoolId, -1);
+    public RawReport buildContractStatusReport() throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
         
-        String title = "Contract Status Report for " + contractPool.getName();
+        List<RemoteBusinessObjectLight> contracts = bem.getObjectsOfClassLight(Constants.CLASS_GENERICCONTRACT, 0);
+        
+        String title = "Contract Status Report";
         String contractStatusReportText = getHeader(title);
         
         contractStatusReportText += 
-                            "  <body><table><tr><td><h1>" + title + "</h1><h2>" + contractPool.getDescription() + "</h2></td><td align=\"center\"><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
+                            "  <body><table><tr><td><h1>" + title + "</h1></td><td align=\"center\"><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
         
         if (contracts.isEmpty())
             contractStatusReportText += "<div class=\"warning\">This pool does not have contracts attached</div>";
@@ -713,10 +712,10 @@ public class Reports {
         
         contractStatusReportText += getFooter();
         
-        return contractStatusReportText.getBytes(StandardCharsets.UTF_8);
+        return new RawReport("Contract About to Expire", "Neotropic SAS", "1.1", contractStatusReportText);
     }
     
-    public byte[] buildMPLSServiceReport(String serviceClass, long serviceId) 
+    public RawReport buildMPLSServiceReport(String serviceClass, long serviceId) 
             throws MetadataObjectNotFoundException, ObjectNotFoundException,
             InvalidArgumentException, ApplicationObjectNotFoundException, 
             NotAuthorizedException
@@ -767,10 +766,10 @@ public class Reports {
         MPLSDetailReportText += instance;
         MPLSDetailReportText += getFooter();
         
-        return MPLSDetailReportText.getBytes(StandardCharsets.UTF_8);
+        return new RawReport("MPLS Service Detail", "Neotropic SAS", "1.1", MPLSDetailReportText);
     }
     
-    public byte[] buildLogicalConfiguratinInterfacesReport(String logicalConfigurationClassName, long logicalConfigurationId) 
+    public RawReport buildLogicalConfiguratinInterfacesReport(String logicalConfigurationClassName, long logicalConfigurationId) 
             throws MetadataObjectNotFoundException, ObjectNotFoundException,
             InvalidArgumentException, ApplicationObjectNotFoundException, 
             NotAuthorizedException
@@ -845,10 +844,10 @@ public class Reports {
         
         DetailReportText += getFooter();
         
-        return DetailReportText.getBytes(StandardCharsets.UTF_8);
+        return new RawReport("Logical Configuration", "Neotropic SAS", "1.1", DetailReportText);
     }
     
-    public byte[] buildServicesReport(String serviceClassName, long serviceId) 
+    public RawReport buildServicesReport(String serviceClassName, long serviceId) 
             throws MetadataObjectNotFoundException, ObjectNotFoundException,
             InvalidArgumentException, ApplicationObjectNotFoundException, 
             NotAuthorizedException
@@ -926,7 +925,7 @@ public class Reports {
         ServiceDetailReportText += instance;
         ServiceDetailReportText += getFooter();
         
-        return ServiceDetailReportText.getBytes(StandardCharsets.UTF_8);
+        return new RawReport("Service Details", "Neotropic SAS", "1.1", ServiceDetailReportText);
     }
     
     //<editor-fold desc="Helpers" defaultstate="collapsed">
