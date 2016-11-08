@@ -17,7 +17,6 @@
 package org.kuwaiba.services.persistence.impl.neo4j;
 
 import com.neotropic.kuwaiba.modules.GenericCommercialModule;
-import com.neotropic.kuwaiba.modules.reporting.HTMLReport;
 import com.neotropic.kuwaiba.modules.reporting.InventoryReport;
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReport;
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
@@ -2560,9 +2559,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             Binding environmentParameters = new Binding();
             environmentParameters.setVariable("instanceNode", instanceNode); //NOI18N
-            environmentParameters.setVariable("HTMLReport", HTMLReport.class); //NOI18N
-            environmentParameters.setVariable("Direction", Direction.class); //NOI18N
-            environmentParameters.setVariable("RelTypes", RelTypes.class);
+            environmentParameters.setVariable("graphDb", graphDb); //NOI18N
+            environmentParameters.setVariable("objectIndex", objectIndex); //NOI18N
+            environmentParameters.setVariable("classIndex", classIndex); //NOI18N
             
             try {
                 GroovyShell shell = new GroovyShell(ApplicationEntityManagerImpl.class.getClassLoader(), environmentParameters);
@@ -2601,13 +2600,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             environmentParameters.setVariable("graphDb", graphDb); //NOI18N
             environmentParameters.setVariable("objectIndex", objectIndex); //NOI18N
             environmentParameters.setVariable("classIndex", classIndex); //NOI18N
-            environmentParameters.setVariable("HTMLReport", HTMLReport.class); //NOI18N
-            environmentParameters.setVariable("Constants", Constants.class); //NOI18N
-            environmentParameters.setVariable("Direction", Direction.class); //NOI18N
-            environmentParameters.setVariable("RelTypes", RelTypes.class);
             
             try {
-                GroovyShell shell = new GroovyShell(environmentParameters);
+                GroovyShell shell = new GroovyShell(ApplicationEntityManagerImpl.class.getClassLoader(), environmentParameters);
                 Object theResult = shell.evaluate(script);
                 
                 if (theResult == null)
