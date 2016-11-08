@@ -2461,6 +2461,7 @@ public class CommunicationsStub {
         try {
             long newPoolId  = service.createClassLevelReport(className, reportName, 
                     reportDescription, script, outputType, enabled,session.getSessionId());
+            cache.resetReportIndex();
             return new LocalReportLight(newPoolId, reportName, reportDescription, enabled, outputType);
         }catch(Exception ex){
             this.error =  ex.getMessage();
@@ -2508,6 +2509,7 @@ public class CommunicationsStub {
     public boolean deleteReport(long reportId) {
         try {
             service.deleteReport(reportId, session.getSessionId());
+            cache.resetReportIndex();
             return true;
         } catch(Exception ex){
             this.error =  ex.getMessage();
@@ -2530,6 +2532,7 @@ public class CommunicationsStub {
         try {
             service.updateReport(reportId, reportName, reportDescription, enabled,
                                     type, script, session.getSessionId());
+            cache.resetReportIndex();
             return true;
         } catch(Exception ex){
             this.error =  ex.getMessage();

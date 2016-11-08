@@ -1,12 +1,14 @@
 /**
- * Calculates the occupation of a given rack.
- * Neotropic SAS - version 1.0
+ * Calculates the occupation of a given rack using some of the new user-defined reporting capabilities.
+ * Neotropic SAS - version 1.1
  * Parameters: None
  */
-import com.neotropic.kuwaiba.modules.reporting.HTMLReport;
+import org.neo4j.graphdb.Direction;
+import org.kuwaiba.services.persistence.impl.neo4j.RelTypes;
+import com.neotropic.kuwaiba.modules.reporting.html.*;
 
 def report = new HTMLReport(String.format("Rack Usage Report for %s", instanceNode.getProperty("name")),
-				null, "Neotropic SAS", "1.1");
+				"Neotropic SAS", "1.1");
 
 report.setEmbeddedStyleSheet(HTMLReport.getDefaultStyleSheet());
 
@@ -14,29 +16,31 @@ report.setEmbeddedStyleSheet(HTMLReport.getDefaultStyleSheet());
 def totalRackUnits = instanceNode.hasProperty("rackUnits") ? instanceNode.getProperty("rackUnits") : 0;
 def usedRackUnits = 0;
 
-def detailsTable = new HTMLReport.HTMLTable(null, null, ["Name", "Serial Number", "Rack Units", "Operational State"] as String[]);
+def detailsTable = new HTMLTable(null, null, ["Name", "Serial Number", "Rack Units", "Operational State"] as String[]);
+
+def i = 0;
 
 instanceNode.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF).each { childOfRelationship ->
 	def rackableNode = childOfRelationship.getStartNode();
 	def rackableRackUnits = rackableNode.hasProperty("rackUnits") ? rackableNode.getProperty("rackUnits") : 0;
 	usedRackUnits += rackableRackUnits;
-	detailsTable.getRows().add(new HTMLReport.HTMLRow(
-		      [ new HTMLReport.HTMLColumn(rackableNode.getProperty("name")),
-		      new HTMLReport.HTMLColumn(rackableNode.hasProperty("serialNumber") ? rackableNode.getProperty("serialNumber") : "Not Set"),
-		      new HTMLReport.HTMLColumn(rackableRackUnits),
-		      new HTMLReport.HTMLColumn("Jo jo jo")] as HTMLReport.HTMLColumn[]));
-	
+	detailsTable.getRows().add(new HTMLRow(null, (i % 2 == 0 ? "odd" : "even"),
+		      [ new HTMLColumn(rackableNode.getProperty("name")),
+		      new HTMLColumn(rackableNode.hasProperty("serialNumber") ? rackableNode.getProperty("serialNumber") : "Not Set"),
+		      new HTMLColumn(rackableRackUnits),
+		      new HTMLColumn("Working")] as HTMLColumn[]));
+	i++;
 }
 
 //Basic info table
-def headerTable = new HTMLReport.HTMLTable();
-headerTable.getRows().add(new HTMLReport.HTMLRow([ new HTMLReport.HTMLColumn("Name"), new HTMLReport.HTMLColumn(instanceNode.getProperty("name")) ] as HTMLReport.HTMLColumn[]));
+def headerTable = new HTMLTable();
+headerTable.getRows().add(new HTMLRow([ new HTMLColumn("Name"), new HTMLColumn(instanceNode.getProperty("name")) ] as HTMLColumn[]));
 
-headerTable.getRows().add(new HTMLReport.HTMLRow([ new HTMLReport.HTMLColumn("Serial Number"), new HTMLReport.HTMLColumn(instanceNode.hasProperty("serialNumber") ? instanceNode.getProperty("serialNumber") : "Not Set") ] as HTMLReport.HTMLColumn[]));
+headerTable.getRows().add(new HTMLRow([ new HTMLColumn("Serial Number"), new HTMLColumn(instanceNode.hasProperty("serialNumber") ? instanceNode.getProperty("serialNumber") : "Not Set") ] as HTMLColumn[]));
 
-headerTable.getRows().add(new HTMLReport.HTMLRow([ new HTMLReport.HTMLColumn("Total Rack Units"), new HTMLReport.HTMLColumn(totalRackUnits) ] as HTMLReport.HTMLColumn[]));
+headerTable.getRows().add(new HTMLRow([ new HTMLColumn("Total Rack Units"), new HTMLColumn(totalRackUnits) ] as HTMLColumn[]));
 
-headerTable.getRows().add(new HTMLReport.HTMLRow([ new HTMLReport.HTMLColumn("Used Rack Units"), new HTMLReport.HTMLColumn(usedRackUnits + " (" + (usedRackUnits == 0 ? 0 : Math.round(100 * usedRackUnits/totalRackUnits)) + "%)") ] as HTMLReport.HTMLColumn[]));
+headerTable.getRows().add(new HTMLRow([ new HTMLColumn("Used Rack Units"), new HTMLColumn(usedRackUnits + " (" + (usedRackUnits == 0 ? 0 : Math.round(100 * usedRackUnits/totalRackUnits)) + "%)") ] as HTMLColumn[]));
 
 //Assemble the components
 report.getComponents().add(headerTable);

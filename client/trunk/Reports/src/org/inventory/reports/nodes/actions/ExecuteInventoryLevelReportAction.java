@@ -62,7 +62,7 @@ class ExecuteInventoryLevelReportAction extends AbstractAction {
                 List<JTextField> components = new ArrayList<>();
                 
                 for (String parameter : report.getParameters()) {
-                    JTextField aTextField = new JTextField(15);
+                    JTextField aTextField = new JTextField(10);
                     aTextField.setName(parameter);
                     components.add(aTextField);
                 }

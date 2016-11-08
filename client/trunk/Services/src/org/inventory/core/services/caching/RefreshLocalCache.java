@@ -28,10 +28,7 @@ public final class RefreshLocalCache implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Cache.getInstace().resetLists();
-        Cache.getInstace().resetLightMetadataIndex();
-        Cache.getInstace().resetMetadataIndex();
-        Cache.getInstace().resetPossibleChildrenCached();
+        Cache.getInstace().resetAll();
         JOptionPane.showMessageDialog(null, "The local cache was reset",
                 "Refresh Operation",JOptionPane.INFORMATION_MESSAGE);
     }

@@ -36,12 +36,12 @@ class AddParameterToReportAction extends AbstractAction {
     private CommunicationsStub com = CommunicationsStub.getInstance();
     
     public AddParameterToReportAction() {
-        putValue(NAME, "Add parameter");
+        putValue(NAME, "Add Parameter");
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        JTextField txtParameterName = new JTextField(20);
+        JTextField txtParameterName = new JTextField(15);
         txtParameterName.setName("txtParameterName"); //NOI18N
         
         JComplexDialogPanel pnlForm = new JComplexDialogPanel(new String[] {"Parameter Name"}, 
