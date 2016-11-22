@@ -56,7 +56,7 @@ import org.kuwaiba.custom.overlays.NodeMarker;
  */
 @SuppressWarnings("serial")
 public class GISView extends CustomComponent {
-    private final String apiKey = "";
+    private final String apiKey = " ";
     private final GoogleMap googleMap = new GoogleMap(apiKey, null, "english");
     private double centerLat = 2.4448;
     private double centerLon = -76.6147;  
