@@ -1,0 +1,31 @@
+Prototype Description
+There are three elements in the left side a tree, in the center a map, and in
+the right side a form, the user can drag elements of the tree and drop in the
+map also if a node or marker is selected then the form show some information.
+
+The interaction implemented are
+ You can select one node on the tree and see the name in the section 3
+ You can select one mark on the map and see the name in the section 3
+ You can change the value temporary of a node in the tree
+ You can drag a node in the tree, drop in the map
+ You can create and delete connection between nodes in the map
+ You can create and delete and move controls points in the connection
+ You can see objects for a specified layer
+ You can measure distance between nodes
+ You can save and load map.xml file
+
+Information
+  When you run the Web application for the first time please be patient this process take long time
+  about three minutes  that you computer can no be used, to make faster the process we
+  removed maven-dependency-plugin and removed jetty-maven-plugin
+
+Requirements
+   jdk1.8.0
+   Glassfish Server 4.1
+   For class MapView configure the apiKey you can get one in https://console.developers.google.com/
+   Firefox web browser (or modified tag set-property in file /resources/org/kuwaiba/KuwaibaWidgetSet.gwt.xml and change for you current browser)
+   A folder in the path /data/files/
+
+ToDo Task
+   Accelerate the build of the application when used widgets, there are two option use the cores in the CPU or configure the vaadin.widgetset.mode with fetch or cdn
+   Reduce the space used by the .war
