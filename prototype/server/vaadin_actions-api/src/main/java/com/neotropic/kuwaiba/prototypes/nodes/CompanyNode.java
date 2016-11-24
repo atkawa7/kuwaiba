@@ -6,7 +6,7 @@
 package com.neotropic.kuwaiba.prototypes.nodes;
 
 import com.neotropic.kuwaiba.prototypes.actions.AbstractAction;
-import com.neotropic.kuwaiba.prototypes.actions.AddEmployeeAction;
+import com.neotropic.kuwaiba.prototypes.actions.ActionsFactory;
 import com.neotropic.kuwaiba.prototypes.model.Company;
 import com.vaadin.ui.Tree;
 
@@ -22,7 +22,9 @@ public class CompanyNode extends AbstractNode {
 
     @Override
     public AbstractAction[] getActions() {
-        return new AbstractAction[] {new AddEmployeeAction()};
+        return new AbstractAction[] { ActionsFactory.createAddEmployeeAction(), 
+            ActionsFactory.createAddEmployeeWithAgeAction(),
+            ActionsFactory.createDeleteAction() };
     }
 
     @Override

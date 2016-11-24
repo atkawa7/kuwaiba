@@ -63,8 +63,6 @@ public class FormWindow extends Window {
                             });
         btnCancel.setWidth(100, Unit.PIXELS);
         
-        componentLayout.addComponent(btnCancel,0, labels.length);
-        
         Button btnOk = new Button("OK", new Button.ClickListener() {
 
                                 @Override
@@ -73,7 +71,6 @@ public class FormWindow extends Window {
                                     close();
                                 }
                             });
-        componentLayout.addComponent(btnOk, 1, labels.length);
         btnOk.setWidth(100, Unit.PIXELS);
         
         HorizontalLayout actionLayout = new HorizontalLayout(btnCancel, btnOk);

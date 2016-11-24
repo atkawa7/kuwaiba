@@ -14,7 +14,7 @@ import java.util.Objects;
 public class Employee {
     private String name;
     private String lastName;
-    private int age;
+    private int age = 0;
 
     public Employee(String name, String lastName, int age) {
         this.name = name;
@@ -48,7 +48,7 @@ public class Employee {
     
     @Override
     public String toString(){
-        return lastName == null || lastName.isEmpty() ? name : lastName.toUpperCase() + ", " + name;
+        return lastName == null || lastName.isEmpty() ? name : lastName.toUpperCase() + ", " + name + " (" + age + ")";
     }
     
     @Override

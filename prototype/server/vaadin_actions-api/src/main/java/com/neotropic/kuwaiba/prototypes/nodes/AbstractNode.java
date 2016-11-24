@@ -7,6 +7,7 @@ package com.neotropic.kuwaiba.prototypes.nodes;
 
 import com.neotropic.kuwaiba.prototypes.actions.AbstractAction;
 import com.vaadin.ui.Tree;
+import java.util.Collection;
 import java.util.Objects;
 
 /**
@@ -51,6 +52,20 @@ public abstract class AbstractNode<T> {
 
     public Tree getTree() {
         return tree;
+    }
+    
+    /**
+     * Deletes the node and its children recursively
+     */
+    public void delete() {
+        Collection<?> children = tree.getChildren(this);
+        
+        if (children != null) {
+            for (Object child : children) //A lambda expression is not thread-safe and will cause a ConcurrentModificationException, even if synchronized
+                ((AbstractNode)child).delete();
+        }
+        
+        tree.removeItem(this);
     }
     
     /**
