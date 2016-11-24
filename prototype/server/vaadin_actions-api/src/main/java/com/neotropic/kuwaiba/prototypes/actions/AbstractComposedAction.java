@@ -22,33 +22,35 @@ import java.util.List;
  * @author duckman
  */
 public abstract class AbstractComposedAction extends AbstractAction {
-    //private Window selectionWindow;
-    private List subMenuOptions;
     
-    public AbstractComposedAction(String caption, List subMenuOptions) {
+    public AbstractComposedAction(String caption) {
         super(caption);
-        this.subMenuOptions = subMenuOptions;
     }
     
-    public AbstractComposedAction(String caption, Resource icon, List subMenuOptions) {
+    public AbstractComposedAction(String caption, Resource icon) {
         super(caption, icon);
-        this.subMenuOptions = subMenuOptions;
     }
-
-    @Override
-    public void actionPerformed(Object sourceComponent, Object targetObject) {
+    
+    /**
+     * Actually shows a popup with the options. Handle the existence of items in the calling method (most probably actionPerformed) to customize the error message
+     * @param sourceComponent 
+     * @param targetObject 
+     * @param subMenuOptions 
+     */
+    public void showSubMenu(Object sourceComponent, Object targetObject, List<?> subMenuOptions) {
+        
         final Window selectionWindow = new Window(getCaption());
         selectionWindow.setModal(true);
-        
+
         final ListSelect lstOptions = new ListSelect("", subMenuOptions);
-        lstOptions.setWidth("90%");
-        
-        
+        lstOptions.setSizeFull();
+
+
         Button btnCancel = new Button("Cancel", (Button.ClickEvent event) -> {
                     selectionWindow.close();
                 });
         btnCancel.setWidth(100, Sizeable.Unit.PIXELS);
-        
+
         Button btnOk = new Button("OK", (Button.ClickEvent event) -> {
                     if (lstOptions.getValue() == null)
                         Notification.show("Select a value from the list", Notification.Type.ERROR_MESSAGE);
@@ -58,22 +60,21 @@ public abstract class AbstractComposedAction extends AbstractAction {
                     }
                 });
         btnOk.setWidth(100, Sizeable.Unit.PIXELS);
-        
+
         HorizontalLayout actionLayout = new HorizontalLayout(btnCancel, btnOk);
         actionLayout.setWidth("100%");
         actionLayout.setComponentAlignment(btnCancel, Alignment.MIDDLE_CENTER);
         actionLayout.setComponentAlignment(btnOk, Alignment.MIDDLE_CENTER);
         actionLayout.setMargin(true);
         actionLayout.setSpacing(true);
-        
+
         selectionWindow.center();
         selectionWindow.setResizable(false);
-        
+
         VerticalLayout layout = new VerticalLayout(lstOptions, actionLayout);
-        layout.setComponentAlignment(lstOptions, Alignment.MIDDLE_CENTER);
-        
+        layout.setMargin(true);
         selectionWindow.setContent(layout);
-        
+
         UI.getCurrent().addWindow(selectionWindow);
     }
     
