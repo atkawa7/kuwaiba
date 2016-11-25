@@ -26,7 +26,7 @@ public class TreeView extends CustomComponent {
     
     public TreeView() {
         tree = new Tree("Employment Tree");
-        
+        tree.setDragMode(Tree.TreeDragMode.NODE);
         RootNode rootNode = new RootNode(tree);
         
         CompanyNode oracle = new CompanyNode(new Company("Oracle", "Technology"), tree);

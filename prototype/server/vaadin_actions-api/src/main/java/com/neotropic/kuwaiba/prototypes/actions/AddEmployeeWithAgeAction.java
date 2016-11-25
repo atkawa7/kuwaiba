@@ -55,9 +55,9 @@ public class AddEmployeeWithAgeAction extends AbstractComposedAction {
     @Override
     public void actionPerformed(Object sourceComponent, Object targetObject) {
         // Here you should retrieve the list of options and check if it's empty:
-        // if (Arrays.asList(10, 20, 30).isEmpty())
-        //    Notification.show("No Ages Available", Notification.Type.WARNING_MESSAGE);
-        // else ...
-        showSubMenu(sourceComponent, targetObject, Arrays.asList(10, 20, 30));
+//        if (Arrays.asList().isEmpty()) 
+//            Notification.show("No Ages Available", Notification.Type.WARNING_MESSAGE);
+//         else 
+        showSubMenu(sourceComponent, targetObject, Arrays.asList(15, 30, 45));
     }
 }

@@ -27,5 +27,5 @@ public class EmployeeNode extends AbstractNode {
 
     @Override
     public void refresh(boolean recursive) {}
-    
+  
 }

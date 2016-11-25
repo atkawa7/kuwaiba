@@ -15,7 +15,7 @@ import com.vaadin.ui.Tree;
  * @author duckman
  */
 public class CompanyNode extends AbstractNode {
-
+    
     public CompanyNode(Company company, Tree tree) {
         super(company, tree);
     }
@@ -29,5 +29,5 @@ public class CompanyNode extends AbstractNode {
 
     @Override
     public void refresh(boolean recursive) {}
-    
+
 }

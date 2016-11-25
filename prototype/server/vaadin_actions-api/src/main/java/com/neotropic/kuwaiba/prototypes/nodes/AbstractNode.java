@@ -19,7 +19,7 @@ public abstract class AbstractNode<T> {
     /**
      * Business object behind this node (model)
      */
-    private T object;
+    protected T object;
     /**
      * Node's displayName. If null, the toString method of the business object will be used
      */
@@ -27,7 +27,7 @@ public abstract class AbstractNode<T> {
     /**
      * Reference to the tree containing this node
      */
-    private Tree tree;
+    protected Tree tree;
 
     public AbstractNode(T object, Tree tree) {
         this.object = object;
@@ -61,8 +61,10 @@ public abstract class AbstractNode<T> {
         Collection<?> children = tree.getChildren(this);
         
         if (children != null) {
-            for (Object child : children) //A lambda expression is not thread-safe and will cause a ConcurrentModificationException, even if synchronized
-                ((AbstractNode)child).delete();
+            synchronized (children) {
+                for (Object child : children) //A lambda expression is not thread-safe and will cause a ConcurrentModificationException, even if synchronized
+                    ((AbstractNode)child).delete();
+            }
         }
         
         tree.removeItem(this);

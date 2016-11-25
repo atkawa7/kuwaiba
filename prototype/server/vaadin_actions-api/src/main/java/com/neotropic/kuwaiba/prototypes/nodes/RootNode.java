@@ -37,6 +37,5 @@ public class RootNode extends AbstractNode {
     public int hashCode() {
         int hash = 3;
         return hash;
-    }
-    
+    }    
 }
