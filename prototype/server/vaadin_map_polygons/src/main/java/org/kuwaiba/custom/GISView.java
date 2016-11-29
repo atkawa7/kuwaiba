@@ -318,7 +318,42 @@ public class GISView extends CustomComponent {
                 }
             }
         });
-        // end Polygons
+        Button btnDeletePolygon = new Button("Delete polygon");
+        mapSearchLayout.addComponent(btnDeletePolygon);
+        
+        btnDeletePolygon.addClickListener(new Button.ClickListener() {
+
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                MapPolygon mapPolygon = null;
+                // google map polygon id
+                Long id = Long.valueOf((String) nativeSelectPolygonsLayers.getValue());
+                
+                for (MapPolygon mapPolygon_ : mapPolygons) {
+                    if (mapPolygon_.getPolygonId() == id) {
+                        mapPolygon = mapPolygon_;
+                        break;
+                    }
+                }
+                if (mapPolygon.getVertices() != null) {
+                    for (PolygonMarker vertex : mapPolygon.getVertices())
+                        if (googleMap.getMarkers().contains(vertex))
+                            googleMap.removeMarker(vertex);
+                }
+                                    
+                googleMap.removePolygonOverlay(mapPolygon.getPolygon());
+                if (mapPolygon.getPolyline() != null)
+                    googleMap.removePolyline(mapPolygon.getPolyline());
+                if (mapPolygon.getDragListener() != null)
+                    googleMap.removeMarkerDragListener(mapPolygon.getDragListener());
+                if (mapPolygon.getClickListener() != null)
+                    googleMap.removeMarkerClickListener(mapPolygon.getClickListener());
+                
+                nativeSelectPolygonsLayers.removeItem((String) nativeSelectPolygonsLayers.getValue());
+                mapPolygons.remove(mapPolygon);
+            }
+        });
+        // end Polygons        
         VerticalLayout mapLayout = new VerticalLayout();
         mapLayout.setSizeFull();
         

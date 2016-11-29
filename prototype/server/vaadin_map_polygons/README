@@ -13,7 +13,7 @@ The interaction implemented are
  You can see objects for a specified layer
  You can measure distance between nodes
  You can save and load map.xml file
- You can create an edit multiples polygons overlays
+ You can create, edit and delete multiples polygons overlays
 
 Information
   When you run the Web application for the first time please be patient this process take long time
@@ -31,4 +31,3 @@ Requirements
 ToDo Task
    Accelerate the build of the application when used widgets, there are two option use the cores in the CPU or configure the vaadin.widgetset.mode with fetch or cdn
    Reduce the space used by the .war
-   Delete a polygon
