@@ -263,6 +263,8 @@ public class GISView extends CustomComponent {
                 }
                 GoogleMapPolygon polygon = mapPolygon.getPolygon();
                 
+//                googleMap.setCenter(mapPolygon.getPolygon().getCoordinates().get(0));
+                
                 List<PolygonMarker> vertices = new ArrayList();
                 
                 List<LatLon> coordinates = polygon.getCoordinates();                
@@ -351,6 +353,75 @@ public class GISView extends CustomComponent {
                 
                 nativeSelectPolygonsLayers.removeItem((String) nativeSelectPolygonsLayers.getValue());
                 mapPolygons.remove(mapPolygon);
+            }
+        });
+        
+        NativeSelect nativeSelectPolygonColor = new NativeSelect();
+        nativeSelectPolygonColor.addItem("red");
+        nativeSelectPolygonColor.addItem("yellow");
+        nativeSelectPolygonColor.addItem("green");
+        
+        Property.ValueChangeListener polygonListener = new Property.ValueChangeListener() {
+
+            @Override
+            public void valueChange(Property.ValueChangeEvent event) {
+                if (event.getProperty().getValue() == null) {
+                    valueChangeEmpty();
+                    return;
+                }
+                MapPolygon mapPolygon = null;
+                
+                Long id = Long.valueOf((String) event.getProperty().getValue());
+                
+                for (MapPolygon mapPolygon_ : mapPolygons) {
+                    if (mapPolygon_.getPolygonId() == id) {
+                        mapPolygon = mapPolygon_;
+                        break;
+                    }
+                }
+                googleMap.setCenter(mapPolygon.getPolygon().getCoordinates().get(0));                
+            }
+            
+            private void valueChangeEmpty() {
+            }
+        };
+        nativeSelectPolygonsLayers.addListener(polygonListener);
+        
+        mapSearchLayout.addComponent(nativeSelectPolygonColor);
+        
+        Button btnEditPolygonColor = new Button("Change polygon color");
+        mapSearchLayout.addComponent(btnEditPolygonColor);
+        
+        btnEditPolygonColor.addClickListener(new Button.ClickListener() {
+
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                MapPolygon mapPolygon = null;
+                // google map polygon id
+                Long id = Long.valueOf((String) nativeSelectPolygonsLayers.getValue());
+                String color = (String) nativeSelectPolygonColor.getValue();
+                if (color == null)
+                    color = "blue";
+                
+                for (MapPolygon mapPolygon_ : mapPolygons) {
+                    if (mapPolygon_.getPolygonId() == id) {
+                        mapPolygon = mapPolygon_;
+                        break;
+                    }
+                }
+                GoogleMapPolygon oldPolygon = mapPolygon.getPolygon();
+                googleMap.removePolygonOverlay(mapPolygon.getPolygon());
+                
+                GoogleMapPolygon newPolygon = new GoogleMapPolygon();
+                newPolygon.setCoordinates(oldPolygon.getCoordinates());
+                newPolygon.setFillColor(color);
+                newPolygon.setFillOpacity(oldPolygon.getFillOpacity());
+                newPolygon.setStrokeColor(color);
+                newPolygon.setStrokeOpacity(oldPolygon.getStrokeOpacity());
+                newPolygon.setStrokeWeight(oldPolygon.getStrokeWeight());
+                
+                mapPolygon.setPolygon(newPolygon);
+                googleMap.addPolygonOverlay(newPolygon);
             }
         });
         // end Polygons        

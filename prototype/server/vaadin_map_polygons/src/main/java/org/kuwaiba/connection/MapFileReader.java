@@ -158,6 +158,7 @@ public class MapFileReader {
                         } // end if edges
                         if (reader.getName().equals(qNamePolygon)) {
                             GoogleMapPolygon polygon = new GoogleMapPolygon();
+                            String color = reader.getAttributeValue(null, "color");
                             
                             while (true) {
                                 reader.nextTag();
@@ -171,11 +172,11 @@ public class MapFileReader {
                                 }
                                 else
                                     break;
-                            }
+                            }                            
                             //TODO: storage the color 
-                            polygon.setFillColor("blue");
+                            polygon.setFillColor(color);
                             polygon.setFillOpacity(0.5);
-                            polygon.setStrokeColor("blue");
+                            polygon.setStrokeColor(color);
                             polygon.setStrokeOpacity(1);
                             polygon.setStrokeWeight(1);
                             

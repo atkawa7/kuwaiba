@@ -102,6 +102,8 @@ public class MapFileWritter {
                 QName qNamePolygon = new QName("polygon");
                 xmlew.add(xmlef.createStartElement(qNamePolygon, null, null));
                 
+                xmlew.add(xmlef.createAttribute(new QName("color"), mapPolygon.getPolygon().getStrokeColor()));
+                
                 List<LatLon> coordinates = mapPolygon.getPolygon().getCoordinates();
                 
                 int i = 0;
