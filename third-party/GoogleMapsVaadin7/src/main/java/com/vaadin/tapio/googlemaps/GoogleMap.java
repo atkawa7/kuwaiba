@@ -109,8 +109,8 @@ public class GoogleMap extends AbstractComponentContainer {
         public void polylineClicked(long polylineId) {
 
             GoogleMapPolyline polyline = getState().polylines.get(polylineId);
-            for (PolylineRightClickListener listener : polylineRightClickListeners) {
-                listener.polylineRightClicked(polyline);
+            for (PolylineClickListener listener : polylineClickListeners) {
+                listener.polylineClicked(polyline);
             }
         }
     };
@@ -120,8 +120,8 @@ public class GoogleMap extends AbstractComponentContainer {
         public void polylineDblClicked(long polylineId) {
 
             GoogleMapPolyline polyline = getState().polylines.get(polylineId);
-            for (PolylineRightClickListener listener : polylineRightClickListeners) {
-                listener.polylineRightClicked(polyline);
+            for (PolylineDblClickListener listener : polylineDblClickListeners) {
+                listener.polylineDblClicked(polyline);
             }
         }
     };
