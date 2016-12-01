@@ -32,5 +32,5 @@
 
     <inherits name="com.vaadin.tapio.googlemaps.Widgetset" />
 
-    <inherits name="org.vaadin.peter.contextmenu.ContextmenuWidgetset" />
+    
 </module>

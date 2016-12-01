@@ -13,10 +13,16 @@ import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.tapio.googlemaps.GoogleMap;
 import com.vaadin.tapio.googlemaps.client.LatLon;
+import com.vaadin.tapio.googlemaps.client.events.MapRightClickListener;
 import com.vaadin.tapio.googlemaps.client.events.MarkerClickListener;
+import com.vaadin.tapio.googlemaps.client.events.MarkerRightClickListener;
+import com.vaadin.tapio.googlemaps.client.events.PolylineClickListener;
+import com.vaadin.tapio.googlemaps.client.events.PolylineRightClickListener;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
+import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
 import com.vaadin.ui.DragAndDropWrapper;
 import com.vaadin.ui.Notification;
+import java.util.Arrays;
 
 /**
  *
@@ -37,7 +43,43 @@ public class GISView extends CustomComponent {
 
             @Override
             public void markerClicked(GoogleMapMarker clickedMarker) {
-                Notification.show(clickedMarker.getCaption(), Notification.Type.ERROR_MESSAGE);
+                Notification.show("Click on marker", Notification.Type.ERROR_MESSAGE);
+            }
+        });
+        
+        map.addMarkerRightClickListener(new MarkerRightClickListener() {
+
+            @Override
+            public void markerRightClicked(GoogleMapMarker clickedMarker) {
+                Notification.show("Right click on marker", Notification.Type.ERROR_MESSAGE);
+            }
+        });
+        
+        
+        GoogleMapPolyline polyline = map.addPolyline("Test Polyline");
+        polyline.setCoordinates(Arrays.asList(new LatLon(2.441916, -76.6063356), new LatLon(2.441916, -76.607)));
+        
+        map.addPolylineClickListener(new PolylineClickListener() {
+
+            @Override
+            public void polylineClicked(GoogleMapPolyline clickedPolyline) {
+                Notification.show("Click on polyline", Notification.Type.ERROR_MESSAGE);
+            }
+        });
+        
+        map.addPolylineRightClickListener(new PolylineRightClickListener() {
+
+            @Override
+            public void polylineRightClicked(GoogleMapPolyline clickedPolyline) {
+                Notification.show("Right click on polyline", Notification.Type.ERROR_MESSAGE);
+            }
+        });
+        
+        map.addMapRightClickListener(new MapRightClickListener() {
+
+            @Override
+            public void mapRightClicked(LatLon position) {
+                Notification.show("Right click on map", Notification.Type.ERROR_MESSAGE);
             }
         });
         
@@ -48,11 +90,11 @@ public class GISView extends CustomComponent {
             public void drop(DragAndDropEvent event) {
                 Object transferable = event.getTransferable().getData("itemId");
                 
-                if (transferable instanceof EmployeeNode) {                
-                    GoogleMapMarker mapMarker = new GoogleMapMarker(((EmployeeNode)transferable).toString(), 
-                            map.getCenter(),true);
+                if (transferable instanceof EmployeeNode) {
                     
-                    map.addMarker(mapMarker);
+                    map.addMarker(((EmployeeNode)transferable).toString(), 
+                            map.getCenter(), true, null);
+                    
                 } else
                     Notification.show("Only employees are allowed to be dropped here", Notification.Type.ERROR_MESSAGE);
                 
