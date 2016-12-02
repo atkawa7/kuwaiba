@@ -24,6 +24,11 @@ import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.tapio.googlemaps.GoogleMap;
 import com.vaadin.tapio.googlemaps.client.LatLon;
+import com.vaadin.tapio.googlemaps.client.events.PolygonClickListener;
+import com.vaadin.tapio.googlemaps.client.events.PolygonDblClickListener;
+import com.vaadin.tapio.googlemaps.client.events.PolygonRightClickListener;
+import com.vaadin.tapio.googlemaps.client.events.PolylineClickListener;
+import com.vaadin.tapio.googlemaps.client.events.PolylineRightClickListener;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolygon;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
@@ -40,7 +45,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.kuwaiba.connection.Connection;
 import org.kuwaiba.connection.ConnectionUtils;
-import org.kuwaiba.custom.events.ControlPointInfoWindowClosedListener;
 import org.kuwaiba.custom.events.ControlPointMarkerClickListener;
 import org.kuwaiba.custom.events.ControlPointMarkerDragListener;
 import org.kuwaiba.custom.events.NodeMarkerClickListener;
@@ -54,19 +58,29 @@ import org.kuwaiba.custom.map.buttons.UploadMapButton;
 import org.kuwaiba.custom.overlays.ControlPointMarker;
 import org.kuwaiba.custom.overlays.NodeMarker;
 import org.kuwaiba.custom.overlays.PolygonMarker;
+import org.kuwaiba.custom.polyline.Edge;
+import org.kuwaiba.custom.polyline.events.EdgeClick;
+import org.kuwaiba.custom.polyline.events.EdgeDblClick;
 import org.kuwaiba.polygon.MapPolygon;
 import org.kuwaiba.polygon.events.PolygonMapClickListener;
 import org.kuwaiba.polygon.events.PolygonMarkerClickListener;
 import org.kuwaiba.polygon.events.PolygonMarkerDragListener;
 import org.kuwaiba.polygon.events.VertexMarkerClickListener;
-
+import org.kuwaiba.utils.Constans;
+// remove the action change connection color
+// ck remove the action add break point
+// ck remove the delete connection action
+// ck remove break point
+// ck download and upload map
+// storage the color
+// TODO:storage the zoom of the map
 /**
  * GIS View section accept drop and select actions
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 @SuppressWarnings("serial")
 public class GISView extends CustomComponent {
-    private final String apiKey = "";
+    private final String apiKey = "AIzaSyDdSZZu-XWKVw1yoj81xJKrv9RNJsKL4WM";
     private final GoogleMap googleMap = new GoogleMap(apiKey, null, "english");
     private double centerLat = 2.4448;
     private double centerLon = -76.6147;  
@@ -97,7 +111,40 @@ public class GISView extends CustomComponent {
         googleMap.addMarkerDragListener(controlPointMarkerDragListener);
         googleMap.addMarkerDragListener(new NodeMarkerDragListener(controlPointMarkerDragListener, edges));
         
-        googleMap.addInfoWindowClosedListener(new ControlPointInfoWindowClosedListener());
+        googleMap.addPolylineClickListener(new EdgeClick());
+        googleMap.addPolylineDblClickListener(new EdgeDblClick());
+        /*
+        googleMap.addPolylineRightClickListener(new PolylineRightClickListener() {
+
+            @Override
+            public void polylineRightClicked(GoogleMapPolyline clickedPolyline) {
+                Notification.show("Right click on polyline", Notification.Type.ERROR_MESSAGE);
+            }
+        });
+        */
+        googleMap.addPolygonClickListener(new PolygonClickListener() {
+
+            @Override
+            public void polygonClicked(GoogleMapPolygon clickedPolygon) {
+                Notification.show("Left click on polygon", Notification.Type.ERROR_MESSAGE);
+            }
+        });
+        
+        googleMap.addPolygonDblClickListener(new PolygonDblClickListener() {
+
+            @Override
+            public void polygonDblClicked(GoogleMapPolygon clickedPolygon) {
+                Notification.show("double click on polygon", Notification.Type.ERROR_MESSAGE);
+            }
+        });
+        
+        googleMap.addPolygonRightClickListener(new PolygonRightClickListener() {
+
+            @Override
+            public void polygonRightClicked(GoogleMapPolygon clickedPolygon) {
+                Notification.show("right click on polygon", Notification.Type.ERROR_MESSAGE);
+            }
+        });
         
         DragAndDropWrapper wrapper = new DragAndDropWrapper(googleMap);
         
@@ -176,7 +223,7 @@ public class GISView extends CustomComponent {
                                 googleMap.removeMarker(googleMapMarker);
                                         
                                 for (Connection conn : theNode.getConnections()) {
-                                    googleMap.removePolyline(conn.getConnection());
+                                    googleMap.removePolyline(conn.getEdge());
                                     for (ControlPointMarker controlPoint : conn.getControlPoints())
                                         if (googleMap.getMarkers().contains(controlPoint))
                                             googleMap.removeMarker(controlPoint);
@@ -198,7 +245,7 @@ public class GISView extends CustomComponent {
                                         googleMap.removeMarker(googleMapMarker);
                                         
                                     for (Connection conn : theNode.getConnections()) {
-                                        googleMap.removePolyline(conn.getConnection());
+                                        googleMap.removePolyline(conn.getEdge());
                                         for (ControlPointMarker controlPoint : conn.getControlPoints())
                                             if (googleMap.getMarkers().contains(controlPoint))
                                                 googleMap.removeMarker(controlPoint);
@@ -225,8 +272,8 @@ public class GISView extends CustomComponent {
                         if (!googleMap.getMarkers().contains(controlPoint))
                             googleMap.addMarker(controlPoint);
                         
-                    googleMap.removePolyline(edge.getConnection());
-                    googleMap.addPolyline(edge.getConnection());
+                    googleMap.removePolyline(edge.getEdge());
+                    googleMap.addPolyline(edge.getEdge());
                 }
             }
         };

@@ -22,19 +22,23 @@ import java.util.ArrayList;
 import java.util.List;
 import org.kuwaiba.custom.overlays.ControlPointMarker;
 import org.kuwaiba.custom.overlays.NodeMarker;
+import org.kuwaiba.custom.polyline.Edge;
+import org.kuwaiba.utils.Constans;
 
 /**
  * 
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class Connection {
-    GoogleMap googleMap;
+    private String connectionColor;
     
-    NodeMarker source;
-    NodeMarker target;
-    GoogleMapPolyline connection;
-    List<ControlPointMarker> controlPoints;
-    List<Connection> edges;
+    private GoogleMap googleMap;
+    
+    private NodeMarker source;
+    private NodeMarker target;
+    private Edge edge;
+    private List<ControlPointMarker> controlPoints;
+    private List<Connection> edges;
     
     private int i;
     
@@ -42,10 +46,12 @@ public class Connection {
         i = 1;
         this.googleMap = googleMap;
         controlPoints = new ArrayList();
-        connection = new GoogleMapPolyline(new ArrayList(), "blue", 1, 5);
+        edge = new Edge(this);
         this.edges = edges;
         source = null;
         target = null;
+        
+        connectionColor = Constans.defaultConnectionColor;
     }
     
     public void setStartAndEndControlPoints(NodeMarker nodeMarker) {
@@ -96,12 +102,12 @@ public class Connection {
         controlPoints.removeAll(controlPoints);
     }
     
-    public void setConnection(GoogleMapPolyline connection) {
-        this.connection = connection;
+    public void setConnection(Edge edge) {
+        this.edge = edge;
     }
     
-    public GoogleMapPolyline getConnection() {
-        return connection;
+    public Edge getEdge() {
+        return edge;
     }
     
     public void setSource(NodeMarker source) {
@@ -122,6 +128,14 @@ public class Connection {
     
     public GoogleMap getMap() {
         return googleMap;
+    }
+    
+    public List<Connection> getEdges() {
+        return edges;
+    }
+    
+    public String getColor() {
+        return connectionColor;
     }
 }
 

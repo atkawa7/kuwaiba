@@ -13,31 +13,33 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.kuwaiba.custom.map.buttons;
+package org.kuwaiba.custom.polyline;
 
-import com.vaadin.tapio.googlemaps.GoogleMap;
-import com.vaadin.ui.Button;
+import com.vaadin.tapio.googlemaps.client.LatLon;
+import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
 import java.util.List;
 import org.kuwaiba.connection.Connection;
-import org.kuwaiba.custom.map.xml.MapFileWritter;
-import org.kuwaiba.polygon.MapPolygon;
 
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class SaveButton extends Button {
+public class Edge extends GoogleMapPolyline {
     
-    public SaveButton(List<Connection> edges, List<MapPolygon> mapPolygons, GoogleMap googleMap) {
-        super("Save");
+    Connection connection;
+    
+    public Edge(Connection connection) {
+        this.connection = connection;
+    }
+    
+    public Edge(Connection connection, List<LatLon> coordinates, String strokeColor,
+        double strokeOpacity, int strokeWeight) {
         
-        addClickListener(new Button.ClickListener() {
-
-            @Override
-            public void buttonClick(ClickEvent event) {
-                MapFileWritter mfw = new MapFileWritter();
-                mfw.mapWriteMap(edges, mapPolygons, googleMap);
-            }
-        });
-    }     
+        super(coordinates, strokeColor, strokeOpacity, strokeWeight);
+        this.connection = connection;
+    }
+    
+    public Connection getConnection() {
+        return connection;
+    }
 }

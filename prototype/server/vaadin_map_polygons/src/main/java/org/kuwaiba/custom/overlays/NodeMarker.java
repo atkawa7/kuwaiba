@@ -53,7 +53,7 @@ public class NodeMarker extends GoogleMapMarker {
                 for (ControlPointMarker controlPoint_ : conn.getControlPoints()) 
                     conn.getMap().removeMarker(controlPoint_);
 
-                conn.getMap().removePolyline(conn.getConnection());
+                conn.getMap().removePolyline(conn.getEdge());
 
                 conn.setI(1);            
             }

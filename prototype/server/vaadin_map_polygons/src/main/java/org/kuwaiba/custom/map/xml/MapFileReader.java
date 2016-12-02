@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.kuwaiba.connection;
+package org.kuwaiba.custom.map.xml;
 
 import com.vaadin.tapio.googlemaps.GoogleMap;
 import com.vaadin.tapio.googlemaps.client.LatLon;
@@ -29,8 +29,10 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
+import org.kuwaiba.connection.Connection;
 import org.kuwaiba.custom.overlays.ControlPointMarker;
 import org.kuwaiba.custom.overlays.NodeMarker;
+import org.kuwaiba.custom.polyline.Edge;
 import org.kuwaiba.polygon.MapPolygon;
 
 /**
@@ -129,12 +131,6 @@ public class MapFileReader {
                                         ControlPointMarker controlPoint = new ControlPointMarker(new LatLon(lat, lon), edges);
                                         controlPoint.setIconUrl(iconUrl);
                                         
-                                        VerticalLayout verticalLayout = new VerticalLayout();
-                                        verticalLayout.addComponent(controlPoint.getBtnDeleteControlPoint());
-                                        verticalLayout.addComponent(controlPoint.getBtnDeleteConnection());
-
-                                        googleMap.setInfoWindowContents(controlPoint.getInfoWindows(), verticalLayout);
-                                        
                                         controlPoints.add(controlPoint);
                                     }
                                 }
@@ -148,10 +144,9 @@ public class MapFileReader {
                                 controlPoint.setConnection(connection);
                                 coordinates.add(controlPoint.getPosition());
                             }
-                            
-                            GoogleMapPolyline polyline = new GoogleMapPolyline(coordinates, color, 1, 5);
+                            Edge edge = new Edge(connection, coordinates, color, 1, 5);
                                                         
-                            connection.setConnection(polyline);
+                            connection.setConnection(edge);
                             connection.setControlPoints(controlPoints);
                             
                             edges.add(connection);

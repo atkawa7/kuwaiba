@@ -16,14 +16,19 @@
 package org.kuwaiba.custom.map.buttons;
 
 import com.vaadin.tapio.googlemaps.GoogleMap;
+import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.NativeSelect;
+import java.util.ArrayList;
 import java.util.List;
 import org.kuwaiba.connection.Connection;
-import org.kuwaiba.connection.MapFileReader;
+import org.kuwaiba.connection.ConnectionUtils;
+import org.kuwaiba.custom.map.xml.MapFileReader;
+import org.kuwaiba.custom.overlays.ControlPointMarker;
 import org.kuwaiba.custom.overlays.NodeMarker;
 import org.kuwaiba.polygon.MapPolygon;
+import org.kuwaiba.utils.Constans;
 
 /**
  *
@@ -46,10 +51,51 @@ public class UploadMapButton extends Button {
                     googleMap.addMarker(node);
                     
                 for (Connection edge : edges) {
+                    List<ControlPointMarker> dummyControlPoints = new ArrayList();
+                    
                     for (GoogleMapMarker controlPoint : edge.getControlPoints())
                         if (!googleMap.getMarkers().contains(controlPoint))
-                            googleMap.addMarker(controlPoint);                    
-                    googleMap.addPolyline(edge.getConnection());
+                            if (!controlPoint.getPosition().equals(edge.getSource().getPosition()) &&
+                                    !controlPoint.getPosition().equals(edge.getTarget().getPosition())) {
+                                
+                                int index = edge.getControlPoints().indexOf(controlPoint);
+                                int nextIndex = index + 1;
+                                int size = edge.getControlPoints().size();
+                                
+                                googleMap.addMarker(controlPoint);
+                                if (nextIndex != size) {
+                                    ControlPointMarker nextControlPoint = edge.getControlPoints().get(nextIndex);
+                                    LatLon latlon = ConnectionUtils.midPoint(controlPoint.getPosition(), nextControlPoint.getPosition());
+                                    
+                                    ControlPointMarker dummycp = new ControlPointMarker(latlon, edges);
+                                    dummycp.setConnection(edge);
+                                    dummycp.setIconUrl(Constans.dummyControlPointIconUrl);
+                                    dummyControlPoints.add(dummycp);
+                                    
+                                    googleMap.addMarker(dummycp);
+                                }
+                                
+                            }
+                    ControlPointMarker srcControlPoint = edge.getControlPoints().get(0);
+                    ControlPointMarker nextControlPoint = edge.getControlPoints().get(1);
+                    LatLon latlon = ConnectionUtils.midPoint(srcControlPoint.getPosition(), nextControlPoint.getPosition());
+                    ControlPointMarker dummycp = new ControlPointMarker(latlon, edges);
+                    dummycp.setConnection(edge);
+                    dummycp.setIconUrl(Constans.dummyControlPointIconUrl);
+                    dummyControlPoints.add(0, dummycp);
+                                    
+                    googleMap.addMarker(dummycp);
+                    
+                    int size = dummyControlPoints.size();
+                    int dummycpIdx = 1;
+                    
+                    for (int i = 0; i < size; i += 1) {
+                        edge.getControlPoints().add(i + dummycpIdx, dummyControlPoints.get(i)); 
+                        
+                        dummycpIdx += 1;
+                    }
+                    
+                    googleMap.addPolyline(edge.getEdge());
                 }
                 
                 for (MapPolygon mapPolygon : mapPolygons) {

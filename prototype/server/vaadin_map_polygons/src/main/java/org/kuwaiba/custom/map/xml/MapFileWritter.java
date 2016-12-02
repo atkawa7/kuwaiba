@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.kuwaiba.connection;
+package org.kuwaiba.custom.map.xml;
 
 import com.vaadin.tapio.googlemaps.GoogleMap;
 import com.vaadin.tapio.googlemaps.client.LatLon;
@@ -27,6 +27,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLOutputFactory;
+import org.kuwaiba.connection.Connection;
 import org.kuwaiba.custom.overlays.ControlPointMarker;
 import org.kuwaiba.custom.overlays.NodeMarker;
 import org.kuwaiba.polygon.MapPolygon;
@@ -36,10 +37,9 @@ import org.kuwaiba.polygon.MapPolygon;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class MapFileWritter {
-    String path = "/data/files/map.xml";
+    private String path = "/data/files/map.xml";
     
     public MapFileWritter() {
-
     }
     
     public void mapWriteMap(List<Connection> edges, List<MapPolygon> mapPolygons, GoogleMap googleMap) {
@@ -82,8 +82,21 @@ public class MapFileWritter {
 
                 xmlew.add(xmlef.createAttribute(new QName("sourceCaption"), edge.getSource().getCaption()));
                 xmlew.add(xmlef.createAttribute(new QName("targetCaption"), edge.getTarget().getCaption()));
-                xmlew.add(xmlef.createAttribute(new QName("color"), edge.getConnection().getStrokeColor()));
-
+                xmlew.add(xmlef.createAttribute(new QName("color"), edge.getEdge().getStrokeColor()));
+                
+                int nedges = edge.getControlPoints().size();
+                for (int i = 0; i < nedges; i += 1) {
+                    if (i % 2 == 0) {
+                        ControlPointMarker controlPoint = edge.getControlPoints().get(i);
+                        QName qNameControlPoint = new QName("controlPoint");
+                        xmlew.add(xmlef.createStartElement(qNameControlPoint, null, null));
+                        xmlew.add(xmlef.createAttribute(new QName("lat"), Double.toString(controlPoint.getPosition().getLat())));
+                        xmlew.add(xmlef.createAttribute(new QName("lon"), Double.toString(controlPoint.getPosition().getLon())));
+                        xmlew.add(xmlef.createAttribute(new QName("iconUrl"), controlPoint.getIconUrl()));
+                        xmlew.add(xmlef.createEndElement(qNameControlPoint, null));
+                    }
+                }
+                /*
                 for (ControlPointMarker controlPoint : edge.getControlPoints()) {
                     QName qNameControlPoint = new QName("controlPoint");
                     xmlew.add(xmlef.createStartElement(qNameControlPoint, null, null));
@@ -91,7 +104,8 @@ public class MapFileWritter {
                     xmlew.add(xmlef.createAttribute(new QName("lon"), Double.toString(controlPoint.getPosition().getLon())));
                     xmlew.add(xmlef.createAttribute(new QName("iconUrl"), controlPoint.getIconUrl()));
                     xmlew.add(xmlef.createEndElement(qNameControlPoint, null));
-                }                
+                } 
+                        */
                 xmlew.add(xmlef.createEndElement(qNameEdge, null));
             }            
             xmlew.add(xmlef.createEndElement(qNameEdges, null));

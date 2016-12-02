@@ -16,78 +16,16 @@
 package org.kuwaiba.custom.overlays;
 
 import com.vaadin.tapio.googlemaps.client.LatLon;
-import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapInfoWindow;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
-import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
-import com.vaadin.ui.Button;
-import java.util.ArrayList;
 import java.util.List;
 import org.kuwaiba.connection.Connection;
-
 /**
  * 
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ControlPointMarker extends GoogleMapMarker {
-    GoogleMapInfoWindow infoWindow;
     Connection conn;
-    Button btnDeleteControlPoint;
-    Button btnDeleteConnection;
-    
     List<Connection> edges;
-    
-    private class ButtonDeleteClickListener implements Button.ClickListener {
-        private final ControlPointMarker controlPoint;
-        
-        public ButtonDeleteClickListener(ControlPointMarker controlPoint) {
-            this.controlPoint = controlPoint;            
-        }
-
-        @Override
-        public void buttonClick(Button.ClickEvent event) {
-            conn.getMap().closeInfoWindow(controlPoint.getInfoWindows());
-            
-            conn.getMap().removeMarker(controlPoint);
-            conn.getControlPoints().remove(controlPoint);
-            
-            String strokeColor = conn.getConnection().getStrokeColor();
-            double strokeOpacity = conn.getConnection().getStrokeOpacity();
-            int strokeWeight = conn.getConnection().getStrokeWeight();
-            
-            GoogleMapPolyline polyline = new GoogleMapPolyline(new ArrayList(), strokeColor, strokeOpacity, strokeWeight);
-            for (ControlPointMarker controlPoint : conn.getControlPoints())
-                polyline.getCoordinates().add(controlPoint.getPosition());
-            conn.getMap().removePolyline(conn.getConnection());
-            conn.setConnection(polyline);
-            conn.getMap().addPolyline(polyline);
-        }
-    }
-    
-    private class ButtonDeleteConnection implements Button.ClickListener {
-        private final ControlPointMarker controlPoint;
-        
-        public ButtonDeleteConnection(ControlPointMarker controlPoint) {
-            this.controlPoint = controlPoint;            
-        }
-        
-        @Override
-        public void buttonClick(Button.ClickEvent event) {
-            conn.getMap().closeInfoWindow(controlPoint.getInfoWindows());
-            conn.getSource().getConnections().remove(conn);
-            conn.getTarget().getConnections().remove(conn);
-            
-            for (ControlPointMarker controlPoint_ : conn.getControlPoints()) 
-                conn.getMap().removeMarker(controlPoint_);
-                
-            conn.getMap().removePolyline(conn.getConnection());
-            
-            conn.setI(1);
-            
-            edges.remove(conn);
-        }
-    }
-    
-    
     
     public ControlPointMarker(LatLon latlon, List<Connection> edges) {
         this.edges = edges;
@@ -95,23 +33,8 @@ public class ControlPointMarker extends GoogleMapMarker {
         setPosition(latlon);
         setIconUrl("VAADIN/img/controlPoint.png");
                 
-        btnDeleteControlPoint = new Button("Delete Control Point");
-        btnDeleteControlPoint.addClickListener(new ButtonDeleteClickListener(this));
-        
-        btnDeleteConnection = new Button("Delete Connection");
-        btnDeleteConnection.addClickListener(new ButtonDeleteConnection(this));
-        
-        infoWindow = new GoogleMapInfoWindow("Control point", this);
         setAnimationEnabled(false);
         setDraggable(true);
-    }
-    
-    public void setInfoWindows(GoogleMapInfoWindow infoWindows) {
-        this.infoWindow = infoWindows;
-    }
-    
-    public GoogleMapInfoWindow getInfoWindows() {
-        return infoWindow;
     }
     
     public void setConnection(Connection conn) {
@@ -120,13 +43,5 @@ public class ControlPointMarker extends GoogleMapMarker {
     
     public Connection getConnection() {
         return conn;
-    }
-    
-    public Button getBtnDeleteControlPoint() {
-        return btnDeleteControlPoint;
-    }
-    
-    public Button getBtnDeleteConnection() {
-        return btnDeleteConnection;
     }
 }

@@ -22,9 +22,7 @@ import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.tapio.googlemaps.client.events.MarkerClickListener;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.VerticalLayout;
 import java.util.ArrayList;
 import java.util.List;
 import org.kuwaiba.connection.Connection;
@@ -35,6 +33,8 @@ import org.kuwaiba.custom.map.buttons.MarkerButton;
 import org.kuwaiba.custom.map.buttons.MeasureButton;
 import org.kuwaiba.custom.overlays.ControlPointMarker;
 import org.kuwaiba.custom.overlays.NodeMarker;
+import org.kuwaiba.custom.polyline.Edge;
+import org.kuwaiba.utils.Constans;
 
 /**
  * 
@@ -63,97 +63,38 @@ public class NodeMarkerClickListener implements MarkerClickListener {
         if (clickedMarker instanceof NodeMarker) {
             if ((Boolean) session.getAttribute(MarkerButton.NAME))
                 googleMap.openInfoWindow(((NodeMarker) clickedMarker).getInfoWindow());
-            
+            // connection button enable
             if ((Boolean) session.getAttribute(ConnectionButton.NAME)) {
                 
                 if (i == 0) {
                     i = 1;
                     edges.add(new Connection(googleMap, edges));
                 }
-                
                 if (i == 1) {
                     int edgesLength = edges.size() - 1;
                     Connection conn = edges.get(edgesLength);
                     conn.setStartAndEndControlPoints((NodeMarker) clickedMarker);
                     // fix source and target
-                    if (conn.getI() == 0) {
-                        GoogleMapPolyline connection = new GoogleMapPolyline(new ArrayList(), "green", 1, 5);
-                        conn.setConnection(connection);
+                    if (conn.getI() == 0) { // if i = 0 source and target are fixed
+                        Edge edge = new Edge(conn, new ArrayList(), "green", 1, 5);
+                        conn.setConnection(edge);
 
-                        for (ControlPointMarker controlPoint : conn.getControlPoints()) {
-                            if (!googleMap.getMarkers().contains(controlPoint)) {
-                                googleMap.addMarker(controlPoint);
-
-                                Button btnConnColor = new Button("Connection Color");
-                                btnConnColor.addClickListener(new Button.ClickListener() {
-
-                                    @Override
-                                    public void buttonClick(Button.ClickEvent event) {
-                                        GoogleMapPolyline polyline = new GoogleMapPolyline(new ArrayList(), "yellow", 1, 5);
-
-                                        for (ControlPointMarker controlPoint : conn.getControlPoints())
-                                            polyline.getCoordinates().add(controlPoint.getPosition());
-
-                                        conn.getMap().removePolyline(conn.getConnection());
-                                        conn.setConnection(polyline);
-                                        conn.getMap().addPolyline(polyline);
-                                    }
-                                });
-
-                                Button btnAddBreakPoint = new Button("Add control point");
-
-                                btnAddBreakPoint.addClickListener(new Button.ClickListener() {
-
-                                    @Override
-                                    public void buttonClick(Button.ClickEvent event) {
-                                        //TODO: Review don't work
-                                        googleMap.closeInfoWindow(conn.getControlPoints().get(0).getInfoWindows());
-
-                                        ControlPointMarker controlPoint_ = new ControlPointMarker(conn.getSource().getPosition(), edges);
-                                        controlPoint_.setDraggable(true);
-                                        controlPoint_.setIconUrl("VAADIN/img/dragControlPoint.png");
-                                        //TODO: Add Control Point between two cotrols points
-                                        googleMap.addMarker(controlPoint_);
-                                        conn.getControlPoints().add(1, controlPoint_); 
-                                        controlPoint_.setConnection(conn);
-
-                                        VerticalLayout verticalLayout = new VerticalLayout();
-                                        verticalLayout.addComponent(controlPoint_.getBtnDeleteControlPoint());
-                                        verticalLayout.addComponent(controlPoint_.getBtnDeleteConnection());
-
-                                        googleMap.setInfoWindowContents(controlPoint_.getInfoWindows(), verticalLayout);
-                                    }
-                                } );
-
-                                //Button btnDelete = new Button("Delete Connection");
-                                VerticalLayout verticalLayout = new VerticalLayout();
-                                verticalLayout.addComponent(btnConnColor);
-                                verticalLayout.addComponent(btnAddBreakPoint);
-                                //verticalLayout.addComponent(btnDelete);
-
-                                googleMap.setInfoWindowContents(controlPoint.getInfoWindows(), verticalLayout);
-
-                                connection.getCoordinates().add(controlPoint.getPosition());
-                            }
-                        }
+                        for (ControlPointMarker controlPoint : conn.getControlPoints())
+                            edge.getCoordinates().add(controlPoint.getPosition());
                         // Central Control Point
                         LatLon position1 = conn.getControlPoints().get(0).getPosition();
                         LatLon position2 = conn.getControlPoints().get(1).getPosition();
                         LatLon position3 = ConnectionUtils.midPoint(position1, position2);
+                        
                         ControlPointMarker centralControlPoint = new ControlPointMarker(position3, edges);
                         centralControlPoint.setDraggable(true);
-                        centralControlPoint.setIconUrl("VAADIN/img/dragControlPoint.png");
+                        centralControlPoint.setIconUrl(Constans.dummyControlPointIconUrl);
                         googleMap.addMarker(centralControlPoint);
                         conn.getControlPoints().add(1, centralControlPoint);
                         centralControlPoint.setConnection(conn);
-
-                        VerticalLayout verticalLayout = new VerticalLayout();
-                        verticalLayout.addComponent(centralControlPoint.getBtnDeleteControlPoint());
-                        verticalLayout.addComponent(centralControlPoint.getBtnDeleteConnection());
-
-                        googleMap.setInfoWindowContents(centralControlPoint.getInfoWindows(), verticalLayout);
-                        //
-                        googleMap.addPolyline(connection);
+                        
+                        edge.getCoordinates().add(1, position3);
+                        googleMap.addPolyline(edge);
                         
                         i = 0;
                     }
@@ -180,11 +121,11 @@ public class NodeMarkerClickListener implements MarkerClickListener {
                             break;
                         }
                     }                    
-                    googleMap.removePolyline(connection.getConnection());
-                    List<LatLon> coordinates = connection.getConnection().getCoordinates();
-                    GoogleMapPolyline polyline = new GoogleMapPolyline(coordinates, "gray", 1, 5);
-                    connection.setConnection(polyline);
-                    googleMap.addPolyline(connection.getConnection());
+                    googleMap.removePolyline(connection.getEdge());
+                    List<LatLon> coordinates = connection.getEdge().getCoordinates();
+                    Edge edge = new Edge(connection, coordinates, "gray", 1, 5);
+                    connection.setConnection(edge);
+                    googleMap.addPolyline(connection.getEdge());
                     
                     double distance = measure.calculateDistance(connection);
                     Notification.show("Distance between Source and Target " + distance);                    

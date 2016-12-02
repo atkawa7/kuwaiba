@@ -17,10 +17,10 @@ package org.kuwaiba.connection;
 
 import com.vaadin.tapio.googlemaps.GoogleMap;
 import com.vaadin.tapio.googlemaps.client.LatLon;
-import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
 import java.util.ArrayList;
 import java.util.List;
 import org.kuwaiba.custom.overlays.NodeMarker;
+import org.kuwaiba.custom.polyline.Edge;
 
 /**
  *
@@ -44,7 +44,7 @@ public class Measure {
     }
     
     public double calculateDistance(Connection connection) {
-        List<LatLon> coordinates = connection.getConnection().getCoordinates();
+        List<LatLon> coordinates = connection.getEdge().getCoordinates();
         
         int sizeCoordinates = coordinates.size();
         
@@ -69,11 +69,11 @@ public class Measure {
         distance = 0;
         i = 0;
         for (Connection connection : connections) {
-            googleMap.removePolyline(connection.getConnection());
-            List<LatLon> coordinates = connection.getConnection().getCoordinates();
-            GoogleMapPolyline polyline = new GoogleMapPolyline(coordinates, "green", 1, 5);
-            connection.setConnection(polyline);
-            googleMap.addPolyline(connection.getConnection());
+            googleMap.removePolyline(connection.getEdge());
+            List<LatLon> coordinates = connection.getEdge().getCoordinates();
+            Edge edge = new Edge(connection, coordinates, "green", 1, 5);
+            connection.setConnection(edge);
+            googleMap.addPolyline(connection.getEdge());
         }
         source = null;
         target = null;
