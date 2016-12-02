@@ -42,6 +42,14 @@ public class GoogleMapPolyline implements Serializable {
         this.coordinates = coordinates;
         this.caption = caption;
     }
+    
+    public GoogleMapPolyline(List<LatLon> coordinates, String strokeColor,
+        double strokeOpacity, int strokeWeight) {
+        this(null, coordinates);
+        this.strokeColor = strokeColor;
+        this.strokeOpacity = strokeOpacity;
+        this.strokeWeight = strokeWeight;
+    }
 
     public GoogleMapPolyline(String caption, List<LatLon> coordinates, String strokeColor,
         double strokeOpacity, int strokeWeight) {

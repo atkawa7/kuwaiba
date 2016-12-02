@@ -50,7 +50,7 @@ public class GoogleMapState extends AbstractComponentState {
     public LatLon fitToBoundsNE = null;
     public LatLon fitToBoundsSW = null;
 
-    public Set<GoogleMapPolygon> polygons = new HashSet<GoogleMapPolygon>();
+    public Map<Long, GoogleMapPolygon> polygons = new HashMap<>();
     
     public Set<GoogleMapKmlLayer> kmlLayers = new HashSet<GoogleMapKmlLayer>();
 

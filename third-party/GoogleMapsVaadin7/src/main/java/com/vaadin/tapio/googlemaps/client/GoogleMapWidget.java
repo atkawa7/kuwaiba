@@ -59,6 +59,9 @@ import com.vaadin.tapio.googlemaps.client.events.MarkerClickListener;
 import com.vaadin.tapio.googlemaps.client.events.MarkerDblClickListener;
 import com.vaadin.tapio.googlemaps.client.events.MarkerDragListener;
 import com.vaadin.tapio.googlemaps.client.events.MarkerRightClickListener;
+import com.vaadin.tapio.googlemaps.client.events.PolygonClickListener;
+import com.vaadin.tapio.googlemaps.client.events.PolygonDblClickListener;
+import com.vaadin.tapio.googlemaps.client.events.PolygonRightClickListener;
 import com.vaadin.tapio.googlemaps.client.events.PolylineClickListener;
 import com.vaadin.tapio.googlemaps.client.events.PolylineDblClickListener;
 import com.vaadin.tapio.googlemaps.client.events.PolylineRightClickListener;
@@ -91,6 +94,10 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
     protected MarkerRightClickListener markerRightClickListener = null;
     protected MarkerDragListener markerDragListener = null;
     protected InfoWindowClosedListener infoWindowClosedListener = null;
+    
+    protected PolygonClickListener polygonClickListener = null;
+    protected PolygonDblClickListener polygonDblClickListener = null;
+    protected PolygonRightClickListener polygonRightClickListener = null;
     
     protected PolylineClickListener polylineClickListener = null;
     protected PolylineDblClickListener polylineDblClickListener = null;
@@ -454,6 +461,18 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
         markerRightClickListener = listener;
     }
     
+    public void setPolygonClickListener(PolygonClickListener listener) {
+        polygonClickListener = listener;
+    }
+    
+    public void setPolygonDblClickListener(PolygonDblClickListener listener) {
+        polygonDblClickListener = listener;
+    }
+    
+    public void setPolygonRightClickListener(PolygonRightClickListener listener) {
+        polygonRightClickListener = listener;
+    }
+    
     public void setPolylineClickListener(PolylineClickListener listener) {
         polylineClickListener = listener;
     }
@@ -568,9 +587,9 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
         allowedBoundsVisibleArea = null;
     }
 
-    public void setPolygonOverlays(Set<GoogleMapPolygon> polyOverlays) {
+    public void setPolygonOverlays(Map<Long, GoogleMapPolygon> polyOverlays) {
         if (polygonMap.size() == polyOverlays.size()
-            && polygonMap.values().containsAll(polyOverlays)) {
+            && polygonMap.values().containsAll(polyOverlays.values())) {
             return;
         }
 
@@ -579,7 +598,7 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
         }
         polygonMap.clear();
 
-        for (GoogleMapPolygon overlay : polyOverlays) {
+        for (GoogleMapPolygon overlay : polyOverlays.values()) {
             MVCArray<LatLng> points = MVCArray.newInstance();
             for (LatLon latLon : overlay.getCoordinates()) {
                 LatLng latLng = LatLng.newInstance(latLon.getLat(),
@@ -596,9 +615,40 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
             options.setStrokeWeight(overlay.getStrokeWeight());
             options.setZindex(overlay.getzIndex());
 
-            Polygon polygon = Polygon.newInstance(options);
+            final Polygon polygon = Polygon.newInstance(options);
             polygon.setPath(points);
             polygon.setMap(map);
+            
+            polygon.addClickHandler(new ClickMapHandler() {
+
+                @Override
+                public void onEvent(ClickMapEvent event) {
+                    if (polygonClickListener != null) {
+                        polygonClickListener.polygonClicked(polygonMap.get(polygon));
+                    }
+                }
+            });
+            
+            polygon.addDblClickHandler(new DblClickMapHandler() {
+                
+                @Override
+                public void onEvent(DblClickMapEvent event) {
+                    if (polygonDblClickListener != null) {
+                        polygonDblClickListener.polygonDblClicked(polygonMap.get(polygon));
+                    }
+                }
+            });
+            
+            polygon.addRightClickHandler(new RightClickMapHandler() {
+                
+                @Override
+                public void onEvent(RightClickMapEvent event) {
+                    if (polygonRightClickListener != null) {
+                        polygonRightClickListener.polygonRightClicked(polygonMap.get(polygon));
+                    }
+                }
+            });
+            
             polygonMap.put(polygon, overlay);
         }
 

@@ -32,11 +32,15 @@ import com.vaadin.tapio.googlemaps.client.events.MarkerClickListener;
 import com.vaadin.tapio.googlemaps.client.events.MarkerDblClickListener;
 import com.vaadin.tapio.googlemaps.client.events.MarkerDragListener;
 import com.vaadin.tapio.googlemaps.client.events.MarkerRightClickListener;
+import com.vaadin.tapio.googlemaps.client.events.PolygonClickListener;
+import com.vaadin.tapio.googlemaps.client.events.PolygonDblClickListener;
+import com.vaadin.tapio.googlemaps.client.events.PolygonRightClickListener;
 import com.vaadin.tapio.googlemaps.client.events.PolylineClickListener;
 import com.vaadin.tapio.googlemaps.client.events.PolylineDblClickListener;
 import com.vaadin.tapio.googlemaps.client.events.PolylineRightClickListener;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapInfoWindow;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
+import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolygon;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
 import com.vaadin.tapio.googlemaps.client.rpcs.InfoWindowClosedRpc;
 import com.vaadin.tapio.googlemaps.client.rpcs.MapClickedRpc;
@@ -48,15 +52,20 @@ import com.vaadin.tapio.googlemaps.client.rpcs.MarkerClickedRpc;
 import com.vaadin.tapio.googlemaps.client.rpcs.MarkerDblClickedRpc;
 import com.vaadin.tapio.googlemaps.client.rpcs.MarkerDraggedRpc;
 import com.vaadin.tapio.googlemaps.client.rpcs.MarkerRightClickedRpc;
+import com.vaadin.tapio.googlemaps.client.rpcs.PolygonClickedRpc;
+import com.vaadin.tapio.googlemaps.client.rpcs.PolygonDblClickedRpc;
+import com.vaadin.tapio.googlemaps.client.rpcs.PolygonRightClickedRpc;
 import com.vaadin.tapio.googlemaps.client.rpcs.PolylineClickedRpc;
 import com.vaadin.tapio.googlemaps.client.rpcs.PolylineDblClickedRpc;
 import com.vaadin.tapio.googlemaps.client.rpcs.PolylineRightClickedRpc;
+import java.util.Set;
 
 @Connect(GoogleMap.class)
 public class GoogleMapConnector extends AbstractComponentContainerConnector
     implements MarkerClickListener, MapMoveListener, MapClickListener,
         MarkerDragListener, InfoWindowClosedListener, MapTypeChangeListener,
         MapDblClickListener, MapRightClickListener, MarkerDblClickListener, MarkerRightClickListener,
+        PolygonClickListener, PolygonDblClickListener, PolygonRightClickListener,
         PolylineClickListener, PolylineDblClickListener, PolylineRightClickListener {
 
     private static final long serialVersionUID = -357262975672050103L;
@@ -73,6 +82,12 @@ public class GoogleMapConnector extends AbstractComponentContainerConnector
         .create(MarkerRightClickedRpc.class, this);
     private final MarkerDblClickedRpc markerDblClickedRpc = RpcProxy
         .create(MarkerDblClickedRpc.class, this);
+    private final PolygonClickedRpc polygonClickedRpc = RpcProxy
+        .create(PolygonClickedRpc.class, this);
+    private final PolygonDblClickedRpc polygonDblClickedRpc = RpcProxy
+        .create(PolygonDblClickedRpc.class, this);
+    private final PolygonRightClickedRpc polygonRightClickedRpc = RpcProxy
+        .create(PolygonRightClickedRpc.class, this);
     private final PolylineClickedRpc polylineClickedRpc = RpcProxy
         .create(PolylineClickedRpc.class, this);
     private final PolylineDblClickedRpc polylineDblClickedRpc = RpcProxy
@@ -140,6 +155,9 @@ public class GoogleMapConnector extends AbstractComponentContainerConnector
         getWidget().setMarkerClickListener(this);
         getWidget().setMarkerDblClickListener(this);
         getWidget().setMarkerRightClickListener(this);
+        getWidget().setPolygonClickListener(this);
+        getWidget().setPolygonDblClickListener(this);
+        getWidget().setPolygonRightClickListener(this);
         getWidget().setPolylineClickListener(this);
         getWidget().setPolylineDblClickListener(this);
         getWidget().setPolylineRightClickListener(this);
@@ -288,7 +306,22 @@ public class GoogleMapConnector extends AbstractComponentContainerConnector
     public void markerRightClicked(GoogleMapMarker clickedMarker) {
         markerRightClickedRpc.markerRightClicked(clickedMarker.getId());
     }
-
+    
+    @Override
+    public void polygonClicked(GoogleMapPolygon clickedPolygon) {
+        polygonClickedRpc.polygonClicked(clickedPolygon.getId());
+    }
+    
+    @Override
+    public void polygonDblClicked(GoogleMapPolygon clickedPolygon) {
+        polygonDblClickedRpc.polygonDblClicked(clickedPolygon.getId());
+    }
+    
+    @Override
+    public void polygonRightClicked(GoogleMapPolygon clickedPolygon) {
+        polygonRightClickedRpc.polygonRightClicked(clickedPolygon.getId());
+    }
+    
     @Override
     public void polylineClicked(GoogleMapPolyline clickedPolyline) {
         polylineClickedRpc.polylineClicked(clickedPolyline.getId());
