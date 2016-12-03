@@ -58,7 +58,7 @@ public class GISView extends AbstractTooledComponent {
                             Notification.show("You just clicked on a toolbar button!", Notification.Type.ERROR_MESSAGE);
                         }
                     }
-                }, AbstractTooledComponent.TOOLBAR_ORIENTATION_HORIZONTAL, ToolBarSize.NORMAL);
+                }, AbstractTooledComponent.TOOLBAR_ORIENTATION_HORIZONTAL, ToolBarSize.BIG);
         
         map = new GoogleMap("AIzaSyDdSZZu-XWKVw1yoj81xJKrv9RNJsKL4WM", null, "english");
         
