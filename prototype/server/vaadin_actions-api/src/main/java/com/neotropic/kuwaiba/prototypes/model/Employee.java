@@ -9,7 +9,7 @@ import java.util.Objects;
 
 /**
  * Represents a business domain object
- * @author duckman
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class Employee {
     private String name;

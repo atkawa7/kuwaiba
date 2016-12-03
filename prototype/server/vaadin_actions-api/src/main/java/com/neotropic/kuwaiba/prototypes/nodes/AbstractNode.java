@@ -12,7 +12,7 @@ import java.util.Objects;
 
 /**
  * A node that represents a business domain object from the model.
- * @author duckman
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  * @param <T> The type of the business object
  */
 public abstract class AbstractNode<T> {

@@ -17,7 +17,7 @@ import java.util.HashMap;
 
 /**
  * A variant of a JComplexPanel, that is, a modal window that serves forms.
- * @author duckman
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class FormWindow extends Window {
     /**

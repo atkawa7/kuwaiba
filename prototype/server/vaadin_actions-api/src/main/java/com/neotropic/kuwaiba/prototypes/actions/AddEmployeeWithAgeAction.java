@@ -17,7 +17,7 @@ import java.util.Arrays;
 
 /**
  *
- * @author duckman
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class AddEmployeeWithAgeAction extends AbstractComposedAction {
     

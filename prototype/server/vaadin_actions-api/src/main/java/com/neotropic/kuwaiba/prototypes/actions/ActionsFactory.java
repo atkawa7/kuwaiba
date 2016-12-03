@@ -7,7 +7,7 @@ package com.neotropic.kuwaiba.prototypes.actions;
 
 /**
  *
- * @author duckman
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ActionsFactory {
     static AddCompanyAction addCompanyAction;

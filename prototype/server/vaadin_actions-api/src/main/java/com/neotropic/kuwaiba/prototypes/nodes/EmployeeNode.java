@@ -12,7 +12,7 @@ import com.vaadin.ui.Tree;
 
 /**
  *
- * @author duckman
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class EmployeeNode extends AbstractNode {
 

@@ -11,12 +11,12 @@ import com.vaadin.ui.Notification;
 
 /**
  *
- * @author duckman
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class DeleteElementAction extends AbstractAction {
     
     public DeleteElementAction() {
-        super("Delete", new ThemeResource("img/warning.gif"));
+        super("Delete", new ThemeResource("icons/warning.gif"));
     }
 
     @Override

@@ -19,7 +19,7 @@ import java.util.List;
 
 /**
  * An contextual action that has a submenu
- * @author duckman
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public abstract class AbstractComposedAction extends AbstractAction {
     

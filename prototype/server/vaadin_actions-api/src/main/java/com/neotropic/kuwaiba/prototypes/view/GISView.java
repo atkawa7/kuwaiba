@@ -5,11 +5,13 @@
  */
 package com.neotropic.kuwaiba.prototypes.view;
 
+import com.neotropic.kuwaiba.prototypes.actions.AbstractAction;
 import com.neotropic.kuwaiba.prototypes.nodes.EmployeeNode;
 import com.vaadin.event.dd.DragAndDropEvent;
 import com.vaadin.event.dd.DropHandler;
 import com.vaadin.event.dd.acceptcriteria.AcceptAll;
 import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.tapio.googlemaps.GoogleMap;
 import com.vaadin.tapio.googlemaps.client.LatLon;
@@ -25,16 +27,42 @@ import com.vaadin.ui.Notification;
 import java.util.Arrays;
 
 /**
- *
- * @author duckman
+ * The Map component, currently supporting only GoogleMaps as map provider
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @SuppressWarnings("serial")
-public class GISView extends CustomComponent {
+public class GISView extends AbstractTooledComponent {
+    /**
+     * Default zoom level
+     */
     public static int DEFAULT_ZOOM_LEVEL = 15;
+    /**
+     * Default center location, Popayán <3
+     */
     public static LatLon DEFAULT_CENTER_LOCATION = new LatLon(2.441916, -76.6063356);
+    /**
+     * The map widget
+     */
+    final GoogleMap map;
+    
     
     public GISView() {
-        final GoogleMap map = new GoogleMap("", null, "english");
+        
+        super(new AbstractAction[] {
+                    new AbstractAction("Test Action for a Button") {
+                        {
+                            setIcon(new ThemeResource("icons/nav_tree_icon24.png"));
+                        }
+                        @Override
+                        public void actionPerformed(Object sourceComponent, Object targetObject) {
+                            Notification.show("You just clicked on a toolbar button!", Notification.Type.ERROR_MESSAGE);
+                        }
+                    }
+                }, AbstractTooledComponent.TOOLBAR_ORIENTATION_HORIZONTAL, ToolBarSize.NORMAL);
+        
+        map = new GoogleMap("AIzaSyDdSZZu-XWKVw1yoj81xJKrv9RNJsKL4WM", null, "english");
+        
+        
         map.setZoom(DEFAULT_ZOOM_LEVEL);
         map.setSizeFull();
         map.setCenter(DEFAULT_CENTER_LOCATION);
@@ -105,12 +133,9 @@ public class GISView extends CustomComponent {
                 return AcceptAll.get();
             }
         });
-        wrapper.setSizeFull();
         
-        setCompositionRoot(wrapper);
-        setSizeFull();
+        wrapper.setSizeFull();
+        setMainComponent(wrapper);
+        
     }
-    
-    
-    
 }

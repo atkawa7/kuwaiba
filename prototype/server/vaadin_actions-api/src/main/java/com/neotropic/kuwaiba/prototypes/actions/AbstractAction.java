@@ -10,7 +10,7 @@ import com.vaadin.server.Resource;
 
 /**
  * Root of all actions in the system
- * @author duckman
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public abstract class AbstractAction extends Action {
     public AbstractAction(String caption) {

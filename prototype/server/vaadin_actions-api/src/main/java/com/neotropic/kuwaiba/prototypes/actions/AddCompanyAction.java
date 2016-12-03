@@ -16,7 +16,7 @@ import com.vaadin.ui.UI;
 
 /**
  *
- * @author duckman
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class AddCompanyAction extends AbstractAction {
     
