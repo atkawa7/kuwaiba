@@ -60,7 +60,7 @@ public class GISView extends AbstractTooledComponent {
                     }
                 }, AbstractTooledComponent.TOOLBAR_ORIENTATION_HORIZONTAL, ToolBarSize.BIG);
         
-        map = new GoogleMap("AIzaSyDdSZZu-XWKVw1yoj81xJKrv9RNJsKL4WM", null, "english");
+        map = new GoogleMap("", null, "english");
         
         
         map.setZoom(DEFAULT_ZOOM_LEVEL);
