@@ -1,5 +1,5 @@
 /**
-* Wrapper for the original, hard-coded report that display a list of contracts and their expiration dates
+* Wrapper for the original, hard-coded report that displays a list of contracts and their expiration dates
 * Neotropic SAS - version 1.1
 * Parameters: None
 */

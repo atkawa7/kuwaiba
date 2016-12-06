@@ -60,7 +60,8 @@ public class LocalApplicationLogEntry {
     public static String[] types = {"Create Application Object", "Delete Application Object", "Update Application Object", 
                            "Create Inventory Object", "Delete Inventory Object", "Update Inventory Object", 
                            "Create Metadata Object", "Delete Metadata Object", "Update Metadata Object", 
-                           "Move object", "Massive Delete", "View Update", "Session Created", "Session Closed", "New User", "Users Deleted"};
+                           "Move object", "Massive Delete", "View Update", "Session Created", "Session Closed", 
+                           "New User", "Massive Application Object Update"};
 
     public LocalApplicationLogEntry(long id, long objectId, int type, String userName, long timestamp, String affectedProperty, String oldValue, String newValue, String notes) {
         this.id = id;
