@@ -99,3 +99,9 @@
 * Added preliminary support for commercial modules
 * Webservice API improved and extended
 * HTTPS support now documented
+
+1.1
+* Added support for templates
+* Added support for user defined reports
+* Passwords are now stored using BCrypt instead of MD5 hashes
+* Hard-coded reports were partly migrated to work as dynamic ones

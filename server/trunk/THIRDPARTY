@@ -1,9 +1,10 @@
 This software makes use of the following third-party components and neither of them was modified, only linked:
 
-* WAX, a simple API for XML (New BSD, http://opensource.org/licenses/BSD-3-Clause) http://code.google.com/p/waxy/
 * Neo4J (GPL) http://www.neo4j.org
+* Groovy (APL) http://www.groovy-lang.org/
+* JBcrypt  (ISC/BSD) http://www.mindrot.org/projects/jBCrypt/
 
 We want to thank all people that made possible this software to be available.
 
-All copyrights and trademarks associated to these third party components correspond to their owners. We don't claim any ownership to any of them.
+All copyrights and trademarks associated to these third party components correspond to their owners. We don't claim any ownership of any of them.
 
