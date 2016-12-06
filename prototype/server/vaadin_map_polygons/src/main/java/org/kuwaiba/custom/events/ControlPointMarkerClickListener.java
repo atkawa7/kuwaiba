@@ -27,7 +27,7 @@ import org.kuwaiba.connection.ConnectionUtils;
 import org.kuwaiba.custom.map.buttons.ConnectionButton;
 import org.kuwaiba.custom.overlays.ControlPointMarker;
 import org.kuwaiba.custom.polyline.Edge;
-import org.kuwaiba.utils.Constans;
+import org.kuwaiba.utils.Constants;
 
 /**
  * 
@@ -57,7 +57,7 @@ public class ControlPointMarkerClickListener implements MarkerClickListener {
                     controlPointClicked = controlPoint;
                     
                     GoogleMapPolyline polyline = controlPoint.getConnection().getEdge();
-                    polyline.setStrokeColor(Constans.selectedConnColor);
+                    polyline.setStrokeColor(Constants.selectedConnColor);
                     repaintConnection(controlPoint.getConnection());
                 }
                 else {
@@ -71,7 +71,7 @@ public class ControlPointMarkerClickListener implements MarkerClickListener {
                     }
                     else {
                         GoogleMapPolyline polyline = controlPoint.getConnection().getEdge();
-                        polyline.setStrokeColor(Constans.unselectedConnColor);
+                        polyline.setStrokeColor(Constants.unselectedConnColor);
                         repaintConnection(controlPoint.getConnection());
                     }
                     controlPointClicked = null;
@@ -100,7 +100,7 @@ public class ControlPointMarkerClickListener implements MarkerClickListener {
         LatLon latlon = ConnectionUtils.midPoint(leftcp.getPosition(), rightcp.getPosition());
         
         ControlPointMarker newDummycp = new ControlPointMarker(latlon, connection.getEdges());
-        newDummycp.setIconUrl(Constans.dummyControlPointIconUrl);
+        newDummycp.setIconUrl(Constants.dummyControlPointIconUrl);
         newDummycp.setConnection(connection);
         
         ControlPointMarker rightcpDummy = controlPoints.get(rightcpIndex - 1);
@@ -140,8 +140,8 @@ public class ControlPointMarkerClickListener implements MarkerClickListener {
                             
         String strokeColor = oldPolyline.getStrokeColor();
         edge.setStrokeColor(strokeColor);
-        edge.setStrokeOpacity(Constans.connStrokeOpacity);
-        edge.setStrokeWeight(Constans.connStrokeWeight);
+        edge.setStrokeOpacity(Constants.connStrokeOpacity);
+        edge.setStrokeWeight(Constants.connStrokeWeight);
                     
         for (ControlPointMarker cp : connection.getControlPoints())
             edge.getCoordinates().add(cp.getPosition());

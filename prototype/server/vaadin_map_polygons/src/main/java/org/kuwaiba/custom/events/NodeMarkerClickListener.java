@@ -21,7 +21,6 @@ import com.vaadin.tapio.googlemaps.GoogleMap;
 import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.tapio.googlemaps.client.events.MarkerClickListener;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
-import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
 import com.vaadin.ui.Notification;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +33,7 @@ import org.kuwaiba.custom.map.buttons.MeasureButton;
 import org.kuwaiba.custom.overlays.ControlPointMarker;
 import org.kuwaiba.custom.overlays.NodeMarker;
 import org.kuwaiba.custom.polyline.Edge;
-import org.kuwaiba.utils.Constans;
+import org.kuwaiba.utils.Constants;
 
 /**
  * 
@@ -88,7 +87,7 @@ public class NodeMarkerClickListener implements MarkerClickListener {
                         
                         ControlPointMarker centralControlPoint = new ControlPointMarker(position3, edges);
                         centralControlPoint.setDraggable(true);
-                        centralControlPoint.setIconUrl(Constans.dummyControlPointIconUrl);
+                        centralControlPoint.setIconUrl(Constants.dummyControlPointIconUrl);
                         googleMap.addMarker(centralControlPoint);
                         conn.getControlPoints().add(1, centralControlPoint);
                         centralControlPoint.setConnection(conn);

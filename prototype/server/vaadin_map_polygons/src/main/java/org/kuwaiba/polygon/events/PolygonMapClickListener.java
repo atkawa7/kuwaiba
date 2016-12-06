@@ -19,7 +19,6 @@ import com.vaadin.server.VaadinSession;
 import com.vaadin.tapio.googlemaps.GoogleMap;
 import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.tapio.googlemaps.client.events.MapClickListener;
-import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolygon;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
 import com.vaadin.ui.NativeSelect;
 import java.util.ArrayList;
@@ -27,6 +26,8 @@ import java.util.List;
 import org.kuwaiba.custom.map.buttons.DrawPolygonButton;
 import org.kuwaiba.custom.overlays.PolygonMarker;
 import org.kuwaiba.polygon.MapPolygon;
+import org.kuwaiba.polygon.PolygonExt;
+import org.kuwaiba.utils.Constants;
 
 /**
  *
@@ -39,7 +40,8 @@ public class PolygonMapClickListener implements MapClickListener {
 
     GoogleMap googleMap;
     GoogleMapPolyline polyline;
-    GoogleMapPolygon polygon;
+//    GoogleMapPolygon polygon;
+    PolygonExt polygonExt;
     
     private final NativeSelect nativeSelect;
     private final List<MapPolygon> mapPolygons;
@@ -53,7 +55,7 @@ public class PolygonMapClickListener implements MapClickListener {
         this.mapPolygons = mapPolygons;
         
         this.googleMap = googleMap;
-        polygon = null;
+        polygonExt = null;
         polyline = null;
     }
 
@@ -82,35 +84,37 @@ public class PolygonMapClickListener implements MapClickListener {
 
                 googleMap.addPolyline(polyline);
 
-                if (polygon != null)
-                    googleMap.removePolygonOverlay(polygon);
+                if (polygonExt != null)
+                    googleMap.removePolygonOverlay(polygonExt);
                 
-                polygon = new GoogleMapPolygon();
-                polygon.setFillColor("blue");
-                polygon.setFillOpacity(0.5);
-                polygon.setStrokeColor("blue");
-                polygon.setStrokeOpacity(1);
-                polygon.setStrokeWeight(1);                
+//                polygon = new GoogleMapPolygon();
+                polygonExt = new PolygonExt();
+                polygonExt.setFillColor(Constants.defaultPolygonColor);
+                polygonExt.setFillOpacity(0.5);
+                polygonExt.setStrokeColor(Constants.defaultPolygonColor);
+                polygonExt.setStrokeOpacity(1);
+                polygonExt.setStrokeWeight(1);                
                 
-                polygon.setCoordinates(coordinates);
+                polygonExt.setCoordinates(coordinates);
 
-                googleMap.addPolygonOverlay(polygon);
+                googleMap.addPolygonOverlay(polygonExt);
                 
                 if (position.equals(vertices.get(0).getPosition())) {
                     for (PolygonMarker vertex : vertices)
                         googleMap.removeMarker(vertex);
                     googleMap.removePolyline(polyline);
                     
-                    polygon.getCoordinates().remove(polygonMarker.getPosition());
+                    polygonExt.getCoordinates().remove(polygonMarker.getPosition());
                     
                     MapPolygon mapPolygon = new MapPolygon(googleMap);
+                    polygonExt.setMapPolygon(mapPolygon);
                     
                     List<PolygonMarker> vertices_ = new ArrayList();
                     for (PolygonMarker vertex : vertices)
                         vertices_.add(vertex);
                     
                     mapPolygon.setVertices(vertices_);
-                    mapPolygon.setPolygon(polygon);
+                    mapPolygon.setPolygon(polygonExt);
                     mapPolygon.setPolyline(polyline);
                     mapPolygon.setPolygonId(mapPolygons.size());
                     
@@ -120,7 +124,7 @@ public class PolygonMapClickListener implements MapClickListener {
                     session.setAttribute(DrawPolygonButton.NAME, false);
                     
                     this.vertices = new ArrayList();
-                    this.polygon = null;
+                    this.polygonExt = null;
                     this.polyline = null;
                 }
                 else

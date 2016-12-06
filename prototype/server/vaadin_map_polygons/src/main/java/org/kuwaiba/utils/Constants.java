@@ -19,7 +19,7 @@ package org.kuwaiba.utils;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class Constans {
+public class Constants {
     public static final String defaultConnectionColor = "green";
     public static final String defaultSelectedConnColor = "yellow";
     public static final String dummyControlPointIconUrl = "VAADIN/img/dummyControlPoint.png";
@@ -29,4 +29,8 @@ public class Constans {
     public static final String selectedConnColor = "yellow";
     public static final double connStrokeOpacity = 1;
     public static int connStrokeWeight = 2;
+    
+    public static final String defaultPolygonColor = "blue";
+    public static final String vertexIconUrl = "VAADIN/img/polygonControlPoint.png";
+    public static final String dummyVertexIconUrl = "VAADIN/img/polygonMiddleControlPoint.png";
 }

@@ -17,9 +17,6 @@ package org.kuwaiba.custom.map.xml;
 
 import com.vaadin.tapio.googlemaps.GoogleMap;
 import com.vaadin.tapio.googlemaps.client.LatLon;
-import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolygon;
-import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
-import com.vaadin.ui.VerticalLayout;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,6 +31,7 @@ import org.kuwaiba.custom.overlays.ControlPointMarker;
 import org.kuwaiba.custom.overlays.NodeMarker;
 import org.kuwaiba.custom.polyline.Edge;
 import org.kuwaiba.polygon.MapPolygon;
+import org.kuwaiba.polygon.PolygonExt;
 
 /**
  *
@@ -152,7 +150,8 @@ public class MapFileReader {
                             edges.add(connection);
                         } // end if edges
                         if (reader.getName().equals(qNamePolygon)) {
-                            GoogleMapPolygon polygon = new GoogleMapPolygon();
+                            PolygonExt polygonExt = new PolygonExt();
+//                            GoogleMapPolygon polygon = new GoogleMapPolygon();
                             String color = reader.getAttributeValue(null, "color");
                             
                             while (true) {
@@ -162,27 +161,29 @@ public class MapFileReader {
                                         double lat = Double.valueOf(reader.getAttributeValue(null, "lat"));
                                         double lon = Double.valueOf(reader.getAttributeValue(null, "lon"));
                                         
-                                        polygon.getCoordinates().add(new LatLon(lat, lon));                                        
+                                        polygonExt.getCoordinates().add(new LatLon(lat, lon));                                        
                                     }
                                 }
                                 else
                                     break;
                             }                            
                             //TODO: storage the color 
-                            polygon.setFillColor(color);
-                            polygon.setFillOpacity(0.5);
-                            polygon.setStrokeColor(color);
-                            polygon.setStrokeOpacity(1);
-                            polygon.setStrokeWeight(1);
+                            polygonExt.setFillColor(color);
+                            polygonExt.setFillOpacity(0.5);
+                            polygonExt.setStrokeColor(color);
+                            polygonExt.setStrokeOpacity(1);
+                            polygonExt.setStrokeWeight(1);
                             
                             MapPolygon mapPolygon = new MapPolygon(googleMap);
                             
-                            mapPolygon.setPolygon(polygon);
+                            mapPolygon.setPolygon(polygonExt);
                             
                             mapPolygon.setPolygonId(polygonIndex);
                             polygonIndex += 1;
                             
                             mapPolygons.add(mapPolygon);
+                            
+                            polygonExt.setMapPolygon(mapPolygon);
                         } // end if polygon
                     } // end if 
                 }  // end while

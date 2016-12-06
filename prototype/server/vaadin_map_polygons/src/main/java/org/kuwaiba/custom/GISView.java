@@ -24,14 +24,8 @@ import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.tapio.googlemaps.GoogleMap;
 import com.vaadin.tapio.googlemaps.client.LatLon;
-import com.vaadin.tapio.googlemaps.client.events.PolygonClickListener;
-import com.vaadin.tapio.googlemaps.client.events.PolygonDblClickListener;
-import com.vaadin.tapio.googlemaps.client.events.PolygonRightClickListener;
-import com.vaadin.tapio.googlemaps.client.events.PolylineClickListener;
-import com.vaadin.tapio.googlemaps.client.events.PolylineRightClickListener;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolygon;
-import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.DragAndDropWrapper;
@@ -44,7 +38,6 @@ import com.vaadin.ui.VerticalLayout;
 import java.util.ArrayList;
 import java.util.List;
 import org.kuwaiba.connection.Connection;
-import org.kuwaiba.connection.ConnectionUtils;
 import org.kuwaiba.custom.events.ControlPointMarkerClickListener;
 import org.kuwaiba.custom.events.ControlPointMarkerDragListener;
 import org.kuwaiba.custom.events.NodeMarkerClickListener;
@@ -57,16 +50,12 @@ import org.kuwaiba.custom.map.buttons.SaveButton;
 import org.kuwaiba.custom.map.buttons.UploadMapButton;
 import org.kuwaiba.custom.overlays.ControlPointMarker;
 import org.kuwaiba.custom.overlays.NodeMarker;
-import org.kuwaiba.custom.overlays.PolygonMarker;
-import org.kuwaiba.custom.polyline.Edge;
 import org.kuwaiba.custom.polyline.events.EdgeClick;
 import org.kuwaiba.custom.polyline.events.EdgeDblClick;
 import org.kuwaiba.polygon.MapPolygon;
 import org.kuwaiba.polygon.events.PolygonMapClickListener;
 import org.kuwaiba.polygon.events.PolygonMarkerClickListener;
-import org.kuwaiba.polygon.events.PolygonMarkerDragListener;
-import org.kuwaiba.polygon.events.VertexMarkerClickListener;
-import org.kuwaiba.utils.Constans;
+import org.kuwaiba.polygon.events.PolygonRightClickListenerImpl;
 // remove the action change connection color
 // ck remove the action add break point
 // ck remove the delete connection action
@@ -80,7 +69,7 @@ import org.kuwaiba.utils.Constans;
  */
 @SuppressWarnings("serial")
 public class GISView extends CustomComponent {
-    private final String apiKey = "AIzaSyDdSZZu-XWKVw1yoj81xJKrv9RNJsKL4WM";
+    private final String apiKey = "";
     private final GoogleMap googleMap = new GoogleMap(apiKey, null, "english");
     private double centerLat = 2.4448;
     private double centerLon = -76.6147;  
@@ -122,6 +111,8 @@ public class GISView extends CustomComponent {
             }
         });
         */
+        googleMap.addPolygonRightClickListener(new PolygonRightClickListenerImpl(googleMap));
+        /*
         googleMap.addPolygonClickListener(new PolygonClickListener() {
 
             @Override
@@ -145,6 +136,7 @@ public class GISView extends CustomComponent {
                 Notification.show("right click on polygon", Notification.Type.ERROR_MESSAGE);
             }
         });
+        */
         
         DragAndDropWrapper wrapper = new DragAndDropWrapper(googleMap);
         
@@ -291,6 +283,7 @@ public class GISView extends CustomComponent {
         googleMap.addMapClickListener(polygonMapClickListener);
         googleMap.addMarkerClickListener(new PolygonMarkerClickListener(session, polygonMapClickListener));
         /**/        
+        /*
         Button btnEditPolygon = new Button("Edit polygon");
         mapSearchLayout.addComponent(btnEditPolygon);
         
@@ -367,6 +360,8 @@ public class GISView extends CustomComponent {
                 }
             }
         });
+                */
+        /*
         Button btnDeletePolygon = new Button("Delete polygon");
         mapSearchLayout.addComponent(btnDeletePolygon);
         
@@ -402,6 +397,7 @@ public class GISView extends CustomComponent {
                 mapPolygons.remove(mapPolygon);
             }
         });
+                */
         
         NativeSelect nativeSelectPolygonColor = new NativeSelect();
         nativeSelectPolygonColor.addItem("red");
@@ -467,7 +463,7 @@ public class GISView extends CustomComponent {
                 newPolygon.setStrokeOpacity(oldPolygon.getStrokeOpacity());
                 newPolygon.setStrokeWeight(oldPolygon.getStrokeWeight());
                 
-                mapPolygon.setPolygon(newPolygon);
+//                mapPolygon.setPolygon(newPolygon);
                 googleMap.addPolygonOverlay(newPolygon);
             }
         });

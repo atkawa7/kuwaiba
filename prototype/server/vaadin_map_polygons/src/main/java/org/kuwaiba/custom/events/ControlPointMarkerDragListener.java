@@ -26,7 +26,7 @@ import org.kuwaiba.connection.Connection;
 import org.kuwaiba.connection.ConnectionUtils;
 import org.kuwaiba.custom.overlays.ControlPointMarker;
 import org.kuwaiba.custom.polyline.Edge;
-import org.kuwaiba.utils.Constans;
+import org.kuwaiba.utils.Constants;
 
 /**
  * 
@@ -78,12 +78,12 @@ public class ControlPointMarkerDragListener implements MarkerDragListener {
         
         ControlPointMarker leftDummy = new ControlPointMarker(leftCoordinate, connection.getEdges());
         leftDummy.setConnection(connection);
-        leftDummy.setIconUrl(Constans.dummyControlPointIconUrl);        
+        leftDummy.setIconUrl(Constants.dummyControlPointIconUrl);        
         googleMap.addMarker(leftDummy);
         
         ControlPointMarker rightDummy = new ControlPointMarker(rightCoordinate, connection.getEdges());
         rightDummy.setConnection(connection);
-        rightDummy.setIconUrl(Constans.dummyControlPointIconUrl);
+        rightDummy.setIconUrl(Constants.dummyControlPointIconUrl);
         googleMap.addMarker(rightDummy);
         
         controlPoints.add(rightControlPointIdx, rightDummy);
@@ -117,12 +117,12 @@ public class ControlPointMarkerDragListener implements MarkerDragListener {
         
         ControlPointMarker newLeftDummy = new ControlPointMarker(leftCoordinate, connection.getEdges());
         newLeftDummy.setConnection(connection);
-        newLeftDummy.setIconUrl(Constans.dummyControlPointIconUrl);        
+        newLeftDummy.setIconUrl(Constants.dummyControlPointIconUrl);        
         googleMap.addMarker(newLeftDummy);
         
         ControlPointMarker newRightDummy = new ControlPointMarker(rightCoordinate, connection.getEdges());
         newRightDummy.setConnection(connection);
-        newRightDummy.setIconUrl(Constans.dummyControlPointIconUrl);
+        newRightDummy.setIconUrl(Constants.dummyControlPointIconUrl);
         googleMap.addMarker(newRightDummy);
         
         controlPoints.add(rightControlPointIdx, newRightDummy);
@@ -134,7 +134,7 @@ public class ControlPointMarkerDragListener implements MarkerDragListener {
     }
     
     private void addNewPolyline(ControlPointMarker controlPoint) {
-        controlPoint.setIconUrl(Constans.controlPointIconUrl);
+        controlPoint.setIconUrl(Constants.controlPointIconUrl);
         
         Connection connection = controlPoint.getConnection();
         List<ControlPointMarker> controlPoints = connection.getControlPoints();

@@ -26,6 +26,7 @@ import java.util.List;
 import org.kuwaiba.connection.ConnectionUtils;
 import org.kuwaiba.custom.overlays.PolygonMarker;
 import org.kuwaiba.polygon.MapPolygon;
+import org.kuwaiba.polygon.PolygonExt;
 
 /**
  *
@@ -67,15 +68,16 @@ public class PolygonMarkerDragListener implements MarkerDragListener {
                             coordinatesPolygon.add(vertex.getPosition());
                     }
                 }
-                GoogleMapPolygon newPolygon = new GoogleMapPolygon();
+//                GoogleMapPolygon newPolygon = new GoogleMapPolygon();
+                PolygonExt newPolygonExt = new PolygonExt(mapPolygon);
                 GoogleMapPolyline newPolyline = new GoogleMapPolyline();
 
-                newPolygon.setCoordinates(coordinatesPolygon);
-                newPolygon.setFillColor(polygon.getFillColor());
-                newPolygon.setFillOpacity(polygon.getFillOpacity());
-                newPolygon.setStrokeColor(polygon.getStrokeColor());
-                newPolygon.setStrokeOpacity(polygon.getStrokeOpacity());
-                newPolygon.setStrokeWeight(polygon.getStrokeWeight());
+                newPolygonExt.setCoordinates(coordinatesPolygon);
+                newPolygonExt.setFillColor(polygon.getFillColor());
+                newPolygonExt.setFillOpacity(polygon.getFillOpacity());
+                newPolygonExt.setStrokeColor(polygon.getStrokeColor());
+                newPolygonExt.setStrokeOpacity(polygon.getStrokeOpacity());
+                newPolygonExt.setStrokeWeight(polygon.getStrokeWeight());
 
                 newPolyline.setCoordinates(coordinatesPolyline);
                 newPolyline.setStrokeColor(polyline.getStrokeColor());
@@ -83,9 +85,9 @@ public class PolygonMarkerDragListener implements MarkerDragListener {
                 newPolyline.setStrokeWeight(polyline.getStrokeWeight());
 
                 googleMap.addPolyline(newPolyline);
-                googleMap.addPolygonOverlay(newPolygon);
+                googleMap.addPolygonOverlay(newPolygonExt);
 
-                mapPolygon.setPolygon(newPolygon);
+                mapPolygon.setPolygon(newPolygonExt);
                 mapPolygon.setPolyline(newPolyline);
             }
         }

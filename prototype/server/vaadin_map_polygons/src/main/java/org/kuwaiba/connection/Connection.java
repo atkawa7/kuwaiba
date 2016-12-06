@@ -16,14 +16,13 @@
 package org.kuwaiba.connection;
 
 import com.vaadin.tapio.googlemaps.GoogleMap;
-import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
 import com.vaadin.ui.Notification;
 import java.util.ArrayList;
 import java.util.List;
 import org.kuwaiba.custom.overlays.ControlPointMarker;
 import org.kuwaiba.custom.overlays.NodeMarker;
 import org.kuwaiba.custom.polyline.Edge;
-import org.kuwaiba.utils.Constans;
+import org.kuwaiba.utils.Constants;
 
 /**
  * 
@@ -51,7 +50,7 @@ public class Connection {
         source = null;
         target = null;
         
-        connectionColor = Constans.defaultConnectionColor;
+        connectionColor = Constants.defaultConnectionColor;
     }
     
     public void setStartAndEndControlPoints(NodeMarker nodeMarker) {

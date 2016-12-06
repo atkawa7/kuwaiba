@@ -28,7 +28,7 @@ import org.kuwaiba.custom.map.xml.MapFileReader;
 import org.kuwaiba.custom.overlays.ControlPointMarker;
 import org.kuwaiba.custom.overlays.NodeMarker;
 import org.kuwaiba.polygon.MapPolygon;
-import org.kuwaiba.utils.Constans;
+import org.kuwaiba.utils.Constants;
 
 /**
  *
@@ -69,7 +69,7 @@ public class UploadMapButton extends Button {
                                     
                                     ControlPointMarker dummycp = new ControlPointMarker(latlon, edges);
                                     dummycp.setConnection(edge);
-                                    dummycp.setIconUrl(Constans.dummyControlPointIconUrl);
+                                    dummycp.setIconUrl(Constants.dummyControlPointIconUrl);
                                     dummyControlPoints.add(dummycp);
                                     
                                     googleMap.addMarker(dummycp);
@@ -81,7 +81,7 @@ public class UploadMapButton extends Button {
                     LatLon latlon = ConnectionUtils.midPoint(srcControlPoint.getPosition(), nextControlPoint.getPosition());
                     ControlPointMarker dummycp = new ControlPointMarker(latlon, edges);
                     dummycp.setConnection(edge);
-                    dummycp.setIconUrl(Constans.dummyControlPointIconUrl);
+                    dummycp.setIconUrl(Constants.dummyControlPointIconUrl);
                     dummyControlPoints.add(0, dummycp);
                                     
                     googleMap.addMarker(dummycp);

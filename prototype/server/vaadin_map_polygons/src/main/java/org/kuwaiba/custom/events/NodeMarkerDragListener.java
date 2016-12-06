@@ -18,14 +18,13 @@ package org.kuwaiba.custom.events;
 import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.tapio.googlemaps.client.events.MarkerDragListener;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
-import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
 import java.util.List;
 import org.kuwaiba.connection.Connection;
 import org.kuwaiba.connection.ConnectionUtils;
 import org.kuwaiba.custom.overlays.ControlPointMarker;
 import org.kuwaiba.custom.overlays.NodeMarker;
 import org.kuwaiba.custom.polyline.Edge;
-import org.kuwaiba.utils.Constans;
+import org.kuwaiba.utils.Constants;
 
 /**
  * 
@@ -46,8 +45,6 @@ public class NodeMarkerDragListener implements MarkerDragListener {
             NodeMarker nodeMarker = (NodeMarker) draggedMarker;
             
             for (Connection connection : nodeMarker.getConnections()) {
-                ControlPointMarker draggedControlPoint = null;
-
                 if (connection.getSource().equals(nodeMarker))
                     markerDragSource(nodeMarker.getPosition(), connection);
                 
@@ -75,7 +72,7 @@ public class NodeMarkerDragListener implements MarkerDragListener {
         
         ControlPointMarker dummyControlPoint = new ControlPointMarker(latlon, connection.getEdges());
         dummyControlPoint.setConnection(connection);
-        dummyControlPoint.setIconUrl(Constans.dummyControlPointIconUrl);
+        dummyControlPoint.setIconUrl(Constants.dummyControlPointIconUrl);
         
         connection.getMap().addMarker(dummyControlPoint);
         connection.getControlPoints().add(cpIndex, controlPoint);
@@ -101,7 +98,7 @@ public class NodeMarkerDragListener implements MarkerDragListener {
         
         ControlPointMarker dummyControlPoint = new ControlPointMarker(latlon, connection.getEdges());
         dummyControlPoint.setConnection(connection);
-        dummyControlPoint.setIconUrl(Constans.dummyControlPointIconUrl);
+        dummyControlPoint.setIconUrl(Constants.dummyControlPointIconUrl);
         
         connection.getMap().addMarker(dummyControlPoint);
         connection.getControlPoints().add(dummyControlPoint);
@@ -124,7 +121,7 @@ public class NodeMarkerDragListener implements MarkerDragListener {
         
         connection.setConnection(newEdge);
         
-        connection.getMap().removePolyline(newEdge);
+        connection.getMap().removePolyline(oldEdge);
         connection.getMap().addPolyline(newEdge);
     }
 }

@@ -26,6 +26,7 @@ import java.util.List;
 import org.kuwaiba.connection.ConnectionUtils;
 import org.kuwaiba.custom.overlays.PolygonMarker;
 import org.kuwaiba.polygon.MapPolygon;
+import org.kuwaiba.polygon.PolygonExt;
 
 /**
  *
@@ -174,15 +175,16 @@ public class VertexMarkerClickListener implements MarkerClickListener {
             coordinates.add(vertex_.getPosition());
         coordinates.add(vertices.get(0).getPosition());
           */  
-        GoogleMapPolygon newPolygon = new GoogleMapPolygon();
+//        GoogleMapPolygon newPolygon = new GoogleMapPolygon();
+        PolygonExt polygonExt = new PolygonExt(mapPolygon);
         GoogleMapPolyline newPolyline = new GoogleMapPolyline();
             
-        newPolygon.setCoordinates(coordinatesPolygon);
-        newPolygon.setFillColor(polygon.getFillColor());
-        newPolygon.setFillOpacity(polygon.getFillOpacity());
-        newPolygon.setStrokeColor(polygon.getStrokeColor());
-        newPolygon.setStrokeOpacity(polygon.getStrokeOpacity());
-        newPolygon.setStrokeWeight(polygon.getStrokeWeight());
+        polygonExt.setCoordinates(coordinatesPolygon);
+        polygonExt.setFillColor(polygon.getFillColor());
+        polygonExt.setFillOpacity(polygon.getFillOpacity());
+        polygonExt.setStrokeColor(polygon.getStrokeColor());
+        polygonExt.setStrokeOpacity(polygon.getStrokeOpacity());
+        polygonExt.setStrokeWeight(polygon.getStrokeWeight());
             
         newPolyline.setCoordinates(coordinatesPolyline);
         newPolyline.setStrokeColor(polyline.getStrokeColor());
@@ -190,9 +192,9 @@ public class VertexMarkerClickListener implements MarkerClickListener {
         newPolyline.setStrokeWeight(polyline.getStrokeWeight());
             
         googleMap.addPolyline(newPolyline);
-        googleMap.addPolygonOverlay(newPolygon);
+        googleMap.addPolygonOverlay(polygonExt);
                    
-        mapPolygon.setPolygon(newPolygon);
+        mapPolygon.setPolygon(polygonExt);
         mapPolygon.setPolyline(newPolyline);
     }
     

@@ -16,7 +16,6 @@
 package org.kuwaiba.polygon;
 
 import com.vaadin.tapio.googlemaps.GoogleMap;
-import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolygon;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
 import java.util.List;
 import org.kuwaiba.custom.overlays.PolygonMarker;
@@ -33,7 +32,7 @@ public class MapPolygon {
     private List<PolygonMarker> vertices;
     
     private final GoogleMap googleMap;
-    private GoogleMapPolygon polygon;
+    private PolygonExt polygon;
     private GoogleMapPolyline polyline;
     
     private PolygonMarkerDragListener dragListener;
@@ -43,11 +42,11 @@ public class MapPolygon {
         this.googleMap = googleMap;
     }
 
-    public GoogleMapPolygon getPolygon() {
+    public PolygonExt getPolygon() {
         return polygon;
     }
 
-    public void setPolygon(GoogleMapPolygon polygon) {
+    public void setPolygon(PolygonExt polygon) {
         this.polygon = polygon;
     }
 
