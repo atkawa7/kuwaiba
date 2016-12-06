@@ -75,6 +75,6 @@ public class LocalPool extends LocalObjectLight {
     
     @Override
     public String toString() {
-        return getName() +" [" + getClassName() + "]";
+        return getName() +" [Pool of " + getClassName() + "]";
     }
 }
