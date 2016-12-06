@@ -525,7 +525,7 @@ public interface BusinessEntityManager {
      * @param reportName Name of the report.
      * @param reportDescription Report description.
      * @param script Script text.
-     * @param outputType What will be the default output of this report? See ClassLevelReportDescriptor for possible values
+     * @param outputType What will be the default output of this report? See RemoteReportLight for possible values
      * @param enabled If enabled, a report can be executed.
      * @return The id of the newly created report.
      * @throws MetadataObjectNotFoundException If the class provided could not be found.

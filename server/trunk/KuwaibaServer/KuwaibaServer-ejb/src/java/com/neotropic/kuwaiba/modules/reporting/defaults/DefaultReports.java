@@ -769,7 +769,7 @@ public class DefaultReports {
         return new RawReport("MPLS Service Detail", "Neotropic SAS", "1.1", MPLSDetailReportText);
     }
     
-    public RawReport buildLogicalConfiguratinInterfacesReport(String logicalConfigurationClassName, long logicalConfigurationId) 
+    public RawReport buildLogicalConfigurationInterfacesReport(String logicalConfigurationClassName, long logicalConfigurationId) 
             throws MetadataObjectNotFoundException, ObjectNotFoundException,
             InvalidArgumentException, ApplicationObjectNotFoundException, 
             NotAuthorizedException

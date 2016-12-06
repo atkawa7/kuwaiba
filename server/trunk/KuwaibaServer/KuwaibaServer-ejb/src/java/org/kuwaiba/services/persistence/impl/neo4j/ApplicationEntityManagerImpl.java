@@ -75,6 +75,7 @@ import org.kuwaiba.ws.todeserialize.StringPair;
 import org.kuwaiba.ws.toserialize.application.TaskNotificationDescriptor;
 import org.kuwaiba.ws.toserialize.application.TaskScheduleDescriptor;
 import org.kuwaiba.ws.toserialize.application.UserInfoLight;
+import org.mindrot.jbcrypt.BCrypt;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -232,7 +233,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
             newUserNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
             newUserNode.setProperty(Constants.PROPERTY_NAME, userName);
-            newUserNode.setProperty(Constants.PROPERTY_PASSWORD, Util.getMD5Hash(password));
+            newUserNode.setProperty(Constants.PROPERTY_PASSWORD, BCrypt.hashpw(password, BCrypt.gensalt()));
                 
             if(firstName == null)
                 firstName = "";
@@ -299,7 +300,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 userIndex.putIfAbsent(userNode, Constants.PROPERTY_NAME, userName);
             }
             if (password != null)
-                userNode.setProperty(Constants.PROPERTY_PASSWORD, Util.getMD5Hash(password));
+                userNode.setProperty(Constants.PROPERTY_PASSWORD, BCrypt.hashpw(password, BCrypt.gensalt()));
             if (firstName != null)
                 userNode.setProperty(Constants.PROPERTY_FIRST_NAME, firstName);
             if (lastName != null)
@@ -367,7 +368,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 cm.removeUser(newUserName);
             }
             if (password != null)
-                userNode.setProperty(Constants.PROPERTY_PASSWORD, Util.getMD5Hash(password));
+                userNode.setProperty(Constants.PROPERTY_PASSWORD, BCrypt.hashpw(password, BCrypt.gensalt()));
             if(firstName != null)
                 userNode.setProperty(Constants.PROPERTY_FIRST_NAME, firstName);
             if(lastName != null)
@@ -1608,7 +1609,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         if (userName == null || password == null)
             throw  new ApplicationObjectNotFoundException("User or Password can not be null");
         try(Transaction tx = graphDb.beginTx()) {
-            Node userNode = userIndex.get(Constants.PROPERTY_NAME,userName).getSingle();
+            Node userNode = userIndex.get(Constants.PROPERTY_NAME, userName).getSingle();
             
             if (userNode == null)
                 throw new ApplicationObjectNotFoundException("User does not exist");
@@ -1616,7 +1617,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (!(Boolean)userNode.getProperty(Constants.PROPERTY_ENABLED))
                 throw new ApplicationObjectNotFoundException("This user is not enabled");
 
-            if (Util.getMD5Hash(password).equals(userNode.getProperty(Constants.PROPERTY_PASSWORD))){
+            if (BCrypt.checkpw(password, (String)userNode.getProperty(Constants.PROPERTY_PASSWORD))){
                 UserProfile user = Util.createUserProfileFromNode(userNode);
                 cm.putUser(user);
             }
@@ -1654,7 +1655,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public int[] executePatch() throws NotAuthorizedException {
+    public String[] executePatch() throws NotAuthorizedException {
         int executedFiles = 0;
         BufferedReader br = null;
         File patchDirectory = new File(Constants.PACTHES_PATH);
@@ -1689,15 +1690,15 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     }
                 }
             }
-        }//end for
-        return new int[]{executedFiles, totalPatchFiles};
+        }
+        return new String[0];
     }
     
     @Override
     public void setConfiguration (Properties properties) {
         this.configuration = properties;
     }
-    
+
     @Override
     public Properties getConfiguration () {
         return this.configuration;

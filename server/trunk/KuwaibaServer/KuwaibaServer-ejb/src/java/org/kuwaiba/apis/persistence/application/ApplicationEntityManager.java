@@ -84,6 +84,7 @@ public interface ApplicationEntityManager {
     
     /**
      * Set the properties of a given user using the id to search for it
+     * @param oid User id
      * @param userName New user's name. Mandatory.
      * @param password New user's password. Use null to leave it unchanged
      * @param firstName New user's first name. Use null to leave it unchanged
@@ -598,12 +599,10 @@ public interface ApplicationEntityManager {
     public UserProfile getUserInSession(String IPAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException;
     
     /**
-     * Executes a patch file 
-     * @return 
-     * @throws MetadataObjectNotFoundException
-     * @throws NotAuthorizedException 
+     * Executes a set of patches
+     * @return The error messages (if any) for every executed patch. If null, the execution was successful
      */
-    public int[] executePatch() throws NotAuthorizedException;
+    public String[] executePatch() throws NotAuthorizedException ;
     
     /**
      * Closes a session

@@ -32,16 +32,15 @@ public interface ToolsBeanRemote {
     public void resetAdmin() throws Exception;
     
     /**
-     * Executes patches
-     * @return 
-     * @throws Exception 
-     */
-    public int[] executePatch() throws Exception;
-    
-    /**
      * load the initial data model 
      * @param dataModelFileAsByteArray The file to be processed, uploaded by the user
      * @throws ServerSideException 
      */
     public void loadDataModel(byte[] dataModelFileAsByteArray) throws ServerSideException;
+    /**
+     * Executes the selected paches
+     * @param patches A string array with the ids of the patches to be executed.
+     * @return The error messages (if any) after applying the patches. Null entries mean successful execution for the corresponding patches
+     */
+    public String[] executePatches(String[] patches);
 }

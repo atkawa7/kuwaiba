@@ -29,9 +29,13 @@
                         <td  class="tileOption">
                             <h:commandLink style="color: white" action="#{Tools.createResetAdminAccount}" value="#{bundle.IndexCreateResetAdminAccount}" immediate="true" />
                         </td>
+                        <td class="tileOption">
+                            <h:commandLink style="color: white" action="#{Tools.prepareApplyPatches}" value="#{bundle.IndexApplyPatches}"  immediate="true" />
+                        </td>
                         <td  class="tileOption">
                             <a style="color: white" href="/kuwaiba/KuwaibaService?wsdl">#{bundle.IndexWebServiceWSDL}</a>
                         </td>
+                        
                     </tr>
                 </table>
             </h:form>

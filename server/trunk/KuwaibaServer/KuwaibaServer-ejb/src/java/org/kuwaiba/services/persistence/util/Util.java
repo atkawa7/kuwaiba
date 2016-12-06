@@ -22,11 +22,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigInteger;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -203,25 +200,25 @@ public class Util {
     public static byte[] readBytesFromFile(String fileName) throws FileNotFoundException, IOException{
         byte[] bytes = null;
         File f = new File(fileName);
-        InputStream is = new FileInputStream(f);
-        long length = f.length();
-
-        if (length < Integer.MAX_VALUE) { //checks if the file is too big
-            bytes = new byte[(int)length];
-            // Read in the bytes
-            int offset = 0;
-            int numRead = 0;
-            while (offset < bytes.length
-                   && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
-                offset += numRead;
-            }
-
-            // Ensure all the bytes have been read in
-            if (offset < bytes.length) {
-                throw new IOException("Could not completely read file " + f.getName());
+        try (InputStream is = new FileInputStream(f)) {
+            long length = f.length();
+            
+            if (length < Integer.MAX_VALUE) { //checks if the file is too big
+                bytes = new byte[(int)length];
+                // Read in the bytes
+                int offset = 0;
+                int numRead = 0;
+                while (offset < bytes.length
+                        && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
+                    offset += numRead;
+                }
+                
+                // Ensure all the bytes have been read in
+                if (offset < bytes.length) {
+                    throw new IOException("Could not completely read file " + f.getName());
+                }
             }
         }
-        is.close();
         return bytes;
     }
 
@@ -676,26 +673,9 @@ public class Util {
     }
 
     /**
-     * Given a plain string, it calculate the MD5 hash. This method is used when authenticating users
-     * Thanks to cholland for the code snippet at http://snippets.dzone.com/posts/show/3686
-     * @param pass
-     * @return the MD5 hash for the given string
-     */
-    public static String getMD5Hash(String pass) {
-        try{
-		MessageDigest m = MessageDigest.getInstance("MD5");
-		byte[] data = pass.getBytes();
-		m.update(data,0,data.length);
-		BigInteger i = new BigInteger(1,m.digest());
-		return String.format("%1$032X", i);
-        }catch(NoSuchAlgorithmException nsa){
-            return null;
-        }
-    }
-
-    /**
      * Retrieves the subclasses of a given class metadata node within the class hierarchy
-     * @return
+     * @param classMetadata The parent class metadata
+     * @return The root node of the list of class metadata nodes
      */
 
     public static Iterable<Node> getAllSubclasses(final Node classMetadata){

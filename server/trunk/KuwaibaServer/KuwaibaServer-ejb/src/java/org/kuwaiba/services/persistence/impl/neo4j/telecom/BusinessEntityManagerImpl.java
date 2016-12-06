@@ -1424,6 +1424,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             environmentParameters.setVariable("classIndex", classIndex); //NOI18N
             environmentParameters.setVariable("defaultReports", defaultReports); //NOI18N
             
+            //To keep backwards compatibility
+            environmentParameters.setVariable("objectClassName", objectClassName); //NOI18N
+            environmentParameters.setVariable("objectId", objectId); //NOI18N
+            
             try {
                 GroovyShell shell = new GroovyShell(BusinessEntityManager.class.getClassLoader(), environmentParameters);
                 Object theResult = shell.evaluate(script);

@@ -34,12 +34,20 @@ import org.kuwaiba.web.misc.JsfUtil;
 public class ToolsController implements Serializable {
     
     private Part dataModelFile;
+    /**
+     * The patches to be executed
+     */
+    private String[] patches;
     
     @EJB
     private ToolsBeanRemote tbr;
        
     public String prepareResetDatabase() {
-        return "ResetDatabase";
+        return "ResetDatabase"; //NOI18N
+    }
+    
+    public String prepareApplyPatches(){
+        return "ApplyPatches"; //NOI18N
     }
     
     public String resetDatabase () {
@@ -75,6 +83,27 @@ public class ToolsController implements Serializable {
         }
         return "index";
     }
+    
+    public String applyPatches() {
+        try {
+            
+            if (patches == null || patches.length == 0) 
+                JsfUtil.addSuccessMessage(String.format("No patches were selected."));
+            else {
+                String[] executedPatchesMessages = tbr.executePatches(patches);
+
+                for (int i = 0; i < executedPatchesMessages.length; i++) {
+                    if (executedPatchesMessages[i] == null)
+                        JsfUtil.addSuccessMessage(String.format("Patch %s applied sucessfully", i + 1));
+                    else
+                        JsfUtil.addErrorMessage(String.format("Patch %s exited with error: %s", i + 1, executedPatchesMessages[i]));
+                }
+            }
+        } catch (Exception e) {
+            JsfUtil.addErrorMessage("An unexpected error occurred while applying the patches: " + e.getMessage());
+        }
+        return "index";
+    }
 
     public Part getDataModelFile() {
         return dataModelFile;
@@ -82,5 +111,13 @@ public class ToolsController implements Serializable {
 
     public void setDataModelFile(Part dataModelFile) {
         this.dataModelFile = dataModelFile;
+    }
+
+    public String[] getPatches() {
+        return patches;
+    }
+
+    public void setPatches(String[] patches) {
+        this.patches = patches;
     }
 }
