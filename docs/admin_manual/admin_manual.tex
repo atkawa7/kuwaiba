@@ -5,7 +5,7 @@
 %Metadata
 \title{Kuwaiba Open Inventory Administrator's Manual}
 \author{Neotropic SAS}
-\date{27.07.2016}
+\date{09.12.2016}
 
 %Imports
 \usepackage{graphicx}
@@ -30,7 +30,7 @@
 	
 	
 	\begin{figure}[b]
-		\centering System Version \textbf{1.0}
+		\centering System Version \textbf{1.1}
 			
 		Visit \textbf{kuwaiba.org} for documentation, latest updates and upcoming events
 	\end{figure}
@@ -63,6 +63,8 @@
 				January 19th 2015 & Corrected how the rmiregistry is launched \\
 				\midrule
 				July 27th 2016 & Adapted to Kuwaiba version 1.0. LaTeX is now used instead of LibreOffice to create the documentation. \\
+				\midrule
+				December 9th 2016 & Added notes about configuring Glassfish to start on boot. \\
 				\bottomrule
 			\end{tabular}	
 				
@@ -230,7 +232,8 @@
 				\end{figure}
 				\item Once the application server is up and running, it will provide a web management interface listening on port 4848 (http://[server\_domain\_name\_or\_ip]:4848). Don't forget the credentials you provided during the server installation process because they will be used for further administration procedures. See figure~\ref{fig:gf_mgmconsole}.
 				\begin{figure}[h!]
-					\includegraphics[width=\linewidth]{img/gf_management_console.jpg} 
+					\centering
+					\includegraphics[width=0.8\linewidth]{img/gf_management_console.jpg} 
 					\caption{Glassfish management console}
 					\label{fig:gf_mgmconsole}
 				\end{figure}		
@@ -242,12 +245,13 @@
 				\end{figure}				
 				\item Test if the application was correctly deployed by opening the URL \\ \textbf{http://[server\_domain\_name\_or\_ip]:8080/kuwaiba/}. See figure~\ref{fig:kw_managementconsole}.
 				\begin{figure}[h!]
-					\includegraphics[width=\linewidth]{img/kw_management_console.jpg} 	
+					\includegraphics[width=\linewidth]{img/kw_management_console.png} 	
 					\caption{Administration console}
 					\label{fig:kw_managementconsole}
 				\end{figure}
+				
 				\begin{framed} {\large \textbf{Important}} \\
-					For security reasons, the administration console can \textbf{only} be opened from the same computer the server is running. If you try to open it from some other computer, you'll get a error.
+					For security reasons, the administration console can \textbf{only} be opened from the same computer the server is running. If you try to open it from some other computer, you'll get an error. If you want to access the administration console from outside, you can use an SSH tunnel.
 				\end{framed}
 				\item Additionally, \textbf{always} check the command prompt/console you used to launch the server to see if an error was thrown. Sometimes, the errors are logged only in the server log file, located at \textbf{[GF\_INSTALL\_DIR]/glassfish/domains/domainXX/logs/}. The application may have been deployed, but the Persistence Service might have not started. A successful startup should look like this in the server log files:
 				\begin{figure}[h!]
@@ -370,6 +374,7 @@
 				\end{enumerate}				
 				\newpage
 				\subsection{Configuring the Client}
+				
 				If you are using a certificate issued by a CA, the client does not need any additional configuration (don't forget to use the port \textbf{8181} in your connection settings. This port can also be configured using the \textbf{domain.xml} file). If it's a self-signed certificate, you need to tell the client application that the certificate can be trusted (just like you did manually when you added the exception in the web browser). To do this, follow these steps:
 				\begin{enumerate}
 					\item In the certificate window you opened in the last step there is a \textit{details} tab. The location differs depending on the browser, but it's always there. This example shows the Firefox way:
@@ -396,6 +401,100 @@
 					\end{figure}
 					In the file \textbf{kuwaiba.conf} you can configure the name of the keystore file. The same file can be used in as many clients as you need.
 				\end{enumerate}
-		\end{appendices}
+			\section{Appendix C. Starting Glassfish on Boot} \label{app:AppendixC}
+				\subsection{Systemd}
+				\begin{enumerate}
+					\item Create a file called \textbf{glassfishd.service} in \textit{/etc/systemd/system/} (This location may vary from distribution to distribution) with the following contents:
+					\begin{verbbox}
+						[Unit]
+						Description=Glassfish Server
+						
+						[Service]
+						Type=forking
+						
+						# Change the user and Glassfish location as needed
+						User=kuwaiba
+						ExecStart=/home/kuwaiba/apps/glassfish4/bin/asadmin start-domain > /dev/null
+						ExecStop=/home/kuwaiba/apps/glassfish4/bin/asadmin stop-domain > /dev/null
+						ExecReload=/home/kuwaiba/apps/glassfish4/bin/asadmin restart-domain > /dev/null
+						
+						# Timeout for the server to start up/shut down process (in seconds)
+						TimeoutSec=300
+					\end{verbbox}
+					\begin{figure}[ht]
+						\centering	
+						\theverbbox
+					\end{figure}\\
+					The \textbf{user} means the user that will launch the process. \textbf{ExecStart} is the command used to start the server. \textbf{ExecStop} is the command to stop the server and \textbf{ExecReload} is used to restart the server process. \textbf{TimeoutSec} configures the time to wait for start-up and stop the server process. If the server is stopped right after starting without apparent reason, increase its value.
+					\item Enable or disable the service by running as root: 
+					\begin{verbbox}
+						systemctl enable|disable glassfishd
+					\end{verbbox}
+					\begin{figure}[ht]
+						\centering	
+						\theverbbox
+					\end{figure}
+					\item You can start, stop or check the status of the service by executing the command
+					\begin{verbbox}
+						systemctl start|stop|status glassfishd
+					\end{verbbox}
+					\begin{figure}[ht]
+						\centering	
+						\theverbbox
+					\end{figure}\\
+					The latter is particularly useful to troubleshoot potential problems.
+				\end{enumerate}
+				
+				\newpage
+				\subsection{SysV Init}
+				\begin{enumerate}
+					\item Create a file called \textbf{glassfishd} in \textit{/etc/init.d} with the following contents:
+					\begin{verbbox}
+						#!/bin/sh
+						
+						#
+						# Glassfish init script for Linux
+						#
+						
+						#Change the location as needed
+						GLASSFISH_HOME=${GLASSFISH_HOME:-"/home/kuwaiba/apps/glassfish4"}
+						
+						case "$1" in
+						start)
+						$GLASSFISH_HOME/bin/asadmin start-domain > /dev/null
+						;;
+						stop)
+						$GLASSFISH_HOME/bin/asadmin stop-domain > /dev/null
+						;;
+						restart)
+						$GLASSFISH_HOME/bin/asadmin restart-domain > /dev/null
+						;;
+						\*)
+						echo "Usage: $0 (start|stop|restart|help)"
+						esac
+					\end{verbbox}
+					\begin{figure}[ht]
+						\centering	
+						\theverbbox
+					\end{figure}\\
+					Don't forget to change the GlassFish path as needed.
+					\item Run this command as root:
+					\begin{verbbox}
+						update-rc.d glassfishd defaults
+					\end{verbbox}
+					\begin{figure}[ht]
+						\centering	
+						\theverbbox
+					\end{figure}\\
+					\item You can start, stop or restart the server at any moment using the command:
+					\begin{verbbox}
+						/etc/init.d/glassfish start|stop|restart
+					\end{verbbox}
+					\begin{figure}[ht]
+						\centering	
+						\theverbbox
+					\end{figure}
 					
+				\end{enumerate}
+		\end{appendices}			
 \end{document}
