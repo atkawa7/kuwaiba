@@ -171,4 +171,6 @@ public class ClassMetadata extends ClassMetadataLight {
         }
         throw new InvalidArgumentException(String.format ("Attribute %s could not be found in class %s", attributeName, getName()));
     }
+    
+    
 }

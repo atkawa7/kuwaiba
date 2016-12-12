@@ -13,10 +13,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.kuwaiba.apis.persistence.metadata;
 
 import java.io.Serializable;
+import org.kuwaiba.services.persistence.util.Constants;
 
 /**
  * Contains the detailed metadata information about a class attribute
@@ -201,5 +201,25 @@ public class AttributeMetadata implements Serializable {
                  || type.equals("Timestamp"))
             return true;
         return false;
+    }
+    
+    /**
+     * Retrieves a mapping for a given attribute
+     * @param type type of the attribute
+     * @return 1 for primitives, 2 for dates and 3 timestamp, 4 for binaries, 
+     * 5 for many to one.
+     */
+    public static int getMappingFromType(String type){
+        if (type.equals("String") || type.equals("Integer") || 
+                type.equals("Float") || type.equals("Long") || 
+                type.equals("Boolean"))
+            return Constants.MAPPING_PRIMITIVE;
+        if (type.equals("Timestamp"))
+            return Constants.MAPPING_TIMESTAMP;
+        if (type.equals("Date"))
+            return Constants.MAPPING_DATE;
+        if (type.equals("Binary"))
+            return Constants.MAPPING_BINARY;
+        return Constants.MAPPING_MANYTOONE;
     }
 }

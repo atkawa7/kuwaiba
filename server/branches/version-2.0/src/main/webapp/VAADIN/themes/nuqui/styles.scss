@@ -1,0 +1,14 @@
+@import "nuqui.scss";
+@import "addons.scss";
+
+// This file prefixes all rules with the theme name to avoid causing conflicts with other themes.
+// The actual styles should be defined in mytheme.scss
+$v-layout-margin: $v-layout-margin-top $v-layout-margin-right $v-layout-margin-bottom $v-layout-margin-left !default;
+//@include v-font(lato-normal,
+//            '../../../../mytheme/fonts/lato-normal');
+
+.nuqui {
+  @include addons;
+  @include nuqui;
+
+}

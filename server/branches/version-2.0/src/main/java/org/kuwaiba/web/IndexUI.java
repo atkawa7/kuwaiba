@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,11 +27,13 @@ import javax.inject.Inject;
  * Main application entry point. It also serves as the fallback controller
  * @author Charles Edward Bedon Cortazar<charles.bedon@kuwaiba.org>
  */
-@Theme("kuwaiba-light")
+@Theme("nuqui")
 @CDIUI("")
 public class IndexUI extends UI {
     @Inject
     CDIViewProvider viewProvider;
+    
+    
     
     @Override
     protected void init(VaadinRequest request) {
@@ -39,11 +41,9 @@ public class IndexUI extends UI {
         navigator.addProvider(viewProvider);
         
         if (getSession().getAttribute("session") == null)
-            navigator.navigateTo(LoginView.NAME);
+           navigator.navigateTo(LoginView.NAME);
         else
             navigator.navigateTo(ApplicationView.NAME);
-        
+        }
         
     }
-    
-}

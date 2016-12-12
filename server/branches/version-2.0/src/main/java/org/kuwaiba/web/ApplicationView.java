@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 package org.kuwaiba.web;
 
+import com.google.common.eventbus.EventBus;
+import com.neotropic.kuwaiba.web.nodes.properties.ObjectNodeProperties;
 import com.vaadin.cdi.CDIView;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -30,7 +32,7 @@ import javax.inject.Inject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
-import org.kuwaiba.web.custom.CustomTree;
+import org.kuwaiba.web.custom.tree.TreeView;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
 
 
@@ -42,6 +44,7 @@ import org.kuwaiba.ws.toserialize.application.RemoteSession;
 class ApplicationView extends CustomComponent implements View {
     static String NAME = "app";
     
+    EventBus eventBus = new EventBus();
     @Inject
     private WebserviceBeanLocal bean;
  
@@ -86,24 +89,28 @@ class ApplicationView extends CustomComponent implements View {
             
             /*Content*/
             HorizontalLayout lytContent = new HorizontalLayout();
-            lytContent.addStyleName("kuwaiba-light-application-background");
             lytContent.setHeight("90%");
             
             /*Left side panel*/
-            CustomTree treeNavigation = new CustomTree(
-                    new RemoteBusinessObjectLight(Long.valueOf(-1), null, null), "Navigation Tree");
-            
+            TreeView treeNavigation = new TreeView(
+                    new RemoteBusinessObjectLight(Long.valueOf(-1), "/", "Root"),
+                    "Navigation Tree", eventBus);
+            ObjectNodeProperties properties = new ObjectNodeProperties(eventBus);
+            eventBus.register(treeNavigation); // subscribers
+            eventBus.register(properties); // subscribers
             VerticalLayout lytLeftSide = new VerticalLayout(treeNavigation);
-            
+                        
             lytLeftSide.setHeight("100%");
             lytLeftSide.setWidth("30%");
             
             VerticalLayout lytCenter = new VerticalLayout();
             
             lytCenter.setWidth("70%");
+            lytCenter.addComponent(properties);
             
             lytContent.addComponents(lytLeftSide, lytCenter);
             lytRoot.addComponents(lytHeader, lytContent);
+
             setCompositionRoot(lytRoot);
         }
     }

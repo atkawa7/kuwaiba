@@ -34,6 +34,30 @@ public class Constants {
      */
     public static final String PERSISTENCE_SERVICE_VERSION = "1.0";
     /**
+     * Integer, Float, Long, Boolean, String or Text
+     */
+    public static final int MAPPING_PRIMITIVE = 1;
+    /**
+     * Dates
+     */
+    public static final int MAPPING_DATE = 2;
+    /**
+     * Timestamp
+     */
+    public static final int MAPPING_TIMESTAMP = 3;
+    /**
+     * Binary
+     */
+    public static final int MAPPING_BINARY = 4;
+    /**
+     * Many to one relationship (such as types)
+     */
+    public static final int MAPPING_MANYTOONE = 5;
+    /**
+     * Many to Many relationship (such as accountable persons for a given equipment)
+     */
+    public static final int MAPPING_MANYTOMANY = 6;
+    /**
      * Class type for RootObject
      */
     public static final int CLASS_TYPE_ROOT = 0;
