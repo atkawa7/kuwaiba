@@ -13,16 +13,28 @@
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
-        <vaadin.version>7.7.2</vaadin.version>
+        <vaadin.version>7.7.3</vaadin.version>
         <deltaspike.version>1.1.0</deltaspike.version>
+                
+        <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>        
+        <project.source.version>1.8</project.source.version>
+        <project.target.version>1.8</project.target.version>
+        <maven-war-plugin.version>2.3</maven-war-plugin.version>
+        <maven-dependency-plugin.version>2.6</maven-dependency-plugin.version>
+        <maven-clean-plugin.version>3.0.0</maven-clean-plugin.version>
     </properties>
     
     <dependencies>
+        <dependency>
+           <groupId>org.vaadin.addons</groupId>
+           <artifactId>wizards-for-vaadin</artifactId>
+           <version>1.1.1</version>
+        </dependency>
         
         <dependency>
             <groupId>com.vaadin.tapio</groupId>
             <artifactId>googlemaps</artifactId>
-            <version>1.3.4</version>
+            <version>1.4.1-NEOTROPIC</version>
         </dependency>
         
         <dependency>
@@ -30,44 +42,52 @@
             <artifactId>guava</artifactId>
             <version>12.0-rc2</version>
         </dependency>
+        
         <dependency>
             <groupId>org.vaadin.addons</groupId>
             <artifactId>customfield</artifactId>
             <version>0.9.4</version>
             <type>jar</type>
         </dependency>
+        
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>
             <version>7.0</version>
             <scope>provided</scope>
         </dependency>
+        
         <dependency>
-                <groupId>com.vaadin</groupId>
-                <artifactId>vaadin-server</artifactId>
-                <version>${vaadin.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.vaadin</groupId>
-                <artifactId>vaadin-client-compiled</artifactId>
-                <version>${vaadin.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.vaadin</groupId>
-                <artifactId>vaadin-themes</artifactId>
-                <version>${vaadin.version}</version>
-            </dependency>
-            <dependency>
-                <artifactId>cdi-helpers</artifactId>
-                <groupId>org.vaadin</groupId>
-                <version>1.4</version>
-            </dependency>
-            <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-server</artifactId>
+            <version>${vaadin.version}</version>
+        </dependency>
+            
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-client-compiled</artifactId>
+            <version>${vaadin.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-themes</artifactId>
+            <version>${vaadin.version}</version>
+        </dependency>
+        
+        <dependency>
+            <artifactId>cdi-helpers</artifactId>
+            <groupId>org.vaadin</groupId>
+            <version>1.4</version>
+        </dependency>
+        
+        <dependency>
             <groupId>org.apache.deltaspike.core</groupId>
             <artifactId>deltaspike-core-api</artifactId>
             <version>${deltaspike.version}</version>
             <scope>compile</scope>
         </dependency>
+        
         <dependency>
             <groupId>org.apache.deltaspike.core</groupId>
             <artifactId>deltaspike-core-impl</artifactId>
@@ -87,6 +107,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
@@ -99,27 +120,40 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
+                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>${project.source.version}</source>
+                    <target>${project.target.version}</target>
                     <compilerArguments>
                         <endorseddirs>${endorsed.dir}</endorseddirs>
                     </compilerArguments>
                 </configuration>
-            </plugin>
+            </plugin>            
+            
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>2.3</version>
+                <version>${maven-war-plugin.version}</version>
                 <configuration>
+                    <packagingExcludes>
+                        **/VAADIN/gwt-unitCache/**,
+                        **/VAADIN/widgetsets/WEB-INF/**,
+                        **/WEB-INF/lib/servlet-api-*.jar,
+                        **/WEB-INF/lib/vaadin-client-*.jar,
+                        **/WEB-INF/lib/jetty-*.jar,
+                        **/WEB-INF/lib/ant-*.jar,
+                        **/WEB-INF/classes/gwt-unitCache/**,
+                        **/WEB-INF/classes/themes/**,
+                        **/WEB-INF/classes/widgetsets/**
+                    </packagingExcludes>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
+            
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.6</version>
+                <version>${maven-dependency-plugin.version}</version>
                 <executions>
                     <execution>
                         <phase>validate</phase>
@@ -141,40 +175,65 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>com.vaadin</groupId>
+                <artifactId>vaadin-maven-plugin</artifactId>
+                <version>${vaadin.plugin.version}</version>
+                <configuration>
+                    <extraJvmArgs>-Xmx512M -Xss1024k</extraJvmArgs>
+                    <webappDirectory>${basedir}/src/main/webapp/VAADIN/widgetsets</webappDirectory>
+                    <hostedWebapp>${basedir}/src/main/webapp/VAADIN/widgetsets</hostedWebapp>
+                    <noServer>true</noServer>
+                    <persistentunitcachedir>${basedir}/target/tmp/gwt-unitCache</persistentunitcachedir>
+                    <compileReport>true</compileReport>
+                    <strict>true</strict>
+                    <style>OBF</style>
+                    <runTarget>http://localhost:8080/</runTarget>
+                    <persistentunitcachedir>${project.build.directory}</persistentunitcachedir>
+                    <deploy>${project.build.directory}/gwt-deploy</deploy>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>resources</goal>
+                            <goal>update-theme</goal>
+                            <goal>update-widgetset</goal>
+                            <goal>compile</goal>
+                            <!-- Comment out compile-theme goal to use on-the-fly theme compilation -->
+                            <goal>compile-theme</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             
             <plugin>
-				<groupId>com.vaadin</groupId>
-				<artifactId>vaadin-maven-plugin</artifactId>
-				<version>${vaadin.plugin.version}</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>update-theme</goal>
-							<goal>update-widgetset</goal>
-							<goal>compile</goal>
-							<!-- Comment out compile-theme goal to use on-the-fly theme compilation -->
-							<goal>compile-theme</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-clean-plugin</artifactId>
-				<version>3.0.0</version>
-				<!-- Clean up also any pre-compiled themes -->
-				<configuration>
-					<filesets>
-						<fileset>
-							<directory>src/main/webapp/VAADIN/themes</directory>
-							<includes>
-								<include>**/styles.css</include>
-								<include>**/styles.scss.cache</include>
-							</includes>
-						</fileset>
-					</filesets>
-				</configuration>
-			</plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>${maven-clean-plugin.version}</version>
+                <!-- Clean up also any pre-compiled themes -->
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>${basedir}/src/main/webapp/VAADIN/themes</directory>
+                            <includes>
+                                <include>**/styles.css</include>
+                                <include>**/styles.scss.cache</include>
+                            </includes>
+                        </fileset>
+                        <fileset>
+                            <directory>
+                                ${basedir}/src/main/webapp/VAADIN/widgetsets
+                            </directory>
+                        </fileset>
+                        <fileset>
+                            <directory>
+                                ${basedir}/src/main/webapp/VAADIN/gwt-unitCache
+                            </directory>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
             
         </plugins>
     </build>
@@ -195,5 +254,4 @@
             </snapshots>
         </repository>
     </repositories>
-
 </project>

@@ -32,6 +32,7 @@ import javax.inject.Inject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
+import org.kuwaiba.web.custom.googlemaps.GeographicInformation;
 import org.kuwaiba.web.custom.tree.TreeView;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
 
@@ -96,6 +97,9 @@ class ApplicationView extends CustomComponent implements View {
                     new RemoteBusinessObjectLight(Long.valueOf(-1), "/", "Root"),
                     "Navigation Tree", eventBus);
             ObjectNodeProperties properties = new ObjectNodeProperties(eventBus);
+            
+            GeographicInformation geoInfo = new GeographicInformation();
+            
             eventBus.register(treeNavigation); // subscribers
             eventBus.register(properties); // subscribers
             VerticalLayout lytLeftSide = new VerticalLayout(treeNavigation);
@@ -105,10 +109,14 @@ class ApplicationView extends CustomComponent implements View {
             
             VerticalLayout lytCenter = new VerticalLayout();
             
-            lytCenter.setWidth("70%");
-            lytCenter.addComponent(properties);
+            lytCenter.setWidth("50%");
+            lytCenter.addComponent(geoInfo);
             
-            lytContent.addComponents(lytLeftSide, lytCenter);
+            VerticalLayout lytRightSide = new VerticalLayout();
+            lytRightSide.setWidth("20%");
+            lytRightSide.addComponent(properties);
+            
+            lytContent.addComponents(lytLeftSide, lytCenter, lytRightSide);
             lytRoot.addComponents(lytHeader, lytContent);
 
             setCompositionRoot(lytRoot);

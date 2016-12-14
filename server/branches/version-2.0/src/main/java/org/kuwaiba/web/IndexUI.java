@@ -16,10 +16,12 @@
 package org.kuwaiba.web;
 
 import com.vaadin.annotations.Theme;
+import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.cdi.CDIUI;
 import com.vaadin.cdi.CDIViewProvider;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.UI;
 import javax.inject.Inject;
 
@@ -29,21 +31,23 @@ import javax.inject.Inject;
  */
 @Theme("nuqui")
 @CDIUI("")
+@SuppressWarnings("serial")
 public class IndexUI extends UI {
     @Inject
     CDIViewProvider viewProvider;
-    
-    
-    
+        
     @Override
     protected void init(VaadinRequest request) {
         Navigator navigator = new Navigator(this, this);
         navigator.addProvider(viewProvider);
         
         if (getSession().getAttribute("session") == null)
-           navigator.navigateTo(LoginView.NAME);
+            navigator.navigateTo(LoginView.NAME);
         else
             navigator.navigateTo(ApplicationView.NAME);
-        }
-        
     }
+    
+    @VaadinServletConfiguration(productionMode = false, ui = IndexUI.class, widgetset = "org.kuwaiba.KuwaibaWidgetSet")
+    public static class Servlet extends VaadinServlet {
+    }
+}

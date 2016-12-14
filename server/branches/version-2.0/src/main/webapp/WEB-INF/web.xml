@@ -5,6 +5,10 @@
         <servlet-name>UI</servlet-name>
         <servlet-class>com.vaadin.server.VaadinServlet</servlet-class>
         <init-param>
+            <param-name>widgetset</param-name>
+            <param-value>org.kuwaiba.KuwaibaWidgetSet</param-value>
+        </init-param>
+        <init-param>
             <param-name>UIProvider</param-name>
             <param-value>com.vaadin.cdi.CDIUIProvider</param-value>
         </init-param>
