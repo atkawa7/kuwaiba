@@ -199,19 +199,20 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
             xmlew.add(xmlef.createStartElement(qnameEdges, null, null));
             
             for (Widget edgeWidget : edgeLayer.getChildren()) {
+                
+                AbstractConnectionWidget acwEdge = (AbstractConnectionWidget) edgeWidget;
+                if (acwEdge.getSourceAnchor() == null || acwEdge.getTargetAnchor() == null) //This connection is malformed because one of the endpoints does not exist
+                    continue;                                                               //probably, it was moved to another parent
+                
                 QName qnameEdge = new QName("edge");
                 xmlew.add(xmlef.createStartElement(qnameEdge, null, null));
                 
-                AbstractConnectionWidget acwEdge = (AbstractConnectionWidget) edgeWidget;
+                
                 LocalObjectLight lolEdge = (LocalObjectLight) findObject(acwEdge);
                 xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(lolEdge.getOid())));
                 xmlew.add(xmlef.createAttribute(new QName("class"), lolEdge.getClassName()));
                 
-                if(acwEdge.getSourceAnchor().getRelatedWidget() == null)
-                    continue;
                 xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(((LocalObjectLight) findObject(acwEdge.getSourceAnchor().getRelatedWidget())).getOid())));
-                if (acwEdge.getTargetAnchor().getRelatedWidget() == null)
-                    continue;
                 xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(((LocalObjectLight) findObject(acwEdge.getTargetAnchor().getRelatedWidget())).getOid())));
                 
                 for (Point point : acwEdge.getControlPoints()) {
