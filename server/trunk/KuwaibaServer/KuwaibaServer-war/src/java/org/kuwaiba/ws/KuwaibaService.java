@@ -161,7 +161,7 @@ public class KuwaibaService {
 
     /**
      * Creates a user
-     * @param username User name. Can't be null
+     * @param username User name. Can't be null, empty or have non standard characters.
      * @param password A password (in plain text, it'll be encrypted later). Can't be null nor an empty string
      * @param firstName User's first name
      * @param lastName User's last name
@@ -974,7 +974,7 @@ public class KuwaibaService {
     }
     
     /**
-     * Delete a pool
+     * Deletes a pool
      * @param id Pool to be deleted
      * @param sessionId Session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
@@ -1041,6 +1041,15 @@ public class KuwaibaService {
         }
     }
     
+    /**
+     * Retrieves all the pools that are children of a particular object.
+     * @param objectClassName Object class.
+     * @param objectId Object id.
+     * @param poolClass Type of the pools that are to be retrieved (that is, the class of the objects contained within the pool)
+     * @param sessionId Session id.
+     * @return A list of children pools.
+     * @throws ServerSideException 
+     */
     @WebMethod(operationName = "getPoolsInObject")
     public List<RemotePool> getPoolsInObject(@WebParam(name = "objectClassName")String objectClassName, 
                                              @WebParam(name = "objectId")long objectId,
@@ -1058,6 +1067,14 @@ public class KuwaibaService {
         }
     }
     
+    /**
+     * Gets the pools contained inside a pool.
+     * @param parentPoolId Parent pool id.
+     * @param poolClass Class of the objects contained by the desired pool (not the parent pool).
+     * @param sessionId Session token.
+     * @return A list of children pools
+     * @throws ServerSideException In case something goes wrong.
+     */
     @WebMethod(operationName = "getPoolsInPool")
     public List<RemotePool> getPoolsInPool(@WebParam(name = "parentPoolId")long parentPoolId,
                                              @WebParam(name = "poolClass")String poolClass, 
@@ -1338,6 +1355,13 @@ public class KuwaibaService {
         }
     }
     
+    /**
+     * Gets the users subscribed to a particular task.
+     * @param taskId Task id.
+     * @param sessionId Session token.
+     * @return The list of subscribed users.
+     * @throws ServerSideException In case something goes wrong.
+     */
     public List<UserInfoLight> getSubscribersForTask(@WebParam(name = "taskId")long taskId,
                                                      @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
@@ -1419,6 +1443,13 @@ public class KuwaibaService {
         }
     }
     
+    /**
+     * Executes a task on demand.
+     * @param taskId The task id
+     * @param sessionId The session token
+     * @return A RemoteTaskResult object wrapping the task execution messages and details.
+     * @throws ServerSideException In case something goes wrong
+     */
     @WebMethod(operationName = "executeTask")
     public RemoteTaskResult executeTask(@WebParam(name = "taskId")long taskId, 
                                         @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
@@ -1672,6 +1703,14 @@ public class KuwaibaService {
         }
     }
     
+    /**
+     * Retrieves all the ancestors of an object in the containment hierarchy. If the provided object is in a pool, the ancestor pools will be returned.
+     * @param objectClass Object class
+     * @param oid Object id.
+     * @param sessionId Session token.
+     * @return The list of ancestors.
+     * @throws ServerSideException In case something goes wrong.
+     */
     @WebMethod(operationName = "getParents")
     public RemoteObjectLight[] getParents(@WebParam(name = "objectclass") String objectClass,
             @WebParam(name = "oid") long oid,
@@ -1719,7 +1758,7 @@ public class KuwaibaService {
      * @param oid Object oid
      * @param parentClass Class to be matched
      * @param sessionId sssion Id
-     * @return
+     * @return The direct parent of the provided object.
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getParentOfClass")
@@ -1766,6 +1805,14 @@ public class KuwaibaService {
         }
     }
     
+    /**
+     * Gets the special children of a given object. This relationship depends on the model. The relationship between a container and the links in the physical layer model is an example of this kind of relationships.
+     * @param objectClass The class of the object to be searched.
+     * @param objectId The id of the object to be searched.
+     * @param sessionId Session token.
+     * @return A list of special children.
+     * @throws ServerSideException If something goes wrong.
+     */
     @WebMethod(operationName = "getObjectSpecialChildren")
     public RemoteObjectLight[] getObjectSpecialChildren (@WebParam(name = "objectclass") String objectClass,
             @WebParam(name = "objectId") long objectId,
@@ -2488,14 +2535,14 @@ public class KuwaibaService {
      * @param displayName Class display name
      * @param description Class description
      * @param isAbstract is this class abstract?
-     * @param isCustom
+     * @param isCustom Is this class part of the core of the application (can not be deleted) or if it's an extension to the default data model. In most cases, this should be "true".
      * @param parentClassName Parent class name
-     * @param isCountable
-     * @param icon Icon fro view. The size is limited by the value in Constants.MAX_ICON_SIZE
-     * @param isInDesign
+     * @param isCountable NOt used so far. It's intended to be used to mark the classes that are created to make consistent the model, but that are not actual inventory elements, such as Slots
+     * @param icon Icon for views. The size is limited by the value in Constants.MAX_ICON_SIZE and it's typically 32x32 pixels
+     * @param isInDesign Says if a class can be instantiated or not. This is useful if you are creating many classes and want to avoid the users to create objects from those classes until you have finished the data model roll-out.
      * @param smallIcon Icon for trees. The size is limited by the value in Constants.MAX_ICON_SIZE
      * @param sessionId Session token
-     * @param color
+     * @param color The color to be used to display the instances of this class (depends on the client used)
      * @return the id of the new class metadata object
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
@@ -2558,11 +2605,11 @@ public class KuwaibaService {
      * @param description New class metadata description. Null if unchanged
      * @param isAbstract is this class abstract?
      * @param icon New icon for views. Null if unchanged. The size is limited by the value in Constants.MAX_ICON_SIZE
-     * @param color
+     * @param color The color of the instances of this class.
      * @param smallIcon New icon for trees. Null if unchanged. The size is limited by the value in Constants.MAX_ICON_SIZE
-     * @param isInDesign
-     * @param isCustom
-     * @param isCountable
+     * @param isInDesign If the class is in design stage (see createClass).
+     * @param isCustom If the class is custom (see createClass).
+     * @param isCountable If the class is countable (see createClass). 
      * @param sessionId Session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
@@ -2674,7 +2721,7 @@ public class KuwaibaService {
      * @param description attribute description
      * @param administrative is the attribute administrative?
      * @param visible is the attribute visible?
-     * @param noCopy
+     * @param noCopy Marks an attribute as not to be copied during a copy operation.
      * @param isReadOnly is the attribute read only?
      * @param unique should this attribute be unique?
      * @param sessionId session token
@@ -2720,7 +2767,7 @@ public class KuwaibaService {
      * @param administrative is the attribute administrative?
      * @param visible is the attribute visible?
      * @param isReadOnly is the attribute read only?
-     * @param noCopy
+     * @param noCopy Marks an attribute as not to be copied during a copy operation.
      * @param unique should this attribute be unique?
      * @param sessionId session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
@@ -3276,7 +3323,14 @@ public class KuwaibaService {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Utility methods. Click on the + sign on the left to edit the code.">/**
-
+    /**
+     * Tests if a class is subclass of another.
+     * @param className Class to be tested.
+     * @param allegedParentClass Class to be tested against.
+     * @param sessionId Session token.
+     * @return If the tested class is subclass of allegedParentClass or not.
+     * @throws ServerSideException In case something goes wrong.
+     */
     @WebMethod(operationName =  "isSubclassOf")
     public boolean isSubClassOf(@WebParam(name = "className") String className, 
                                 @WebParam(name = "allegedParentClass") String allegedParentClass,
@@ -3295,6 +3349,15 @@ public class KuwaibaService {
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Sync/ bulk load methods. Click on the + sign on the left to edit the code.">/**
+    /**
+     * Creates many objects at once given a well formatted file. See user manual for details on how to format the file
+     * @param file The file with size no greater 
+     * @param commitSize The records are not committed one by one, but in batch. This number tells Kuwaiba how many records (lines) to commit at once.
+     * @param dataType What kind of data contains the file, listTypes, inventory objects, etc
+     * @param sessionId Session token.
+     * @return The result of the operation.
+     * @throws ServerSideException If something goes wrong.
+     */
     @WebMethod(operationName = "bulkUpload")
     public String bulkUpload(@WebParam(name = "file")
         byte[] file, @WebParam(name = "commitSize")
@@ -3313,6 +3376,13 @@ public class KuwaibaService {
         }
     }
     
+    /**
+     * Retrieves the log file product of a bulk load operation.
+     * @param fileName The name of the file  (provided by the method that performs the bulk creation)
+     * @param sessionId Session token
+     * @return The contents of the file.
+     * @throws ServerSideException  If something goes wrong.
+     */
     @WebMethod(operationName = "downloadBulkLoadLog")
     public byte[] downloadBulkLoadLog(@WebParam(name = "fileName")
         String fileName, @WebParam(name = "sessionId")
@@ -3643,6 +3713,13 @@ public class KuwaibaService {
         }
     }
     
+    /**
+     * Updates the value of any of the parameters of a given report.
+     * @param reportId Report id.
+     * @param parameters List of pairs attribute-value of the report. Valid values are name, description, script and enabled.
+     * @param sessionId Session token.
+     * @throws ServerSideException If something goes wrong.
+     */
     @WebMethod(operationName = "updateReportParameters")
     public void updateReportParameters(@WebParam(name = "reportId")long reportId, @WebParam(name = "parameters")List<StringPair> parameters, 
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
@@ -4141,6 +4218,16 @@ public class KuwaibaService {
         }
     }
     
+    /**
+     * Creates a subnet
+     * @param poolId The id of the pool that will contain the subnet
+     * @param className The class name of the subnet (e.g. SubnetIPv4, SubnetIPv6)
+     * @param attributeNames Names of the attributes that will be set on the newly created element.
+     * @param attributeValues The values to be set in the aforementioned attributes.
+     * @param sessionId Session token.
+     * @return The id of the new subnet.
+     * @throws ServerSideException If something goes wrong.
+     */
     @WebMethod(operationName = "createSubnet")
     public long createSubnet(@WebParam(name = "poolId")long poolId,
             @WebParam(name = "className")String className,
@@ -4256,7 +4343,7 @@ public class KuwaibaService {
     }
     
     /**
-     * Adds an ip to a Subnet
+     * Adds an IP to a Subnet
      * @param id ipAddres id
      * @param parentClassName the parent class name
      * @param attributeNames IP Address Attributes
@@ -4461,7 +4548,7 @@ public class KuwaibaService {
     }
     
     /**
-     * Checks if a new subnet overlaps with a existing one
+     * Checks if a new subnet overlaps with an existing one
      * @param networkIp the network ip for the subnet
      * @param broadcastIp the broadcast ip for the subnet
      * @param sessionId Session token
@@ -4658,8 +4745,8 @@ public class KuwaibaService {
      * Release the association between a network element and a MPLSTunnel or BridgeDomain or 
      * FrameRelay or VRF
      * @param portId MPLSTunnel or BridgeDomain or FrameRelay or VRF id
-     * @param releasePortFromInterfaceClassName network element class name
-     * @param releasePortFromInterfaceId network element id
+     * @param interfaceClassName network element class name
+     * @param interfaceId network element id
      * @param sessionId Session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
      */
