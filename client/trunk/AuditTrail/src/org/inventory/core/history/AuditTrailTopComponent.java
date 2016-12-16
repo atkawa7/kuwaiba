@@ -29,7 +29,6 @@ import org.openide.DialogDisplayer;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
-import org.openide.util.Lookup;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 
@@ -56,7 +55,6 @@ preferredID = "AuditTrailTopComponent")
 public final class AuditTrailTopComponent extends TopComponent implements ExportableTable {
     private ETable aTable;
     private AuditTrailService service;
-    private NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
 
     public AuditTrailTopComponent() {
         initComponents();
@@ -191,10 +189,6 @@ public final class AuditTrailTopComponent extends TopComponent implements Export
     public ETable getTable(){
         return aTable;
     }
-    
-    public NotificationUtil getNotifier(){
-        return nu;
-    }
 
     @Override
     public Object[][] getResults(Range range) {
@@ -209,7 +203,7 @@ public final class AuditTrailTopComponent extends TopComponent implements Export
         }else{
             LocalApplicationLogEntry[] records = CommunicationsStub.getInstance().getGeneralActivityAuditTrail(0, 0);
             if (records == null){
-                nu.showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 return new Object[0][0];
             }
             else{

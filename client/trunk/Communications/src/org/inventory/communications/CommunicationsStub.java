@@ -183,7 +183,7 @@ public class CommunicationsStub {
             
             this.session = new LocalSession(this.service.createSession(user, password));
             return true;
-        }catch(Exception ex){ 
+        }catch(Exception ex) { 
             this.error =  ex.getMessage();
             return false;
         }
@@ -475,17 +475,7 @@ public class CommunicationsStub {
             List<ApplicationLogEntry> myEntries = service.getGeneralActivityAuditTrail(page, limit, this.session.getSessionId());
             
             LocalApplicationLogEntry[] res = new LocalApplicationLogEntry[myEntries.size()];
-            
-            //We sort the array here, since it's not from the source
-            Collections.sort(myEntries, new Comparator<ApplicationLogEntry>(){
-
-                @Override
-                public int compare(ApplicationLogEntry o1, ApplicationLogEntry o2) {
-                    if (o1.getTimestamp() < o2.getTimestamp())
-                        return -1;
-                    return 1;
-                }
-            });
+         
             
             for (int i = 0; i < myEntries.size(); i++)
                 res[i] = new LocalApplicationLogEntry(myEntries.get(i).getId(),

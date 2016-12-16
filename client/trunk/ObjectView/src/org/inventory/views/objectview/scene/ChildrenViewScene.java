@@ -125,7 +125,9 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
         widget.setControlPointShape(PointShape.SQUARE_FILLED_BIG);
         widget.setEndPointShape(PointShape.SQUARE_FILLED_BIG);
         widget.setRouter(RouterFactory.createFreeRouter());
-        if (newLineColor != null) widget.setLineColor(newLineColor);
+        widget.setToolTipText(edge.toString());
+        if (newLineColor != null)
+            widget.setLineColor(newLineColor);
         edgeLayer.addChild(widget);
         return widget;
     }

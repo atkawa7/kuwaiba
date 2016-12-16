@@ -69,7 +69,7 @@ public class AuditTrailService {
         }
         
         if (records == null)
-            component.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else{
             if (component.getTable().getModel() instanceof DefaultTableModel)
                 component.getTable().setModel(new AuditTrailTableModel(records));

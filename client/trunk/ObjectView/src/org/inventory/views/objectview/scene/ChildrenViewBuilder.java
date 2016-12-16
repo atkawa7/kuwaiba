@@ -88,7 +88,7 @@ public class ChildrenViewBuilder implements AbstractViewBuilder {
             List<LocalObjectViewLight> views = com.getObjectRelatedViews(object.getOid(), object.getClassName());
             List<LocalObjectLight> myChildren = com.getObjectChildren(object.getOid(), com.getMetaForClass(object.getClassName(),false).getOid());
             List<LocalObject> myConnections = com.getChildrenOfClass(object.getOid(),object.getClassName(), Constants.CLASS_GENERICCONNECTION);
-
+           
             if(views.isEmpty()){ //There are no saved views
                 buildDefaultView(myChildren, myConnections);
                 currentView = null;
