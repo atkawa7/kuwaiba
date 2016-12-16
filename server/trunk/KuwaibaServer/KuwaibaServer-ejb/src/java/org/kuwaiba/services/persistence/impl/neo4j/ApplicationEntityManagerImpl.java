@@ -206,7 +206,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override
     public long createUser(String userName, String password, String firstName,
             String lastName, boolean enabled, long[] privileges, long[] groups)
-            throws InvalidArgumentException, NotAuthorizedException, NotAuthorizedException 
+            throws InvalidArgumentException 
     {
         if (userName == null)
             throw new InvalidArgumentException("User name can not be null");
@@ -269,8 +269,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override
     public void setUserProperties(long oid, String userName, String password, String firstName,
             String lastName, boolean enabled, long[] privileges, long[] groups)
-            throws InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException 
-    {
+            throws InvalidArgumentException, ApplicationObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx()) {
             Node userNode = userIndex.get(Constants.PROPERTY_ID, oid).getSingle();
             if(userNode == null)
@@ -336,8 +335,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override
     public void setUserProperties(String formerUsername, String newUserName, String password, String firstName,
             String lastName, boolean enabled, long[] privileges, long[] groups)
-            throws InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException 
-    {
+            throws InvalidArgumentException, ApplicationObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx()) { 
             Node userNode = userIndex.get(Constants.PROPERTY_NAME, formerUsername).getSingle();
             if(userNode == null)
@@ -403,9 +401,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     @Override
     public long createGroup(String groupName, String description,
-            long[] privileges, long[] users) 
-            throws InvalidArgumentException, NotAuthorizedException 
-    {
+            long[] privileges, long[] users) throws InvalidArgumentException {
         if (groupName == null)
             throw new InvalidArgumentException("Group name can not be null");
         if (groupName.trim().isEmpty())
@@ -460,8 +456,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public List<UserProfile> getUsers() throws NotAuthorizedException
-    {
+    public List<UserProfile> getUsers() {
         try(Transaction tx = graphDb.beginTx())
         {
             IndexHits<Node> usersNodes = userIndex.query(Constants.PROPERTY_NAME, "*");
@@ -473,8 +468,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public List<GroupProfile> getGroups() throws NotAuthorizedException
-    {
+    public List<GroupProfile> getGroups() {
         try(Transaction tx = graphDb.beginTx()) {
             IndexHits<Node> groupsNodes = groupIndex.query(Constants.PROPERTY_NAME, "*");
 
@@ -488,12 +482,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override
     public void setGroupProperties(long id, String groupName, String description,
             long[] privileges, long[] users)
-            throws InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws InvalidArgumentException, ApplicationObjectNotFoundException {
         
         try(Transaction tx = graphDb.beginTx()) {
             Node groupNode = groupIndex.get(Constants.PROPERTY_ID, id).getSingle();
             if(groupNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("Can not find the group with id %1s",id));
+                throw new ApplicationObjectNotFoundException(String.format("Can not find the group with id %s",id));
             
             if(groupName != null){
                 if (groupName.isEmpty())
@@ -503,7 +497,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
                 Node storedGroup = groupIndex.get(Constants.PROPERTY_NAME, groupName).getSingle();
                     if (storedGroup != null)
-                        throw new InvalidArgumentException(String.format("The group name %1s is already in use", groupName));
+                        throw new InvalidArgumentException(String.format("The group name %s is already in use", groupName));
                 groupIndex.remove(groupNode, Constants.PROPERTY_NAME, (String)groupNode.getProperty(Constants.PROPERTY_NAME));
                 cm.removeGroup((String)groupNode.getProperty(Constants.PROPERTY_NAME));
                 groupNode.setProperty(Constants.PROPERTY_NAME, groupName);
@@ -542,8 +536,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public void deleteUsers(long[] oids)
-            throws ApplicationObjectNotFoundException, NotAuthorizedException {
+    public void deleteUsers(long[] oids) throws ApplicationObjectNotFoundException {
         
         try(Transaction tx = graphDb.beginTx()) {
             //TODO watch if there are relationships you can/should not delete
@@ -569,8 +562,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public void deleteGroups(long[] oids)
-            throws ApplicationObjectNotFoundException, NotAuthorizedException {
+    public void deleteGroups(long[] oids) throws ApplicationObjectNotFoundException {
         
         try(Transaction tx = graphDb.beginTx()) {
             if(oids != null){
@@ -592,27 +584,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             }
         }
     }
-
-    @Override
-    public RemoteBusinessObjectLight getListTypeItem(String listTypeName) 
-            throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
-        
-        if (listTypeName == null)
-           throw new InvalidArgumentException("Item name and class name can not be null");
-        GenericObjectList listType = cm.getListType(listTypeName);
-        if(listType!=null){
-            RemoteBusinessObjectLight rol = new RemoteBusinessObject(listType.getId(), listType.getClassName(), "");
-            return rol;
-        }
-        else
-            return null;
-    }
     
    //List type related methods
     @Override
    public long createListTypeItem(String className, String name, String displayName)
-            throws MetadataObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, NotAuthorizedException 
-   {               
+            throws MetadataObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException {               
        if (name == null || className == null)
            throw new InvalidArgumentException("Item name and class name can not be null");
        
@@ -667,7 +643,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
     @Override
     public List<RemoteBusinessObjectLight> getListTypeItems(String className)
-            throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
+            throws MetadataObjectNotFoundException, InvalidArgumentException {
         
         List<RemoteBusinessObjectLight> children = new ArrayList<>();
         try(Transaction tx = graphDb.beginTx()) {
@@ -691,7 +667,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
     @Override
     public List<ClassMetadataLight> getInstanceableListTypes()
-            throws ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws ApplicationObjectNotFoundException {
         
         try(Transaction tx = graphDb.beginTx()) {
             Node genericObjectListNode = classIndex.get(Constants.PROPERTY_NAME, Constants.CLASS_GENERICOBJECTLIST).getSingle();
@@ -723,7 +699,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override
     public long createObjectRelatedView(long oid, String objectClass, String name, String description, String viewClassName, 
         byte[] structure, byte[] background) 
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         
         if (objectClass == null)
             throw new InvalidArgumentException("The root object can not be related to any view");
@@ -763,7 +739,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
     @Override
     public long createGeneralView(String viewClass, String name, String description, byte[] structure, byte[] background)
-            throws InvalidArgumentException, NotAuthorizedException {
+            throws InvalidArgumentException {
         
         try(Transaction tx = graphDb.beginTx()) {
             
@@ -795,7 +771,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override
     public ChangeDescriptor updateObjectRelatedView(long oid, String objectClass, long viewId, 
     String name, String description, byte[] structure, byte[] background)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         
         if (objectClass == null)
             throw new InvalidArgumentException("The root object does not have any view");
@@ -866,13 +842,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
     @Override
     public ChangeDescriptor updateGeneralView(long oid, String name, String description, byte[] structure, byte[] background)
-            throws InvalidArgumentException, ObjectNotFoundException, NotAuthorizedException {
+            throws InvalidArgumentException, ApplicationObjectNotFoundException {
         
         try(Transaction tx = graphDb.beginTx()) {
             String affectedProperty = "", oldValue = "", newValue = ""; //NOI18N
             Node gView = generalViewsIndex.get(Constants.PROPERTY_ID, oid).getSingle();
             if (gView == null)
-                throw new ObjectNotFoundException("View", oid);
+                throw new ApplicationObjectNotFoundException(String.format("View with id %s could not be found", oid));
             if (name != null) {
                 affectedProperty += Constants.PROPERTY_NAME;
                 oldValue = String.valueOf(gView.getProperty(Constants.PROPERTY_NAME));
@@ -910,10 +886,14 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public void deleteGeneralViews(long[] ids) throws ObjectNotFoundException, NotAuthorizedException {
+    public void deleteGeneralViews(long[] ids) throws ApplicationObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx()) {
             for (long id : ids){
                 Node gView = generalViewsIndex.get(Constants.PROPERTY_ID, id).getSingle();
+                
+                if (gView == null)
+                    throw new ApplicationObjectNotFoundException(String.format("View with id %s could not be found", id));
+                
                 generalViewsIndex.remove(gView);
                 gView.delete();
             }
@@ -923,7 +903,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
     @Override
     public ViewObject getObjectRelatedView(long oid, String objectClass, long viewId)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         
         try(Transaction tx = graphDb.beginTx()) {
             Node instance = getInstanceOfClass(objectClass, oid);
@@ -956,7 +936,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
     @Override
     public List<ViewObjectLight> getObjectRelatedViews(long oid, String objectClass, int limit)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         
         try(Transaction tx = graphDb.beginTx()) {
             Node instance = getInstanceOfClass(objectClass, oid);
@@ -1010,7 +990,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public ViewObject getGeneralView(long viewId) throws ObjectNotFoundException, NotAuthorizedException {
+    public ViewObject getGeneralView(long viewId) throws ObjectNotFoundException {
         
         try(Transaction tx = graphDb.beginTx()) {
             Node gView = generalViewsIndex.get(Constants.PROPERTY_ID,viewId).getSingle();
@@ -1041,8 +1021,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     //Queries
     @Override
     public long createQuery(String queryName, long ownerOid, byte[] queryStructure,
-            String description) 
-            throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException{
+            String description) throws ApplicationObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx()) {
             Node queryNode =  graphDb.createNode();
             queryNode.setProperty(CompactQuery.PROPERTY_QUERYNAME, queryName);
@@ -1058,6 +1037,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
                 if(userNode != null)
                     userNode.createRelationshipTo(queryNode, RelTypes.OWNS_QUERY);
+                else
+                    throw new ApplicationObjectNotFoundException(String.format("User with id %s could not be found", ownerOid));
             }
             else
                 queryNode.setProperty(CompactQuery.PROPERTY_IS_PUBLIC, true);
@@ -1071,9 +1052,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
     @Override
     public void saveQuery(long queryOid, String queryName, long ownerOid,
-            byte[] queryStructure, String description) 
-            throws ApplicationObjectNotFoundException, NotAuthorizedException
-    {
+            byte[] queryStructure, String description) throws ApplicationObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx()) {
             Node queryNode =  queryIndex.get(CompactQuery.PROPERTY_ID, queryOid).getSingle();
             if(queryNode == null)
@@ -1105,8 +1084,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public void deleteQuery(long queryOid)
-            throws ApplicationObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
+    public void deleteQuery(long queryOid) throws ApplicationObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx())
         {
             Node queryNode =  queryIndex.get(CompactQuery.PROPERTY_ID, queryOid).getSingle();
@@ -1125,8 +1103,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public List<CompactQuery> getQueries(boolean showPublic) 
-            throws ApplicationObjectNotFoundException, InvalidArgumentException, NotAuthorizedException{
+    public List<CompactQuery> getQueries(boolean showPublic) {
         
         try(Transaction tx = graphDb.beginTx())
         {
@@ -1155,7 +1132,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
     @Override
     public CompactQuery getQuery(long queryOid)
-            throws ApplicationObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
+            throws ApplicationObjectNotFoundException {
         
         CompactQuery cq =  new CompactQuery();
 
@@ -1196,7 +1173,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     @Override
     public byte[] getClassHierachy(boolean showAll) 
-            throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException{
+            throws MetadataObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
@@ -1236,7 +1213,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     //Pools
     @Override
     public long createRootPool(String name, String description, String instancesOfClass, int type)
-            throws MetadataObjectNotFoundException, NotAuthorizedException {
+            throws MetadataObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx()) {
             Node poolNode =  graphDb.createNode();
 
@@ -1263,7 +1240,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     @Override
     public long createPoolInObject(String parentClassname, long parentId, String name, String description, String instancesOfClass, int type)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, NotAuthorizedException {
+            throws MetadataObjectNotFoundException, ObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx()) {
             Node poolNode =  graphDb.createNode();
 
@@ -1296,7 +1273,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     @Override
     public long createPoolInPool(long parentId, String name, String description, String instancesOfClass, int type)
-            throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             Node poolNode =  graphDb.createNode();
 
@@ -1329,7 +1306,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public void deletePool(long id) throws NotAuthorizedException, ApplicationObjectNotFoundException, OperationNotPermittedException {
+    public void deletePool(long id) throws ApplicationObjectNotFoundException, OperationNotPermittedException {
         try(Transaction tx = graphDb.beginTx()) {
             Node poolNode = poolsIndex.get(Constants.PROPERTY_ID, id).getSingle();
             if (poolNode == null)
@@ -1342,7 +1319,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public void deletePools(long[] ids) throws NotAuthorizedException, ApplicationObjectNotFoundException, OperationNotPermittedException {
+    public void deletePools(long[] ids) throws ApplicationObjectNotFoundException, OperationNotPermittedException {
         for (long id : ids)
             deletePool(id);
     }
@@ -1360,8 +1337,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
        
     @Override
-    public List<Pool> getRootPools(String className, int type, boolean includeSubclasses) 
-            throws NotAuthorizedException {
+    public List<Pool> getRootPools(String className, int type, boolean includeSubclasses) {
         try(Transaction tx = graphDb.beginTx()) {
             List<Pool> pools  = new ArrayList<>();
             
@@ -1394,8 +1370,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public List<Pool> getPoolsInObject(String objectClassName, long objectId, String poolClass) 
-            throws NotAuthorizedException, ObjectNotFoundException {
+    public List<Pool> getPoolsInObject(String objectClassName, long objectId, String poolClass) throws ObjectNotFoundException {
         
         try(Transaction tx = graphDb.beginTx()) {
             List<Pool> pools  = new ArrayList<>();
@@ -1422,7 +1397,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     @Override
     public List<Pool> getPoolsInPool(long parentPoolId, String poolClass) 
-            throws NotAuthorizedException, ApplicationObjectNotFoundException {
+            throws ApplicationObjectNotFoundException {
         
         try(Transaction tx = graphDb.beginTx()) {
             List<Pool> pools  = new ArrayList<>();
@@ -1449,7 +1424,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
            
     @Override
-    public Pool getPool(long poolId) throws NotAuthorizedException, ApplicationObjectNotFoundException {
+    public Pool getPool(long poolId) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             Node poolNode = poolsIndex.get(Constants.PROPERTY_ID, poolId).getSingle();
             
@@ -1476,8 +1451,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     @Override
     public List<RemoteBusinessObjectLight> getPoolItems(long poolId, int limit)
-            throws ApplicationObjectNotFoundException, NotAuthorizedException
-    {
+            throws ApplicationObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx()) {
             Node poolNode = poolsIndex.get(Constants.PROPERTY_ID, poolId).getSingle();
 
@@ -1513,8 +1487,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     @Override
     public List<ActivityLogEntry> getBusinessObjectAuditTrail(String objectClass, long objectId, int limit) 
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException 
-    {
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         try(Transaction tx = graphDb.beginTx()) {
             if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, objectClass))
                 throw new InvalidArgumentException(String.format("Class %s is not subclass of %s",
@@ -1543,33 +1516,24 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public List<ActivityLogEntry> getGeneralActivityAuditTrail(int page, int limit) 
-            throws NotAuthorizedException {        
+    public List<ActivityLogEntry> getGeneralActivityAuditTrail(int page, int limit) {        
         try(Transaction tx = graphDb.beginTx()) {
             Node generalActivityLogNode = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).
                     get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle();
 
+            String query = String.format("MATCH (n)<-[:%s]-(m)-[:%s]->(u) WHERE id(n) = %s RETURN m AS auditTrailEntry, u AS user ORDER BY n.creationDate DESC %s", 
+                    RelTypes.CHILD_OF_SPECIAL, RelTypes.PERFORMED_BY, generalActivityLogNode.getId(), page == 0 || limit == 0 ? "" : "SKIP " + (page * limit - limit) + " LIMIT " + limit);
+            
+            Result result = graphDb.execute(query);
+            
             List<ActivityLogEntry> log = new ArrayList<>();
-            int i = 0, toBeSkipped = 0;
-            int lowerLimit = page * limit - limit;
-            for (Relationship rel : generalActivityLogNode.getRelationships(Direction.INCOMING,RelTypes.CHILD_OF_SPECIAL)){
-                if (toBeSkipped < lowerLimit){
-                    toBeSkipped++;
-                    continue;
-                }
-
-                if (limit != 0){
-                    if (i < limit)
-                        i++;
-                    else
-                        break;
-                }
-                Node logEntry = rel.getStartNode();
-                Node relatedObject = logEntry.hasRelationship(Direction.INCOMING, RelTypes.HAS_HISTORY_ENTRY) ?
-                                        logEntry.getSingleRelationship(RelTypes.HAS_HISTORY_ENTRY, Direction.INCOMING).getStartNode() : null;
-
-                log.add(new ActivityLogEntry(logEntry.getId(), relatedObject == null ? 0 : relatedObject.getId(), (Integer)logEntry.getProperty(Constants.PROPERTY_TYPE), 
-                        (String)logEntry.getSingleRelationship(RelTypes.PERFORMED_BY, Direction.OUTGOING).getEndNode().getProperty(Constants.PROPERTY_NAME), 
+            while (result.hasNext()) {
+                Map<String, Object> resultEntry = result.next();
+                Node logEntry = (Node)resultEntry.get("auditTrailEntry");
+                Node user = (Node)resultEntry.get("user");
+                
+                log.add(new ActivityLogEntry(logEntry.getId(), 0, (Integer)logEntry.getProperty(Constants.PROPERTY_TYPE), 
+                        (String)user.getProperty(Constants.PROPERTY_NAME), 
                         (Long)logEntry.getProperty(Constants.PROPERTY_CREATION_DATE), 
                         logEntry.hasProperty(Constants.PROPERTY_AFFECTED_PROPERTY) ? (String)logEntry.getProperty(Constants.PROPERTY_AFFECTED_PROPERTY) : null, 
                         logEntry.hasProperty(Constants.PROPERTY_OLD_VALUE) ? (String)logEntry.getProperty(Constants.PROPERTY_OLD_VALUE) :  null, 
@@ -1655,7 +1619,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public String[] executePatch() throws NotAuthorizedException {
+    public String[] executePatch() {
         int executedFiles = 0;
         BufferedReader br = null;
         File patchDirectory = new File(Constants.PACTHES_PATH);
@@ -2408,8 +2372,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         Map<String, Node> classNodes = new HashMap<>();
         List<String> ListClassNames = new ArrayList();
         readJoins(ListClassNames, query);
-        try(Transaction tx = graphDb.beginTx())
-        {
+        try(Transaction tx = graphDb.beginTx()) {
             for(String className : ListClassNames)
                 classNodes.put(className, classIndex.get(Constants.PROPERTY_NAME, className).getSingle());
         }

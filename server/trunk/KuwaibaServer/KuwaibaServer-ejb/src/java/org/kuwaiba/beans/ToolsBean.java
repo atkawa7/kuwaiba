@@ -69,17 +69,18 @@ public class ToolsBean implements ToolsBeanRemote {
     @Override
     public String[] executePatches(String[] patches) {
         String[] results = new String[patches.length];
-        //Implementation for version 1.1
+        //Implementation for version 1.0 -> 1.1
+        
+        ApplicationEntityManager aem = PersistenceService.getInstance().getApplicationEntityManager();
+                    
+        if (aem == null) {
+            results[0] = "The Persistence Service doesn't seem to be running. Passwords could no be reset.";
+            return results;
+        }
         
         for (int i = 0; i < patches.length; i++) {
             switch (patches[i]) {
                 case "1": 
-                    ApplicationEntityManager aem = PersistenceService.getInstance().getApplicationEntityManager();
-                    
-                    if (aem == null) {
-                        results[i] = "The Persistence Service doesn't seem to be running. Passwords could no be reset.";
-                        continue;
-                    }
                     try {
                         //Reset passwords
                         List<UserProfile> users = aem.getUsers();
@@ -111,7 +112,7 @@ public class ToolsBean implements ToolsBeanRemote {
                         fixedClass.setId(classToRename.getId());
                         fixedClass.setName("GenericMPLSService");
                         mem.setClassProperties(fixedClass);
-                    } catch (InvalidArgumentException | ApplicationObjectNotFoundException | NotAuthorizedException | MetadataObjectNotFoundException ex) {
+                    } catch (InvalidArgumentException | ApplicationObjectNotFoundException | MetadataObjectNotFoundException ex) {
                         //Do nothing. The class probably was already renamed
                     }
             
@@ -197,8 +198,11 @@ public class ToolsBean implements ToolsBeanRemote {
                         bem.createClassLevelReport("FrameRelayCircuit", "Configuration Details", "Logical configuration of some MPLS-related entities",
                                 String.format(template, "Logical configuration of some MPLS-related entities", "buildLogicalConfigurationInterfacesReport(objectClassName, objectId)",
                                         "Configuration Details"), RemoteReportLight.TYPE_HTML, true);
+                        
+                        aem.createGeneralActivityLogEntry("admin", ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+                                new ChangeDescriptor("reports", "", "", "Hard-coded reports migrated"));
 
-                    } catch (MetadataObjectNotFoundException ex) {
+                    } catch (MetadataObjectNotFoundException | ApplicationObjectNotFoundException ex) {
                         results[i] = ex.getMessage();
                     }
             
