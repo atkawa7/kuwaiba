@@ -18,6 +18,7 @@ package com.neotropic.kuwaiba.web.nodes.properties;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.neotropic.kuwaiba.web.nodes.ObjectNode;
+import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.server.Page;
 import com.vaadin.shared.Position;
@@ -38,35 +39,44 @@ import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.services.persistence.util.Constants;
+import org.kuwaiba.web.properties.AbstractNodePorperty;
 import org.kuwaiba.web.properties.PropertySheet;
 
 /**
- * Represents a property sheet for an object node 
+ * This class contains the method that listens when a node is selected in the 
+ * tree or a marker is selected in the map and creates a property sheet 
+ * for the selected object. 
  * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
  */
-public class ObjectNodeProperties extends CustomComponent {
+public class ObjectNodeProperty extends CustomComponent implements AbstractNodePorperty{
     
     private RemoteBusinessObject remoteBusinessObject;
     private final EventBus eventBus;
     private PropertySheet sheet;
     
-    public ObjectNodeProperties(final EventBus eventBus) {
+    public ObjectNodeProperty(final EventBus eventBus) {
         this.eventBus = eventBus;
     }
       
     @Subscribe
+    @Override
     public void nodeSelected(ItemClickEvent event) {
         createPropertySheet((ObjectNode) event.getItemId());
+        //ObjectNode node = (ObjectNode)event.getItemId();
     }
     
-    private void createPropertySheet(ObjectNode node){
+    @Override
+    public void createPropertySheet(Object node){
         try {
             BusinessEntityManager bem = PersistenceService.getInstance().getBusinessEntityManager();
             MetadataEntityManager mem = PersistenceService.getInstance().getMetadataEntityManager();
             ApplicationEntityManager aem = PersistenceService.getInstance().getApplicationEntityManager();
             
-            remoteBusinessObject = bem.getObject(node.getClassName(), node.getId());
-            sheet = new PropertySheet(remoteBusinessObject, eventBus);
+            remoteBusinessObject = bem.getObject(((ObjectNode)node).getClassName(), ((ObjectNode)node).getId());
+            BeanItem<RemoteBusinessObject> beanItem = new BeanItem<> (remoteBusinessObject);
+            ObjectNodePropertyChangeValueListener valueListener = new ObjectNodePropertyChangeValueListener(beanItem, eventBus);
+            sheet = new PropertySheet(beanItem, valueListener);
+            
             ClassMetadata meta = mem.getClass(remoteBusinessObject.getClassName());
             Set<AttributeMetadata> classAttributes = meta.getAttributes();
             int i = 0;
@@ -83,10 +93,10 @@ public class ObjectNodeProperties extends CustomComponent {
                     switch (mapping) {
                         case Constants.MAPPING_TIMESTAMP:
                         case Constants.MAPPING_DATE:
-                            sheet.createDateProperty(classAttribute.getName(), new Date(Long.valueOf(attributeValue)), i);
+                            sheet.createDateProperty(classAttribute.getName(), classAttribute.getDescription(), new Date(Long.valueOf(attributeValue)), i);
                             break;
                         case Constants.MAPPING_PRIMITIVE:
-                            sheet.createPrimitiveField(classAttribute.getName(), attributeValue, classAttribute.getType(), i);
+                            sheet.createPrimitiveField(classAttribute.getName(),  classAttribute.getDescription(), attributeValue, classAttribute.getType(), i);
                             break;
                         case Constants.MAPPING_MANYTOONE:
                             List<RemoteBusinessObjectLight> listTypeItems = aem.getListTypeItems(classAttribute.getType());
@@ -98,23 +108,20 @@ public class ObjectNodeProperties extends CustomComponent {
                                         actualItem = listTypeItem;
                                 }
                             }
-                            sheet.createListTypeField(classAttribute.getName(), listTypeItems, actualItem, i);
+                            sheet.createListTypeField(classAttribute.getName(),  classAttribute.getDescription(), listTypeItems, actualItem, i);
                             break;
-//                        case Constants.MAPPING_MANYTOMANY:
-//                            sheet.createTextField(classAttribute.getName(), "MtM", i);
-//                            break;
+                        case Constants.MAPPING_MANYTOMANY:
+                            sheet.createPrimitiveField(classAttribute.getName(),  classAttribute.getDescription(), "MtM", classAttribute.getType(), i);
+                            break;
                         default:
                            showNotification(new Notification("Mapping not supported",
                                    Notification.Type.ERROR_MESSAGE));
                     }        
                 }
             }
-            i++;
-            sheet.createDefaults(i);
         } catch (InventoryException ex) {
-            Logger.getLogger(ObjectNodeProperties.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ObjectNodeProperty.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
         setCompositionRoot(sheet);
     }
     

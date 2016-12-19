@@ -16,7 +16,7 @@
 package org.kuwaiba.web;
 
 import com.google.common.eventbus.EventBus;
-import com.neotropic.kuwaiba.web.nodes.properties.ObjectNodeProperties;
+import com.neotropic.kuwaiba.web.nodes.properties.ObjectNodeProperty;
 import com.vaadin.cdi.CDIView;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -96,7 +96,7 @@ class ApplicationView extends CustomComponent implements View {
             TreeView treeNavigation = new TreeView(
                     new RemoteBusinessObjectLight(Long.valueOf(-1), "/", "Root"),
                     "Navigation Tree", eventBus);
-            ObjectNodeProperties properties = new ObjectNodeProperties(eventBus);
+            ObjectNodeProperty properties = new ObjectNodeProperty(eventBus);
             
             GeographicInformation geoInfo = new GeographicInformation();
             

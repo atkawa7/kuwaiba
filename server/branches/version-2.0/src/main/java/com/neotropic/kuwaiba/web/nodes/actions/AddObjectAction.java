@@ -15,10 +15,8 @@
  */
 package com.neotropic.kuwaiba.web.nodes.actions;
 
-import com.vaadin.ui.AbstractField;
-import com.vaadin.ui.TextField;
+
 import com.vaadin.ui.Tree;
-import com.vaadin.ui.UI;
 
 /**
  *
@@ -27,7 +25,7 @@ import com.vaadin.ui.UI;
 public class AddObjectAction extends AbstractAction {
     
     public AddObjectAction() {
-        super("Add Company");
+        super("Add Object");
     }
 
 //    @Override

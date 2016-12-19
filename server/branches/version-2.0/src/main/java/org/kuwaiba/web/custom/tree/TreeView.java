@@ -64,7 +64,6 @@ public class TreeView extends Tree implements Tree.ExpandListener, CollapseListe
     @Subscribe
     public void nodeChange(Property.ValueChangeEvent event) { 
         String newValue = (String) event.getProperty().getValue();
-        //node.setDisplayName(newValue);
         this.setItemCaption(node, newValue);
     }
 }
