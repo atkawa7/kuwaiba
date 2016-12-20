@@ -34,13 +34,10 @@ import java.util.List;
 import java.util.Map;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
-import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
-import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
-import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.ConnectionManager;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
@@ -114,14 +111,15 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     /**
      * Reference to the CacheManager
      */
-    private CacheManager cm;
+    private CacheManager cm = CacheManager.getInstance();
 
-    private BusinessEntityManagerImpl() {
-        cm = CacheManager.getInstance();
-    }
-
+    /**
+     * Main constructor. It receives references to the other entity managers
+     * @param cmn Reference to the ConnectionManager instance.
+     * @param aem Reference to the ApplicationManager instance.
+     * @param mem Reference to the MetadataManager instance. 
+     */
     public BusinessEntityManagerImpl(ConnectionManager cmn, ApplicationEntityManager aem, MetadataEntityManager mem) {
-        this();
         this.aem = aem;
         this.mem = mem;
         this.defaultReports = new DefaultReports(mem, this, aem);
@@ -140,7 +138,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     @Override
     public long createObject(String className, String parentClassName, long parentOid, HashMap<String,List<String>> attributes, long template)
-            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException, DatabaseException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException {
         
         ClassMetadata myClass= cm.getClass(className);
         
@@ -209,7 +207,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     //TODO: Rewrite this!
     @Override
     public long createObject(String className, String parentClassName, String criteria, HashMap<String, List<String>> attributes, long template)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, DatabaseException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, ApplicationObjectNotFoundException {
         
         ClassMetadata objectClass = cm.getClass(className);
         if (objectClass == null)
@@ -304,7 +302,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     @Override
     public long createSpecialObject(String className, String parentClassName, long parentOid, HashMap<String,List<String>> attributes, long template)
-            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException, DatabaseException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException {
 
         ClassMetadata myClass= cm.getClass(className);
         if (myClass == null)
@@ -350,7 +348,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     public long createPoolItem(long poolId, String className, String[] attributeNames, 
     String[][] attributeValues, long templateId) 
             throws ApplicationObjectNotFoundException, InvalidArgumentException, 
-            ArraySizeMismatchException, MetadataObjectNotFoundException, NotAuthorizedException {
+            ArraySizeMismatchException, MetadataObjectNotFoundException {
         
         if (attributeNames != null && attributeValues != null){
             if (attributeNames.length != attributeValues.length)
@@ -392,7 +390,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     @Override
     public long[] createBulkSpecialObjects(String className, int numberOfObjects, String parentClassName, long parentId) 
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, ApplicationObjectNotFoundException, NotAuthorizedException, InvalidArgumentException {
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException {
         
         ClassMetadata myClass= cm.getClass(className);
         if (myClass == null)
@@ -447,7 +445,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     @Override
     public RemoteBusinessObject getObject(String className, long oid)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         
         try (Transaction tx = graphDb.beginTx()) {
             ClassMetadata myClass = cm.getClass(className);
@@ -461,7 +459,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     @Override
     public RemoteBusinessObjectLight getObjectLight(String className, long oid)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws ObjectNotFoundException, MetadataObjectNotFoundException {
         
         //Perform benchmarks to see if accessing to the objects index is less expensive
         try(Transaction tx = graphDb.beginTx()) {
@@ -484,7 +482,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     @Override
     public RemoteBusinessObject getParent(String objectClass, long oid) 
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         
         try(Transaction tx = graphDb.beginTx()) {
             Node objectNode = getInstanceOfClass(objectClass, oid);
@@ -507,7 +505,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     @Override
     public List<RemoteBusinessObjectLight> getParents (String objectClassName, long oid)
-        throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+        throws ObjectNotFoundException, MetadataObjectNotFoundException {
         
         List<RemoteBusinessObjectLight> parents =  new ArrayList<>();
       
@@ -536,7 +534,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     @Override
     public RemoteBusinessObject getParentOfClass(String objectClass, long oid, String parentClass) 
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         
         try(Transaction tx = graphDb.beginTx()) {
             Node objectNode = getInstanceOfClass(objectClass, oid);
@@ -564,7 +562,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     @Override
     public void deleteObjects(HashMap<String, List<Long>> objects, boolean releaseRelationships)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException, NotAuthorizedException {
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException {
 
         try(Transaction tx = graphDb.beginTx()) {
             //TODO: Optimize so it can find all objects of a single class in one query
@@ -582,7 +580,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public void deleteObject(String className, long oid, boolean releaseRelationships) throws ObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException, NotAuthorizedException {
+    public void deleteObject(String className, long oid, boolean releaseRelationships) 
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException {
         try (Transaction tx = graphDb.beginTx()) {
             if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, className))
                         throw new OperationNotPermittedException(String.format("Class %s is not a business-related class", className));
@@ -596,7 +595,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     @Override
     public ChangeDescriptor updateObject(String className, long oid, HashMap<String,List<String>> attributes)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, 
-            WrongMappingException, InvalidArgumentException, ApplicationObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+                InvalidArgumentException {
 
         ClassMetadata myClass= cm.getClass(className);
         
@@ -660,7 +659,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     @Override
     public boolean setBinaryAttributes(String className, long oid, List<String> attributeNames, List<byte[]> attributeValues)
-            throws ObjectNotFoundException, OperationNotPermittedException, ArraySizeMismatchException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws ObjectNotFoundException, OperationNotPermittedException, ArraySizeMismatchException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -699,7 +698,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     @Override
     public void releaseSpecialRelationship(String objectClass, long objectId, long otherObjectId, String name)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws ObjectNotFoundException, MetadataObjectNotFoundException {
         
         try(Transaction tx = graphDb.beginTx()) {
             Node node = getInstanceOfClass(objectClass, objectId);
@@ -714,7 +713,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     @Override
     public void releaseSpecialRelationship(String objectClass, long objectId, String relationshipName, long targetId)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws ObjectNotFoundException, MetadataObjectNotFoundException {
         
         try(Transaction tx = graphDb.beginTx()) {
             Node node = getInstanceOfClass(objectClass, objectId);
@@ -729,7 +728,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     @Override
     public void moveObjects(String targetClassName, long targetOid, HashMap<String, long[]> objects)
-            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
         ClassMetadata newParentClass = cm.getClass(targetClassName);
         
         if (newParentClass == null)
@@ -768,7 +767,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     @Override
     public long[] copyObjects(String targetClassName, long targetOid, HashMap<String, long[]> objects, boolean recursive)
-            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
         ClassMetadata newParentClass = cm.getClass(targetClassName);
 
         if (newParentClass == null)
@@ -800,13 +799,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     @Override
     public boolean setObjectLockState(String className, long oid, Boolean value)
-            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public List<RemoteBusinessObjectLight> getObjectChildren(String className, long oid, int maxResults)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws ObjectNotFoundException, MetadataObjectNotFoundException  {
         try (Transaction tx =  graphDb.beginTx()) {
             Node parentNode;
             if(oid == -1)
@@ -839,7 +838,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     @Override
     public List<RemoteBusinessObjectLight> getObjectChildren(long classId, long oid, int maxResults)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws ObjectNotFoundException, MetadataObjectNotFoundException  {
         try(Transaction tx = graphDb.beginTx()) {
             Node parentNode;
             if(oid == -1)
@@ -869,7 +868,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     @Override
     public List<RemoteBusinessObjectLight> getSiblings(String className, long oid, int maxResults)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException{
+            throws MetadataObjectNotFoundException, ObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx()){
             Node node = getInstanceOfClass(className, oid);
             List<RemoteBusinessObjectLight> res = new ArrayList<>();
@@ -900,7 +899,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     @Override
     public List<RemoteBusinessObjectLight> getObjectsOfClassLight(String className, int maxResults)
-            throws MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws MetadataObjectNotFoundException, InvalidArgumentException {
         try(Transaction tx = graphDb.beginTx()) {
             Node classMetadataNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
             if (classMetadataNode == null)
@@ -926,7 +925,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     @Override
     public List<RemoteBusinessObject> getChildrenOfClass(long parentOid, String parentClass, String classToFilter, int maxResults)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException {
         
         try (Transaction tx = graphDb.beginTx()) {
         
@@ -982,7 +981,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     @Override
     public List<RemoteBusinessObjectLight> getChildrenOfClassLight(long parentOid, String parentClass, String classToFilter, int maxResults)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException  {
+            throws MetadataObjectNotFoundException, ObjectNotFoundException  {
         
         try (Transaction tx = graphDb.beginTx()) {
             Node parentNode = getInstanceOfClass(parentClass, parentOid);
@@ -1036,7 +1035,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     @Override
     public List<RemoteBusinessObjectLight> getSpecialAttribute(String objectClass, long objectId, String specialAttributeName) 
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, NotAuthorizedException {
+            throws ObjectNotFoundException, MetadataObjectNotFoundException {
         
         try(Transaction tx = graphDb.beginTx()) {
             Node instance = getInstanceOfClass(objectClass, objectId);
@@ -1053,7 +1052,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public List<AnnotatedRemoteBusinessObjectLight> getAnnotatedSpecialAttribute(String objectClass, long objectId, String specialAttributeName) throws ObjectNotFoundException, MetadataObjectNotFoundException, NotAuthorizedException {
+    public List<AnnotatedRemoteBusinessObjectLight> getAnnotatedSpecialAttribute(String objectClass, long objectId, String specialAttributeName) 
+            throws ObjectNotFoundException, MetadataObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx()) {
             Node instance = getInstanceOfClass(objectClass, objectId);
             List<AnnotatedRemoteBusinessObjectLight> res = new ArrayList<>();
@@ -1072,7 +1072,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     @Override
     public HashMap<String,List<RemoteBusinessObjectLight>> getSpecialAttributes (String className, long objectId) 
-        throws MetadataObjectNotFoundException, ObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException  {
+        throws MetadataObjectNotFoundException, ObjectNotFoundException  {
         
         HashMap<String,List<RemoteBusinessObjectLight>> res = new HashMap<>();
         try(Transaction tx = graphDb.beginTx()) {
@@ -1092,7 +1092,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     @Override
     public List<RemoteBusinessObjectLight> getObjectSpecialChildren(String objectClass, long objectId)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException  {
+            throws MetadataObjectNotFoundException, ObjectNotFoundException  {
         
         try(Transaction tx = graphDb.beginTx()) {
             Node instance = getInstanceOfClass(objectClass, objectId);
@@ -1110,7 +1110,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     @Override
     public boolean hasRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException  {
+            throws ObjectNotFoundException, MetadataObjectNotFoundException {
         
         try(Transaction tx = graphDb.beginTx()) {
             Node object = getInstanceOfClass(objectClass, objectId);
@@ -1127,7 +1127,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     @Override
     public boolean hasSpecialRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships) 
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, NotAuthorizedException  {
+            throws ObjectNotFoundException, MetadataObjectNotFoundException  {
         try (Transaction tx = graphDb.beginTx()) {
             Node object = getInstanceOfClass(objectClass, objectId);
             int relationshipsCounter = 0;
@@ -1144,7 +1144,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     //TODO DELETE. This is a business dependant method, should not be here. Don't use it
     @Override
-    public List<RemoteBusinessObjectLight> getPhysicalPath(String objectClass, long objectId) throws ApplicationObjectNotFoundException, NotAuthorizedException{
+    public List<RemoteBusinessObjectLight> getPhysicalPath(String objectClass, long objectId) {
         List<RemoteBusinessObjectLight> path = new ArrayList<>();
         
         //The first part of the query will return many paths, the longest is the one we need. The others are

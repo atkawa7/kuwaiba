@@ -186,16 +186,8 @@ public class ToolsBean implements ToolsBeanRemote {
                         bem.createClassLevelReport("BridgeDomainInterface", "Configuration Details", "Logical configuration of some MPLS-related entities",
                                 String.format(template, "Logical configuration of some MPLS-related entities", "buildLogicalConfigurationInterfacesReport(objectClassName, objectId)",
                                         "Configuration Details"), RemoteReportLight.TYPE_HTML, true);
-                        
-                        bem.createClassLevelReport("MPLSTunnel", "Configuration Details", "Logical configuration of some MPLS-related entities",
-                                String.format(template, "Logical configuration of some MPLS-related entities", "buildLogicalConfigurationInterfacesReport(objectClassName, objectId)",
-                                        "Configuration Details"), RemoteReportLight.TYPE_HTML, true);
-                        
+                                                
                         bem.createClassLevelReport("VRFInstance", "Configuration Details", "Logical configuration of some MPLS-related entities",
-                                String.format(template, "Logical configuration of some MPLS-related entities", "buildLogicalConfigurationInterfacesReport(objectClassName, objectId)",
-                                        "Configuration Details"), RemoteReportLight.TYPE_HTML, true);
-                        
-                        bem.createClassLevelReport("FrameRelayCircuit", "Configuration Details", "Logical configuration of some MPLS-related entities",
                                 String.format(template, "Logical configuration of some MPLS-related entities", "buildLogicalConfigurationInterfacesReport(objectClassName, objectId)",
                                         "Configuration Details"), RemoteReportLight.TYPE_HTML, true);
                         

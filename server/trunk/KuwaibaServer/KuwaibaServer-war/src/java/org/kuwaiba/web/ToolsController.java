@@ -96,7 +96,7 @@ public class ToolsController implements Serializable {
                     if (executedPatchesMessages[i] == null)
                         JsfUtil.addSuccessMessage(String.format("Patch %s applied sucessfully", i + 1));
                     else
-                        JsfUtil.addErrorMessage(String.format("Patch %s exited with error: %s", i + 1, executedPatchesMessages[i]));
+                        JsfUtil.addErrorMessage(String.format("Patch %s exit with error: %s", i + 1, executedPatchesMessages[i]));
                 }
             }
         } catch (Exception e) {

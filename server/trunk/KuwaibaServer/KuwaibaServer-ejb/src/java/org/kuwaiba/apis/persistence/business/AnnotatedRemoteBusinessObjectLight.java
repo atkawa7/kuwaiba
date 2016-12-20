@@ -18,10 +18,10 @@ package org.kuwaiba.apis.persistence.business;
 import java.util.Map;
 
 /**
- * When an object is related to another using a special relationship, the other side of the relationship an be retrieved
+ * When an object is related to another using a special relationship, the other side of the relationship can be retrieved
  * using the method BusinessEntityManager.getSpecialAttribute or BusinessEntityManager.getSpecialAttributes. However, in some cases, 
  * the relationship itself has its own properties, and it's called an annotated relationship. In order to be able to retrieve not only the 
- * other side of the relationship, but also the annotated property, use this type. It wraps both
+ * other side of the relationship, but also the annotated property, use this type.
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class AnnotatedRemoteBusinessObjectLight {
