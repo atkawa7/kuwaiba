@@ -22,7 +22,7 @@ import org.neo4j.graphdb.RelationshipType;
  * Possible relationship types
  * @author Adrian Fernando Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public enum RelTypes implements RelationshipType{
+public enum RelTypes implements RelationshipType {
     
     ROOT, //Relationship to the root node
     EXTENDS, //Inheritance
@@ -43,5 +43,8 @@ public enum RelTypes implements RelationshipType{
     PERFORMED_BY, //Connects a log entry node with a user
     GROUP, //Used to associate the groups nodes with group root node
     PRIVILEGE, //Used to associate the privilege nodes with privilege root node
-    SUBSCRIBED_TO //Used to relate a user to a task, so it can be notified about the result of its execution
+    SUBSCRIBED_TO, //Used to relate a user to a task, so it can be notified about the result of its execution
+    HAS_TEMPLATE, //Used to related a class to a template (which is basically a normal object)
+    HAS_REPORT, //Relates a class or the dummy root (depending on if it's a class or inventory level report) to a report
+    INSTANCE_OF_SPECIAL //Used to relate a class with an instance that makes part of a template. These instances are not indexed and can not be searched, that's why they need a special relationship
 }

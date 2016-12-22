@@ -16,7 +16,7 @@
 package org.kuwaiba.util;
 
 import java.util.Iterator;
-import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
  *

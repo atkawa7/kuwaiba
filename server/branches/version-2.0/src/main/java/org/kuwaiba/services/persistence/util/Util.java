@@ -22,11 +22,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigInteger;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,10 +51,10 @@ import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.apis.persistence.metadata.GenericObjectList;
 import org.kuwaiba.services.persistence.impl.neo4j.RelTypes;
-import org.kuwaiba.ws.todeserialize.StringPair;
-import org.kuwaiba.ws.toserialize.application.RemotePool;
-import org.kuwaiba.ws.toserialize.application.TaskNotificationDescriptor;
-import org.kuwaiba.ws.toserialize.application.TaskScheduleDescriptor;
+import org.kuwaiba.interfaces.ws.todeserialize.StringPair;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemotePool;
+import org.kuwaiba.interfaces.ws.toserialize.application.TaskNotificationDescriptor;
+import org.kuwaiba.interfaces.ws.toserialize.application.TaskScheduleDescriptor;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.Label;
@@ -115,7 +112,7 @@ public class Util {
      * @param listType Node the list items are supposed to be instance of
      * @return A list of nodes representing the list type items
      */
-    public static List<Node> getRealValue(List<String> values, Node listType) throws InvalidArgumentException{
+    public static List<Node> getRealValue(List<String> values, Node listType) {
         Iterable<Relationship> listTypeItems = listType.getRelationships(RelTypes.INSTANCE_OF, Direction.INCOMING);
         List<Node> res = new ArrayList<>();
         
@@ -163,14 +160,15 @@ public class Util {
      * Deletes recursively and object and all its children. Note that the transaction should be handled by the caller
      * @param instance The object to be deleted
      * @param unsafeDeletion True if you want the object to be deleted no matter if it has RELATED_TO and RELATED_TO_SPECIAL relationships
+     * @throws org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException If the object already has relationships
      */
     public static void deleteObject(Node instance, boolean unsafeDeletion) throws OperationNotPermittedException {
         if(!unsafeDeletion){
             if (instance.getRelationships(RelTypes.RELATED_TO, Direction.INCOMING).iterator().hasNext())
-                throw new OperationNotPermittedException("deleteObject",String.format("The object with id %s can not be deleted since it has relationships", instance.getId()));
+                throw new OperationNotPermittedException(String.format("The object with id %s can not be deleted since it has relationships", instance.getId()));
 
             if (instance.getRelationships(RelTypes.RELATED_TO_SPECIAL, Direction.INCOMING).iterator().hasNext())
-                throw new OperationNotPermittedException("deleteObject",String.format("The object with id %s can not be deleted since it has relationships", instance.getId()));
+                throw new OperationNotPermittedException(String.format("The object with id %s can not be deleted since it has relationships", instance.getId()));
         }
 
         for (Relationship rel : instance.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF, RelTypes.CHILD_OF_SPECIAL))
@@ -182,34 +180,45 @@ public class Util {
         instance.getGraphDatabase().index().forNodes(Constants.INDEX_OBJECTS).remove(instance);
         instance.delete();
     }
+    
+    public static void deleteTemplateObject(Node instance) {
+        for (Relationship rel : instance.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF))
+            deleteTemplateObject(rel.getStartNode());
+
+        for (Relationship rel : instance.getRelationships())
+            rel.delete();
+
+        instance.delete();
+    }
 
     /**
      * Read and returns the bytes of a given file
      * @param fileName file to be opened
      * @return bytes on that file
+     * @throws java.io.FileNotFoundException If the file could not be found
      */
     public static byte[] readBytesFromFile(String fileName) throws FileNotFoundException, IOException{
         byte[] bytes = null;
         File f = new File(fileName);
-        InputStream is = new FileInputStream(f);
-        long length = f.length();
-
-        if (length < Integer.MAX_VALUE) { //checks if the file is too big
-            bytes = new byte[(int)length];
-            // Read in the bytes
-            int offset = 0;
-            int numRead = 0;
-            while (offset < bytes.length
-                   && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
-                offset += numRead;
-            }
-
-            // Ensure all the bytes have been read in
-            if (offset < bytes.length) {
-                throw new IOException("Could not completely read file " + f.getName());
+        try (InputStream is = new FileInputStream(f)) {
+            long length = f.length();
+            
+            if (length < Integer.MAX_VALUE) { //checks if the file is too big
+                bytes = new byte[(int)length];
+                // Read in the bytes
+                int offset = 0;
+                int numRead = 0;
+                while (offset < bytes.length
+                        && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
+                    offset += numRead;
+                }
+                
+                // Ensure all the bytes have been read in
+                if (offset < bytes.length) {
+                    throw new IOException("Could not completely read file " + f.getName());
+                }
             }
         }
-        is.close();
         return bytes;
     }
 
@@ -385,7 +394,8 @@ public class Util {
         attribute.setNoCopy((Boolean)attributeNode.getProperty(Constants.PROPERTY_NO_COPY));
         attribute.setUnique((Boolean)attributeNode.getProperty(Constants.PROPERTY_UNIQUE));
         attribute.setId(attributeNode.getId());
-
+        attribute.setMapping(getMappingFromType(attribute.getType()));
+        
         return attribute;
     }
     
@@ -410,8 +420,21 @@ public class Util {
             (String)instance.getProperty(Constants.PROPERTY_NAME), (String)classNode.getProperty(Constants.PROPERTY_NAME));
     }
     
+    public static RemoteBusinessObjectLight createTemplateElementLightFromNode (Node instance) {
+        Node classNode = instance.getSingleRelationship(RelTypes.INSTANCE_OF_SPECIAL, Direction.OUTGOING).getEndNode();
+        
+        return new RemoteBusinessObjectLight(instance.getId(), 
+            (String)instance.getProperty(Constants.PROPERTY_NAME), (String)classNode.getProperty(Constants.PROPERTY_NAME));
+    }
+    
     public static RemoteBusinessObject createRemoteObjectFromNode (Node instance) throws InvalidArgumentException {
         Node classNode = instance.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode();
+        ClassMetadata classMetadata = createClassMetadataFromNode(classNode);
+        return createRemoteObjectFromNode(instance, classMetadata);
+    }
+    
+    public static RemoteBusinessObject createTemplateElementFromNode (Node instance) throws InvalidArgumentException {
+        Node classNode = instance.getSingleRelationship(RelTypes.INSTANCE_OF_SPECIAL, Direction.OUTGOING).getEndNode();
         ClassMetadata classMetadata = createClassMetadataFromNode(classNode);
         return createRemoteObjectFromNode(instance, classMetadata);
     }
@@ -458,10 +481,10 @@ public class Util {
     
     /**
      * Builds a RemoteBusinessObject instance from a node representing a business object
-     * @param instance
-     * @param myClass
-     * @return
-     * @throws InvalidArgumentException if an attribute value can't be mapped into value
+     * @param instance The object as a Node instance.
+     * @param myClass The class metadata to map the node's properties into a RemoteBussinessObject.
+     * @return The business object.
+     * @throws InvalidArgumentException If an attribute value can't be mapped into value.
      */
     public static RemoteBusinessObject createRemoteObjectFromNode(Node instance, ClassMetadata myClass) throws InvalidArgumentException {
         
@@ -501,7 +524,7 @@ public class Util {
             for (AttributeMetadata myAtt : myClass.getAttributes()){
                 if (myAtt.getName().equals(attributeName)){
                     if (attributes.get(attributeName)==null)
-                        attributes.put(attributeName, new ArrayList<String>());
+                        attributes.put(attributeName, new ArrayList<>());
                     attributes.get(attributeName).add(String.valueOf(relationship.getEndNode().getId()));
                 }
             }
@@ -651,26 +674,9 @@ public class Util {
     }
 
     /**
-     * Given a plain string, it calculate the MD5 hash. This method is used when authenticating users
-     * Thanks to cholland for the code snippet at http://snippets.dzone.com/posts/show/3686
-     * @param pass
-     * @return the MD5 hash for the given string
-     */
-    public static String getMD5Hash(String pass) {
-        try{
-		MessageDigest m = MessageDigest.getInstance("MD5");
-		byte[] data = pass.getBytes();
-		m.update(data,0,data.length);
-		BigInteger i = new BigInteger(1,m.digest());
-		return String.format("%1$032X", i);
-        }catch(NoSuchAlgorithmException nsa){
-            return null;
-        }
-    }
-
-    /**
      * Retrieves the subclasses of a given class metadata node within the class hierarchy
-     * @return
+     * @param classMetadata The parent class metadata
+     * @return The root node of the list of class metadata nodes
      */
 
     public static Iterable<Node> getAllSubclasses(final Node classMetadata){
@@ -686,7 +692,6 @@ public class Util {
      * attribute of the node, if the property is a date it is formating into
      * yyyy-MM-DD, if does not exists it return an empty string.
      * @param objectNode
-     * @param className
      * @param attribute
      * @return
      */
@@ -725,7 +730,6 @@ public class Util {
     /**
      * Evaluates attribute type
      * @param attributeType
-     * @param attributeName
      * @param attributeValue
      * @return
      */
@@ -810,7 +814,8 @@ public class Util {
      * Transactions are not handled here
      * @param classNode
      * @param attributeName
-     * @param attributeType 
+     * @param newAttributeType 
+     * @throws InvalidArgumentException If the value can not be converted and the process threw an error
      */
     public static void changeAttributeTypeIfPrimitive (Node classNode, String attributeName, String newAttributeType) throws InvalidArgumentException {
         final TraversalDescription UPDATE_TRAVERSAL = classNode.getGraphDatabase().traversalDescription().
@@ -880,7 +885,6 @@ public class Util {
      * @param classNode
      * @param oldAttributeName
      * @param newAttributeName
-     * @throws InvalidArgumentException 
      */
     public static void changeAttributeName(Node classNode, String oldAttributeName, String newAttributeName) {
         final TraversalDescription UPDATE_TRAVERSAL = classNode.getGraphDatabase().traversalDescription().
@@ -1008,5 +1012,20 @@ public class Util {
         }catch (NumberFormatException ex){} //Does nothing
         
         return null;
-    }  
+    }
+    
+    /**
+     * Given an attribute type, tells what mapping should be used to render the value on screen.
+     * @param type Attribute type
+     * @return The attribute type. For possible values, see AttributeMetadata.MAPPING_XXX
+     */
+    public static int getMappingFromType(String type){
+        if (type.equals("String") || type.equals("Integer") || type.equals("Float") || type.equals("Long") || type.equals("Boolean"))
+            return AttributeMetadata.MAPPING_PRIMITIVE;
+        if (type.equals("Timestamp"))
+            return AttributeMetadata.MAPPING_TIMESTAMP;
+        if (type.equals("Date"))
+            return AttributeMetadata.MAPPING_DATE;
+        return AttributeMetadata.MAPPING_MANYTOONE;
+    }
 }

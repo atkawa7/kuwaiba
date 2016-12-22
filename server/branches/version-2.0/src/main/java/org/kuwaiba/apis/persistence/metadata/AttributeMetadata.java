@@ -13,17 +13,32 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package org.kuwaiba.apis.persistence.metadata;
 
 import java.io.Serializable;
-import org.kuwaiba.services.persistence.util.Constants;
 
 /**
  * Contains the detailed metadata information about a class attribute
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class AttributeMetadata implements Serializable {
-
+    /**
+     * Integer, Float, Long, Boolean, String or Text
+     */
+    public static final int MAPPING_PRIMITIVE = 1;
+    /**
+     * Dates
+     */
+    public static final int MAPPING_DATE = 2;
+    /**
+     * Timestamp
+     */
+    public static final int MAPPING_TIMESTAMP = 3;
+    /**
+     * Many to one relationship (such as types)
+     */
+    public static final int MAPPING_MANYTOONE = 4;
     /**
      * Attribute's id
      */
@@ -72,7 +87,10 @@ public class AttributeMetadata implements Serializable {
      * Cannot change or delete a locked attribute
      */
     private Boolean locked;
-
+    /**
+     * The attribute mapping, that is, how should it be interpreted by a parser. See MAPPING_XXXX  constants for possible values
+     */
+    private int mapping;
     // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
     public Boolean isAdministrative() {
         return administrative;
@@ -169,6 +187,14 @@ public class AttributeMetadata implements Serializable {
     public void setLocked(Boolean locked) {
         this.locked = locked;
     }
+
+    public int getMapping() {
+        return mapping;
+    }
+
+    public void setMapping(int mapping) {
+        this.mapping = mapping;
+    }
     // </editor-fold>
     
     @Override
@@ -179,7 +205,7 @@ public class AttributeMetadata implements Serializable {
             return false;
         
         AttributeMetadata theOtherAttribute = (AttributeMetadata)obj;
-        //null checka are avoided here because the attribute name can not be null
+        //null checks are avoided here because the attribute name can not be null
         return this.getId() == theOtherAttribute.getId() || this.getName().equals(theOtherAttribute.getName());
     }
 
@@ -196,30 +222,8 @@ public class AttributeMetadata implements Serializable {
      * @return true if the given type is primitive, false otherwise
      */
     public static boolean isPrimitive(String type){
-        if (type.equals("String") || type.equals("Integer") || type.equals("Float") 
+        return type.equals("String") || type.equals("Integer") || type.equals("Float") 
                 || type.equals("Long") || type.equals("Boolean") || type.equals("Date")
-                 || type.equals("Timestamp"))
-            return true;
-        return false;
-    }
-    
-    /**
-     * Retrieves a mapping for a given attribute
-     * @param type type of the attribute
-     * @return 1 for primitives, 2 for dates and 3 timestamp, 4 for binaries, 
-     * 5 for many to one.
-     */
-    public static int getMappingFromType(String type){
-        if (type.equals("String") || type.equals("Integer") || 
-                type.equals("Float") || type.equals("Long") || 
-                type.equals("Boolean"))
-            return Constants.MAPPING_PRIMITIVE;
-        if (type.equals("Timestamp"))
-            return Constants.MAPPING_TIMESTAMP;
-        if (type.equals("Date"))
-            return Constants.MAPPING_DATE;
-        if (type.equals("Binary"))
-            return Constants.MAPPING_BINARY;
-        return Constants.MAPPING_MANYTOONE;
+                || type.equals("Timestamp");
     }
 }

@@ -16,9 +16,9 @@
 package org.kuwaiba.apis.persistence.application;
 
 import java.util.List;
-import org.kuwaiba.ws.todeserialize.StringPair;
-import org.kuwaiba.ws.toserialize.application.TaskNotificationDescriptor;
-import org.kuwaiba.ws.toserialize.application.TaskScheduleDescriptor;
+import org.kuwaiba.interfaces.ws.todeserialize.StringPair;
+import org.kuwaiba.interfaces.ws.toserialize.application.TaskNotificationDescriptor;
+import org.kuwaiba.interfaces.ws.toserialize.application.TaskScheduleDescriptor;
 
 /**
  * Remote representation of a task

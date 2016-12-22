@@ -6,6 +6,7 @@
 <enterprise-beans>
     <session>
         <ejb-name>StartupBean</ejb-name>
+        <!-- Persistence -->
         <env-entry>
            <description>Database user name, if applicable</description>
            <env-entry-name>dbUsername</env-entry-name>
@@ -36,6 +37,38 @@
            <env-entry-type>java.lang.Integer</env-entry-type>
            <env-entry-value>0</env-entry-value>
         </env-entry>
+        <!-- Mapping -->
+        <env-entry>
+           <description>Google Maps API Key</description>
+           <env-entry-name>googleMapsApiKey</env-entry-name>
+           <env-entry-type>java.lang.String</env-entry-type>
+           <env-entry-value></env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Language used for the maps</description>
+           <env-entry-name>mapLanguage</env-entry-name>
+           <env-entry-type>java.lang.String</env-entry-type>
+           <env-entry-value>english</env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Default latitude of the center of a map</description>
+           <env-entry-name>defaultCenterLatitude</env-entry-name>
+           <env-entry-type>java.lang.Double</env-entry-type>
+           <env-entry-value>2.441916</env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Default longitude of the center of a map</description>
+           <env-entry-name>defaultCenterLongitude</env-entry-name>
+           <env-entry-type>java.lang.Double</env-entry-type>
+           <env-entry-value>-76.6063356</env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Default zoom of a map</description>
+           <env-entry-name>defaultZoom</env-entry-name>
+           <env-entry-type>java.lang.Integer</env-entry-type>
+           <env-entry-value>17</env-entry-value>
+        </env-entry>
+        <!-- Other -->
         <env-entry>
            <description>Background path</description>
            <env-entry-name>backgroundsPath</env-entry-name>

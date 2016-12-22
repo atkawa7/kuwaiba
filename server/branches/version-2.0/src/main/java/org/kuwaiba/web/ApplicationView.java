@@ -16,25 +16,25 @@
 package org.kuwaiba.web;
 
 import com.google.common.eventbus.EventBus;
-import com.neotropic.kuwaiba.web.nodes.properties.ObjectNodeProperty;
+import org.kuwaiba.apis.web.gui.nodes.properties.ObjectNodeProperty;
 import com.vaadin.cdi.CDIView;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Page;
 import com.vaadin.shared.Position;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CustomComponent;
-import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.VerticalSplitPanel;
 import javax.inject.Inject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
-import org.kuwaiba.web.custom.googlemaps.GeographicInformation;
+import org.kuwaiba.web.custom.osp.GoogleMapsGISView;
 import org.kuwaiba.web.custom.tree.TreeView;
-import org.kuwaiba.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
 
 /**
@@ -43,7 +43,7 @@ import org.kuwaiba.ws.toserialize.application.RemoteSession;
  */
 @CDIView("app")
 class ApplicationView extends CustomComponent implements View {
-    static String NAME = "app";
+    static String VIEW_NAME = "app";
     
     EventBus eventBus = new EventBus();
     @Inject
@@ -56,15 +56,27 @@ class ApplicationView extends CustomComponent implements View {
         if (session == null) //NOI18N
              getUI().getNavigator().navigateTo(LoginView.class.getName());
         else {
+            setSizeFull();
             VerticalLayout lytRoot = new VerticalLayout();
             lytRoot.setSizeFull();
             Page.getCurrent().setTitle(String.format("%s - [%s]", "Kuwaiba Open Network Inventory", session.getUsername()));
-
-            /* Header */
-            HorizontalLayout lytHeader = new HorizontalLayout();
-            lytHeader.setWidth("100%");
-            lytHeader.setHeight("10%");
-            lytHeader.addStyleName("kuwaiba-light-official-background");
+            
+            TreeView treeView = new TreeView(
+                    new RemoteBusinessObjectLight(-1, "Navigation Tree Root", "Root"),
+                    "Navigation Tree", eventBus);
+            ObjectNodeProperty propertySheet = new ObjectNodeProperty(eventBus);
+            
+            eventBus.register(treeView);
+            eventBus.register(propertySheet);
+            
+            VerticalSplitPanel pnlSplitExplorer = new VerticalSplitPanel(treeView, propertySheet);
+            pnlSplitExplorer.setSplitPosition(70);
+            pnlSplitExplorer.setSizeFull();
+            
+            GoogleMapsGISView gisView = new GoogleMapsGISView();
+            
+            HorizontalSplitPanel pnlSplitMain = new HorizontalSplitPanel(pnlSplitExplorer, gisView);
+            pnlSplitMain.setSplitPosition(20);
             
             Button btnLogout = new Button("Logout");
             
@@ -74,8 +86,8 @@ class ApplicationView extends CustomComponent implements View {
                 public void buttonClick(Button.ClickEvent event) {
                     try {
                         bean.closeSession(session.getSessionId(), Page.getCurrent().getWebBrowser().getAddress());
-                        getSession().close();
-                        getUI().getNavigator().navigateTo(LoginView.NAME);
+                        getSession().setAttribute("session", null);
+                        getUI().getNavigator().navigateTo(LoginView.VIEW_NAME);
                     } catch (ServerSideException ex) {
                         Notification ntfLoginError = new Notification(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
                         ntfLoginError.setPosition(Position.ASSISTIVE);
@@ -85,40 +97,8 @@ class ApplicationView extends CustomComponent implements View {
                 }
             });
             
-            lytHeader.addComponent(btnLogout);
-            lytHeader.setComponentAlignment(btnLogout, Alignment.TOP_RIGHT);
-            
-            /*Content*/
-            HorizontalLayout lytContent = new HorizontalLayout();
-            lytContent.setHeight("90%");
-            
-            /*Left side panel*/
-            TreeView treeNavigation = new TreeView(
-                    new RemoteBusinessObjectLight(Long.valueOf(-1), "/", "Root"),
-                    "Navigation Tree", eventBus);
-            ObjectNodeProperty properties = new ObjectNodeProperty(eventBus);
-            
-            GeographicInformation geoInfo = new GeographicInformation();
-            
-            eventBus.register(treeNavigation); // subscribers
-            eventBus.register(properties); // subscribers
-            VerticalLayout lytLeftSide = new VerticalLayout(treeNavigation);
-                        
-            lytLeftSide.setHeight("100%");
-            lytLeftSide.setWidth("30%");
-            
-            VerticalLayout lytCenter = new VerticalLayout();
-            
-            lytCenter.setWidth("50%");
-            lytCenter.addComponent(geoInfo);
-            
-            VerticalLayout lytRightSide = new VerticalLayout();
-            lytRightSide.setWidth("20%");
-            lytRightSide.addComponent(properties);
-            
-            lytContent.addComponents(lytLeftSide, lytCenter, lytRightSide);
-            lytRoot.addComponents(lytHeader, lytContent);
-
+            lytRoot.addComponents(btnLogout, pnlSplitMain);
+            lytRoot.setExpandRatio(pnlSplitMain, 2);
             setCompositionRoot(lytRoot);
         }
     }

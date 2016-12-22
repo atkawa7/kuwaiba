@@ -17,7 +17,7 @@ package org.kuwaiba.web.custom.tree;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import com.neotropic.kuwaiba.web.nodes.ObjectNode;
+import org.kuwaiba.apis.web.gui.nodes.ObjectNode;
 import com.vaadin.data.Property;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.ui.Tree;
@@ -25,7 +25,7 @@ import com.vaadin.ui.Tree.CollapseListener;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 
 /**
- * Custom tree for kuwaiba
+ * A tree that extends the features of the default one and makes use of the Nodes API
  * @author Charles Bedon <charles.bedon@kuwaiba.org>
  * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
  */
@@ -38,8 +38,8 @@ public class TreeView extends Tree implements Tree.ExpandListener, CollapseListe
         super(caption);
         addItem(new ObjectNode(rootObject, this));
         this.eventBus = eventBus;
-        registerListeners();
         this.setDragMode(Tree.TreeDragMode.NODE);
+        registerListeners();
     }    
     
     public final void registerListeners(){

@@ -16,23 +16,28 @@
 
 package org.kuwaiba.services.persistence.impl.neo4j.telecom;
 
+import com.neotropic.kuwaiba.modules.reporting.defaults.DefaultReports;
+import com.neotropic.kuwaiba.modules.reporting.InventoryReport;
+import com.neotropic.kuwaiba.modules.reporting.model.RemoteReport;
+import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
+import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
-import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
-import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
-import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.ConnectionManager;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
@@ -48,6 +53,7 @@ import org.kuwaiba.services.persistence.impl.neo4j.RelTypes;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.services.persistence.util.Util;
 import org.kuwaiba.util.ChangeDescriptor;
+import org.kuwaiba.interfaces.ws.todeserialize.StringPair;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -95,23 +101,34 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      */
     private Index<Node> specialNodesIndex;
     /**
+     * Index for reports
+     */
+    private Index<Node> reportsIndex;
+    /**
+     * As a temporary workaround, the old hard-coded reports are wrapped instead of being completely migrated to Groovy scripts
+     */
+    private DefaultReports defaultReports;
+    /**
      * Reference to the CacheManager
      */
-    private CacheManager cm;
+    private CacheManager cm = CacheManager.getInstance();
 
-    private BusinessEntityManagerImpl() {
-        cm = CacheManager.getInstance();
-    }
-
+    /**
+     * Main constructor. It receives references to the other entity managers
+     * @param cmn Reference to the ConnectionManager instance.
+     * @param aem Reference to the ApplicationManager instance.
+     * @param mem Reference to the MetadataManager instance. 
+     */
     public BusinessEntityManagerImpl(ConnectionManager cmn, ApplicationEntityManager aem, MetadataEntityManager mem) {
-        this();
         this.aem = aem;
         this.mem = mem;
+        this.defaultReports = new DefaultReports(mem, this, aem);
         this.graphDb = (GraphDatabaseService)cmn.getConnectionHandler();
         try(Transaction tx = graphDb.beginTx()) {
             this.classIndex = graphDb.index().forNodes(Constants.INDEX_CLASS);
             this.objectIndex = graphDb.index().forNodes(Constants.INDEX_OBJECTS);
             this.poolsIndex = graphDb.index().forNodes(Constants.INDEX_POOLS);
+            this.reportsIndex = graphDb.index().forNodes(Constants.INDEX_REPORTS);
             this.specialNodesIndex = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES);
         }catch(Exception ex) {
             System.out.println(String.format("[KUWAIBA] [%s] An error was found while creating the BEM instance: %s", 
@@ -121,13 +138,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     @Override
     public long createObject(String className, String parentClassName, long parentOid, HashMap<String,List<String>> attributes, long template)
-            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException, DatabaseException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException {
         
         ClassMetadata myClass= cm.getClass(className);
         
         if (!mem.getPossibleChildren(parentClassName).contains(myClass)) 
-            throw new OperationNotPermittedException("Create Object", 
-                    String.format("An instance of class %s can't be created as child of %s", className, parentClassName == null ? Constants.NODE_DUMMYROOT : parentClassName));
+            throw new OperationNotPermittedException(String.format("An instance of class %s can't be created as child of %s", className, parentClassName == null ? Constants.NODE_DUMMYROOT : parentClassName));
         
         try (Transaction tx = graphDb.beginTx()) {        
             Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
@@ -140,19 +156,19 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             }
 
             if (myClass.isInDesign())
-                throw new OperationNotPermittedException("Create Object", "Can not create instances of classes marked as isDesign");
+                throw new OperationNotPermittedException("Can not create instances of classes marked as isDesign");
 
             if (myClass.isAbstract())
-                throw new OperationNotPermittedException("Create Object", "Can not create instances of abstract classes");
+                throw new OperationNotPermittedException(String.format("Abstract class %s can not be instantiated", className));
 
             if (!cm.isSubClass("InventoryObject", className))
-                throw new OperationNotPermittedException("Create Object", "Can not create non-inventory objects");
+                throw new OperationNotPermittedException("Can not create non-inventory objects");
 
             //The object should be created under an instance other than the dummy root
-            if (parentClassName != null) {
+            if (parentClassName != null && parentOid != -1) {
                 ClassMetadata myParentObjectClass= cm.getClass(parentClassName);
                 if (myParentObjectClass == null)
-                    throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
+                    throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", parentClassName));
             }
 
             Node parentNode;
@@ -164,9 +180,25 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             else
                 parentNode = specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
 
-            Node newObject = createObject(classNode, myClass, attributes, template);
+            Node newObject;
+            if (template <= 0)
+                newObject = createObject(classNode, myClass, attributes);
+            else {
+                Node templateNode = null;
+                for (Relationship hasTemplateRelationship : classNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_TEMPLATE)) {
+                    Node endNode = hasTemplateRelationship.getEndNode();
+                    if (endNode.getId() == template){
+                        templateNode = endNode;
+                        break;
+                    }
+                }
+                
+                if (templateNode == null)
+                    throw new ApplicationObjectNotFoundException(String.format("No template with id %s was found for class %s", template, className));
+                
+                newObject = copyTemplateElement(templateNode, true);
+            }
             newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF);
-                      
             tx.success();
             return newObject.getId();
         }
@@ -175,24 +207,23 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     //TODO: Rewrite this!
     @Override
     public long createObject(String className, String parentClassName, String criteria, HashMap<String, List<String>> attributes, long template)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, DatabaseException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, ApplicationObjectNotFoundException {
         
         ClassMetadata objectClass = cm.getClass(className);
         if (objectClass == null)
             throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
         
         if (objectClass.isInDesign())
-            throw new OperationNotPermittedException("Create Object", "Can not create instances of classes marked as isDesign");
+            throw new OperationNotPermittedException("Can not create instances of classes marked as isDesign");
 
         if (objectClass.isAbstract())
-            throw new OperationNotPermittedException("Create Object", "Can not create instances of abstract classes");
+            throw new OperationNotPermittedException("Can not create instances of abstract classes");
 
         if (!cm.isSubClass("InventoryObject", className))
-            throw new OperationNotPermittedException("Create Object", "Can not create non-inventory objects");
+            throw new OperationNotPermittedException("Can not create non-inventory objects");
         
         if (!mem.getPossibleChildren(parentClassName).contains(objectClass))
-            throw new OperationNotPermittedException("Create Object", 
-                    String.format("An instance of class %s can't be created as child of %s", className, parentClassName == null ? Constants.NODE_DUMMYROOT : parentClassName));
+            throw new OperationNotPermittedException(String.format("An instance of class %s can't be created as child of %s", className, parentClassName == null ? Constants.NODE_DUMMYROOT : parentClassName));
         
         String[] splitCriteria = criteria.split(":");
         if (splitCriteria.length != 2)
@@ -243,7 +274,25 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
 
-            Node newObject = createObject(classNode, objectClass, attributes, template);
+            Node newObject;
+            if (template <= 0)
+                newObject = createObject(classNode, objectClass, attributes);
+            else {
+                Node templateNode = null;
+                for (Relationship hasTemplateRelationship : classNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_TEMPLATE)) {
+                    Node endNode = hasTemplateRelationship.getEndNode();
+                    if (endNode.getId() == template){
+                        templateNode = endNode;
+                        break;
+                    }
+                }
+                
+                if (templateNode == null)
+                    throw new ApplicationObjectNotFoundException(String.format("No template with id %s was found for class %s", template, className));
+                
+                newObject = copyTemplateElement(templateNode, true);
+            }
+            
             newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF);
                       
             tx.success();
@@ -253,17 +302,17 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     @Override
     public long createSpecialObject(String className, String parentClassName, long parentOid, HashMap<String,List<String>> attributes, long template)
-            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException, DatabaseException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException {
 
         ClassMetadata myClass= cm.getClass(className);
         if (myClass == null)
             throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
 
         if (myClass.isInDesign())
-            throw new OperationNotPermittedException("Create Object", "Can not create instances of classes marked as isDesign");
+            throw new OperationNotPermittedException("Can not create instances of classes marked as isDesign");
         
         if (myClass.isAbstract())
-            throw new OperationNotPermittedException("Create Object", "Can not create objects of abstract classes");
+            throw new OperationNotPermittedException("Can not create objects of abstract classes");
         
         try(Transaction tx = graphDb.beginTx()) {
             Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
@@ -284,7 +333,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     throw new ObjectNotFoundException(parentClassName, parentOid);
             }
         
-            Node newObject = createObject(classNode, myClass, attributes, template);
+            Node newObject = createObject(classNode, myClass, attributes);
             if (parentNode !=null)
                 newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF_SPECIAL);
 
@@ -299,7 +348,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     public long createPoolItem(long poolId, String className, String[] attributeNames, 
     String[][] attributeValues, long templateId) 
             throws ApplicationObjectNotFoundException, InvalidArgumentException, 
-            ArraySizeMismatchException, MetadataObjectNotFoundException, NotAuthorizedException {
+            ArraySizeMismatchException, MetadataObjectNotFoundException {
         
         if (attributeNames != null && attributeValues != null){
             if (attributeNames.length != attributeValues.length)
@@ -331,7 +380,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     attributes.put(attributeNames[i], Arrays.asList(attributeValues[i]));
             }
             
-            Node newObject = createObject(classNode, classMetadata, attributes, templateId);
+            Node newObject = createObject(classNode, classMetadata, attributes);
             newObject.createRelationshipTo(pool, RelTypes.CHILD_OF_SPECIAL).setProperty(Constants.PROPERTY_NAME, Constants.REL_PROPERTY_POOL);
             
             tx.success();
@@ -341,20 +390,20 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     @Override
     public long[] createBulkSpecialObjects(String className, int numberOfObjects, String parentClassName, long parentId) 
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, ApplicationObjectNotFoundException, NotAuthorizedException, InvalidArgumentException {
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException {
         
         ClassMetadata myClass= cm.getClass(className);
         if (myClass == null)
             throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
 
         if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, className))
-            throw new OperationNotPermittedException("Create Object", String.format("Class %s is not an business class", className));
+            throw new OperationNotPermittedException(String.format("Class %s is not an business class", className));
         
         if (myClass.isInDesign())
-            throw new OperationNotPermittedException("Create Object", "Can not create instances of classes marked as isDesign");
+            throw new OperationNotPermittedException("Can not create instances of classes marked as isDesign");
         
         if (myClass.isAbstract())
-            throw new OperationNotPermittedException("Create Object", "Can't create objects from an abstract classes");
+            throw new OperationNotPermittedException("Can't create objects from an abstract classes");
 
         try(Transaction tx =graphDb.beginTx())
         {
@@ -381,7 +430,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
             long res[] = new long[numberOfObjects];
             for (int i = 0; i < numberOfObjects; i++){
-                Node newObject = createObject(classNode, myClass, null, 0);
+                Node newObject = createObject(classNode, myClass, null);
                 newObject.setProperty(Constants.PROPERTY_NAME, String.valueOf(i + 1));
                 if (parentNode != null)
                     newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF_SPECIAL);
@@ -396,7 +445,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     @Override
     public RemoteBusinessObject getObject(String className, long oid)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         
         try (Transaction tx = graphDb.beginTx()) {
             ClassMetadata myClass = cm.getClass(className);
@@ -410,7 +459,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     @Override
     public RemoteBusinessObjectLight getObjectLight(String className, long oid)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws ObjectNotFoundException, MetadataObjectNotFoundException {
         
         //Perform benchmarks to see if accessing to the objects index is less expensive
         try(Transaction tx = graphDb.beginTx()) {
@@ -433,7 +482,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     @Override
     public RemoteBusinessObject getParent(String objectClass, long oid) 
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         
         try(Transaction tx = graphDb.beginTx()) {
             Node objectNode = getInstanceOfClass(objectClass, oid);
@@ -456,7 +505,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     @Override
     public List<RemoteBusinessObjectLight> getParents (String objectClassName, long oid)
-        throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+        throws ObjectNotFoundException, MetadataObjectNotFoundException {
         
         List<RemoteBusinessObjectLight> parents =  new ArrayList<>();
       
@@ -485,7 +534,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     @Override
     public RemoteBusinessObject getParentOfClass(String objectClass, long oid, String parentClass) 
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         
         try(Transaction tx = graphDb.beginTx()) {
             Node objectNode = getInstanceOfClass(objectClass, oid);
@@ -513,14 +562,14 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     @Override
     public void deleteObjects(HashMap<String, List<Long>> objects, boolean releaseRelationships)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException, NotAuthorizedException {
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException {
 
         try(Transaction tx = graphDb.beginTx()) {
             //TODO: Optimize so it can find all objects of a single class in one query
             for (String className : objects.keySet()){
                 for (long oid : objects.get(className)){
                     if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, className))
-                        throw new OperationNotPermittedException(className, String.format("Class %s is not a business-related class", className));
+                        throw new OperationNotPermittedException(String.format("Class %s is not a business-related class", className));
 
                     Node instance = getInstanceOfClass(className, oid);
                     Util.deleteObject(instance, releaseRelationships);
@@ -531,10 +580,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public void deleteObject(String className, long oid, boolean releaseRelationships) throws ObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException, NotAuthorizedException {
+    public void deleteObject(String className, long oid, boolean releaseRelationships) 
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException {
         try (Transaction tx = graphDb.beginTx()) {
             if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, className))
-                        throw new OperationNotPermittedException(className, String.format("Class %s is not a business-related class", className));
+                        throw new OperationNotPermittedException(String.format("Class %s is not a business-related class", className));
 
             Node instance = getInstanceOfClass(className, oid);
             Util.deleteObject(instance, releaseRelationships);
@@ -545,7 +595,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     @Override
     public ChangeDescriptor updateObject(String className, long oid, HashMap<String,List<String>> attributes)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, 
-            WrongMappingException, InvalidArgumentException, ApplicationObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+                InvalidArgumentException {
 
         ClassMetadata myClass= cm.getClass(className);
         
@@ -609,7 +659,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     @Override
     public boolean setBinaryAttributes(String className, long oid, List<String> attributeNames, List<byte[]> attributeValues)
-            throws ObjectNotFoundException, OperationNotPermittedException, ArraySizeMismatchException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws ObjectNotFoundException, OperationNotPermittedException, ArraySizeMismatchException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -625,14 +675,14 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             long bObjectId, String name, boolean unique, HashMap<String, Object> properties) throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
         
         if (aObjectId == bObjectId)
-            throw new OperationNotPermittedException("Relate Objects", "An object can not be related with itself");
+            throw new OperationNotPermittedException("An object can not be related with itself");
         
         try(Transaction tx = graphDb.beginTx()) {
             Node nodeA = getInstanceOfClass(aObjectClass, aObjectId);
             for (Relationship rel : nodeA.getRelationships(RelTypes.RELATED_TO_SPECIAL)){
                 if (rel.getOtherNode(nodeA).getId() == bObjectId 
                         && rel.getProperty(Constants.PROPERTY_NAME).equals(name) && unique)
-                    throw new OperationNotPermittedException("Relate Objects", "These elements are already related");
+                    throw new OperationNotPermittedException("These elements are already related");
             }
             Node nodeB = getInstanceOfClass(bObjectClass, bObjectId);
             Relationship rel = nodeA.createRelationshipTo(nodeB, RelTypes.RELATED_TO_SPECIAL);
@@ -648,7 +698,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     @Override
     public void releaseSpecialRelationship(String objectClass, long objectId, long otherObjectId, String name)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws ObjectNotFoundException, MetadataObjectNotFoundException {
         
         try(Transaction tx = graphDb.beginTx()) {
             Node node = getInstanceOfClass(objectClass, objectId);
@@ -663,7 +713,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     @Override
     public void releaseSpecialRelationship(String objectClass, long objectId, String relationshipName, long targetId)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws ObjectNotFoundException, MetadataObjectNotFoundException {
         
         try(Transaction tx = graphDb.beginTx()) {
             Node node = getInstanceOfClass(objectClass, objectId);
@@ -678,7 +728,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     @Override
     public void moveObjects(String targetClassName, long targetOid, HashMap<String, long[]> objects)
-            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
         ClassMetadata newParentClass = cm.getClass(targetClassName);
         
         if (newParentClass == null)
@@ -688,7 +738,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             Node newParentNode = getInstanceOfClass(targetClassName, targetOid);
             for (String myClass : objects.keySet()){
                 if (!cm.canBeChild(targetClassName, myClass))
-                    throw new OperationNotPermittedException("moveObjects", String.format("An instance of class %s can not be child of an instance of class %s", myClass,targetClassName));
+                    throw new OperationNotPermittedException(String.format("An instance of class %s can not be child of an instance of class %s", myClass,targetClassName));
 
                 Node instanceClassNode = classIndex.get(Constants.PROPERTY_NAME, myClass).getSingle();
                 if (instanceClassNode == null)
@@ -717,7 +767,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     @Override
     public long[] copyObjects(String targetClassName, long targetOid, HashMap<String, long[]> objects, boolean recursive)
-            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
         ClassMetadata newParentClass = cm.getClass(targetClassName);
 
         if (newParentClass == null)
@@ -729,7 +779,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             int i = 0;
             for (String myClass : objects.keySet()){
                 if (!cm.canBeChild(targetClassName, myClass))
-                    throw new OperationNotPermittedException("copyObjects", String.format("An instance of class %s can not be child of an instance of class %s", myClass,targetClassName));
+                    throw new OperationNotPermittedException(String.format("An instance of class %s can not be child of an instance of class %s", myClass,targetClassName));
 
                 Node instanceClassNode = classIndex.get(Constants.PROPERTY_NAME, myClass).getSingle();
                 if (instanceClassNode == null)
@@ -749,13 +799,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     @Override
     public boolean setObjectLockState(String className, long oid, Boolean value)
-            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public List<RemoteBusinessObjectLight> getObjectChildren(String className, long oid, int maxResults)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws ObjectNotFoundException, MetadataObjectNotFoundException  {
         try (Transaction tx =  graphDb.beginTx()) {
             Node parentNode;
             if(oid == -1)
@@ -780,13 +830,15 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     res.add(new RemoteBusinessObjectLight(child.getId(),(String)child.getProperty(Constants.PROPERTY_NAME), Util.getClassName(child)));
                 }
             }
+            
+            Collections.sort(res);
             return res;
         }
     }
     
     @Override
     public List<RemoteBusinessObjectLight> getObjectChildren(long classId, long oid, int maxResults)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws ObjectNotFoundException, MetadataObjectNotFoundException  {
         try(Transaction tx = graphDb.beginTx()) {
             Node parentNode;
             if(oid == -1)
@@ -816,7 +868,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     @Override
     public List<RemoteBusinessObjectLight> getSiblings(String className, long oid, int maxResults)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException{
+            throws MetadataObjectNotFoundException, ObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx()){
             Node node = getInstanceOfClass(className, oid);
             List<RemoteBusinessObjectLight> res = new ArrayList<>();
@@ -847,7 +899,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     @Override
     public List<RemoteBusinessObjectLight> getObjectsOfClassLight(String className, int maxResults)
-            throws MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws MetadataObjectNotFoundException, InvalidArgumentException {
         try(Transaction tx = graphDb.beginTx()) {
             Node classMetadataNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
             if (classMetadataNode == null)
@@ -873,7 +925,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     @Override
     public List<RemoteBusinessObject> getChildrenOfClass(long parentOid, String parentClass, String classToFilter, int maxResults)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException {
         
         try (Transaction tx = graphDb.beginTx()) {
         
@@ -929,7 +981,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     @Override
     public List<RemoteBusinessObjectLight> getChildrenOfClassLight(long parentOid, String parentClass, String classToFilter, int maxResults)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException  {
+            throws MetadataObjectNotFoundException, ObjectNotFoundException  {
         
         try (Transaction tx = graphDb.beginTx()) {
             Node parentNode = getInstanceOfClass(parentClass, parentOid);
@@ -983,7 +1035,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     @Override
     public List<RemoteBusinessObjectLight> getSpecialAttribute(String objectClass, long objectId, String specialAttributeName) 
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, NotAuthorizedException {
+            throws ObjectNotFoundException, MetadataObjectNotFoundException {
         
         try(Transaction tx = graphDb.beginTx()) {
             Node instance = getInstanceOfClass(objectClass, objectId);
@@ -1000,7 +1052,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public List<AnnotatedRemoteBusinessObjectLight> getAnnotatedSpecialAttribute(String objectClass, long objectId, String specialAttributeName) throws ObjectNotFoundException, MetadataObjectNotFoundException, NotAuthorizedException {
+    public List<AnnotatedRemoteBusinessObjectLight> getAnnotatedSpecialAttribute(String objectClass, long objectId, String specialAttributeName) 
+            throws ObjectNotFoundException, MetadataObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx()) {
             Node instance = getInstanceOfClass(objectClass, objectId);
             List<AnnotatedRemoteBusinessObjectLight> res = new ArrayList<>();
@@ -1019,7 +1072,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     @Override
     public HashMap<String,List<RemoteBusinessObjectLight>> getSpecialAttributes (String className, long objectId) 
-        throws MetadataObjectNotFoundException, ObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException  {
+        throws MetadataObjectNotFoundException, ObjectNotFoundException  {
         
         HashMap<String,List<RemoteBusinessObjectLight>> res = new HashMap<>();
         try(Transaction tx = graphDb.beginTx()) {
@@ -1039,7 +1092,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     @Override
     public List<RemoteBusinessObjectLight> getObjectSpecialChildren(String objectClass, long objectId)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException  {
+            throws MetadataObjectNotFoundException, ObjectNotFoundException  {
         
         try(Transaction tx = graphDb.beginTx()) {
             Node instance = getInstanceOfClass(objectClass, objectId);
@@ -1057,7 +1110,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     @Override
     public boolean hasRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException  {
+            throws ObjectNotFoundException, MetadataObjectNotFoundException {
         
         try(Transaction tx = graphDb.beginTx()) {
             Node object = getInstanceOfClass(objectClass, objectId);
@@ -1074,7 +1127,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     @Override
     public boolean hasSpecialRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships) 
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, NotAuthorizedException  {
+            throws ObjectNotFoundException, MetadataObjectNotFoundException  {
         try (Transaction tx = graphDb.beginTx()) {
             Node object = getInstanceOfClass(objectClass, objectId);
             int relationshipsCounter = 0;
@@ -1091,7 +1144,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     //TODO DELETE. This is a business dependant method, should not be here. Don't use it
     @Override
-    public List<RemoteBusinessObjectLight> getPhysicalPath(String objectClass, long objectId) throws ApplicationObjectNotFoundException, NotAuthorizedException{
+    public List<RemoteBusinessObjectLight> getPhysicalPath(String objectClass, long objectId) {
         List<RemoteBusinessObjectLight> path = new ArrayList<>();
         
         //The first part of the query will return many paths, the longest is the one we need. The others are
@@ -1137,8 +1190,301 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         return paths;
     }
     
+    //<editor-fold desc="Reporting API implementation" defaultstate="collapsed">
+        @Override
+    public long createClassLevelReport(String className, String reportName, String reportDescription, 
+            String script, int outputType, boolean enabled) throws MetadataObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
+            
+            if (classNode == null)
+                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
+            
+            Node newReport = graphDb.createNode();
+            newReport.setProperty(Constants.PROPERTY_NAME, reportName == null ? "" : reportName);
+            newReport.setProperty(Constants.PROPERTY_DESCRIPTION, reportDescription == null ? "" : reportDescription);
+            newReport.setProperty(Constants.PROPERTY_SCRIPT, script == null ? "" : script);
+            newReport.setProperty(Constants.PROPERTY_TYPE, Math.abs(outputType) > 4 ? RemoteReportLight.TYPE_HTML : outputType);
+            newReport.setProperty(Constants.PROPERTY_ENABLED, enabled);
+            
+            classNode.createRelationshipTo(newReport, RelTypes.HAS_REPORT);
+            reportsIndex.putIfAbsent(newReport, Constants.PROPERTY_ID, newReport.getId());
+            
+            tx.success();
+            return newReport.getId();
+        }
+    }
+
+    @Override
+    public long createInventoryLevelReport(String reportName, String reportDescription, String script, 
+            int outputType, boolean enabled, List<StringPair> parameters) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node dummyRootNode = specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
+            
+            if (dummyRootNode == null)
+                throw new ApplicationObjectNotFoundException("Dummy Root could not be found");
+            
+            Node newReport = graphDb.createNode();
+            newReport.setProperty(Constants.PROPERTY_NAME, reportName == null ? "" : reportName);
+            newReport.setProperty(Constants.PROPERTY_DESCRIPTION, reportDescription == null ? "" : reportDescription);
+            newReport.setProperty(Constants.PROPERTY_SCRIPT, script == null ? "" : script);
+            newReport.setProperty(Constants.PROPERTY_TYPE, Math.abs(outputType) > 4 ? RemoteReportLight.TYPE_HTML : outputType);
+            newReport.setProperty(Constants.PROPERTY_ENABLED, enabled);
+            
+            if (parameters != null) {
+                for (StringPair parameter : parameters) {
+                    if (parameter.getKey() == null || parameter.getKey().trim().isEmpty())
+                        throw new InvalidArgumentException("Parameter names can not be empty strings");
+                    
+                    newReport.setProperty("PARAM_" + parameter.getKey(), 
+                            parameter.getValue() == null ? "" : parameter.getValue());
+                }
+            }
+            
+            
+            dummyRootNode.createRelationshipTo(newReport, RelTypes.HAS_REPORT);
+            reportsIndex.putIfAbsent(newReport, Constants.PROPERTY_ID, newReport.getId());
+            
+            tx.success();
+            return newReport.getId();
+        }
+    }
+
+    @Override
+    public void deleteReport(long reportId) throws ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()){
+            
+            Node reportNode = reportsIndex.get(Constants.PROPERTY_ID, reportId).getSingle();
+            
+            if (reportNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("The report with id %s could not be found", reportId));
+            
+            for (Relationship rel : reportNode.getRelationships())
+                rel.delete();
+
+            reportsIndex.remove(reportNode, Constants.PROPERTY_ID, reportNode.getId());
+            reportNode.delete();
+            
+            tx.success();
+        }
+    }
+
+    @Override
+    public void updateReport(long reportId, String reportName, String reportDescription, Boolean enabled,
+            Integer type, String script) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node reportNode = reportsIndex.get(Constants.PROPERTY_ID, reportId).getSingle();
+            
+            if (reportNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("The report with id %s could not be found", reportId));
+            
+            if (reportName != null)
+               reportNode.setProperty(Constants.PROPERTY_NAME, reportName);
+            if (reportDescription != null)
+               reportNode.setProperty(Constants.PROPERTY_DESCRIPTION, reportDescription);
+            if (enabled != null)
+               reportNode.setProperty(Constants.PROPERTY_ENABLED, enabled);
+            if (type != null)
+               reportNode.setProperty(Constants.PROPERTY_TYPE, type);
+            if (script != null)
+               reportNode.setProperty(Constants.PROPERTY_SCRIPT, script);
+
+            tx.success();
+        }
+    }
     
-    
+    @Override
+    public void updateReportParameters(long reportId, List<StringPair> parameters) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node reportNode = reportsIndex.get(Constants.PROPERTY_ID, reportId).getSingle();
+            if (reportNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("A report with id %s could not be found", reportId));
+
+            for (StringPair parameter : parameters) {
+                
+                if (parameter.getKey() == null || parameter.getKey().trim().isEmpty())
+                        throw new InvalidArgumentException("Parameter names can not be empty strings");
+                
+                String actualParameterName = "PARAM_" + parameter.getKey();
+                //The parameters are stored with a prefix PARAM_
+                //params set to null, must be deleted
+                if (reportNode.hasProperty(actualParameterName) && parameter.getValue() == null)
+                    reportNode.removeProperty(actualParameterName);
+                else
+                    reportNode.setProperty(actualParameterName, parameter.getValue());
+            }
+            
+            tx.success();
+        }
+    }
+
+    @Override
+    public List<RemoteReportLight> getClassLevelReports(String className, boolean recursive, boolean includeDisabled) throws MetadataObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            
+            Node mainClassNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
+            List<RemoteReportLight> remoteReports = new ArrayList<>();
+            
+            if (mainClassNode == null)
+                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
+            
+            if (recursive) {
+                Node classNode = mainClassNode;
+                do {
+                    for (Relationship hasReportRelationship : classNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_REPORT)) 
+                        remoteReports.add(new RemoteReportLight(hasReportRelationship.getEndNode().getId(), 
+                                                            (String)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_NAME), 
+                                                            (String)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_DESCRIPTION), 
+                                                            (boolean)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_ENABLED),
+                                                            (int)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_TYPE)));
+                    
+                    if (classNode.hasRelationship(RelTypes.EXTENDS, Direction.OUTGOING)) //This should not happen, but let's check it anyway
+                        classNode = classNode.getSingleRelationship(RelTypes.EXTENDS, Direction.OUTGOING).getEndNode();
+                    else
+                        classNode = null;
+                } while (classNode != null && !Constants.CLASS_ROOTOBJECT.equals(classNode.getProperty(Constants.PROPERTY_NAME)));
+            }
+            else {
+                for (Relationship hasReportRelationship : mainClassNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_REPORT)) 
+                    remoteReports.add(new RemoteReportLight(hasReportRelationship.getEndNode().getId(), 
+                                                        (String)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_NAME), 
+                                                        (String)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_DESCRIPTION), 
+                                                        (boolean)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_ENABLED),
+                                                        (int)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_TYPE)));
+            }
+            
+            return remoteReports;
+        }
+    }
+
+    @Override
+    public List<RemoteReportLight> getInventoryLevelReports(boolean includeDisabled) throws ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node dummyRootNode = specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
+            
+            if (dummyRootNode == null)
+                throw new ApplicationObjectNotFoundException("Dummy Root could not be found");
+            
+            List<RemoteReportLight> remoteReports = new ArrayList<>();
+            
+            for (Relationship hasReportRelationship : dummyRootNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_REPORT)) {
+                if (includeDisabled || (boolean)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_ENABLED))
+                    remoteReports.add(new RemoteReportLight(hasReportRelationship.getEndNode().getId(), 
+                                                        (String)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_NAME), 
+                                                        (String)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_DESCRIPTION), 
+                                                        (boolean)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_ENABLED),
+                                                        (int)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_TYPE)));
+            }
+            
+            Collections.sort(remoteReports);
+            
+            return remoteReports;
+        }
+    }
+
+    @Override
+    public RemoteReport getReport(long reportId) throws ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node reportNode = reportsIndex.get(Constants.PROPERTY_ID, reportId).getSingle();
+            
+            if (reportNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("The report with id %s could not be found", reportId)); 
+            
+            List<StringPair> parameters = new ArrayList<>();
+            for (String property : reportNode.getPropertyKeys()) {
+                if (property.startsWith("PARAM_"))
+                    parameters.add(new StringPair(property.replace("PARAM_", ""), (String)reportNode.getProperty(property)));
+            }
+                
+            return new RemoteReport(reportNode.getId(), (String)reportNode.getProperty(Constants.PROPERTY_NAME), 
+                                    (String)reportNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
+                                    (boolean)reportNode.getProperty(Constants.PROPERTY_ENABLED),
+                                    (int)reportNode.getProperty(Constants.PROPERTY_TYPE),
+                                    (String)reportNode.getProperty(Constants.PROPERTY_SCRIPT), 
+                                    parameters);
+        }
+    }
+
+    @Override
+    public byte[] executeClassLevelReport(String objectClassName, long objectId, long reportId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node reportNode = reportsIndex.get(Constants.PROPERTY_ID, reportId).getSingle();
+            
+            if (reportNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("The report with id %s could not be found", reportId)); 
+            
+            Node instanceNode = getInstanceOfClass(objectClassName, objectId);
+            
+            String script = (String)reportNode.getProperty(Constants.PROPERTY_SCRIPT);
+            
+            Binding environmentParameters = new Binding();
+            environmentParameters.setVariable("instanceNode", instanceNode); //NOI18N
+            environmentParameters.setVariable("graphDb", graphDb); //NOI18N
+            environmentParameters.setVariable("objectIndex", objectIndex); //NOI18N
+            environmentParameters.setVariable("classIndex", classIndex); //NOI18N
+            environmentParameters.setVariable("defaultReports", defaultReports); //NOI18N
+            
+            //To keep backwards compatibility
+            environmentParameters.setVariable("objectClassName", objectClassName); //NOI18N
+            environmentParameters.setVariable("objectId", objectId); //NOI18N
+            
+            try {
+                GroovyShell shell = new GroovyShell(BusinessEntityManager.class.getClassLoader(), environmentParameters);
+                Object theResult = shell.evaluate(script);
+                
+                if (theResult == null)
+                    throw new InvalidArgumentException("The script returned a null object. Please check the syntax.");
+                else {
+                    if (theResult instanceof InventoryReport)
+                        return ((InventoryReport)theResult).asByteArray();
+                    else
+                        throw new InvalidArgumentException("The script does not return an InventoryReport object. Please check the return value.");
+                }
+            } catch(Exception ex) {
+                return ("<html><head><title>Error</title></head><body><center>" + ex.getMessage() + "</center></body></html>").getBytes(StandardCharsets.UTF_8);
+            }
+        }
+    }
+
+    @Override
+    public byte[] executeInventoryLevelReport(long reportId, List<StringPair> parameters) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node reportNode = reportsIndex.get(Constants.PROPERTY_ID, reportId).getSingle();
+            
+            if (reportNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("The report with id %s could not be found", reportId)); 
+                     
+            String script = (String)reportNode.getProperty(Constants.PROPERTY_SCRIPT);
+            
+            HashMap<String, String> scriptParameters = new HashMap<>();
+            for(StringPair parameter : parameters)
+                scriptParameters.put(parameter.getKey(), parameter.getValue());
+            
+            Binding environmentParameters = new Binding();
+            environmentParameters.setVariable("parameters", scriptParameters); //NOI18N
+            environmentParameters.setVariable("graphDb", graphDb); //NOI18N
+            environmentParameters.setVariable("objectIndex", objectIndex); //NOI18N
+            environmentParameters.setVariable("classIndex", classIndex); //NOI18N
+            environmentParameters.setVariable("defaultReports", defaultReports); //NOI18N
+            
+            try {
+                GroovyShell shell = new GroovyShell(BusinessEntityManager.class.getClassLoader(), environmentParameters);
+                Object theResult = shell.evaluate(script);
+                
+                if (theResult == null)
+                    throw new InvalidArgumentException("The script returned a null object. Please check the syntax.");
+                else {
+                    if (theResult instanceof InventoryReport)
+                        return ((InventoryReport)theResult).asByteArray();
+                    else
+                        throw new InvalidArgumentException("The script does not return an InventoryReport object. Please check the return value.");
+                }
+            } catch(Exception ex) {
+                return ("<html><head><title>Error</title></head><body><center>" + ex.getMessage() + "</center></body></html>").getBytes(StandardCharsets.UTF_8);
+            }
+        }
+    }
+    //</editor-fold>
     /**
      * Helpers
      */
@@ -1213,7 +1559,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         throw new ObjectNotFoundException((String)classNode.getProperty(Constants.PROPERTY_NAME), oid);
     }
     
-    public Node createObject(Node classNode, ClassMetadata classToMap, HashMap<String,List<String>> attributes, long template) 
+    public Node createObject(Node classNode, ClassMetadata classToMap, HashMap<String,List<String>> attributes) 
             throws InvalidArgumentException, MetadataObjectNotFoundException {
  
         if (classToMap.isAbstract())
@@ -1278,12 +1624,43 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         for (Relationship rel : templateObject.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING))
             newInstance.createRelationshipTo(rel.getEndNode(), RelTypes.RELATED_TO).setProperty(Constants.PROPERTY_NAME, rel.getProperty(Constants.PROPERTY_NAME));
         
+        newInstance.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
+        
         objectIndex.putIfAbsent(newInstance, Constants.PROPERTY_ID, newInstance.getId());
         newInstance.createRelationshipTo(templateObject.getRelationships(RelTypes.INSTANCE_OF).iterator().next().getEndNode(), RelTypes.INSTANCE_OF);
 
         if (recursive){
             for (Relationship rel : templateObject.getRelationships(RelTypes.CHILD_OF, Direction.INCOMING)){
                 Node newChild = copyObject(rel.getStartNode(), true);
+                newChild.createRelationshipTo(newInstance, RelTypes.CHILD_OF);
+            }
+        }
+        return newInstance;
+    }
+    
+    /**
+     * Spawns [recursively] an inventory object from a template element
+     * @param templateObject The template object used to create the inventory object
+     * @param recursive Should the spawn operation be recursive?
+     * @return The root copied object
+     */
+    private Node copyTemplateElement(Node templateObject, boolean recursive) {
+        
+        Node newInstance = graphDb.createNode();
+        for (String property : templateObject.getPropertyKeys())
+            newInstance.setProperty(property, templateObject.getProperty(property));
+        
+        for (Relationship rel : templateObject.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING))
+            newInstance.createRelationshipTo(rel.getEndNode(), RelTypes.RELATED_TO).setProperty(Constants.PROPERTY_NAME, rel.getProperty(Constants.PROPERTY_NAME));
+        
+        newInstance.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
+        
+        objectIndex.putIfAbsent(newInstance, Constants.PROPERTY_ID, newInstance.getId());
+        newInstance.createRelationshipTo(templateObject.getRelationships(RelTypes.INSTANCE_OF_SPECIAL).iterator().next().getEndNode(), RelTypes.INSTANCE_OF);
+
+        if (recursive){
+            for (Relationship rel : templateObject.getRelationships(RelTypes.CHILD_OF, Direction.INCOMING)){
+                Node newChild = copyTemplateElement(rel.getStartNode(), true);
                 newChild.createRelationshipTo(newInstance, RelTypes.CHILD_OF);
             }
         }

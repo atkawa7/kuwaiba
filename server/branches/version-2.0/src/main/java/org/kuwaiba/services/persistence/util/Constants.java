@@ -32,31 +32,7 @@ public class Constants {
     /**
      * Persistence Service version
      */
-    public static final String PERSISTENCE_SERVICE_VERSION = "1.0";
-    /**
-     * Integer, Float, Long, Boolean, String or Text
-     */
-    public static final int MAPPING_PRIMITIVE = 1;
-    /**
-     * Dates
-     */
-    public static final int MAPPING_DATE = 2;
-    /**
-     * Timestamp
-     */
-    public static final int MAPPING_TIMESTAMP = 3;
-    /**
-     * Binary
-     */
-    public static final int MAPPING_BINARY = 4;
-    /**
-     * Many to one relationship (such as types)
-     */
-    public static final int MAPPING_MANYTOONE = 5;
-    /**
-     * Many to Many relationship (such as accountable persons for a given equipment)
-     */
-    public static final int MAPPING_MANYTOMANY = 6;
+    public static final String PERSISTENCE_SERVICE_VERSION = "1.1";
     /**
      * Class type for RootObject
      */
@@ -154,6 +130,10 @@ public class Constants {
      */
     public static final String INDEX_TASKS = "tasks"; //NOI18N
     /**
+     * Name of the index for reports
+     */
+    public static final String INDEX_REPORTS = "reports"; //NOI18N
+    /**
      * Label used for the class index
      */
     public static final String INDEX_CLASS = "classes"; //NOI18N
@@ -243,6 +223,7 @@ public class Constants {
     public static final String PROPERTY_CATEGORY = "category"; //NOI18N
     public static final String PROPERTY_SUPPORT_PHONE_NUMBER = "supportPhoneNumber"; //NOI18N
     public static final String PROPERTY_SUPPORT_EMAIL = "supportEmail"; //NOI18N
+    public static final String PROPERTY_PARAMETERS = "parameters"; //NOI18N
     
     /**
      * Root for all business classes

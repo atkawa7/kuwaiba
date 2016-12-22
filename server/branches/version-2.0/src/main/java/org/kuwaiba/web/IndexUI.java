@@ -42,9 +42,9 @@ public class IndexUI extends UI {
         navigator.addProvider(viewProvider);
         
         if (getSession().getAttribute("session") == null)
-            navigator.navigateTo(LoginView.NAME);
+            navigator.navigateTo(LoginView.VIEW_NAME);
         else
-            navigator.navigateTo(ApplicationView.NAME);
+            navigator.navigateTo(ApplicationView.VIEW_NAME);
     }
     
     @VaadinServletConfiguration(productionMode = false, ui = IndexUI.class, widgetset = "org.kuwaiba.KuwaibaWidgetSet")

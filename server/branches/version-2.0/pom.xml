@@ -50,7 +50,12 @@
             <version>0.9.4</version>
             <type>jar</type>
         </dependency>
-        
+        <dependency>
+            <groupId>org.mindrot.jbcrypt</groupId>
+            <artifactId>JBCrypt</artifactId>
+            <version>0.4</version>
+            <type>jar</type>
+        </dependency>
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>

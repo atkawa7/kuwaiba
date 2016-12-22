@@ -16,14 +16,13 @@
 
 package org.kuwaiba.interfaces.ws;
 
+import com.neotropic.kuwaiba.modules.reporting.model.RemoteReport;
+import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
 import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
-import com.vaadin.cdi.CDIUI;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
@@ -33,42 +32,40 @@ import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.util.Constants;
-import org.kuwaiba.ws.todeserialize.StringPair;
-import org.kuwaiba.ws.todeserialize.TransientQuery;
-import org.kuwaiba.ws.toserialize.application.ApplicationLogEntry;
-import org.kuwaiba.ws.toserialize.application.RemoteQuery;
-import org.kuwaiba.ws.toserialize.application.RemoteQueryLight;
-import org.kuwaiba.ws.toserialize.application.RemoteSession;
-import org.kuwaiba.ws.toserialize.application.ResultRecord;
-import org.kuwaiba.ws.toserialize.application.GroupInfo;
-import org.kuwaiba.ws.toserialize.application.RemotePool;
-import org.kuwaiba.ws.toserialize.application.RemoteTask;
-import org.kuwaiba.ws.toserialize.application.RemoteTaskResult;
-import org.kuwaiba.ws.toserialize.application.ReportDescriptor;
-import org.kuwaiba.ws.toserialize.application.TaskNotificationDescriptor;
-import org.kuwaiba.ws.toserialize.application.TaskScheduleDescriptor;
-import org.kuwaiba.ws.toserialize.application.UserInfo;
-import org.kuwaiba.ws.toserialize.application.UserInfoLight;
-import org.kuwaiba.ws.toserialize.application.ViewInfo;
-import org.kuwaiba.ws.toserialize.application.ViewInfoLight;
-import org.kuwaiba.ws.toserialize.business.RemoteObject;
-import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.ws.toserialize.business.RemoteObjectSpecialRelationships;
-import org.kuwaiba.ws.toserialize.metadata.AttributeInfo;
-import org.kuwaiba.ws.toserialize.metadata.ClassInfo;
-import org.kuwaiba.ws.toserialize.metadata.ClassInfoLight;
+import org.kuwaiba.interfaces.ws.todeserialize.StringPair;
+import org.kuwaiba.interfaces.ws.todeserialize.TransientQuery;
+import org.kuwaiba.interfaces.ws.toserialize.application.ApplicationLogEntry;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteQuery;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteQueryLight;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.interfaces.ws.toserialize.application.ResultRecord;
+import org.kuwaiba.interfaces.ws.toserialize.application.GroupInfo;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemotePool;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteTask;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteTaskResult;
+import org.kuwaiba.interfaces.ws.toserialize.application.TaskNotificationDescriptor;
+import org.kuwaiba.interfaces.ws.toserialize.application.TaskScheduleDescriptor;
+import org.kuwaiba.interfaces.ws.toserialize.application.UserInfo;
+import org.kuwaiba.interfaces.ws.toserialize.application.UserInfoLight;
+import org.kuwaiba.interfaces.ws.toserialize.application.ViewInfo;
+import org.kuwaiba.interfaces.ws.toserialize.application.ViewInfoLight;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectSpecialRelationships;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.AttributeInfo;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfo;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
 
 /**
  * Main web service
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 @WebService (serviceName = "KuwaibaService")
-@CDIUI //The CDUI Annotation is required, otherwise the bean won't be properly injected (@EJB is not supported while working with Vaadin) 
 public class KuwaibaService {
     /**
      * The main session bean in charge of providing the business logic
      */
-    @Inject
+    @EJB
     private WebserviceBeanLocal wsBean;
    /**
      * The context to get information about each request
@@ -164,7 +161,7 @@ public class KuwaibaService {
 
     /**
      * Creates a user
-     * @param username User name. Can't be null
+     * @param username User name. Can't be null, empty or have non standard characters.
      * @param password A password (in plain text, it'll be encrypted later). Can't be null nor an empty string
      * @param firstName User's first name
      * @param lastName User's last name
@@ -977,7 +974,7 @@ public class KuwaibaService {
     }
     
     /**
-     * Delete a pool
+     * Deletes a pool
      * @param id Pool to be deleted
      * @param sessionId Session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
@@ -1044,6 +1041,15 @@ public class KuwaibaService {
         }
     }
     
+    /**
+     * Retrieves all the pools that are children of a particular object.
+     * @param objectClassName Object class.
+     * @param objectId Object id.
+     * @param poolClass Type of the pools that are to be retrieved (that is, the class of the objects contained within the pool)
+     * @param sessionId Session id.
+     * @return A list of children pools.
+     * @throws ServerSideException 
+     */
     @WebMethod(operationName = "getPoolsInObject")
     public List<RemotePool> getPoolsInObject(@WebParam(name = "objectClassName")String objectClassName, 
                                              @WebParam(name = "objectId")long objectId,
@@ -1061,6 +1067,14 @@ public class KuwaibaService {
         }
     }
     
+    /**
+     * Gets the pools contained inside a pool.
+     * @param parentPoolId Parent pool id.
+     * @param poolClass Class of the objects contained by the desired pool (not the parent pool).
+     * @param sessionId Session token.
+     * @return A list of children pools
+     * @throws ServerSideException In case something goes wrong.
+     */
     @WebMethod(operationName = "getPoolsInPool")
     public List<RemotePool> getPoolsInPool(@WebParam(name = "parentPoolId")long parentPoolId,
                                              @WebParam(name = "poolClass")String poolClass, 
@@ -1211,7 +1225,7 @@ public class KuwaibaService {
     /**
      * Updates the parameters of a task. If any of the values is null, that parameter will be deleted, if the parameter does not exist, it will be created
      * @param taskId Task id
-     * @param parameters The parameters to be modified as pairs paramName/paramValue
+     * @param parameters The parameters to be modified as pairs paramName/paramValue. A null value means that that parameter should be deleted
      * @param sessionId The session token
      * @throws ServerSideException In case something goes wrong
      */
@@ -1341,6 +1355,13 @@ public class KuwaibaService {
         }
     }
     
+    /**
+     * Gets the users subscribed to a particular task.
+     * @param taskId Task id.
+     * @param sessionId Session token.
+     * @return The list of subscribed users.
+     * @throws ServerSideException In case something goes wrong.
+     */
     public List<UserInfoLight> getSubscribersForTask(@WebParam(name = "taskId")long taskId,
                                                      @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
@@ -1422,6 +1443,13 @@ public class KuwaibaService {
         }
     }
     
+    /**
+     * Executes a task on demand.
+     * @param taskId The task id
+     * @param sessionId The session token
+     * @return A RemoteTaskResult object wrapping the task execution messages and details.
+     * @throws ServerSideException In case something goes wrong
+     */
     @WebMethod(operationName = "executeTask")
     public RemoteTaskResult executeTask(@WebParam(name = "taskId")long taskId, 
                                         @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
@@ -1524,11 +1552,11 @@ public class KuwaibaService {
     /**
      * Gets all children of an object of a given class
      * @param parentOid Parent whose children are requested
-     * @param parentClass
-     * @param childrenClass
+     * @param parentClass Class name of the element we want the children from
+     * @param childrenClass The type of children we want to retrieve
      * @param maxResults Max number of children to be returned. O for all
      * @param sessionId Session token
-     * @return An array with children
+     * @return An array with the children objects
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName="getChildrenOfClass")
@@ -1675,6 +1703,14 @@ public class KuwaibaService {
         }
     }
     
+    /**
+     * Retrieves all the ancestors of an object in the containment hierarchy. If the provided object is in a pool, the ancestor pools will be returned.
+     * @param objectClass Object class
+     * @param oid Object id.
+     * @param sessionId Session token.
+     * @return The list of ancestors.
+     * @throws ServerSideException In case something goes wrong.
+     */
     @WebMethod(operationName = "getParents")
     public RemoteObjectLight[] getParents(@WebParam(name = "objectclass") String objectClass,
             @WebParam(name = "oid") long oid,
@@ -1722,7 +1758,7 @@ public class KuwaibaService {
      * @param oid Object oid
      * @param parentClass Class to be matched
      * @param sessionId sssion Id
-     * @return
+     * @return The direct parent of the provided object.
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getParentOfClass")
@@ -1769,6 +1805,14 @@ public class KuwaibaService {
         }
     }
     
+    /**
+     * Gets the special children of a given object. This relationship depends on the model. The relationship between a container and the links in the physical layer model is an example of this kind of relationships.
+     * @param objectClass The class of the object to be searched.
+     * @param objectId The id of the object to be searched.
+     * @param sessionId Session token.
+     * @return A list of special children.
+     * @throws ServerSideException If something goes wrong.
+     */
     @WebMethod(operationName = "getObjectSpecialChildren")
     public RemoteObjectLight[] getObjectSpecialChildren (@WebParam(name = "objectclass") String objectClass,
             @WebParam(name = "objectId") long objectId,
@@ -2491,14 +2535,14 @@ public class KuwaibaService {
      * @param displayName Class display name
      * @param description Class description
      * @param isAbstract is this class abstract?
-     * @param isCustom
+     * @param isCustom Is this class part of the core of the application (can not be deleted) or if it's an extension to the default data model. In most cases, this should be "true".
      * @param parentClassName Parent class name
-     * @param isCountable
-     * @param icon Icon fro view. The size is limited by the value in Constants.MAX_ICON_SIZE
-     * @param isInDesign
+     * @param isCountable NOt used so far. It's intended to be used to mark the classes that are created to make consistent the model, but that are not actual inventory elements, such as Slots
+     * @param icon Icon for views. The size is limited by the value in Constants.MAX_ICON_SIZE and it's typically 32x32 pixels
+     * @param isInDesign Says if a class can be instantiated or not. This is useful if you are creating many classes and want to avoid the users to create objects from those classes until you have finished the data model roll-out.
      * @param smallIcon Icon for trees. The size is limited by the value in Constants.MAX_ICON_SIZE
      * @param sessionId Session token
-     * @param color
+     * @param color The color to be used to display the instances of this class (depends on the client used)
      * @return the id of the new class metadata object
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
@@ -2561,11 +2605,11 @@ public class KuwaibaService {
      * @param description New class metadata description. Null if unchanged
      * @param isAbstract is this class abstract?
      * @param icon New icon for views. Null if unchanged. The size is limited by the value in Constants.MAX_ICON_SIZE
-     * @param color
+     * @param color The color of the instances of this class.
      * @param smallIcon New icon for trees. Null if unchanged. The size is limited by the value in Constants.MAX_ICON_SIZE
-     * @param isInDesign
-     * @param isCustom
-     * @param isCountable
+     * @param isInDesign If the class is in design stage (see createClass).
+     * @param isCustom If the class is custom (see createClass).
+     * @param isCountable If the class is countable (see createClass). 
      * @param sessionId Session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
@@ -2677,7 +2721,7 @@ public class KuwaibaService {
      * @param description attribute description
      * @param administrative is the attribute administrative?
      * @param visible is the attribute visible?
-     * @param noCopy
+     * @param noCopy Marks an attribute as not to be copied during a copy operation.
      * @param isReadOnly is the attribute read only?
      * @param unique should this attribute be unique?
      * @param sessionId session token
@@ -2723,7 +2767,7 @@ public class KuwaibaService {
      * @param administrative is the attribute administrative?
      * @param visible is the attribute visible?
      * @param isReadOnly is the attribute read only?
-     * @param noCopy
+     * @param noCopy Marks an attribute as not to be copied during a copy operation.
      * @param unique should this attribute be unique?
      * @param sessionId session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
@@ -3279,7 +3323,14 @@ public class KuwaibaService {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Utility methods. Click on the + sign on the left to edit the code.">/**
-
+    /**
+     * Tests if a class is subclass of another.
+     * @param className Class to be tested.
+     * @param allegedParentClass Class to be tested against.
+     * @param sessionId Session token.
+     * @return If the tested class is subclass of allegedParentClass or not.
+     * @throws ServerSideException In case something goes wrong.
+     */
     @WebMethod(operationName =  "isSubclassOf")
     public boolean isSubClassOf(@WebParam(name = "className") String className, 
                                 @WebParam(name = "allegedParentClass") String allegedParentClass,
@@ -3298,6 +3349,15 @@ public class KuwaibaService {
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Sync/ bulk load methods. Click on the + sign on the left to edit the code.">/**
+    /**
+     * Creates many objects at once given a well formatted file. See user manual for details on how to format the file
+     * @param file The file with size no greater 
+     * @param commitSize The records are not committed one by one, but in batch. This number tells Kuwaiba how many records (lines) to commit at once.
+     * @param dataType What kind of data contains the file, listTypes, inventory objects, etc
+     * @param sessionId Session token.
+     * @return The result of the operation.
+     * @throws ServerSideException If something goes wrong.
+     */
     @WebMethod(operationName = "bulkUpload")
     public String bulkUpload(@WebParam(name = "file")
         byte[] file, @WebParam(name = "commitSize")
@@ -3316,6 +3376,13 @@ public class KuwaibaService {
         }
     }
     
+    /**
+     * Retrieves the log file product of a bulk load operation.
+     * @param fileName The name of the file  (provided by the method that performs the bulk creation)
+     * @param sessionId Session token
+     * @return The contents of the file.
+     * @throws ServerSideException  If something goes wrong.
+     */
     @WebMethod(operationName = "downloadBulkLoadLog")
     public byte[] downloadBulkLoadLog(@WebParam(name = "fileName")
         String fileName, @WebParam(name = "sessionId")
@@ -3333,42 +3400,453 @@ public class KuwaibaService {
     }
     // </editor-fold>
     
-    // <editor-fold defaultstate="collapsed" desc="Reporting methods">
+    //<editor-fold desc="Templates" defaultstate="collapsed">
     /**
-     * 
-     * @param className The name of the class to check for reports against
-     * @param limit Limit of results. Use -1 to retrieve all
-     * @param sessionId Session token
-     * @return A list of objects with the basic information about the available reports
-     * @throws ServerSideException In case something goes wrong
+     * Creates a template.
+     * @param templateClass The class you want to create a template for.
+     * @param templateName The name of the template.
+     * @param sessionId Session token.
+     * @return The id of the newly created template.
+     * @throws ServerSideException If something goes wrong
      */
-    @WebMethod(operationName = "getReportsForClass")
-    public ReportDescriptor[] getReportsForClass(@WebParam(name = "className") String className, 
-            @WebParam(name = "limit") int limit, 
-            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
-        try{
-            return wsBean.getReportsForClass(className, limit, getIPAddress(), sessionId);
+    @WebMethod(operationName = "createTemplate")
+    public long createTemplate(@WebParam(name = "templateClass")String templateClass, 
+            @WebParam(name = "templateName")String templateName, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.createTemplate(templateClass, templateName, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in getReportsForClass: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in createTemplate: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
     }
     
-    @WebMethod(operationName = "executeReport")
-    public byte[] executeReport(@WebParam(name = "reportId") long reportId, 
-            @WebParam(name = "arguments") List<StringPair> arguments, 
-            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
-        try{
-            return wsBean.executeReport(reportId, arguments, getIPAddress(), sessionId);
+    /**
+     * Creates an object inside a template.
+     * @param templateElementClass Class of the object you want to create.
+     * @param templateElementParentClassName Class of the parent to the obejct you want to create.
+     * @param templateElementParentId Id of the parent to the obejct you want to create.
+     * @param templateElementName Name of the element.
+     * @param sessionId Session token.
+     * @return The id of the new object.
+     * @throws ServerSideException If something goes wrong.
+     */
+    @WebMethod(operationName = "createTemplateElement")
+    public long createTemplateElement(@WebParam(name = "templateElementClass")String templateElementClass, 
+            @WebParam(name = "templateElementParentClassName")String templateElementParentClassName,
+            @WebParam(name = "templateElementParentId")long templateElementParentId,
+            @WebParam(name = "templateElementName")String templateElementName,
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.createTemplateElement(templateElementClass, templateElementParentClassName, 
+                    templateElementParentId, templateElementName, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in executeReport: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in createTemplateElement: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Updates the value of an attribute of a template element.
+     * @param templateElementClass Class of the element you want to update.
+     * @param templateElementId Id of the element you want to update.
+     * @param attributeNames Names of the attributes that you want to be updated as an array of strings.
+     * @param attributeValues The values of the attributes you want to upfate. For list types, it's the id of the related type
+     * @param sessionId Session token.
+     * @throws ServerSideException If something goes wrong.
+     */
+    @WebMethod(operationName = "updateTemplateElement")
+    public void updateTemplateElement(@WebParam(name = "templateElementClass")String templateElementClass, 
+            @WebParam(name = "templateElementId")long templateElementId,
+            @WebParam(name = "attributeNames")String[] attributeNames,
+            @WebParam(name = "attributeValues")String[] attributeValues,
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            wsBean.updateTemplateElement(templateElementClass, templateElementId, 
+                    attributeNames, attributeValues, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in updateTemplateElement: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Deletes an element within a template or a template itself.
+     * @param templateElementClass The template element class.
+     * @param templateElementId The template element id.
+     * @param sessionId Session token.
+     * @throws ServerSideException 
+     */
+    @WebMethod(operationName = "deleteTemplateElement")
+    public void deleteTemplateElement(@WebParam(name = "templateElementClass")String templateElementClass, 
+            @WebParam(name = "templateElementId")long templateElementId,
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            wsBean.deleteTemplateElement(templateElementClass, templateElementId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteTemplateElement: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Gets the templates available for a given class
+     * @param className Class whose templates we need
+     * @param sessionId Session token
+     * @return A list of templates (actually, the top element) as a list of RemoteOObjects
+     * @throws ServerSideException If somethings goes wrong
+     */
+    @WebMethod(operationName = "getTemplatesForClass")
+    public List<RemoteObjectLight> getTemplatesForClass(@WebParam(name = "className")String className, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getTemplatesForClass(className, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getTemplatesForClass: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Copy template elements within templates. Should not be used to copy entire templates.
+     * @param sourceObjectsClassNames Array with the class names of the elements to be copied.
+     * @param sourceObjectsIds  Array with the ids of the elements to be copied.
+     * @param newParentClassName Class of the parent of the copied objects.
+     * @param newParentId Id of the parent of the copied objects.
+     * @param sessionId Session token.
+     * @return An array with the ids of the newly created elements in the same order they were provided.
+     * @throws org.kuwaiba.exceptions.ServerSideException In case something goes wrong.
+     */
+    public long[] copyTemplateElements(@WebParam(name = "sourceObjectsClassNames")String[] sourceObjectsClassNames, 
+                                       @WebParam(name = "sourceObjectsIds")long[] sourceObjectsIds, 
+                                       @WebParam(name = "newParentClassName")String newParentClassName,
+                                       @WebParam(name = "newParentId")long newParentId, 
+                                       @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.copyTemplateElements(sourceObjectsClassNames, sourceObjectsIds, newParentClassName, newParentId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in copyTemplateElements: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Retrieves the children of a given template element.
+     * @param templateElementClass Template element class.
+     * @param templateElementId Template element id.
+     * @param sessionId 
+     * @return The template element's children as a list of RemoteBusinessObjectLight instances.
+     * @throws org.kuwaiba.exceptions.ServerSideException
+     */
+    @WebMethod(operationName = "getTemplateElementChildren")
+    public List<RemoteObjectLight> getTemplateElementChildren(@WebParam(name = "templateElementClass")String templateElementClass, 
+            @WebParam(name = "templateElementId")long templateElementId, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getTemplateElementChildren(templateElementClass, templateElementId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getTemplateElementChildren: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    /**
+     * Retrives all the information of a given template element.
+     * @param templateElementClass Template element class.
+     * @param templateElementId Template element id.
+     * @param sessionId session token
+     * @return The template element information
+     * @throws org.kuwaiba.exceptions.ServerSideException In case someting goes wrong.
+     */
+    @WebMethod(operationName = "getTemplateElement")
+    public RemoteObject getTemplateElement(@WebParam(name = "templateElementClass")String templateElementClass, 
+            @WebParam(name = "templateElementId")long templateElementId, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getTemplateElement(templateElementClass, templateElementId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getTemplateElement: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    //</editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Reporting API methods">
+    /**
+     * Creates a class level report (a report that will be available for all instances of a given class -and its subclasses-)
+     * @param className Class this report is going to be related to. It can be ab abstract class and the report will be available for all its subclasses
+     * @param reportName Name of the report.
+     * @param reportDescription Report description.
+     * @param script Script text.
+     * @param outputType What will be the default output of this report? See ClassLevelReportDescriptor for possible values
+     * @param enabled If enabled, a report can be executed.
+     * @param sessionId Session token
+     * @return The id of the newly created report.
+     * @throws ServerSideException If the class provided could not be found.
+     */
+    @WebMethod(operationName = "createClassLevelReport")
+    public long createClassLevelReport(@WebParam(name = "className")String className, 
+            @WebParam(name = "reportName")String reportName, @WebParam(name = "reportDescription")String reportDescription, 
+            @WebParam(name = "script")String script, @WebParam(name = "outputType")int outputType, 
+            @WebParam(name = "enabled")boolean enabled, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.createClassLevelReport(className, reportName, reportDescription, 
+                    script, outputType, enabled, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createClassLevelReport: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Creates an inventory level report (a report that is not tied to a particlar instance or class. In most cases, they also receive parameters)
+     * @param reportName Name of the report.
+     * @param reportDescription Report description.
+     * @param script Script text.
+     * @param outputType What will be the default output of this report? See InventoryLevelReportDescriptor for possible values
+     * @param enabled If enabled, a report can be executed.
+     * @param parameters Optional (it might be either null or an empty array). The list of the names parameters that this report will support. They will always be captured as strings, so it's up to the author of the report the sanitization and conversion of the inputs
+     * @param sessionId Session token
+     * @return The id of the newly created report.
+     * @throws ServerSideException If the dummy root could not be found, which is actually a severe problem.
+     */
+    @WebMethod(operationName = "createInventoryLevelReport")
+    public long createInventoryLevelReport(@WebParam(name = "reportName")String reportName, 
+            @WebParam(name = "reportDescription")String reportDescription, @WebParam(name = "script")String script, 
+            @WebParam(name = "outputType")int outputType, @WebParam(name = "enabled")boolean enabled, 
+            @WebParam(name = "parameters")List<StringPair> parameters, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.createInventoryLevelReport(reportName, reportDescription, script, 
+                    outputType, enabled, parameters, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createInventoryLevelReport: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Deletes a report
+     * @param reportId The id of the report.
+     * @param sessionId Session token.
+     * @throws ServerSideException If the report could not be found.
+     */
+    @WebMethod(operationName = "deleteReport")
+    public void deleteReport(@WebParam(name = "reportId")long reportId, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            wsBean.deleteReport(reportId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteReport: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Updates the properties of an existing class level report.
+     * @param reportId Id of the report.
+     * @param reportName The name of the report. Null to leave it unchanged.
+     * @param reportDescription The description of the report. Null to leave it unchanged.
+     * @param enabled Is the report enabled? . Null to leave it unchanged.
+     * @param type Type of the output of the report. See LocalReportLight for possible values
+     * @param script Text of the script. 
+     * @param sessionId Session token.
+     * @throws ServerSideException If any of the report properties has a wrong or unexpected format or if the report could not be found.
+     */
+    @WebMethod(operationName = "updateReport")
+    public void updateReport(@WebParam(name = "reportId")long reportId, @WebParam(name = "reportName")String reportName, 
+            @WebParam(name = "reportDescription")String reportDescription, @WebParam(name = "enabled")Boolean enabled,
+            @WebParam(name = "type")Integer type, @WebParam(name = "script")String script, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            wsBean.updateReport(reportId, reportName, reportDescription, enabled,
+                                    type, script, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in updateReport: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Updates the value of any of the parameters of a given report.
+     * @param reportId Report id.
+     * @param parameters List of pairs attribute-value of the report. Valid values are name, description, script and enabled.
+     * @param sessionId Session token.
+     * @throws ServerSideException If something goes wrong.
+     */
+    @WebMethod(operationName = "updateReportParameters")
+    public void updateReportParameters(@WebParam(name = "reportId")long reportId, @WebParam(name = "parameters")List<StringPair> parameters, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            wsBean.updateReportParameters(reportId, parameters, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in updateReport: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Gets the class level reports associated to the given class (or its superclasses)
+     * @param className The class to extract the reports from.
+     * @param recursive False to get only the directly associated reports. True top get also the reports associate top its superclasses
+     * @param includeDisabled True to also include the reports marked as disabled. False to return only the enabled ones.
+     * @param sessionId Session token.
+     * @return The list of reports.
+     * @throws ServerSideException If the class could not be found
+     */
+    @WebMethod(operationName = "getClassLevelReports")
+    public List<RemoteReportLight> getClassLevelReports(@WebParam(name = "className")String className, 
+            @WebParam(name = "recursive")boolean recursive, @WebParam(name = "includeDisabled")boolean includeDisabled, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getClassLevelReports(className, recursive, includeDisabled, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getClassLevelReports: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Gets the inventory class reports.
+     * @param includeDisabled True to also include the reports marked as disabled. False to return only the enabled ones.
+     * @param sessionId Session token.
+     * @return The list of reports.
+     * @throws ServerSideException If the dummy root could not be found, which is actually a severe problem.
+     */
+    @WebMethod(operationName = "getInventoryLevelReports")
+    public List<RemoteReportLight> getInventoryLevelReports(@WebParam(name = "includeDisabled")boolean includeDisabled, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getInventoryLevelReports(includeDisabled, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getInventoryLevelReports: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Gets the information related to a class level report.
+     * @param reportId The id of the report.
+     * @param sessionId Session token.
+     * @return  The report.
+     * @throws ServerSideException If the report could not be found.
+     */
+    @WebMethod(operationName = "getReport")
+    public RemoteReport getReport(@WebParam(name = "reportId")long reportId, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getReport(reportId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getReport: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Executes a class level report and returns the result.
+     * @param objectClassName The class of the instance that will be used as input for the report.
+     * @param objectId The id of the instance that will be used as input for the report.
+     * @param reportId The id of the report.
+     * @param sessionId Session token.
+     * @return The result of the report execution.
+     * @throws ServerSideException If the class could not be found or if the report could not be found or if the inventory object could not be found or if there's an error during the execution of the report. 
+     */
+    @WebMethod(operationName = "executeClassLevelReport")
+    public byte[] executeClassLevelReport(@WebParam(name = "objectClassName")String objectClassName, 
+            @WebParam(name = "objectId")long objectId, @WebParam(name = "reportId")long reportId, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.executeClassLevelReport(objectClassName, objectId, reportId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in executeClassLevelReport: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+   
+    /**
+     * Executes an inventory level report and returns the result.
+     * @param reportId The id of the report.
+     * @param parameters List of pairs param name - param value
+     * @param sessionId Session token.
+     * @return The result of the report execution.
+     * @throws ServerSideException If the report could not be found or if the associated script exits with error.
+     */
+    @WebMethod(operationName = "executeInventoryLevelReport")
+    public byte[] executeInventoryLevelReport(@WebParam(name = "reportId")long reportId, 
+            @WebParam(name = "parameters")List<StringPair> parameters, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.executeInventoryLevelReport(reportId, parameters, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in executeInventoryLevelReport: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
@@ -3740,6 +4218,16 @@ public class KuwaibaService {
         }
     }
     
+    /**
+     * Creates a subnet
+     * @param poolId The id of the pool that will contain the subnet
+     * @param className The class name of the subnet (e.g. SubnetIPv4, SubnetIPv6)
+     * @param attributeNames Names of the attributes that will be set on the newly created element.
+     * @param attributeValues The values to be set in the aforementioned attributes.
+     * @param sessionId Session token.
+     * @return The id of the new subnet.
+     * @throws ServerSideException If something goes wrong.
+     */
     @WebMethod(operationName = "createSubnet")
     public long createSubnet(@WebParam(name = "poolId")long poolId,
             @WebParam(name = "className")String className,
@@ -3855,7 +4343,7 @@ public class KuwaibaService {
     }
     
     /**
-     * Adds an ip to a Subnet
+     * Adds an IP to a Subnet
      * @param id ipAddres id
      * @param parentClassName the parent class name
      * @param attributeNames IP Address Attributes
@@ -4060,7 +4548,7 @@ public class KuwaibaService {
     }
     
     /**
-     * Checks if a new subnet overlaps with a existing one
+     * Checks if a new subnet overlaps with an existing one
      * @param networkIp the network ip for the subnet
      * @param broadcastIp the broadcast ip for the subnet
      * @param sessionId Session token
@@ -4257,8 +4745,8 @@ public class KuwaibaService {
      * Release the association between a network element and a MPLSTunnel or BridgeDomain or 
      * FrameRelay or VRF
      * @param portId MPLSTunnel or BridgeDomain or FrameRelay or VRF id
-     * @param releasePortFromInterfaceClassName network element class name
-     * @param releasePortFromInterfaceId network element id
+     * @param interfaceClassName network element class name
+     * @param interfaceId network element id
      * @param sessionId Session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
      */

@@ -16,38 +16,38 @@
 
 package org.kuwaiba.beans;
 
+import com.neotropic.kuwaiba.modules.reporting.model.RemoteReport;
+import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
 import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
 import java.util.List;
 import javax.ejb.Local;
-import javax.ejb.Remote;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
 import org.kuwaiba.exceptions.NotAuthorizedException;
 import org.kuwaiba.exceptions.ServerSideException;
-import org.kuwaiba.ws.todeserialize.StringPair;
-import org.kuwaiba.ws.todeserialize.TransientQuery;
-import org.kuwaiba.ws.toserialize.application.ApplicationLogEntry;
-import org.kuwaiba.ws.toserialize.application.GroupInfo;
-import org.kuwaiba.ws.toserialize.application.RemotePool;
-import org.kuwaiba.ws.toserialize.application.RemoteQuery;
-import org.kuwaiba.ws.toserialize.application.RemoteQueryLight;
-import org.kuwaiba.ws.toserialize.application.RemoteSession;
-import org.kuwaiba.ws.toserialize.application.RemoteTask;
-import org.kuwaiba.ws.toserialize.application.RemoteTaskResult;
-import org.kuwaiba.ws.toserialize.application.ReportDescriptor;
-import org.kuwaiba.ws.toserialize.application.ResultRecord;
-import org.kuwaiba.ws.toserialize.application.TaskNotificationDescriptor;
-import org.kuwaiba.ws.toserialize.application.TaskScheduleDescriptor;
-import org.kuwaiba.ws.toserialize.application.UserInfo;
-import org.kuwaiba.ws.toserialize.application.UserInfoLight;
-import org.kuwaiba.ws.toserialize.application.ViewInfo;
-import org.kuwaiba.ws.toserialize.application.ViewInfoLight;
-import org.kuwaiba.ws.toserialize.business.RemoteObject;
-import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.ws.toserialize.business.RemoteObjectSpecialRelationships;
-import org.kuwaiba.ws.toserialize.metadata.AttributeInfo;
-import org.kuwaiba.ws.toserialize.metadata.ClassInfo;
-import org.kuwaiba.ws.toserialize.metadata.ClassInfoLight;
+import org.kuwaiba.interfaces.ws.todeserialize.StringPair;
+import org.kuwaiba.interfaces.ws.todeserialize.TransientQuery;
+import org.kuwaiba.interfaces.ws.toserialize.application.ApplicationLogEntry;
+import org.kuwaiba.interfaces.ws.toserialize.application.GroupInfo;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemotePool;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteQuery;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteQueryLight;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteTask;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteTaskResult;
+import org.kuwaiba.interfaces.ws.toserialize.application.ResultRecord;
+import org.kuwaiba.interfaces.ws.toserialize.application.TaskNotificationDescriptor;
+import org.kuwaiba.interfaces.ws.toserialize.application.TaskScheduleDescriptor;
+import org.kuwaiba.interfaces.ws.toserialize.application.UserInfo;
+import org.kuwaiba.interfaces.ws.toserialize.application.UserInfoLight;
+import org.kuwaiba.interfaces.ws.toserialize.application.ViewInfo;
+import org.kuwaiba.interfaces.ws.toserialize.application.ViewInfoLight;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectSpecialRelationships;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.AttributeInfo;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfo;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
 
 @Local
 public interface WebserviceBeanLocal {
@@ -337,10 +337,54 @@ public interface WebserviceBeanLocal {
     public byte[] downloadBulkLoadLog(String fileName, String ipAddress, String sessionId) throws ServerSideException;
     // </editor-fold>
     
-    // <editor-fold defaultstate="collapsed" desc="Reporting methods.">
-    public ReportDescriptor[] getReportsForClass(String className, int limit, String ipAddress, String sessionId) throws ServerSideException;
+    //<editor-fold desc="Templates" defaultstate="collapsed">
+    public long createTemplate(String templateClass, String templateName, String ipAddress, String sessionId) throws ServerSideException;
+
+    public long createTemplateElement(String templateElementClass, String templateElementParentClassName, long templateElementParentId, String templateElementName, String ipAddress, String sessionId) throws ServerSideException;
+
+    public void updateTemplateElement(String templateElementClass, long templateElementId, String[] attributeNames, String[] attributeValues, String ipAddress, String sessionId) throws ServerSideException;
+
+    public void deleteTemplateElement(String templateElementClass, long templateElementId, String ipAddress, String sessionId) throws ServerSideException;
+
+    public List<RemoteObjectLight> getTemplatesForClass(String className, String ipAddress, String sessionId) throws ServerSideException;
     
-    public byte[] executeReport(long reportId, List<StringPair> arguments, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteObjectLight> getTemplateElementChildren(String templateElementClass, 
+            long templateElementId, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public RemoteObject getTemplateElement(String templateElementClass, long templateElementId, 
+            String ipAddress, String sessionId) throws ServerSideException;
+    
+    public long[] copyTemplateElements(String[] sourceObjectsClassNames, long[] sourceObjectsIds, 
+            String newParentClassName,long newParentId, String ipAddress, String sessionId) throws ServerSideException;
+    //</editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Reporting methods.">
+    public long createClassLevelReport(String className, String reportName, String reportDescription, 
+            String script, int outputType, boolean enabled, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public long createInventoryLevelReport(String reportName, String reportDescription, String script, int outputType, 
+            boolean enabled, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public void deleteReport(long reportId, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public void updateReport(long reportId, String reportName, String reportDescription, Boolean enabled,
+            Integer type, String script, String ipAddress, String sessionId) throws ServerSideException;
+
+    public void updateReportParameters(long reportId, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public List<RemoteReportLight> getClassLevelReports(String className, boolean recursive, 
+            boolean includeDisabled, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public List<RemoteReportLight> getInventoryLevelReports(boolean includeDisabled, 
+            String ipAddress, String sessionId) throws ServerSideException;
+    
+    public RemoteReport getReport(long reportId, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public byte[] executeClassLevelReport(String objectClassName, long objectId, 
+            long reportId, String ipAddress, String sessionId) throws ServerSideException;
+   
+    public byte[] executeInventoryLevelReport(long reportId, List<StringPair> parameters, 
+            String ipAddress, String sessionId) throws ServerSideException;
     
     // </editor-fold>
     
@@ -421,5 +465,4 @@ public interface WebserviceBeanLocal {
     // <editor-fold defaultstate="collapsed" desc="Help methods. Click on the + sign on the left to edit the code.">
     public boolean isSubclassOf(String className, String subclassOf, String remoteAddress, String sessionId);
     // </editor-fold>
-    
 }

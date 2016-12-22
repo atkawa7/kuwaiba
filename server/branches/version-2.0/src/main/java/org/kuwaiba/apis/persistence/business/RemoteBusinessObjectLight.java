@@ -22,7 +22,7 @@ import java.io.Serializable;
  * Contains a business object basic information
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class RemoteBusinessObjectLight implements Serializable {
+public class RemoteBusinessObjectLight implements Serializable, Comparable<RemoteBusinessObjectLight> {
 
     /**
      * Object's id
@@ -39,7 +39,7 @@ public class RemoteBusinessObjectLight implements Serializable {
 
     protected RemoteBusinessObjectLight() {}
 
-    public RemoteBusinessObjectLight(Long id, String name, String className) {
+    public RemoteBusinessObjectLight(long id, String name, String className) {
         this.id = id;
         this.name = name;
         this.className = className;
@@ -72,5 +72,10 @@ public class RemoteBusinessObjectLight implements Serializable {
     @Override
     public String toString() {
         return getName() + " [" + getClassName() + "]";
+    }
+
+    @Override
+    public int compareTo(RemoteBusinessObjectLight o) {
+        return getName().compareTo(o.getName());
     }
 }

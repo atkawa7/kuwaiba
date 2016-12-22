@@ -35,7 +35,7 @@ import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.services.persistence.util.Constants;
-import org.kuwaiba.ws.toserialize.application.RemotePool;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemotePool;
 
 /**
  * IP address manager module
