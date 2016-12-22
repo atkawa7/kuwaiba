@@ -21,15 +21,14 @@ import com.vaadin.cdi.CDIView;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Page;
-import com.vaadin.shared.Position;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.HorizontalSplitPanel;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
 import javax.inject.Inject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
+import org.kuwaiba.apis.web.gui.nodes.util.NotificationsUtil;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.web.custom.osp.GoogleMapsGISView;
@@ -89,10 +88,7 @@ class ApplicationView extends CustomComponent implements View {
                         getSession().setAttribute("session", null);
                         getUI().getNavigator().navigateTo(LoginView.VIEW_NAME);
                     } catch (ServerSideException ex) {
-                        Notification ntfLoginError = new Notification(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-                        ntfLoginError.setPosition(Position.ASSISTIVE);
-                        ntfLoginError.setDelayMsec(3000);
-                        ntfLoginError.show(Page.getCurrent());
+                        NotificationsUtil.showError(ex.getMessage());
                     }
                 }
             });

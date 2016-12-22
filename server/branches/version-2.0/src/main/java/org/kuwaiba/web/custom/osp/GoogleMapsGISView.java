@@ -15,14 +15,21 @@
  */
 package org.kuwaiba.web.custom.osp;
 
+import com.vaadin.event.dd.DragAndDropEvent;
+import com.vaadin.event.dd.DropHandler;
+import com.vaadin.event.dd.acceptcriteria.AcceptAll;
+import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.tapio.googlemaps.GoogleMap;
 import com.vaadin.tapio.googlemaps.client.LatLon;
-import com.vaadin.ui.Notification;
+import com.vaadin.ui.DragAndDropWrapper;
 import com.vaadin.ui.VerticalLayout;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
+import org.kuwaiba.apis.web.gui.nodes.AbstractNode;
 import org.kuwaiba.apis.web.gui.nodes.actions.AbstractAction;
+import org.kuwaiba.apis.web.gui.nodes.util.NotificationsUtil;
 import org.kuwaiba.web.custom.core.AbstractTooledComponent;
 import org.kuwaiba.web.custom.wizards.connection.PopupConnectionWizardView;
 
@@ -52,15 +59,35 @@ public class GoogleMapsGISView extends AbstractTooledComponent implements Abstra
             map.setCenter(new LatLon(latitude, longitude));
             map.setZoom(zoom);
             map.setSizeFull();
+            
+            DragAndDropWrapper dndWrapper = new DragAndDropWrapper(map);
+            dndWrapper.setDropHandler(new DropHandler() {
 
-            setMainComponent(map);
+                @Override
+                public void drop(DragAndDropEvent event) {
+                    AbstractNode transferable = (AbstractNode)event.getTransferable().getData("itemId");
+
+                    if (transferable.getObject() instanceof RemoteBusinessObjectLight) {
+
+                        map.addMarker(((RemoteBusinessObjectLight)transferable.getObject()).toString(), 
+                                map.getCenter(), true, null);
+
+                    } else
+                        NotificationsUtil.showError("Only inventory objects are allowed to be dropped here");
+                }
+
+                @Override
+                public AcceptCriterion getAcceptCriterion() {
+                    return AcceptAll.get();
+                }
+            });
+
+            dndWrapper.setSizeFull();
+            setMainComponent(dndWrapper);
             
         } catch (NamingException ex){
-            Notification.show("An error occurred while loading the map default settings. Please contact your administrator", 
-                    Notification.Type.ERROR_MESSAGE);
+            NotificationsUtil.showError("An error occurred while loading the map default settings. Please contact your administrator");
         }
-        
-        
     }
 
     @Override

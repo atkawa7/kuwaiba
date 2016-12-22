@@ -42,6 +42,7 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 import javax.inject.Inject;
+import org.kuwaiba.apis.web.gui.nodes.util.NotificationsUtil;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
@@ -87,8 +88,7 @@ class LoginView extends CustomComponent implements View {
                     getUI().getNavigator().navigateTo(ApplicationView.VIEW_NAME);
                     
                 } catch (ServerSideException ex) {
-                    showNotification(new Notification(ex.getMessage(),
-                    Notification.Type.ERROR_MESSAGE));
+                    NotificationsUtil.showError(ex.getMessage());
                     txtUsername.focus();
                 }
             }
@@ -97,27 +97,19 @@ class LoginView extends CustomComponent implements View {
         Panel pnlLogin = new Panel();
         pnlLogin.setSizeUndefined();
 
-        pnlLogin.setCaption("<b>Kuwaiba Open Network Inventory</b>");
         pnlLogin.setContent(new MVerticalLayout(txtUsername, txtPassword, btnLogin)
                 .withAlign(btnLogin, Alignment.BOTTOM_LEFT));
         
         btnLogin.focus();
         
+       
+        VerticalLayout lytHeaderFiller = new VerticalLayout();
+        //Add stuff to the header
         VerticalLayout lytFooterFiller = new VerticalLayout();
-        lytFooterFiller.setWidth("100%"); //NOI18N
-        lytFooterFiller.setHeight("30%"); //NOI18N
+        //Add stuff to the footer
         
-        setCompositionRoot(new MVerticalLayout(new VerticalLayout(), pnlLogin, lytFooterFiller)
+        setCompositionRoot(new MVerticalLayout(lytHeaderFiller, pnlLogin, lytFooterFiller)
                 .withAlign(pnlLogin, Alignment.TOP_CENTER)
                 .withFullHeight());
-    }
-    
-       
-    private void showNotification(Notification notification) {
-        // keep the notification visible a little while after moving the
-        // mouse, or until clicked
-        notification.setPosition(Position.BOTTOM_CENTER);
-        notification.setDelayMsec(3000);
-        notification.show(Page.getCurrent());
     }
 }
