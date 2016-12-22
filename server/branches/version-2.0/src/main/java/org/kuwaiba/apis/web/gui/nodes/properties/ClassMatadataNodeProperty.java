@@ -21,6 +21,7 @@ import org.kuwaiba.apis.web.gui.nodes.ClassMetadataNode;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.ui.CustomComponent;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
+import org.kuwaiba.web.custom.osp.NodeMarker;
 import org.kuwaiba.web.properties.AbstractNodePorperty;
 import org.kuwaiba.web.properties.PropertySheet;
 
@@ -47,6 +48,12 @@ public class ClassMatadataNodeProperty extends CustomComponent implements Abstra
     @Override
     public void createPropertySheet(Object node) {
         //sheet = new PropertySheet(classMetadata, eventBus);
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void markerSelected(NodeMarker marker) {
+        //createPropertySheet((ClassMetadataNode) marker.get);
     }
     
    

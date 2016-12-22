@@ -15,6 +15,7 @@
  */
 package org.kuwaiba.web.custom.osp;
 
+import com.google.common.eventbus.EventBus;
 import com.vaadin.event.dd.DragAndDropEvent;
 import com.vaadin.event.dd.DropHandler;
 import com.vaadin.event.dd.acceptcriteria.AcceptAll;
@@ -22,12 +23,14 @@ import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.tapio.googlemaps.GoogleMap;
 import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.ui.DragAndDropWrapper;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.VerticalLayout;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.web.gui.nodes.AbstractNode;
+import org.kuwaiba.apis.web.gui.nodes.ObjectNode;
 import org.kuwaiba.apis.web.gui.nodes.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.nodes.util.NotificationsUtil;
 import org.kuwaiba.web.custom.core.AbstractTooledComponent;
@@ -43,7 +46,7 @@ public class GoogleMapsGISView extends AbstractTooledComponent implements Abstra
     private PopupConnectionWizardView wzdPhysicalConnections;
     
     
-    public GoogleMapsGISView() {
+    public GoogleMapsGISView(final EventBus eventBus) {
         super(new AbstractAction[0], AbstractTooledComponent.TOOLBAR_ORIENTATION_HORIZONTAL, 
                     AbstractTooledComponent.ToolBarSize.NORMAL);
         try {
@@ -59,21 +62,19 @@ public class GoogleMapsGISView extends AbstractTooledComponent implements Abstra
             map.setCenter(new LatLon(latitude, longitude));
             map.setZoom(zoom);
             map.setSizeFull();
-            
+            map.addMarkerClickListener(new NodeMarkerClickListener(eventBus));
             DragAndDropWrapper dndWrapper = new DragAndDropWrapper(map);
             dndWrapper.setDropHandler(new DropHandler() {
 
                 @Override
                 public void drop(DragAndDropEvent event) {
-                    AbstractNode transferable = (AbstractNode)event.getTransferable().getData("itemId");
-
-                    if (transferable.getObject() instanceof RemoteBusinessObjectLight) {
-
-                        map.addMarker(((RemoteBusinessObjectLight)transferable.getObject()).toString(), 
-                                map.getCenter(), true, null);
-
+                    Object transferable = event.getTransferable().getData("itemId");
+                    if (transferable instanceof ObjectNode) {
+                        NodeMarker marker = new NodeMarker(map, map.getCenter(), true, 
+                                (RemoteBusinessObjectLight)((ObjectNode)transferable).getObject());
+                        map.addMarker(marker);
                     } else
-                        NotificationsUtil.showError("Only inventory objects are allowed to be dropped here");
+                        Notification.show("Only inventory objects are allowed to be dropped here", Notification.Type.ERROR_MESSAGE);
                 }
 
                 @Override

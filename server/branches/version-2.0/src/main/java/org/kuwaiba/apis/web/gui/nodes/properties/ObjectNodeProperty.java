@@ -38,6 +38,7 @@ import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
+import org.kuwaiba.web.custom.osp.NodeMarker;
 import org.kuwaiba.web.properties.AbstractNodePorperty;
 import org.kuwaiba.web.properties.PropertySheet;
 
@@ -60,7 +61,13 @@ public class ObjectNodeProperty extends CustomComponent implements AbstractNodeP
     @Subscribe
     @Override
     public void nodeSelected(ItemClickEvent event) {
-        createPropertySheet((ObjectNode) event.getItemId());
+        createPropertySheet((RemoteBusinessObjectLight) ((ObjectNode)event.getItemId()).getObject());
+    }
+    
+    @Subscribe
+    @Override
+    public void markerSelected(NodeMarker marker) {
+        createPropertySheet(marker.getRemoteBusinessObject());
     }
     
     @Override
@@ -70,7 +77,7 @@ public class ObjectNodeProperty extends CustomComponent implements AbstractNodeP
             MetadataEntityManager mem = PersistenceService.getInstance().getMetadataEntityManager();
             ApplicationEntityManager aem = PersistenceService.getInstance().getApplicationEntityManager();
             
-            remoteBusinessObject = bem.getObject(((ObjectNode)node).getClassName(), ((ObjectNode)node).getId());
+            remoteBusinessObject = bem.getObject(((RemoteBusinessObjectLight)node).getClassName(), ((RemoteBusinessObjectLight)node).getId());
             BeanItem<RemoteBusinessObject> beanItem = new BeanItem<> (remoteBusinessObject);
             ObjectNodePropertyChangeValueListener valueListener = new ObjectNodePropertyChangeValueListener(beanItem, eventBus);
             sheet = new PropertySheet(beanItem, valueListener);

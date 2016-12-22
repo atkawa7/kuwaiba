@@ -72,7 +72,7 @@ class ApplicationView extends CustomComponent implements View {
             pnlSplitExplorer.setSplitPosition(70);
             pnlSplitExplorer.setSizeFull();
             
-            GoogleMapsGISView gisView = new GoogleMapsGISView();
+            GoogleMapsGISView gisView = new GoogleMapsGISView(eventBus);
             
             HorizontalSplitPanel pnlSplitMain = new HorizontalSplitPanel(pnlSplitExplorer, gisView);
             pnlSplitMain.setSplitPosition(20);

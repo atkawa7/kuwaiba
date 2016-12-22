@@ -17,6 +17,7 @@ package org.kuwaiba.web.properties;
 
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.event.ItemClickEvent;
+import org.kuwaiba.web.custom.osp.NodeMarker;
 
 /**
  * Abstract component for the property sheet of any node
@@ -26,5 +27,7 @@ public interface AbstractNodePorperty {
     
     @Subscribe
     void nodeSelected(ItemClickEvent event);
+    @Subscribe
+    void markerSelected(NodeMarker marker);
     void createPropertySheet(Object node);
 }
