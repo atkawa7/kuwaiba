@@ -673,7 +673,7 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
                 points.push(latLng);
             }
 
-            PolylineOptions options = PolylineOptions.newInstance();
+            final PolylineOptions options = PolylineOptions.newInstance();
             options.setGeodesic(overlay.isGeodesic());
             options.setStrokeColor(overlay.getStrokeColor());
             options.setStrokeOpacity(overlay.getStrokeOpacity());
@@ -700,6 +700,26 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
                 public void onEvent(DblClickMapEvent event) {
                     if (polylineDblClickListener != null) {
                         polylineDblClickListener.polylineDblClicked(polylineMap.get(polyline));
+                        
+                        if (polyline.getEditable()) {
+                            GoogleMapPolyline googleMapPolyline = polylineMap.get(polyline);
+//                            String strokeColor = googleMapPolyline.getStrokeColor();
+//                            options.setStrokeColor(strokeColor);
+                            //Improve this process uptate coordinates of googlemappolyline
+                            List<LatLon> coordinates = new ArrayList();
+                            System.out.println("asd ---");
+                            for (int i = 0; i < polyline.getPath().getLength(); i += 1) {
+                                LatLng latLng = polyline.getPath().get(i);
+                                coordinates.add(new LatLon(latLng.getLatitude(), latLng.getLongitude()));
+                                System.out.println("asd" + i);
+                            }
+                            googleMapPolyline.setCoordinates(coordinates);
+                            
+                            polyline.setEditable(false);
+                        }
+                        else {
+                            polyline.setEditable(true);
+                        }
                     }
                 }
             });
