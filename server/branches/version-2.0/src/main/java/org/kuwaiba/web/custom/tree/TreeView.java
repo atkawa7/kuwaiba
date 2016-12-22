@@ -39,6 +39,7 @@ public class TreeView extends Tree implements Tree.ExpandListener, CollapseListe
         addItem(new ObjectNode(rootObject, this));
         this.eventBus = eventBus;
         registerListeners();
+        this.setDragMode(Tree.TreeDragMode.NODE);
     }    
     
     public final void registerListeners(){
