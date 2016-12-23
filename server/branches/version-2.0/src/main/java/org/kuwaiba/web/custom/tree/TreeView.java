@@ -40,7 +40,19 @@ public class TreeView extends Tree implements Tree.ExpandListener, CollapseListe
         this.eventBus = eventBus;
         this.setDragMode(Tree.TreeDragMode.NODE);
         registerListeners();
-    }    
+    }
+    
+    public TreeView(RemoteBusinessObjectLight rootObject) {
+        eventBus = null;
+        addItem(new ObjectNode(rootObject, this));
+        
+        addExpandListener(this);
+        addCollapseListener(this);
+        
+        this.addItemClickListener((ItemClickEvent event) -> {
+            node = (ObjectNode)event.getItemId();
+        });
+    }
     
     public final void registerListeners(){
         addExpandListener(this);

@@ -21,7 +21,7 @@ import org.kuwaiba.apis.web.gui.nodes.ClassMetadataNode;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.ui.CustomComponent;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
-import org.kuwaiba.web.custom.osp.NodeMarker;
+import org.kuwaiba.web.custom.googlemap.overlays.NodeMarker;
 import org.kuwaiba.web.properties.AbstractNodePorperty;
 import org.kuwaiba.web.properties.PropertySheet;
 

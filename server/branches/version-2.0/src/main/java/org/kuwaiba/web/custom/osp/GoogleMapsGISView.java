@@ -16,79 +16,35 @@
 package org.kuwaiba.web.custom.osp;
 
 import com.google.common.eventbus.EventBus;
-import com.vaadin.event.dd.DragAndDropEvent;
-import com.vaadin.event.dd.DropHandler;
-import com.vaadin.event.dd.acceptcriteria.AcceptAll;
-import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
-import com.vaadin.tapio.googlemaps.GoogleMap;
-import com.vaadin.tapio.googlemaps.client.LatLon;
-import com.vaadin.ui.DragAndDropWrapper;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.VerticalLayout;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.web.gui.nodes.AbstractNode;
 import org.kuwaiba.apis.web.gui.nodes.ObjectNode;
 import org.kuwaiba.apis.web.gui.nodes.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.nodes.util.NotificationsUtil;
 import org.kuwaiba.web.custom.core.AbstractTooledComponent;
-import org.kuwaiba.web.custom.wizards.connection.PopupConnectionWizardView;
+import org.kuwaiba.web.custom.googlemap.GoogleMapWrapper;
 
 /**
  * GISView implementation for Google Maps
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class GoogleMapsGISView extends AbstractTooledComponent implements AbstractGISView {
-    private VerticalLayout lytMapComponent;
-    private GoogleMap map;
-    private PopupConnectionWizardView wzdPhysicalConnections;
-    
+//    private VerticalLayout lytMapComponent;
+    private GoogleMapWrapper mapWrapper;    
     
     public GoogleMapsGISView(final EventBus eventBus) {
-        super(new AbstractAction[0], AbstractTooledComponent.TOOLBAR_ORIENTATION_HORIZONTAL, 
+        super(new AbstractAction[]{new AbstractAction("Connection") {
+            
+            @Override
+            public void actionPerformed(Object sourceComponent, Object targetObject) {
+                eventBus.post(targetObject);
+            }
+        }}, AbstractTooledComponent.TOOLBAR_ORIENTATION_HORIZONTAL, 
                     AbstractTooledComponent.ToolBarSize.NORMAL);
-        try {
-            Context context = new InitialContext();
-            String apiKey = (String)context.lookup("java:comp/env/googleMapsApiKey"); //NOI18N
-            String mapLanguage = (String)context.lookup("java:comp/env/mapLanguage"); //NOI18N
-            double longitude = (double)context.lookup("java:comp/env/defaultCenterLongitude"); //NOI18N
-            double latitude = (double)context.lookup("java:comp/env/defaultCenterLatitude"); //NOI18N
-            int zoom = (int)context.lookup("java:comp/env/defaultZoom"); //NOI18N
-            wzdPhysicalConnections = new PopupConnectionWizardView();
-            
-            map = new GoogleMap(apiKey, null, mapLanguage);
-            map.setCenter(new LatLon(latitude, longitude));
-            map.setZoom(zoom);
-            map.setSizeFull();
-            map.addMarkerClickListener(new NodeMarkerClickListener(eventBus));
-            DragAndDropWrapper dndWrapper = new DragAndDropWrapper(map);
-            dndWrapper.setDropHandler(new DropHandler() {
-
-                @Override
-                public void drop(DragAndDropEvent event) {
-                    Object transferable = event.getTransferable().getData("itemId");
-                    if (transferable instanceof ObjectNode) {
-                        NodeMarker marker = new NodeMarker(map, map.getCenter(), true, 
-                                (RemoteBusinessObjectLight)((ObjectNode)transferable).getObject());
-                        map.addMarker(marker);
-                    } else
-                        Notification.show("Only inventory objects are allowed to be dropped here", Notification.Type.ERROR_MESSAGE);
-                }
-
-                @Override
-                public AcceptCriterion getAcceptCriterion() {
-                    return AcceptAll.get();
-                }
-            });
-
-            dndWrapper.setSizeFull();
-            setMainComponent(dndWrapper);
-            
-        } catch (NamingException ex){
-            NotificationsUtil.showError("An error occurred while loading the map default settings. Please contact your administrator");
-        }
+        
+        mapWrapper = new GoogleMapWrapper(eventBus);
+        mapWrapper.setSizeFull();
+        setMainComponent(mapWrapper);
     }
 
     @Override

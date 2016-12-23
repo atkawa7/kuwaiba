@@ -38,7 +38,7 @@ import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
-import org.kuwaiba.web.custom.osp.NodeMarker;
+import org.kuwaiba.web.custom.googlemap.overlays.NodeMarker;
 import org.kuwaiba.web.properties.AbstractNodePorperty;
 import org.kuwaiba.web.properties.PropertySheet;
 
@@ -69,6 +69,17 @@ public class ObjectNodeProperty extends CustomComponent implements AbstractNodeP
     public void markerSelected(NodeMarker marker) {
         createPropertySheet(marker.getRemoteBusinessObject());
     }
+    
+    /** 
+     * A marker is selected in GIS View
+     * @param nodeMarker 
+     */
+    /*
+    @Subscribe
+    public void nodeSelected(NodeMarker nodeMarker) {
+        createPropertySheet(nodeMarker.getNode());
+    }
+    */
     
     @Override
     public void createPropertySheet(Object node){

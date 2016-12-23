@@ -20,9 +20,6 @@ import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapInfoWindow;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import com.vaadin.ui.Button;
-import java.util.ArrayList;
-import java.util.List;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 //import org.kuwaiba.connection.Connection;
 
@@ -30,7 +27,7 @@ import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
  * Represents a marker in the map (google-map)
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class NodeMarker extends GoogleMapMarker {
+public class NodeMarkerOld extends GoogleMapMarker {
     
     //List<Connection> connections;
     private final GoogleMapInfoWindow infoWindow;
@@ -38,7 +35,7 @@ public class NodeMarker extends GoogleMapMarker {
     private final GoogleMap googleMap;
     private final RemoteBusinessObjectLight remoteBusinessObject;
     
-    public NodeMarker(GoogleMap googleMap, LatLon position, boolean draggable,
+    public NodeMarkerOld(GoogleMap googleMap, LatLon position, boolean draggable,
             RemoteBusinessObjectLight remoteBusinessObject)
     {
         super(remoteBusinessObject.getName(), position, draggable);

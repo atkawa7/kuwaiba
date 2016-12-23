@@ -15,8 +15,10 @@
  */
 package org.kuwaiba.web.custom.wizards.connection;
 
+import com.google.common.eventbus.EventBus;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.PopupView;
+import org.kuwaiba.web.custom.googlemap.overlays.ConnectionPolyline;
 import org.vaadin.teemu.wizards.Wizard;
 import org.vaadin.teemu.wizards.event.WizardCancelledEvent;
 import org.vaadin.teemu.wizards.event.WizardCompletedEvent;
@@ -29,16 +31,21 @@ import org.vaadin.teemu.wizards.event.WizardStepSetChangedEvent;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class PopupConnectionWizardView extends PopupView implements WizardProgressListener {
-    private Wizard wizard = null;    
+    private final EventBus eventBus;
+    private Wizard wizard = null;   
+    private ConnectionPolyline connection;
     
-    public PopupConnectionWizardView() {
+    public PopupConnectionWizardView(final EventBus eventBus, ConnectionPolyline connection) {
+        this.eventBus = eventBus;
+        this.connection = connection;
+        
         setHideOnMouseOut(false);
         initWizard();
         setContent(new PopupView.Content() {
 
             @Override
             public String getMinimizedValueAsHTML() {
-                return "Wizard";
+                return "";
             }
 
             @Override
@@ -52,11 +59,15 @@ public class PopupConnectionWizardView extends PopupView implements WizardProgre
         wizard = new Wizard();
         wizard.setUriFragmentEnabled(true);
         wizard.addStep(new FirstStep(), "first");
-        wizard.addStep(new SecondStep(), "second");
+        wizard.addStep(new SecondStep(this), "second");
         wizard.addStep(new LastStep(), "last");
         wizard.setHeight("400px");
         wizard.setWidth("500px");
         wizard.addListener(this);
+    }
+    
+    public ConnectionPolyline getConnection() {
+        return connection;
     }
     
     public Wizard getWizard() {
@@ -75,6 +86,7 @@ public class PopupConnectionWizardView extends PopupView implements WizardProgre
 
     @Override
     public void wizardCompleted(WizardCompletedEvent event) {
+        eventBus.post(event);
         this.setPopupVisible(false);
 //        wizard.finish();
     }

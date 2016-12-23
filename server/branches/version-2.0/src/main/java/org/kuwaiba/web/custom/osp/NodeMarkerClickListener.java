@@ -47,7 +47,7 @@ public class NodeMarkerClickListener implements MarkerClickListener {
             
     @Override
     public void markerClicked(GoogleMapMarker clickedMarker) {
-        NodeMarker m = (NodeMarker)clickedMarker;
+        NodeMarkerOld m = (NodeMarkerOld)clickedMarker;
         eventBus.post(m);
     }
     

@@ -17,8 +17,15 @@ package org.kuwaiba.web.custom.wizards.connection;
 
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.VerticalSplitPanel;
+import org.kuwaiba.apis.persistence.PersistenceService;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
+import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
+import org.kuwaiba.apis.web.gui.nodes.ObjectNode;
+import org.kuwaiba.web.custom.tree.TreeView;
 import org.vaadin.teemu.wizards.WizardStep;
 
 /**
@@ -26,28 +33,71 @@ import org.vaadin.teemu.wizards.WizardStep;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class SecondStep implements WizardStep {
+    /**
+     * Reference to the Metadata Entity Manager
+     */
+    private MetadataEntityManager mem;
+    
+    private PopupConnectionWizardView wizard;
+    private TreeView endPointA;
+    private TreeView endPointB;
+    
+    VerticalLayout content = new VerticalLayout();
+    
+    public SecondStep(PopupConnectionWizardView wizard) {
+        mem = PersistenceService.getInstance().getMetadataEntityManager();
+        this.wizard = wizard;
+    }
     
     @Override
     public String getCaption() {
-        return "Second step";
+        return "Choose endpoint";
     }
 
     @Override
-    public Component getContent() {
-        VerticalLayout content = new VerticalLayout();
+    public Component getContent() {        
         content.setSizeFull();
         content.setMargin(true);
         
-        content.addComponent(new Label("<p>Second step (connections)</p>",ContentMode.HTML));
+        VerticalSplitPanel pnlStart = new VerticalSplitPanel();
+        pnlStart.addComponent(new Label("<b>Choose endpoint</b>", ContentMode.HTML));
+        pnlStart.addComponent(new Label("<p>Select the objects (port or nodes) you'd like to connect.</p>", ContentMode.HTML));
         
+        HorizontalSplitPanel pnlChooseEndpoints = new HorizontalSplitPanel();
+        RemoteBusinessObjectLight rootSourceNode = wizard.getConnection().getSource().getRemoteBusinessObject();
+        RemoteBusinessObjectLight rootTargetNode = wizard.getConnection().getTarget().getRemoteBusinessObject();
+        endPointA = new TreeView(rootSourceNode);
+        pnlChooseEndpoints.setFirstComponent(endPointA);
+        endPointB = new TreeView(rootTargetNode);
+        pnlChooseEndpoints.setSecondComponent(endPointB);
+        
+        content.addComponents(pnlStart, pnlChooseEndpoints);
+
         return content;
     }
-
+    
     @Override
     public boolean onAdvance() {
-        return true;
+        ObjectNode aObjectNode = (ObjectNode) endPointA.getValue();
+        ObjectNode bObjectNode = (ObjectNode) endPointB.getValue();
+        
+        String error = "";
+        boolean advanced = true;
+        
+        if (aObjectNode == null || bObjectNode == null) {
+            error = "You have to select both sides of this connection";
+            advanced = false;
+        } else {
+            
+        }
+        VerticalSplitPanel pnlError = new VerticalSplitPanel();
+        pnlError.addComponent(new Label("<p style=\"color:red;\">"+error+".</p>", ContentMode.HTML));
+        
+        content.addComponent(pnlError);
+        
+        return advanced;
     }
-
+    
     @Override
     public boolean onBack() {
         return true;
