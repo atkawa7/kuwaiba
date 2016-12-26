@@ -16,7 +16,6 @@
 package org.kuwaiba.web;
 
 import com.google.common.eventbus.EventBus;
-import org.kuwaiba.apis.web.gui.nodes.properties.ObjectNodeProperty;
 import com.vaadin.cdi.CDIView;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -25,15 +24,13 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.VerticalSplitPanel;
 import javax.inject.Inject;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
-import org.kuwaiba.apis.web.gui.nodes.util.NotificationsUtil;
+import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.web.custom.osp.GoogleMapsGISView;
-import org.kuwaiba.web.custom.tree.TreeView;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.web.modules.navtree.NavigationTreeModule;
 
 
 /**
@@ -46,7 +43,7 @@ class ApplicationView extends CustomComponent implements View {
     
     EventBus eventBus = new EventBus();
     @Inject
-    private WebserviceBeanLocal bean;
+    private WebserviceBeanLocal wsBean;
  
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
@@ -60,21 +57,10 @@ class ApplicationView extends CustomComponent implements View {
             lytRoot.setSizeFull();
             Page.getCurrent().setTitle(String.format("%s - [%s]", "Kuwaiba Open Network Inventory", session.getUsername()));
             
-            TreeView treeView = new TreeView(
-                    new RemoteBusinessObjectLight(-1, "Navigation Tree Root", "Root"),
-                    "Navigation Tree", eventBus);
-            ObjectNodeProperty propertySheet = new ObjectNodeProperty(eventBus);
-            
-            eventBus.register(treeView);
-            eventBus.register(propertySheet);
-            
-            VerticalSplitPanel pnlSplitExplorer = new VerticalSplitPanel(treeView, propertySheet);
-            pnlSplitExplorer.setSplitPosition(70);
-            pnlSplitExplorer.setSizeFull();
-            
+            NavigationTreeModule mdlNavTree = new NavigationTreeModule(eventBus, wsBean, session);        
             GoogleMapsGISView gisView = new GoogleMapsGISView(eventBus);
             
-            HorizontalSplitPanel pnlSplitMain = new HorizontalSplitPanel(pnlSplitExplorer, gisView);
+            HorizontalSplitPanel pnlSplitMain = new HorizontalSplitPanel(mdlNavTree.open(), gisView);
             pnlSplitMain.setSplitPosition(20);
             
             Button btnLogout = new Button("Logout");
@@ -84,7 +70,7 @@ class ApplicationView extends CustomComponent implements View {
                 @Override
                 public void buttonClick(Button.ClickEvent event) {
                     try {
-                        bean.closeSession(session.getSessionId(), Page.getCurrent().getWebBrowser().getAddress());
+                        wsBean.closeSession(session.getSessionId(), Page.getCurrent().getWebBrowser().getAddress());
                         getSession().setAttribute("session", null);
                         getUI().getNavigator().navigateTo(LoginView.VIEW_NAME);
                     } catch (ServerSideException ex) {

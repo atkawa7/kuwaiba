@@ -16,10 +16,8 @@
 package org.kuwaiba.interfaces.ws.toserialize.business;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
@@ -42,7 +40,7 @@ public class RemoteObjectSpecialRelationships implements Serializable {
         int i = 0;
         for (String relationship : relationships.keySet()){
             this.relationships[i] = relationship;
-            this.relatedObjects[i] = RemoteObjectLight.toRemoteObjectLightArray(relationships.get(relationship));
+            //this.relatedObjects[i] = RemoteObjectLight.toRemoteObjectLightArray(relationships.get(relationship));
             i++;
         }
     }

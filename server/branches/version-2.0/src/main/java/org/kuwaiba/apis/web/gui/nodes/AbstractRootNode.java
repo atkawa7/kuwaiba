@@ -15,38 +15,24 @@
  */
 package org.kuwaiba.apis.web.gui.nodes;
 
-import org.kuwaiba.apis.web.gui.nodes.actions.AbstractAction;
-import org.kuwaiba.apis.web.gui.nodes.actions.AddObjectAction;
-import com.vaadin.ui.Tree;
+import com.vaadin.server.FontAwesome;
+import org.kuwaiba.web.custom.tree.DynamicTree;
 
 /**
- * Represent the root node in a tree
+ * Root class of all root nodes
  * @author Charles Bedon <charles.bedon@kuwaiba.org>
  */
-public class RootNode extends AbstractNode {
+public abstract class AbstractRootNode extends AbstractNode {
 
-    public RootNode(Tree tree) {
-        super(tree);
-        setDisplayName("Companies All Over the World");
-    }
-
-    @Override
-    public AbstractAction[] getActions() {
-        return new AbstractAction[] { new AddObjectAction() };
-    }
-
-    @Override
-    public void refresh(boolean recursive) {}
-    
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof RootNode; //There should be only one root node
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 3;
-        return hash;
+    public AbstractRootNode(String caption) {
+        setDisplayName(caption);
+        this.object = caption;
     }
     
+    @Override
+    public void setTree(DynamicTree tree) {
+        super.setTree(tree);
+        tree.addItem(this);
+        tree.setItemIcon(this, FontAwesome.STAR);
+    }
 }

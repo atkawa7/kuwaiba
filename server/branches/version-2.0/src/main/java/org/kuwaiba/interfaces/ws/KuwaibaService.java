@@ -639,7 +639,7 @@ public class KuwaibaService {
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getListTypeItems")
-    public RemoteObjectLight[] getListTypeItems(
+    public List<RemoteObjectLight> getListTypeItems(
             @WebParam(name = "className") String className,
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException{
         try{
@@ -1147,7 +1147,7 @@ public class KuwaibaService {
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getPoolItems")
-    public RemoteObjectLight[] getPoolItems(@WebParam(name = "poolId")long poolId,
+    public List<RemoteObjectLight> getPoolItems(@WebParam(name = "poolId")long poolId,
             @WebParam(name = "limit")int limit,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
@@ -1478,13 +1478,12 @@ public class KuwaibaService {
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getObjectChildrenForClassWithId")
-    public RemoteObjectLight[] getObjectChildrenForClassWithId(@WebParam(name = "oid") long oid,
+    public List<RemoteObjectLight> getObjectChildrenForClassWithId(@WebParam(name = "oid") long oid,
             @WebParam(name = "objectClassId") long objectClassId,
             @WebParam(name = "maxResults") int maxResults,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
-            RemoteObjectLight[] res = wsBean.getObjectChildren(oid,objectClassId, maxResults, getIPAddress(), sessionId);
-            return res;
+            return wsBean.getObjectChildren(oid,objectClassId, maxResults, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -1505,13 +1504,12 @@ public class KuwaibaService {
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getObjectChildren")
-    public RemoteObjectLight[] getObjectChildren(@WebParam(name = "objectClassName") String objectClassName,
+    public List<RemoteObjectLight> getObjectChildren(@WebParam(name = "objectClassName") String objectClassName,
             @WebParam(name = "oid") long oid,
             @WebParam(name = "maxResults") int maxResults,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
-            RemoteObjectLight[] res = wsBean.getObjectChildren(objectClassName, oid, maxResults, getIPAddress(), sessionId);
-            return res;
+            return wsBean.getObjectChildren(objectClassName, oid, maxResults, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -1532,13 +1530,12 @@ public class KuwaibaService {
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getSiblings")
-    public RemoteObjectLight[] getSiblings(@WebParam(name = "objectClassName") String objectClassName,
+    public List<RemoteObjectLight> getSiblings(@WebParam(name = "objectClassName") String objectClassName,
             @WebParam(name = "oid") long oid,
             @WebParam(name = "maxResults") int  maxResults,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
-            RemoteObjectLight[] res = wsBean.getSiblings(objectClassName, oid, maxResults, getIPAddress(), sessionId);
-            return res;
+            return wsBean.getSiblings(objectClassName, oid, maxResults, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -1589,7 +1586,7 @@ public class KuwaibaService {
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName="getChildrenOfClassLight")
-    public RemoteObjectLight[] getChildrenOfClassLight(@WebParam(name="parentOid")long parentOid,
+    public List<RemoteObjectLight> getChildrenOfClassLight(@WebParam(name="parentOid")long parentOid,
             @WebParam(name="parentClass")String parentClass,
             @WebParam(name="childrenClass")String childrenClass,
             @WebParam(name="maxResults")int maxResults,
@@ -1664,7 +1661,7 @@ public class KuwaibaService {
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getObjectsOfClassLight")
-    public RemoteObjectLight[] getObjectsOfClassLight(@WebParam(name = "className") String className,
+    public List<RemoteObjectLight> getObjectsOfClassLight(@WebParam(name = "className") String className,
             @WebParam(name = "maxResults")int maxResults,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
@@ -1712,10 +1709,10 @@ public class KuwaibaService {
      * @throws ServerSideException In case something goes wrong.
      */
     @WebMethod(operationName = "getParents")
-    public RemoteObjectLight[] getParents(@WebParam(name = "objectclass") String objectClass,
+    public List<RemoteObjectLight> getParents(@WebParam(name = "objectclass") String objectClass,
             @WebParam(name = "oid") long oid,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
-        try{
+        try {
             return wsBean.getParents(objectClass, oid, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
@@ -1789,7 +1786,7 @@ public class KuwaibaService {
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getSpecialAttribute")
-    public RemoteObjectLight[] getSpecialAttribute(@WebParam(name = "objectclass") String objectClass,
+    public List<RemoteObjectLight> getSpecialAttribute(@WebParam(name = "objectclass") String objectClass,
             @WebParam(name = "oid") long oid,
             @WebParam(name = "attributename") String attributeName,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
@@ -1814,7 +1811,7 @@ public class KuwaibaService {
      * @throws ServerSideException If something goes wrong.
      */
     @WebMethod(operationName = "getObjectSpecialChildren")
-    public RemoteObjectLight[] getObjectSpecialChildren (@WebParam(name = "objectclass") String objectClass,
+    public List<RemoteObjectLight> getObjectSpecialChildren (@WebParam(name = "objectclass") String objectClass,
             @WebParam(name = "objectId") long objectId,
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try{
@@ -2187,10 +2184,10 @@ public class KuwaibaService {
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
      */
     @WebMethod(operationName = "getPhysicalPath")
-    public RemoteObjectLight[] getPhysicalPath (@WebParam(name = "objectClass")String objectClass,
+    public List<RemoteObjectLight> getPhysicalPath (@WebParam(name = "objectClass")String objectClass,
             @WebParam(name = "objectId")long objectId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
-        try{
+        try {
             return wsBean.getPhysicalPath(objectClass, objectId, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
@@ -2348,7 +2345,7 @@ public class KuwaibaService {
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
      */
     @WebMethod(operationName = "getServiceResources")
-    public RemoteObjectLight[] getServiceResources (
+    public List<RemoteObjectLight> getServiceResources (
             @WebParam(name = "serviceClass")String serviceClass,
             @WebParam(name = "serviceId")long serviceId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
@@ -2431,7 +2428,7 @@ public class KuwaibaService {
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getServices")
-    public RemoteObjectLight[] getServices(@WebParam(name = "customerClass")String customerClass, 
+    public List<RemoteObjectLight> getServices(@WebParam(name = "customerClass")String customerClass, 
             @WebParam(name = "customerId")long customerId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
@@ -4174,7 +4171,7 @@ public class KuwaibaService {
      * @throws ServerSideException 
      */
     @WebMethod(operationName = "getSubnets")
-    public RemoteObjectLight[] getSubnets(@WebParam(name = "poolId")long poolId,
+    public List<RemoteObjectLight> getSubnets(@WebParam(name = "poolId")long poolId,
             @WebParam(name = "limit")int limit,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
@@ -4403,7 +4400,7 @@ public class KuwaibaService {
      * @throws ServerSideException 
      */
     @WebMethod(operationName = "getSubnetUsedIps")
-    public RemoteObjectLight[] getSubnetUsedIps(@WebParam(name = "id")long id,
+    public List<RemoteObjectLight> getSubnetUsedIps(@WebParam(name = "id")long id,
             @WebParam(name = "limit")int limit,
             @WebParam(name = "className")String className,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{

@@ -17,18 +17,13 @@ package org.kuwaiba.apis.web.gui.nodes.properties;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import org.kuwaiba.apis.web.gui.nodes.ObjectNode;
+import org.kuwaiba.apis.web.gui.nodes.InventoryObjectNode;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.ItemClickEvent;
-import com.vaadin.server.Page;
-import com.vaadin.shared.Position;
 import com.vaadin.ui.CustomComponent;
-import com.vaadin.ui.Notification;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
@@ -38,9 +33,8 @@ import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
-import org.kuwaiba.web.custom.googlemap.overlays.NodeMarker;
-import org.kuwaiba.web.properties.AbstractNodePorperty;
-import org.kuwaiba.web.properties.PropertySheet;
+import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
+import org.kuwaiba.web.custom.osp.google.overlays.NodeMarker;
 
 /**
  * This class contains the method that listens when a node is selected in the 
@@ -48,7 +42,7 @@ import org.kuwaiba.web.properties.PropertySheet;
  * for the selected object. 
  * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
  */
-public class ObjectNodeProperty extends CustomComponent implements AbstractNodePorperty{
+public class ObjectNodeProperty extends CustomComponent implements AbstractNodeProperty {
     
     private RemoteBusinessObject remoteBusinessObject;
     private final EventBus eventBus;
@@ -61,25 +55,32 @@ public class ObjectNodeProperty extends CustomComponent implements AbstractNodeP
     @Subscribe
     @Override
     public void nodeSelected(ItemClickEvent event) {
-        createPropertySheet((RemoteBusinessObjectLight) ((ObjectNode)event.getItemId()).getObject());
+        createPropertySheet((RemoteBusinessObjectLight) ((InventoryObjectNode)event.getItemId()).getObject());
     }
     
+    /** 
+     * A marker is selected in GIS View
+     * @param marker The selected marker
+     */
     @Subscribe
     @Override
     public void markerSelected(NodeMarker marker) {
         createPropertySheet(marker.getRemoteBusinessObject());
     }
     
-    /** 
-     * A marker is selected in GIS View
-     * @param nodeMarker 
+    /**
+     * Registers this component in the event bus.
      */
-    /*
-    @Subscribe
-    public void nodeSelected(NodeMarker nodeMarker) {
-        createPropertySheet(nodeMarker.getNode());
+    public void register() {
+        eventBus.register(this);
     }
-    */
+    
+    /**
+     * Unregisters this component from the event bus.
+     */
+    public void unregister() {
+        eventBus.unregister(this);
+    }
     
     @Override
     public void createPropertySheet(Object node){
@@ -127,22 +128,13 @@ public class ObjectNodeProperty extends CustomComponent implements AbstractNodeP
                             sheet.createListTypeField(classAttribute.getName(),  classAttribute.getDescription(), listTypeItems, actualItem, i);
                             break;
                         default:
-                           showNotification(new Notification("Mapping not supported",
-                                   Notification.Type.ERROR_MESSAGE));
+                            NotificationsUtil.showError("Mapping not supported");
                     }        
                 }
             }
         } catch (InventoryException ex) {
-            Logger.getLogger(ObjectNodeProperty.class.getName()).log(Level.SEVERE, null, ex);
+            NotificationsUtil.showError(ex.getLocalizedMessage());
         }
         setCompositionRoot(sheet);
-    }
-    
-    private void showNotification(Notification notification) {
-        // keep the notification visible a little while after moving the
-        // mouse, or until clicked
-        notification.setPosition(Position.BOTTOM_CENTER);
-        notification.setDelayMsec(2000);
-        notification.show(Page.getCurrent());
     }
 }

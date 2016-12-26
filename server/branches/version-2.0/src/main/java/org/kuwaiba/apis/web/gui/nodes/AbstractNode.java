@@ -15,10 +15,10 @@
  */
 package org.kuwaiba.apis.web.gui.nodes;
 
-import org.kuwaiba.apis.web.gui.nodes.actions.AbstractAction;
-import com.vaadin.ui.Tree;
+import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import java.util.Collection;
 import java.util.Objects;
+import org.kuwaiba.web.custom.tree.DynamicTree;
 
 /**
  * A node that represents a business domain object from the model.
@@ -29,7 +29,7 @@ public abstract class AbstractNode<T> {
     /**
      * Business object behind this node (model)
      */
-    private T object;
+    protected T object;
     /**
      * Node's displayName. If null, the toString method of the business object will be used
      */
@@ -37,15 +37,12 @@ public abstract class AbstractNode<T> {
     /**
      * Reference to the tree containing this node
      */
-    private Tree tree;
+    private DynamicTree tree;
 
-    public AbstractNode(T object, Tree tree) {
-        this.object = object;
-        this.tree = tree;
-    }
+    public AbstractNode() {}
     
-    public AbstractNode(Tree tree) {
-        this.tree = tree;
+    public AbstractNode(T object) {
+        this.object = object;
     }
 
     public String getDisplayName() {
@@ -59,10 +56,28 @@ public abstract class AbstractNode<T> {
     public Object getObject() {
         return object;
     }
+    
+    /**
+     * This method relates and adds this object to a tree 
+     * @param tree The tree.
+     */
+    public void setTree(DynamicTree tree) {
+        this.tree = tree;
+        this.tree.addItem(this);
+    }
 
-    public Tree getTree() {
+    public DynamicTree getTree() {
         return tree;
     }
+    
+    /**
+     * What to do when expanding the node is requested. Always check if the tree has been set!
+     */
+    public abstract void expand();
+    /**
+     * What to do when collapsing the node is requested. Always check if the tree has been set!
+     */
+    public abstract void collapse();
     
     /**
      * Deletes the node and its children recursively
@@ -114,6 +129,7 @@ public abstract class AbstractNode<T> {
     
     @Override
     public boolean equals(Object obj) {
+        
         if (obj instanceof AbstractNode) 
             return object.equals(((AbstractNode)obj).getObject());
         else

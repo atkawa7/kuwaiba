@@ -16,24 +16,19 @@
 package org.kuwaiba.web.custom.osp;
 
 import com.google.common.eventbus.EventBus;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
-import org.kuwaiba.apis.web.gui.nodes.AbstractNode;
-import org.kuwaiba.apis.web.gui.nodes.ObjectNode;
-import org.kuwaiba.apis.web.gui.nodes.actions.AbstractAction;
-import org.kuwaiba.apis.web.gui.nodes.util.NotificationsUtil;
+import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.web.custom.core.AbstractTooledComponent;
-import org.kuwaiba.web.custom.googlemap.GoogleMapWrapper;
+import org.kuwaiba.web.custom.osp.google.GoogleMapWrapper;
 
 /**
  * GISView implementation for Google Maps
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class GoogleMapsGISView extends AbstractTooledComponent implements AbstractGISView {
-//    private VerticalLayout lytMapComponent;
     private GoogleMapWrapper mapWrapper;    
     
     public GoogleMapsGISView(final EventBus eventBus) {
-        super(new AbstractAction[]{new AbstractAction("Connection") {
+        super(new AbstractAction[]{ new AbstractAction("Connection") {
             
             @Override
             public void actionPerformed(Object sourceComponent, Object targetObject) {

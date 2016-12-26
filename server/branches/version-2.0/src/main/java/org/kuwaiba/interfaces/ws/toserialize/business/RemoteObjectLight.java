@@ -108,14 +108,18 @@ public class RemoteObjectLight implements Serializable {
         this.validators.add(newValidator);
     }
 
-    public static RemoteObjectLight[] toRemoteObjectLightArray(List<RemoteBusinessObjectLight> toBeWrapped){
+    public static List<RemoteObjectLight> toRemoteObjectLightArray(List<RemoteBusinessObjectLight> toBeWrapped){
         if (toBeWrapped == null)
             return null;
-
-        RemoteObjectLight[] res = new RemoteObjectLight[toBeWrapped.size()];
-        for (int i = 0; i < toBeWrapped.size(); i++)
-            res[i] = new RemoteObjectLight(toBeWrapped.get(i));
+        List<RemoteObjectLight> res = new ArrayList<>();
+        for (RemoteBusinessObjectLight aRemoteBusinessObjectLight : toBeWrapped)
+            res.add(new RemoteObjectLight(aRemoteBusinessObjectLight));
 
         return res;
+    }
+    
+    @Override
+    public String toString() {
+        return String.format("%s [%s]", name, className);
     }
 }

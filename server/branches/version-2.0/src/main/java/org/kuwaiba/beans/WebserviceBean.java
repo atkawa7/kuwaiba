@@ -23,6 +23,7 @@ import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
 import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHModule;
 import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
+import com.sun.javafx.scene.control.skin.VirtualFlow;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -675,16 +676,13 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
 
     @Override
-    public RemoteObjectLight[] getListTypeItems(String className, String ipAddress, String sessionId) throws ServerSideException {
+    public List<RemoteObjectLight> getListTypeItems(String className, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateCall("getListTypeItems", ipAddress, sessionId);
             List<RemoteBusinessObjectLight> listTypeItems = aem.getListTypeItems(className);
-            RemoteObjectLight[] res = new RemoteObjectLight[listTypeItems.size()];
-            for (int i = 0; i < res.length; i++)
-                res[i] = new RemoteObjectLight(listTypeItems.get(i));
-            return res;
+            return RemoteObjectLight.toRemoteObjectLightArray(listTypeItems);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -735,7 +733,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
 
     // <editor-fold defaultstate="collapsed" desc="Business methods. Click on the + sign on the left to edit the code.">
     @Override
-    public RemoteObjectLight[] getObjectChildren(long oid, long objectClassId, int maxResults, String ipAddress, String sessionId) throws ServerSideException {
+    public List<RemoteObjectLight> getObjectChildren(long oid, long objectClassId, int maxResults, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
@@ -747,7 +745,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
 
     @Override
-    public RemoteObjectLight[] getObjectChildren(String className, long oid, int maxResults, String ipAddress, String sessionId)
+    public List<RemoteObjectLight> getObjectChildren(String className, long oid, int maxResults, String ipAddress, String sessionId)
             throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
@@ -760,7 +758,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
     
     @Override
-    public RemoteObjectLight[] getSiblings(String className, long oid, int maxResults, String ipAddress, String sessionId)
+    public List<RemoteObjectLight> getSiblings(String className, long oid, int maxResults, String ipAddress, String sessionId)
             throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
@@ -786,7 +784,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
 
     @Override
-    public RemoteObjectLight[] getChildrenOfClassLight(long parentOid, String parentClass, String classToFilter, int maxResults, String ipAddress, String sessionId)
+    public List<RemoteObjectLight> getChildrenOfClassLight(long parentOid, String parentClass, String classToFilter, int maxResults, String ipAddress, String sessionId)
             throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
@@ -835,7 +833,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
     
     @Override
-    public RemoteObjectLight[] getParents(String objectClass, long oid, String ipAddress, String sessionId) throws ServerSideException{
+    public List<RemoteObjectLight> getParents(String objectClass, long oid, String ipAddress, String sessionId) throws ServerSideException{
         if (bem == null || aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
@@ -847,7 +845,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
     
     @Override
-    public RemoteObjectLight[] getSpecialAttribute(String objectClass, long objectId, String attributeName, String ipAddress, String sessionId) throws ServerSideException{
+    public List<RemoteObjectLight> getSpecialAttribute(String objectClass, long objectId, String attributeName, String ipAddress, String sessionId) throws ServerSideException{
         if (bem == null || aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
@@ -887,7 +885,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }  
 
     @Override
-    public RemoteObjectLight[] getObjectSpecialChildren (String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException{
+    public List<RemoteObjectLight> getObjectSpecialChildren (String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException{
         if (bem == null || aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
@@ -899,7 +897,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
     
     @Override
-    public RemoteObjectLight[] getObjectsOfClassLight(String className, int maxResults, String ipAddress, String sessionId) throws ServerSideException{
+    public List<RemoteObjectLight> getObjectsOfClassLight(String className, int maxResults, String ipAddress, String sessionId) throws ServerSideException{
         if (bem == null || aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
@@ -1286,7 +1284,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
     
     @Override
-    public RemoteObjectLight[] getPhysicalPath(String objectClassName, long oid, String ipAddress, String sessionId) throws ServerSideException {
+    public List<RemoteObjectLight> getPhysicalPath(String objectClassName, long oid, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
@@ -1295,15 +1293,8 @@ public class WebserviceBean implements WebserviceBeanLocal {
                 throw new ServerSideException(String.format("Class %s is not a port", objectClassName));
             
             List<RemoteBusinessObjectLight> thePath = bem.getPhysicalPath(objectClassName, oid); 
-            RemoteObjectLight[] res = new RemoteObjectLight[thePath.size()];
             
-            int i = 0;
-            for (RemoteBusinessObjectLight aNode : thePath) {
-                res[i] = new RemoteObjectLight(aNode);
-                i++;
-            }
-            
-            return res;
+            return RemoteObjectLight.toRemoteObjectLightArray(thePath);
 
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -1376,7 +1367,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
     
     @Override
-    public RemoteObjectLight[] getServiceResources(String serviceClass, long serviceId, String ipAddress, String sessionId) throws ServerSideException {
+    public List<RemoteObjectLight> getServiceResources(String serviceClass, long serviceId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
@@ -1424,7 +1415,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
     
     @Override
-    public RemoteObjectLight[] getServices(String customerClass, long customerId, String ipAddress, String sessionId) throws ServerSideException{
+    public List<RemoteObjectLight> getServices(String customerClass, long customerId, String ipAddress, String sessionId) throws ServerSideException{
         if (bem == null || aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
@@ -1966,7 +1957,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
     
     @Override
-    public RemoteObjectLight[] getPoolItems(long poolId, int limit, String ipAddress, String sessionId) throws ServerSideException{
+    public List<RemoteObjectLight> getPoolItems(long poolId, int limit, String ipAddress, String sessionId) throws ServerSideException{
         if (aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
@@ -2651,7 +2642,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
     
     @Override
-    public RemoteObjectLight[] getSubnets(long poolId, int limit, String ipAddress, String sessionId) throws ServerSideException{
+    public List<RemoteObjectLight> getSubnets(long poolId, int limit, String ipAddress, String sessionId) throws ServerSideException{
         try {
             aem.validateCall("getSubnets", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
@@ -2807,7 +2798,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
     
     @Override
-    public RemoteObjectLight[] getSubnetUsedIps(long id, String className, int limit, String ipAddress, String sessionId) throws ServerSideException{
+    public List<RemoteObjectLight> getSubnetUsedIps(long id, String className, int limit, String ipAddress, String sessionId) throws ServerSideException{
         try{
             aem.validateCall("getSubnetUsedIps", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N

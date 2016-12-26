@@ -30,8 +30,6 @@ import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 import org.kuwaiba.services.persistence.util.Constants;
-import org.kuwaiba.web.properties.AbstractNodePorpertyValueChangeListener;
-import org.kuwaiba.web.properties.PropertySheet;
 
 /**
  * Value change listener for the fields in the property sheet of a 

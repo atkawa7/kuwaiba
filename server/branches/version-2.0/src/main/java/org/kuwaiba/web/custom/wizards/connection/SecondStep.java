@@ -24,8 +24,8 @@ import com.vaadin.ui.VerticalSplitPanel;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
-import org.kuwaiba.apis.web.gui.nodes.ObjectNode;
-import org.kuwaiba.web.custom.tree.TreeView;
+import org.kuwaiba.apis.web.gui.nodes.InventoryObjectNode;
+import org.kuwaiba.web.custom.tree.DynamicTree;
 import org.vaadin.teemu.wizards.WizardStep;
 
 /**
@@ -39,8 +39,8 @@ public class SecondStep implements WizardStep {
     private MetadataEntityManager mem;
     
     private PopupConnectionWizardView wizard;
-    private TreeView endPointA;
-    private TreeView endPointB;
+    private DynamicTree treeEndPointA;
+    private DynamicTree treeEndPointB;
     
     VerticalLayout content = new VerticalLayout();
     
@@ -64,12 +64,12 @@ public class SecondStep implements WizardStep {
         pnlStart.addComponent(new Label("<p>Select the objects (port or nodes) you'd like to connect.</p>", ContentMode.HTML));
         
         HorizontalSplitPanel pnlChooseEndpoints = new HorizontalSplitPanel();
-        RemoteBusinessObjectLight rootSourceNode = wizard.getConnection().getSource().getRemoteBusinessObject();
-        RemoteBusinessObjectLight rootTargetNode = wizard.getConnection().getTarget().getRemoteBusinessObject();
-        endPointA = new TreeView(rootSourceNode);
-        pnlChooseEndpoints.setFirstComponent(endPointA);
-        endPointB = new TreeView(rootTargetNode);
-        pnlChooseEndpoints.setSecondComponent(endPointB);
+        RemoteBusinessObjectLight rootSource = wizard.getConnection().getSource().getRemoteBusinessObject();
+        RemoteBusinessObjectLight rootTarget = wizard.getConnection().getTarget().getRemoteBusinessObject();
+        //treeEndPointA = new DynamicTree(new ObjectNode(rootSource, treeEndPointA), "Select A endpoint");
+        pnlChooseEndpoints.setFirstComponent(treeEndPointA);
+        //treeEndPointB = new DynamicTree(new ObjectNode(rootTarget, treeEndPointB), "Select A endpoint");
+        pnlChooseEndpoints.setSecondComponent(treeEndPointB);
         
         content.addComponents(pnlStart, pnlChooseEndpoints);
 
@@ -78,8 +78,8 @@ public class SecondStep implements WizardStep {
     
     @Override
     public boolean onAdvance() {
-        ObjectNode aObjectNode = (ObjectNode) endPointA.getValue();
-        ObjectNode bObjectNode = (ObjectNode) endPointB.getValue();
+        InventoryObjectNode aObjectNode = (InventoryObjectNode) treeEndPointA.getValue();
+        InventoryObjectNode bObjectNode = (InventoryObjectNode) treeEndPointB.getValue();
         
         String error = "";
         boolean advanced = true;

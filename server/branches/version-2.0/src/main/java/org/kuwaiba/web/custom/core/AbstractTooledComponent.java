@@ -12,7 +12,7 @@ import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.VerticalLayout;
-import org.kuwaiba.apis.web.gui.nodes.actions.AbstractAction;
+import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 
 /**
  * The root of all components with a toolbar.
