@@ -39,4 +39,12 @@ public interface TopComponent {
      * @return The current session.
      */
     public RemoteSession getApplicationSession();
+    /**
+     * Registers all relevant components in the global event bus
+     */
+    public void registerComponents();
+    /**
+     * Registers all relevant components from the global event bus
+     */
+    public void unregisterComponents();
 }

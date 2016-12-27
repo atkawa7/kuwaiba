@@ -18,7 +18,7 @@ package org.kuwaiba.web.custom.osp;
 import com.google.common.eventbus.EventBus;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.web.custom.core.AbstractTooledComponent;
-import org.kuwaiba.web.custom.osp.google.GoogleMapWrapper;
+import org.kuwaiba.web.modules.osp.google.GoogleMapWrapper;
 
 /**
  * GISView implementation for Google Maps

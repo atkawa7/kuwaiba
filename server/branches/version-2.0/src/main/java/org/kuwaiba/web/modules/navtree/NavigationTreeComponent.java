@@ -67,11 +67,13 @@ class NavigationTreeComponent extends AbstractTopComponent {
             this.setSizeFull();
         }
         
+        @Override
         public void registerComponents() {
             tree.register();
             propertySheet.register();
         }
         
+        @Override
         public void unregisterComponents() {
             tree.unregister();
             propertySheet.unregister();

@@ -34,7 +34,7 @@ import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
-import org.kuwaiba.web.custom.osp.google.overlays.NodeMarker;
+import org.kuwaiba.web.modules.osp.google.overlays.NodeMarker;
 
 /**
  * This class contains the method that listens when a node is selected in the 

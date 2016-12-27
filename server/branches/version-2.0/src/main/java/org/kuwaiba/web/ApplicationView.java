@@ -20,17 +20,17 @@ import com.vaadin.cdi.CDIView;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Page;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.HorizontalSplitPanel;
+import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.VerticalLayout;
 import javax.inject.Inject;
 import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
-import org.kuwaiba.web.custom.osp.GoogleMapsGISView;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.web.modules.navtree.NavigationTreeModule;
+import org.kuwaiba.web.modules.osp.OutsidePlantModule;
 
 
 /**
@@ -57,18 +57,13 @@ class ApplicationView extends CustomComponent implements View {
             lytRoot.setSizeFull();
             Page.getCurrent().setTitle(String.format("%s - [%s]", "Kuwaiba Open Network Inventory", session.getUsername()));
             
-            NavigationTreeModule mdlNavTree = new NavigationTreeModule(eventBus, wsBean, session);        
-            GoogleMapsGISView gisView = new GoogleMapsGISView(eventBus);
+            MenuBar mnuMain = new MenuBar();
             
-            HorizontalSplitPanel pnlSplitMain = new HorizontalSplitPanel(mdlNavTree.open(), gisView);
-            pnlSplitMain.setSplitPosition(20);
-            
-            Button btnLogout = new Button("Logout");
-            
-            btnLogout.addClickListener(new Button.ClickListener() {
+            MenuBar.MenuItem mnuTools =  mnuMain.addItem("Tools", null, null);
+            MenuBar.MenuItem mnuLogout = mnuMain.addItem("Logout", null, new MenuBar.Command() {
 
                 @Override
-                public void buttonClick(Button.ClickEvent event) {
+                public void menuSelected(MenuBar.MenuItem selectedItem) {
                     try {
                         wsBean.closeSession(session.getSessionId(), Page.getCurrent().getWebBrowser().getAddress());
                         getSession().setAttribute("session", null);
@@ -79,7 +74,30 @@ class ApplicationView extends CustomComponent implements View {
                 }
             });
             
-            lytRoot.addComponents(btnLogout, pnlSplitMain);
+            final HorizontalSplitPanel pnlSplitMain = new HorizontalSplitPanel();
+            final NavigationTreeModule mdlNavTree = new NavigationTreeModule(eventBus, wsBean, session);
+            final OutsidePlantModule mdlOutsidePlant = new OutsidePlantModule(eventBus, wsBean, session);
+            
+            mnuTools.addItem(mdlNavTree.getName(), mdlNavTree.getIcon(), new MenuBar.Command() {
+
+                @Override
+                public void menuSelected(MenuBar.MenuItem selectedItem) {
+                    pnlSplitMain.setFirstComponent(mdlNavTree.open());
+                }
+            });
+            
+            MenuBar.MenuItem mnuNavigation = mnuTools.addItem("Navigation", null);
+            mnuNavigation.addItem(mdlOutsidePlant.getName(), mdlOutsidePlant.getIcon(), new MenuBar.Command() {
+
+                @Override
+                public void menuSelected(MenuBar.MenuItem selectedItem) {
+                    pnlSplitMain.setSecondComponent(mdlOutsidePlant.open());
+                }
+            });
+            
+            pnlSplitMain.setSplitPosition(20);
+            
+            lytRoot.addComponents(mnuMain, pnlSplitMain);
             lytRoot.setExpandRatio(pnlSplitMain, 2);
             setCompositionRoot(lytRoot);
         }

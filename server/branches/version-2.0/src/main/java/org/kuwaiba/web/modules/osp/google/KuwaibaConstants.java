@@ -1,4 +1,4 @@
- /*
+/*
  *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
@@ -13,21 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.kuwaiba.apis.web.gui.nodes.properties;
-
-import com.google.common.eventbus.Subscribe;
-import com.vaadin.event.ItemClickEvent;
-import org.kuwaiba.web.modules.osp.google.overlays.NodeMarker;
+package org.kuwaiba.web.modules.osp.google;
 
 /**
- * Abstract component for the property sheet of any node
- * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
+ *
+ * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public interface AbstractNodeProperty {
+public class KuwaibaConstants {
+    public static final String ADD_MARKER_MESSAGE = "The map containt the object";
     
-    @Subscribe
-    void nodeSelected(ItemClickEvent event);
-    @Subscribe
-    void markerSelected(NodeMarker event);
-    void createPropertySheet(Object node);
+    public static final String CLASS_VIEWABLEOBJECT = "ViewableObject";
+    
+    public static final String VIEWABLEOBJECT_MESSAGE = "Only ViewableObject are allowed";
+    
+    public static final int WIZARD_TYPE_CONTAINER = 1;
+    
+    public static final int WIZARD_TYPE_LINK = 2;
 }

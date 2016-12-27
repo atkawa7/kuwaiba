@@ -18,7 +18,7 @@ package org.kuwaiba.web.custom.wizards.connection;
 import com.google.common.eventbus.EventBus;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.PopupView;
-import org.kuwaiba.web.custom.osp.google.overlays.ConnectionPolyline;
+import org.kuwaiba.web.modules.osp.google.overlays.ConnectionPolyline;
 import org.vaadin.teemu.wizards.Wizard;
 import org.vaadin.teemu.wizards.event.WizardCancelledEvent;
 import org.vaadin.teemu.wizards.event.WizardCompletedEvent;

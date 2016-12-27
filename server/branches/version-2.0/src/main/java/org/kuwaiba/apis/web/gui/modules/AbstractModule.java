@@ -37,6 +37,25 @@ public abstract class AbstractModule {
      */
     public static int MODULE_TYPE_COMMERCIAL = 3;
     /**
+     * The component will be placed on the left side of the screen. It's the mode used by most 
+     * file tree explorers.
+     */
+    public static int COMPONENT_MODE_EXPLORER = 1;
+    /**
+     * The component will be placed on the center and side of the screen. It's the mode used by most 
+     * code editor.
+     */
+    public static int COMPONENT_MODE_EDITOR = 2;
+    /**
+     * The component will be placed on the bottom of the screen. It's the mode used for output windows in most 
+     * software IDEs.
+     */
+    public static int COMPONENT_MODE_OUTPUT = 3;
+    /**
+     * The component will be placed on the left-bottom corner of the screen. 
+     */
+    public static int COMPONENT_MODE_NAVIGATOR = 4;
+    /**
      * The number of opened modules (by the same user)
      */
     protected int instanceCount;
@@ -65,8 +84,6 @@ public abstract class AbstractModule {
         instanceCount = 0;
         this.eventBus = eventBus;
     }
-    
-    
     
     /**
      * Gets the module's name. Must be unique, otherwise, the system will only take last one loaded at application's startup
@@ -100,6 +117,19 @@ public abstract class AbstractModule {
     public Resource getIcon() {
         return this.icon;
     }
+    /**
+     * Returns where to place the icons and menu entries for this module. It's a "/" separated String, being every part the submenu or subtoolbar to be used. 
+     * For example, "Tools/Navigation" will place the module under the root menu option Tools, in the submenu "Navigation". 
+     * The toolbars icon will be located in the section "Tools" and the rest will be ignored.
+     * @return The String with the path to be used.
+     */
+    public abstract String getLocation();
+    /**
+     * What mode (location in the screen) should be used to display the component returned by the open() method. 
+     * See COMPONENT_MODE_XXX properties for possible values.
+     * @return The mode for this module. 
+     */
+    public abstract int getMode();
     /**
      * Gets an instance of and/or initialize the component that displays the information of the module. The implementor
      * is responsible for checking how many open views are allowed for a particular module.

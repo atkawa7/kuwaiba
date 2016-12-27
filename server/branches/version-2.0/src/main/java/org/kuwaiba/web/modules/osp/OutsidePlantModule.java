@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.kuwaiba.web.modules.navtree;
+package org.kuwaiba.web.modules.osp;
 
 import com.google.common.eventbus.EventBus;
 import com.vaadin.server.ThemeResource;
@@ -23,32 +23,38 @@ import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
 /**
- * The definition of the Navigation Tree module.
+ * The definition of the OSP module.
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class NavigationTreeModule extends AbstractModule {
+public class OutsidePlantModule extends AbstractModule {
     /**
      * The actual component
      */
-    private NavigationTreeComponent treeNavTree;
+    private OutsidePlantComponent gisView;
+    /**
+     * Reference to the WebserviceBean
+     */
     private WebserviceBeanLocal wsBean;
+    /**
+     * Reference to the current session
+     */
     private RemoteSession session;
     
-    public NavigationTreeModule(EventBus eventBus, WebserviceBeanLocal wsBean, RemoteSession session) {
+    public OutsidePlantModule(EventBus eventBus, WebserviceBeanLocal wsBean, RemoteSession session) {
         super(eventBus);
         this.wsBean = wsBean;
         this.session = session;
-        icon = new ThemeResource("img/mod_icon_navtree.png");
+        icon = new ThemeResource("img/mod_icon_osp.png");
     }
     
     @Override
     public String getName() {
-        return "Navigation Tree";
+        return "Outside Plant Module";
     }
 
     @Override
     public String getDescription() {
-        return "Navigate through your physical assets in a hierarchical fashion.";
+        return "Manage your outside plant and locate your assets on a map.";
     }
 
     @Override
@@ -68,28 +74,28 @@ public class NavigationTreeModule extends AbstractModule {
 
     @Override
     public String getLocation() {
-        return "Tools/Navigation";
+        return "Tools/Advanced";
     }
 
     @Override
     public int getMode() {
-        return AbstractModule.COMPONENT_MODE_EXPLORER;
+        return AbstractModule.COMPONENT_MODE_EDITOR;
     }
     
     @Override
     public Component open() {
         if (instanceCount == 0) {
-            treeNavTree = new NavigationTreeComponent(eventBus, wsBean, session);
+            gisView = new OutsidePlantComponent(eventBus, wsBean, session);
             instanceCount ++;
         }
         //Register components in the event bus
-        treeNavTree.registerComponents();
-        return treeNavTree;
+        gisView.registerComponents();
+        return gisView;
     }
 
     @Override
     public void close() {
         //Unregister components from the event bus
-        treeNavTree.unregisterComponents();
+        gisView.unregisterComponents();
     }
 }
