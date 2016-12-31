@@ -248,11 +248,15 @@ public class AddIPAddressAction extends GenericObjectNodeAction {
                     if(!SubnetEngine.belongsToIpv6(networkIp, ipAddress, maskBits))
                         itBelong = true;
                 }
-                if(ipAddress.equals(networkIp))
-                    isNetworIp = true;
-                
-                if(ipAddress.equals(broadcastIp))
-                    isBroadcastIp = true;
+//                if(ipAddress.equals(networkIp))
+//                    isNetworIp = true;
+//                if(ipAddress.equals(networkIp))
+//                    isNetworIp = true;
+//                
+//                if(ipAddress.equals(broadcastIp))
+//                    isBroadcastIp = true;
+//                if(ipAddress.equals(broadcastIp))
+//                    isBroadcastIp = true;
 
                 if(!isUsed && !itBelong && !isBroadcastIp && ! isNetworIp){    
                     lblError.setVisible(false);
@@ -283,14 +287,14 @@ public class AddIPAddressAction extends GenericObjectNodeAction {
                     lblError.setText("This IP is in use");
                     lblError.setVisible(true);  
                 }
-                else if(isNetworIp){
-                    lblError.setText("The network IP can not be use");
-                    lblError.setVisible(true);  
-                }
-                else if(isBroadcastIp){
-                    lblError.setText("The broadcast IP can not be use");
-                    lblError.setVisible(true);  
-                }
+//                else if(isNetworIp){
+//                    lblError.setText("The network IP can not be use");
+//                    lblError.setVisible(true);  
+//                }
+//                else if(isBroadcastIp){
+//                    lblError.setText("The broadcast IP can not be use");
+//                    lblError.setVisible(true);  
+//                }
             }
             else
                 lblError.setVisible(true);
