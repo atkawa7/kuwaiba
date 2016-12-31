@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
@@ -31,7 +32,7 @@ import org.openide.util.actions.Presenter;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- * Release a relation between service instance and an interface
+ * Releases a relation between a service instance and an interface
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
@@ -42,12 +43,16 @@ public class ReleaseGenericPortFromInterface extends GenericObjectNodeAction imp
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (CommunicationsStub.getInstance().releasePortFromInterface(className,
-                id, Long.valueOf(((JMenuItem)e.getSource()).getName())))
-            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
-                    java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/mpls/Bundle").getString("LBL_SUCCESS"));
-        else
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+        if (JOptionPane.showConfirmDialog(null, 
+                "Are you sure you want to release this interface?", "Warning", 
+                JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION) {
+            if (CommunicationsStub.getInstance().releasePortFromInterface(className,
+                    id, Long.valueOf(((JMenuItem)e.getSource()).getName())))
+                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
+                        java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/mpls/Bundle").getString("LBL_SUCCESS"));
+            else
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+        }
     }
 
     @Override

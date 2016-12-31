@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
@@ -41,23 +42,28 @@ public class ReleaseFromServiceAction extends GenericObjectNodeAction implements
     @Override
     public void actionPerformed(ActionEvent e) {
         
-        Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
+        if (JOptionPane.showConfirmDialog(null, 
+                "Are you sure you want to release this service?", "Warning", 
+                JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION) {
         
-        boolean success = true;
-        while (selectedNodes.hasNext()) {
-            ObjectNode selectedNode = selectedNodes.next();
-            if (CommunicationsStub.getInstance().releaseObjectFromService(selectedNode.getObject().getClassName(), 
-                selectedNode.getObject().getOid(), Long.valueOf(((JMenuItem)e.getSource()).getName()))) {
-                if (selectedNode.getParentNode() instanceof ServiceNode)
-                    ((ServiceChildren)selectedNode.getParentNode().getChildren()).addNotify();
-            } else {
-                success = false;
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
+
+            boolean success = true;
+            while (selectedNodes.hasNext()) {
+                ObjectNode selectedNode = selectedNodes.next();
+                if (CommunicationsStub.getInstance().releaseObjectFromService(selectedNode.getObject().getClassName(), 
+                    selectedNode.getObject().getOid(), Long.valueOf(((JMenuItem)e.getSource()).getName()))) {
+                    if (selectedNode.getParentNode() instanceof ServiceNode)
+                        ((ServiceChildren)selectedNode.getParentNode().getChildren()).addNotify();
+                } else {
+                    success = false;
+                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                }
             }
+
+            if (success)
+                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "The selected resources were released from the service");
         }
-        
-        if (success)
-            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "The selected resources were released from the service");
     }
 
     @Override

@@ -1381,7 +1381,7 @@ public class CommunicationsStub {
     }
     
     public boolean releaseMirrorPort (String objectClass, long objectId) {
-        try{
+        try {
             service.releaseMirrorPort (objectClass, objectId, session.getSessionId());
             return true;
         }catch(Exception ex){

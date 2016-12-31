@@ -16,6 +16,7 @@
 package org.inventory.models.physicalconnections.actions;
 
 import java.awt.event.ActionEvent;
+import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
@@ -36,10 +37,16 @@ public class ReleaseMirrorPortAction extends GenericObjectNodeAction {
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (CommunicationsStub.getInstance().releaseMirrorPort(object.getClassName(), object.getOid()))
-            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Miror port released successfully");
-        else
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());        
+        
+        if (JOptionPane.showConfirmDialog(null, 
+                "Are you sure you want to release this mirror port?", "Warning", 
+                JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION) {
+        
+            if (CommunicationsStub.getInstance().releaseMirrorPort(object.getClassName(), object.getOid()))
+                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Miror port released successfully");
+            else
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());        
+        }
     }
 
     @Override

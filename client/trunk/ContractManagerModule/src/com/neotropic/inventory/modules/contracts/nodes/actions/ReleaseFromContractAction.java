@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
@@ -39,24 +40,27 @@ public class ReleaseFromContractAction extends GenericObjectNodeAction implement
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        
-        Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
-        
-        boolean success = true;
-        while (selectedNodes.hasNext()) {
-            ObjectNode selectedNode = selectedNodes.next();
-            if (CommunicationsStub.getInstance().releaseObjectFromContract(selectedNode.getObject().getClassName(), 
-                selectedNode.getObject().getOid(), Long.valueOf(((JMenuItem)e.getSource()).getName()))) {
-                if (selectedNode.getParentNode() instanceof ContractNode)
-                    ((ContractNode.ContractChildren)selectedNode.getParentNode().getChildren()).addNotify();
-            } else {
-                success = false;
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+        if (JOptionPane.showConfirmDialog(null, 
+                "The selected objects will no longer be related to this contract\n Are you sure you want to continue?", "Warning", 
+                JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION) {
+            Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
+
+            boolean success = true;
+            while (selectedNodes.hasNext()) {
+                ObjectNode selectedNode = selectedNodes.next();
+                if (CommunicationsStub.getInstance().releaseObjectFromContract(selectedNode.getObject().getClassName(), 
+                    selectedNode.getObject().getOid(), Long.valueOf(((JMenuItem)e.getSource()).getName()))) {
+                    if (selectedNode.getParentNode() instanceof ContractNode)
+                        ((ContractNode.ContractChildren)selectedNode.getParentNode().getChildren()).addNotify();
+                } else {
+                    success = false;
+                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                }
             }
+
+            if (success)
+                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "The selected devices were released from the contract");
         }
-        
-        if (success)
-            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "The selected devices were released from the contract");
     }
 
     @Override

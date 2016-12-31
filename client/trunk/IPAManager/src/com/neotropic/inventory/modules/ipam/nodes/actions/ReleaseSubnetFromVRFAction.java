@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
@@ -41,12 +42,16 @@ public class ReleaseSubnetFromVRFAction extends GenericObjectNodeAction implemen
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (CommunicationsStub.getInstance().releaseSubnetFromVRF( 
-                id, Long.valueOf(((JMenuItem)e.getSource()).getName())))
-            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
-                    java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_SUCCESS"));
-        else
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+        if (JOptionPane.showConfirmDialog(null, 
+                "Are you sure you want to delete this relationship?", "Warning", 
+                JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION) {
+            if (CommunicationsStub.getInstance().releaseSubnetFromVRF( 
+                    id, Long.valueOf(((JMenuItem)e.getSource()).getName())))
+                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
+                        java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_SUCCESS"));
+            else
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+        }
     }
     
     @Override
