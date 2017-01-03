@@ -192,4 +192,9 @@ public class ClassInfoLight implements Serializable {
         hash = 47 * hash + (this.className != null ? this.className.hashCode() : 0);
         return hash;
     }
+    
+    @Override
+    public String toString() {
+        return String.format("%s", className);
+    }
 }

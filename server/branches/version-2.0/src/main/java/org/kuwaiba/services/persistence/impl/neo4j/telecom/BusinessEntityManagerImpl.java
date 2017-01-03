@@ -481,6 +481,39 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
+    public RemoteBusinessObject getCommonParent(String aObjectClass, long aOid, String bObjectClass, long bOid)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
+        // while we will find a better way to do the query, we use this way
+        RemoteBusinessObject aParent = getParent(aObjectClass, aOid);
+        RemoteBusinessObject bParent = getParent(bObjectClass, bOid);
+        
+        if (aParent.getId() == bParent.getId())
+            return aParent;
+        
+        List<RemoteBusinessObject> aParents = new ArrayList();
+        List<RemoteBusinessObject> bParents = new ArrayList();
+        
+        aParents.add(aParent);
+        while (aParent.getId() != -1L) {
+            aParent = getParent(aParent.getClassName(), aParent.getId());
+            aParents.add(aParent);
+        }
+        
+        bParents.add(bParent);
+        while (bParent.getId() != -1L) {
+            bParent = getParent(bParent.getClassName(), bParent.getId());
+            bParents.add(bParent);
+        }
+        
+        int size = aParents.size() <= bParents.size() ? aParents.size() : bParents.size();
+        for (int i = 0; i < size; i += 1)
+            if (aParents.get(i).getId() == bParents.get(i).getId())
+                return aParents.get(i);
+                
+        return null;
+    }
+    
+    @Override
     public RemoteBusinessObject getParent(String objectClass, long oid) 
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         

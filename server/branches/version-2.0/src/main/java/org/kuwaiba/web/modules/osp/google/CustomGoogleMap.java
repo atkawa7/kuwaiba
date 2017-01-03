@@ -15,7 +15,6 @@
  */
 package org.kuwaiba.web.modules.osp.google;
 
-import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import org.kuwaiba.web.modules.osp.google.overlays.NodeMarker;
 import com.vaadin.tapio.googlemaps.GoogleMap;
@@ -25,43 +24,50 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Notification;
 import java.util.HashMap;
 import java.util.Map;
-import org.kuwaiba.apis.persistence.PersistenceService;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
-import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
+import org.kuwaiba.apis.web.gui.modules.EmbeddableComponent;
+import org.kuwaiba.apis.web.gui.modules.TopComponent;
+import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
+import org.kuwaiba.beans.WebserviceBeanLocal;
+import org.kuwaiba.exceptions.ServerSideException;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.web.modules.osp.google.overlays.ConnectionPolyline;
-import org.kuwaiba.web.custom.wizards.connection.ConnectionConfiguration;
-import org.kuwaiba.web.custom.wizards.connection.FirstStep;
-import org.kuwaiba.web.custom.wizards.connection.PopupConnectionWizardView;
+import org.kuwaiba.web.custom.wizards.physicalconnection.PhysicalConnectionConfiguration;
+import org.kuwaiba.web.custom.wizards.physicalconnection.PhysicalConnectionWizard;
+import org.vaadin.teemu.wizards.event.WizardCancelledEvent;
 import org.vaadin.teemu.wizards.event.WizardCompletedEvent;
 
 /**
  * Custom GoogleMap for Kuwaiba
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class CustomGoogleMap extends GoogleMap {
-    private final EventBus eventBus;
+public class CustomGoogleMap extends GoogleMap implements EmbeddableComponent {
+    private final TopComponent parentComponent;
+    
     private Map<Long, NodeMarker> nodes = new HashMap<>();
     Map<Long, ConnectionPolyline> connections = new HashMap<>();
     
     ConnectionPolyline newConnection = null;
     private boolean connectionEnable = false;
     
-    public CustomGoogleMap(EventBus eventBus, String apiKey, String clientId, String language) {
+    public CustomGoogleMap(TopComponent parentComponent, String apiKey, String clientId, String language) {
         super(apiKey, clientId, language);
-        this.eventBus = eventBus;
+        this.parentComponent = parentComponent;
         
-        this.eventBus.register(this);
         addMarkerClickListener(new MarkerClickListenerImpl());
     }
     
-    public void addNodeMarker(RemoteBusinessObjectLight node) {
-        if (nodes.containsKey(node.getId())) {
-            Notification.show(KuwaibaConstants.ADD_MARKER_MESSAGE, Notification.Type.WARNING_MESSAGE);
+    public void addNodeMarker(RemoteObjectLight node) {
+        if (nodes.containsKey(node.getOid())) {
+            Notification.show("The map containt the object", Notification.Type.WARNING_MESSAGE);
             return;
         }
-        MetadataEntityManager mem = PersistenceService.getInstance().getMetadataEntityManager();
-        if (!mem.isSubClass(KuwaibaConstants.CLASS_VIEWABLEOBJECT, node.getClassName())) {
-            Notification.show(KuwaibaConstants.VIEWABLEOBJECT_MESSAGE, Notification.Type.WARNING_MESSAGE);
+        WebserviceBeanLocal wsBean = getTopComponent().getWsBean();
+        String ipAddress = getUI().getPage().getWebBrowser().getAddress();
+        String sessioId = getTopComponent().getApplicationSession().getSessionId();
+                
+        if (!wsBean.isSubclassOf(node.getClassName(), "ViewableObject", ipAddress, sessioId)) { //NOI18N
+            Notification.show("Only ViewableObject are allowed", Notification.Type.WARNING_MESSAGE);
             return;
         }
         NodeMarker nodeMarker = new NodeMarker(node);
@@ -69,7 +75,102 @@ public class CustomGoogleMap extends GoogleMap {
         nodeMarker.setPosition(getCenter());
         addMarker(nodeMarker);
                     
-        nodes.put(node.getId(), nodeMarker);
+        nodes.put(node.getOid(), nodeMarker);
+    }
+    
+    public void register() {
+        if (parentComponent != null)
+            parentComponent.getEventBus().register(this);
+    }
+    
+    public void unregister() {
+        if (parentComponent != null)
+            parentComponent.getEventBus().unregister(this);
+    }
+
+    @Override
+    public TopComponent getTopComponent() {
+        return parentComponent;
+    }
+        
+    @Subscribe
+    public void enableTool(Button.ClickEvent event) {
+        if ("Connect".equals(event.getButton().getDescription()))
+            connectionEnable = !connectionEnable;
+    }
+    
+    @Subscribe
+    public void addConnectionPolyline(WizardCancelledEvent event) {
+        removeComponent(newConnection.getWizard());
+        newConnection = null;                
+    }
+        
+    @Subscribe
+    public void addConnectionPolyline(WizardCompletedEvent event) {
+        PhysicalConnectionConfiguration connConfig = newConnection.getWizard().getConnectionConfiguration();
+        
+        newConnection.setCaption(connConfig.getCaption());
+        newConnection.setStrokeColor(connConfig.getStrokeColor());
+        newConnection.setStrokeOpacity(connConfig.getStrokeOpacity());
+        newConnection.setStrokeWeight(connConfig.getStrokeWeight());
+        
+        RemoteObjectLight aRbo = newConnection.getSource().getRemoteObjectLight();
+        RemoteObjectLight bRbo = newConnection.getTarget().getRemoteObjectLight();
+                
+        String [] names = null;
+        String [][] values = null;
+        
+        String name = connConfig.getCaption(); // connection name
+        
+        long typeOid = connConfig.getTypeOid();
+        if (typeOid == 0) {
+            names = new String[]{"name"};
+            values = new String[][]{new String[]{name}};
+        }
+        else {
+            String type = Long.toString(connConfig.getTypeOid());
+            
+            names = new String[]{"name", "type"};
+            values = new String[][]{new String[]{name}, new String[]{type}};
+        }
+        RemoteObject commonParent = null;
+        long connectionId = -1L;
+        
+        String connectionClass = connConfig.getConnectionClass();
+        String errorMessage = "";
+        
+        WebserviceBeanLocal wsBean = getTopComponent().getWsBean();
+        String ipAddress = getUI().getPage().getWebBrowser().getAddress();
+        String sessioId = getTopComponent().getApplicationSession().getSessionId();
+        
+        try {        
+            commonParent = wsBean.getCommonParent(aRbo.getClassName(), aRbo.getOid(), bRbo.getClassName(), bRbo.getOid(), ipAddress, sessioId);
+            connectionId = wsBean.createPhysicalConnection(aRbo.getClassName(), aRbo.getOid(), bRbo.getClassName(), bRbo.getOid(), commonParent.getClassName(), commonParent.getOid(), names, values, connectionClass, ipAddress, sessioId);
+        } catch (ServerSideException ex) {
+            errorMessage = ex.getMessage();
+        }   
+        if (connectionId != -1L) {
+            connections.put(connectionId, newConnection);
+            addPolyline(newConnection);
+            
+            int numberOfChildren = connConfig.getNumChildren();
+            if (numberOfChildren > 0) {
+                String childrenType = connConfig.getPortType();
+                try {
+                    wsBean.createBulkPhysicalConnections(childrenType, numberOfChildren, connectionClass, connectionId, ipAddress, sessioId);
+                    Notification.show("Children connections were created successfully", Notification.Type.HUMANIZED_MESSAGE);
+                } catch (ServerSideException ex) {
+                    errorMessage = ex.getMessage();
+                    NotificationsUtil.showError(errorMessage);
+                }
+            }
+            Notification.show("The object was created successfully", Notification.Type.HUMANIZED_MESSAGE);
+        }
+        else
+            NotificationsUtil.showError(errorMessage);
+        
+        removeComponent(newConnection.getWizard());
+        newConnection = null;
     }
     
     private class MarkerClickListenerImpl implements MarkerClickListener {
@@ -84,7 +185,7 @@ public class CustomGoogleMap extends GoogleMap {
                     if (newConnection == null)
                         newConnection = new ConnectionPolyline((NodeMarker) clickedMarker);
                     else {
-                        PopupConnectionWizardView wizard = new PopupConnectionWizardView(eventBus, newConnection);
+                        PhysicalConnectionWizard wizard = new PhysicalConnectionWizard(parentComponent, newConnection);
                         newConnection.setTarget((NodeMarker) clickedMarker);
                         newConnection.setWizard(wizard);
                         
@@ -93,31 +194,8 @@ public class CustomGoogleMap extends GoogleMap {
                         wizard.setPopupVisible(true);
                     }
                 }
-                eventBus.post(clickedMarker);
+                parentComponent.getEventBus().post(clickedMarker);
             }           
         }
-    }
-    
-    @Subscribe
-    public void enableTool(Button.ClickEvent event) {
-        if ("Connection".equals(event.getButton().getDescription()))
-            connectionEnable = !connectionEnable;
-    }
-    
-    @Subscribe
-    public void addConnectionPolyline(WizardCompletedEvent event) {
-        // change for the object node id
-        ConnectionConfiguration connConfig = ((FirstStep) event.getWizard().getSteps().get(0)).getConnConfig();        
-        Long id = Long.valueOf(String.valueOf(connections.size()));
-        newConnection.setCaption(connConfig.getCaption());
-        newConnection.setStrokeColor(connConfig.getStrokeColor());
-        newConnection.setStrokeOpacity(connConfig.getStrokeOpacity());
-        newConnection.setStrokeWeight(connConfig.getStrokeWeight());
-        
-        connections.put(id, newConnection);
-                        
-        addPolyline(newConnection);
-        removeComponent(newConnection.getWizard());
-        newConnection = null;
     }
 }

@@ -819,6 +819,18 @@ public class WebserviceBean implements WebserviceBeanLocal {
             throw new ServerSideException(ex.getMessage());
         }
     }
+    
+    @Override
+    public RemoteObject getCommonParent(String aObjectClass, long aOid, String bObjectClass, long bOid, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("getCommonParent", ipAddress, sessionId);
+            return new RemoteObject(bem.getCommonParent(aObjectClass, aOid, bObjectClass, bOid));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
 
     @Override
     public RemoteObject getParent(String objectClass, long oid, String ipAddress, String sessionId) throws ServerSideException{

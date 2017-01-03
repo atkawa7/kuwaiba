@@ -15,31 +15,33 @@
  */
 package org.kuwaiba.web.modules.osp;
 
+import org.kuwaiba.web.modules.osp.google.GoogleMapsGISView;
 import com.google.common.eventbus.EventBus;
 import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
-import org.kuwaiba.web.custom.osp.GoogleMapsGISView;
 
 /**
  * The main component of the OSP module.
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 class OutsidePlantComponent extends AbstractTopComponent {
-        
-        public OutsidePlantComponent(EventBus eventBus, WebserviceBeanLocal wsBean, RemoteSession session) {
+    GoogleMapsGISView gisView;
+    
+    public OutsidePlantComponent(EventBus eventBus, WebserviceBeanLocal wsBean, RemoteSession session) {
             super(wsBean, eventBus, session);
-            setCompositionRoot(new GoogleMapsGISView(eventBus));
+            gisView = new GoogleMapsGISView(this);
+            setCompositionRoot(gisView);
             this.setSizeFull();
         }
         
         @Override
         public void registerComponents() {
-            //TODO
+            gisView.register();
         }
         
         @Override
         public void unregisterComponents() {
-            //TODO
+            gisView.unregister();
         }
     }

@@ -65,7 +65,7 @@ public class ObjectNodeProperty extends CustomComponent implements AbstractNodeP
     @Subscribe
     @Override
     public void markerSelected(NodeMarker marker) {
-        createPropertySheet(marker.getRemoteBusinessObject());
+//        createPropertySheet(marker.getRemoteBusinessObject());
     }
     
     /**

@@ -16,23 +16,21 @@
 package org.kuwaiba.web.modules.osp.google.overlays;
 
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
-import org.kuwaiba.apis.web.gui.nodes.InventoryObjectNode;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
  * Custom GoogleMapMarker for Kuwaiba
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class NodeMarker extends GoogleMapMarker {
-    //private ObjectNode node;    
-    private final RemoteBusinessObjectLight remoteBusinessObject;
+    private RemoteObjectLight remoteObjectLight;
     
-    public NodeMarker(RemoteBusinessObjectLight remoteBusinessObject) {
-        this.remoteBusinessObject = remoteBusinessObject;
+    public NodeMarker(RemoteObjectLight remoteObjectLight) {
+        this.remoteObjectLight = remoteObjectLight;
         setDraggable(true);
     }
     
-    public RemoteBusinessObjectLight getRemoteBusinessObject() {
-        return remoteBusinessObject;
+    public RemoteObjectLight getRemoteObjectLight() {
+        return remoteObjectLight;
     }
 }

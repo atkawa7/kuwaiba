@@ -146,6 +146,7 @@ public interface WebserviceBeanLocal {
 
     public RemoteObjectLight getObjectLight(String objectClass, long oid, String ipAddress, String sessionId) throws ServerSideException;
     
+    public RemoteObject getCommonParent(String aObjectClass, long aOid, String bObjectClass, long bOid, String ipAddress, String sessionId) throws ServerSideException;
     public RemoteObject getParent(String objectClass, long oid, String ipAddress, String sessionId) throws ServerSideException;
     public List<RemoteObjectLight> getParents(String objectClass, long oid, String ipAddress, String sessionId) throws ServerSideException;
     

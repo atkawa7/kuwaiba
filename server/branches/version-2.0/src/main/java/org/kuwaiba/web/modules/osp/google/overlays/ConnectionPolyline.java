@@ -16,7 +16,7 @@
 package org.kuwaiba.web.modules.osp.google.overlays;
 
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
-import org.kuwaiba.web.custom.wizards.connection.PopupConnectionWizardView;
+import org.kuwaiba.web.custom.wizards.physicalconnection.PhysicalConnectionWizard;
 
 /**
  *
@@ -26,7 +26,7 @@ public class ConnectionPolyline extends GoogleMapPolyline {
     //private ObjectNode connection;
     private NodeMarker source;
     private NodeMarker target;
-    private PopupConnectionWizardView wizard;
+    private PhysicalConnectionWizard wizard;
     
     public ConnectionPolyline(NodeMarker source) {
         this.source = source;
@@ -59,11 +59,11 @@ public class ConnectionPolyline extends GoogleMapPolyline {
         getCoordinates().add(target.getPosition());
     }
 
-    public PopupConnectionWizardView getWizard() {
+    public PhysicalConnectionWizard getWizard() {
         return wizard;
     }
 
-    public void setWizard(PopupConnectionWizardView wizard) {
+    public void setWizard(PhysicalConnectionWizard wizard) {
         this.wizard = wizard;
     }
     

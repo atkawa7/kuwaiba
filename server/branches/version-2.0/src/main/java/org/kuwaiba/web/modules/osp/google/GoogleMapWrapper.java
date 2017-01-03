@@ -15,7 +15,6 @@
  */
 package org.kuwaiba.web.modules.osp.google;
 
-import com.google.common.eventbus.EventBus;
 import com.vaadin.event.dd.DragAndDropEvent;
 import com.vaadin.event.dd.DropHandler;
 import com.vaadin.event.dd.acceptcriteria.AcceptAll;
@@ -26,18 +25,23 @@ import com.vaadin.ui.Notification;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
-import org.kuwaiba.apis.web.gui.nodes.AbstractNode;
+import org.kuwaiba.apis.web.gui.modules.EmbeddableComponent;
+import org.kuwaiba.apis.web.gui.modules.TopComponent;
+import org.kuwaiba.apis.web.gui.nodes.InventoryObjectNode;
 import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
- * Custom GoogleMap for Kuwaiba
+ * Custom GoogleMap Wrapper for Kuwaiba
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class GoogleMapWrapper extends DragAndDropWrapper {
+public class GoogleMapWrapper extends DragAndDropWrapper implements EmbeddableComponent {
     private CustomGoogleMap map;
+    private TopComponent parentComponent;
     
-    public GoogleMapWrapper(final EventBus eventBus) {
+    public GoogleMapWrapper(TopComponent parentComponent) {
+        this.parentComponent = parentComponent;
+        
         try {
             Context context = new InitialContext();
             String apiKey = (String)context.lookup("java:comp/env/googleMapsApiKey"); //NOI18N
@@ -46,7 +50,7 @@ public class GoogleMapWrapper extends DragAndDropWrapper {
             double latitude = (double)context.lookup("java:comp/env/defaultCenterLatitude"); //NOI18N
             int zoom = (int)context.lookup("java:comp/env/defaultZoom"); //NOI18N
             
-            map = new CustomGoogleMap(eventBus, apiKey, null, mapLanguage);
+            map = new CustomGoogleMap(parentComponent, apiKey, null, mapLanguage);
             map.setCenter(new LatLon(latitude, longitude));
             map.setZoom(zoom);
             map.setSizeFull();
@@ -59,6 +63,19 @@ public class GoogleMapWrapper extends DragAndDropWrapper {
         }
     }
     
+    public void register() {
+        map.register();
+    }
+    
+    public void unregister() {
+        map.unregister();
+    }
+
+    @Override
+    public TopComponent getTopComponent() {
+        return parentComponent;
+    }
+    
     private class DropHandlerImpl implements DropHandler {
         
         public DropHandlerImpl() {
@@ -66,13 +83,11 @@ public class GoogleMapWrapper extends DragAndDropWrapper {
 
         @Override
         public void drop(DragAndDropEvent event) {
-            AbstractNode transferable = (AbstractNode)event.getTransferable().getData("itemId");
-            if (transferable.getObject() instanceof RemoteBusinessObjectLight) {
-                map.addNodeMarker(((RemoteBusinessObjectLight)transferable.getObject()));
-                /*
-                map.addMarker(((RemoteBusinessObjectLight)transferable.getObject()).toString(), 
-                        map.getCenter(), true, null);
-                        */
+            Object object = event.getTransferable().getData("itemId");
+            if (object instanceof InventoryObjectNode) {
+                InventoryObjectNode objectNode = (InventoryObjectNode) object;
+                
+                map.addNodeMarker((RemoteObjectLight) objectNode.getObject());
             }
             else
                 NotificationsUtil.showError("Only inventory objects are allowed to be dropped here");
