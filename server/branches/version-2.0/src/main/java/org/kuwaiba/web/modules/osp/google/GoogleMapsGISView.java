@@ -5,6 +5,7 @@
  */
 package org.kuwaiba.web.modules.osp.google;
 
+import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.CustomComponent;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.modules.EmbeddableComponent;
@@ -40,7 +41,7 @@ public class GoogleMapsGISView extends CustomComponent implements AbstractGISVie
     }    
     
     private void initActions() {
-        AbstractAction connect = new AbstractAction("Connect") {
+        AbstractAction connect = new AbstractAction("Connect", new ThemeResource("img/mod_icon_osp_connect.png")) {
 
             @Override
             public void actionPerformed(Object sourceComponent, Object targetObject) {

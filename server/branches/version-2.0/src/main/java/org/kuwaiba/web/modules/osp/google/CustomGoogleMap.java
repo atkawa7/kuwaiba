@@ -22,8 +22,10 @@ import com.vaadin.tapio.googlemaps.client.events.MarkerClickListener;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Notification;
-import java.util.HashMap;
-import java.util.Map;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.List;
 import org.kuwaiba.apis.web.gui.modules.EmbeddableComponent;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
@@ -33,7 +35,8 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.web.modules.osp.google.overlays.ConnectionPolyline;
 import org.kuwaiba.web.custom.wizards.physicalconnection.PhysicalConnectionConfiguration;
-import org.kuwaiba.web.custom.wizards.physicalconnection.PhysicalConnectionWizard;
+import org.kuwaiba.web.modules.osp.events.ConnectionPolylineClickListener;
+import org.kuwaiba.web.modules.osp.events.MarkerDragListenerImpl;
 import org.vaadin.teemu.wizards.event.WizardCancelledEvent;
 import org.vaadin.teemu.wizards.event.WizardCompletedEvent;
 
@@ -41,24 +44,25 @@ import org.vaadin.teemu.wizards.event.WizardCompletedEvent;
  * Custom GoogleMap for Kuwaiba
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class CustomGoogleMap extends GoogleMap implements EmbeddableComponent {
+public class CustomGoogleMap extends GoogleMap implements EmbeddableComponent, PropertyChangeListener {
     private final TopComponent parentComponent;
-    
+    /* get this for the getState
     private Map<Long, NodeMarker> nodes = new HashMap<>();
-    Map<Long, ConnectionPolyline> connections = new HashMap<>();
-    
+    private Map<Long, ConnectionPolyline> connections = new HashMap<>();
+    */
     ConnectionPolyline newConnection = null;
     private boolean connectionEnable = false;
     
     public CustomGoogleMap(TopComponent parentComponent, String apiKey, String clientId, String language) {
         super(apiKey, clientId, language);
         this.parentComponent = parentComponent;
-        
         addMarkerClickListener(new MarkerClickListenerImpl());
+        addMarkerDragListener(new MarkerDragListenerImpl());
+        addPolylineClickListener(new ConnectionPolylineClickListener());
     }
     
     public void addNodeMarker(RemoteObjectLight node) {
-        if (nodes.containsKey(node.getOid())) {
+        if (getState().markers.containsKey(node.getOid())) {
             Notification.show("The map containt the object", Notification.Type.WARNING_MESSAGE);
             return;
         }
@@ -71,11 +75,13 @@ public class CustomGoogleMap extends GoogleMap implements EmbeddableComponent {
             return;
         }
         NodeMarker nodeMarker = new NodeMarker(node);
+        nodeMarker.setId(node.getOid());
         nodeMarker.setCaption(node.toString());
         nodeMarker.setPosition(getCenter());
-        addMarker(nodeMarker);
-                    
-        nodes.put(node.getOid(), nodeMarker);
+        
+        nodeMarker.addPropertyChangeListener(this);
+        
+        getState().markers.put(node.getOid(), nodeMarker);
     }
     
     public void register() {
@@ -114,6 +120,8 @@ public class CustomGoogleMap extends GoogleMap implements EmbeddableComponent {
         newConnection.setStrokeOpacity(connConfig.getStrokeOpacity());
         newConnection.setStrokeWeight(connConfig.getStrokeWeight());
         
+        
+        
         RemoteObjectLight aRbo = newConnection.getSource().getRemoteObjectLight();
         RemoteObjectLight bRbo = newConnection.getTarget().getRemoteObjectLight();
                 
@@ -150,9 +158,8 @@ public class CustomGoogleMap extends GoogleMap implements EmbeddableComponent {
             errorMessage = ex.getMessage();
         }   
         if (connectionId != -1L) {
-            connections.put(connectionId, newConnection);
-            addPolyline(newConnection);
-            
+            getState().polylines.put(connectionId, newConnection);
+                        
             int numberOfChildren = connConfig.getNumChildren();
             if (numberOfChildren > 0) {
                 String childrenType = connConfig.getPortType();
@@ -172,7 +179,44 @@ public class CustomGoogleMap extends GoogleMap implements EmbeddableComponent {
         removeComponent(newConnection.getWizard());
         newConnection = null;
     }
-    
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getSource() instanceof ConnectionPolyline) {
+            if (evt.getPropertyName().equals("coordinates"))
+                getState().polylinesChanged.add((ConnectionPolyline) evt.getSource());
+            
+            if (evt.getPropertyName().equals("addMarker")) {
+                GoogleMapMarker marker = (GoogleMapMarker) evt.getNewValue();
+                getState().markers.put(marker.getId(), marker);
+            }
+            /*
+            if (evt.getPropertyName().equals("markerIsVisible")) {
+                PointMarker midpoint = (PointMarker) evt.getNewValue();
+                getState().markersChanged.add(midpoint);
+            }
+            */
+            if (evt.getPropertyName().equals("updateMarker")) {
+                getState().markersChanged.add((GoogleMapMarker) evt.getNewValue());
+            }
+            
+            if (evt.getPropertyName().equals("showMarkers")) {
+                List<GoogleMapMarker> markers = (ArrayList<GoogleMapMarker>) evt.getNewValue();
+                for (GoogleMapMarker marker : markers)
+                    marker.setVisible(true);
+                getState().markersChanged = markers;
+            }
+            if (evt.getPropertyName().equals("hideMarkers")) {
+                List<GoogleMapMarker> markers = (ArrayList<GoogleMapMarker>) evt.getNewValue();
+                for (GoogleMapMarker marker : markers)
+                    marker.setVisible(false);
+                getState().markersChanged = markers;
+            }
+                
+            
+        }
+    }
+        
     private class MarkerClickListenerImpl implements MarkerClickListener {
         
         public MarkerClickListenerImpl() {
@@ -185,17 +229,34 @@ public class CustomGoogleMap extends GoogleMap implements EmbeddableComponent {
                     if (newConnection == null)
                         newConnection = new ConnectionPolyline((NodeMarker) clickedMarker);
                     else {
-                        PhysicalConnectionWizard wizard = new PhysicalConnectionWizard(parentComponent, newConnection);
                         newConnection.setTarget((NodeMarker) clickedMarker);
+                        /*
+                        PhysicalConnectionWizard wizard = new PhysicalConnectionWizard(parentComponent, newConnection);
+                        //newConnection.setTarget((NodeMarker) clickedMarker);
                         newConnection.setWizard(wizard);
                         
                         addComponent(wizard);
                                                 
                         wizard.setPopupVisible(true);
+                                */
+                        addNewPolyline(); // remove before method only for test 
                     }
                 }
                 parentComponent.getEventBus().post(clickedMarker);
             }           
         }
+    }
+    
+    private void addNewPolyline() {
+//        Long id  = Long.getLong(String.valueOf(getState().polylines.size()));
+        newConnection.setStrokeColor("green");
+        newConnection.setStrokeOpacity(1);
+        newConnection.setStrokeWeight(3);
+
+        newConnection.addPropertyChangeListener(this);
+
+        getState().polylines.put(newConnection.getId(), newConnection);
+
+        newConnection = null;
     }
 }

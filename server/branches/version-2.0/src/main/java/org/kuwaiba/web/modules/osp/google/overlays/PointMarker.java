@@ -1,4 +1,4 @@
- /*
+/*
  *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
@@ -15,29 +15,43 @@
  */
 package org.kuwaiba.web.modules.osp.google.overlays;
 
+import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
-import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
- * Custom GoogleMapMarker for Kuwaiba
+ *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class NodeMarker extends GoogleMapMarker {
+public class PointMarker extends GoogleMapMarker {
     private List<PropertyChangeListener> propertyChangeListeners;
-    
-    private RemoteObjectLight remoteObjectLight;
-    
-    public NodeMarker(RemoteObjectLight remoteObjectLight) {
-        this.remoteObjectLight = remoteObjectLight;
+    private boolean isPoint;
+        
+    public PointMarker(LatLon position, boolean isPoint) {
+        this.isPoint = isPoint;
+        setAnimationEnabled(false);
         setDraggable(true);
+        fixIconUrl(isPoint);
+        setPosition(position);
     }
     
-    public RemoteObjectLight getRemoteObjectLight() {
-        return remoteObjectLight;
+    private void fixIconUrl(boolean isPoint) {
+        if (isPoint)
+            setIconUrl("VAADIN/themes/nuqui/img/mod_icon_osp_point.png");
+        else
+            setIconUrl("VAADIN/themes/nuqui/img/mod_icon_osp_midpoint.png");
+    }
+    
+    public boolean isPoint() {
+        return isPoint;
+    }
+    
+    public void setIsPoint(boolean isPoint) {
+        this.isPoint = isPoint;
+        fixIconUrl(isPoint);
     }
     
     public void addPropertyChangeListener(PropertyChangeListener listener) {
