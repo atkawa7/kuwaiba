@@ -459,6 +459,15 @@ public class GoogleMap extends AbstractComponentContainer {
     public void addMarkerClickListener(MarkerClickListener listener) {
         markerClickListeners.add(listener);
     }
+    
+    /**
+     * Returns the marker click listeners
+     * 
+     * @return Set of the marker click listeners
+     */
+    public List<MarkerClickListener> getMarkerClickListeners() {
+        return markerClickListeners;
+    }
 
     /**
      * Removes a MarkerClickListener from the map.

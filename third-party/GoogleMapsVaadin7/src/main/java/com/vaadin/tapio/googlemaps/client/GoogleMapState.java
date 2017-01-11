@@ -12,6 +12,8 @@ import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapInfoWindow;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolygon;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The shared state of the Google Maps. Contains also the default values.
@@ -63,4 +65,7 @@ public class GoogleMapState extends AbstractComponentState {
     public String apiUrl = null;
 
     public Map<Long, String> infoWindowContentIdentifiers = new HashMap<>();
+    
+    public List<GoogleMapMarker> markersChanged = new ArrayList();
+    public List<GoogleMapPolyline> polylinesChanged = new ArrayList();
 }

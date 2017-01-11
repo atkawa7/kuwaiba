@@ -25,6 +25,8 @@ public class GoogleMapMarker implements Serializable {
     private boolean animationEnabled = true;
 
     private boolean optimized = true;
+    
+    private boolean visible = true;
 
     /**
      * Instantiates a new GoogleMapMarker.
@@ -171,6 +173,23 @@ public class GoogleMapMarker implements Serializable {
     public void setOptimized(boolean optimized) {
         this.optimized = optimized;
     }
+    
+    /**
+     * Checks if the marker is visible
+     * 
+     * @return true, if the marker is visible
+     */
+    public boolean isVisible() {
+        return visible;
+    }
+    
+    /**
+     * Enables/disables marker visible.
+     * @param visible set true to enable (default true).
+     */
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
 
     public long getId() {
         return id;
@@ -225,6 +244,9 @@ public class GoogleMapMarker implements Serializable {
             return false;
         }
         if (other.isOptimized() != isOptimized()) {
+            return false;
+        }
+        if (other.isVisible() != isVisible()) {
             return false;
         }
         return true;
