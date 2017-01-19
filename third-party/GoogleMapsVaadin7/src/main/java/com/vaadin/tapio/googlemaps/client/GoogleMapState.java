@@ -68,4 +68,5 @@ public class GoogleMapState extends AbstractComponentState {
     
     public List<GoogleMapMarker> markersChanged = new ArrayList();
     public List<GoogleMapPolyline> polylinesChanged = new ArrayList();
+    public List<GoogleMapPolygon> polygonsChanged = new ArrayList();
 }

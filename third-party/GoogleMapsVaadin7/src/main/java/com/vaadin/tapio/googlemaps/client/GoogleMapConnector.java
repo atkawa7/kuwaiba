@@ -218,9 +218,16 @@ public class GoogleMapConnector extends AbstractComponentContainerConnector
         
         getWidget().updateMarkers(getState().markersChanged);
         getState().markersChanged.clear();
-        getWidget().updatePolylineOverlays(getState().polylinesChanged);
-        getState().polylinesChanged.clear();
-
+        
+        if (!getState().polygonsChanged.isEmpty()) {
+            getWidget().updatePolygons(getState().polygons);
+            getState().polygonsChanged.clear();
+        }
+        if (!getState().polylinesChanged.isEmpty()) {
+            getWidget().updatePolylines(getState().polylines);
+            getState().polylinesChanged.clear();
+        }
+        
         if (getState().fitToBoundsNE != null
             && getState().fitToBoundsSW != null) {
             getWidget().fitToBounds(getState().fitToBoundsNE,

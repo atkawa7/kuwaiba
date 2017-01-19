@@ -31,6 +31,8 @@ public class GoogleMapPolyline implements Serializable {
     private int zIndex = 0;
 
     private boolean geodesic = false;
+    
+    private boolean visible = true;
 
     public GoogleMapPolyline() {
         id = idCounter;
@@ -182,6 +184,24 @@ public class GoogleMapPolyline implements Serializable {
     public void setGeodesic(boolean geodesic) {
         this.geodesic = geodesic;
     }
+    
+    /**
+     * Checks if the polyline is visible
+     * 
+     * @return true, if polyline is visible
+     */
+    public boolean isVisible() {
+        return visible;
+    }
+    
+    /**
+     * Show/hide the polyline.
+     * 
+     * @param visible Set true to show the polyline
+     */
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
 
     public long getId() {
         return id;
@@ -214,6 +234,44 @@ public class GoogleMapPolyline implements Serializable {
         if (id != other.id) {
             return false;
         }
+        return true;
+    }
+    
+    public boolean hasSameCoordinates(GoogleMapPolyline other) {
+        if (other.getCoordinates() == null || getCoordinates() == null)
+            return true;
+        
+        if (other.getCoordinates().size() != getCoordinates().size())
+            return false;
+        
+        for (int i = 0; i < getCoordinates().size(); i += 1)
+            if (!other.getCoordinates().get(i)
+                    .hasSameFieldValues(getCoordinates().get(i)))
+                return false;
+        
+        return true;
+    }
+    
+    public boolean hasSameFieldValues(GoogleMapPolyline other) {
+        if (!other.getStrokeColor().equals(getStrokeColor()))
+            return false;
+        
+        if (Double.doubleToLongBits(other.getStrokeOpacity()) != Double
+                .doubleToLongBits(getStrokeOpacity()))
+            return false;
+        
+        if (other.getStrokeWeight() != getStrokeWeight())
+            return false;
+        
+        if (other.getzIndex() != getzIndex())
+            return false;
+        
+        if (other.isGeodesic() != isGeodesic())
+            return false;
+        
+        if (other.isVisible() != isVisible())
+            return false;
+        
         return true;
     }
 }

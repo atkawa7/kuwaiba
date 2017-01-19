@@ -81,6 +81,7 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
     protected Map<Marker, GoogleMapMarker> markerMap = new HashMap<>();
     protected Map<GoogleMapMarker, Marker> gmMarkerMap = new HashMap<>();
     protected Map<Polygon, GoogleMapPolygon> polygonMap = new HashMap<>();
+    protected Map<GoogleMapPolygon, Polygon> gmPolygonMap = new HashMap<>();
     protected Map<Polyline, GoogleMapPolyline> polylineMap = new HashMap<>();
     protected Map<GoogleMapPolyline, Polyline> gmPolylineMap = new HashMap<>();
 
@@ -442,17 +443,16 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
             updateMarker(markerChanged);
     }
 
-    private void updateMarker(GoogleMapMarker googleMapMarker) {
-        Marker marker = gmMarkerMap.get(googleMapMarker);
+    private void updateMarker(GoogleMapMarker newGmMarker) {
+        Marker marker = gmMarkerMap.get(newGmMarker);
         GoogleMapMarker oldGmMarker = markerMap.get(marker);
-
-        if (!oldGmMarker.hasSameFieldValues(googleMapMarker)) {
-            MarkerOptions options = createMarkerOptions(googleMapMarker);
+        
+        if (!oldGmMarker.hasSameFieldValues(newGmMarker)) {
+            MarkerOptions options = createMarkerOptions(newGmMarker);
             marker.setOptions(options);
-        }
-
-        gmMarkerMap.put(googleMapMarker, marker);
-        markerMap.put(marker, googleMapMarker);
+        }        
+        gmMarkerMap.put(newGmMarker, marker);
+        markerMap.put(marker, newGmMarker);
     }
 
     public void setMarkerClickListener(MarkerClickListener listener) {
@@ -593,86 +593,113 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
     public void clearVisibleAreaBoundLimits() {
         allowedBoundsVisibleArea = null;
     }
-
-    public void setPolygonOverlays(Map<Long, GoogleMapPolygon> polyOverlays) {
-        if (polygonMap.size() == polyOverlays.size()
-            && polygonMap.values().containsAll(polyOverlays.values())) {
-            return;
-        }
-
-        for (Polygon polygon : polygonMap.keySet()) {
-            polygon.setMap(null);
-        }
-        polygonMap.clear();
-
-        for (GoogleMapPolygon overlay : polyOverlays.values()) {
-            MVCArray<LatLng> points = MVCArray.newInstance();
-            for (LatLon latLon : overlay.getCoordinates()) {
-                LatLng latLng = LatLng.newInstance(latLon.getLat(),
-                    latLon.getLon());
-                points.push(latLng);
+        
+    private List<GoogleMapPolygon> getRemovedPolygons(Map<Long, GoogleMapPolygon> newPolyOverlays) {
+        List<GoogleMapPolygon> result = new ArrayList<>();
+        
+        for (GoogleMapPolygon oldPolygon : gmPolygonMap.keySet()) {
+            if (!newPolyOverlays.containsValue(oldPolygon)) {
+                result.add(oldPolygon);
             }
-
-            PolygonOptions options = PolygonOptions.newInstance();
-            options.setFillColor(overlay.getFillColor());
-            options.setFillOpacity(overlay.getFillOpacity());
-            options.setGeodesic(overlay.isGeodesic());
-            options.setStrokeColor(overlay.getStrokeColor());
-            options.setStrokeOpacity(overlay.getStrokeOpacity());
-            options.setStrokeWeight(overlay.getStrokeWeight());
-            options.setZindex(overlay.getzIndex());
-
-            final Polygon polygon = Polygon.newInstance(options);
-            polygon.setPath(points);
-            polygon.setMap(map);
-            
-            polygon.addClickHandler(new ClickMapHandler() {
-
-                @Override
-                public void onEvent(ClickMapEvent event) {
-                    if (polygonClickListener != null) {
-                        polygonClickListener.polygonClicked(polygonMap.get(polygon));
-                    }
-                }
-            });
-            
-            polygon.addDblClickHandler(new DblClickMapHandler() {
-                
-                @Override
-                public void onEvent(DblClickMapEvent event) {
-                    if (polygonDblClickListener != null) {
-                        polygonDblClickListener.polygonDblClicked(polygonMap.get(polygon));
-                    }
-                }
-            });
-            
-            polygon.addRightClickHandler(new RightClickMapHandler() {
-                
-                @Override
-                public void onEvent(RightClickMapEvent event) {
-                    if (polygonRightClickListener != null) {
-                        polygonRightClickListener.polygonRightClicked(polygonMap.get(polygon));
-                    }
-                }
-            });
-            
-            polygonMap.put(polygon, overlay);
         }
-
+        return result;
     }
     
-    private void updatePolylineOverlay(GoogleMapPolyline newGmPolyline) {
-        Polyline polyline = gmPolylineMap.get(newGmPolyline);
-                
+    private void removePolygons(List<GoogleMapPolygon> polygons) {
+        for (GoogleMapPolygon gmPolygon  : polygons) {
+            Polygon polygon = gmPolygonMap.get(gmPolygon);
+            polygon.setMap((MapWidget) null);
+            
+            polygonMap.remove(polygon);
+            gmPolygonMap.remove(gmPolygon);
+        }
+    }
+    
+    private PolygonOptions createPolygonOptions(GoogleMapPolygon gmPolygon) {
+        PolygonOptions options = PolygonOptions.newInstance();
+        options.setFillColor(gmPolygon.getFillColor());
+        options.setFillOpacity(gmPolygon.getFillOpacity());
+        options.setGeodesic(gmPolygon.isGeodesic());
+        options.setStrokeColor(gmPolygon.getStrokeColor());
+        options.setStrokeOpacity(gmPolygon.getStrokeOpacity());
+        options.setStrokeWeight(gmPolygon.getStrokeWeight());
+        options.setVisible(gmPolygon.isVisible());
+        options.setZindex(gmPolygon.getzIndex());
+        return options;
+    }
+    
+    private Polygon addPolygon(GoogleMapPolygon gmPolygon) {
         MVCArray<LatLng> points = MVCArray.newInstance();
-        for (LatLon latLon : newGmPolyline.getCoordinates()) {
+        for (LatLon latLon : gmPolygon.getCoordinates()) {
             LatLng latLng = LatLng.newInstance(latLon.getLat(), 
                     latLon.getLon());
             points.push(latLng);
         }
-        polyline.setPath(points);        
+        
+        PolygonOptions options = createPolygonOptions(gmPolygon);
+        
+        final Polygon polygon = Polygon.newInstance(options);
+        polygon.setPath(points);
+        polygon.setMap(map);
+        
+        return polygon;
+    }
+        
+    public void updatePolygons(Map<Long, GoogleMapPolygon> polyOverlays) {
+        setPolygons(polyOverlays);
     }
     
+    private void setPolygons(Map<Long, GoogleMapPolygon> polyOverlays) {
+        for (Polygon polygon : polygonMap.keySet())
+            polygon.setMap((MapWidget) null);        
+        polygonMap.clear();
+        gmPolygonMap.clear();
+        
+        for (GoogleMapPolygon gmPolygon : polyOverlays.values()) {
+                final Polygon polygon = addPolygon(gmPolygon);
+                polygonMap.put(polygon, gmPolygon);
+                gmPolygonMap.put(gmPolygon, polygon);
+                
+                polygon.addClickHandler(new ClickMapHandler() {
+
+                    @Override
+                    public void onEvent(ClickMapEvent event) {
+                        if (polygonClickListener != null) {
+                            polygonClickListener.polygonClicked(polygonMap.get(polygon));
+                        }
+                    }
+                });
+
+                polygon.addDblClickHandler(new DblClickMapHandler() {
+
+                    @Override
+                    public void onEvent(DblClickMapEvent event) {
+                        if (polygonDblClickListener != null) {
+                            polygonDblClickListener.polygonDblClicked(polygonMap.get(polygon));
+                        }
+                    }
+                });
+
+                polygon.addRightClickHandler(new RightClickMapHandler() {
+
+                    @Override
+                    public void onEvent(RightClickMapEvent event) {
+                        if (polygonRightClickListener != null) {
+                            polygonRightClickListener.polygonRightClicked(polygonMap.get(polygon));
+                        }
+                    }
+                });
+        }
+    }    
+        
+    public void setPolygonOverlays(Map<Long, GoogleMapPolygon> polyOverlays) {
+        if (polygonMap.size() == polyOverlays.size() &&
+                polygonMap.values().containsAll(polyOverlays.values()))
+            return;
+        
+        setPolygons(polyOverlays);
+    }
+        
     private List<GoogleMapPolyline> getRemovedPolylines(Map<Long, GoogleMapPolyline> newPolylines) {
         List<GoogleMapPolyline> result = new ArrayList<>();
         
@@ -692,35 +719,50 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
             gmPolylineMap.remove(gmPolyline);
         }
     }
-
-    public void setPolylineOverlays(Map<Long, GoogleMapPolyline> polylineOverlays) {
-        if (polylineOverlays.size() == polylineMap.size()
-            && polylineMap.values().containsAll(polylineOverlays.values())) {
-            return;
+    
+    private PolylineOptions createPolylineOptions(GoogleMapPolyline gmPolyline) {
+        PolylineOptions options = PolylineOptions.newInstance();
+        options.setGeodesic(gmPolyline.isGeodesic());
+        options.setStrokeColor(gmPolyline.getStrokeColor());
+        options.setStrokeOpacity(gmPolyline.getStrokeOpacity());
+        options.setStrokeWeight(gmPolyline.getStrokeWeight());
+        options.setVisible(gmPolyline.isVisible());
+        options.setZindex(gmPolyline.getzIndex());
+        return options;
+    }
+    
+    private Polyline addPolyline(GoogleMapPolyline gmPolyline) {
+        MVCArray<LatLng> points = MVCArray.newInstance();
+        for (LatLon latLon : gmPolyline.getCoordinates()) {
+            LatLng latLng = LatLng.newInstance(latLon.getLat(), 
+                    latLon.getLon());
+            points.push(latLng);
         }
-                
-        List<GoogleMapPolyline> removedPolylines = getRemovedPolylines(polylineOverlays);
-        removePolylines(removedPolylines);
-
-        for (GoogleMapPolyline overlay : polylineOverlays.values()) {
-            if (!gmPolylineMap.containsKey(overlay)) {
-                MVCArray<LatLng> points = MVCArray.newInstance();
-                for (LatLon latLon : overlay.getCoordinates()) {
-                    LatLng latLng = LatLng.newInstance(latLon.getLat(),
-                        latLon.getLon());
-                    points.push(latLng);
-                }
-                
-                final PolylineOptions options = PolylineOptions.newInstance();
-                options.setGeodesic(overlay.isGeodesic());
-                options.setStrokeColor(overlay.getStrokeColor());
-                options.setStrokeOpacity(overlay.getStrokeOpacity());
-                options.setStrokeWeight(overlay.getStrokeWeight());
-                options.setZindex(overlay.getzIndex());
-
-                final Polyline polyline = Polyline.newInstance(options);
-                polyline.setPath(points);
-                polyline.setMap(map);
+        
+        PolylineOptions options = createPolylineOptions(gmPolyline);
+        
+        final Polyline polyline = Polyline.newInstance(options);
+        polyline.setPath(points);
+        polyline.setMap(map);
+        
+        return polyline;
+    }
+    
+    public void updatePolylines(Map<Long, GoogleMapPolyline> polylineOverlays) {
+        setPolylines(polylineOverlays);
+    }
+    
+    private void setPolylines(Map<Long, GoogleMapPolyline> polylineOverlays) {
+        for (Polyline polyline : polylineMap.keySet())
+            polyline.setMap((MapWidget) null);
+        
+        polylineMap.clear();
+        gmPolylineMap.clear();
+        
+        for (GoogleMapPolyline gmPolyline : polylineOverlays.values()) {
+                final Polyline polyline = addPolyline(gmPolyline);
+                polylineMap.put(polyline, gmPolyline);
+                gmPolylineMap.put(gmPolyline, polyline);
 
                 polyline.addClickHandler(new ClickMapHandler() {
 
@@ -750,19 +792,16 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
                             polylineRightClickListener.polylineRightClicked(polylineMap.get(polyline));
                         }
                     }
-                });            
-
-                polylineMap.put(polyline, overlay);
-                gmPolylineMap.put(overlay, polyline);
-            }
-            else
-                updatePolylineOverlay(overlay);
+                });
         }
     }
     
-    public void updatePolylineOverlays(List<GoogleMapPolyline> polylineOvelays) {
-        for (GoogleMapPolyline polylineOverlay : polylineOvelays)
-            updatePolylineOverlay(polylineOverlay);
+    public void setPolylineOverlays(Map<Long, GoogleMapPolyline> polylineOverlays) {
+        if (polylineOverlays.size() == polylineMap.size() 
+                && polylineMap.values().containsAll(polylineOverlays.values()))
+            return;
+        
+        setPolylines(polylineOverlays);
     }
     
     public void setKmlLayers(Collection<GoogleMapKmlLayer> layers) {

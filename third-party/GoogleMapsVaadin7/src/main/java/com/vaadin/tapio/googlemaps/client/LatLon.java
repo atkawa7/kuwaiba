@@ -69,5 +69,16 @@ public class LatLon implements Serializable {
         }
         return true;
     }
-
+        
+    public boolean hasSameFieldValues(LatLon other) {
+        if (Double.doubleToLongBits(lat) != Double
+            .doubleToLongBits(other.lat)) {
+            return false;
+        }
+        if (Double.doubleToLongBits(lon) != Double
+            .doubleToLongBits(other.lon)) {
+            return false;
+        }
+        return true;
+    }
 }
