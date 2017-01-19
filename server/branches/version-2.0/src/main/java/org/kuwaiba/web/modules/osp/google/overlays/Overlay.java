@@ -1,4 +1,4 @@
- /*
+/*
  *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
@@ -15,21 +15,22 @@
  */
 package org.kuwaiba.web.modules.osp.google.overlays;
 
-import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-
 /**
- * Custom GoogleMapMarker for Kuwaiba
+ *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class NodeMarker extends Marker {
-    private RemoteObjectLight remoteObjectLight;
-    
-    public NodeMarker(RemoteObjectLight remoteObjectLight) {
-        this.remoteObjectLight = remoteObjectLight;
-        setDraggable(true);
-    }
-    
-    public RemoteObjectLight getRemoteObjectLight() {
-        return remoteObjectLight;
-    }
+public interface Overlay {
+    /**
+     * A overlay can be removed by code or from view use this operation to 
+     * specify the method.
+     * 
+     * @param removed the overlay was removed by code (false) or from view (true)
+     */
+    public void removedFromView(boolean removed);
+    /**
+     * The overlay was removed by code (false) from view (true).
+     * 
+     * @return true, if the overlay was removed
+     */
+    public boolean getRemoved();
 }

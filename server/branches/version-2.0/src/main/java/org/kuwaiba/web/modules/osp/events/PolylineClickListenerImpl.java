@@ -15,20 +15,21 @@
  */
 package org.kuwaiba.web.modules.osp.events;
 
-import com.vaadin.tapio.googlemaps.client.events.MarkerClickListener;
-import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
-import org.kuwaiba.web.modules.osp.google.overlays.PointMarker;
+import com.vaadin.tapio.googlemaps.client.events.PolylineClickListener;
+import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
+import org.kuwaiba.web.modules.osp.google.overlays.Polyline;
 
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class PointMarkerClickListener implements MarkerClickListener{
-
+public class PolylineClickListenerImpl implements PolylineClickListener {
+    
     @Override
-    public void markerClicked(GoogleMapMarker clickedMarker) {
-        if (clickedMarker instanceof PointMarker) {
-            
+    public void polylineClicked(GoogleMapPolyline clickedPolyline) {
+        if (clickedPolyline instanceof Polyline) {
+            Polyline polyline = (Polyline) clickedPolyline;
+            polyline.setEditable(!polyline.isEditable());
         }
     }
     

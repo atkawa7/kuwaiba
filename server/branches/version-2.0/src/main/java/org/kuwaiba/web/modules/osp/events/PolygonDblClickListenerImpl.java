@@ -1,4 +1,4 @@
-/*
+ /*
  *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
@@ -15,24 +15,21 @@
  */
 package org.kuwaiba.web.modules.osp.events;
 
-import com.vaadin.tapio.googlemaps.client.events.PolylineClickListener;
-import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
-import org.kuwaiba.web.modules.osp.google.overlays.ConnectionPolyline;
+import com.vaadin.tapio.googlemaps.client.events.PolygonDblClickListener;
+import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolygon;
+import org.kuwaiba.web.modules.osp.google.overlays.Polygon;
 
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ConnectionPolylineClickListener implements PolylineClickListener {
-    private boolean enableEdition = false;
+public class PolygonDblClickListenerImpl implements PolygonDblClickListener {
 
     @Override
-    public void polylineClicked(GoogleMapPolyline clickedPolyline) {
-        if (clickedPolyline instanceof ConnectionPolyline) {
-            
-            enableEdition = !enableEdition;
-            ((ConnectionPolyline) clickedPolyline).enableEdition(enableEdition);
-        }
+    public void polygonDblClicked(GoogleMapPolygon clickedPolygon) {
+        if (clickedPolygon instanceof Polygon)
+            ((Polygon) clickedPolygon)
+                    .firePropertyChangeEvent("removePolygon", null, null);
     }
     
 }

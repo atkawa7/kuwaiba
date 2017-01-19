@@ -1,4 +1,4 @@
-/*
+ /*
  *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
@@ -15,23 +15,30 @@
  */
 package org.kuwaiba.web.modules.osp.events;
 
-import com.vaadin.tapio.googlemaps.client.LatLon;
-import com.vaadin.tapio.googlemaps.client.events.MarkerDragListener;
+import com.vaadin.tapio.googlemaps.client.events.MarkerDblClickListener;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import org.kuwaiba.web.modules.osp.google.overlays.Marker;
+import org.kuwaiba.web.modules.osp.google.overlays.NodeMarker;
+import org.kuwaiba.web.modules.osp.google.overlays.PointMarker;
 
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class MarkerDragListenerImpl implements MarkerDragListener {
+public class MarkerDblClickListenerImpl implements MarkerDblClickListener {
 
     @Override
-    public void markerDragged(GoogleMapMarker draggedMarker, LatLon oldPosition) {
-        if (draggedMarker instanceof Marker) {
-            ((Marker) draggedMarker)
-                    .firePropertyChangeEvent("updateMarker", oldPosition, 
-                            ((Marker) draggedMarker).getPosition());
+    public void markerDblClicked(GoogleMapMarker clickedMarker) {
+        if (clickedMarker instanceof NodeMarker)
+            ((Marker) clickedMarker)
+                    .firePropertyChangeEvent("removeMarker", null, clickedMarker);
+        
+        if (clickedMarker instanceof PointMarker) {
+            PointMarker point = (PointMarker) clickedMarker;
+            
+            if (point.isPoint())
+                point.firePropertyChangeEvent("removeMarker", null, clickedMarker);
         }
     }
+    
 }

@@ -13,23 +13,24 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.kuwaiba.web.modules.osp.google.overlays;
+package org.kuwaiba.web.modules.osp.events;
 
-import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import com.vaadin.tapio.googlemaps.client.events.PolygonClickListener;
+import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolygon;
+import org.kuwaiba.web.modules.osp.google.overlays.Polygon;
 
 /**
- * Custom GoogleMapMarker for Kuwaiba
+ *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class NodeMarker extends Marker {
-    private RemoteObjectLight remoteObjectLight;
-    
-    public NodeMarker(RemoteObjectLight remoteObjectLight) {
-        this.remoteObjectLight = remoteObjectLight;
-        setDraggable(true);
+public class PolygonClickListenerImpl implements PolygonClickListener {
+
+    @Override
+    public void polygonClicked(GoogleMapPolygon clickedPolygon) {
+        if (clickedPolygon instanceof Polygon) {
+            Polygon polygon = (Polygon) clickedPolygon;
+            polygon.setEditable(!polygon.isEditable());
+        }
     }
     
-    public RemoteObjectLight getRemoteObjectLight() {
-        return remoteObjectLight;
-    }
 }

@@ -16,19 +16,20 @@
 package org.kuwaiba.web.modules.osp.google.overlays;
 
 import com.vaadin.tapio.googlemaps.client.LatLon;
-import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class PointMarker extends GoogleMapMarker {
-    private List<PropertyChangeListener> propertyChangeListeners;
+public class PointMarker extends Marker {
     private boolean isPoint;
+    /**
+     * A special point is that is used
+     * for represent an object position e.g.
+     * in a Connection the source and target nodes, 
+     * in a Polygon the end point that close the figure.
+     */
+    private boolean isSpecial = false;
         
     public PointMarker(LatLon position, boolean isPoint) {
         this.isPoint = isPoint;
@@ -54,27 +55,11 @@ public class PointMarker extends GoogleMapMarker {
         fixIconUrl(isPoint);
     }
     
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        if (propertyChangeListeners == null)
-            propertyChangeListeners = new ArrayList<>();
-        if (propertyChangeListeners.contains(listener))
-            return;
-        propertyChangeListeners.add(listener);
+    public boolean isSpecial() {
+        return isSpecial;
     }
     
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        if (propertyChangeListeners == null)
-            return;
-        propertyChangeListeners.remove(listener);
-    }
-    
-    public void removeAllPropertyChangeListener() {
-        if (propertyChangeListeners != null)
-            propertyChangeListeners.clear();
-    }
-    
-    public void firePropertyChangeEvent(String propertyName, Object oldValue, Object newValue) {
-        for (PropertyChangeListener listener : propertyChangeListeners)
-            listener.propertyChange(new PropertyChangeEvent(this, propertyName, oldValue, newValue));
+    public void setIsSpecial(boolean isSpecial) {
+        this.isSpecial = isSpecial;
     }
 }
