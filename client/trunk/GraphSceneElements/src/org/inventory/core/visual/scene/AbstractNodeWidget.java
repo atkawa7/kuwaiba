@@ -70,8 +70,8 @@ public class AbstractNodeWidget extends SelectableNodeWidget {
         createActions(AbstractScene.ACTION_CONNECT);
     }
     
-    public void showLabel(boolean shouldShow) {
-        labelWidget.setVisible(shouldShow);
+    public LabelWidget getLabelWidget() {
+        return labelWidget;
     }
     
     /**

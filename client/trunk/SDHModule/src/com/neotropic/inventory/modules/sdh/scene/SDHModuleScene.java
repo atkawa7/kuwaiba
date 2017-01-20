@@ -159,14 +159,6 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
         connectionWidget.setTargetAnchor(targetWidget != null ? AnchorFactory.createCircularAnchor(targetWidget, 3) : null);
     }
 
-    public void showLabels(boolean visible) {
-        for (Widget aWidget : nodeLayer.getChildren()) 
-            ((AbstractNodeWidget)aWidget).showLabel(visible);
-        
-        if (getView() != null)
-            getView().repaint();
-    }
-
     @Override
     public byte[] getAsXML() {
         try {

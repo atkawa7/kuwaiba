@@ -114,10 +114,18 @@ public abstract class AbstractScene<N, E> extends GraphScene<N, E> {
         setActiveTool(ACTION_SELECT);
     }
     
-    public void toggleLabels(boolean visible){
-        labelsLayer.setVisible(visible);
-        if (getView() != null)
-            getView().repaint();
+    public void toggleNodeLabels(boolean visible){
+        for (Widget edge : nodeLayer.getChildren()) 
+            ((AbstractNodeWidget)edge).getLabelWidget().setVisible(visible);
+        
+        validate();
+    }
+    
+    public void toggleConnectionLabels(boolean visible) {
+        for (Widget edge : edgeLayer.getChildren()) 
+            ((SelectableConnectionWidget)edge).getLabelWidget().setVisible(visible);
+        
+        validate();
     }
            
     public void initSelectionListener(){

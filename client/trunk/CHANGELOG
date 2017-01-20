@@ -111,3 +111,7 @@
 * WAX dependency removed
 * Added support for templates
 * It's possible to create reports from scripts
+
+1.1.1
+* Releasing relationships triggers an "Are you sure?" warning.
+* The connection and node labels can now be hidden/shown in topology views

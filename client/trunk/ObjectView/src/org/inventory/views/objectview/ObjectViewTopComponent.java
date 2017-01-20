@@ -134,9 +134,9 @@ public final class ObjectViewTopComponent extends TopComponent
         } catch (IOException e) {}
         
         //Default connection settings
-        service.getViewBuilder().getScene().setNewLineColor(Color.GREEN);
-        ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setConnectionClass(Constants.CLASS_OPTICALLINK);
-        ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setWizardType(PhysicalConnectionProvider.WIZARD_LINK);
+        service.getViewBuilder().getScene().setNewLineColor(Color.RED);
+        ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setConnectionClass(Constants.CLASS_WIRECONTAINER);
+        ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setWizardType(PhysicalConnectionProvider.WIZARD_CONTAINER);
     }
 
     /** This method is called from within the constructor to
@@ -152,6 +152,7 @@ public final class ObjectViewTopComponent extends TopComponent
         btnRemoveBackground = new javax.swing.JButton();
         btnFormatText = new javax.swing.JButton();
         btnShowNodeLabels = new javax.swing.JToggleButton();
+        btnShowConnectionLabels = new javax.swing.JToggleButton();
         btnSave = new javax.swing.JButton();
         btnSelect = new javax.swing.JToggleButton();
         btnConnect = new javax.swing.JToggleButton();
@@ -227,6 +228,20 @@ public final class ObjectViewTopComponent extends TopComponent
             }
         });
         barMain.add(btnShowNodeLabels);
+
+        btnShowConnectionLabels.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/objectview/res/hide_conn_labels.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnShowConnectionLabels, org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnShowConnectionLabels.text")); // NOI18N
+        btnShowConnectionLabels.setToolTipText(org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnShowConnectionLabels.toolTipText")); // NOI18N
+        btnShowConnectionLabels.setEnabled(false);
+        btnShowConnectionLabels.setFocusable(false);
+        btnShowConnectionLabels.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnShowConnectionLabels.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnShowConnectionLabels.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnShowConnectionLabelsActionPerformed(evt);
+            }
+        });
+        barMain.add(btnShowConnectionLabels);
 
         btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/objectview/res/save.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnSave, org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnSave.text")); // NOI18N
@@ -531,7 +546,7 @@ public final class ObjectViewTopComponent extends TopComponent
     }//GEN-LAST:event_btnFormatTextActionPerformed
 
     private void btnShowNodeLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowNodeLabelsActionPerformed
-        service.getViewBuilder().getScene().toggleLabels(!btnShowNodeLabels.isSelected());
+        service.getViewBuilder().getScene().toggleNodeLabels(!btnShowNodeLabels.isSelected());
     }//GEN-LAST:event_btnShowNodeLabelsActionPerformed
 
     private void cmbViewTypeItemStateChangedPerformed(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmbViewTypeItemStateChangedPerformed
@@ -552,6 +567,10 @@ public final class ObjectViewTopComponent extends TopComponent
        }
     }//GEN-LAST:event_cmbViewTypeItemStateChangedPerformed
 
+    private void btnShowConnectionLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowConnectionLabelsActionPerformed
+        service.getViewBuilder().getScene().toggleConnectionLabels(!btnShowConnectionLabels.isSelected());
+    }//GEN-LAST:event_btnShowConnectionLabelsActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barConnections;
     private javax.swing.JToolBar barContainers;
@@ -566,6 +585,7 @@ public final class ObjectViewTopComponent extends TopComponent
     private javax.swing.JButton btnRemoveBackground;
     private javax.swing.JButton btnSave;
     private javax.swing.JToggleButton btnSelect;
+    private javax.swing.JToggleButton btnShowConnectionLabels;
     private javax.swing.JToggleButton btnShowNodeLabels;
     private javax.swing.JToggleButton btnWireContainer;
     private javax.swing.JToggleButton btnWirelessContainer;
@@ -730,6 +750,7 @@ public final class ObjectViewTopComponent extends TopComponent
         btnFormatText.setEnabled(enabled);
         btnRefresh.setEnabled(enabled);
         btnShowNodeLabels.setEnabled(enabled);
+        btnShowConnectionLabels.setEnabled(enabled);
     }
     
     public void setListModel (ComboBoxModel newModel) {

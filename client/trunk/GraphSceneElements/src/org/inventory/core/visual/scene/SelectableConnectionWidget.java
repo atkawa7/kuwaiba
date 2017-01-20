@@ -18,9 +18,11 @@ package org.inventory.core.visual.scene;
 
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.netbeans.api.visual.action.ActionFactory;
+import org.netbeans.api.visual.layout.LayoutFactory;
 import org.netbeans.api.visual.widget.ConnectionWidget;
+import org.netbeans.api.visual.widget.LabelWidget;
 import org.netbeans.api.visual.widget.Scene;
-import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
 
@@ -29,23 +31,21 @@ import org.openide.util.lookup.Lookups;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public abstract class SelectableConnectionWidget extends ConnectionWidget {
-    protected ObjectNode node;
     private Lookup lookup;
+    private LabelWidget labelWidget;
     
     public SelectableConnectionWidget(Scene scene, LocalObjectLight businessObject) {
         super(scene);
-        node = new ObjectNode(businessObject);
-        lookup = Lookups.singleton(node);
+        labelWidget = new LabelWidget(scene, businessObject.toString());
+        labelWidget.setOpaque(true);
+        labelWidget.getActions().addAction(ActionFactory.createMoveAction ());
+        addChild(labelWidget);
+        setConstraint(labelWidget, LayoutFactory.ConnectionWidgetLayoutAlignment.CENTER, 0.5f);
+        lookup = Lookups.singleton(new ObjectNode(businessObject));
     }
     
-    public ObjectNode getNode() {
-        return node;
-    }
-    
-    public void setNode(ObjectNode node) {
-        this.node = node;
-        lookup = Lookups.singleton(node);
-        setToolTipText(node.getObject().toString());
+    public LabelWidget getLabelWidget() {
+        return labelWidget;
     }
     
     @Override

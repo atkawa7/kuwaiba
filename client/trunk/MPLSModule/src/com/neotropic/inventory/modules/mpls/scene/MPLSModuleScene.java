@@ -325,13 +325,6 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
         connectionWidget.setTargetAnchor(targetWidget != null ? AnchorFactory.createCircularAnchor(targetWidget, 3) : null);
     }
  
-    public void showLabels(boolean visible) {
-        for (Widget aWidget : nodeLayer.getChildren()) 
-            ((AbstractNodeWidget)aWidget).showLabel(visible);
-        
-        if (getView() != null)
-            getView().repaint();
-    }
     /**
      * Own implementation of a connection provider
      */

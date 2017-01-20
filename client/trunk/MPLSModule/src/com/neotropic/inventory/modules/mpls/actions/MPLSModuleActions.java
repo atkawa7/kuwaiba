@@ -70,8 +70,8 @@ public class MPLSModuleActions {
                     actions.add(deleteMPLSConnectionAction);
                     actions.add(null);
                     
-                    AbstractConnectionWidget nodeWidget = (AbstractConnectionWidget)widget;
-                    actions.addAll(Arrays.asList(nodeWidget.getNode().getActions(true)));
+                    AbstractConnectionWidget connectionWidget = (AbstractConnectionWidget)widget;
+                    actions.addAll(Arrays.asList(connectionWidget.getLookup().lookup(ObjectNode.class).getActions(true)));
                     
                     return Utilities.actionsToPopup(actions.toArray(new Action[0]), scene.getView());                    
                 }
