@@ -431,7 +431,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             long res[] = new long[numberOfObjects];
             for (int i = 0; i < numberOfObjects; i++){
                 Node newObject = createObject(classNode, myClass, null);
-                newObject.setProperty(Constants.PROPERTY_NAME, String.valueOf(i + 1));
+                newObject.setProperty(Constants.PROPERTY_NAME, String.format("%03d", i + 1));
                 if (parentNode != null)
                     newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF_SPECIAL);
                 
