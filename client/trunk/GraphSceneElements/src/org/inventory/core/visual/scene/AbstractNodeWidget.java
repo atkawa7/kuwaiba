@@ -17,8 +17,8 @@ package org.inventory.core.visual.scene;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import javax.swing.BorderFactory;
 import org.inventory.communications.core.LocalObjectLight;
+import org.netbeans.api.visual.laf.LookFeel;
 import org.netbeans.api.visual.layout.LayoutFactory;
 import org.netbeans.api.visual.model.ObjectState;
 import org.netbeans.api.visual.widget.LabelWidget;
@@ -42,6 +42,11 @@ public class AbstractNodeWidget extends SelectableNodeWidget {
      * The generic icon (a square)
      */
     private Widget squareWidget;
+    /**
+     * Widget used to encapsulate the label and reserve the proper space, 
+     * so if the label is hidden, the connections anchored to the widget are not disorganized. 
+     */
+    private Widget paddingWidget;
     
     /**
      * Default constructor
@@ -50,28 +55,30 @@ public class AbstractNodeWidget extends SelectableNodeWidget {
      */
     public AbstractNodeWidget(Scene scene, LocalObjectLight object) {
         super(scene, object);
+        LookFeel lookFeel = getScene().getLookFeel();
+        
         this.squareWidget = new Widget(scene);
-        this.labelWidget = new LabelWidget(scene);
-        
-        this.labelWidget.setLabel(object.toString());
-        
         this.squareWidget.setPreferredSize(DEFAULT_DIMENSION);
         this.squareWidget.setBackground(Color.ORANGE);
         this.squareWidget.setOpaque(true);
         
+        this.labelWidget = new LabelWidget(scene);
+        this.labelWidget.setLabel(object.toString());
         //Centers the text, and makes the widgets to stack one onto another
-        setLayout(LayoutFactory.createVerticalFlowLayout (LayoutFactory.SerialAlignment.CENTER, 5));
+        setLayout(LayoutFactory.createVerticalFlowLayout(LayoutFactory.SerialAlignment.CENTER, 1 - lookFeel.getMargin()));
         
         addChild(squareWidget);
         addChild(labelWidget);
-        
+                
         setToolTipText(object.toString());
         createActions(AbstractScene.ACTION_SELECT);
         createActions(AbstractScene.ACTION_CONNECT);
+        
+        setState (ObjectState.createNormal());        
     }
     
-    public LabelWidget getLabelWidget() {
-        return labelWidget;
+    public void togglelabel(boolean visible) {
+        labelWidget.setVisible(visible);
     }
     
     /**
@@ -81,10 +88,8 @@ public class AbstractNodeWidget extends SelectableNodeWidget {
      */
     @Override
     public void notifyStateChanged (ObjectState previousState, ObjectState state) {
-        if (state.isSelected())
-            labelWidget.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(Color.RED, 1, true), BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-        else
-            labelWidget.setBorder(BorderFactory.createEmptyBorder());
+        LookFeel lookFeel = getScene ().getLookFeel ();
+        labelWidget.setBorder (lookFeel.getBorder (state));
+        labelWidget.setForeground (lookFeel.getForeground (state));
     }   
 }
