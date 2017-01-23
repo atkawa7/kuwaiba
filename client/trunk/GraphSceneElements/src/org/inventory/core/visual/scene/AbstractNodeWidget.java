@@ -77,6 +77,10 @@ public class AbstractNodeWidget extends SelectableNodeWidget {
         setState (ObjectState.createNormal());        
     }
     
+    public LabelWidget getLabelWidget() {
+        return labelWidget;
+    }
+    
     public void togglelabel(boolean visible) {
         labelWidget.setVisible(visible);
     }
