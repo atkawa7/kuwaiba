@@ -25,7 +25,6 @@ import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.queries.LocalTransientQuery;
 import org.inventory.communications.util.Constants;
-import org.inventory.queries.scene.QueryEditorScene;
 import org.inventory.queries.scene.filters.SimpleCriteriaNodeWidget;
 import org.netbeans.api.visual.vmd.VMDColorScheme;
 import org.netbeans.api.visual.widget.Widget;

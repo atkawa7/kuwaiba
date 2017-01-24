@@ -15,6 +15,9 @@
  */
 package org.inventory.core.wizards.physicalconnections;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import javax.swing.JLabel;
 import org.inventory.core.services.utils.ExplorablePanel;
 import javax.swing.JPanel;
 import org.inventory.communications.core.LocalObjectLight;
@@ -29,6 +32,7 @@ public final class ConnectionWizardVisualPanel1 extends JPanel{
     private LocalObjectLight bSide;
     private ExplorablePanel pnlLeft;
     private ExplorablePanel pnlRight;
+    private JLabel lblInstructions;
 
     ConnectionWizardVisualPanel1(LocalObjectLight aSide, LocalObjectLight bSide) {
         this.aSide = aSide;
@@ -38,6 +42,9 @@ public final class ConnectionWizardVisualPanel1 extends JPanel{
     }
 
     public void initCustomComponents(){
+        
+        lblInstructions = new JLabel("Select the objects (ports or nodes) you'd like to connect.");
+        
         treeLeft = new BeanTreeView();
         treeRight = new BeanTreeView();
 
@@ -46,10 +53,15 @@ public final class ConnectionWizardVisualPanel1 extends JPanel{
                   
         pnlLeft.getExplorerManager().setRootContext(new ObjectNode(aSide));
         pnlRight.getExplorerManager().setRootContext(new ObjectNode(bSide));
-        pnlLeft.add(treeLeft);
-        pnlRight.add(treeRight);
-        pnlScrollLeft.setViewportView(pnlLeft);
-        pnlScrollRight.setViewportView(pnlRight);
+        pnlLeft.setViewportView(treeLeft);
+        pnlRight.setViewportView(treeRight);
+        
+        pnlLeft.setMinimumSize(new Dimension(30, 60));
+        pnlRight.setMinimumSize(new Dimension(30, 60));
+        
+        add(lblInstructions, BorderLayout.NORTH);
+        add(pnlLeft, BorderLayout.WEST);
+        add(pnlRight, BorderLayout.EAST);
     }
 
     @Override
@@ -73,42 +85,8 @@ public final class ConnectionWizardVisualPanel1 extends JPanel{
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        lblInstructions = new javax.swing.JLabel();
-        pnlScrollRight = new javax.swing.JScrollPane();
-        pnlScrollLeft = new javax.swing.JScrollPane();
-
-        lblInstructions.setFont(new java.awt.Font("Dialog", 0, 12));
-        org.openide.awt.Mnemonics.setLocalizedText(lblInstructions, org.openide.util.NbBundle.getMessage(ConnectionWizardVisualPanel1.class, "ConnectionWizardVisualPanel1.lblInstructions.text")); // NOI18N
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(29, 29, 29)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblInstructions)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(pnlScrollLeft, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(42, 42, 42)
-                        .addComponent(pnlScrollRight, javax.swing.GroupLayout.PREFERRED_SIZE, 283, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(80, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lblInstructions)
-                .addGap(27, 27, 27)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(pnlScrollRight)
-                    .addComponent(pnlScrollLeft, javax.swing.GroupLayout.DEFAULT_SIZE, 367, Short.MAX_VALUE))
-                .addContainerGap(33, Short.MAX_VALUE))
-        );
+        setLayout(new java.awt.BorderLayout());
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel lblInstructions;
-    private javax.swing.JScrollPane pnlScrollLeft;
-    private javax.swing.JScrollPane pnlScrollRight;
     // End of variables declaration//GEN-END:variables
 }
