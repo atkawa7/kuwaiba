@@ -16,7 +16,6 @@
 
 package org.inventory.core.services.utils;
 
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerManager.Provider;

@@ -117,7 +117,6 @@ public abstract class AbstractScene<N, E> extends GraphScene<N, E> {
     public void toggleNodeLabels(boolean visible){
         for (Widget edge : nodeLayer.getChildren()) 
             ((AbstractNodeWidget)edge).getLabelWidget().setVisible(visible);
-        
         validate();
     }
     

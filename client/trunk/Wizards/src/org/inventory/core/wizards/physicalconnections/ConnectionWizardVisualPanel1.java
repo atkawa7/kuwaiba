@@ -16,7 +16,6 @@
 package org.inventory.core.wizards.physicalconnections;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import javax.swing.JLabel;
 import org.inventory.core.services.utils.ExplorablePanel;
 import javax.swing.JPanel;
@@ -53,11 +52,9 @@ public final class ConnectionWizardVisualPanel1 extends JPanel{
                   
         pnlLeft.getExplorerManager().setRootContext(new ObjectNode(aSide));
         pnlRight.getExplorerManager().setRootContext(new ObjectNode(bSide));
+        
         pnlLeft.setViewportView(treeLeft);
         pnlRight.setViewportView(treeRight);
-        
-        pnlLeft.setMinimumSize(new Dimension(30, 60));
-        pnlRight.setMinimumSize(new Dimension(30, 60));
         
         add(lblInstructions, BorderLayout.NORTH);
         add(pnlLeft, BorderLayout.WEST);

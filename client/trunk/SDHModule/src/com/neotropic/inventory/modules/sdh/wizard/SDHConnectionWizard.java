@@ -22,7 +22,6 @@ import com.neotropic.inventory.modules.sdh.SDHModuleService;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dialog;
-import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
@@ -811,22 +810,15 @@ public class SDHConnectionWizard {
             pnlTreeASide = new ExplorablePanel();
             pnlTreeBSide = new ExplorablePanel();
             
-            pnlTreeASide.add(treeASide);
-            pnlTreeBSide.add(treeBSide);
-            
             pnlTreeASide.getExplorerManager().setRootContext(new ObjectNode(equipmentA));
             pnlTreeBSide.getExplorerManager().setRootContext(new ObjectNode(equipmentB));
             
-            JScrollPane pnlScrollTreeASide = new JScrollPane();
-            JScrollPane pnlScrollTreeBSide = new JScrollPane();
+            pnlTreeASide.setViewportView(treeASide);
+            pnlTreeBSide.setViewportView(treeBSide);
             
-            pnlScrollTreeASide.setViewportView(pnlTreeASide);
-            pnlScrollTreeBSide.setViewportView(pnlTreeBSide);
-            
-            GridLayout layout = new GridLayout(1, 2);
-            thePanel.setLayout(layout);
-            thePanel.add(pnlScrollTreeASide);
-            thePanel.add(pnlScrollTreeBSide);
+            thePanel.setLayout(new BorderLayout());
+            thePanel.add(pnlTreeASide, BorderLayout.WEST);
+            thePanel.add(pnlTreeBSide, BorderLayout.EAST);
             
             thePanel.setName("Select the endpoints");
             //Shows what step we're in on the left panel of the wizard

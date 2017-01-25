@@ -55,6 +55,7 @@ public class AbstractNodeWidget extends SelectableNodeWidget {
      */
     public AbstractNodeWidget(Scene scene, LocalObjectLight object) {
         super(scene, object);
+        
         LookFeel lookFeel = getScene().getLookFeel();
         
         this.squareWidget = new Widget(scene);
@@ -74,16 +75,21 @@ public class AbstractNodeWidget extends SelectableNodeWidget {
         createActions(AbstractScene.ACTION_SELECT);
         createActions(AbstractScene.ACTION_CONNECT);
         
-        setState (ObjectState.createNormal());        
+        setState (ObjectState.createNormal());   
+        
     }
     
     public LabelWidget getLabelWidget() {
         return labelWidget;
     }
     
-    public void togglelabel(boolean visible) {
-        labelWidget.setVisible(visible);
-    }
+//    public void togglelabel(boolean visible) {
+//        //labelWidget.setVisible(visible);
+//        if (!visible)
+//            labelWidget.setPreferredSize(new Dimension(0, 0));
+//        else
+//            labelWidget.setPreferredSize(new Dimension(10, 5));
+//    }
     
     /**
      * Implements the widget-state specific look of the widget.
