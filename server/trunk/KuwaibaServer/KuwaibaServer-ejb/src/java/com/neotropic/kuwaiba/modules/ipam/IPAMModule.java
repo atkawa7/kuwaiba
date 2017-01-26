@@ -17,8 +17,11 @@ package com.neotropic.kuwaiba.modules.ipam;
 
 import com.neotropic.kuwaiba.modules.GenericCommercialModule;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.application.Pool;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
@@ -135,14 +138,14 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws NotAuthorizedException 
      */
     private List<RemotePool> getDefaultIPAMRootNodes() throws NotAuthorizedException, MetadataObjectNotFoundException{
-        List<Pool> ipv4RootPools = aem.getRootPools(Constants.CLASS_SUBNET_IPV4, 2, false);
-        List<Pool> ipv6RootPools = aem.getRootPools(Constants.CLASS_SUBNET_IPV6, 2, false);
+        List<Pool> ipv4RootPools = aem.getRootPools(Constants.CLASS_SUBNET_IPV4, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
+        List<Pool> ipv6RootPools = aem.getRootPools(Constants.CLASS_SUBNET_IPV6, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
         
         List<RemotePool> rootSubnetPools = new ArrayList<>();
         if(ipv4RootPools.isEmpty() || ipv6RootPools.isEmpty()){
             createRootNodes();
-            ipv4RootPools = aem.getRootPools(Constants.CLASS_SUBNET_IPV4, 2, false);
-            ipv6RootPools = aem.getRootPools(Constants.CLASS_SUBNET_IPV6, 2, false);
+            ipv4RootPools = aem.getRootPools(Constants.CLASS_SUBNET_IPV4, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
+            ipv6RootPools = aem.getRootPools(Constants.CLASS_SUBNET_IPV6, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
         }
         
         for (Pool rootPool : ipv4RootPools) 
@@ -160,8 +163,10 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws NotAuthorizedException 
      */
     private void createRootNodes() throws MetadataObjectNotFoundException, NotAuthorizedException{
-        aem.createRootPool(Constants.NODE_IPV6ROOT, Constants.NODE_IPV6ROOT, Constants.CLASS_SUBNET_IPV6, 2);
-        aem.createRootPool(Constants.NODE_IPV4ROOT, Constants.NODE_IPV4ROOT, Constants.CLASS_SUBNET_IPV4, 2);
+        aem.createRootPool(Constants.NODE_IPV6ROOT, Constants.NODE_IPV6ROOT, 
+                Constants.CLASS_SUBNET_IPV6, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT);
+        aem.createRootPool(Constants.NODE_IPV4ROOT, Constants.NODE_IPV4ROOT, 
+                Constants.CLASS_SUBNET_IPV4, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT);
         //getDefaultIPAMRootNodes();
     }
     
@@ -275,13 +280,23 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws ArraySizeMismatchException
      * @throws NotAuthorizedException
      * @throws MetadataObjectNotFoundException 
+     * @throws ObjectNotFoundException 
+     * @throws OperationNotPermittedException 
      */
     public long createSubnet(long parentId, String className, String[] attributeNames, 
-            String[][] attributeValues) throws ApplicationObjectNotFoundException, 
+            String[][] attributeValues) throws 
             InvalidArgumentException, ArraySizeMismatchException, NotAuthorizedException, 
-            MetadataObjectNotFoundException
+            MetadataObjectNotFoundException, OperationNotPermittedException, ObjectNotFoundException, ApplicationObjectNotFoundException
     {
-        return bem.createPoolItem(parentId, className, attributeNames, attributeValues, 0);
+        try {
+            aem.getPool(parentId);
+            return bem.createPoolItem(parentId, className, attributeNames, attributeValues, 0);
+        } catch (ApplicationObjectNotFoundException ex) {
+            HashMap<String,List<String>> attributes = new HashMap<>();
+            for (int i = 0; i < attributeNames.length; i++)
+                attributes.put(attributeNames[i], Arrays.asList(attributeValues[i]));
+            return bem.createSpecialObject(className, className, parentId, attributes, 0);
+        }
     }
     
     
@@ -301,6 +316,7 @@ public class IPAMModule implements GenericCommercialModule{
     {
         if(ids != null)
             bem.deleteObject(className, ids[0], releaseRelationships);
+        
     }
     
     /**
@@ -466,8 +482,40 @@ public class IPAMModule implements GenericCommercialModule{
             ObjectNotFoundException, ApplicationObjectNotFoundException, 
             NotAuthorizedException
     {
-        return bem.getObjectSpecialChildren(className, id);
+        List<RemoteBusinessObjectLight> children = bem.getObjectSpecialChildren(className, id);
+        List<RemoteBusinessObjectLight> usedIps = new ArrayList<>();
+        for (RemoteBusinessObjectLight child : children) {
+            if(child.getClassName().equals(Constants.CLASS_IP_ADDRESS))
+                usedIps.add(child);
+        }
+        return usedIps;
     }
+    
+    /**
+     * Retrieves all the Subnets created inside a subnet
+     * @param id subnet id
+     * @param className If the subnet has IPv4 or an IPv6 addresses
+     * @return the next free IP address in the subnet 
+     * @throws MetadataObjectNotFoundException 
+     * @throws ObjectNotFoundException 
+     * @throws ApplicationObjectNotFoundException 
+     * @throws NotAuthorizedException 
+     */
+    public List<RemoteBusinessObjectLight> getSubnetsInSubent(long id, String className) 
+            throws MetadataObjectNotFoundException, 
+            ObjectNotFoundException, ApplicationObjectNotFoundException, 
+            NotAuthorizedException
+    {
+        List<RemoteBusinessObjectLight> children = bem.getObjectSpecialChildren(className, id);
+        List<RemoteBusinessObjectLight> subnets = new ArrayList<>();
+        for (RemoteBusinessObjectLight child : children) {
+            if(child.getClassName().equals(Constants.CLASS_SUBNET_IPV4) || 
+                    child.getClassName().equals(Constants.CLASS_SUBNET_IPV6))
+            subnets.add(child);
+        }
+        return subnets;
+    }
+    
     /**
      * checks if the new subnet overlaps with in the created subnets
      * @param networkIp

@@ -43,15 +43,19 @@ import org.kuwaiba.ws.toserialize.application.UserInfoLight;
  */
 public interface ApplicationEntityManager {
     /**
-     * Type of pool general purpose. These pools are not linked to any particular model
+     * Type of pool general purpose. 
+     * These pools are not linked to any particular model
      */
     public static final int POOL_TYPE_GENERAL_PURPOSE = 1;
     /**
-     * Type of pool module root. These pools are used in models and are the root of such model
+     * Type of pool module root. 
+     * These pools are used in models and are the root of such model
      */
     public static final int POOL_TYPE_MODULE_ROOT = 2;
     /**
-     * Type of pool module component. These pools are used in models and are in the lower levels of the pool containment hierarchy
+     * Type of pool module component. 
+     * These pools are used in models and are in the lower levels of the pool 
+     * containment hierarchy.
      */
     public static int POOL_TYPE_MODULE_COMPONENT = 3;
     /**
