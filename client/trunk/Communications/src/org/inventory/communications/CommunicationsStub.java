@@ -1222,6 +1222,7 @@ public class CommunicationsStub {
         }
     }
     //</editor-fold>
+    
     // <editor-fold defaultstate="collapsed" desc="Object methods. Click on the + sign on the left to edit the code.">
     /**
      * 
@@ -2248,8 +2249,9 @@ public class CommunicationsStub {
     }
     
     /**
-     * Creates a pool that will have as parent an inventory object. This special containment structure can be used to 
-     * provide support for new models
+     * Creates a pool that will have as parent an inventory object.
+     * This special containment structure can be used to provide 
+     * support for new models.
      * @param parentClassname Class name of the parent object
      * @param parentId Id of the parent object
      * @param name Pool name
@@ -3203,6 +3205,18 @@ public class CommunicationsStub {
         return null;
     }
     
+    public List<LocalObjectLight> getSubnetsInSubent(long id, String className){
+        try {
+            List<LocalObjectLight> res = new ArrayList<>();
+            for (RemoteObjectLight anIp : service.getSubnetsInSubent(id, 0, className, this.session.getSessionId())) 
+                res.add(new LocalObjectLight(anIp.getOid(), anIp.getName(), anIp.getClassName()));
+            return res;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+        }
+        return null;
+    }
+
     public boolean relateToVLAN(long subnetId, String className, long vlanId){
         try{
             service.relateToVlan(subnetId, className, vlanId, this.session.getSessionId());
