@@ -1,5 +1,5 @@
-/**
- * Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
+/*
+ * Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>
  *
  * Licensed under the EPL License, Version 1.0 (the "License"); you may not use
  * this file except in compliance with the License. You may obtain a copy of the
@@ -15,6 +15,7 @@
  */
 package com.neotropic.inventory.modules.ipam.nodes.actions;
 
+import com.neotropic.inventory.modules.ipam.nodes.SubnetChildren;
 import com.neotropic.inventory.modules.ipam.nodes.SubnetNode;
 import com.neotropic.inventory.modules.ipam.nodes.SubnetPoolChildren;
 import com.neotropic.inventory.modules.ipam.nodes.SubnetPoolNode;
@@ -27,9 +28,9 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.openide.nodes.AbstractNode;
 import org.openide.util.Utilities;
 import org.openide.util.lookup.ServiceProvider;
-
 
 /**
  *
@@ -37,7 +38,6 @@ import org.openide.util.lookup.ServiceProvider;
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
 public class DeleteSubnetAction extends GenericObjectNodeAction{
-
     /**
      * Reference to the communications stub singleton
      */
@@ -50,24 +50,25 @@ public class DeleteSubnetAction extends GenericObjectNodeAction{
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        
         Iterator<? extends SubnetNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(SubnetNode.class).allInstances().iterator();
         String className = "";
-        SubnetNode selectedNode = null;
-        SubnetPoolNode parentNode = null;
+        AbstractNode parentNode = null;
         
         if (!selectedNodes.hasNext())
             return;
         List<Long> ids = new ArrayList<>();
         while (selectedNodes.hasNext()) {
-            selectedNode = (SubnetNode)selectedNodes.next();
-            parentNode = (SubnetPoolNode)selectedNode.getParentNode();
+            SubnetNode selectedNode = (SubnetNode)selectedNodes.next();
+            parentNode = (AbstractNode) selectedNode.getParentNode();
             className = selectedNode.getObject().getClassName();
             ids.add(selectedNode.getObject().getOid());
         }
         
         if (com.deleteSubnet(className, ids)){
-            ((SubnetPoolChildren)parentNode.getChildren()).addNotify();
+            if(parentNode instanceof SubnetPoolNode)
+                ((SubnetPoolChildren)parentNode.getChildren()).addNotify();
+            else
+                ((SubnetChildren)parentNode.getChildren()).addNotify();
             NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
                     java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_DELETION_TEXT_OK"));
         }

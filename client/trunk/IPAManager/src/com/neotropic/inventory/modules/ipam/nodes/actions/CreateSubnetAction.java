@@ -16,6 +16,7 @@
 package com.neotropic.inventory.modules.ipam.nodes.actions;
 
 import com.neotropic.inventory.modules.ipam.engine.SubnetEngine;
+import com.neotropic.inventory.modules.ipam.nodes.SubnetChildren;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import org.inventory.communications.CommunicationsStub;
@@ -34,6 +35,7 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import org.inventory.communications.core.LocalObject;
+import org.openide.nodes.AbstractNode;
 import org.openide.util.Utilities;
 
 
@@ -63,24 +65,34 @@ public class CreateSubnetAction extends AbstractAction{
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        Iterator<? extends SubnetPoolNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(SubnetPoolNode.class).allInstances().iterator();
+        Iterator<? extends AbstractNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(AbstractNode.class).allInstances().iterator();
         String className = "";
+        String subnetFather = "";
         long id = 0;
         
         if (!selectedNodes.hasNext())
             return;
         
         while (selectedNodes.hasNext()) {
-            SubnetPoolNode selectedNode = (SubnetPoolNode)selectedNodes.next();
-            className = selectedNode.getSubnetPool().getClassName();
-            id = selectedNode.getSubnetPool().getOid();
+            AbstractNode selectedNode = selectedNodes.next();
+            if(selectedNode instanceof SubnetPoolNode){
+                SubnetPoolNode node = (SubnetPoolNode)selectedNode;
+                className = node.getSubnetPool().getClassName();
+                id = node.getSubnetPool().getOid();
+                subnetFather = null;
+            }
+            else if(selectedNode instanceof SubnetNode){
+                SubnetNode node = (SubnetNode)selectedNode;
+                className = node.getObject().getClassName();
+                id = node.getObject().getOid();
+                subnetFather =  node.getObject().getName();
+            }
         }
-        CreateSubnetFrame subnetFrame = new CreateSubnetFrame(id, className);
+        CreateSubnetFrame subnetFrame = new CreateSubnetFrame(id, className, subnetFather);
         subnetFrame.setVisible(true);
     }    
     
     private class CreateSubnetFrame extends JFrame{
-
 
         private javax.swing.JButton btnAddSubnet;
         private javax.swing.JButton btnClose;
@@ -92,15 +104,21 @@ public class CreateSubnetAction extends AbstractAction{
         private javax.swing.JPanel pnl;
         private javax.swing.JCheckBox cbxCreateAllIps;
         
-        private String className;
-        private long parentId;
+        private final String className;
+        private final long parentId;
+        private final String subnetFather;
         private LocalObjectLight newSubnet;
 
-        public CreateSubnetFrame(long parentId, String className) {
+        public CreateSubnetFrame(long parentId, String className, String subnetFather) {
             this.className = className;
             this.parentId = parentId;
+            this.subnetFather = subnetFather;
             initComponents();
             txtDescription.requestFocus();
+            if(subnetFather != null){
+                String[] split = subnetFather.split("/");
+                txtIpAddress.setText(split[0]+"/");
+            }
         }
 
         @SuppressWarnings("unchecked")
@@ -121,7 +139,7 @@ public class CreateSubnetAction extends AbstractAction{
                 }
             });
             txtIpAddress = new PTextField(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_USE_CIDR"));
-            txtIpAddress.setForeground(Color.lightGray);
+            //txtIpAddress.setForeground(Color.lightGray);
             txtDescription = new javax.swing.JTextField();
             lblIpAddress = new javax.swing.JLabel();
             lblDescription = new javax.swing.JLabel();
@@ -202,7 +220,9 @@ public class CreateSubnetAction extends AbstractAction{
             SubnetEngine subnetEngine = new SubnetEngine();
             String ipCIDR = txtIpAddress.getText();
             boolean createIps = false;
+            boolean isSubnet = false;
             if(SubnetEngine.isCIDRFormat(ipCIDR)){
+                
                 lblError.setVisible(false);
                 String[] attributeNames = new String[5];
                 String[] attributeValues = new String[5];
@@ -222,6 +242,9 @@ public class CreateSubnetAction extends AbstractAction{
                     attributeValues[4] = Integer.toString(subnetEngine.calculateNumberOfHosts());
                     attributeValues[0] = ipCIDR;
                     
+                    if(subnetFather != null)
+                        isSubnet = subnetEngine.isSubnetofSubnet(ipCIDR, subnetFather);
+                    
                 }else if(className.equals(Constants.CLASS_SUBNET_IPV6)){
                     subnetEngine.calculateSubnetsIpv6(ipCIDR);
                     List<String> subnets = subnetEngine.getSubnets();
@@ -229,63 +252,43 @@ public class CreateSubnetAction extends AbstractAction{
                     attributeValues[3] = subnets.get(0);
                     attributeValues[4] = Integer.toString(subnetEngine.calculateNumberOfHostsIpV6());
                     attributeValues[0] = ipCIDR;
+                    
+                    if(subnetFather != null)
+                        isSubnet = subnetEngine.isSubnetofSubnetIPv6(ipCIDR, subnetFather);
                 }
+                
+                if(subnetFather != null && !isSubnet){
+                    lblError.setText("this is not a subnet of "+ subnetFather);
+                    lblError.setVisible(true);
+                    return;
+                }
+                
                 if(cbxCreateAllIps.isSelected()){
                     int dialogButton = JOptionPane.YES_NO_OPTION;
                     int dialogResult = JOptionPane.showConfirmDialog (null, 
                                       "\nThis could be dangerous!!!"
                                     + "\nIf the subnet has to many IP Addresses\n"
                                     + "\nWould You like to create all the possible ip address?","Warning!!",dialogButton);
-                    if(dialogResult == JOptionPane.YES_OPTION){
+                    if(dialogResult == JOptionPane.YES_OPTION)
                             createIps=true;
-                    }
                 }
                 
                 newSubnet = CommunicationsStub.getInstance().createSubnet(parentId, className,
-                            new LocalObject(className, 0, attributeNames, attributeValues));
-
-                if(createIps){
-                    String[] ipAttributeNames = new String[2];
-                    String[] ipAttributeValues = new String[2];
-
-                    ipAttributeNames[0] = Constants.PROPERTY_NAME;
-                    ipAttributeNames[1] = Constants.PROPERTY_DESCRIPTION;
-                    
-                    LocalObjectLight addedIP = null;
-                    String[] split = ipCIDR.split("/");
-                    String ip = attributeValues[3];
-                    if(className.equals(Constants.CLASS_SUBNET_IPV4)){
-
-                        while(SubnetEngine.belongsTo(attributeValues[3], ip, Integer.parseInt(split[1]))){
-                            ip =  SubnetEngine.nextIpv4(attributeValues[3], attributeValues[2], ip, Integer.parseInt(split[1]));
-                            if(ip.trim().equals(attributeValues[2].trim()))
-                                break;
-                            ipAttributeValues[0] = ip;
-                            ipAttributeValues[1] = "";
-                            addedIP = CommunicationsStub.getInstance().addIP(newSubnet.getOid(), className,
-                            new LocalObject(className, 0, ipAttributeNames, ipAttributeValues));
-                        }
-                    }
-
-                    else if(className.equals(Constants.CLASS_SUBNET_IPV6)){
-                        ip = SubnetEngine.nextIpv6(attributeValues[3], attributeValues[2], attributeValues[3], Integer.parseInt(split[1]));
-                        while(SubnetEngine.belongsToIpv6(attributeValues[3], ip, Integer.parseInt(split[1]))){
-                            ip =  SubnetEngine.nextIpv6(attributeValues[3], attributeValues[2], ip, Integer.parseInt(split[1]));
-                            if(ip.trim().equals(attributeValues[2].trim()))
-                                break;
-                            ipAttributeValues[0] = ip;
-                            ipAttributeValues[1] = "";
-                            addedIP = CommunicationsStub.getInstance().addIP(newSubnet.getOid(), className, 
-                            new LocalObject(className, 0, ipAttributeNames, ipAttributeValues));
-                        }
-                    }
-                }
+                    new LocalObject(className, 0, attributeNames, attributeValues));
+                
+                if(createIps)
+                    createIps(ipCIDR, attributeValues, className, newSubnet);
+                
                 if (newSubnet == null)
                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
                 else{
-                    ((SubnetPoolChildren)subnetPoolNode.getChildren()).addNotify();
+                    if(subnetPoolNode != null)
+                        ((SubnetPoolChildren)subnetPoolNode.getChildren()).addNotify();
+                    else
+                        ((SubnetChildren)subnetNode.getChildren()).addNotify();
+                    
                     NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_CREATED"));
-                    }
+                }
                 dispose();
             }
             else
@@ -294,6 +297,43 @@ public class CreateSubnetAction extends AbstractAction{
 
         public LocalObjectLight getNewSubnet() {
             return newSubnet;
+        }
+    }
+    
+    private void createIps(String ipCIDR, String[] attributeValues, String className, LocalObjectLight newSubnet){
+        String[] ipAttributeNames = new String[2];
+        String[] ipAttributeValues = new String[2];
+
+        ipAttributeNames[0] = Constants.PROPERTY_NAME;
+        ipAttributeNames[1] = Constants.PROPERTY_DESCRIPTION;
+
+        LocalObjectLight addedIP = null;
+        String[] split = ipCIDR.split("/");
+        String ip = attributeValues[3];
+        if(className.equals(Constants.CLASS_SUBNET_IPV4)){
+
+            while(SubnetEngine.belongsTo(attributeValues[3], ip, Integer.parseInt(split[1]))){
+                ip =  SubnetEngine.nextIpv4(attributeValues[3], attributeValues[2], ip, Integer.parseInt(split[1]));
+                if(ip.trim().equals(attributeValues[2].trim()))
+                    break;
+                ipAttributeValues[0] = ip;
+                ipAttributeValues[1] = "";
+                addedIP = CommunicationsStub.getInstance().addIP(newSubnet.getOid(), className,
+                new LocalObject(className, 0, ipAttributeNames, ipAttributeValues));
+            }
+        }
+
+        else if(className.equals(Constants.CLASS_SUBNET_IPV6)){
+            ip = SubnetEngine.nextIpv6(attributeValues[3], attributeValues[2], attributeValues[3], Integer.parseInt(split[1]));
+            while(SubnetEngine.belongsToIpv6(attributeValues[3], ip, Integer.parseInt(split[1]))){
+                ip =  SubnetEngine.nextIpv6(attributeValues[3], attributeValues[2], ip, Integer.parseInt(split[1]));
+                if(ip.trim().equals(attributeValues[2].trim()))
+                    break;
+                ipAttributeValues[0] = ip;
+                ipAttributeValues[1] = "";
+                addedIP = CommunicationsStub.getInstance().addIP(newSubnet.getOid(), className, 
+                new LocalObject(className, 0, ipAttributeNames, ipAttributeValues));
+            }
         }
     }
 }

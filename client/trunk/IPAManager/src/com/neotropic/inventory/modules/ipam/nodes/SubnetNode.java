@@ -16,6 +16,7 @@
 package com.neotropic.inventory.modules.ipam.nodes;
 
 import com.neotropic.inventory.modules.ipam.nodes.actions.AddIPAddressAction;
+import com.neotropic.inventory.modules.ipam.nodes.actions.CreateSubnetAction;
 import java.awt.Image;
 import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
@@ -55,6 +56,7 @@ public class SubnetNode extends ObjectNode {
     public Action[] getActions(boolean context){
         return new Action[]{
             new AddIPAddressAction(),
+            new CreateSubnetAction(this),
             null,
             new RelateToServiceAction(),
             new RelateToVlanAction(),

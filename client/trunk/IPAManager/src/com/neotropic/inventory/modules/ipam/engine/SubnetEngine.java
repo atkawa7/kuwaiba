@@ -42,6 +42,10 @@ public class SubnetEngine {
     }
     
     public void calculateSubnets(String ipCIDR){
+        ipAddress = "";
+        mapSubnets = new HashMap();
+        subnets = new ArrayList<>();
+        
         String[] ipCIDRsplited = ipCIDR.split("/");
               
         ipAddress = ipCIDRsplited[0];
@@ -230,7 +234,6 @@ public class SubnetEngine {
                 binaryMask.add(segment);
                 segment = new ArrayList<>();
             }
-            
         }
         return binaryMask;
     }
@@ -295,6 +298,10 @@ public class SubnetEngine {
     }
     
     public void calculateSubnetsIpv6(String ipCIDR){
+        ipAddress = "";
+        mapSubnets = new HashMap();
+        subnets = new ArrayList<>();
+        
         String[] splitedCIDR = ipCIDR.split("/");
         maskBits = Integer.parseInt(splitedCIDR[1]);
         ipAddress = splitedCIDR[0];
@@ -667,5 +674,47 @@ public class SubnetEngine {
                 break;
         }
         return true;
+    }
+    
+    public boolean isSubnetofSubnet(String ipCIDR, String subnetFather){
+        String[] splitNewSubnet = ipCIDR.split("/");
+        String[] splitSubnetFather = subnetFather.split("/");
+        
+        if(Integer.valueOf(splitNewSubnet[1]) < Integer.valueOf(splitSubnetFather[1]))
+            return false;
+        else{
+            calculateSubnets(ipCIDR);
+            String newSubnetBroadcastIp = subnets.get(subnets.size()-1);
+            String newSubnetNetworkIp = subnets.get(0);
+            
+            calculateSubnets(subnetFather);
+            String subnetFatherNetworkIp = subnets.get(0);
+            
+            if(belongsTo(subnetFatherNetworkIp, newSubnetNetworkIp, Integer.valueOf(splitSubnetFather[1])))
+                return belongsTo(subnetFatherNetworkIp, newSubnetBroadcastIp, Integer.valueOf(splitSubnetFather[1]));
+            else
+                return false;
+        }
+    }
+    
+    public boolean isSubnetofSubnetIPv6(String ipCIDR, String subnetFather){
+        String[] splitNewSubnet = ipCIDR.split("/");
+        String[] splitSubnetFather = subnetFather.split("/");
+        
+        if(Integer.valueOf(splitNewSubnet[1]) < Integer.valueOf(splitSubnetFather[1]))
+            return false;
+        else{
+            calculateSubnetsIpv6(ipCIDR);
+            String newSubnetBroadcastIp = subnets.get(subnets.size()-1);
+            String newSubnetNetworkIp = subnets.get(0);
+            
+            calculateSubnetsIpv6(subnetFather);
+            String subnetFatherNetworkIp = subnets.get(0);
+            
+            if(belongsToIpv6(subnetFatherNetworkIp, newSubnetNetworkIp, Integer.valueOf(splitSubnetFather[1])))
+                return belongsToIpv6(subnetFatherNetworkIp, newSubnetBroadcastIp, Integer.valueOf(splitSubnetFather[1]));
+            else
+                return false;
+        }
     }
 }

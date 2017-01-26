@@ -79,6 +79,7 @@ public class AddIPAddressAction extends GenericObjectNodeAction {
         String broadcastIp = (String)subnet.getAttribute(Constants.PROPERTY_BROADCASTIP);
         String cidr = subnet.getName();
         int type = 0;
+        
         if(className.equals(Constants.CLASS_SUBNET_IPV4))
             type = 4;
         if(className.equals(Constants.CLASS_SUBNET_IPV6))
@@ -226,10 +227,14 @@ public class AddIPAddressAction extends GenericObjectNodeAction {
         private void btnAddSubnetActionPerformed(java.awt.event.ActionEvent evt) { 
             
             String ipAddress = txtIpAddress.getText();
+            
+            
+            boolean isRange = false;
             boolean isUsed = false;
             boolean itBelong = false;
             boolean isNetworIp = false;
             boolean isBroadcastIp = false;
+            
             
             if(SubnetEngine.isIPAddress(ipAddress)){
                 //looking for used IPs
