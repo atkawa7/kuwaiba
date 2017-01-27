@@ -227,50 +227,58 @@ public class AddIPAddressAction extends GenericObjectNodeAction {
         private void btnAddSubnetActionPerformed(java.awt.event.ActionEvent evt) { 
             
             String ipAddress = txtIpAddress.getText();
-            
-            
-            boolean isRange = false;
+            List<String> ips = new ArrayList<>();
             boolean isUsed = false;
             boolean itBelong = false;
-            boolean isNetworIp = false;
-            boolean isBroadcastIp = false;
             
-            
-            if(SubnetEngine.isIPAddress(ipAddress)){
-                //looking for used IPs
-                for (LocalObjectLight subnetUsedIp : subnetUsedIps) {
-                    if(subnetUsedIp.getName().equals(ipAddress)){
-                        isUsed = true;
-                        break;
+            if(ipAddress.contains("-")){
+                String[] split = ipAddress.split("-");
+                String firstIp = split[0].trim();
+                String lastIp =  split[1].trim();
+
+                if(SubnetEngine.isIPAddress(firstIp) && 
+                        SubnetEngine.isIPAddress(lastIp) &&
+                        belongToSubnet(firstIp) &&
+                        belongToSubnet(lastIp))
+                {
+                    isUsed = ipIsInuse(ipAddress);
+                    if (!isUsed)
+                        ips.add(firstIp);
+                    String nextRangeIp = firstIp;
+                    
+                    while(!nextRangeIp.equals(lastIp)){
+                        nextRangeIp = nextIpInRange(nextRangeIp, className, networkIp, broadcastIp);
+                        isUsed = ipIsInuse(ipAddress);
+                        if (!isUsed && nextRangeIp != null)
+                            ips.add(nextRangeIp);
                     }
                 }
-                
-                if(className.equals(Constants.CLASS_SUBNET_IPV4)){
-                    if(!SubnetEngine.belongsTo(networkIp, ipAddress, maskBits))
-                        itBelong = true;
+                else{
+                    lblError.setText("One or both IP addresses are misspelled or are out of the subnet range, please check");
+                    lblError.setVisible(true);  
                 }
-                else if (className.equals(Constants.CLASS_SUBNET_IPV6)){   
-                    if(!SubnetEngine.belongsToIpv6(networkIp, ipAddress, maskBits))
-                        itBelong = true;
+            }// end if IPs came in a range
+            
+            else{
+                if(SubnetEngine.isIPAddress(ipAddress)){
+                    if(belongToSubnet(ipAddress) && !ipIsInuse(ipAddress))
+                        ips.add(ipAddress);
+                    else{
+                        lblError.setText("This IP is outside of the subnet o is already in use");
+                        lblError.setVisible(true);
+                    }
                 }
-//                if(ipAddress.equals(networkIp))
-//                    isNetworIp = true;
-//                if(ipAddress.equals(networkIp))
-//                    isNetworIp = true;
-//                
-//                if(ipAddress.equals(broadcastIp))
-//                    isBroadcastIp = true;
-//                if(ipAddress.equals(broadcastIp))
-//                    isBroadcastIp = true;
-
-                if(!isUsed && !itBelong && !isBroadcastIp && ! isNetworIp){    
-                    lblError.setVisible(false);
+                else
+                    lblError.setVisible(true);
+            }//end else one IP
+            if(!ips.isEmpty()){
+                for (String ip : ips) {
                     String[] attributeNames = new String[2];
                     String[] attributeValues = new String[2];
 
                     attributeNames[0] = Constants.PROPERTY_NAME;
                     attributeNames[1] = Constants.PROPERTY_DESCRIPTION;
-                    attributeValues[0] = ipAddress;
+                    attributeValues[0] = ip;
                     attributeValues[1] = txtDescription.getText();
 
                     LocalObjectLight addedIP = CommunicationsStub.getInstance().addIP(parentId, className,
@@ -280,29 +288,49 @@ public class AddIPAddressAction extends GenericObjectNodeAction {
                         NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
                     else {
                         ((AbstractChildren)subnetNode.getChildren()).addNotify();
-                        NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_CREATED"));
+                        NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, ip + " " + java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_IP_CREATED"));
                     }
                     dispose();
-                }
-                else if(itBelong){
-                    lblError.setText("This IP is outside of the subnet");
-                    lblError.setVisible(true);
-                }
-                else if(isUsed){
-                    lblError.setText("This IP is in use");
-                    lblError.setVisible(true);  
-                }
-//                else if(isNetworIp){
-//                    lblError.setText("The network IP can not be use");
-//                    lblError.setVisible(true);  
-//                }
-//                else if(isBroadcastIp){
-//                    lblError.setText("The broadcast IP can not be use");
-//                    lblError.setVisible(true);  
-//                }
+                }//end for creating IPs 
             }
-            else
-                lblError.setVisible(true);
         }
+    
+        private boolean ipIsInuse(String ipAddress){
+            for (LocalObjectLight subnetUsedIp : subnetUsedIps) {
+                if(subnetUsedIp.getName().equals(ipAddress))
+                    return true;
+            }
+            return false;
+        }
+    
+        private String nextIpInRange(String ipAddress, String className, String networkIp, String broadcastIp){
+            String nextRangeIp = null;
+            switch (className) {
+                case Constants.CLASS_SUBNET_IPV4:
+                    nextRangeIp = SubnetEngine.nextIpv4(networkIp, broadcastIp, ipAddress, maskBits);
+                    if(SubnetEngine.belongsTo(networkIp, nextRangeIp, maskBits))
+                        return nextRangeIp;
+                    break;
+                case Constants.CLASS_SUBNET_IPV6:
+                    nextRangeIp = SubnetEngine.nextIpv6(networkIp, broadcastIp, ipAddress, maskBits);
+                    if(SubnetEngine.belongsToIpv6(networkIp, nextRangeIp, maskBits))
+                        return nextRangeIp;
+                    break;
+            }
+            return null;
+        }
+        
+        private boolean belongToSubnet(String ipAddress){
+            switch (className) {
+                case Constants.CLASS_SUBNET_IPV4:
+                    return SubnetEngine.belongsTo(networkIp, ipAddress, maskBits);
+                case Constants.CLASS_SUBNET_IPV6:
+                    return SubnetEngine.belongsToIpv6(networkIp, ipAddress, maskBits);
+            }
+            return false;
+        }
+        
     }
+    
+        
 }
