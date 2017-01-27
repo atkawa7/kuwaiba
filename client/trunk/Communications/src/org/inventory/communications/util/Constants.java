@@ -383,6 +383,7 @@ public class Constants {
     public static final String CLASS_ELECTRICALLINK = "ElectricalLink";
     public static final String CLASS_OPTICALLINK = "OpticalLink";
     public static final String CLASS_WIRELESSLINK = "RadioLink";
+    public static final String CLASS_POWERLINK = "PowerLink";
 
     /**
      * Physical connection type classes
@@ -390,6 +391,7 @@ public class Constants {
     public static final String CLASS_ELECTRICALLINKTYPE = "ElectricalLinkType";
     public static final String CLASS_OPTICALLINKTYPE = "OpticalLinkType";
     public static final String CLASS_WIRELESSLINKTYPE = "WirelessLinkType";
+    public static final String CLASS_POWERLINKTYPE = "PowerLinkType";
 
     /**
      * Physical container type classes
@@ -415,6 +417,8 @@ public class Constants {
             return CLASS_OPTICALLINKTYPE;
         if (connectionClass.equals(CLASS_WIRELESSLINK))
             return CLASS_WIRELESSLINKTYPE;
+        if (connectionClass.equals(CLASS_POWERLINK))
+            return CLASS_POWERLINKTYPE;
         if (connectionClass.equals(CLASS_WIRECONTAINER))
             return CLASS_WIRECONTAINERTYPE;
         if (connectionClass.equals(CLASS_WIRELESSCONTAINER))

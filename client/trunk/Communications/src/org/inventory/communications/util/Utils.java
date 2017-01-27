@@ -348,6 +348,8 @@ public class Utils {
             return Color.GREEN;
         if (connectionClass.equals(Constants.CLASS_WIRELESSLINK))
             return Color.MAGENTA;
+        if (connectionClass.equals(Constants.CLASS_POWERLINK))
+            return Color.YELLOW;
         if (connectionClass.equals(Constants.CLASS_WIRECONTAINER))
             return Color.RED;
         if (connectionClass.equals(Constants.CLASS_WIRELESSCONTAINER))
