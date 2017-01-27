@@ -74,6 +74,7 @@ public final class ObjectViewTopComponent extends TopComponent
     public static final int CONNECTION_ELECTRICALLINK = 3;
     public static final int CONNECTION_OPTICALLINK = 4;
     public static final int CONNECTION_WIRELESSLINK = 5;
+    public static final int CONNECTION_POWERLINK = 6;
     
 
     private Font currentFont = AbstractScene.defaultFont;
@@ -117,6 +118,7 @@ public final class ObjectViewTopComponent extends TopComponent
         buttonGroupRightToolbar.add(btnElectricalLink);
         buttonGroupRightToolbar.add(btnOpticalLink);
         buttonGroupRightToolbar.add(btnWirelessLink);
+        buttonGroupRightToolbar.add(btnPowerLink);
         buttonGroupRightToolbar.add(btnWireContainer);
         buttonGroupRightToolbar.add(btnWirelessContainer);
         btnSelect.setSelected(true);
@@ -168,6 +170,7 @@ public final class ObjectViewTopComponent extends TopComponent
         btnElectricalLink = new javax.swing.JToggleButton();
         btnOpticalLink = new javax.swing.JToggleButton();
         btnWirelessLink = new javax.swing.JToggleButton();
+        btnPowerLink = new javax.swing.JToggleButton();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -399,6 +402,19 @@ public final class ObjectViewTopComponent extends TopComponent
         });
         barConnections.add(btnWirelessLink);
 
+        btnPowerLink.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/objectview/res/power_link.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnPowerLink, org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnPowerLink.text")); // NOI18N
+        btnPowerLink.setToolTipText(org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnPowerLink.toolTipText")); // NOI18N
+        btnPowerLink.setFocusable(false);
+        btnPowerLink.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnPowerLink.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnPowerLink.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPowerLinkActionPerformed(evt);
+            }
+        });
+        barConnections.add(btnPowerLink);
+
         pnlRight.add(barConnections, java.awt.BorderLayout.LINE_END);
 
         add(pnlRight, java.awt.BorderLayout.LINE_END);
@@ -571,6 +587,17 @@ public final class ObjectViewTopComponent extends TopComponent
         service.getViewBuilder().getScene().toggleConnectionLabels(!btnShowConnectionLabels.isSelected());
     }//GEN-LAST:event_btnShowConnectionLabelsActionPerformed
 
+    private void btnPowerLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPowerLinkActionPerformed
+        if (!service.getViewBuilder().getScene().supportsConnections())
+            JOptionPane.showMessageDialog(null, "This view does not support the selected action", 
+                    "Information", JOptionPane.INFORMATION_MESSAGE);
+        else{
+            service.getViewBuilder().getScene().setNewLineColor(Color.yellow);
+            ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setConnectionClass(Constants.CLASS_POWERLINK);
+            ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setWizardType(PhysicalConnectionProvider.WIZARD_LINK);
+        }
+    }//GEN-LAST:event_btnPowerLinkActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barConnections;
     private javax.swing.JToolBar barContainers;
@@ -581,6 +608,7 @@ public final class ObjectViewTopComponent extends TopComponent
     private javax.swing.JButton btnExport;
     private javax.swing.JButton btnFormatText;
     private javax.swing.JToggleButton btnOpticalLink;
+    private javax.swing.JToggleButton btnPowerLink;
     private javax.swing.JButton btnRefresh;
     private javax.swing.JButton btnRemoveBackground;
     private javax.swing.JButton btnSave;
