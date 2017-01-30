@@ -21,13 +21,12 @@ import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.modules.EmbeddableComponent;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.web.custom.core.AbstractTooledComponent;
-import org.kuwaiba.web.modules.osp.AbstractGISView;
 
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class GoogleMapsGISView extends CustomComponent implements AbstractGISView, EmbeddableComponent {
+public class GoogleMapsGISView extends CustomComponent implements /*AbstractGISView,*/ EmbeddableComponent {
     
     private AbstractAction[] actions;
     private AbstractTooledComponent gisTooledComponent;
@@ -51,7 +50,8 @@ public class GoogleMapsGISView extends CustomComponent implements AbstractGISVie
     }    
     
     private void initActions() {
-        AbstractAction connect = new AbstractAction("Connect", new ThemeResource("img/mod_icon_osp_connect.png")) {
+        AbstractAction connect = new AbstractAction("Connect", 
+                new ThemeResource("img/mod_icon_osp_connect.png")) {
 
             @Override
             public void actionPerformed(Object sourceComponent, Object targetObject) {
@@ -59,14 +59,60 @@ public class GoogleMapsGISView extends CustomComponent implements AbstractGISVie
             }
         };
         
-        AbstractAction drawPolygon = new AbstractAction("Draw polygon", null) {
+        AbstractAction drawPolygon = new AbstractAction("Draw polygon", 
+                new ThemeResource("img/mod_icon_osp_polygon.png")) {
 
             @Override
             public void actionPerformed(Object sourceComponent, Object targetObject) {
                 getTopComponent().getEventBus().post(targetObject);
             }
         };
-        actions =  new AbstractAction[]{connect, drawPolygon};
+        
+        AbstractAction save  =new AbstractAction("Save", 
+                new ThemeResource("img/mod_icon_osp_save.png")) {
+
+            @Override
+            public void actionPerformed(Object sourceComponent, Object targetObject) {
+                getTopComponent().getEventBus().post(targetObject);
+            }
+        };
+        
+        AbstractAction open  =new AbstractAction("Open", 
+                new ThemeResource("img/mod_icon_osp_open.png")) {
+
+            @Override
+            public void actionPerformed(Object sourceComponent, Object targetObject) {
+                getTopComponent().getEventBus().post(targetObject);
+            }
+        };
+        
+        AbstractAction clear  =new AbstractAction("Clean") {
+
+            @Override
+            public void actionPerformed(Object sourceComponent, Object targetObject) {
+                getTopComponent().getEventBus().post(targetObject);
+            }
+        };
+        
+        AbstractAction newView = new AbstractAction("New", 
+                new ThemeResource("img/mod_icon_osp_add.png")) {
+
+            @Override
+            public void actionPerformed(Object sourceComponent, Object targetObject) {
+                getTopComponent().getEventBus().post(targetObject);
+            }
+        };
+        
+        AbstractAction deleteView = new AbstractAction("Delete", 
+                new ThemeResource("img/mod_icon_osp_delete.png")) {
+
+            @Override
+            public void actionPerformed(Object sourceComponent, Object targetObject) {
+                getTopComponent().getEventBus().post(targetObject);
+            }
+        };
+        
+        actions =  new AbstractAction[]{newView, open, save, deleteView, connect, drawPolygon, clear};
     }
     
     private void initGoogleMapWrapper() {
@@ -74,7 +120,17 @@ public class GoogleMapsGISView extends CustomComponent implements AbstractGISVie
         googleMapsWrapper.setSizeFull();
         gisTooledComponent.setMainComponent(googleMapsWrapper);
     }
-
+    
+    private void toogleButtons() {
+        
+        for (AbstractAction action : actions) {
+            action.actionPerformed(parentComponent, action);
+        }
+    }
+    /*
+    toggleButtons
+    */    
+    /*
     @Override
     public String getName() {
         return "OSP Module for Google Maps";
@@ -94,7 +150,7 @@ public class GoogleMapsGISView extends CustomComponent implements AbstractGISVie
     public String getVendor() {
         return "Neotropic SAS";
     }
-    
+    */
     public void register() {
         if (parentComponent != null)
             googleMapsWrapper.register();
@@ -109,5 +165,20 @@ public class GoogleMapsGISView extends CustomComponent implements AbstractGISVie
     public TopComponent getTopComponent() {
         return parentComponent;
     }
-    
+    /*
+    @Override
+    public void clear() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public byte[] getAsXML() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void render(byte[] structure) throws IllegalArgumentException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    */
 }

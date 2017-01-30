@@ -38,25 +38,26 @@ public class Polygon extends GoogleMapPolygon implements PropertyChangeListener,
     
     private final Polyline polyline;
     private boolean editable;
-    
-    private boolean removedFromView = false;
-    
-    public Polygon(PointMarker point, PropertyChangeListener propertyChangeListener) {
+        
+    public Polygon(PropertyChangeListener propertyChangeListener) {
         polyline = new PolylineImpl();
-        polyline.setStrokeColor(Polyline.defaultPolylineColor);
+        polyline.setStrokeColor(Polyline.defaultPolylineColor);        
         
         customPolygonColor = Polygon.defaultPolygonColor;
-        this.setFillColor(customPolygonColor);
-        this.setFillOpacity(0.5);
-        this.setStrokeColor(customPolygonColor);
+        setFillColor(customPolygonColor);
+        setFillOpacity(0.5);
+        setStrokeColor(customPolygonColor);
         
-        
-        point.addPropertyChangeListener(this);
-        polyline.getPoints().add(point);
-                
         addPropertyChangeListener(propertyChangeListener);
         
         polyline.addPropertyChangeListener(propertyChangeListener);
+    }
+    
+    public Polygon(PointMarker point, PropertyChangeListener propertyChangeListener) {
+        this(propertyChangeListener);
+        
+        point.addPropertyChangeListener(this);
+        polyline.getPoints().add(point);
     }
     
     public boolean isEditable() {
@@ -209,6 +210,9 @@ public class Polygon extends GoogleMapPolygon implements PropertyChangeListener,
     }
     
     private class PolylineImpl extends Polyline {
+        public PolylineImpl() {
+            super();
+        }
 
         @Override
         void enableEdition() {

@@ -34,7 +34,8 @@ public abstract class Polyline extends GoogleMapPolyline implements PropertyChan
     
     public static final String defaultPolylineColor = "#AAD400";
     public static final String selectedPolylineColor = "yellow";
-    public String customPolylineColor;
+    
+    public String customColor;
     /**
      * Control points
      */
@@ -48,8 +49,7 @@ public abstract class Polyline extends GoogleMapPolyline implements PropertyChan
     
     public Polyline() {
         points = new ArrayList();
-        customPolylineColor = Polyline.defaultPolylineColor;
-        setStrokeColor(customPolylineColor);
+        setStrokeColor(defaultPolylineColor);
     }    
     
     public List<PointMarker> getPoints() {
@@ -89,6 +89,7 @@ public abstract class Polyline extends GoogleMapPolyline implements PropertyChan
                 }
                 setSpecialPoints();
             }
+            customColor = getStrokeColor();
             setStrokeColor(Polyline.selectedPolylineColor);
             firePropertyChangeEvent("updatePolyline", null, this);
             
@@ -96,7 +97,7 @@ public abstract class Polyline extends GoogleMapPolyline implements PropertyChan
         }
         else {
             if (!points.isEmpty()) {
-                setStrokeColor(customPolylineColor);
+                setStrokeColor(customColor);
                 firePropertyChangeEvent("updatePolyline", null, this);
                 
                 enableEdition();

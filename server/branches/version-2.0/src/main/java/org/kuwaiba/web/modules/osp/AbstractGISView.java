@@ -41,4 +41,22 @@ public interface AbstractGISView {
      * @return The module's vendor
      */
     public abstract String getVendor();
+    
+    /**
+     * Remove all elements on the view.
+     */
+    public abstract void clear();
+    
+    /**
+     * The XML representation of the view. Typically used to serialize it
+     * @return XML document as a byte arrays
+     */
+    public abstract byte[] getAsXML();
+    
+    /**
+     * Renders a view. That is, reads its structure and renders its content
+     * @param structure The XML structure as an byte array (which is actually a dump of the stored xml file)
+     * @throws IllegalArgumentException If the XML has an unexpected format or value
+     */
+    public abstract void render(byte[] structure) throws IllegalArgumentException;
 }

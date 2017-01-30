@@ -104,7 +104,7 @@ public abstract class AbstractTooledComponent extends CustomComponent {
         setCompositionRoot(componentLayout);
         setSizeFull();
     }
-    
+        
     public void setMainComponent(Component mainComponent) {
         componentLayout.addComponent(mainComponent);
         ((AbstractOrderedLayout)componentLayout).setExpandRatio(mainComponent, 2);

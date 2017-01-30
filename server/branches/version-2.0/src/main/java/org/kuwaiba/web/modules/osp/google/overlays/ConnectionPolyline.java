@@ -19,24 +19,38 @@ import com.vaadin.tapio.googlemaps.client.LatLon;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
-import org.kuwaiba.web.custom.wizards.physicalconnection.PhysicalConnectionWizard;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
  * Polyline that represent a physical connection
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ConnectionPolyline extends Polyline {
+    private RemoteObjectLight connectionInfo;
+    
     private final NodeMarker source;
     private NodeMarker target;
-    /**
-     * Wizard to configure the physical connection
-     */
-    private PhysicalConnectionWizard wizard;
-        
+            
     public ConnectionPolyline(NodeMarker source) {
         this.source = source;
         getCoordinates().add(source.getPosition());
         target = null;
+    }
+    
+    public ConnectionPolyline(NodeMarker source, NodeMarker target) {
+        this.source = source;
+        this.target = target;
+        
+        this.source.addPropertyChangeListener(this);
+        this.target.addPropertyChangeListener(this);        
+    }
+    
+    public RemoteObjectLight getConnectionInfo() {
+        return connectionInfo;
+    }
+    
+    public void setConnectionInfo(RemoteObjectLight connectionInfo) {
+        this.connectionInfo = connectionInfo;
     }
     
     public NodeMarker getSource() {
@@ -54,15 +68,7 @@ public class ConnectionPolyline extends Polyline {
         this.source.addPropertyChangeListener(this);
         this.target.addPropertyChangeListener(this);
     }
-
-    public PhysicalConnectionWizard getWizard() {
-        return wizard;
-    }
-
-    public void setWizard(PhysicalConnectionWizard wizard) {
-        this.wizard = wizard;
-    }
-    
+        
     @Override
     void enableEdition() {
         List<PointMarker> viewablePoints = new ArrayList();
