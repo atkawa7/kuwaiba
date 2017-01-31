@@ -33,8 +33,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
@@ -139,10 +137,19 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
     
     public void enableConnectionTool(boolean value) {
         connectionEnable = !connectionEnable;
+        if (connectionEnable)
+            Notification.show("Enable Connection Tool", Notification.Type.TRAY_NOTIFICATION);
+        else
+            Notification.show("Disable Connection Tool", Notification.Type.TRAY_NOTIFICATION);
+        newConnection = null;            
     }
     
     public void enablePolygonTool(boolean value) {
         drawPolygonEnable = !drawPolygonEnable;
+        if (drawPolygonEnable)
+            Notification.show("Enable Polygon Tool", Notification.Type.TRAY_NOTIFICATION);
+        else
+            Notification.show("Disable Polygon Tool", Notification.Type.TRAY_NOTIFICATION);
     }
     
     @Override
@@ -154,34 +161,29 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
             newPolygon = null;
             return;
         } 
-        
         if (evt.getPropertyName().equals("addPolyline")) {
             GoogleMapPolyline gmPolyline = 
                     (GoogleMapPolyline) evt.getNewValue();
             getState().polylines.put(gmPolyline.getId(), gmPolyline);
             return;
         }
-        
         if (evt.getPropertyName().equals("updatePolyline")) {
             getState().polylinesChanged
                     .add((GoogleMapPolyline) evt.getNewValue());
             return;
         }
-        
         if (evt.getPropertyName().equals("hidePolyline")) {
             GoogleMapPolyline polyline = (GoogleMapPolyline) evt.getNewValue();
             polyline.setVisible(false);
             getState().polylinesChanged.add(polyline);
             return;
         }
-        
         if (evt.getPropertyName().equals("showPolyline")) {
             GoogleMapPolyline polyline = (GoogleMapPolyline) evt.getNewValue();
             polyline.setVisible(true);
             getState().polylinesChanged.add(polyline);
             return;
         }
-        
         if (evt.getPropertyName().equals("removeMarkers")) {
             List<Marker> markers = 
                     (ArrayList<Marker>) evt.getNewValue();
@@ -189,55 +191,46 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
                 removeMarker((Marker) marker);
             return;
         }
-        
         if (evt.getPropertyName().equals("addPolygon")) {
             GoogleMapPolygon gmPolygon = (GoogleMapPolygon) evt.getNewValue();
             getState().polygons.put(gmPolygon.getId(), gmPolygon);
             return;
         }
-        
         if (evt.getPropertyName().equals("hidePolygon")) {
             GoogleMapPolygon gmPolygon = (GoogleMapPolygon) evt.getNewValue();
             gmPolygon.setVisible(false);
             getState().polygonsChanged.add(gmPolygon);
             return;
         }
-        
         if (evt.getPropertyName().equals("showPolygon")) {
             GoogleMapPolygon gmPolygon = (GoogleMapPolygon) evt.getNewValue();
             gmPolygon.setVisible(true);
             getState().polygonsChanged.add(gmPolygon);
             return;
         }
-        
         if (evt.getPropertyName().equals("updatePolygon")) {
             getState().polygonsChanged
                     .add((GoogleMapPolygon) evt.getNewValue());
             return;
         }
-        
         if (evt.getPropertyName().equals("addMarker")) {
             GoogleMapMarker marker = (GoogleMapMarker) evt.getNewValue();
             getState().markers.put(marker.getId(), marker);
             return;
         }
-        
         if (evt.getPropertyName().equals("removeMarker")) {
             removeMarker((Marker) evt.getNewValue());
             return;
         }
-        
         if (evt.getPropertyName().equals("updateMarker")) {
             if (evt.getNewValue() instanceof Marker)
                 getState().markersChanged.add((GoogleMapMarker) evt.getNewValue());
             return;
         }
-        
         if (evt.getPropertyName().equals("updateMarkers")) {
             getState().markersChanged = 
                     (ArrayList<GoogleMapMarker>) evt.getNewValue();
         }
-        
         if (evt.getPropertyName().equals("showMarkers")) {
             List<GoogleMapMarker> markers = (ArrayList<GoogleMapMarker>) evt.getNewValue();
             for (GoogleMapMarker marker : markers)
@@ -245,7 +238,6 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
             getState().markersChanged = markers;
             return;
         }
-        
         if (evt.getPropertyName().equals("hideMarkers")) {
             List<GoogleMapMarker> markers = (ArrayList<GoogleMapMarker>) evt.getNewValue();
             for (GoogleMapMarker marker : markers)
@@ -253,15 +245,12 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
             getState().markersChanged = markers;
             return;
         }
-        
         if (evt.getPropertyName().equals("removePolygon")) {
             removePolygon((Polygon) evt.getSource());
             return;
         }
-        
         if (evt.getPropertyName().equals("removePolyline")) {
             removePolyline((Polyline) evt.getSource());
-            return;
         }
     }
     
@@ -321,7 +310,7 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
                                 
                 wsBean.deletePhysicalConnection(connInfo.getClassName(), connInfo.getOid(), ipAddress, sessioId);
             } catch (ServerSideException ex) {
-                //Logger.getLogger(CustomGoogleMap.class.getName()).log(Level.SEVERE, null, ex);
+                Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
             }
         }           
         List<PointMarker> points = polyline.getPoints();
@@ -370,22 +359,9 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
     }
     
     public void removeAllPhysicalConnection() {
-        for (GoogleMapPolyline gmPolyline : getState().polylines.values()) {
-            if (gmPolyline instanceof ConnectionPolyline) {
-                ConnectionPolyline connection = (ConnectionPolyline) gmPolyline;
-                RemoteObjectLight connInfo = connection.getConnectionInfo();
-
-                WebserviceBeanLocal wsBean = getTopComponent().getWsBean();
-                String ipAddress = getUI().getPage().getWebBrowser().getAddress();
-                String sessioId = getTopComponent().getApplicationSession().getSessionId();
-                                
-                try {
-                    wsBean.deletePhysicalConnection(connInfo.getClassName(), connInfo.getOid(), ipAddress, sessioId);
-                } catch (ServerSideException ex) {
-                    Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-                }
-            }
-        }   
+        for (GoogleMapPolyline gmPolyline : getState().polylines.values())
+            if (gmPolyline instanceof ConnectionPolyline)
+                removePolyline(gmPolyline);
     }
 
     @Override
@@ -636,6 +612,7 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
                             addConnectionForNode(target, edge);
                             
                             edge.addPropertyChangeListener(this);
+                            edge.setSaved(true);
                             getState().polylines.put(edge.getId(), edge);
                         }
                         else {
@@ -723,6 +700,26 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
         getUI().removeWindow(wizard);
         newConnection = null;
     }
+
+    public void connectionsSaved() {
+        for (GoogleMapPolyline gmPolyline : getState().polylines.values()) {
+            if (gmPolyline instanceof ConnectionPolyline) {
+                ConnectionPolyline connection = (ConnectionPolyline) gmPolyline;
+                if (!connection.isSaved())
+                    connection.setSaved(true);
+            }
+        }
+    }
+
+    public void removeConnectionsUnsave() {
+        for (GoogleMapPolyline gmPolyline : getState().polylines.values()) {
+            if (gmPolyline instanceof ConnectionPolyline) {
+                ConnectionPolyline connection = (ConnectionPolyline) gmPolyline;
+                if (!connection.isSaved())
+                    removePolyline(connection);
+            }
+        }
+    }
     
     private class MarkerClickListenerImpl implements MarkerClickListener {
         
@@ -745,9 +742,10 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
                     }
                     else {
                         newConnection.setTarget((NodeMarker) clickedMarker);
+                        /*
                         Notification.show("Target node of connection", 
                                 Notification.Type.HUMANIZED_MESSAGE);
-                        
+                        */
                         PhysicalConnectionWizard wizard = new PhysicalConnectionWizard(parentComponent, newConnection);
                         wizard.addCloseListener(CustomGoogleMap.this);
                         
@@ -773,16 +771,13 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
                 getState().markers.put(point.getId(), point);
                 
                 if (newPolygon == null)
-                    initNewPolygon(point);
+                    newPolygon = new Polygon(point, CustomGoogleMap.this);
                 else
                     newPolygon.addPoint(point);
             }
         }
     }
     
-    private void initNewPolygon(PointMarker point) {
-        newPolygon = new Polygon(point, this);
-    }
     /**
      * For test only.
      */

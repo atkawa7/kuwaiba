@@ -23,10 +23,9 @@ import com.vaadin.ui.Window;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class DeleteWindow extends ConfirmDialogWindow {
-    private boolean ok = false;
+public class CleanViewWindow extends ConfirmDialogWindow {
     
-    public DeleteWindow(Window.CloseListener closeListener) {
+    public CleanViewWindow(Window.CloseListener closeListener) {
         super(closeListener, "Confirmation", 
                 ConfirmDialogWindow.OK_CANCEL_OPTION);
     }
@@ -36,7 +35,7 @@ public class DeleteWindow extends ConfirmDialogWindow {
         VerticalLayout content = new VerticalLayout();
         content.setMargin(true);
         
-        Label lblMsg = new Label("Are you sure you want to delete the current view?");
+        Label lblMsg = new Label("Are you sure you want to delete all elements in the current view?");
         content.addComponent(lblMsg);
         
         return content;

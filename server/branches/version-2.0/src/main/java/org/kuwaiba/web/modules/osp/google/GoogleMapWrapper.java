@@ -38,6 +38,7 @@ import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.ViewInfo;
 import org.kuwaiba.interfaces.ws.toserialize.application.ViewInfoLight;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.web.modules.osp.windows.CleanViewWindow;
 import org.kuwaiba.web.modules.osp.windows.ConfirmDialogWindow;
 import org.kuwaiba.web.modules.osp.windows.DeleteWindow;
 import org.kuwaiba.web.modules.osp.windows.OpenViewWindow;
@@ -110,10 +111,15 @@ public class GoogleMapWrapper extends DragAndDropWrapper implements EmbeddableCo
         if ("Draw polygon".equals(event.getButton().getDescription())) {
             map.enablePolygonTool(true);
         }
-        
         if ("Clean".equals(event.getButton().getDescription())) {
-            map.clear();
-            Notification.show("The view was cleaned", Type.TRAY_NOTIFICATION);
+            if (view != null) {
+                CleanViewWindow window = new CleanViewWindow(this);
+                getUI().addWindow(window);
+            }
+            else {
+                map.clear();
+                Notification.show("The view was cleaned", Type.TRAY_NOTIFICATION);
+            }
         }
         if ("Open".equals(event.getButton().getDescription())) {
             try {
@@ -185,7 +191,6 @@ public class GoogleMapWrapper extends DragAndDropWrapper implements EmbeddableCo
                 getUI().removeWindow(window);
                 return;
             }
-            
             if (e.getWindow() instanceof SaveTopologyWindow) {
                 SaveTopologyWindow window = (SaveTopologyWindow) e.getWindow();
                 getUI().addWindow(window);
@@ -194,17 +199,19 @@ public class GoogleMapWrapper extends DragAndDropWrapper implements EmbeddableCo
                     String viewDescription = window.getViewDescription();
                     
                     if (view == null || view.getId() == -1) {
-                        wsBean.createGeneralView(CLASS_VIEW, viewName, 
+                        long id = wsBean.createGeneralView(CLASS_VIEW, viewName, 
                         viewDescription, map.getAsXML(), null, 
                         ipAddress, sessioId);
+                        view = wsBean.getGeneralView(id, ipAddress, sessioId);
                         
+                        map.connectionsSaved();
                         Notification.show("OSP View Saved", Type.TRAY_NOTIFICATION);
                     }
                     else {
                         wsBean.updateGeneralView(view.getId(), viewName, 
                                 viewDescription, map.getAsXML(), null, 
                                 ipAddress, sessioId);
-                        
+                        map.connectionsSaved();
                         Notification.show("OSP View Updated", Type.TRAY_NOTIFICATION);
                     }
                     if (windowCallSaveView) {
@@ -234,6 +241,19 @@ public class GoogleMapWrapper extends DragAndDropWrapper implements EmbeddableCo
                 getUI().removeWindow(window);
                 return;
             }
+            if (e.getWindow() instanceof CleanViewWindow) {
+                CleanViewWindow window = (CleanViewWindow) e.getWindow();
+                if (window.getOption() == ConfirmDialogWindow.OK_OPTION) {
+                    if (view != null) {
+                        map.removeAllPhysicalConnection();
+                        map.clear();
+                        Notification.show("The view was cleaned", Type.TRAY_NOTIFICATION);
+                    }
+                }                
+                window.removeCloseListener(this);
+                getUI().removeWindow(window);
+                return;
+            }
             if (e.getWindow() instanceof SaveViewDialog) {
                 SaveViewDialog window = (SaveViewDialog) e.getWindow();
                 if (window.getOption() == ConfirmDialogWindow.YES_OPTION) {
@@ -242,6 +262,7 @@ public class GoogleMapWrapper extends DragAndDropWrapper implements EmbeddableCo
                 }
                                
                 if (window.getOption() == ConfirmDialogWindow.NO_OPTION) {
+                    map.removeConnectionsUnsave();
                     map.clear();
                     view = null;
                 }

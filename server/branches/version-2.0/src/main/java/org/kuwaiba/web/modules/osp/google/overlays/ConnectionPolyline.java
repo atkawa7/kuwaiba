@@ -26,6 +26,11 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ConnectionPolyline extends Polyline {
+    /**
+     * Saved. is used to know if the connection was stored in the view 
+     * of the data base
+     */
+    private boolean saved = false;
     private RemoteObjectLight connectionInfo;
     
     private final NodeMarker source;
@@ -43,6 +48,14 @@ public class ConnectionPolyline extends Polyline {
         
         this.source.addPropertyChangeListener(this);
         this.target.addPropertyChangeListener(this);        
+    }
+    
+    public boolean isSaved() {
+        return saved;
+    }
+    
+    public void setSaved(boolean saved) {
+        this.saved = saved;
     }
     
     public RemoteObjectLight getConnectionInfo() {
