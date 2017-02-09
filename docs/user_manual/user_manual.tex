@@ -896,15 +896,13 @@
 		Before presenting the tools provided by the application, let's first clarify and introduce some concepts. This module deals solely with L1 topologies. It's only about cables, ports, etc. The data model provides four types of entities to represent physical layer elements:
 		\begin{itemize}
 			\item \textbf{Connections:} These are all point-to-point physical links. In the current data model, there are three	types of connections: \textbf{ElectricalLink} (for electrical connections like coaxial, twisted
-			pairs and the like), \textbf{OpticalLink} (for fiber optics) and \textbf{RadioLink} (for radio links -Microwave links, mostly-).
+			pairs and the like), \textbf{OpticalLink} (for fiber optics), \textbf{RadioLink} (for radio links -Microwave links, mostly-) and \textbf{PowerLink} (for electrical power connections AC/DC).
 			\item \textbf{Containers:} All objects that can be used to contain, wrap and protect connections (understanding \textit{Connection} as defined above). There are two types of containers: \textbf{WireContainer} (used to contain all kind of cables -wires and fibers-, like pipes, conduits, ditches, etc) and \textbf{WirelessContainer} (used to contain radio channels or carriers).
 			\item \textbf{Nodes:} These objects are endpoints to \textit{Containers}. In the default data model you will find classes like: \textbf{Tower}, \textbf{Warehouse}, \textbf{Facility}, \textbf{Shelter}, \textbf{Building}, \textbf{Floor} and \textbf{Room}, but in general, any subclass of \textbf{GenericPhysicalNode} can be a so called \textit{Node}.
 			\textbf{Endpoints:} These objects are endpoints to \textit{Connections}. In practice, they're always some kind of \textbf{Port} (in the data model context, this means all subclasses of \textbf{GenericPort}).
 		\end{itemize}
 		In summary, you can only connect \textit{Nodes} using \textit{Containers} and \textit{Endpoints} using \textit{Connections}. To create new connections, select in the \textbf{\nameref{sec:navigation_tree}} an element and try to connected the desired children using the \nameref{sec:default_view}. For example, if you want to connect two buildings, select the city which is the parent for both. Likewise, if you want to connect a router to an ODF, you probably will have to select the room or the rack they are located. In short, select the nearest common parent between the two elements you want to connect.
-		\begin{framed} {\large \textbf{Important}}\\
-			You can also create power connections with this approach.
-		\end{framed}
+		
 		\begin{table}[h!]
 			\centering
 			\begin{tabular}{lp{10cm}}
@@ -919,6 +917,8 @@
 				\includegraphics[width=0.5cm]{img/icon_optical_link.png} & Create an optical link \\
 				\midrule
 				\includegraphics[width=0.5cm]{img/icon_wireless_link.png} & Create a wireless link \\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_power_link.png} & Create a power link \\
 			\end{tabular}
 			\caption{Connection tools}
 		\end{table}
@@ -1353,12 +1353,20 @@
 	\end{figure}
 	
 	\newpage
-	Of course you are also able to release an object from a service, after associate an object to a service if you want to release that relationship you need to make right click in the object an select  \textbf{Release from service}, if the object has a service associated this will be shown, if you click on it, the object won't be related to that service any more.
+	Of course you are also able to release an object from a service, after associate an object to a service if you want to release that relationship you need to make right click in the object an select  \textbf{Release from service}, if the object has a service associated this will be shown, if you click on it, the object won't be related to that service any more, for your own safety Kuwaiba will show you a message to confirm the release action.
+	
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.5\linewidth]{img/sm_release_from_service.png}
 		\caption{Release an object from a service}
 		\label{fig:sm_release_from_service}
+	\end{figure}
+	
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width=0.5\linewidth]{img/sm_release_from_service_confrimation.png}
+		\caption{Release an object from a service confirmation}
+		\label{fig:sm_release_from_service_confirmation}
 	\end{figure}
 	
 	Every time you relate an object to a service, the object will appear as a son of the service in the Service Manager nodes as you can see in figure~\ref{fig:sm_device_relate_to_service}
@@ -1729,7 +1737,8 @@
 			\label{fig:ipam_root_nodes_actions}
 		\end{figure}
 		
-		A folder is a way to store several subnetworks, you can create as many folders as you want, you can also create a folder inside other folder.
+		\subsubsection{Folders}
+		A folder is a way to store and arrange several subnets, you can create as many folders as you want, you can also create a folder inside other folder.
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.4\linewidth]{img/ipam_create_new_folder.png}
@@ -1738,16 +1747,18 @@
 		\end{figure}
 		
 		Once you create a folder, you could edit its attributes, \textbf{name} and \textbf{description} in the property sheet just like any other element in kuwaiba
+
+		\subsubsection{Creating Subnets}
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.4\linewidth]{img/ipam_folder_actions.png}
 			\caption{Folder actions}
 			\label{fig:ipam_folder_actions}
 		\end{figure}
-		
-		To add a new subnet IPv4 or IPv6 you should type the subnet in the Classless Inter-Domain Routing (CIDR) Format\footnote{CIDR Format http://ip2cidr.com/cidr.php}.
-		\newline For IPv4 address you could use 182.5.13.0/26 and will be accepted, remember de CIDR Format. 
-		\newline For a IPv6 address you could use a compress or a expand notation for example you could use 2000::/3 or 2000:0000:0000:0000:0000:0000:0000:0000/3 both will be accepted.
+	
+		There are two main roots in the IPAM one for IPv4 subnets and other for IPV6 subnets, we don't want you to mix between IPv4 and IPv6 subnets thats why we made this separation.  To add a new subnet (IPv4 or IPv6) make right click in a folder, then select \textit{Create subnet}, after this kuwaiba will show you a form where you should type your new subnet in Classless Inter-Domain Routing (CIDR) Format\footnote{CIDR Format http://ip2cidr.com/cidr.php}.
+		\newline i.e. For an IPv4 address you could use 182.5.13.0/26 and will be accepted, remember de CIDR Format. 
+		\newline i.e. For an IPv6 address you could use a compress or an expand notation for example you could use 2000::/3 or 2000:0000:0000:0000:0000:0000:0000:0000/3 both will be accepted.
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.5\linewidth]{img/ipam_add_subnet.png}
@@ -1755,7 +1766,9 @@
 			\label{fig:ipam_add_subnet}
 		\end{figure}
 		
-		Once you have created a subnet you could add IP addresses
+		\subsubsection{Adding IPs}
+		
+		Once you have created a subnet you can an add an IP address or a range of IP addresses, making right click in the subnet and then selecting \textit{add IP address} kuwaiba will show you a form to add IPs.
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.4\linewidth]{img/ipam_subnet_actions.png}
@@ -1763,15 +1776,26 @@
 			\label{fig:ipam_subnet_actions}
 		\end{figure}
 		
-		Kuwaiba will put by default in text box the next no used ip address of the subnet, but you could type any IP address that belongs the subnet range, Kuwaiba won't let you add the network IP or de broadcast IP.
+		Kuwaiba will put by default in text box the next no used ip address of the subnet, but you could type any IP address that belongs the subnet range, Kuwaiba let you add the network IP or de broadcast IP, but you should type them manually, to add a range of IPs you shall type [the first IP] - [the last IP] Kuwaiba will create every IP of the given range. 
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.5\linewidth]{img/ipam_add_ip_address.png}
 			\caption{Add IP address}
 			\label{fig:ipam_add_ip_address}
 		\end{figure}
+	
+	   	\subsubsection{Creating nested Subnets}
+	   	
+		Subnets can be nested inside other subnets as long as the limits of subnet you are trying to nest belongs  completely to the biger subnet, to nest a a subnet inside other subnet, make right click in the wished subnet and then select \textit{Create subnet}, Kuwaiba will show you the form to create a subnet, by default the subnet field will be filled with the bigger subent Network IP address, so you shall complete the CIDR format with the number of bits for the mask.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.5\linewidth]{img/ipam_add_subsubnet.png}
+			\caption{Add Subnet}
+			\label{fig:ipam_add_subsubnet}
+		\end{figure}
 		
-		The subnets can be associate to VLANs, just make right-click in the subnet and select \textit{Relate to a VLAN} then kuwaiba will display a text dialog with a list of all the existing VLANs.
+		
+		The subnets can be associate to VLANs o VFR instances, just make right-click in the subnet and select \textit{Relate to a VLAN} or \textit{Relate to a VFRs} then kuwaiba will display a text dialog with a list of all the existing VLANs or VFRs.
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.3\linewidth]{img/ipam_available_vlans.png}
@@ -1779,7 +1803,7 @@
 			\label{fig:ipam_available_vlans}
 		\end{figure}
 		
-		The subnets and the IP addresses can be associate to services, just make right-click in the subnet or the IP address and select \textit{Relate to a service} then, Kuwaiba will display a dialog with a list of all the existing services  (see \textbf{\nameref{sec:service_manager}})
+		Both subnets and IP addresses can be associate to services, you can associate them to a service one by one or you can select all the subnet or IP address at once and then make right-click in the selected item(s) and choose \textit{Relate to a service} then, Kuwaiba will display a dialog with a list of all the existing services  (see \textbf{\nameref{sec:service_manager}})
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.4\linewidth]{img/ipam_available_services.png}
