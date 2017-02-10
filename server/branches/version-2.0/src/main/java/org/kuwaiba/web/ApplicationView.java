@@ -29,6 +29,8 @@ import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.web.modules.containment.ContainmentManagerModule;
+import org.kuwaiba.web.modules.lists.ListManagerModule;
 import org.kuwaiba.web.modules.navtree.NavigationTreeModule;
 import org.kuwaiba.web.modules.osp.OutsidePlantModule;
 
@@ -36,6 +38,7 @@ import org.kuwaiba.web.modules.osp.OutsidePlantModule;
 /**
  * Main application component
  * @author Charles Edward Bedon Cortazar<charles.bedon@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 @CDIView("app")
 class ApplicationView extends CustomComponent implements View {
@@ -77,12 +80,30 @@ class ApplicationView extends CustomComponent implements View {
             final HorizontalSplitPanel pnlSplitMain = new HorizontalSplitPanel();
             final NavigationTreeModule mdlNavTree = new NavigationTreeModule(eventBus, wsBean, session);
             final OutsidePlantModule mdlOutsidePlant = new OutsidePlantModule(eventBus, wsBean, session);
+            final ContainmentManagerModule mdlContainment = new ContainmentManagerModule(eventBus, wsBean, session);
+            final ListManagerModule mdlListManager = new ListManagerModule(eventBus, wsBean, session);
             
             mnuTools.addItem(mdlNavTree.getName(), mdlNavTree.getIcon(), new MenuBar.Command() {
 
                 @Override
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
                     pnlSplitMain.setFirstComponent(mdlNavTree.open());
+                }
+            });
+            
+            mnuTools.addItem(mdlListManager.getName(), mdlListManager.getIcon(), new MenuBar.Command() {
+
+                @Override
+                public void menuSelected(MenuBar.MenuItem selectedItem) {
+                    pnlSplitMain.setFirstComponent(mdlListManager.open());
+                }
+            });
+            
+            mnuTools.addItem(mdlContainment.getName(), mdlContainment.getIcon(), new MenuBar.Command() {
+
+                @Override
+                public void menuSelected(MenuBar.MenuItem selectedItem) {
+                    pnlSplitMain.setSecondComponent(mdlContainment.open());
                 }
             });
             

@@ -39,7 +39,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.ViewInfo;
 import org.kuwaiba.interfaces.ws.toserialize.application.ViewInfoLight;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.web.modules.osp.windows.CleanViewWindow;
-import org.kuwaiba.web.modules.osp.windows.ConfirmDialogWindow;
+import org.kuwaiba.apis.web.gui.windows.ConfirmDialogWindow;
 import org.kuwaiba.web.modules.osp.windows.DeleteWindow;
 import org.kuwaiba.web.modules.osp.windows.OpenViewWindow;
 import org.kuwaiba.web.modules.osp.windows.SaveTopologyWindow;

@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.kuwaiba.web.modules.osp.windows;
+package org.kuwaiba.apis.web.gui.windows;
 
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;

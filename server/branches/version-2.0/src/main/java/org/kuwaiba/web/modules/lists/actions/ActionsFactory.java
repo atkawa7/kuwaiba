@@ -13,31 +13,27 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.kuwaiba.web.modules.osp.windows;
+package org.kuwaiba.web.modules.lists.actions;
 
-import org.kuwaiba.apis.web.gui.windows.ConfirmDialogWindow;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
+import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class SaveViewDialog extends ConfirmDialogWindow {
+public class ActionsFactory {
+    static CreateListTypeChildAction createListTypeChildAction;
+    static DeleteListTypeAction deleteListTypeAction;
     
-    public SaveViewDialog(Window.CloseListener closeListener) {
-        super(closeListener, "Confirmation", 
-                ConfirmDialogWindow.YES_NO_CANCEL_OPTION);
-    }
-
-    @Override
-    public VerticalLayout initContent() {
-        VerticalLayout content = new VerticalLayout();
-        content.addComponent(
-                new Label("This view has not been saved, do you want to save it"));
-        return content;
+    public static AbstractAction createCreateListTypeChildAction(){
+        if (createListTypeChildAction == null)
+            createListTypeChildAction = new CreateListTypeChildAction();
+        return createListTypeChildAction;
     }
     
-    
+    public static AbstractAction createDeleteListTypeAction(){
+        if (deleteListTypeAction == null)
+            deleteListTypeAction = new DeleteListTypeAction();
+        return deleteListTypeAction;
+    }
 }

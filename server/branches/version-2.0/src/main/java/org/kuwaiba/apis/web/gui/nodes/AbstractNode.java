@@ -37,7 +37,7 @@ public abstract class AbstractNode<T> {
     /**
      * Reference to the tree containing this node
      */
-    private DynamicTree tree;
+    protected DynamicTree tree;
 
     public AbstractNode() {}
     
