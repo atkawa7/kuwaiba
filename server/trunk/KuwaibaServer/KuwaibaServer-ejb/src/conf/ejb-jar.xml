@@ -46,7 +46,7 @@
            <description>Corporate Logo</description>
            <env-entry-name>corporateLogo</env-entry-name>
            <env-entry-type>java.lang.String</env-entry-type>
-           <env-entry-value>http://afr-ix.com/wp-content/uploads/2017/01/logo-e1470897827862.png</env-entry-value>
+           <env-entry-value>http://neotropic.co/img/logo_blue.png</env-entry-value>
         </env-entry>
         <env-entry>
            <description>Enable the default security manager</description>
