@@ -48,6 +48,7 @@ public class ClassMetadataNode extends AbstractNode<ClassInfoLight> {
     public void expand() {
         if (getTree() == null)
             return;
+        collapse();
         try {
             ClassInfoLight currentObject = (ClassInfoLight) getObject();
             
@@ -67,31 +68,6 @@ public class ClassMetadataNode extends AbstractNode<ClassInfoLight> {
         catch(ServerSideException ex) {
             Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
         }
-    }
-
-    @Override
-    public void collapse() {
-        List<ClassMetadataNode> nodesToRemove = getChildren(this, new ArrayList<>());
-        if (!nodesToRemove.isEmpty()) {
-            for (ClassMetadataNode node : nodesToRemove)
-                getTree().removeItem(node);
-        }
-    }
-    
-    private List<ClassMetadataNode> getChildren(ClassMetadataNode node, List<ClassMetadataNode> nodes) {
-        Collection<ClassMetadataNode> children = (Collection<ClassMetadataNode>) getTree().getChildren(node);
-        if (children != null) {
-            for (ClassMetadataNode child : children) {
-                Collection<ClassMetadataNode> subChildren = (Collection<ClassMetadataNode>) getTree().getChildren(child);
-                if (subChildren != null) {
-                    nodes.add(child);
-                    nodes.addAll(getChildren(child, nodes));
-                }
-                else
-                    nodes.add(child);
-            }
-        }
-        return nodes;
     }
     
     @Override

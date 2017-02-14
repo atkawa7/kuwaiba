@@ -19,8 +19,6 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Notification;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
@@ -60,7 +58,9 @@ public class ContainmentNode extends AbstractNode {
     public void expand() {
         if (getTree() == null)
             return;
+        
         try {
+            collapse();
             if (getTree().areChildrenAllowed(this)) {
                 ClassInfoLight currentObject = (ClassInfoLight) getObject();
 
@@ -86,36 +86,7 @@ public class ContainmentNode extends AbstractNode {
             Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
         }
     }
-
-    @Override
-    public void collapse() {
-        List<Object> nodesToRemove = getChildren(this, new ArrayList<>());
-        if (!nodesToRemove.isEmpty()) {
-            for (Object node : nodesToRemove)
-                getTree().removeItem(node);
-        }
-    }
     
-    private List<Object> getChildren(Object parentId, List<Object> nodes) {
-        Collection<Object> children = (Collection<Object>) getTree().getChildren(parentId);
-        if (children != null) {
-            for (Object child : children) {
-                if (getTree().areChildrenAllowed(child)) {
-                    Collection<ContainmentNode> subChildren = (Collection<ContainmentNode>) getTree().getChildren(child);
-                    if (subChildren != null) {
-                        nodes.add(child);
-                        nodes.addAll(getChildren(child, nodes));
-                    }
-                    else
-                        nodes.add(child);
-                }
-                else
-                    nodes.add(child);
-            }
-        }
-        return nodes;
-    }
-
     @Override
     public AbstractAction[] getActions() {
         if (!getTree().areChildrenAllowed(this))

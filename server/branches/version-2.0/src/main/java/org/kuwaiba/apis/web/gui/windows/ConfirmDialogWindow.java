@@ -28,6 +28,7 @@ public abstract class ConfirmDialogWindow extends Window {
     public static final int YES_NO_OPTION = 0;
     public static final int YES_NO_CANCEL_OPTION = 1;
     public static final int OK_CANCEL_OPTION = 2;
+    public static final int ONLY_OK_OPTION = 3;
     
     public static final int YES_OPTION = 0;
     public static final int NO_OPTION = 1;
@@ -116,6 +117,9 @@ public abstract class ConfirmDialogWindow extends Window {
             case OK_CANCEL_OPTION:
                 content.addComponent(btnOk);
                 content.addComponent(btnCancel);
+                break;
+            case ONLY_OK_OPTION:
+                content.addComponent(btnOk);
                 break;
         }
         return content;

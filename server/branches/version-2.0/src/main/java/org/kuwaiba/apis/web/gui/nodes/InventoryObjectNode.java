@@ -19,19 +19,19 @@ import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Notification;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.web.custom.tree.DynamicTree;
+import org.kuwaiba.web.modules.navtree.actions.ActionsFactory;
 
 /**
  * Represents a node of a tree
  * @author Charles Bedon <charles.bedon@kuwaiba.org>
  * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class InventoryObjectNode extends AbstractNode<RemoteObjectLight>{
     
@@ -54,7 +54,7 @@ public class InventoryObjectNode extends AbstractNode<RemoteObjectLight>{
     public void expand() {
         if (getTree() == null) //If the tree has not been set previously, do nothing
             return;
-        
+        collapse();
         try {
             TopComponent topComponent = getTree().getTopComponent();
             RemoteObjectLight currentObject = (RemoteObjectLight)getObject();
@@ -73,32 +73,7 @@ public class InventoryObjectNode extends AbstractNode<RemoteObjectLight>{
             Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
         }
     }
-    
-    @Override
-    public void collapse() {
-        List<InventoryObjectNode> nodesToRemove = getChildren(this, new ArrayList<>());
-        if(!nodesToRemove.isEmpty()){
-            for (InventoryObjectNode node : nodesToRemove) 
-                getTree().removeItem(node);
-        }
-    }
-    
-    private List<InventoryObjectNode> getChildren(InventoryObjectNode node, List<InventoryObjectNode> nodes){
-        Collection<InventoryObjectNode> children = (Collection<InventoryObjectNode>) getTree().getChildren(node);
-        if(children != null){
-            for (InventoryObjectNode child : children) {
-                Collection<InventoryObjectNode> subChildren = (Collection<InventoryObjectNode>) getTree().getChildren(child);
-                if(subChildren != null){
-                    nodes.add(child);
-                    nodes.addAll(getChildren(child, nodes));
-                }
-                else
-                    nodes.add(child);
-            }
-        }
-        return nodes;
-    }
-    
+        
     @Override
     public String toString() {
         return getDisplayName();
@@ -121,7 +96,10 @@ public class InventoryObjectNode extends AbstractNode<RemoteObjectLight>{
 
     @Override
     public AbstractAction[] getActions() {
-        return new AbstractAction[0];
+        return new AbstractAction[]{ 
+            ActionsFactory.createCreateInventoryObjectAction(), 
+            ActionsFactory.createDeleteInventoryObjectAction(), 
+            ActionsFactory.createShowObjectIdAction() };
     }
 
     @Override

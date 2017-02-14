@@ -19,6 +19,7 @@ import java.util.List;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.web.custom.tree.DynamicTree;
+import org.kuwaiba.web.modules.navtree.actions.ActionsFactory;
 
 /**
  * This node should be used as root in all trees composed by inventory nodes (e.g. Navigation Tree)
@@ -41,7 +42,7 @@ public class InventoryObjectRootNode extends AbstractRootNode {
         
         if (getTree() == null) //If the tree has not been set previously, do nothing
             return;
-        
+        collapse();
         for (RemoteObjectLight child : initialChildren) {
             InventoryObjectNode objectNode = new InventoryObjectNode(child);
             objectNode.setTree(getTree());
@@ -49,13 +50,10 @@ public class InventoryObjectRootNode extends AbstractRootNode {
             getTree().setParent(objectNode, this);
         }
     }
-
-    @Override
-    public void collapse() {}
-
+    
     @Override
     public AbstractAction[] getActions() {
-        return new AbstractAction[0];
+        return new AbstractAction[]{ ActionsFactory.createCreateInventoryObjectAction() };
     }
 
     @Override

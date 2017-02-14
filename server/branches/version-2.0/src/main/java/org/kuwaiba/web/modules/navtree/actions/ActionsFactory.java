@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,25 +18,30 @@ package org.kuwaiba.web.modules.navtree.actions;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 
 /**
- *
- * @author duckman
+ * Action factory for Inventory Object Nodes
+ * @author Charles Bedon <charles.bedon@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ActionsFactory {
-    static AddObjectAction addObjectAction;
-    static DeleteObjectAction deleteObjectAction;
+    static CreateInventoryObjectAction createInventoryObjectAction;
+    static DeleteInventoryObjectAction deleteInventoryObjectAction;
+    static ShowObjectIdAction showObjectIdAction;
+        
+    public static AbstractAction createCreateInventoryObjectAction() {
+        if (createInventoryObjectAction == null)
+            createInventoryObjectAction = new CreateInventoryObjectAction();
+        return createInventoryObjectAction;
+    }    
     
-    
-    public static AbstractAction createAddObjectAction(){
-        if (addObjectAction == null)
-           addObjectAction = new AddObjectAction();
-        return addObjectAction;
+    public static AbstractAction createDeleteInventoryObjectAction() {
+        if (deleteInventoryObjectAction == null)
+            deleteInventoryObjectAction = new DeleteInventoryObjectAction();
+        return deleteInventoryObjectAction;
     }
     
-    
-    public static AbstractAction createDeleteObjectAction(){
-        if (deleteObjectAction == null)
-           deleteObjectAction = new DeleteObjectAction();
-        return deleteObjectAction;
+    public static AbstractAction createShowObjectIdAction() {
+        if (showObjectIdAction == null)
+            showObjectIdAction = new ShowObjectIdAction();
+        return showObjectIdAction;
     }
-    
 }

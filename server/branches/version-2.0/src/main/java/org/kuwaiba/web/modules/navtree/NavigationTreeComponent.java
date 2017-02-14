@@ -16,10 +16,13 @@
 package org.kuwaiba.web.modules.navtree;
 
 import com.google.common.eventbus.EventBus;
+import com.vaadin.event.Action;
 import com.vaadin.server.Page;
 import com.vaadin.ui.VerticalSplitPanel;
 import java.util.List;
+import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
+import org.kuwaiba.apis.web.gui.nodes.AbstractNode;
 import org.kuwaiba.apis.web.gui.nodes.InventoryObjectRootNode;
 import org.kuwaiba.apis.web.gui.nodes.properties.ObjectNodeProperty;
 import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
@@ -52,6 +55,21 @@ class NavigationTreeComponent extends AbstractTopComponent {
                 
                 tree = new DynamicTree(rootNode, this);
                 rootNode.setTree(tree);
+                
+                tree.addActionHandler(new Action.Handler() {
+
+                    @Override
+                    public Action[] getActions(Object target, Object sender) {
+                        if (target instanceof AbstractNode)
+                            return ((AbstractNode)target).getActions();
+                        return null;
+                    }
+
+                    @Override
+                    public void handleAction(Action action, Object sender, Object target) {
+                        ((AbstractAction) action).actionPerformed(sender, target);
+                    }
+                });
                 
                 propertySheet = new ObjectNodeProperty(eventBus);
 

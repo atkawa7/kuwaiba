@@ -21,9 +21,9 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.NativeSelect;
+import com.vaadin.ui.Tree;
 import com.vaadin.ui.VerticalLayout;
 import java.util.HashMap;
-import java.util.List;
 import org.kuwaiba.apis.web.gui.nodes.InventoryObjectNode;
 import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
 import org.kuwaiba.beans.WebserviceBeanLocal;
@@ -59,11 +59,13 @@ public class FirstStep implements WizardStep {
         RemoteObjectLight rootSource = wizard.getConnection().getSource().getRemoteObjectLight();
         InventoryObjectNode rootNodeA = new InventoryObjectNode(rootSource);
         treeEndPointA = new DynamicTree(rootNodeA, wizard.getTopComponent());
+        treeEndPointA.setDragMode(Tree.TreeDragMode.NONE);
         rootNodeA.setTree(treeEndPointA);
         
         RemoteObjectLight rootTarget = wizard.getConnection().getTarget().getRemoteObjectLight();
         InventoryObjectNode rootNodeB = new InventoryObjectNode(rootTarget);
         treeEndPointB = new DynamicTree(rootNodeB, wizard.getTopComponent());
+        treeEndPointB.setDragMode(Tree.TreeDragMode.NONE);
         rootNodeB.setTree(treeEndPointB);
         
         HorizontalSplitPanel pnlChooseEndpoints = new HorizontalSplitPanel();

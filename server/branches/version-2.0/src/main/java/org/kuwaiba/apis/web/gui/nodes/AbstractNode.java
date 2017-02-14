@@ -15,14 +15,17 @@
  */
 package org.kuwaiba.apis.web.gui.nodes;
 
+import java.util.ArrayList;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import org.kuwaiba.web.custom.tree.DynamicTree;
 
 /**
  * A node that represents a business domain object from the model.
  * @author Charles Bedon <charles.bedon@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  * @param <T> The type of the business object
  */
 public abstract class AbstractNode<T> {
@@ -77,22 +80,46 @@ public abstract class AbstractNode<T> {
     /**
      * What to do when collapsing the node is requested. Always check if the tree has been set!
      */
-    public abstract void collapse();
+    public void collapse() {
+        if (getTree() == null)
+            return;
+        
+        List<AbstractNode> nodesToRemove = getChildren(this, new ArrayList<>());
+        
+        if (!nodesToRemove.isEmpty())
+            for (AbstractNode node : nodesToRemove) 
+                getTree().removeItem(node);
+    }
     
     /**
-     * Deletes the node and its children recursively
+     * Deletes the node and its children
      */
     public void delete() {
-        Collection<?> children = tree.getChildren(this);
+        List<AbstractNode> nodesToRemove = getChildren(this, new ArrayList<>());
         
-        if (children != null) {
-            for (Object child : children) //A lambda expression is not thread-safe and will cause a ConcurrentModificationException, even if synchronized
-                ((AbstractNode)child).delete();
-        }
-        
+        if(!nodesToRemove.isEmpty())
+            for (AbstractNode node : nodesToRemove) 
+                getTree().removeItem(node);
+                
         tree.removeItem(this);
     }
     
+    public List<AbstractNode> getChildren(AbstractNode node, List<AbstractNode> nodes){
+        Collection<AbstractNode> children = (Collection<AbstractNode>) getTree().getChildren(node);
+        if(children != null){
+            for (AbstractNode child : children) {
+                Collection<AbstractNode> subChildren = (Collection<AbstractNode>) getTree().getChildren(child);
+                if(subChildren != null){
+                    nodes.add(child);
+                    nodes.addAll(getChildren(child, nodes));
+                }
+                else
+                    nodes.add(child);
+            }
+        }
+        return nodes;
+    }
+        
     /**
      * Actions associated to this node
      * @return An array of actions

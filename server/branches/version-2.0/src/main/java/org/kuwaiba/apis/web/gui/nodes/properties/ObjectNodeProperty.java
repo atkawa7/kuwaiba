@@ -55,7 +55,7 @@ public class ObjectNodeProperty extends CustomComponent implements AbstractNodeP
     @Subscribe
     @Override
     public void nodeSelected(ItemClickEvent event) {
-        createPropertySheet((RemoteBusinessObjectLight) ((InventoryObjectNode)event.getItemId()).getObject());
+//        createPropertySheet((RemoteBusinessObjectLight) ((InventoryObjectNode)event.getItemId()).getObject());
     }
     
     /** 

@@ -18,8 +18,6 @@ package org.kuwaiba.apis.web.gui.nodes.listmanagernodes;
 import com.vaadin.server.Page;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Notification;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
@@ -52,6 +50,7 @@ public class ListTypeNode extends AbstractNode<ClassInfoLight> {
             return;
         
         try {
+            collapse();
             TopComponent topComponent = getTree().getTopComponent();
             ClassInfoLight currentObject = (ClassInfoLight)getObject();
             
@@ -69,24 +68,7 @@ public class ListTypeNode extends AbstractNode<ClassInfoLight> {
             Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
         }
     }
-
-    @Override
-    public void collapse() {
-        List<ListTypeChildNode> nodesToRemove = getChildren(this, new ArrayList<>());
-        if(!nodesToRemove.isEmpty())
-            for (ListTypeChildNode node : nodesToRemove) 
-                getTree().removeItem(node);
-    }
-    
-    private List<ListTypeChildNode> getChildren(ListTypeNode node, List<ListTypeChildNode> nodes){
-        Collection<ListTypeChildNode> children = (Collection<ListTypeChildNode>) getTree().getChildren(node);
-        if(children != null){
-            for (ListTypeChildNode child : children)
-                    nodes.add(child);
-        }
-        return nodes;
-    }
-
+        
     @Override
     public AbstractAction[] getActions() {
         return new AbstractAction[] { ActionsFactory.createCreateListTypeChildAction() };
