@@ -1399,6 +1399,7 @@ public class CommunicationsStub {
      * @param endpointBId target object oid
      * @param parentClass connection's parent class
      * @param parentId connection's parent id
+     * @param name Initial connection name
      * @param type This can be either the type name or its id
      * @param connectionClass Class for the corresponding connection to be created
      * @return A local object light representing the new connection
@@ -1418,8 +1419,8 @@ public class CommunicationsStub {
             values.add(valueType);
 
             long myObjectId = service.createPhysicalConnection(endpointAClass, endpointAId,
-                    endpointBClass, endpointBId, parentClass, parentId, Arrays.asList(new String[]{"name","type"}), values, connectionClass, this.session.getSessionId());
-            return new LocalObjectLight(myObjectId, "", connectionClass);
+                    endpointBClass, endpointBId, parentClass, parentId, Arrays.asList(new String[]{ "name", "type" }), values, connectionClass, this.session.getSessionId());
+            return new LocalObjectLight(myObjectId, name, connectionClass);
         }catch(Exception ex){
             this.error =  ex.getMessage();
             return null;

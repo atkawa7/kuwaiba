@@ -42,7 +42,7 @@ public class ReleaseFromContractAction extends GenericObjectNodeAction implement
     public void actionPerformed(ActionEvent e) {
         if (JOptionPane.showConfirmDialog(null, 
                 "The selected objects will no longer be related to this contract\n Are you sure you want to continue?", "Warning", 
-                JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION) {
+                JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
 
             boolean success = true;

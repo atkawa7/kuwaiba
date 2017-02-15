@@ -45,7 +45,7 @@ public class ReleaseGenericPortFromInterface extends GenericObjectNodeAction imp
     public void actionPerformed(ActionEvent e) {
         if (JOptionPane.showConfirmDialog(null, 
                 "Are you sure you want to release this interface?", "Warning", 
-                JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION) {
+                JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             if (CommunicationsStub.getInstance().releasePortFromInterface(className,
                     id, Long.valueOf(((JMenuItem)e.getSource()).getName())))
                 NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 

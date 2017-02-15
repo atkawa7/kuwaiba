@@ -522,6 +522,10 @@
 
 <xs:element name="getSubnets" type="tns:getSubnets"/>
 
+<xs:element name="getSubnetsInSubent" type="tns:getSubnetsInSubent"/>
+
+<xs:element name="getSubnetsInSubentResponse" type="tns:getSubnetsInSubentResponse"/>
+
 <xs:element name="getSubnetsResponse" type="tns:getSubnetsResponse"/>
 
 <xs:element name="getSubscribersForTask" type="tns:getSubscribersForTask"/>
@@ -897,6 +901,17 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="deleteClass">
+<xs:sequence>
+<xs:element name="className" type="xs:string" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteClassResponse">
+<xs:sequence/>
+</xs:complexType>
+
 <xs:complexType name="getAllClassesLight">
 <xs:sequence>
 <xs:element name="includeListTypes" type="xs:boolean"/>
@@ -908,17 +923,6 @@
 <xs:sequence>
 <xs:element name="return" type="tns:classInfoLight" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="deleteClass">
-<xs:sequence>
-<xs:element name="className" type="xs:string" minOccurs="0"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="deleteClassResponse">
-<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="getPhysicalPath">
@@ -2742,6 +2746,21 @@
 
 <xs:complexType name="setGroupPropertiesResponse">
 <xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="getSubnetsInSubent">
+<xs:sequence>
+<xs:element name="id" type="xs:long"/>
+<xs:element name="limit" type="xs:int"/>
+<xs:element name="className" type="xs:string" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getSubnetsInSubentResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="deletePools">

@@ -40,7 +40,7 @@ public class ReleaseMirrorPortAction extends GenericObjectNodeAction {
         
         if (JOptionPane.showConfirmDialog(null, 
                 "Are you sure you want to release this mirror port?", "Warning", 
-                JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION) {
+                JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
         
             if (CommunicationsStub.getInstance().releaseMirrorPort(object.getClassName(), object.getOid()))
                 NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Miror port released successfully");

@@ -46,8 +46,6 @@ import org.openide.util.LookupListener;
  */
 public class ConnectLinksFrame extends JFrame {
     JLabel lblResults;
-    private JScrollPane pnlScrollLeft;
-    private JScrollPane pnlScrollRight;
     private JScrollPane pnlScrollCenter;
     private JList lstAvailableConnections;
     private BeanTreeView leftTree;
@@ -79,11 +77,8 @@ public class ConnectLinksFrame extends JFrame {
         pnlRight = new ExplorablePanel();
         
         rightTree = new BeanTreeView();
-        rightTree.setSize(400, 0);
-        pnlRight.add(rightTree);
-        pnlScrollRight = new JScrollPane();
-        pnlScrollRight.setViewportView(pnlRight);
-        add(pnlScrollRight, BorderLayout.EAST);
+        pnlRight.setViewportView(rightTree);
+        add(pnlRight, BorderLayout.EAST);
         
         JPanel centralPanel = new JPanel();
         centralPanel.setLayout(new BorderLayout());
@@ -107,11 +102,8 @@ public class ConnectLinksFrame extends JFrame {
         
         leftTree = new BeanTreeView();
         leftTree.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
-        leftTree.setSize(400, 0);
-        pnlLeft.add(leftTree);
-        pnlScrollLeft = new JScrollPane();
-        pnlScrollLeft.setViewportView(pnlLeft);
-        add(pnlScrollLeft, BorderLayout.WEST);
+        pnlLeft.setViewportView(leftTree);
+        add(pnlLeft, BorderLayout.WEST);
         init();
     }
     

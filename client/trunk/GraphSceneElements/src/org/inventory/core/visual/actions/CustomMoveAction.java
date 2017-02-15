@@ -107,15 +107,17 @@ public final class CustomMoveAction extends WidgetAction.LockedAdapter {
         boolean state;
         if (initialMouseLocation != null  &&  initialMouseLocation.equals (event.getPoint ()))
             state = true;
-        else
+        else {
             state = move (widget, event.getPoint ());
+            scene.fireChangeEvent(new ActionEvent(scene, AbstractScene.SCENE_CHANGE, "move-widget")); //NOI18N
+        }
         if (state) {
             movingWidget = null;
             dragSceneLocation = null;
             originalSceneLocation = null;
             initialMouseLocation = null;
             provider.movementFinished (widget);
-            scene.fireChangeEvent(new ActionEvent(scene, AbstractScene.SCENE_CHANGE, "move-widget")); //NOI18N
+            
         }
         return state ? State.CONSUMED : State.REJECTED;
     }

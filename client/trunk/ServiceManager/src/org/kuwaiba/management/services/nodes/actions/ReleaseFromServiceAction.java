@@ -44,7 +44,7 @@ public class ReleaseFromServiceAction extends GenericObjectNodeAction implements
         
         if (JOptionPane.showConfirmDialog(null, 
                 "Are you sure you want to release this service?", "Warning", 
-                JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION) {
+                JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
         
             Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
 
