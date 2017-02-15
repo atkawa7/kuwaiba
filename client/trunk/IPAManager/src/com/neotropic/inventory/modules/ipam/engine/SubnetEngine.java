@@ -243,7 +243,7 @@ public class SubnetEngine {
      * @param ip a compress IPv6 IP Address
      * @return a complete IPv6
      */
-    private static String[] completeIPv6(String ip){
+    public static String[] completeIPv6(String ip){
         String[] shortIPAddress = ip.split(":");
         String[] ipAddress = {"0000", "0000", "0000", "0000", "0000", "0000", "0000", "0000"};
         boolean flag = false;

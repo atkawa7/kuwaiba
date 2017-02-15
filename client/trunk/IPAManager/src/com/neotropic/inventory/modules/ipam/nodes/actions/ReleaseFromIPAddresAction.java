@@ -37,9 +37,9 @@ public class ReleaseFromIPAddresAction extends GenericObjectNodeAction implement
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (JOptionPane.showConfirmDialog(null, 
-                "Are you sure you want to delete this relationship?", "Warning", 
-                JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+         if(JOptionPane.showConfirmDialog(null, "Are you sure you want to release this IP", 
+                "Warning",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION)
+        {
             if (CommunicationsStub.getInstance().releasePortFromIPAddress(object.getClassName(), 
                     object.getOid(), Long.valueOf(((JMenuItem)e.getSource()).getName())))
                 NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 

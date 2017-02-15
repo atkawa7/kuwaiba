@@ -1,5 +1,5 @@
-/**
- * Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
+/*
+ * Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>
  *
  * Licensed under the EPL License, Version 1.0 (the "License"); you may not use
  * this file except in compliance with the License. You may obtain a copy of the
@@ -41,7 +41,6 @@ import org.openide.explorer.view.BeanTreeView;
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class SubnetsFrame extends JFrame{
-    private JScrollPane pnlScrollMain;
     private List<LocalObjectLight> selectedPorts;
     private ExplorablePanel pnlSubnets;
 
@@ -55,15 +54,14 @@ public class SubnetsFrame extends JFrame{
         lblInstructions.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         
         pnlSubnets = new ExplorablePanel();
+        pnlSubnets.setSize(300, 400);
         BeanTreeView treeSubnets = new BeanTreeView();
         treeSubnets.setRootVisible(false);
-        pnlScrollMain = new JScrollPane();
         JPanel pnlInstructions = new JPanel();
         pnlInstructions.setLayout(new GridLayout(1, 1));
         
-        pnlSubnets.add(treeSubnets);
+        pnlSubnets.setViewportView(treeSubnets);
         pnlSubnets.getExplorerManager().setRootContext(new IPAMRootNode(subnets.toArray(new LocalPool[0])));
-        pnlScrollMain.setViewportView(pnlSubnets);
         add(pnlSubnets, BorderLayout.CENTER);
         
         JPanel pnlButtons = new JPanel();

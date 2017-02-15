@@ -15,6 +15,7 @@
  */
 package com.neotropic.inventory.modules.ipam.nodes;
 
+import com.neotropic.inventory.modules.ipam.engine.SubnetEngine;
 import com.neotropic.inventory.modules.ipam.nodes.actions.AddIPAddressAction;
 import com.neotropic.inventory.modules.ipam.nodes.actions.CreateSubnetAction;
 import java.awt.Image;
@@ -27,15 +28,24 @@ import com.neotropic.inventory.modules.ipam.nodes.actions.ReleaseFromVlanAction;
 import com.neotropic.inventory.modules.ipam.nodes.actions.ReleaseSubnetFromVRFAction;
 import com.neotropic.inventory.modules.ipam.nodes.properties.GeneralProperty;
 import com.neotropic.inventory.modules.ipam.nodes.properties.NotEditableProperty;
+import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DnDConstants;
+import java.io.IOException;
+import java.util.HashMap;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.util.Constants;
+import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.navigation.applicationnodes.objectnodes.AbstractChildren;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ExecuteClassLevelReportAction;
 import org.kuwaiba.management.services.nodes.actions.RelateToServiceAction;
 import org.kuwaiba.management.services.nodes.actions.ReleaseFromServiceAction;
+import org.openide.nodes.Node;
+import org.openide.nodes.NodeTransfer;
 
 import org.openide.nodes.Sheet;
 import org.openide.util.ImageUtilities;
+import org.openide.util.datatransfer.PasteType;
 
 /**
  * Represents a subnet 
@@ -118,4 +128,79 @@ public class SubnetNode extends ObjectNode {
     public boolean canRename() {
         return false;
     }
+    
+    @Override
+    public PasteType getDropType(Transferable _obj, final int action, int index) {
+        final Node dropNode = NodeTransfer.node(_obj,
+                NodeTransfer.DND_COPY_OR_MOVE + NodeTransfer.CLIPBOARD_CUT);
+        
+        if (dropNode == null) 
+            return null;
+        
+        //Ignore those noisy attempts to move it to itself
+        if (dropNode.getLookup().lookup(LocalObjectLight.class).equals(object))
+            return null;
+
+        return new PasteType() {
+            @Override
+            public Transferable paste() throws IOException {
+                try {
+                    LocalObjectLight obj = dropNode.getLookup().lookup(LocalObjectLight.class);
+                        //Check if the current object can contain the drop node
+                    Node parentNode = null;
+                    if (action == DnDConstants.ACTION_MOVE) {
+                        String className = getObject().getClassName();
+                        long oid = getObject().getOid();
+                        
+                        LocalObject parentSubnet = com.getObjectInfo(className, oid);
+                        LocalObject childSubnet = com.getObjectInfo(className, obj.getOid());
+                        
+                        String parentNetworkIp = (String)parentSubnet.getAttribute("networkIp");
+                        String parentBroadcastIp = (String)parentSubnet.getAttribute("broadcastIp");
+                        
+                        String childNetworkIp = (String)childSubnet.getAttribute("networkIp");
+                        String childBroadcastIp = (String)childSubnet.getAttribute("broadcastIp");
+
+                        String[] parentSplit = parentSubnet.getName().split("/");
+                        String[] childSplit = childSubnet.getName().split("/");
+                        
+                        boolean networkIpBelongsTo = false;
+                        boolean broadcastIpBelongsTo = false;
+                                
+                        if(className.equals(Constants.CLASS_SUBNET_IPV4)){
+                            networkIpBelongsTo = SubnetEngine.belongsTo(parentNetworkIp, childNetworkIp, Integer.valueOf(parentSplit[1]));
+                            broadcastIpBelongsTo = SubnetEngine.belongsTo(parentNetworkIp, childBroadcastIp, Integer.valueOf(childSplit[1]));
+                        }
+                        else if(className.equals(Constants.CLASS_SUBNET_IPV6)){
+                            networkIpBelongsTo = SubnetEngine.belongsToIpv6(parentNetworkIp, childNetworkIp, Integer.valueOf(parentSplit[1]));
+                            broadcastIpBelongsTo = SubnetEngine.belongsToIpv6(parentNetworkIp, childBroadcastIp, Integer.valueOf(childSplit[1]));
+                        }
+                        if(!networkIpBelongsTo && parentNetworkIp.equals(childNetworkIp))
+                            networkIpBelongsTo =  true;
+                        if(!broadcastIpBelongsTo && parentBroadcastIp.equals(childBroadcastIp))
+                            broadcastIpBelongsTo = true;
+                        
+                        if(networkIpBelongsTo && broadcastIpBelongsTo){
+                            if(com.moveObjectsToPool(className, oid, new LocalObjectLight[]{obj})){
+                                //Refreshes the old parent node
+                                if (dropNode.getParentNode().getChildren() instanceof AbstractChildren)
+                                    ((AbstractChildren)dropNode.getParentNode().getChildren()).addNotify();
+
+                                //Refreshes the new parent node
+                                if (getChildren() instanceof AbstractChildren)
+                                    ((AbstractChildren)getChildren()).addNotify();
+                            }else
+                                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+                        }
+                        else
+                            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE,"The subnet: " + obj.getName() + " is not subnet of "+ object.getName());
+                    }
+                } catch (Exception ex) {
+                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());
+                }
+                return null;
+            }
+        };
+    }
+    
 }

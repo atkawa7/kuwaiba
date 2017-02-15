@@ -1,5 +1,5 @@
-/**
- * Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
+/*
+ * Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>
  *
  * Licensed under the EPL License, Version 1.0 (the "License"); you may not use
  * this file except in compliance with the License. You may obtain a copy of the
@@ -28,7 +28,6 @@ import com.neotropic.inventory.modules.ipam.nodes.SubnetPoolChildren;
 import com.neotropic.inventory.modules.ipam.nodes.SubnetPoolNode;
 import com.neotropic.inventory.modules.ipam.windows.PTextField;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.List;

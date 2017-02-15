@@ -15,6 +15,7 @@
  */
 package com.neotropic.inventory.modules.ipam.nodes;
 
+import com.neotropic.inventory.modules.ipam.engine.SubnetEngine;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -35,7 +36,6 @@ public class SubnetChildren extends AbstractChildren{
     @Override
     public void addNotify(){
         LocalObjectLight subnet = ((SubnetNode)getNode()).getObject();
-
         List<LocalObjectLight> ips = CommunicationsStub.getInstance().
                 getSubnetUsedIps(subnet.getOid(), subnet.getClassName());
         List<LocalObjectLight> subnets = CommunicationsStub.getInstance().
@@ -46,20 +46,15 @@ public class SubnetChildren extends AbstractChildren{
         
         if (subnets == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-        
         else {
             List<LocalObjectLight> subnetChildren = new ArrayList<>();
-            
              
             for (LocalObjectLight subnetChild : sortSubnets(subnets)) 
                 subnetChildren.add(subnetChild);
             
             for (LocalObjectLight ip : sortIps(ips)) 
                 subnetChildren.add(ip);
-           
-            
-            
-            
+
             setKeys(subnetChildren);
         }
     }
@@ -77,31 +72,42 @@ public class SubnetChildren extends AbstractChildren{
             return new Node[] { new SubnetNode(key) };
     }
     
-    
-    
-    
-    
-    
-    
     private List<LocalObjectLight> sortIps(List<LocalObjectLight> ips){
-        
         List<LocalObjectLight> sortIps = ips;
         for (int i = 0; i < sortIps.size(); i++) {
             for (int j = i; j< sortIps.size(); j++) {
                 LocalObjectLight auxIp = null;
-                String[] aIp = sortIps.get(i).getName().split("\\.");
-                String[] bIp = sortIps.get(j).getName().split("\\.");
-
-                if(Integer.valueOf(aIp[0]) >= Integer.valueOf(bIp[0])){
-                   if(Integer.valueOf(aIp[1]) >= Integer.valueOf(bIp[1])){
-                       if(Integer.valueOf(aIp[2]) >= Integer.valueOf(bIp[2])){
-                           if(Integer.valueOf(aIp[3]) >= Integer.valueOf(bIp[3])){
-                               auxIp =  sortIps.get(i);
-                               sortIps.set(i, sortIps.get(j));
-                               sortIps.set(j, auxIp);
+                if(!sortIps.get(i).getName().contains(":")){
+                    String[] aIp = sortIps.get(i).getName().split("\\.");
+                    String[] bIp = sortIps.get(j).getName().split("\\.");
+                    if(Integer.valueOf(aIp[0]) >= Integer.valueOf(bIp[0])){
+                       if(Integer.valueOf(aIp[1]) >= Integer.valueOf(bIp[1])){
+                           if(Integer.valueOf(aIp[2]) >= Integer.valueOf(bIp[2])){
+                               if(Integer.valueOf(aIp[3]) >= Integer.valueOf(bIp[3])){
+                                   auxIp =  sortIps.get(i);
+                                   sortIps.set(i, sortIps.get(j));
+                                   sortIps.set(j, auxIp);
+                               }
                            }
                        }
-                   }
+                    }
+                }//end if is ipv4
+                else{
+                    String[] aIp = SubnetEngine.completeIPv6(sortIps.get(i).getName());
+                    String[] bIp = SubnetEngine.completeIPv6(sortIps.get(j).getName());
+                    for(int k=0; k<8; k++){
+                        if(Integer.parseInt(aIp[i],16) >= Integer.parseInt(bIp[i],16)){
+                            if(k==7){
+                                auxIp =  sortIps.get(i);
+                                sortIps.set(i, sortIps.get(j));
+                                sortIps.set(j, auxIp);
+                            }
+                            else
+                                continue;
+                        }
+                        else    
+                            break;
+                    }
                 }
             }
         }
@@ -115,23 +121,45 @@ public class SubnetChildren extends AbstractChildren{
         for (int i = 0; i < sortSubnets.size(); i++) {
             for (int j = i; j< sortSubnets.size(); j++) {
                 LocalObjectLight auxSubnet = null;
+                if(!sortSubnets.get(i).getName().contains(":")){
+                    String[] aIpCIDRsplit = sortSubnets.get(i).getName().split("/");
+                    String[] aSubnetSplit = aIpCIDRsplit[0].split("\\.");
 
-                String[] aIpCIDRsplit = sortSubnets.get(i).getName().split("/");
-                String[] aSubnetSplit = aIpCIDRsplit[0].split("\\.");
-
-                String[] bIpCIDRsplit = sortSubnets.get(j).getName().split("/");
-                String[] bSubnetSplit = bIpCIDRsplit[0].split("\\.");
-
-                if(Integer.valueOf(aSubnetSplit[0]) >= Integer.valueOf(bSubnetSplit[0])){
-                   if(Integer.valueOf(aSubnetSplit[1]) >= Integer.valueOf(bSubnetSplit[1])){
-                       if(Integer.valueOf(aSubnetSplit[2]) >= Integer.valueOf(bSubnetSplit[2])){
-                           if(Integer.valueOf(aSubnetSplit[3]) >= Integer.valueOf(bSubnetSplit[3])){
-                               auxSubnet =  sortSubnets.get(i);
-                               sortSubnets.set(i, sortSubnets.get(j));
-                               sortSubnets.set(j, auxSubnet);
+                    String[] bIpCIDRsplit = sortSubnets.get(j).getName().split("/");
+                    String[] bSubnetSplit = bIpCIDRsplit[0].split("\\.");
+                    
+                    if(Integer.valueOf(aSubnetSplit[0]) >= Integer.valueOf(bSubnetSplit[0])){
+                       if(Integer.valueOf(aSubnetSplit[1]) >= Integer.valueOf(bSubnetSplit[1])){
+                           if(Integer.valueOf(aSubnetSplit[2]) >= Integer.valueOf(bSubnetSplit[2])){
+                               if(Integer.valueOf(aSubnetSplit[3]) >= Integer.valueOf(bSubnetSplit[3])){
+                                   auxSubnet =  sortSubnets.get(i);
+                                   sortSubnets.set(i, sortSubnets.get(j));
+                                   sortSubnets.set(j, auxSubnet);
+                               }
                            }
                        }
-                   }
+                    }
+                }//end ipv4
+                else{
+                    String[] aIpCIDRsplit = sortSubnets.get(i).getName().split("/");
+                    String[] aSubnetSplit = SubnetEngine.completeIPv6(aIpCIDRsplit[0]);
+
+                    String[] bIpCIDRsplit = sortSubnets.get(j).getName().split("/");
+                    String[] bSubnetSplit = SubnetEngine.completeIPv6(bIpCIDRsplit[0]);
+                    
+                    for(int k=0; k<8; k++){
+                        if(Integer.parseInt(aSubnetSplit[i],16) >= Integer.parseInt(bSubnetSplit[i],16)){
+                            if(k==7){
+                                auxSubnet =  sortSubnets.get(i);
+                                sortSubnets.set(i, sortSubnets.get(j));
+                                sortSubnets.set(j, auxSubnet);
+                            }
+                            else
+                                continue;
+                        }
+                        else    
+                            break;
+                    }
                 }
             }
         }
