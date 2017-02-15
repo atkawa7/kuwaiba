@@ -130,6 +130,7 @@ public class ChildrenViewBuilder implements AbstractViewBuilder {
                                 Widget widget = scene.addNode(lol);
                                 widget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
                                 widget.setBackground(com.getMetaForClass(objectClass, false).getColor());
+                                scene.validate();
                                 myChildren.remove(lol);
                             }
                             else
@@ -159,17 +160,18 @@ public class ChildrenViewBuilder implements AbstractViewBuilder {
                                         newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideWidget));
                                         newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideWidget));
                                         List<Point> localControlPoints = new ArrayList<>();
-                                        while(true){
+                                        while(true) {
                                             reader.nextTag();
 
-                                            if (reader.getName().equals(qControlPoint)){
+                                            if (reader.getName().equals(qControlPoint)) {
                                                 if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
                                                     localControlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")), Integer.valueOf(reader.getAttributeValue(null,"y"))));
-                                            }else{
+                                            } else {
                                                 newEdge.setControlPoints(localControlPoints,false);
                                                 break;
                                             }
                                         }
+                                        scene.validate();
                                     }
                                 }else
                                     currentView.setDirty(true);
