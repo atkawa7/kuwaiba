@@ -21,10 +21,10 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
 /**
- *
+ * Custom dialog message implementation
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public abstract class ConfirmDialogWindow extends Window {
+public abstract class MessageDialogWindow extends Window {
     public static final int YES_NO_OPTION = 0;
     public static final int YES_NO_CANCEL_OPTION = 1;
     public static final int OK_CANCEL_OPTION = 2;
@@ -37,7 +37,7 @@ public abstract class ConfirmDialogWindow extends Window {
     
     private int option = CANCEL_OPTION;
     
-    public ConfirmDialogWindow(Window.CloseListener closeListener, 
+    public MessageDialogWindow(Window.CloseListener closeListener, 
             String caption, int options) {
         super(caption);
         center();
@@ -54,7 +54,7 @@ public abstract class ConfirmDialogWindow extends Window {
         setContent(content);
     }
     /**
-     * 
+     * Initializes the contents of the window
      * @return content
      */
     public abstract VerticalLayout initContent();

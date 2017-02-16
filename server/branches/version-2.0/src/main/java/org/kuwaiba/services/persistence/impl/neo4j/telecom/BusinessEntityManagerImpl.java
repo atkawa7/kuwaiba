@@ -700,7 +700,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     public void createSpecialRelationship(String aObjectClass, long aObjectId, String bObjectClass, long bObjectId, String name, boolean unique)
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
         
-        createSpecialRelationship(aObjectClass, aObjectId, bObjectClass, bObjectId, name, unique, new HashMap<String, Object>());
+        createSpecialRelationship(aObjectClass, aObjectId, bObjectClass, bObjectId, name, unique, new HashMap<>());
     }
     
     @Override

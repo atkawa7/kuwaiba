@@ -39,7 +39,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.ViewInfo;
 import org.kuwaiba.interfaces.ws.toserialize.application.ViewInfoLight;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.web.modules.osp.windows.CleanViewWindow;
-import org.kuwaiba.apis.web.gui.windows.ConfirmDialogWindow;
+import org.kuwaiba.apis.web.gui.windows.MessageDialogWindow;
 import org.kuwaiba.web.modules.osp.windows.DeleteWindow;
 import org.kuwaiba.web.modules.osp.windows.OpenViewWindow;
 import org.kuwaiba.web.modules.osp.windows.SaveTopologyWindow;
@@ -227,7 +227,7 @@ public class GoogleMapWrapper extends DragAndDropWrapper implements EmbeddableCo
             }
             if (e.getWindow() instanceof DeleteWindow) {
                 DeleteWindow window = (DeleteWindow) e.getWindow();
-                if (window.getOption() == ConfirmDialogWindow.OK_OPTION) {
+                if (window.getOption() == MessageDialogWindow.OK_OPTION) {
                     if (view != null) {
                         wsBean.deleteGeneralView(new long[]{view.getId()}, 
                                 ipAddress, sessioId);
@@ -243,7 +243,7 @@ public class GoogleMapWrapper extends DragAndDropWrapper implements EmbeddableCo
             }
             if (e.getWindow() instanceof CleanViewWindow) {
                 CleanViewWindow window = (CleanViewWindow) e.getWindow();
-                if (window.getOption() == ConfirmDialogWindow.OK_OPTION) {
+                if (window.getOption() == MessageDialogWindow.OK_OPTION) {
                     if (view != null) {
                         map.removeAllPhysicalConnection();
                         map.clear();
@@ -256,12 +256,12 @@ public class GoogleMapWrapper extends DragAndDropWrapper implements EmbeddableCo
             }
             if (e.getWindow() instanceof SaveViewDialog) {
                 SaveViewDialog window = (SaveViewDialog) e.getWindow();
-                if (window.getOption() == ConfirmDialogWindow.YES_OPTION) {
+                if (window.getOption() == MessageDialogWindow.YES_OPTION) {
                     saveView();
                     windowCallSaveView = true;
                 }
                                
-                if (window.getOption() == ConfirmDialogWindow.NO_OPTION) {
+                if (window.getOption() == MessageDialogWindow.NO_OPTION) {
                     map.removeConnectionsUnsave();
                     map.clear();
                     view = null;

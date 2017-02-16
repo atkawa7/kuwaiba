@@ -15,7 +15,7 @@
  */
 package org.kuwaiba.web.modules.osp.windows;
 
-import org.kuwaiba.apis.web.gui.windows.ConfirmDialogWindow;
+import org.kuwaiba.apis.web.gui.windows.MessageDialogWindow;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -24,11 +24,11 @@ import com.vaadin.ui.Window;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class CleanViewWindow extends ConfirmDialogWindow {
+public class CleanViewWindow extends MessageDialogWindow {
     
     public CleanViewWindow(Window.CloseListener closeListener) {
         super(closeListener, "Confirmation", 
-                ConfirmDialogWindow.OK_CANCEL_OPTION);
+                MessageDialogWindow.OK_CANCEL_OPTION);
     }
     
     @Override

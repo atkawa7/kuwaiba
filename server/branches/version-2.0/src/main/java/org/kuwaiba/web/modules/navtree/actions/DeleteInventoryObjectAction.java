@@ -25,7 +25,7 @@ import com.vaadin.ui.Window;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.apis.web.gui.nodes.InventoryObjectNode;
-import org.kuwaiba.apis.web.gui.windows.ConfirmDialogWindow;
+import org.kuwaiba.apis.web.gui.windows.MessageDialogWindow;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
@@ -51,7 +51,7 @@ public class DeleteInventoryObjectAction extends AbstractAction implements Windo
     public void windowClose(Window.CloseEvent e) {
         DeleteInventoryObjectWindows window = (DeleteInventoryObjectWindows) e.getWindow();
         
-        if (window.getOption() == ConfirmDialogWindow.OK_OPTION) {
+        if (window.getOption() == MessageDialogWindow.OK_OPTION) {
             try {
                 TopComponent parentComponent = node.getTree().getTopComponent();
                 
@@ -77,11 +77,11 @@ public class DeleteInventoryObjectAction extends AbstractAction implements Windo
         }
     }
     
-    public class DeleteInventoryObjectWindows extends ConfirmDialogWindow {
+    public class DeleteInventoryObjectWindows extends MessageDialogWindow {
 
         public DeleteInventoryObjectWindows(Window.CloseListener closeListener) {
             super(closeListener, "Confirmation", 
-                    ConfirmDialogWindow.OK_CANCEL_OPTION);
+                    MessageDialogWindow.OK_CANCEL_OPTION);
         }
 
         @Override

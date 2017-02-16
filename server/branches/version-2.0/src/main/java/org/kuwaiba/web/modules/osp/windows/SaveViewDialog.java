@@ -15,7 +15,7 @@
  */
 package org.kuwaiba.web.modules.osp.windows;
 
-import org.kuwaiba.apis.web.gui.windows.ConfirmDialogWindow;
+import org.kuwaiba.apis.web.gui.windows.MessageDialogWindow;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -24,11 +24,11 @@ import com.vaadin.ui.Window;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class SaveViewDialog extends ConfirmDialogWindow {
+public class SaveViewDialog extends MessageDialogWindow {
     
     public SaveViewDialog(Window.CloseListener closeListener) {
         super(closeListener, "Confirmation", 
-                ConfirmDialogWindow.YES_NO_CANCEL_OPTION);
+                MessageDialogWindow.YES_NO_CANCEL_OPTION);
     }
 
     @Override

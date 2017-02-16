@@ -16,7 +16,7 @@ import java.util.List;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.apis.web.gui.nodes.InventoryObjectNode;
-import org.kuwaiba.apis.web.gui.windows.ConfirmDialogWindow;
+import org.kuwaiba.apis.web.gui.windows.MessageDialogWindow;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
@@ -42,11 +42,11 @@ public class ShowObjectIdAction extends AbstractAction implements Window.CloseLi
     @Override
     public void windowClose(Window.CloseEvent e) {}
     
-    public class ShowObjectIdWindows extends ConfirmDialogWindow {
+    public class ShowObjectIdWindows extends MessageDialogWindow {
 
         public ShowObjectIdWindows() {
             super(ShowObjectIdAction.this, "Object id", 
-                    ConfirmDialogWindow.ONLY_OK_OPTION);
+                    MessageDialogWindow.ONLY_OK_OPTION);
         }
 
         @Override

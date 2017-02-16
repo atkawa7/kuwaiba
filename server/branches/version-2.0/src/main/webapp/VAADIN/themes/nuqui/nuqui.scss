@@ -109,7 +109,6 @@ $v-layout-spacing-horizontal: round($v-unit-size / 1.8) !default;
         border: none !important;
     }
 
-
     .h1{
         color: gold;
         font-size: 1em;
@@ -137,16 +136,6 @@ $v-layout-spacing-horizontal: round($v-unit-size / 1.8) !default;
             padding-right: $foot-login-padding;
         }
     }//end login-foot
-    
-    
-/*    .v-tree-node-expanded {
-        background: transparent url(img/Documenta.png) no-repeat 0px 4px;
-    }
-    .v-tree-node {
-        background: transparent url(img/Documenta.png) no-repeat 0px 4px;
-        padding: 1px 0;
-        padding-left: 2px;
-    }*/
     
     .v-tree-node-bold {
         font-weight: bold;

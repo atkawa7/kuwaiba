@@ -34,7 +34,7 @@ public abstract class AbstractTooledComponent extends CustomComponent {
      */
     public static final int TOOLBAR_SIZE_SMALL = 1;
     /**
-     * Toolbar size small (icon size 22x22)
+     * Toolbar size small (icon size 24x24)
      */
     public static final int TOOLBAR_SIZE_NORMAL = 2;
     /**
@@ -49,6 +49,14 @@ public abstract class AbstractTooledComponent extends CustomComponent {
      * Toolbar orientation horizontal
      */
     public static final int TOOLBAR_ORIENTATION_HORIZONTAL = 2;
+    /**
+     * Vertical padding used to place the icon inside the button 
+     */
+    public static final int TOOLBAR_VERTICAL_PADDING = 5;
+    /**
+     * Horizontal padding used to place the icon inside the button 
+     */
+    public static final int TOOLBAR_HORIZONTAL_PADDING = 5;
     /**
      * Toolbar orientation
      */
@@ -73,20 +81,19 @@ public abstract class AbstractTooledComponent extends CustomComponent {
         if (orientation == TOOLBAR_ORIENTATION_HORIZONTAL) {
             componentLayout = new VerticalLayout();
             toolbarLayout = new HorizontalLayout();
-            toolbarLayout.setHeight(toolBarSize.size, Unit.PIXELS);
-            toolbarLayout.setWidth("100%");
+            toolbarLayout.setHeight(toolBarSize.size + 2 * TOOLBAR_VERTICAL_PADDING, Unit.PIXELS);
         } else {
             componentLayout = new HorizontalLayout();
             toolbarLayout = new VerticalLayout();
-            toolbarLayout.setWidth(toolBarSize.size, Unit.PIXELS);
-            toolbarLayout.setHeight("100%");
+            toolbarLayout.setWidth(toolBarSize.size + 2 * TOOLBAR_HORIZONTAL_PADDING, Unit.PIXELS);
         }
         
         for (final AbstractAction action : actions) {
             final Button btnAction = new Button(action.getIcon());
             btnAction.setDescription(action.getCaption());
-            btnAction.setWidth(toolBarSize.size, Unit.PIXELS);
-            btnAction.setHeight(toolBarSize.size, Unit.PIXELS);
+            btnAction.setStyleName("v-button-icon-only");
+            btnAction.setWidth(toolBarSize.size + 2 * TOOLBAR_HORIZONTAL_PADDING, Unit.PIXELS);
+            btnAction.setHeight(toolBarSize.size + 2 * TOOLBAR_VERTICAL_PADDING, Unit.PIXELS);
             btnAction.addClickListener(new Button.ClickListener() {
 
                 @Override
