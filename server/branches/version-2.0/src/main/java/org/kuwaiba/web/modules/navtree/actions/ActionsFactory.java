@@ -25,7 +25,7 @@ import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 public class ActionsFactory {
     static CreateInventoryObjectAction createInventoryObjectAction;
     static DeleteInventoryObjectAction deleteInventoryObjectAction;
-    static ShowObjectIdAction showObjectIdAction;
+    static MoreInformationAction showObjectIdAction;
         
     public static AbstractAction createCreateInventoryObjectAction() {
         if (createInventoryObjectAction == null)
@@ -41,7 +41,7 @@ public class ActionsFactory {
     
     public static AbstractAction createShowObjectIdAction() {
         if (showObjectIdAction == null)
-            showObjectIdAction = new ShowObjectIdAction();
+            showObjectIdAction = new MoreInformationAction();
         return showObjectIdAction;
     }
 }

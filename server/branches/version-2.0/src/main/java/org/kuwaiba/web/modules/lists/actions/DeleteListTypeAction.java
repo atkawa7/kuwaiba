@@ -77,7 +77,7 @@ public class DeleteListTypeAction extends AbstractAction implements Window.Close
     public class DeleteListTypeWindows extends MessageDialogWindow {
 
         public DeleteListTypeWindows(Window.CloseListener closeListener) {
-            super(closeListener, "Confirmation", 
+            super(closeListener, "Delete List Type", 
                     MessageDialogWindow.OK_CANCEL_OPTION);
         }
 

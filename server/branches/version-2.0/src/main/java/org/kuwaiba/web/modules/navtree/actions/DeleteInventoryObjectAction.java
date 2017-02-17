@@ -80,7 +80,7 @@ public class DeleteInventoryObjectAction extends AbstractAction implements Windo
     public class DeleteInventoryObjectWindows extends MessageDialogWindow {
 
         public DeleteInventoryObjectWindows(Window.CloseListener closeListener) {
-            super(closeListener, "Confirmation", 
+            super(closeListener, "Delete Object", 
                     MessageDialogWindow.OK_CANCEL_OPTION);
         }
 

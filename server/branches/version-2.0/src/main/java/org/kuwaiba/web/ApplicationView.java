@@ -63,7 +63,7 @@ class ApplicationView extends CustomComponent implements View {
             MenuBar mnuMain = new MenuBar();
             
             MenuBar.MenuItem mnuTools =  mnuMain.addItem("Tools", null, null);
-            MenuBar.MenuItem mnuLogout = mnuMain.addItem("Logout", null, new MenuBar.Command() {
+            mnuMain.addItem("Logout", null, new MenuBar.Command() {
 
                 @Override
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
@@ -107,7 +107,7 @@ class ApplicationView extends CustomComponent implements View {
                 }
             });
             
-            MenuBar.MenuItem mnuNavigation = mnuTools.addItem("Navigation", null);
+            MenuBar.MenuItem mnuNavigation = mnuTools.addItem("Advanced", null);
             mnuNavigation.addItem(mdlOutsidePlant.getName(), mdlOutsidePlant.getIcon(), new MenuBar.Command() {
 
                 @Override

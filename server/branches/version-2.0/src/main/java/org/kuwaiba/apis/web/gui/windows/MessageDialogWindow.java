@@ -33,24 +33,25 @@ public abstract class MessageDialogWindow extends Window {
     public static final int YES_OPTION = 0;
     public static final int NO_OPTION = 1;
     public static final int CANCEL_OPTION = 2;
-    public static final int OK_OPTION = 0;
+    public static final int OK_OPTION = 3;
     
     private int option = CANCEL_OPTION;
     
     public MessageDialogWindow(Window.CloseListener closeListener, 
-            String caption, int options) {
-        super(caption);
+            String title, int options) {
+        super(title);
         center();
         addCloseListener(closeListener);
         
         VerticalLayout content = new VerticalLayout();
-        content.setMargin(true);
         
         content.addComponent(initContent());
         content.addComponent(initButtons(options));
                         
         setResizable(false);
         setClosable(false);
+        setModal(true);
+        
         setContent(content);
     }
     /**
@@ -61,9 +62,12 @@ public abstract class MessageDialogWindow extends Window {
     
     private HorizontalLayout initButtons(int options) {
         HorizontalLayout content = new HorizontalLayout();
+        content.setSpacing(true);
         content.setMargin(true);
-        
+                
         Button btnYes = new Button("Yes");
+        btnYes.setWidth("120px");
+        
         btnYes.addClickListener(new Button.ClickListener() {
             
             @Override
@@ -74,6 +78,7 @@ public abstract class MessageDialogWindow extends Window {
         });
         
         Button btnNo = new Button("No");
+        btnNo.setWidth("120px"); //NOI18N
         btnNo.addClickListener(new Button.ClickListener() {
             
             @Override
@@ -83,7 +88,8 @@ public abstract class MessageDialogWindow extends Window {
             }
         });
         
-        Button btnOk = new Button("Ok");
+        Button btnOk = new Button("OK");
+        btnOk.setWidth("120px");
         btnOk.addClickListener(new Button.ClickListener() {
             
             @Override
@@ -94,6 +100,7 @@ public abstract class MessageDialogWindow extends Window {
         });
                 
         Button btnCancel = new Button("Cancel");
+        btnCancel.setWidth("120px");
         btnCancel.addClickListener(new Button.ClickListener() {
             
             @Override
@@ -102,7 +109,6 @@ public abstract class MessageDialogWindow extends Window {
                 close();
             }
         });
-        
         
         switch (options) {
             case YES_NO_OPTION:
@@ -122,6 +128,8 @@ public abstract class MessageDialogWindow extends Window {
                 content.addComponent(btnOk);
                 break;
         }
+        
+        btnOk.focus();
         return content;
     }
     
