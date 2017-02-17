@@ -1326,8 +1326,25 @@ public class CommunicationsStub {
         }
     }
 
-    public boolean moveObjects(String targetClass, long targetOid, LocalObjectLight[] objects) {
+    public boolean moveObjectsToPool(String targetClass, long targetOid, LocalObjectLight[] objects) {
 
+        try{
+            List<Long> objectOids = new ArrayList<>();
+            List<String> objectClasses = new ArrayList<>();
+
+            for (LocalObjectLight lol : objects){
+                objectOids.add(lol.getOid());
+                objectClasses.add(lol.getClassName());
+            }
+            service.moveObjectsToPool(targetClass, targetOid, objectClasses, objectOids, this.session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    public boolean moveObjects(String targetClass, long targetOid, LocalObjectLight[] objects) {
         try{
             List<Long> objectOids = new ArrayList<>();
             List<String> objectClasses = new ArrayList<>();
