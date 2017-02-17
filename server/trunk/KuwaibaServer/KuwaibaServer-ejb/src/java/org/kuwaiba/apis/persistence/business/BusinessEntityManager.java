@@ -243,6 +243,19 @@ public interface BusinessEntityManager {
      */
     public boolean setBinaryAttributes(String className, long oid, List<String> attributeNames, List<byte[]> attributeValues)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, ArraySizeMismatchException;
+    
+    /**
+     * Move a list of objects to a new parent: this methods ignores those who can't be moved and raises
+     * an OperationNotPermittedException, however, it will move those which can be moved
+     * @param objects Map using the object class name as keys and the respective objects oids as values
+     * @param targetClassName Parent's class name
+     * @param targetOid Parent's oid
+     * @throws MetadataObjectNotFoundException If the object's or new parent's class can't be found
+     * @throws ObjectNotFoundException If the object or its new parent can't be found
+     * @throws OperationNotPermittedException If the update can't be performed due to a business rule
+     */
+    public void moveObjectsToPool(String targetClassName, long targetOid, HashMap<String, long[]> objects)
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException;
     /**
      * Move a list of objects to a new parent: this methods ignores those who can't be moved and raises
      * an OperationNotPermittedException, however, it will move those which can be moved

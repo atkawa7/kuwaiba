@@ -1019,6 +1019,28 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
+    public void moveObjectsToPool(String targetClass, long targetOid, String[] objectClasses, long[] objectOids, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        if (objectClasses.length != objectOids.length)
+            throw new ServerSideException("Array sizes do not match");
+        try {
+            aem.validateCall("moveObjectsToPool", ipAddress, sessionId);
+            HashMap<String,long[]> objects = new HashMap<>();
+            for (int i = 0; i< objectClasses.length;i++){
+                if (objects.get(objectClasses[i]) == null)
+                    objects.put(objectClasses[i], new long[]{objectOids[i]});
+            }
+            bem.moveObjectsToPool(targetClass, targetOid, objects);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                    ActivityLogEntry.ACTIVITY_TYPE_CHANGE_PARENT, 
+                    String.format("%s moved to pool with id %s", Arrays.toString(objectOids), targetOid));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
     public void moveObjects(String targetClass, long targetOid, String[] objectClasses, long[] objectOids, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");

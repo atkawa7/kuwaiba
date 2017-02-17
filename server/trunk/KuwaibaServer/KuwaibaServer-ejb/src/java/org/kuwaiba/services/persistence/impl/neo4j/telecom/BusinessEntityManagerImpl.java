@@ -64,6 +64,7 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
+import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.graphdb.traversal.TraversalDescription;
 import org.neo4j.helpers.collection.IteratorUtil;
 
@@ -355,7 +356,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             throw new ArraySizeMismatchException("attributeNames", "attributeValues");
         }
         
-        
         try(Transaction tx =graphDb.beginTx()) {
             Node pool = poolsIndex.get(Constants.PROPERTY_ID, poolId).getSingle();
             
@@ -382,6 +382,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             
             Node newObject = createObject(classNode, classMetadata, attributes);
             newObject.createRelationshipTo(pool, RelTypes.CHILD_OF_SPECIAL).setProperty(Constants.PROPERTY_NAME, Constants.REL_PROPERTY_POOL);
+            objectIndex.putIfAbsent(newObject, Constants.PROPERTY_ID, newObject.getId());
             
             tx.success();
             return newObject.getId();
@@ -721,6 +722,48 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 if (rel.getProperty(Constants.PROPERTY_NAME).equals(relationshipName) &&
                             rel.getEndNode().getId() == targetId)
                     rel.delete();
+            }
+            tx.success();
+        }
+    }
+    
+    @Override
+    public void moveObjectsToPool(String targetClassName, long targetOid, HashMap<String, long[]> objects)
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
+        ClassMetadata newParentClass = cm.getClass(targetClassName);
+        
+        boolean isPool = true;
+        if (newParentClass == null)
+            throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", targetClassName));
+        
+        try(Transaction tx = graphDb.beginTx()) {
+            Node newParentNode = poolsIndex.get(Constants.PROPERTY_ID, targetOid).getSingle();
+            
+            if(newParentNode == null){
+                isPool = false;
+                newParentNode = objectIndex.get(Constants.PROPERTY_ID, targetOid).getSingle();
+                if(newParentNode == null)
+                    throw new ObjectNotFoundException(targetClassName, targetOid);
+            }
+            
+            for (String myClass : objects.keySet()){
+                Node instanceClassNode = classIndex.get(Constants.PROPERTY_NAME, myClass).getSingle();
+                if (instanceClassNode == null)
+                    throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", myClass));
+                for (long oid : objects.get(myClass)){
+                    Node instance = getInstanceOfClass(instanceClassNode, oid);
+                    String oldValue = null;
+                    //If the object was child of a pool
+                    if (instance.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).iterator().hasNext()){
+                        Relationship rel = instance.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).iterator().next();
+                        oldValue = String.valueOf(rel.getEndNode().getId());
+                        rel.delete();
+                    }
+                    if(isPool)
+                        instance.createRelationshipTo(newParentNode, RelTypes.CHILD_OF_SPECIAL).setProperty(Constants.PROPERTY_NAME, Constants.REL_PROPERTY_POOL);
+                    else
+                        instance.createRelationshipTo(newParentNode, RelTypes.CHILD_OF_SPECIAL);
+                }
             }
             tx.success();
         }
