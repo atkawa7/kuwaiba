@@ -15,9 +15,9 @@
  */
 package org.kuwaiba.apis.web.gui.nodes.properties;
 
-import com.google.common.eventbus.EventBus;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.FieldEvents;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
@@ -31,13 +31,13 @@ import org.kuwaiba.services.persistence.util.Constants;
  * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
  * @param <T> type of objects that can be set as a list in the properties 
  */
-public class PropertySheet<T extends Object> extends Table{
-
+public class Sheet<T extends Object> extends Table {
     private final AbstractNodePorpertyValueChangeListener<T> valueChangeListener;
     protected BeanItem<T> object;
     private final Label descriptionText;  
+    Button close;
         
-    public PropertySheet(BeanItem<T> object, AbstractNodePorpertyValueChangeListener<T> valueChangeListener) {
+    public Sheet(BeanItem<T> object, AbstractNodePorpertyValueChangeListener<T> valueChangeListener) {
         this.object = object;
         this.valueChangeListener = valueChangeListener;
         descriptionText = new Label();     
@@ -46,21 +46,24 @@ public class PropertySheet<T extends Object> extends Table{
         addContainerProperty("Attribute", Label.class, null);
         addContainerProperty("Value", Component.class, null);
         addSelectedObjectId();
+        close =  new Button(">");
+        this.addItem(new Object[] {new Label("a"), close}, 1212);
     }
     
     public void createDateProperty(String propertyCaption, String description, Date date, int i){
-        DateProperty dateField = new DateProperty(date);
+        PorpertyDate dateField = new PorpertyDate(date);
         dateField.setEnabled(false);
         this.addItem(new Object[] {new Label(propertyCaption), dateField}, i);
     }
     
     public void createPrimitiveField(String propertyCaption, String description, Object value, String type, int i){
+        
         switch (type) {
             case "String":
             case "Float":
             case "Long":
             case "Integer":
-                PrimitiveProperty stringProperty = new PrimitiveProperty(propertyCaption, type, (String)value);
+                PropertyPrimitive stringProperty = new PropertyPrimitive(propertyCaption, type, (String)value);
                 stringProperty.addFocusListener(valueChangeListener);
                 stringProperty.addValueChangeListener(valueChangeListener);
                 stringProperty.addFocusListener(new descriptionListener(description));
@@ -73,23 +76,25 @@ public class PropertySheet<T extends Object> extends Table{
 //                this.addItem(new Object[] {new Label(propertyCaption), numericProperty}, i);
 //                break;
             case "Boolean":
-                BooleanProperty booleanProperty = new BooleanProperty(propertyCaption, (boolean)value);
+                if(((String)value).isEmpty())
+                    value = "false";
+                PorpertyBoolean booleanProperty = new PorpertyBoolean(propertyCaption, Boolean.valueOf((String)value));
                 booleanProperty.addValueChangeListener(valueChangeListener);
                 booleanProperty.addFocusListener(valueChangeListener);
-                this.addItem(new Object[] {new Label(propertyCaption), }, i);
+                this.addItem(new Object[] {new Label(propertyCaption), booleanProperty}, i);
                 break;
         }
     } 
     
     public void createListTypeField(String propertyCaption, String description, List<T> list, T actualValue, int i){
-        ListTypeProperty listProperty = new ListTypeProperty(propertyCaption, list, actualValue);
+        PropertyListType listProperty = new PropertyListType(propertyCaption, list, actualValue);
         listProperty.addValueChangeListener(valueChangeListener);
         listProperty.addFocusListener(valueChangeListener);
         this.addItem(new Object[] {new Label(propertyCaption), listProperty}, i);
         
     }
     
-    private void addDescritpion(){
+    private void addDescription(){
         Label description = new Label("Description: ");
         descriptionText.setValue("");
         description.addStyleName(ValoTheme.LABEL_BOLD);
@@ -98,13 +103,16 @@ public class PropertySheet<T extends Object> extends Table{
     }
     
     private void addSelectedObjectId(){
-        Label objectId = new Label(Long.toString((long)object.getItemProperty(Constants.PROPERTY_ID).getValue()));
-        objectId.addStyleName(ValoTheme.LABEL_BOLD);
-        Label id = new Label(Constants.PROPERTY_ID);
-        id.addStyleName(ValoTheme.LABEL_BOLD);
-        this.addItem(new Object[] {id, objectId}, 0);
+        if(object != null){
+            Label objectId = new Label(Long.toString((long)object.getItemProperty(Constants.PROPERTY_OID).getValue()));
+            objectId.addStyleName(ValoTheme.LABEL_BOLD);
+            Label id = new Label(Constants.PROPERTY_ID);
+            id.addStyleName(ValoTheme.LABEL_BOLD);
+            this.addItem(new Object[] {id, objectId}, 0);
+            this.addItem(new Object[] {new Label("dsdsdsa"), close}, 20);
+        }
     }
-    
+   
     private class descriptionListener implements FieldEvents.FocusListener{
 
         private final String propertyDescription;

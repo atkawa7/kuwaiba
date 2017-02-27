@@ -23,9 +23,9 @@ import java.util.Date;
  * A field to represent date values in a property sheet
  * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
  */
-public class DateProperty extends DateField {
+public class PorpertyDate extends DateField {
 
-    public DateProperty(Date date) {
+    public PorpertyDate (Date date) {
         super();
         this.setResolution(Resolution.MINUTE);
         this.setValue(date);

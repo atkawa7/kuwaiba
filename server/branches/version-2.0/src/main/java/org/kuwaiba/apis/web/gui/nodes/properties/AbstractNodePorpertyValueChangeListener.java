@@ -1,4 +1,4 @@
- /*
+/*
  *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
@@ -19,6 +19,7 @@ import com.google.common.eventbus.EventBus;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.FieldEvents;
+import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.services.persistence.util.Constants;
 
 /**
@@ -33,10 +34,12 @@ public abstract class AbstractNodePorpertyValueChangeListener<T extends Object>
     protected String attributeCaption;
     protected String attributeType;
     protected BeanItem<T> object;
+    protected TopComponent parentComponent;
 
-    public AbstractNodePorpertyValueChangeListener(BeanItem<T> object, EventBus eventBus){
+    public AbstractNodePorpertyValueChangeListener(TopComponent parentComponent, BeanItem<T> object, EventBus eventBus){
         this.object = object;
         this.eventBus = eventBus;
+        this.parentComponent = parentComponent;
     }
 
     public void setAttributeCaption(String attributeCaption) {
@@ -54,15 +57,21 @@ public abstract class AbstractNodePorpertyValueChangeListener<T extends Object>
     public void focus(FieldEvents.FocusEvent event){
         Object source = event.getSource();
         
-        if(source instanceof PrimitiveProperty){
-            attributeCaption = ((PrimitiveProperty)source).getPropertyName();
-            attributeType = ((PrimitiveProperty)source).getPropertyType();
+        if(source instanceof PropertyPrimitive){
+            attributeCaption = ((PropertyPrimitive)source).getPropertyName();
+            attributeType = ((PropertyPrimitive)source).getPropertyType();
         }
-        else if(source instanceof ListTypeProperty)
-            attributeCaption = ((ListTypeProperty)source).getPropertyName();
-        else if(source instanceof BooleanProperty)
-            attributeCaption = ((BooleanProperty)source).getPropertyName();
-        else
+        else if(source instanceof PropertyListType){
+            attributeCaption = ((PropertyListType)source).getPropertyName();
+            attributeType = "ListType";
+        }
+        else if(source instanceof PorpertyBoolean){
+            attributeCaption = ((PorpertyBoolean)source).getPropertyName();
+            attributeType = "Boolean";
+        }
+        else{
             attributeCaption = Constants.PROPERTY_CREATION_DATE;
+            attributeType = Constants.PROPERTY_CREATION_DATE;
+        }
     }
 }

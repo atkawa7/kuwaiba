@@ -1,4 +1,4 @@
- /*
+/*
  *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
@@ -17,17 +17,32 @@ package org.kuwaiba.apis.web.gui.nodes.properties;
 
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.event.ItemClickEvent;
+import com.vaadin.ui.CustomComponent;
+import org.kuwaiba.apis.web.gui.modules.EmbeddableComponent;
+import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.web.modules.osp.google.overlays.NodeMarker;
 
 /**
  * Abstract component for the property sheet of any node
  * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
  */
-public interface AbstractNodeProperty {
+public abstract class AbstractNodeProperty extends CustomComponent implements 
+        EmbeddableComponent
+{
+    protected Sheet sheet;
+    private final TopComponent parentComponent;
+
+    public AbstractNodeProperty(TopComponent parentComponent) {
+        this.parentComponent = parentComponent;
+    }
     
+    @Override
+    public TopComponent getTopComponent() {
+        return parentComponent;
+    }
+        
     @Subscribe
-    void nodeSelected(ItemClickEvent event);
+    abstract void nodeSelected(ItemClickEvent event);
     @Subscribe
-    void markerSelected(NodeMarker event);
-    void createPropertySheet(Object node);
+    abstract void markerSelected(NodeMarker event);
 }

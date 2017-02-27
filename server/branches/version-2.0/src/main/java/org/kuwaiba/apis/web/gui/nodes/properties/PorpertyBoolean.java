@@ -15,37 +15,22 @@
  */
 package org.kuwaiba.apis.web.gui.nodes.properties;
 
-import com.vaadin.ui.ComboBox;
-import java.util.List;
+import com.vaadin.ui.CheckBox;
 
 /**
- * A field to represent a set of values(a list) in a property sheet
+ * A field to represent boolean values in a property sheet
  * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
- * @param <T>
  */
-public class ListTypeProperty <T extends Object> extends ComboBox {
-
-    private final String propertyName;
-    private T oldValue;
+public class PorpertyBoolean extends CheckBox{
     
-    public ListTypeProperty(String propertyName, List<T> list, T actualValue) {
+    private final String propertyName;
+            
+    public PorpertyBoolean(String propertyName, boolean value) {
         this.propertyName = propertyName;
-        this.setTextInputAllowed(false);
-        this.setNullSelectionAllowed(false);
-        for (T item : list) 
-            addItem(item);
-        this.select(actualValue);
+        setValue(value);
     }
 
     public String getPropertyName() {
         return propertyName;
-    }
-
-    public T getOldValue() {
-        return oldValue;
-    }
-
-    public void setOldValue(T oldValue) {
-        this.oldValue = oldValue;
     }
 }

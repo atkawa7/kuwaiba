@@ -22,19 +22,19 @@ import com.vaadin.ui.TextField;
  * A field to represent primitive values(numeric, string) in a property sheet
  * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
  */
-public class PrimitiveProperty extends TextField{
+public class PropertyPrimitive extends TextField{
     
     private String propertyName;
     private String propertyType;
     
-    public PrimitiveProperty(String propertyName, String propertyType, String value) {
+    public PropertyPrimitive(String propertyName, String propertyType, String value) {
         super();
         this.propertyName = propertyName;
         this.propertyType = propertyType;
         setValue(value == null ? "" : (String)value);
     }
     
-    public PrimitiveProperty(int value) {
+    public PropertyPrimitive(int value) {
         super();
         setConverter(Integer.class);
         setValue(Integer.toString(value));
