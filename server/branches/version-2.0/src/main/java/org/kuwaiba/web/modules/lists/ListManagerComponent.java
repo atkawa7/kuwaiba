@@ -22,6 +22,7 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.VerticalSplitPanel;
 import java.util.ArrayList;
+import java.util.Arrays;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
 import org.kuwaiba.apis.web.gui.nodes.AbstractNode;
@@ -37,6 +38,7 @@ import org.kuwaiba.web.custom.tree.DynamicTree;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ListManagerComponent extends AbstractTopComponent {
+    
     private DynamicTree listTypesTree;
     
     public ListManagerComponent(EventBus eventBus, WebserviceBeanLocal wsBean, RemoteSession session) {
@@ -48,8 +50,7 @@ public class ListManagerComponent extends AbstractTopComponent {
                     session.getSessionId());
             
             ArrayList<ClassInfoLight> rootChildren = new ArrayList();
-            for (ClassInfoLight listType : listTypes)
-                rootChildren.add(listType);
+            rootChildren.addAll(Arrays.asList(listTypes));
             
             ListTypeRootNode rootNode = new ListTypeRootNode("Available List Types", rootChildren);
             
