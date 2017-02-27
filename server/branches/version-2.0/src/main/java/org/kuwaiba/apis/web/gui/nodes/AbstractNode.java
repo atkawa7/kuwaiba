@@ -16,10 +16,25 @@
 package org.kuwaiba.apis.web.gui.nodes;
 
 import java.util.ArrayList;
+import com.vaadin.data.util.BeanItem;
+import com.vaadin.server.Page;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
+import org.kuwaiba.apis.web.gui.nodes.properties.NodeProperty;
+import org.kuwaiba.apis.web.gui.nodes.properties.Sheet;
+import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
+import org.kuwaiba.apis.web.gui.wrappers.LocalObjectListItem;
+import org.kuwaiba.exceptions.ServerSideException;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfo;
+import org.kuwaiba.services.persistence.util.Util;
 import org.kuwaiba.web.custom.tree.DynamicTree;
 
 /**
@@ -168,5 +183,87 @@ public abstract class AbstractNode<T> {
         int hash = 7;
         hash = 71 * hash + Objects.hashCode(this.object);
         return hash;
+    }
+    
+    public Sheet createPropertySheet(){
+        try {
+            RemoteObject remoteObject = getTree().getTopComponent().getWsBean().getObject(
+                    ((RemoteObjectLight)getObject()).getClassName(),
+                    ((RemoteObjectLight)getObject()).getOid(),
+                    Page.getCurrent().getWebBrowser().getAddress(), 
+                     getTree().getTopComponent().getApplicationSession().getSessionId());
+            
+            BeanItem<RemoteObject> beanItem = new BeanItem<> (remoteObject);
+            ObjectNodePropertyChangeValueListener valueListener = new ObjectNodePropertyChangeValueListener(getTree().getTopComponent(), beanItem, getTree().getTopComponent().getEventBus());
+            
+            Sheet sheet = new Sheet(beanItem, valueListener);
+            
+            ClassInfo meta = getTree().getTopComponent().getWsBean().getClass(remoteObject.getClassName(), 
+                    Page.getCurrent().getWebBrowser().getAddress(), 
+                    getTree().getTopComponent().getApplicationSession().getSessionId());
+            
+            String[] classAttributes = meta.getAttributeNames();
+            int i = 0;
+            //Arrays.sort(classAttributes);
+            for (String classAttribute : classAttributes) {
+                if(meta.getAttributesIsVisible()[i]){
+                    int k = 0;
+                    for (String attribute : remoteObject.getAttributes()) {
+                        if (attribute.equals(classAttribute))
+                            break;
+                        k++;
+                    }
+                    String attributeValue = "";
+                    if(k < remoteObject.getAttributes().length)
+                        attributeValue = remoteObject.getValues()[k][0];
+                   
+                    AttributeMetadata a =  new AttributeMetadata();
+                    String[] attributeTypes = meta.getAttributeTypes();
+                    
+                    switch (Util.getMappingFromType(attributeTypes[i])) {
+                        case AttributeMetadata.MAPPING_TIMESTAMP:
+                        case AttributeMetadata.MAPPING_DATE:
+                            sheet.createDateProperty(classAttribute, meta.getAttributesDescription()[i], new Date(Long.valueOf(attributeValue)), i);
+                            break;
+                        case AttributeMetadata.MAPPING_PRIMITIVE:
+                            sheet.createPrimitiveField(classAttribute,  meta.getAttributesDescription()[i], attributeValue, meta.getAttributeTypes()[i], i);
+                            break;
+                        case AttributeMetadata.MAPPING_MANYTOONE:
+                            List<RemoteObjectLight> listTypeItems = getTree().getTopComponent().getWsBean().getListTypeItems(meta.getAttributeTypes()[i], 
+                                Page.getCurrent().getWebBrowser().getAddress(),
+                                getTree().getTopComponent().getApplicationSession().getSessionId()
+                            );
+                            
+                            List<LocalObjectListItem> localListTypeItems = new ArrayList<>();
+                            for (RemoteObjectLight listTypeItem : listTypeItems) {
+                                localListTypeItems.add(new LocalObjectListItem(
+                                        listTypeItem.getOid(),
+                                        listTypeItem.getClassName(), 
+                                        listTypeItem.getName()));
+                            }
+                            
+                            LocalObjectListItem actualItem = null;
+                            
+                            for (LocalObjectListItem listTypeItem : localListTypeItems) {
+                                if(!attributeValue.isEmpty()){
+                                    if(listTypeItem.getOid() == Long.valueOf(attributeValue))
+                                        actualItem = listTypeItem;
+                                }
+                            }
+                            sheet.createListTypeField(classAttribute,  meta.getAttributesDescription()[i], localListTypeItems, actualItem, i);
+                            break;
+                        default:
+                            NotificationsUtil.showError("Mapping not supported");
+                    }        
+                }
+                i++;
+            }//end for
+            sheet.setPageLength(sheet.size());
+            return sheet;
+            
+         } catch (ServerSideException ex) {
+            Logger.getLogger(NodeProperty.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 }

@@ -177,6 +177,10 @@ public class Constants {
      * Property CHILD_OF_SPECIAL relationship type
      */
     public static final String REL_PROPERTY_POOL = "pool";
+     /**
+     * A fixed label to indicate a given node doesn't have a name set
+     */
+    public static final String LABEL_NONAME = "<No Name>";
     /**
      * Property "structure" for views
      */

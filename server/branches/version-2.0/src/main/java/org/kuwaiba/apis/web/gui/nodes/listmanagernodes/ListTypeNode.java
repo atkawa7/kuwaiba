@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
@@ -43,7 +43,7 @@ public class ListTypeNode extends AbstractNode<ClassInfoLight> {
         super.setTree(tree);
         tree.setItemIcon(this, new ThemeResource("img/mod_list_res/list-type.png"));
     }
-
+    
     @Override
     public void expand() {
         if (getTree() == null) //If the tree has not been set previously, do nothing
@@ -76,5 +76,5 @@ public class ListTypeNode extends AbstractNode<ClassInfoLight> {
 
     @Override
     public void refresh(boolean recursive) {}
-    
+
 }

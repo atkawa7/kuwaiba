@@ -1,4 +1,4 @@
- /*
+/*
  *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
@@ -23,14 +23,16 @@ import com.vaadin.ui.Tree.CollapseListener;
 import org.kuwaiba.apis.web.gui.modules.EmbeddableComponent;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.apis.web.gui.nodes.AbstractNode;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
  * A tree that extends the features of the default one and makes use of the Nodes API
  * @author Charles Bedon <charles.bedon@kuwaiba.org>
  * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
  */
-public class DynamicTree extends Tree implements Tree.ExpandListener, CollapseListener, EmbeddableComponent {
-
+public class DynamicTree extends Tree implements Tree.ExpandListener, 
+        CollapseListener, EmbeddableComponent 
+{
     /**
      * Currently selected node
      */
@@ -38,10 +40,11 @@ public class DynamicTree extends Tree implements Tree.ExpandListener, CollapseLi
     /**
      * Nearest component that can provide access to the session variables
      */
-    private TopComponent parentComponent;
+    private final TopComponent parentComponent;
     
     /**
-     * To make use of the global variables (and from there, to the backend logic), this component should be embedded into a TopComponent
+     * To make use of the global variables (and from there, to the backend logic), 
+     * this component should be embedded into a TopComponent
      * @param rootNode The root node of the tree.
      * @param parentComponent The parent TopComponent component
      */
@@ -92,6 +95,9 @@ public class DynamicTree extends Tree implements Tree.ExpandListener, CollapseLi
     @Subscribe
     public void nodeChange(Property.ValueChangeEvent event) {
         String newValue = (String) event.getProperty().getValue();
+//        Object object = currentlySelectedNode.getObject();
+//        if(object instanceof RemoteObjectLight)
+//            ((RemoteObjectLight)(object)).setName(newValue);
         this.setItemCaption(currentlySelectedNode, newValue);
     }
 

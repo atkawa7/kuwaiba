@@ -23,6 +23,7 @@ import java.util.List;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.apis.web.gui.nodes.AbstractNode;
+import org.kuwaiba.apis.web.gui.nodes.properties.Sheet;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
 import org.kuwaiba.web.custom.tree.DynamicTree;
@@ -108,5 +109,10 @@ public class ContainmentNode extends AbstractNode {
         if (((ContainmentNode)obj).getId() == getId())
             return true;
         return false;
+    }
+    
+    //@Override
+    public Sheet createPropertySheet(){
+        return null;
     }
 }

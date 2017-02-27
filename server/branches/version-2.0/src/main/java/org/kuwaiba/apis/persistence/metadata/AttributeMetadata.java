@@ -36,9 +36,17 @@ public class AttributeMetadata implements Serializable {
      */
     public static final int MAPPING_TIMESTAMP = 3;
     /**
+     * Binary
+     */
+    public static final int MAPPING_BINARY = 4;
+    /**
      * Many to one relationship (such as types)
      */
-    public static final int MAPPING_MANYTOONE = 4;
+    public static final int MAPPING_MANYTOONE = 5;
+    /**
+     * Many to Many relationship (such as accountable persons for a given equipment)
+     */
+    public static final int MAPPING_MANYTOMANY = 6;
     /**
      * Attribute's id
      */

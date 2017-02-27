@@ -103,5 +103,5 @@ public class InventoryObjectNode extends AbstractNode<RemoteObjectLight>{
     }
 
     @Override
-    public void refresh(boolean recursive) {}
+    public void refresh(boolean recursive) {}  
 }
