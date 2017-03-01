@@ -24,7 +24,7 @@ import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.apis.web.gui.nodes.AbstractNode;
 import org.kuwaiba.apis.web.gui.nodes.InventoryObjectNode;
 import org.kuwaiba.apis.web.gui.nodes.listmanagernodes.ListTypeChildNode;
-import org.kuwaiba.web.modules.osp.google.overlays.NodeMarker;
+import org.kuwaiba.web.modules.osp.google.overlays.MarkerNode;
 
 /**
  * This class contains the method that listens when a node is selected in the 
@@ -66,7 +66,7 @@ public class NodeProperty extends CustomComponent implements
      * @param marker The selected marker
      */
     @Subscribe
-    public void markerSelected(NodeMarker marker) {
+    public void markerSelected(MarkerNode marker) {
 //        createPropertySheet(marker.getRemoteBusinessObject());
     }
     

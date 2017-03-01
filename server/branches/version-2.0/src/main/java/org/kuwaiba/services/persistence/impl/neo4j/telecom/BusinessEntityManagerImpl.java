@@ -505,11 +505,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             bParents.add(bParent);
         }
         
-        int size = aParents.size() <= bParents.size() ? aParents.size() : bParents.size();
-        for (int i = 0; i < size; i += 1)
-            if (aParents.get(i).getId() == bParents.get(i).getId())
-                return aParents.get(i);
-                
+        for (int i = 0; i < aParents.size(); i += 1) {
+            for (int j = 0; j < bParents.size(); j += 1) {
+                if (aParents.get(i).getId() == bParents.get(j).getId())
+                    return aParents.get(i);                                
+            }
+        }
+                        
         return null;
     }
     

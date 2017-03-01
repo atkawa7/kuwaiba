@@ -15,6 +15,7 @@
  */
 package org.kuwaiba.web.modules.osp.windows;
 
+import com.vaadin.ui.Component;
 import org.kuwaiba.apis.web.gui.windows.MessageDialogWindow;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
@@ -32,7 +33,7 @@ public class CleanViewWindow extends MessageDialogWindow {
     }
     
     @Override
-    public VerticalLayout initContent() {
+    public Component initSimpleMainComponent() {
         VerticalLayout content = new VerticalLayout();
         content.setMargin(true);
         
@@ -41,4 +42,7 @@ public class CleanViewWindow extends MessageDialogWindow {
         
         return content;
     }
+
+    @Override
+    public void initComplexMainComponent() {}
 }

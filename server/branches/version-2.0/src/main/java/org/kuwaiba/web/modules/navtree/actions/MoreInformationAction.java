@@ -17,6 +17,7 @@ package org.kuwaiba.web.modules.navtree.actions;
 
 import com.vaadin.server.Page;
 import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
@@ -60,7 +61,7 @@ public class MoreInformationAction extends AbstractAction implements Window.Clos
         }
 
         @Override
-        public VerticalLayout initContent() {
+        public Component initSimpleMainComponent() {
             try {
                 RemoteObjectLight object = (RemoteObjectLight) node.getObject();
                 
@@ -80,8 +81,8 @@ public class MoreInformationAction extends AbstractAction implements Window.Clos
                 content.setMargin(true);
                 
                 Label lblId = new Label(String.format("<b>id: </b>%s", object.getOid(),ContentMode.HTML));
-                Label lblClass = new Label(String.format("<b>Class: </b>", object.getClassName(),ContentMode.HTML));
-                Label lblContainment = new Label(String.format("<b>Containment Path: </b>", containmentPath,ContentMode.HTML));
+                Label lblClass = new Label(String.format("<b>Class: </b>%s", object.getClassName(),ContentMode.HTML));
+                Label lblContainment = new Label(String.format("<b>Containment Path: </b>%s", containmentPath,ContentMode.HTML));
                 
                 content.addComponent(lblId);
                 content.addComponent(lblClass);
@@ -93,5 +94,8 @@ public class MoreInformationAction extends AbstractAction implements Window.Clos
                 return null;
             }
         }
+
+        @Override
+        public void initComplexMainComponent() {}
     }
 }

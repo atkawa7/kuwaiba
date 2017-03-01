@@ -17,6 +17,7 @@ package org.kuwaiba.web.modules.lists.actions;
 
 import com.vaadin.server.Page;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
@@ -82,7 +83,7 @@ public class DeleteListTypeAction extends AbstractAction implements Window.Close
         }
 
         @Override
-        public VerticalLayout initContent() {
+        public Component initSimpleMainComponent() {
             VerticalLayout content = new VerticalLayout();
             content.setMargin(true);
 
@@ -93,5 +94,8 @@ public class DeleteListTypeAction extends AbstractAction implements Window.Close
 
             return content;
         }
+
+        @Override
+        public void initComplexMainComponent() {}
     }
 }

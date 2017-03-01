@@ -27,9 +27,12 @@ public class PolygonDblClickListenerImpl implements PolygonDblClickListener {
 
     @Override
     public void polygonDblClicked(GoogleMapPolygon clickedPolygon) {
+        //TODO: replace this for right click and delete polygon
+        /*
         if (clickedPolygon instanceof Polygon)
             ((Polygon) clickedPolygon)
                     .firePropertyChangeEvent("removePolygon", null, null);
+                */
     }
     
 }

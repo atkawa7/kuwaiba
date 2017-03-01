@@ -15,6 +15,7 @@
  */
 package org.kuwaiba.web.modules.osp.windows;
 
+import com.vaadin.ui.Component;
 import org.kuwaiba.apis.web.gui.windows.MessageDialogWindow;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
@@ -32,12 +33,15 @@ public class SaveViewDialog extends MessageDialogWindow {
     }
 
     @Override
-    public VerticalLayout initContent() {
+    public Component initSimpleMainComponent() {
         VerticalLayout content = new VerticalLayout();
+        content.setMargin(true);
+        
         content.addComponent(
                 new Label("This view has not been saved, do you want to save it"));
         return content;
     }
-    
-    
+
+    @Override
+    public void initComplexMainComponent() {}
 }

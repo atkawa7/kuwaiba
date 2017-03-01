@@ -15,7 +15,6 @@
  */
 package org.kuwaiba.web.custom.wizards.physicalconnection;
 
-import com.vaadin.data.validator.IntegerRangeValidator;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.NativeSelect;
@@ -26,17 +25,18 @@ import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
+import org.vaadin.risto.stepper.IntStepper;
 import org.vaadin.teemu.wizards.WizardStep;
 
 /**
  * Second Step Connection settings for Physical Connection Wizard 
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class SecondStep implements WizardStep {
+public class SecondStepConnectionSettings implements WizardStep {
     private PhysicalConnectionWizard wizard;
     private FormLayout content;
     
-    public SecondStep(PhysicalConnectionWizard wizard) {
+    public SecondStepConnectionSettings(PhysicalConnectionWizard wizard) {
         content = null;
         this.wizard = wizard;
     }
@@ -66,12 +66,17 @@ public class SecondStep implements WizardStep {
                 String connectionTypeClass = connConfig.getConnectionTypeClass();
                 List<RemoteObjectLight> types = wsBean.getListTypeItems(connectionTypeClass, ipAddress, sessionId);
                 
-                if (types != null && types.size() > 0) {
-                    NativeSelect selectConnectionTypeClass = new NativeSelect("Connection Type");
-                    for (RemoteObjectLight type : types)
+                NativeSelect selectConnectionTypeClass = new NativeSelect("Connection Type");
+                selectConnectionTypeClass.setNullSelectionItemId("None");
+                
+                if (types != null && types.size() > 0)
+                    for (RemoteObjectLight type : types) {
                         selectConnectionTypeClass.addItem(type);
-                    content.addComponent(selectConnectionTypeClass);
-                }                
+                        selectConnectionTypeClass.setItemCaption(type, type.getName());
+                    }
+                
+                content.addComponent(selectConnectionTypeClass);
+                
                 int wizardType = connConfig.getWizardType();
 
                 if (wizardType == PhysicalConnectionConfiguration.WIZARD_TYPE_CONTAINER) {
@@ -79,13 +84,25 @@ public class SecondStep implements WizardStep {
 
                     if (portClasses.size() > 0) {
                         NativeSelect selectChildrenType = new NativeSelect("Children type");
-                        for (ClassInfoLight portClass : portClasses)
+                        selectChildrenType.setNullSelectionItemId(null);
+                        selectChildrenType.setNullSelectionAllowed(false);
+                        
+                        
+                        boolean flag = true;
+                        for (ClassInfoLight portClass : portClasses) {
                             selectChildrenType.addItem(portClass);
+                            selectChildrenType.setItemCaption(portClass, portClass.getClassName());                            
+                            if (flag) {
+                                selectChildrenType.setValue(portClass);
+                                flag = false;
+                            }
+                        }
+                        
                         content.addComponent(selectChildrenType);
-
-                        TextField tfNumChildren = new TextField("Number of children", "0");
-                        tfNumChildren.addValidator(new IntegerRangeValidator("Integer", 0, Integer.MAX_VALUE));                        
-                        content.addComponent(tfNumChildren);
+                        
+                        IntStepper numChildren = new IntStepper("Number of children");
+                        numChildren.setMinValue(0);
+                        content.addComponent(numChildren);
                     }
                 }
             } catch (ServerSideException ex) {
@@ -103,17 +120,19 @@ public class SecondStep implements WizardStep {
             PhysicalConnectionConfiguration connConfig = wizard.getConnectionConfiguration();
             connConfig.setCaption(((TextField)content.getComponent(0)).getValue());
             
-            RemoteObjectLight object = (RemoteObjectLight) ((NativeSelect) content.getComponent(1)).getValue();
+            RemoteObjectLight object = (RemoteObjectLight) 
+                    ((NativeSelect) content.getComponent(1)).getValue();
+            
             if (object != null)
                 connConfig.setTypeOid(object.getOid());
             else
                 connConfig.setTypeOid(0);
-                                        
+            
             if (componentCount == 4) {
                 ClassInfoLight portClass = (ClassInfoLight) ((NativeSelect) content.getComponent(2)).getValue();
                 connConfig.setPortType(portClass.getClassName());
                 
-                int numChildren = Integer.valueOf((String) ((TextField)content.getComponent(3)).getValue());
+                int numChildren = ((IntStepper) content.getComponent(3)).getValue();//Integer.valueOf((String) ((TextField)content.getComponent(3)).getValue());
                 connConfig.setNumChildren(numChildren);
             }
             return true;

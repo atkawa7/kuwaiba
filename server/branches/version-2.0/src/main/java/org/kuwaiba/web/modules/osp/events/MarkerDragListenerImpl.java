@@ -18,6 +18,7 @@ package org.kuwaiba.web.modules.osp.events;
 import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.tapio.googlemaps.client.events.MarkerDragListener;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
+import org.kuwaiba.web.modules.osp.google.CustomGoogleMap;
 import org.kuwaiba.web.modules.osp.google.overlays.Marker;
 
 /**
@@ -30,7 +31,7 @@ public class MarkerDragListenerImpl implements MarkerDragListener {
     public void markerDragged(GoogleMapMarker draggedMarker, LatLon oldPosition) {
         if (draggedMarker instanceof Marker) {
             ((Marker) draggedMarker)
-                    .firePropertyChangeEvent("updateMarker", oldPosition, 
+                    .firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_UPDATE_MARKER, oldPosition, 
                             ((Marker) draggedMarker).getPosition());
         }
     }

@@ -17,6 +17,8 @@ package org.kuwaiba.web.modules.osp.events;
 
 import com.vaadin.tapio.googlemaps.client.events.PolylineClickListener;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.web.modules.osp.google.overlays.ConnectionPolyline;
 import org.kuwaiba.web.modules.osp.google.overlays.Polyline;
 
 /**
@@ -27,10 +29,15 @@ public class PolylineClickListenerImpl implements PolylineClickListener {
     
     @Override
     public void polylineClicked(GoogleMapPolyline clickedPolyline) {
+        //TODO: replace this for right click and connect links
+        if (clickedPolyline instanceof ConnectionPolyline) {
+            RemoteObjectLight object = ((ConnectionPolyline) clickedPolyline).getConnectionInfo();
+            ((Polyline) clickedPolyline)
+                    .firePropertyChangeEvent("showConnectionLinksWindow", null, object);
+        }
         if (clickedPolyline instanceof Polyline) {
             Polyline polyline = (Polyline) clickedPolyline;
             polyline.setEditable(!polyline.isEditable());
         }
     }
-    
 }

@@ -16,11 +16,13 @@
 package org.kuwaiba.web.custom.wizards.physicalconnection;
 
 import com.vaadin.data.Property;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.VerticalLayout;
 import java.util.HashMap;
@@ -38,14 +40,14 @@ import org.vaadin.teemu.wizards.WizardStep;
  * First Step Choose endpoint for Physical Connection Wizard
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class FirstStep implements WizardStep {
-    private PhysicalConnectionWizard wizard;
+public class FirstStepChooseEndpoint implements WizardStep {
+    private final PhysicalConnectionWizard wizard;
     private DynamicTree treeEndPointA;
     private DynamicTree treeEndPointB;
     
     VerticalLayout content;
     
-    public FirstStep(PhysicalConnectionWizard wizard) {
+    public FirstStepChooseEndpoint(PhysicalConnectionWizard wizard) {
         content = null;
         this.wizard = wizard;
     }
@@ -79,41 +81,67 @@ public class FirstStep implements WizardStep {
     public Component getContent() {
         if (content == null)  {
             content = new VerticalLayout();
+            content.setMargin(true);
             content.setSizeFull();
             
-            NativeSelect selectConnection = new NativeSelect("Connection Class");
-            selectConnection.addItems(
-                    "Wire Container",
-                    "Wireless Container",
-                    "Electrical Link",
-                    "Optical Link",
-                    "Wireless Link");
-
-            selectConnection.addListener(new Property.ValueChangeListener() {
-
-                @Override
-                public void valueChange(Property.ValueChangeEvent event) {                                
-                    String connectionClass = (String) event.getProperty().getValue();
-                    
-                    if (connectionClass != null) {
-                        PhysicalConnectionConfiguration connConfig = wizard.getConnectionConfiguration();
-                        connConfig.chooseWizardType(connectionClass);
+            ComboBox selectConnection = new ComboBox("Connection Class");
+            selectConnection.setWidth("30%");
                         
-                        if (treeEndPointA == null && treeEndPointB == null) {
-                            Component trees = initTrees();
-                            
-                            if (trees != null) {
-                                content.addComponent(new Label(""
-                                        + "<p>Choose endpoint</p>"
-                                        + "<p>Select the objects (port or nodes) you'd like to connect.</p>", 
-                                        ContentMode.HTML));
-                                content.addComponent(trees);
-                            }
-                        }
-                    }
+            selectConnection.setNullSelectionAllowed(false);
+            
+            String [] connectionClasses = new String[] {
+                "Wire Container", 
+                "Wireless Container", 
+                "Electrical Link", 
+                "Optical Link", 
+                "Wireless Link", 
+                "Power Link"};
+            
+            ThemeResource [] icons = new ThemeResource[] { 
+                new ThemeResource("img/mod_phy_conn_icon_wire_container.png"), 
+                new ThemeResource("img/mod_phy_conn_icon_wireless_container.png"), 
+                new ThemeResource("img/mod_phy_conn_icon_electrical_link.png"), 
+                new ThemeResource("img/mod_phy_conn_icon_optical_link.png"), 
+                new ThemeResource("img/mod_phy_conn_icon_wireless_link.png"), 
+                new ThemeResource("img/mod_phy_conn_icon_power_link.png") };
+            
+            for (int i = 0; i < icons.length; i += 1) {
+                selectConnection.addItem(connectionClasses[i]);
+                selectConnection.setItemIcon(connectionClasses[i], icons[i]);
+            }
+            selectConnection.setValue(connectionClasses[0]);
+                                                
+            String connectionClass  = (String) selectConnection.getValue();
+            PhysicalConnectionConfiguration connConfig = wizard.getConnectionConfiguration();
+            connConfig.chooseWizardType(connectionClass);
+            
+            selectConnection.addListener(new Property.ValueChangeListener() {
+                
+                @Override
+                public void valueChange(Property.ValueChangeEvent event) {                             
+                    String connectionClass = (String) event.getProperty().getValue();
+                    connConfig.chooseWizardType(connectionClass);
                 }
             });
-            content.addComponent(selectConnection);
+            
+            FormLayout formLayout = new FormLayout(selectConnection);
+            formLayout.setWidthUndefined();
+            content.addComponent(formLayout);
+            content.setExpandRatio(formLayout, 0.1f);
+            
+            Component trees = initTrees();
+            
+            if (trees != null) {
+                Label lblMessage = new Label("" 
+                        /*+ "<p><b>Choose endpoint</b></p>"*/
+                        + "<p><b>Select the objects (port or nodes) you'd like to connect.</b></p>", 
+                        ContentMode.HTML);
+                content.addComponent(lblMessage);
+                content.setExpandRatio(lblMessage, 0.1f);
+                
+                content.addComponent(trees);
+                content.setExpandRatio(trees, 0.8f);
+            }
         }
         return content;
     }

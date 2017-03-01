@@ -141,4 +141,49 @@ $v-layout-spacing-horizontal: round($v-unit-size / 1.8) !default;
         font-weight: bold;
         color: #eb2977
     }
+    /*
+    .v-table-cell-content-a-side-connected {
+        background-image: url("img/mod_phy_conn_a_side_connected.png");
+        background-repeat: no-repeat;
+        background-position: 5px;
+        text-indent: 25px;
+        color: green;
+    }
+    
+    .v-table-cell-content-b-side-connected {
+        background-image: url("img/mod_phy_conn_b_side_connected.png");
+        background-image: 
+        background-repeat: no-repeat;
+        background-position: 5px;
+        text-indent: 25px;
+        color: green;
+    }
+    
+    .v-table-cell-content-connected {
+        background-image: url("img/mod_phy_conn_connected.png");
+        background-repeat: no-repeat;
+        background-position: 5px;
+        text-indent: 25px;
+        color: green;
+    }
+
+    .v-table-cell-content-disconnected {
+        background-image: url("img/mod_phy_conn_disconnected.png");
+        background-repeat: no-repeat;
+        background-position: 5px;                
+        text-indent: 25px;
+        color: red;
+    }
+    */    
+    .v-table-cell-content-disable {
+        background-color: gainsboro;
+        color: graytext;
+        font-style: italic;
+    }
+    
+    .v-tree-node-caption-disabled {
+        background-color: gainsboro;
+        color: graytext;
+        font-style: italic;
+    }
 }

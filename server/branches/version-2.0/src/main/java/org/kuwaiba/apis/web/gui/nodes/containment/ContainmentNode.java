@@ -79,7 +79,7 @@ public class ContainmentNode extends AbstractNode {
                     childNode.getTree().setChildrenAllowed(childNode, false);
                     childNode.getTree().setParent(childNode, this);
                     childNode.getTree().setItemIcon(childNode, 
-                            new ThemeResource("img/mod_containtment_res/flag-black.png"));
+                            new ThemeResource("img/mod_containtment_icon_flag_black.png"));
                 }
             }
         }

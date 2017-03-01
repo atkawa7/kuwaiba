@@ -21,6 +21,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
+import org.kuwaiba.web.modules.osp.google.CustomGoogleMap;
 import org.kuwaiba.web.modules.osp.measure.ConnectionUtils;
 
 /**
@@ -39,7 +40,7 @@ public abstract class Polyline extends GoogleMapPolyline implements PropertyChan
     /**
      * Control points
      */
-    protected List<PointMarker> points;
+    protected List<MarkerPoint> points;
     /**
      * The polyline can be edited
      */
@@ -52,7 +53,7 @@ public abstract class Polyline extends GoogleMapPolyline implements PropertyChan
         setStrokeColor(defaultPolylineColor);
     }    
     
-    public List<PointMarker> getPoints() {
+    public List<MarkerPoint> getPoints() {
         return points;
     }    
     
@@ -68,10 +69,10 @@ public abstract class Polyline extends GoogleMapPolyline implements PropertyChan
                 for (int i = 0; i < getCoordinates().size(); i += 1) {
                     LatLon leftPosition = getCoordinates().get(i);
                     
-                    PointMarker leftPoint = new PointMarker(leftPosition, true);
+                    MarkerPoint leftPoint = new MarkerPoint(leftPosition, true);
                     
                     leftPoint.addPropertyChangeListener(this);                    
-                    firePropertyChangeEvent("addMarker", null, leftPoint);
+                    firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_ADD_MARKER, null, leftPoint);
                     points.add(leftPoint);                    
                     
                     if (i < getCoordinates().size() - 1) {
@@ -80,10 +81,10 @@ public abstract class Polyline extends GoogleMapPolyline implements PropertyChan
                         LatLon midPosition = ConnectionUtils
                                 .midPoint(leftPosition, rightPosition);
                         
-                        PointMarker midpoint = new PointMarker(midPosition, 
+                        MarkerPoint midpoint = new MarkerPoint(midPosition, 
                                 false);
                         midpoint.addPropertyChangeListener(this);
-                        firePropertyChangeEvent("addMarker", null, midpoint);
+                        firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_ADD_MARKER, null, midpoint);
                         points.add(midpoint);
                     }
                 }
@@ -91,14 +92,14 @@ public abstract class Polyline extends GoogleMapPolyline implements PropertyChan
             }
             customColor = getStrokeColor();
             setStrokeColor(Polyline.selectedPolylineColor);
-            firePropertyChangeEvent("updatePolyline", null, this);
+            firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_UPDATE_POLYLINE, null, this);
             
             enableEdition();
         }
         else {
             if (!points.isEmpty()) {
                 setStrokeColor(customColor);
-                firePropertyChangeEvent("updatePolyline", null, this);
+                firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_UPDATE_POLYLINE, null, this);
                 
                 enableEdition();
             }
@@ -164,13 +165,13 @@ public abstract class Polyline extends GoogleMapPolyline implements PropertyChan
         if (evt == null || evt.getPropertyName() == null)
             return;
         
-        if (!(evt.getSource() instanceof PointMarker)) {
+        if (!(evt.getSource() instanceof MarkerPoint)) {
             updateSpecialPoints(evt);
             return;
         }
                 
-        if (evt.getPropertyName().equals("updateMarker")) {
-            PointMarker point = (PointMarker) evt.getSource();
+        if (evt.getPropertyName().equals(CustomGoogleMap.GM_EVENT_NAME_UPDATE_MARKER)) {
+            MarkerPoint point = (MarkerPoint) evt.getSource();
             
             if (point.isSpecial()) {
                 updateSpecialPoints(evt);
@@ -186,7 +187,7 @@ public abstract class Polyline extends GoogleMapPolyline implements PropertyChan
                 coordinate.setLat(((LatLon) evt.getNewValue()).getLat());
                 coordinate.setLon(((LatLon) evt.getNewValue()).getLon());
                     
-                firePropertyChangeEvent("updatePolyline", null, this);
+                firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_UPDATE_POLYLINE, null, this);
                 // position of current point
                 LatLon latLonPoint = points.get(pointIdx).getPosition();
                 if (pointIdx - 2 >= 0) { // Point is not the source point
@@ -196,7 +197,7 @@ public abstract class Polyline extends GoogleMapPolyline implements PropertyChan
                     points.get(pointIdx - 1).setPosition(
                             ConnectionUtils.midPoint(latLonLPoint, latLonPoint));
                         
-                    firePropertyChangeEvent("updateMarker", null, 
+                    firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_UPDATE_MARKER, null, 
                             points.get(pointIdx - 1));
                 }
                 if (pointIdx + 2 < points.size()) { // Point is not the target point
@@ -206,7 +207,7 @@ public abstract class Polyline extends GoogleMapPolyline implements PropertyChan
                     points.get(pointIdx + 1).setPosition(
                             ConnectionUtils.midPoint(latLonPoint, latLonRPoint));
                     
-                    firePropertyChangeEvent("updateMarker", null, 
+                    firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_UPDATE_MARKER, null, 
                             points.get(pointIdx + 1));
                 }
             }
@@ -214,19 +215,19 @@ public abstract class Polyline extends GoogleMapPolyline implements PropertyChan
                 LatLon latLonLPoint = points.get(pointIdx - 1).getPosition();
                 LatLon latLonRPoint = points.get(pointIdx + 1).getPosition();
                     
-                PointMarker leftMidpoint = new PointMarker(
+                MarkerPoint leftMidpoint = new MarkerPoint(
                         ConnectionUtils.midPoint(latLonLPoint, 
                                 point.getPosition()),false);
                 
                 leftMidpoint.addPropertyChangeListener(this);
-                firePropertyChangeEvent("addMarker", null, leftMidpoint);
+                firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_ADD_MARKER, null, leftMidpoint);
                     
-                PointMarker rightMidpoint = new PointMarker(
+                MarkerPoint rightMidpoint = new MarkerPoint(
                         ConnectionUtils.midPoint(latLonRPoint, 
                                 point.getPosition()), false);
                 
                 rightMidpoint.addPropertyChangeListener(this);
-                firePropertyChangeEvent("addMarker", null, rightMidpoint);
+                firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_ADD_MARKER, null, rightMidpoint);
                                     
                 points.add(pointIdx + 1, rightMidpoint);
                 points.add(pointIdx, leftMidpoint);
@@ -235,16 +236,16 @@ public abstract class Polyline extends GoogleMapPolyline implements PropertyChan
                         
                 getCoordinates().add(newPointIdx, point.getPosition());
                     
-                firePropertyChangeEvent("updatePolyline", null, this);
+                firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_UPDATE_POLYLINE, null, this);
                     
                 point.setIsPoint(true); // change to point
-                firePropertyChangeEvent("updateMarker", null, point);
+                firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_UPDATE_MARKER, null, point);
             }
             return;
         }
         
-        if (evt.getPropertyName().equals("removeMarker")) {
-            PointMarker point = (PointMarker) evt.getSource();
+        if (evt.getPropertyName().equals(CustomGoogleMap.GM_EVENT_NAME_REMOVE_MARKER)) {
+            MarkerPoint point = (MarkerPoint) evt.getSource();
             
             if (point.isSpecial()) {
                 updateSpecialPoints(evt);
@@ -252,10 +253,10 @@ public abstract class Polyline extends GoogleMapPolyline implements PropertyChan
             }            
             int pointIdx = points.indexOf(point);
                         
-            PointMarker rightMidpoint = points.remove(pointIdx + 1);
+            MarkerPoint rightMidpoint = points.remove(pointIdx + 1);
             rightMidpoint.removeAllPropertyChangeListener();
             
-            PointMarker leftMidpoint = points.remove(pointIdx - 1);
+            MarkerPoint leftMidpoint = points.remove(pointIdx - 1);
             leftMidpoint.removeAllPropertyChangeListener();
                         
             List markers = new ArrayList();
@@ -273,9 +274,9 @@ public abstract class Polyline extends GoogleMapPolyline implements PropertyChan
                             points.get(pointIdx + 1).getPosition());
             point.setPosition(position);
             
-            firePropertyChangeEvent("removeMarkers", null, markers);
-            firePropertyChangeEvent("updateMarker", null, point);
-            firePropertyChangeEvent("updatePolyline", null, this);
+            firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_REMOVE_MARKERS, null, markers);
+            firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_UPDATE_MARKER, null, point);
+            firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_UPDATE_POLYLINE, null, this);
             // one bug when remove three point the polyline don't updtate
             // and you need click twice for see the change
             return;

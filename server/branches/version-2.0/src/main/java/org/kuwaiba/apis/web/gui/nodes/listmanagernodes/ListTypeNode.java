@@ -41,7 +41,7 @@ public class ListTypeNode extends AbstractNode<ClassInfoLight> {
     @Override
     public void setTree(DynamicTree tree) {
         super.setTree(tree);
-        tree.setItemIcon(this, new ThemeResource("img/mod_list_res/list-type.png"));
+        tree.setItemIcon(this, new ThemeResource("img/mod_list_icon_list_type.png"));
     }
     
     @Override

@@ -21,6 +21,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
+import org.kuwaiba.web.modules.osp.google.CustomGoogleMap;
 import org.kuwaiba.web.modules.osp.measure.ConnectionUtils;
 
 /**
@@ -53,7 +54,7 @@ public class Polygon extends GoogleMapPolygon implements PropertyChangeListener,
         polyline.addPropertyChangeListener(propertyChangeListener);
     }
     
-    public Polygon(PointMarker point, PropertyChangeListener propertyChangeListener) {
+    public Polygon(MarkerPoint point, PropertyChangeListener propertyChangeListener) {
         this(propertyChangeListener);
         
         point.addPropertyChangeListener(this);
@@ -75,16 +76,16 @@ public class Polygon extends GoogleMapPolygon implements PropertyChangeListener,
         if (editable) {            
             setFillColor(Polygon.selectedPolygonColor);
             setStrokeColor(Polygon.selectedPolygonColor);
-            firePropertyChangeEvent("updatePolygon", null, this);
+            firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_UPDATE_POLYGON, null, this);
             
-            firePropertyChangeEvent("showPolyline", null, polyline);
+            firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_SHOW_POLYLINE, null, polyline);
         }
         else {
             setFillColor(customPolygonColor);
             setStrokeColor(customPolygonColor);
-            firePropertyChangeEvent("updatePolygon", null, this);
+            firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_UPDATE_POLYGON, null, this);
             
-            firePropertyChangeEvent("hidePolyline", null, polyline);
+            firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_HIDE_POLYLINE, null, polyline);
         }
     }
     
@@ -92,32 +93,32 @@ public class Polygon extends GoogleMapPolygon implements PropertyChangeListener,
         return polyline;
     }
     
-    public void addPoint(PointMarker point) {
-        List<PointMarker> points = polyline.getPoints();
+    public void addPoint(MarkerPoint point) {
+        List<MarkerPoint> points = polyline.getPoints();
         
         points.add(point);
         
         if (points.size() >= 2) { 
             if (points.size() == 2) { // size = 2 can draw a polyline
-                for (PointMarker pointMarker : points)
+                for (MarkerPoint pointMarker : points)
                     polyline.getCoordinates().add(pointMarker.getPosition());
                 
-                firePropertyChangeEvent("addPolyline", null, polyline);
+                firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_ADD_POLYLINE, null, polyline);
             }
             else {
                 if (points.size() >= 3) { 
                     if (points.size() == 3) { // size = 3 can draw a polygon
-                        for (PointMarker pointMarker : points)
+                        for (MarkerPoint pointMarker : points)
                             getCoordinates().add(pointMarker.getPosition());
-                        firePropertyChangeEvent("addPolygon", null, this);
+                        firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_ADD_POLYGON, null, this);
                     }
                     else {
                         getCoordinates().add(point.getPosition());
-                        firePropertyChangeEvent("updatePolygon", null, this);
+                        firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_UPDATE_POLYGON, null, this);
                     }
                 }
                 polyline.getCoordinates().add(point.getPosition());
-                firePropertyChangeEvent("updatePolyline", null, polyline);
+                firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_UPDATE_POLYLINE, null, polyline);
             }
         }
     }
@@ -178,28 +179,28 @@ public class Polygon extends GoogleMapPolygon implements PropertyChangeListener,
     
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals("updatePolyline")) {
+        if (evt.getPropertyName().equals(CustomGoogleMap.GM_EVENT_NAME_UPDATE_POLYLINE)) {
             getCoordinates().clear();
             
             for (int i = 0; i < polyline.getCoordinates().size() - 1; i += 1)
                 getCoordinates().add(polyline.getCoordinates().get(i));      
             
-            firePropertyChangeEvent("updatePolygon", null, this);
+            firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_UPDATE_POLYGON, null, this);
             return;
         }
         
         if (evt.getPropertyName().equals("markerClicked")) {
-            Marker point = (PointMarker) evt.getSource();
+            Marker point = (MarkerPoint) evt.getSource();
             point.removedFromView(true);
             
             polyline.getCoordinates().add(point.getPosition());
             
-            firePropertyChangeEvent("hidePolyline", null, polyline);
-            firePropertyChangeEvent("removeMarkers", null, polyline.getPoints());
+            firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_HIDE_POLYLINE, null, polyline);
+            firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_REMOVE_MARKERS, null, polyline.getPoints());
                 
             polyline.getPoints().clear();
             
-            firePropertyChangeEvent("endingPolygonDraw", null, null);
+            firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_ENDING_POLYGON, null, null);
             return;
         }
     }
@@ -216,14 +217,14 @@ public class Polygon extends GoogleMapPolygon implements PropertyChangeListener,
 
         @Override
         void enableEdition() {
-            List<PointMarker> viewablePoints = new ArrayList();
+            List<MarkerPoint> viewablePoints = new ArrayList();
             for (int i = 0; i < points.size() - 1; i += 1)
                 viewablePoints.add(points.get(i));
             
             if (isEditable())
-                firePropertyChangeEvent("showMarkers", null, viewablePoints);
+                firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_SHOW_MARKERS, null, viewablePoints);
             else
-                firePropertyChangeEvent("hideMarkers", null, viewablePoints);
+                firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_HIDE_MARKERS, null, viewablePoints);
         }
 
         @Override
@@ -232,31 +233,31 @@ public class Polygon extends GoogleMapPolygon implements PropertyChangeListener,
             
             points.get(points.size() - 1).setIsSpecial(true);
             points.get(points.size() - 1).setVisible(false);
-            firePropertyChangeEvent("updateMarker", null, points.get(points.size() - 1));
+            firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_UPDATE_MARKER, null, points.get(points.size() - 1));
         }
 
         @Override
         void updateSpecialPoints(PropertyChangeEvent evt) {
             if (evt.getSource().equals(points.get(0)) && 
-                    evt.getPropertyName().equals("updateMarker")) {
-                PointMarker firstPoint = points.get(0);
+                    evt.getPropertyName().equals(CustomGoogleMap.GM_EVENT_NAME_UPDATE_MARKER)) {
+                MarkerPoint firstPoint = points.get(0);
                 
                 LatLon firstPosition = firstPoint.getPosition();
                 
                 LatLon secondPosition = points.get(2).getPosition();
                 
-                PointMarker firstMidpoint = points.get(1);
+                MarkerPoint firstMidpoint = points.get(1);
                 LatLon firstMidPosition = ConnectionUtils
                         .midPoint(firstPosition, secondPosition);
                 firstMidpoint.setPosition(firstMidPosition);
                 
-                PointMarker lastPoint = points.get(points.size() - 1);
+                MarkerPoint lastPoint = points.get(points.size() - 1);
                 lastPoint.setPosition(firstPosition);
                                 
                 LatLon secondLastPosition = points.get(points.size() - 3)
                         .getPosition();
                 
-                PointMarker lastMidpoint = points.get(points.size() - 2);
+                MarkerPoint lastMidpoint = points.get(points.size() - 2);
                 LatLon lastMidPosition = ConnectionUtils
                         .midPoint(firstPosition, secondLastPosition);
                 lastMidpoint.setPosition(lastMidPosition);
@@ -271,21 +272,21 @@ public class Polygon extends GoogleMapPolygon implements PropertyChangeListener,
                 getCoordinates().get(getCoordinates().size() - 1)
                         .setLon(firstPosition.getLon());
                 // better update markers
-                List<PointMarker> markers = new ArrayList();
+                List<MarkerPoint> markers = new ArrayList();
                 markers.add(firstMidpoint);
                 markers.add(lastPoint);
                 markers.add(lastMidpoint);
                 
-                firePropertyChangeEvent("updateMarkers", null, markers);
-                firePropertyChangeEvent("updatePolyline", null, this);
+                firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_UPDATE_MARKERS, null, markers);
+                firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_UPDATE_POLYLINE, null, this);
                 return;
             }
             if (evt.getSource().equals(points.get(0)) && 
-                    evt.getPropertyName().equals("removeMarker")) {                
+                    evt.getPropertyName().equals(CustomGoogleMap.GM_EVENT_NAME_REMOVE_MARKER)) {                
                 
-                PointMarker lastPoint = points.get(points.size() - 1);
-                PointMarker secondLastPoint = points.get(points.size() - 3);
-                PointMarker secondPoint = points.get(2);
+                MarkerPoint lastPoint = points.get(points.size() - 1);
+                MarkerPoint secondLastPoint = points.get(points.size() - 3);
+                MarkerPoint secondPoint = points.get(2);
                 secondPoint.setIsSpecial(true);
                                 
                 lastPoint.setPosition(secondPoint.getPosition());
@@ -307,9 +308,9 @@ public class Polygon extends GoogleMapPolygon implements PropertyChangeListener,
                 lastPosition.setLon(secondPoint.getPosition().getLon());
                 
                 
-                firePropertyChangeEvent("removeMarkers", null, markers);
-                firePropertyChangeEvent("updateMarker", null, lastPoint);
-                firePropertyChangeEvent("updatePolyline", null, this);
+                firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_REMOVE_MARKERS, null, markers);
+                firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_UPDATE_MARKER, null, lastPoint);
+                firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_UPDATE_POLYLINE, null, this);
                 return;
             }
         }

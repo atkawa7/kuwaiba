@@ -69,6 +69,8 @@ public abstract class AbstractTooledComponent extends CustomComponent {
      * Main layout
      */
     private Layout componentLayout;
+    
+    private Component mainComponent;
     /**
      * Main constructor
      * @param actions The list of actions to be represented as buttons in the toolbar
@@ -111,12 +113,23 @@ public abstract class AbstractTooledComponent extends CustomComponent {
         setCompositionRoot(componentLayout);
         setSizeFull();
     }
+    
+    public Component getToolbarLayout() {
+        return ((AbstractOrderedLayout) componentLayout).getComponent(0);
+    }
         
     public void setMainComponent(Component mainComponent) {
-        componentLayout.addComponent(mainComponent);
-        ((AbstractOrderedLayout)componentLayout).setExpandRatio(mainComponent, 2);
+        if (mainComponent != null) {
+            this.mainComponent = mainComponent;
+            componentLayout.addComponent(this.mainComponent);
+            ((AbstractOrderedLayout)componentLayout).setExpandRatio(this.mainComponent, 2);
+        }
+        else {
+            componentLayout.removeComponent(this.mainComponent);
+            this.mainComponent = null;
+        }
     }
-    
+        
     public enum ToolBarSize {
         SMALL(16), NORMAL(24), BIG(32);
         

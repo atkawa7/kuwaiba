@@ -21,7 +21,7 @@ import com.vaadin.tapio.googlemaps.client.LatLon;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class PointMarker extends Marker {
+public class MarkerPoint extends Marker {
     private boolean isPoint;
     /**
      * A special point is that is used
@@ -31,7 +31,7 @@ public class PointMarker extends Marker {
      */
     private boolean isSpecial = false;
         
-    public PointMarker(LatLon position, boolean isPoint) {
+    public MarkerPoint(LatLon position, boolean isPoint) {
         this.isPoint = isPoint;
         setAnimationEnabled(false);
         setDraggable(true);

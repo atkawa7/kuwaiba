@@ -36,7 +36,7 @@ public class ListTypeChildNode extends AbstractNode {
     public void setTree(DynamicTree tree) {
         super.setTree(tree);
         tree.setItemIcon(this, 
-                new ThemeResource("img/mod_list_res/list-type-item.png"));
+                new ThemeResource("img/mod_list_icon_list_type_item.png"));
         tree.setChildrenAllowed(this, false);
     }
 

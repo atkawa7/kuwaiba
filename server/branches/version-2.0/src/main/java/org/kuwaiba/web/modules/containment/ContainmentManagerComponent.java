@@ -92,13 +92,13 @@ public class ContainmentManagerComponent extends AbstractTopComponent {
             navtreeRootNode.setDisplayName(navtreeRootClass.getDisplayName());
             navtreeRootNode.setTree(tree);
             navtreeRootNode.getTree().setItemIcon(navtreeRootNode, 
-                    new ThemeResource("img/mod_containtment_res/flag-red.png"));
+                    new ThemeResource("img/mod_containtment_icon_flag_red.png"));
             
             for (ClassInfoLight item : treeModel) {
                 ContainmentNode containmentNode = new ContainmentNode(item);
                 containmentNode.setTree(tree);
                 containmentNode.getTree().setItemIcon(containmentNode, 
-                        new ThemeResource("img/mod_containtment_res/flag-green.png"));
+                        new ThemeResource("img/mod_containtment_icon_flag_green.png"));
             }
             
             Table table = new Table();
@@ -151,7 +151,7 @@ public class ContainmentManagerComponent extends AbstractTopComponent {
                             child.getTree().setChildrenAllowed(child, false);
                             child.getTree().setParent(child, parent);
                             child.getTree().setItemIcon(child, 
-                                    new ThemeResource("img/mod_containtment_res/flag-black.png"));
+                                    new ThemeResource("img/mod_containtment_icon_flag_black.png"));
                                                         
                             Notification.show("Operation completed successfully", 
                                     Notification.Type.TRAY_NOTIFICATION);

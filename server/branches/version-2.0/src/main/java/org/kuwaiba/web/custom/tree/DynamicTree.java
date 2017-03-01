@@ -20,6 +20,7 @@ import com.vaadin.data.Property;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.Tree.CollapseListener;
+import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.modules.EmbeddableComponent;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.apis.web.gui.nodes.AbstractNode;
@@ -93,12 +94,34 @@ public class DynamicTree extends Tree implements Tree.ExpandListener,
     }
     
     @Subscribe
-    public void nodeChange(Property.ValueChangeEvent event) {
-        String newValue = (String) event.getProperty().getValue();
-//        Object object = currentlySelectedNode.getObject();
-//        if(object instanceof RemoteObjectLight)
-//            ((RemoteObjectLight)(object)).setName(newValue);
-        this.setItemCaption(currentlySelectedNode, newValue);
+    public void nodeChange(Property.ValueChangeEvent[] event) {
+        long oid = (Long) event[0].getProperty().getValue();
+        
+        String newValue = (String) event[1].getProperty().getValue();
+        
+        AbstractNode node = new AbstractNode(new RemoteObjectLight(oid, "", "")){
+
+            @Override
+            public void expand() {}
+
+            @Override
+            public AbstractAction[] getActions() {
+                return new AbstractAction[0];
+            }
+
+            @Override
+            public void refresh(boolean recursive) {}
+        };
+        
+        for (Object item : getItemIds()) {
+            if (item instanceof AbstractNode) {
+                if (node.equals((AbstractNode) item)) {
+                    
+                    this.setItemCaption(item, newValue);
+                    break;
+                }
+            }
+        }
     }
 
     @Override

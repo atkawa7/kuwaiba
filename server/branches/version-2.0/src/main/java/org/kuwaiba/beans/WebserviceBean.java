@@ -31,6 +31,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Singleton;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
@@ -47,10 +49,13 @@ import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.application.ViewObject;
 import org.kuwaiba.apis.persistence.application.ViewObjectLight;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
+import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
@@ -826,7 +831,11 @@ public class WebserviceBean implements WebserviceBeanLocal {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateCall("getCommonParent", ipAddress, sessionId);
-            return new RemoteObject(bem.getCommonParent(aObjectClass, aOid, bObjectClass, bOid));
+            RemoteBusinessObject rbo = bem.getCommonParent(aObjectClass, aOid, bObjectClass, bOid);
+            if (rbo.getId() != -1) // is not DummyRoot
+                return new RemoteObject(rbo);
+            else
+                return null;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -1291,6 +1300,29 @@ public class WebserviceBean implements WebserviceBeanLocal {
                 }
             }
         } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void releasePhysicalLink(String linkClassName, long linkId, String endpoint, String portClassName, long portId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        
+        try {
+            aem.validateCall("connectPhysicalLinks", ipAddress, sessionId);
+            
+            if (linkClassName != null && !mem.isSubClass("GenericPhysicalLink", linkClassName))
+                throw new ServerSideException(String.format("Class %s is not a physical link", linkClassName));
+            
+            if (portClassName != null && !mem.isSubClass("GenericPort", portClassName))
+                throw new ServerSideException(String.format("Class %s is not a port", portClassName));
+            
+            bem.releaseSpecialRelationship(linkClassName, linkId, endpoint, portId);
+            
+        } catch (ObjectNotFoundException | MetadataObjectNotFoundException | 
+                org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException ex) {
+            
             throw new ServerSideException(ex.getMessage());
         }
     }

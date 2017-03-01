@@ -20,7 +20,6 @@ import com.vaadin.event.ItemClickEvent;
 import com.vaadin.ui.CustomComponent;
 import org.kuwaiba.apis.web.gui.modules.EmbeddableComponent;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
-import org.kuwaiba.web.modules.osp.google.overlays.NodeMarker;
 
 /**
  * Abstract component for the property sheet of any node
@@ -43,6 +42,4 @@ public abstract class AbstractNodeProperty extends CustomComponent implements
         
     @Subscribe
     abstract void nodeSelected(ItemClickEvent event);
-    @Subscribe
-    abstract void markerSelected(NodeMarker event);
 }

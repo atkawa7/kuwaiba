@@ -18,8 +18,8 @@ package org.kuwaiba.web.modules.osp.events;
 import com.vaadin.tapio.googlemaps.client.events.MarkerDblClickListener;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import org.kuwaiba.web.modules.osp.google.overlays.Marker;
-import org.kuwaiba.web.modules.osp.google.overlays.NodeMarker;
-import org.kuwaiba.web.modules.osp.google.overlays.PointMarker;
+import org.kuwaiba.web.modules.osp.google.overlays.MarkerNode;
+import org.kuwaiba.web.modules.osp.google.overlays.MarkerPoint;
 
 /**
  *
@@ -29,12 +29,14 @@ public class MarkerDblClickListenerImpl implements MarkerDblClickListener {
 
     @Override
     public void markerDblClicked(GoogleMapMarker clickedMarker) {
-        if (clickedMarker instanceof NodeMarker)
+        //TODO: replace this for right click and delete marker
+        /*
+        if (clickedMarker instanceof MarkerNode)
             ((Marker) clickedMarker)
                     .firePropertyChangeEvent("removeMarker", null, clickedMarker);
-        
-        if (clickedMarker instanceof PointMarker) {
-            PointMarker point = (PointMarker) clickedMarker;
+        */
+        if (clickedMarker instanceof MarkerPoint) {
+            MarkerPoint point = (MarkerPoint) clickedMarker;
             
             if (point.isPoint())
                 point.firePropertyChangeEvent("removeMarker", null, clickedMarker);

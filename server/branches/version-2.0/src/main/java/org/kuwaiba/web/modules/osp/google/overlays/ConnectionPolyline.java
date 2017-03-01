@@ -20,6 +20,7 @@ import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.web.modules.osp.google.CustomGoogleMap;
 
 /**
  * Polyline that represent a physical connection
@@ -33,16 +34,16 @@ public class ConnectionPolyline extends Polyline {
     private boolean saved = false;
     private RemoteObjectLight connectionInfo;
     
-    private final NodeMarker source;
-    private NodeMarker target;
+    private final MarkerNode source;
+    private MarkerNode target;
             
-    public ConnectionPolyline(NodeMarker source) {
+    public ConnectionPolyline(MarkerNode source) {
         this.source = source;
         getCoordinates().add(source.getPosition());
         target = null;
     }
     
-    public ConnectionPolyline(NodeMarker source, NodeMarker target) {
+    public ConnectionPolyline(MarkerNode source, MarkerNode target) {
         this.source = source;
         this.target = target;
         
@@ -66,15 +67,15 @@ public class ConnectionPolyline extends Polyline {
         this.connectionInfo = connectionInfo;
     }
     
-    public NodeMarker getSource() {
+    public MarkerNode getSource() {
         return source;
     }
 
-    public NodeMarker getTarget() {
+    public MarkerNode getTarget() {
         return target;        
     }
 
-    public void setTarget(NodeMarker target) {
+    public void setTarget(MarkerNode target) {
         this.target = target;
         getCoordinates().add(target.getPosition());
         
@@ -84,15 +85,15 @@ public class ConnectionPolyline extends Polyline {
         
     @Override
     void enableEdition() {
-        List<PointMarker> viewablePoints = new ArrayList();
+        List<MarkerPoint> viewablePoints = new ArrayList();
         
         for (int i = 1; i < points.size() - 1; i += 1)
                 viewablePoints.add(points.get(i));
         
         if (isEditable())
-            firePropertyChangeEvent("showMarkers", null, viewablePoints);
+            firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_SHOW_MARKERS, null, viewablePoints);
         else
-            firePropertyChangeEvent("hideMarkers", null, viewablePoints);
+            firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_HIDE_MARKERS, null, viewablePoints);
     }
     
     @Override
@@ -100,11 +101,11 @@ public class ConnectionPolyline extends Polyline {
         // point is special because represent the source node
         points.get(0).setIsSpecial(true);
         points.get(0).setVisible(false);
-        firePropertyChangeEvent("updateMarker", null, points.get(0));
+        firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_UPDATE_MARKER, null, points.get(0));
         // point is special because represent the target node
         points.get(points.size() - 1).setIsSpecial(true);
         points.get(points.size() - 1).setVisible(false);
-        firePropertyChangeEvent("updateMarker", null, 
+        firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_UPDATE_MARKER, null, 
                 points.get(points.size() - 1));
         
     }
@@ -114,7 +115,7 @@ public class ConnectionPolyline extends Polyline {
         if (evt == null || evt.getPropertyName() == null)
             return;
         
-        if (evt.getPropertyName().equals("updateMarker")) {
+        if (evt.getPropertyName().equals(CustomGoogleMap.GM_EVENT_NAME_UPDATE_MARKER)) {
             // update polyline coordinates when the source node change the position
             if (evt.getSource().equals(source)) {
                 if (points.isEmpty()) {
@@ -122,14 +123,14 @@ public class ConnectionPolyline extends Polyline {
                     coordinate.setLat(((LatLon) evt.getNewValue()).getLat());
                     coordinate.setLon(((LatLon) evt.getNewValue()).getLon());
 
-                    firePropertyChangeEvent("updatePolyline", null, this);
+                    firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_UPDATE_POLYLINE, null, this);
                 }
                 else {
                     // disable before update
                     points.get(0).setIsSpecial(false); 
                     
                     points.get(0).
-                            firePropertyChangeEvent("updateMarker", 
+                            firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_UPDATE_MARKER, 
                                     points.get(0).getPosition(), 
                                     source.getPosition());
                     // enable after update
@@ -145,14 +146,14 @@ public class ConnectionPolyline extends Polyline {
                     coordinate.setLat(((LatLon) evt.getNewValue()).getLat());
                     coordinate.setLon(((LatLon) evt.getNewValue()).getLon());
 
-                    firePropertyChangeEvent("updatePolyline", null, this);
+                    firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_UPDATE_POLYLINE, null, this);
                 }
                 else {
                     // disable before update
                     points.get(points.size() - 1).setIsSpecial(false);
 
                     points.get(points.size() - 1).
-                            firePropertyChangeEvent("updateMarker", 
+                            firePropertyChangeEvent(CustomGoogleMap.GM_EVENT_NAME_UPDATE_MARKER, 
                                     points.get(points.size() - 1).getPosition(), 
                                     target.getPosition());
                     // enable after update
@@ -161,5 +162,10 @@ public class ConnectionPolyline extends Polyline {
                 return;
             }
         }
+    }
+    
+    @Override
+    public String toString() {
+        return connectionInfo.toString();
     }
 }

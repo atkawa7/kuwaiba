@@ -27,9 +27,11 @@ public class PolylineDblClickListenerImpl implements PolylineDblClickListener {
 
     @Override
     public void polylineDblClicked(GoogleMapPolyline clickedPolyline) {
+        //TODO: replace this for right click and delete
+        /*
         if (clickedPolyline instanceof Polyline)
             ((Polyline) clickedPolyline)
                     .firePropertyChangeEvent("removePolyline", null, null);
+        */
     }
-    
 }

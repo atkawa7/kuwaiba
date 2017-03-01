@@ -20,12 +20,16 @@ import com.vaadin.event.dd.DragAndDropEvent;
 import com.vaadin.event.dd.DropHandler;
 import com.vaadin.event.dd.acceptcriteria.AcceptAll;
 import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
+import com.vaadin.server.Page;
 import com.vaadin.tapio.googlemaps.client.LatLon;
+import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.DragAndDropWrapper;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Window;
+import java.util.List;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -40,7 +44,9 @@ import org.kuwaiba.interfaces.ws.toserialize.application.ViewInfoLight;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.web.modules.osp.windows.CleanViewWindow;
 import org.kuwaiba.apis.web.gui.windows.MessageDialogWindow;
+import org.kuwaiba.web.modules.osp.OutsidePlantComponent;
 import org.kuwaiba.web.modules.osp.windows.DeleteWindow;
+import org.kuwaiba.web.modules.osp.windows.FilterByWindow;
 import org.kuwaiba.web.modules.osp.windows.OpenViewWindow;
 import org.kuwaiba.web.modules.osp.windows.SaveTopologyWindow;
 import org.kuwaiba.web.modules.osp.windows.SaveViewDialog;
@@ -101,72 +107,123 @@ public class GoogleMapWrapper extends DragAndDropWrapper implements EmbeddableCo
     }
     
     @Subscribe
-    public void enableTool(Button.ClickEvent event) {
-        if ("Connect".equals(event.getButton().getDescription())) {
-            if (map.getMarkers().size() >= 2)
-                map.enableConnectionTool(true);
-            else
-                Notification.show("There are not nodes to connect", Type.WARNING_MESSAGE);
-        }
-        if ("Draw polygon".equals(event.getButton().getDescription())) {
-            map.enablePolygonTool(true);
-        }
-        if ("Clean".equals(event.getButton().getDescription())) {
-            if (view != null) {
-                CleanViewWindow window = new CleanViewWindow(this);
-                getUI().addWindow(window);
+    public void enableTool(AbstractComponent component) {
+        if (component instanceof ComboBox) {
+            Object cboValue = ((ComboBox) component).getValue();
+            if (cboValue == null) {
+                if (this.getUI() != null) {
+                    List<Object> elements = map.getVisbleNodesAndConnections();
+                    ((ComboBox) component).removeAllItems();
+                    ((ComboBox) component).addItem(null);
+                    ((ComboBox) component).addItems(elements);
+                }
             }
             else {
-                map.clear();
-                Notification.show("The view was cleaned", Type.TRAY_NOTIFICATION);
-            }
-        }
-        if ("Open".equals(event.getButton().getDescription())) {
-            try {
-                WebserviceBeanLocal wsBean = getTopComponent().getWsBean();
-                String ipAddress = getUI().getPage().getWebBrowser().getAddress();
-                String sessioId = getTopComponent().getApplicationSession().getSessionId();
-                
-                ViewInfoLight [] views = wsBean.getGeneralViews(CLASS_VIEW, -1, ipAddress, sessioId);
-                if (views.length > 0) {
-                    if (view != null || !map.isEmpty()) {
-                        SaveViewDialog window = new SaveViewDialog(this);                
-                        getUI().addWindow(window);
-                    }
-                    else {
-                        OpenViewWindow window = new OpenViewWindow(views);
-                        window.addCloseListener(this);
-                        getUI().addWindow(window);
-                    }
-                }
-                else
-                    Notification.show("There are not views", Type.WARNING_MESSAGE);                                
-            } catch (ServerSideException ex) {
-                Notification.show(ex.getMessage(), Type.ERROR_MESSAGE);
+                map.moveMapToOverlay(cboValue);
+                ((ComboBox) component).setValue(null);
             }
             return;
         }
-        if ("Save".equals(event.getButton().getDescription())) {
-            if (map.isEmpty())
-                Notification.show("The view is empty, it won't be saved", 
-                        Type.WARNING_MESSAGE);
-            else {
-                saveView();
+        if (component instanceof Button) {
+            Button btn = (Button) component;
+                        
+            if (OutsidePlantTooledComponent.ACTION_FILTER_CAPTION
+                    .equals(btn.getDescription())) {
+                FilterByWindow filterByWindow = new FilterByWindow(this);
+                filterByWindow.initComplexMainComponent();
+                filterByWindow.setNodesFilter(map.getNodeFilter());
+                filterByWindow.setConnectionFilter(map.getConnectionsFilter());
+                getUI().addWindow(filterByWindow);
+                return;
             }
-        }
-        if ("New".equals(event.getButton().getDescription())) {
-            if (view != null || !map.isEmpty()) {
-                SaveViewDialog window = new SaveViewDialog(this);                
-                getUI().addWindow(window);
+            
+            if (OutsidePlantTooledComponent.ACTION_NEW_CAPTION
+                    .equals(btn.getDescription())) {
+
+                ((OutsidePlantComponent) parentComponent).addMainComponentToTooledComponent();
+
+                if (view != null || !map.isEmpty()) {
+                    SaveViewDialog window = new SaveViewDialog(this);                
+                    getUI().addWindow(window);
+                }
             }
-        }
-        if ("Delete".equals(event.getButton().getDescription())) {
-            if (view != null) {
-                DeleteWindow window = new DeleteWindow(this);
-                getUI().addWindow(window);
+
+            if (OutsidePlantTooledComponent.ACTION_OPEN_CAPTION
+                    .equals(btn.getDescription())) {
+
+                try {
+                    WebserviceBeanLocal wsBean = getTopComponent().getWsBean();
+                    String ipAddress = btn.getUI().getPage().getWebBrowser().getAddress();
+                    String sessioId = getTopComponent().getApplicationSession().getSessionId();
+
+                    ViewInfoLight [] views = wsBean.getGeneralViews(CLASS_VIEW, -1, ipAddress, sessioId);
+                    if (views.length > 0) {
+                        if (view != null || !map.isEmpty()) {
+                            SaveViewDialog window = new SaveViewDialog(this);                
+                            getUI().addWindow(window);
+                        }
+                        else {
+                            OpenViewWindow window = new OpenViewWindow(this, views);
+                            window.initComplexMainComponent();
+                            btn.getUI().addWindow(window);
+                        }
+                    }
+                    else
+                        Notification.show("There are not views", Type.WARNING_MESSAGE);                                
+                } catch (ServerSideException ex) {
+                    Notification.show(ex.getMessage(), Type.ERROR_MESSAGE);
+                }
+                return;
             }
-            else
-                Notification.show("There are not view to delete", Type.WARNING_MESSAGE);
+
+            if (OutsidePlantTooledComponent.ACTION_CONNECT_CAPTION
+                    .equals(btn.getDescription())) {
+
+                if (map.getMarkers().size() >= 2)
+                    map.enableConnectionTool(true);
+                else
+                    Notification.show("There are not nodes to connect", Type.WARNING_MESSAGE);
+            }
+            if (OutsidePlantTooledComponent.ACTION_POLYGON_CAPTION
+                    .equals(btn.getDescription())) {
+
+                map.enablePolygonTool(true);
+            }
+            if (OutsidePlantTooledComponent.ACTION_CLEAN_CAPTION
+                    .equals(btn.getDescription())) {
+
+                if (view != null || view.getId() != -1) {
+                    CleanViewWindow window = new CleanViewWindow(this);
+                    getUI().addWindow(window);
+                }
+                else {
+                    map.removeAllPhysicalConnection();
+                    map.clear();
+                    Notification.show("The view was cleaned", Type.TRAY_NOTIFICATION);
+                }
+            }
+
+            if (OutsidePlantTooledComponent.ACTION_SAVE_CAPTION
+                    .equals(btn.getDescription())) {
+
+                if (map.isEmpty())
+                    Notification.show("The view is empty, it won't be saved", 
+                            Type.WARNING_MESSAGE);
+                else {
+                    saveView();
+                }
+            }
+
+            if (OutsidePlantTooledComponent.ACTION_DELETE_CAPTION
+                    .equals(btn.getDescription())) {
+
+                if (view != null) {
+                    DeleteWindow window = new DeleteWindow(this);
+                    getUI().addWindow(window);
+                }
+                else
+                    Notification.show("There are not view to delete", Type.WARNING_MESSAGE);
+            }
         }
     }
 
@@ -174,27 +231,38 @@ public class GoogleMapWrapper extends DragAndDropWrapper implements EmbeddableCo
     public void windowClose(Window.CloseEvent e) {
         try {
             WebserviceBeanLocal wsBean = getTopComponent().getWsBean();
-            String ipAddress = getUI().getPage().getWebBrowser().getAddress();
+            String ipAddress = Page.getCurrent().getWebBrowser().getAddress();
             String sessioId = getTopComponent().getApplicationSession().getSessionId();
+            
+            if (e.getWindow() instanceof FilterByWindow) {
+                FilterByWindow window = (FilterByWindow) e.getWindow();
+                if (window.getOption() == MessageDialogWindow.OK_OPTION) {
+                    map.filterby(window.getSeletedNodesFilter(), 
+                            window.getSelectedConnectionsFilter());
+                }
+                window.removeCloseListener(this);
+            }
             
             if (e.getWindow() instanceof OpenViewWindow) {
                 OpenViewWindow window = (OpenViewWindow) e.getWindow();
 
-                if (window.isOk()) {
+                if (window.getOption() == MessageDialogWindow.OK_OPTION) {
                     if (window.getView() != null) {
+                        ((OutsidePlantComponent) parentComponent).addMainComponentToTooledComponent();
+                        
                         ViewInfoLight selectedView = window.getView();
                         view = wsBean.getGeneralView(selectedView.getId(), ipAddress, sessioId);
                         map.render(view.getStructure());
                     }
                 }
                 window.removeCloseListener(this);
-                getUI().removeWindow(window);
+                                
                 return;
             }
             if (e.getWindow() instanceof SaveTopologyWindow) {
                 SaveTopologyWindow window = (SaveTopologyWindow) e.getWindow();
                 getUI().addWindow(window);
-                if (window.isOk()) {
+                if (window.getOption() == MessageDialogWindow.OK_OPTION) {
                     String viewName = window.getViewName();
                     String viewDescription = window.getViewDescription();
                     
@@ -234,19 +302,26 @@ public class GoogleMapWrapper extends DragAndDropWrapper implements EmbeddableCo
                         map.removeAllPhysicalConnection();
                         map.clear();
                         view = null;
+                        ((OutsidePlantComponent) parentComponent).removeMainComponentToTooledComponent();
                         Notification.show("OSP View Deleted", Type.TRAY_NOTIFICATION);
                     }
                 }                
                 window.removeCloseListener(this);
-                getUI().removeWindow(window);
+                
                 return;
             }
             if (e.getWindow() instanceof CleanViewWindow) {
                 CleanViewWindow window = (CleanViewWindow) e.getWindow();
-                if (window.getOption() == MessageDialogWindow.OK_OPTION) {
-                    if (view != null) {
+                if (window.getOption() == MessageDialogWindow.OK_OPTION) {                    
+                    if (view != null || view.getId() != -1) {
                         map.removeAllPhysicalConnection();
                         map.clear();
+                        
+                        wsBean.updateGeneralView(view.getId(), view.getName(), 
+                                view.getDescription(), map.getAsXML(), null, 
+                                ipAddress, sessioId);
+                        view = null;
+                                                                                                
                         Notification.show("The view was cleaned", Type.TRAY_NOTIFICATION);
                     }
                 }                
@@ -282,9 +357,8 @@ public class GoogleMapWrapper extends DragAndDropWrapper implements EmbeddableCo
             viewName = view.getName();
             viewDescription = view.getDescription();
         }
-        SaveTopologyWindow window = new SaveTopologyWindow(viewName, 
-                viewDescription);
-        window.addCloseListener(this);
+        SaveTopologyWindow window = new SaveTopologyWindow(this, viewName, viewDescription);
+        window.initComplexMainComponent();
         getUI().addWindow(window);
     }
     

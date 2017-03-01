@@ -56,9 +56,9 @@ public class PhysicalConnectionWizard extends Window implements
         this.connConfig = new PhysicalConnectionConfiguration();
         
         initWizard();
-        
+        setHeight("70%");
+        setWidth("70%");
         setModal(true);
-        setResizable(false);
         setClosable(false);
         setContent(wizard);
     }
@@ -66,10 +66,9 @@ public class PhysicalConnectionWizard extends Window implements
     private void initWizard() {
         wizard = new Wizard();
         wizard.setUriFragmentEnabled(true);
-        wizard.addStep(new FirstStep(this), "first");
-        wizard.addStep(new SecondStep(this), "second");
-        wizard.setHeight("400px");
-        wizard.setWidth("500px");
+        wizard.addStep(new FirstStepChooseEndpoint(this), "first");
+        wizard.addStep(new SecondStepConnectionSettings(this), "second");
+        wizard.setSizeFull();
         wizard.addListener(this);
     }
     
@@ -131,7 +130,16 @@ public class PhysicalConnectionWizard extends Window implements
         
         try {        
             commonParent = wsBean.getCommonParent(aRbo.getClassName(), aRbo.getOid(), bRbo.getClassName(), bRbo.getOid(), ipAddress, sessioId);
-            connectionId = wsBean.createPhysicalConnection(aRbo.getClassName(), aRbo.getOid(), bRbo.getClassName(), bRbo.getOid(), commonParent.getClassName(), commonParent.getOid(), names, values, connectionClass, ipAddress, sessioId);
+            if (commonParent != null)
+                connectionId = wsBean.createPhysicalConnection(aRbo.getClassName(), aRbo.getOid(), bRbo.getClassName(), bRbo.getOid(), commonParent.getClassName(), commonParent.getOid(), names, values, connectionClass, ipAddress, sessioId);
+            else {
+                Notification.show(
+                        "Failed create Physical Connection" 
+                                + "\n\nThe common parent between " + aRbo.toString() + " and " + bRbo.toString() + " is the Navigation Tree Root" 
+                                + "\n\nThe Navigation Tree Root never will be the parent for one connection", 
+                        Notification.Type.ERROR_MESSAGE);
+                return;                
+            }
         } catch (ServerSideException ex) {
             errorMessage = ex.getMessage();
         }   

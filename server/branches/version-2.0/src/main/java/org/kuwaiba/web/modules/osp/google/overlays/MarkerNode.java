@@ -21,15 +21,20 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
  * Custom GoogleMapMarker for Kuwaiba
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class NodeMarker extends Marker {
+public class MarkerNode extends Marker {
     private RemoteObjectLight remoteObjectLight;
     
-    public NodeMarker(RemoteObjectLight remoteObjectLight) {
+    public MarkerNode(RemoteObjectLight remoteObjectLight) {
         this.remoteObjectLight = remoteObjectLight;
         setDraggable(true);
     }
     
     public RemoteObjectLight getRemoteObjectLight() {
         return remoteObjectLight;
+    }
+        
+    @Override
+    public String toString() {
+        return remoteObjectLight.toString();
     }
 }

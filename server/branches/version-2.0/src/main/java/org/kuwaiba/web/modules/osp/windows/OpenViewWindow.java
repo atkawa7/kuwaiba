@@ -16,81 +16,68 @@
 package org.kuwaiba.web.modules.osp.windows;
 
 import com.vaadin.data.Property;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.ListSelect;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import org.kuwaiba.apis.web.gui.windows.MessageDialogWindow;
 import org.kuwaiba.interfaces.ws.toserialize.application.ViewInfoLight;
 
 /**
  *
  *  @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class OpenViewWindow extends Window {
+public class OpenViewWindow extends MessageDialogWindow {
     private ViewInfoLight view;
-    private boolean ok;
+
+    private final ListSelect lstSelect = new ListSelect("Choose a view");
+    /**
+     * Listeners
+     */
+    private final Property.ValueChangeListener valueChangeListener;
     
-    public OpenViewWindow(ViewInfoLight [] views) {
-        center();
-        VerticalLayout content = new VerticalLayout();        
-        content.setMargin(true);
-        
-        ListSelect lstSelect = new ListSelect("Choose a view");
+    public OpenViewWindow(Window.CloseListener closeListener, ViewInfoLight [] views) {
+        super(closeListener, "", MessageDialogWindow.OK_CANCEL_OPTION);
         
         for (ViewInfoLight view : views)
             lstSelect.addItem(view);
-        
+                        
+        lstSelect.setSizeFull();
         lstSelect.setRows(5);
-        lstSelect.addValueChangeListener(new Property.ValueChangeListener() {
+        
+        valueChangeListener = new Property.ValueChangeListener() {
 
             @Override
             public void valueChange(Property.ValueChangeEvent event) {
                 view = (ViewInfoLight) event.getProperty().getValue();
             }
-        });
-        content.addComponent(lstSelect);
-        
-        HorizontalLayout buttonsLayout = new HorizontalLayout();
-        buttonsLayout.setMargin(true);
-        
-        Button btnOk = new Button("Ok");
-        btnOk.addClickListener(new Button.ClickListener() {
+        };
 
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                ok = true;
-                close();
-            }
-        });
-        buttonsLayout.addComponent(btnOk);
-        
-        Button btnCancel = new Button("Cancel");
-        btnCancel.addClickListener(new Button.ClickListener() {
-
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                ok = false;
-                close();
-            }
-        });
-        buttonsLayout.addComponent(btnCancel);
-        content.addComponent(buttonsLayout);
-        
-        setResizable(false);
-        setClosable(false);
-        setContent(content);
-    }
-    
-    public void showWindow() {
-        
-    }
-    
-    public boolean isOk() {
-        return ok;
-    }
+        lstSelect.addValueChangeListener(valueChangeListener);
+    }   
     
     public ViewInfoLight getView() {
         return view;
+    }
+    
+    @Override    
+    public void close() {
+        lstSelect.removeValueChangeListener(valueChangeListener);
+        super.close();
+    }
+
+    @Override
+    public Component initSimpleMainComponent() {
+        return null;
+    }
+
+    @Override
+    public void initComplexMainComponent() {
+        VerticalLayout content = new VerticalLayout();        
+        content.setMargin(true);
+        
+        content.addComponent(lstSelect);
+        
+        setMainComponent(content);
     }
 }

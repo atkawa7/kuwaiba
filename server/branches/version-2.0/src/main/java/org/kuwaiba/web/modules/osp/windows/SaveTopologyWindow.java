@@ -15,88 +15,55 @@
  */
 package org.kuwaiba.web.modules.osp.windows;
 
-import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import org.kuwaiba.apis.web.gui.windows.MessageDialogWindow;
 
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class SaveTopologyWindow extends Window {
-    private String viewName;
-    private String viewDescription;
-    private boolean ok = false;
-    
-    public SaveTopologyWindow(String name, String description) {
-        super("Save Topology");
-        center();
-        viewName = name;
-        viewDescription = description;
+public class SaveTopologyWindow extends MessageDialogWindow {
+    TextField tfName = new TextField("Name");
+    TextField tfDescription = new TextField("Description");
         
+    public SaveTopologyWindow(Window.CloseListener closeListener, String viewName, String viewDescription) {
+        super(closeListener, "Confirmation", MessageDialogWindow.OK_CANCEL_OPTION);
+        
+        tfName.setValue(viewName);
+        tfName.setRequired(true);
+        
+        tfDescription.setValue(viewDescription);
+    }
+
+    public String getViewName() {
+        return tfName.getValue();
+    }
+    
+    public String getViewDescription() {
+        return tfDescription.getValue();
+    }
+    
+    @Override
+    public void initComplexMainComponent() {
         VerticalLayout content = new VerticalLayout();
         
         FormLayout form = new FormLayout();
         form.setMargin(true);
-        
-        TextField tfName = new TextField("Name");
-        tfName.setValue(viewName);
-        tfName.setRequired(true);
+
         form.addComponent(tfName);
-        
-        TextField tfDescription = new TextField("Description");
-        tfDescription.setValue(viewDescription);
         form.addComponent(tfDescription);
         
         content.addComponent(form);
         
-        HorizontalLayout btnsLayout = new HorizontalLayout();
-        
-        Button btnOk = new Button("Ok");
-        btnOk.addClickListener(new Button.ClickListener() {
-
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                viewName = tfName.getValue();
-                viewDescription = tfDescription.getValue();
-                ok = true;
-                close();
-            }
-        });
-        btnsLayout.addComponent(btnOk);
-        
-        Button btnCancel = new Button("Cancel");
-        btnCancel.addClickListener(new Button.ClickListener() {
-
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-//                tfName.setValue("");
-//                tfDescription.setValue("");
-                ok = false;
-                close();
-            }
-        });
-        btnsLayout.addComponent(btnCancel);
-        
-        content.addComponent(btnsLayout);
-        
-        setResizable(false);
-        setClosable(false);
-        setContent(content);        
-    }
-    
-    public boolean isOk() {
-        return ok;
+        setMainComponent(content);
     }
 
-    public String getViewName() {
-        return viewName;
-    }
-    
-    public String getViewDescription() {
-        return viewDescription;
+    @Override
+    public Component initSimpleMainComponent() {
+        return null;
     }
 }

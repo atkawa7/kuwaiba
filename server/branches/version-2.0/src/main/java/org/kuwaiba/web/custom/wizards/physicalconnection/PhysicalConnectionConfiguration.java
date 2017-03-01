@@ -41,6 +41,7 @@ public class PhysicalConnectionConfiguration {
     public static final String CLASS_ELECTRICALLINK = "ElectricalLink";
     public static final String CLASS_OPTICALLINK = "OpticalLink";
     public static final String CLASS_WIRELESSLINK = "RadioLink";
+     public static final String CLASS_POWERLINK = "PowerLink";
 
     /**
      * Physical connection type classes
@@ -48,6 +49,7 @@ public class PhysicalConnectionConfiguration {
     public static final String CLASS_ELECTRICALLINKTYPE = "ElectricalLinkType";
     public static final String CLASS_OPTICALLINKTYPE = "OpticalLinkType";
     public static final String CLASS_WIRELESSLINKTYPE = "WirelessLinkType";
+    public static final String CLASS_POWERLINKTYPE = "PowerLinkType";
 
     /**
      * Physical container type classes
@@ -186,6 +188,11 @@ public class PhysicalConnectionConfiguration {
                     setConnectionTypeClass(PhysicalConnectionConfiguration.CLASS_WIRELESSLINKTYPE);
                     setWizardType(PhysicalConnectionConfiguration.WIZARD_TYPE_LINK);
                     break;
+                case "Power Link":
+                    setStrokeColor("yellow"); //NOI18N
+                    setConnectionClass(PhysicalConnectionConfiguration.CLASS_POWERLINK);
+                    setConnectionTypeClass(PhysicalConnectionConfiguration.CLASS_POWERLINKTYPE);
+                    setWizardType(PhysicalConnectionConfiguration.WIZARD_TYPE_LINK);
                 default:
                     break;
             }

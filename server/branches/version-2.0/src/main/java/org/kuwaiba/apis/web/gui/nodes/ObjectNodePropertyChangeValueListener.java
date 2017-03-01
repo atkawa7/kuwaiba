@@ -54,9 +54,16 @@ public class ObjectNodePropertyChangeValueListener extends AbstractNodePorpertyV
                 k++;
             }
             // Notifies if the name has changed
-            if(attributeCaption.equals(Constants.PROPERTY_NAME))
-                eventBus.post(event);
+            if(attributeCaption.equals(Constants.PROPERTY_NAME)) {
+                Property.ValueChangeEvent eventOID = new Property.ValueChangeEvent() {
 
+                    @Override
+                    public Property getProperty() {
+                        return object.getItemProperty(Constants.PROPERTY_OID);
+                    }
+                };                
+                eventBus.post(new Property.ValueChangeEvent[]{eventOID, event});
+            }
             if(k >= attributes.length){
                 //if is an attribute without value
                 String[] newAttributes = new String[k+1];

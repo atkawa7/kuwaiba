@@ -15,33 +15,52 @@
  */
 package org.kuwaiba.web.modules.osp;
 
-import org.kuwaiba.web.modules.osp.google.GoogleMapsGISView;
 import com.google.common.eventbus.EventBus;
 import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.web.modules.osp.google.GoogleMapWrapper;
+import org.kuwaiba.web.modules.osp.google.OutsidePlantTooledComponent;
 
 /**
  * The main component of the OSP module.
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-class OutsidePlantComponent extends AbstractTopComponent {
-    GoogleMapsGISView gisView;
-    
+public class OutsidePlantComponent extends AbstractTopComponent {
+    private final GoogleMapWrapper googleMapsWrapper;
+    private final OutsidePlantTooledComponent tooledComponent;
+            
     public OutsidePlantComponent(EventBus eventBus, WebserviceBeanLocal wsBean, RemoteSession session) {
-            super(wsBean, eventBus, session);
-            gisView = new GoogleMapsGISView(this);
-            setCompositionRoot(gisView);
-            this.setSizeFull();
-        }
+        super(wsBean, eventBus, session);
         
-        @Override
-        public void registerComponents() {
-            gisView.register();
-        }
+        googleMapsWrapper = new GoogleMapWrapper(this);
+        googleMapsWrapper.setSizeFull();
         
-        @Override
-        public void unregisterComponents() {
-            gisView.unregister();
-        }
+        tooledComponent = new OutsidePlantTooledComponent(this);
+        
+        setCompositionRoot(tooledComponent);
+        this.setSizeFull();
     }
+    
+    public void addMainComponentToTooledComponent() {
+        tooledComponent.toggleButtons(false);
+        tooledComponent.setMainComponent(googleMapsWrapper);
+    }
+            
+    public void removeMainComponentToTooledComponent() {
+        tooledComponent.toggleButtons(false);
+        tooledComponent.setMainComponent(null);
+    }
+            
+    @Override
+    public void registerComponents() {
+        googleMapsWrapper.register();
+        tooledComponent.register();
+    }
+    
+    @Override
+    public void unregisterComponents() {
+        googleMapsWrapper.unregister();
+        tooledComponent.unregister();
+    }
+}

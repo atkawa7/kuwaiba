@@ -27,6 +27,7 @@ import org.kuwaiba.apis.web.gui.nodes.InventoryObjectRootNode;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
+import org.kuwaiba.web.modules.physicalconnections.windows.EndpointNode;
 
 /**
  * Action that requests an Inventory Object creation
@@ -59,7 +60,13 @@ public class CreateInventoryObjectAction extends AbstractComposedAction {
                     Page.getCurrent().getWebBrowser().getAddress(), 
                     parentComponent.getApplicationSession().getSessionId());
             
-            InventoryObjectNode childNode = new InventoryObjectNode(object);
+            AbstractNode childNode = null;
+            // special case of inventory object that represent a port
+            if (targetObject instanceof EndpointNode) 
+                childNode = new EndpointNode(object);
+            else
+                childNode = new InventoryObjectNode(object);
+                        
             childNode.setTree(((AbstractNode) targetObject).getTree());
             
             ((AbstractNode) targetObject).getTree().setParent(childNode, targetObject);            

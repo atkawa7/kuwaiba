@@ -16,6 +16,7 @@
 package org.kuwaiba.apis.web.gui.windows;
 
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -36,6 +37,21 @@ public abstract class MessageDialogWindow extends Window {
     public static final int OK_OPTION = 3;
     
     private int option = CANCEL_OPTION;
+
+    private final String BTN_YES_CAPTION = "Yes";
+    private final String BTN_NO_CAPTION = "No";
+    private final String BTN_OK_CAPTION = "Ok";
+    private final String BTN_CANCEL_CAPTION = "Cancel";
+    
+    private Button btnYes;
+    private Button btnNo;
+    private Button btnOk;
+    private Button btnCancel;
+    /**
+     * Listener for all buttons
+     */
+    Button.ClickListener clickListener;
+    VerticalLayout content;
     
     public MessageDialogWindow(Window.CloseListener closeListener, 
             String title, int options) {
@@ -43,9 +59,13 @@ public abstract class MessageDialogWindow extends Window {
         center();
         addCloseListener(closeListener);
         
-        VerticalLayout content = new VerticalLayout();
+        content = new VerticalLayout();
         
-        content.addComponent(initContent());
+        Component simpleMainComponent = initSimpleMainComponent();
+        
+        if (simpleMainComponent != null)
+            setMainComponent(simpleMainComponent);
+        
         content.addComponent(initButtons(options));
                         
         setResizable(false);
@@ -54,82 +74,99 @@ public abstract class MessageDialogWindow extends Window {
         
         setContent(content);
     }
+    
+    protected void setMainComponent(Component mainComponent) {
+        content.addComponent(mainComponent, 0);
+    }
+    /**
+     * A simple main component is a Message Dialog Window
+     * that show a simple message for confirmation.
+     */
+    public abstract Component initSimpleMainComponent();
     /**
      * Initializes the contents of the window
      * @return content
      */
-    public abstract VerticalLayout initContent();
+    public abstract void initComplexMainComponent();
     
     private HorizontalLayout initButtons(int options) {
+        clickListener = new Button.ClickListener() {
+
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                if (event.getButton().equals(btnYes))
+                    option = YES_OPTION;
+                if (event.getButton().equals(btnNo))
+                    option = NO_OPTION;
+                if (event.getButton().equals(btnOk))
+                    option = OK_OPTION;
+                if (event.getButton().equals(btnCancel))
+                    option = CANCEL_OPTION;
+                close();
+            }
+        };
+        
         HorizontalLayout content = new HorizontalLayout();
         content.setSpacing(true);
         content.setMargin(true);
-                
-        Button btnYes = new Button("Yes");
-        btnYes.setWidth("120px");
-        
-        btnYes.addClickListener(new Button.ClickListener() {
-            
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                option = YES_OPTION;
-                close();
-            }
-        });
-        
-        Button btnNo = new Button("No");
-        btnNo.setWidth("120px"); //NOI18N
-        btnNo.addClickListener(new Button.ClickListener() {
-            
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                option = NO_OPTION;
-                close();
-            }
-        });
-        
-        Button btnOk = new Button("OK");
-        btnOk.setWidth("120px");
-        btnOk.addClickListener(new Button.ClickListener() {
-            
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                option = OK_OPTION;
-                close();
-            }
-        });
-                
-        Button btnCancel = new Button("Cancel");
-        btnCancel.setWidth("120px");
-        btnCancel.addClickListener(new Button.ClickListener() {
-            
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                option = CANCEL_OPTION;
-                close();
-            }
-        });
         
         switch (options) {
             case YES_NO_OPTION:
+                btnYes = new Button(BTN_YES_CAPTION);
+                btnYes.setWidth("120px"); //NOI18N
+                btnYes.addClickListener(clickListener);
+                
                 content.addComponent(btnYes);
+                
+                btnNo = new Button(BTN_NO_CAPTION);
+                btnNo.setWidth("120px"); //NOI18N
+                btnNo.addClickListener(clickListener);
+                
                 content.addComponent(btnNo);
                 break;
             case YES_NO_CANCEL_OPTION:
+                btnYes = new Button(BTN_YES_CAPTION);
+                btnYes.setWidth("120px"); //NOI18N
+                btnYes.addClickListener(clickListener);
+                
                 content.addComponent(btnYes);
+                
+                btnNo = new Button(BTN_NO_CAPTION);
+                btnNo.setWidth("120px"); //NOI18N
+                btnNo.addClickListener(clickListener);
+                
                 content.addComponent(btnNo);
+                
+                btnCancel = new Button(BTN_CANCEL_CAPTION);
+                btnCancel.setWidth("120px");
+                btnCancel.addClickListener(clickListener);
+                
                 content.addComponent(btnCancel);
                 break;
             case OK_CANCEL_OPTION:
+                btnOk = new Button(BTN_OK_CAPTION);
+                btnOk.setWidth("120px");
+                btnOk.addClickListener(clickListener);
+                
                 content.addComponent(btnOk);
+                
+                btnCancel = new Button(BTN_CANCEL_CAPTION);
+                btnCancel.setWidth("120px");
+                btnCancel.addClickListener(clickListener);
+                
                 content.addComponent(btnCancel);
                 break;
             case ONLY_OK_OPTION:
+                btnOk = new Button(BTN_OK_CAPTION);
+                btnOk.setWidth("120px");
+                btnOk.addClickListener(clickListener);
+                
                 content.addComponent(btnOk);
                 break;
         }
+        if (btnOk != null)
+            btnOk.focus();
         
-        btnOk.focus();
         return content;
     }
     
@@ -139,5 +176,34 @@ public abstract class MessageDialogWindow extends Window {
     
     public void setOption(int option) {
         this.option = option;
+    }
+    
+    public Button.ClickListener getClickListener() {
+        return clickListener;
+    }
+    
+    public Button getBtnOk() {
+        return btnOk;
+    }
+    
+    public void setBtnOk(Button btnOk) {
+        this.btnOk = btnOk;
+    }
+    
+    @Override
+    public void close() {
+        if (btnYes != null)
+            btnYes.removeClickListener(clickListener);
+        
+        if (btnNo != null)
+            btnNo.removeClickListener(clickListener);
+            
+        if (btnOk != null)
+            btnOk.removeClickListener(clickListener);
+        
+        if (btnCancel != null)
+            btnCancel.removeClickListener(clickListener);
+        
+        super.close();
     }
 }

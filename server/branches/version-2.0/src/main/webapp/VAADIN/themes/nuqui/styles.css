@@ -1533,6 +1533,110 @@ div.v-layout.v-horizontal.v-widget {
 	vertical-align: top;
 }
 
+.nuqui .stepper {
+	position: relative;
+}
+
+.nuqui .stepper input[type=text] {
+	line-height: 1.55;
+	font-size: 13px;
+	width: inherit;
+}
+
+.nuqui .stepper.v-has-width input[type=text] {
+	width: 100%;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.nuqui .stepper.v-disabled {
+	opacity: 0.5;
+}
+
+.nuqui .stepper .stepper-updown {
+	position: absolute;
+	top: 2px;
+	right: 2px;
+}
+
+.nuqui .stepper .stepper-up, .nuqui .stepper .stepper-down {
+	display: block;
+	outline: none;
+	font-size: 13px;
+	line-height: 0.775;
+}
+
+.v-gecko .nuqui .stepper .stepper-updown {
+	top: 4px !important;
+}
+
+.v-trident .nuqui .stepper .stepper-updown {
+	top: 5px !important;
+}
+
+.v-trident .nuqui .stepper .stepper-up, .v-trident .nuqui .stepper .stepper-down {
+	font-size: 14px !important;
+	line-height: 0.5 !important;
+}
+
+.v-sa .nuqui .stepper .stepper-updown {
+	top: 4px;
+	right: 4px;
+}
+
+.nuqui .stepper {
+	position: relative;
+}
+
+.nuqui .stepper input[type=text] {
+	line-height: 1.55;
+	font-size: 13px;
+	width: inherit;
+}
+
+.nuqui .stepper.v-has-width input[type=text] {
+	width: 100%;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.nuqui .stepper.v-disabled {
+	opacity: 0.5;
+}
+
+.nuqui .stepper .stepper-updown {
+	position: absolute;
+	top: 2px;
+	right: 2px;
+}
+
+.nuqui .stepper .stepper-up, .nuqui .stepper .stepper-down {
+	display: block;
+	outline: none;
+	font-size: 13px;
+	line-height: 0.775;
+}
+
+.v-gecko .nuqui .stepper .stepper-updown {
+	top: 4px !important;
+}
+
+.v-trident .nuqui .stepper .stepper-updown {
+	top: 5px !important;
+}
+
+.v-trident .nuqui .stepper .stepper-up, .v-trident .nuqui .stepper .stepper-down {
+	font-size: 14px !important;
+	line-height: 0.5 !important;
+}
+
+.v-sa .nuqui .stepper .stepper-updown {
+	top: 4px;
+	right: 4px;
+}
+
 .nuqui.v-app, .nuqui.v-app-loading {
 	font: 400 13px/1.55 lato-normal, sans-serif;
 	color: #464646;
@@ -13013,4 +13117,16 @@ div.v-layout.v-horizontal.v-widget {
 .nuqui .v-tree-node-bold {
 	font-weight: bold;
 	color: #eb2977;
+}
+
+.nuqui .v-table-cell-content-disable {
+	background-color: gainsboro;
+	color: graytext;
+	font-style: italic;
+}
+
+.nuqui .v-tree-node-caption-disabled {
+	background-color: gainsboro;
+	color: graytext;
+	font-style: italic;
 }
