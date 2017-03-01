@@ -14,11 +14,11 @@
    height="793.70081"
    id="svg2"
    version="1.1"
-   inkscape:version="0.92.0 r15299"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="icons.svg"
-   inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ClassManager/src/org/inventory/customization/classmanager/res/icon24.png"
-   inkscape:export-xdpi="44.66494"
-   inkscape:export-ydpi="44.66494">
+   inkscape:export-filename="/home/johnyortega/Documents/filter.png"
+   inkscape:export-xdpi="38"
+   inkscape:export-ydpi="38">
   <defs
      id="defs4">
     <linearGradient
@@ -479,14 +479,14 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.8284272"
-     inkscape:cx="696.67661"
-     inkscape:cy="-33.107962"
+     inkscape:zoom="5.656854"
+     inkscape:cx="1113.285"
+     inkscape:cy="106.41315"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
-     inkscape:window-width="1440"
-     inkscape:window-height="847"
+     inkscape:window-width="1600"
+     inkscape:window-height="843"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -1883,9 +1883,9 @@
     <ellipse
        style="fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.832977"
        id="path3435-6-6-0-4-9-9"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/Queries/src/org/inventory/queries/res/icon224.png"
-       inkscape:export-xdpi="44.66497"
-       inkscape:export-ydpi="44.66497"
+       inkscape:export-filename="/home/johnyortega/Documents/search.png"
+       inkscape:export-xdpi="38.380001"
+       inkscape:export-ydpi="38.380001"
        cx="835.98181"
        cy="834.10925"
        rx="25.792042"
@@ -1893,9 +1893,9 @@
     <g
        id="g4165-9"
        transform="matrix(0.85923643,0,0,0.90923929,425.37775,396.24471)"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/Queries/src/org/inventory/queries/res/icon224.png"
-       inkscape:export-xdpi="44.66497"
-       inkscape:export-ydpi="44.66497">
+       inkscape:export-filename="/home/johnyortega/Documents/search.png"
+       inkscape:export-xdpi="38.380001"
+       inkscape:export-ydpi="38.380001">
       <circle
          id="path3258-8"
          style="fill:none;stroke:#ffffff;stroke-width:5.33333349;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -4599,5 +4599,210 @@
            inkscape:export-ydpi="40.942867" />
       </g>
     </g>
+    <ellipse
+       style="fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.832977"
+       id="path3435-6-6-0-4-9-6-7-3"
+       inkscape:export-filename="/home/johnyortega/Documents/clean"
+       inkscape:export-xdpi="38.383938"
+       inkscape:export-ydpi="38.383938"
+       cx="1072.9462"
+       cy="1015.0394"
+       rx="25.792042"
+       ry="25.79204" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1"
+       id="rect3903"
+       width="7.7781744"
+       height="20.771261"
+       x="1068.8802"
+       y="990.37903"
+       ry="2.4659731"
+       inkscape:export-filename="/home/johnyortega/Documents/clean"
+       inkscape:export-xdpi="38.383938"
+       inkscape:export-ydpi="38.383938" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1"
+       id="rect3905"
+       width="31.643057"
+       height="7.0710683"
+       x="1056.1523"
+       y="1011.504"
+       ry="3.5355341"
+       rx="15.821528"
+       inkscape:export-filename="/home/johnyortega/Documents/clean"
+       inkscape:export-xdpi="38.383938"
+       inkscape:export-ydpi="38.383938" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1"
+       id="rect3907"
+       width="4.0658636"
+       height="13.87697"
+       x="1056.2407"
+       y="1019.724"
+       ry="1.9570086"
+       inkscape:export-filename="/home/johnyortega/Documents/clean"
+       inkscape:export-xdpi="38.383938"
+       inkscape:export-ydpi="38.383938" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1"
+       id="rect3907-2"
+       width="4.0658636"
+       height="13.87697"
+       x="1061.7385"
+       y="1019.724"
+       ry="1.9570086"
+       inkscape:export-filename="/home/johnyortega/Documents/clean"
+       inkscape:export-xdpi="38.383938"
+       inkscape:export-ydpi="38.383938" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1"
+       id="rect3907-2-9"
+       width="4.0658636"
+       height="13.87697"
+       x="1067.2363"
+       y="1019.724"
+       ry="1.9570086"
+       inkscape:export-filename="/home/johnyortega/Documents/clean"
+       inkscape:export-xdpi="38.383938"
+       inkscape:export-ydpi="38.383938" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1"
+       id="rect3907-2-9-1"
+       width="4.0658636"
+       height="13.87697"
+       x="1072.7341"
+       y="1019.724"
+       ry="1.9570086"
+       inkscape:export-filename="/home/johnyortega/Documents/clean"
+       inkscape:export-xdpi="38.383938"
+       inkscape:export-ydpi="38.383938" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1"
+       id="rect3907-2-9-1-2"
+       width="4.0658636"
+       height="13.87697"
+       x="1078.2319"
+       y="1019.724"
+       ry="1.9570086"
+       inkscape:export-filename="/home/johnyortega/Documents/clean"
+       inkscape:export-xdpi="38.383938"
+       inkscape:export-ydpi="38.383938" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1"
+       id="rect3907-2-9-1-2-7"
+       width="4.0658636"
+       height="13.87697"
+       x="1083.7297"
+       y="1019.724"
+       ry="1.9570086"
+       inkscape:export-filename="/home/johnyortega/Documents/clean"
+       inkscape:export-xdpi="38.383938"
+       inkscape:export-ydpi="38.383938" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1"
+       id="rect4032"
+       width="31.643028"
+       height="6.717514"
+       x="1056.1523"
+       y="1014.7743"
+       inkscape:export-filename="/home/johnyortega/Documents/clean"
+       inkscape:export-xdpi="38.383938"
+       inkscape:export-ydpi="38.383938" />
+    <rect
+       style="fill:#4d4d4d;fill-opacity:1"
+       id="rect4034"
+       width="31.731417"
+       height="3.2703688"
+       x="1056.0638"
+       y="1020.4312"
+       inkscape:export-filename="/home/johnyortega/Documents/clean"
+       inkscape:export-xdpi="38.383938"
+       inkscape:export-ydpi="38.383938" />
+    <rect
+       style="fill:#4d4d4d;fill-opacity:1"
+       id="rect4034-0"
+       width="32.350136"
+       height="3.2703688"
+       x="1055.6644"
+       y="1014.6521"
+       inkscape:export-filename="/home/johnyortega/Documents/clean"
+       inkscape:export-xdpi="38.383938"
+       inkscape:export-ydpi="38.383938" />
+    <rect
+       style="fill:#4d4d4d;fill-opacity:1"
+       id="rect4034-0-9"
+       width="10.783381"
+       height="3.1819804"
+       x="1067.5544"
+       y="992.36786"
+       inkscape:export-filename="/home/johnyortega/Documents/clean"
+       inkscape:export-xdpi="38.383938"
+       inkscape:export-ydpi="38.383938" />
+    <rect
+       style="fill:#4d4d4d;fill-opacity:1"
+       id="rect4034-0-9-3"
+       width="10.783381"
+       height="3.0052037"
+       x="1067.2892"
+       y="996.78729"
+       inkscape:export-filename="/home/johnyortega/Documents/clean"
+       inkscape:export-xdpi="38.383938"
+       inkscape:export-ydpi="38.383938" />
+    <ellipse
+       style="fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.832977"
+       id="path3435-6-6-0-4-9-6-5-3"
+       inkscape:export-filename="/home/johnyortega/Documents/filter.png"
+       inkscape:export-xdpi="38"
+       inkscape:export-ydpi="38"
+       cx="1130.6709"
+       cy="1013.9976"
+       rx="25.792042"
+       ry="25.79204" />
+    <path
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       d="m 1116.9519,997.53337 -0.1137,4.31443 6.0016,12.8712 8.0118,17.1894 7.7612,-17.1777 5.7939,-12.8243 0.1156,-4.35545 -13.9215,-0.01 -13.6489,-0.008 z"
+       id="path2816-0-6"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/johnyortega/Documents/filter.png"
+       inkscape:export-xdpi="38"
+       inkscape:export-ydpi="38" />
+    <path
+       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.06666672"
+       d="m 1123.8884,1017.0422 0.2246,20.6851 6.6363,-5.7814 6.9688,-6.0749 -0.095,-8.7355 -13.7348,-0.094 z"
+       id="rect4243-7"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/johnyortega/Documents/filter.png"
+       inkscape:export-xdpi="38"
+       inkscape:export-ydpi="38" />
+    <rect
+       style="fill:#4d4d4d;fill-opacity:1"
+       id="rect4034-3"
+       width="31.731417"
+       height="3.2703688"
+       x="1112.8535"
+       y="1013.7801"
+       inkscape:export-filename="/home/johnyortega/Documents/filter.png"
+       inkscape:export-xdpi="38.383938"
+       inkscape:export-ydpi="38.383938" />
+    <path
+       style="fill:#ffffff;fill-opacity:1"
+       d="m 1129.1339,993.51745 c -5.2566,0 -9.8163,0.99447 -12.2581,2.47451 l 0,4.94904 c 2.4418,1.4801 7.0013,2.4762 12.2581,2.4762 l 3.6132,0 c 4.9038,0 9.2106,-0.8628 11.7491,-2.1804 l 0,-5.53885 c -2.5385,-1.31719 -6.8453,-2.1805 -11.7491,-2.1805 l -3.6132,0 z"
+       id="rect4034-3-3-6"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/johnyortega/Documents/filter.png"
+       inkscape:export-xdpi="38"
+       inkscape:export-ydpi="38" />
+    <rect
+       style="fill:#4d4d4d;fill-opacity:1"
+       id="rect4034-3-3"
+       width="25.367527"
+       height="5.391686"
+       x="1118.0685"
+       y="995.54987"
+       inkscape:export-filename="/home/johnyortega/Documents/filter.png"
+       inkscape:export-xdpi="38.383938"
+       inkscape:export-ydpi="38.383938"
+       ry="2.695843"
+       rx="11.24787" />
   </g>
 </svg>
