@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
  *
  * Licensed under the EPL License, Version 1.0 (the "License"); you may not use
@@ -31,7 +31,6 @@ import com.neotropic.inventory.modules.ipam.nodes.properties.NotEditableProperty
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DnDConstants;
 import java.io.IOException;
-import java.util.HashMap;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -151,49 +150,77 @@ public class SubnetNode extends ObjectNode {
                     if (action == DnDConstants.ACTION_MOVE) {
                         String className = getObject().getClassName();
                         long oid = getObject().getOid();
-                        
+                        boolean networkIpBelongsTo = false;
+                        boolean broadcastIpBelongsTo = false;
+                            
                         LocalObject parentSubnet = com.getObjectInfo(className, oid);
-                        LocalObject childSubnet = com.getObjectInfo(className, obj.getOid());
+                        String[] parentSplit = parentSubnet.getName().split("/");
+                        LocalObject childNode = null;
                         
                         String parentNetworkIp = (String)parentSubnet.getAttribute("networkIp");
                         String parentBroadcastIp = (String)parentSubnet.getAttribute("broadcastIp");
                         
-                        String childNetworkIp = (String)childSubnet.getAttribute("networkIp");
-                        String childBroadcastIp = (String)childSubnet.getAttribute("broadcastIp");
+                        if(obj.getClassName().equals(Constants.CLASS_IP_ADDRESS)){
+                            
+                            childNode = com.getObjectInfo(obj.getClassName(), obj.getOid());
+                            
+                            if(className.equals(Constants.CLASS_SUBNET_IPV4))
+                                networkIpBelongsTo = SubnetEngine.belongsTo(parentNetworkIp, obj.getName(), Integer.valueOf(parentSplit[1]));
+                            
+                            else if(className.equals(Constants.CLASS_SUBNET_IPV6))
+                                networkIpBelongsTo = SubnetEngine.belongsToIpv6(parentNetworkIp, obj.getName(), Integer.valueOf(parentSplit[1]));
+                            
+                            if(networkIpBelongsTo){
+                                if(com.moveObjectsToPool(className, oid, new LocalObjectLight[]{obj})){
+                                    //Refreshes the old parent node
+                                    if (dropNode.getParentNode().getChildren() instanceof AbstractChildren)
+                                        ((AbstractChildren)dropNode.getParentNode().getChildren()).addNotify();
 
-                        String[] parentSplit = parentSubnet.getName().split("/");
-                        String[] childSplit = childSubnet.getName().split("/");
-                        
-                        boolean networkIpBelongsTo = false;
-                        boolean broadcastIpBelongsTo = false;
-                                
-                        if(className.equals(Constants.CLASS_SUBNET_IPV4)){
-                            networkIpBelongsTo = SubnetEngine.belongsTo(parentNetworkIp, childNetworkIp, Integer.valueOf(parentSplit[1]));
-                            broadcastIpBelongsTo = SubnetEngine.belongsTo(parentNetworkIp, childBroadcastIp, Integer.valueOf(childSplit[1]));
+                                    //Refreshes the new parent node
+                                    if (getChildren() instanceof AbstractChildren)
+                                        ((AbstractChildren)getChildren()).addNotify();
+                                }else
+                                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+                            }
+                            else
+                                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE,"The IP: " + obj.getName() + " does not belong to "+ object.getName());
                         }
-                        else if(className.equals(Constants.CLASS_SUBNET_IPV6)){
-                            networkIpBelongsTo = SubnetEngine.belongsToIpv6(parentNetworkIp, childNetworkIp, Integer.valueOf(parentSplit[1]));
-                            broadcastIpBelongsTo = SubnetEngine.belongsToIpv6(parentNetworkIp, childBroadcastIp, Integer.valueOf(childSplit[1]));
-                        }
-                        if(!networkIpBelongsTo && parentNetworkIp.equals(childNetworkIp))
-                            networkIpBelongsTo =  true;
-                        if(!broadcastIpBelongsTo && parentBroadcastIp.equals(childBroadcastIp))
-                            broadcastIpBelongsTo = true;
                         
-                        if(networkIpBelongsTo && broadcastIpBelongsTo){
-                            if(com.moveObjectsToPool(className, oid, new LocalObjectLight[]{obj})){
-                                //Refreshes the old parent node
-                                if (dropNode.getParentNode().getChildren() instanceof AbstractChildren)
-                                    ((AbstractChildren)dropNode.getParentNode().getChildren()).addNotify();
+                        else{ 
+                            childNode = com.getObjectInfo(className, obj.getOid());
+                            String childNetworkIp = (String)childNode.getAttribute("networkIp");
+                            String childBroadcastIp = (String)childNode.getAttribute("broadcastIp");
+                        
+                            String[] childSplit = childNode.getName().split("/");
 
-                                //Refreshes the new parent node
-                                if (getChildren() instanceof AbstractChildren)
-                                    ((AbstractChildren)getChildren()).addNotify();
-                            }else
-                                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+                            if(className.equals(Constants.CLASS_SUBNET_IPV4)){
+                                networkIpBelongsTo = SubnetEngine.belongsTo(parentNetworkIp, childNetworkIp, Integer.valueOf(parentSplit[1]));
+                                broadcastIpBelongsTo = SubnetEngine.belongsTo(parentNetworkIp, childBroadcastIp, Integer.valueOf(parentSplit[1]));
+                            }
+                            else if(className.equals(Constants.CLASS_SUBNET_IPV6)){
+                                networkIpBelongsTo = SubnetEngine.belongsToIpv6(parentNetworkIp, childNetworkIp, Integer.valueOf(parentSplit[1]));
+                                broadcastIpBelongsTo = SubnetEngine.belongsToIpv6(parentNetworkIp, childBroadcastIp, Integer.valueOf(parentSplit[1]));
+                            }
+                            if(!networkIpBelongsTo && parentNetworkIp.equals(childNetworkIp))
+                                networkIpBelongsTo =  true;
+                            if(!broadcastIpBelongsTo && parentBroadcastIp.equals(childBroadcastIp))
+                                broadcastIpBelongsTo = true;
+
+                            if(networkIpBelongsTo && broadcastIpBelongsTo){
+                                if(com.moveObjectsToPool(className, oid, new LocalObjectLight[]{obj})){
+                                    //Refreshes the old parent node
+                                    if (dropNode.getParentNode().getChildren() instanceof AbstractChildren)
+                                        ((AbstractChildren)dropNode.getParentNode().getChildren()).addNotify();
+
+                                    //Refreshes the new parent node
+                                    if (getChildren() instanceof AbstractChildren)
+                                        ((AbstractChildren)getChildren()).addNotify();
+                                }else
+                                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+                            }
+                            else
+                                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE,"The subnet: " + obj.getName() + " is not subnet of "+ object.getName());
                         }
-                        else
-                            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE,"The subnet: " + obj.getName() + " is not subnet of "+ object.getName());
                     }
                 } catch (Exception ex) {
                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());
@@ -202,5 +229,4 @@ public class SubnetNode extends ObjectNode {
             }
         };
     }
-    
 }
