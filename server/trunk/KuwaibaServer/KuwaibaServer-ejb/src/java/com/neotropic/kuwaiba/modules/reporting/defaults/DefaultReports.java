@@ -20,6 +20,7 @@ import com.neotropic.kuwaiba.modules.mpls.MPLSModule;
 import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHModule;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -527,19 +528,39 @@ public class DefaultReports {
     public RawReport subnetUsageReport(String className, long subnetId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
     
         RemoteBusinessObject subnet = bem.getObject(className, subnetId);
-        List<RemoteBusinessObjectLight> ips = bem.getObjectSpecialChildren(className, subnetId);
+        List<RemoteBusinessObjectLight> subnetChildren = bem.getObjectSpecialChildren(className, subnetId);
         HashMap<String, List<String>> subnetAttributes = subnet.getAttributes();
         int hosts = Integer.parseInt(subnetAttributes.get("hosts").get(0));
         
         
         int usedIps = 0;
         
+        List<RemoteBusinessObjectLight> ips  = new ArrayList<>();
+        List<RemoteBusinessObjectLight> subnets  = new ArrayList<>();
+        
+        for (RemoteBusinessObjectLight children : subnetChildren) {
+            if(children.getClassName().equals(Constants.CLASS_IP_ADDRESS))
+                ips.add(children);
+        }
+        
+        for (RemoteBusinessObjectLight children : subnetChildren) {
+            if(children.getClassName().equals(Constants.CLASS_SUBNET_IPV4) || children.getClassName().equals(Constants.CLASS_SUBNET_IPV6))
+                subnets.add(children);
+        }
+        
         for (RemoteBusinessObjectLight ip : ips) {
-            List<RemoteBusinessObjectLight> ipDevices = bem.getSpecialAttribute(Constants.CLASS_IP_ADDRESS, ip.getId(), IPAMModule.RELATIONSHIP_IPAMHASADDRESS);
-            if(!ipDevices.isEmpty())
-                usedIps++;
+            if(ip.getClassName().equals(Constants.CLASS_IP_ADDRESS)){
+                List<RemoteBusinessObjectLight> ipDevices = bem.getSpecialAttribute(Constants.CLASS_IP_ADDRESS, ip.getId(), IPAMModule.RELATIONSHIP_IPAMHASADDRESS);
+                if(!ipDevices.isEmpty())
+                    usedIps++;
+            }
         }
 
+        if(hosts == 0 && usedIps == 0){
+            usedIps = ips.size();
+            if(usedIps>hosts);
+                hosts += 2;
+        }
         int freeIps = hosts - usedIps;
         
         String vrf="", vlan = "", service="", title, subnetUsageReportText;
@@ -582,12 +603,41 @@ public class DefaultReports {
                     + "<tr><td class=\"generalInfoLabel\">Service</td><td class=\"generalInfoValue\">" + service + "</td></tr></table>";
         }
         
+        String nestedSubnets; 
         String ipAddresses; 
+        
+        if (subnets.isEmpty())
+            nestedSubnets = "<div class=\"error\">There are no Subnets nested</div>";
+        else {
+            nestedSubnets = "<br><h2>Subnets</h2><table><tr><th>Subnet</th><th>Description</th><th>Service</th></tr>";
+
+            int i = 0;
+            for (RemoteBusinessObjectLight nestedSubnet : subnets) {
+                service = "";
+                
+                String subSubnet = nestedSubnet.getName() + " [" + nestedSubnet.getClassName()+"]";
+                
+                List<RemoteBusinessObjectLight> subnetServices = bem.getSpecialAttribute(nestedSubnet.getClassName(), nestedSubnet.getId(), "uses");
+                if(!subnetServices.isEmpty())
+                    service = subnetServices.get(0).getName() + "[" +  subnetServices.get(0).getClassName() + "]";
+                
+                RemoteBusinessObject subnetO = bem.getObject(className, nestedSubnet.getId());
+                HashMap<String, List<String>> attributes = subnetO.getAttributes();
+                
+                nestedSubnets += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") +"\"><td>" + nestedSubnet.getName() + "</td>"
+                              + "<td>" + attributes.get("description").get(0) +"</td>"
+                              + "<td>" + service +"</td></tr>";
+                i ++;
+            }
+            nestedSubnets += "</table>";
+        }
+        
+        subnetUsageReportText += nestedSubnets;
         
         if (ips.isEmpty())
             ipAddresses = "<div class=\"error\">There are no IPs Addresses in use</div>";
         else {
-            ipAddresses = "<table><tr><th>IP Address</th><th>Description</th><th>Port</th><th>Location</th><th>Service</th></tr>";
+            ipAddresses = "<br><h2>IP Addresses</h2><table><tr><th>IP Address</th><th>Description</th><th>Port</th><th>Location</th><th>Service</th></tr>";
 
             int i = 0;
             for (RemoteBusinessObjectLight ip : ips) {
