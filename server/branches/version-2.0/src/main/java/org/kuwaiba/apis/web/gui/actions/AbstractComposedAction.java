@@ -43,9 +43,9 @@ public abstract class AbstractComposedAction extends AbstractAction {
     
     /**
      * Actually shows a popup with the options. Handle the existence of items in the calling method (most probably actionPerformed) to customize the error message
-     * @param sourceComponent 
-     * @param targetObject 
-     * @param subMenuOptions 
+     * @param sourceComponent The visual component this action is attached to.
+     * @param targetObject The object related to the action (usually a node)
+     * @param subMenuOptions The options in the submenu
      */
     public void showSubMenu(Object sourceComponent, Object targetObject, List<?> subMenuOptions) {
         
@@ -70,6 +70,7 @@ public abstract class AbstractComposedAction extends AbstractAction {
                     }
                 });
         btnOk.setWidth(100, Sizeable.Unit.PIXELS);
+        btnOk.focus();
 
         HorizontalLayout actionLayout = new HorizontalLayout(btnCancel, btnOk);
         actionLayout.setWidth("100%");

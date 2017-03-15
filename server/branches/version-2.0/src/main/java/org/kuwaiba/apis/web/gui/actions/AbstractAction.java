@@ -33,8 +33,8 @@ public abstract class AbstractAction extends Action {
     
     /**
      * What to do when the action is triggered 
-     * @param sourceComponent The parent component that
-     * @param targetObject
+     * @param sourceComponent The parent component that contains the object related to the action
+     * @param targetObject The object related to the action (usually a node)
      */
     public abstract void actionPerformed (Object sourceComponent, Object targetObject);
 }
