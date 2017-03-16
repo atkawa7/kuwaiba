@@ -3,6 +3,7 @@ package com.vaadin.tapio.googlemaps.client;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,15 +13,13 @@ import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapInfoWindow;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolygon;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The shared state of the Google Maps. Contains also the default values.
  */
 public class GoogleMapState extends AbstractComponentState {
     private static final long serialVersionUID = 646346522643L;
-
+    
     public String apiKey = null;
     public String clientId = null;
 
@@ -52,12 +51,14 @@ public class GoogleMapState extends AbstractComponentState {
     public LatLon fitToBoundsNE = null;
     public LatLon fitToBoundsSW = null;
 
-    public Map<Long, GoogleMapPolygon> polygons = new HashMap<>();
+    
     
     public Set<GoogleMapKmlLayer> kmlLayers = new HashSet<GoogleMapKmlLayer>();
 
-    public Map<Long, GoogleMapPolyline> polylines = new HashMap<>();
     public Map<Long, GoogleMapMarker> markers = new HashMap<>();
+    public Map<Long, GoogleMapPolygon> polygons = new HashMap<>();
+    public Map<Long, GoogleMapPolyline> polylines = new HashMap<>();
+    
 
     public Map<Long, GoogleMapInfoWindow> infoWindows = new HashMap<>();
     public boolean trafficLayerVisible = false;
@@ -65,8 +66,19 @@ public class GoogleMapState extends AbstractComponentState {
     public String apiUrl = null;
 
     public Map<Long, String> infoWindowContentIdentifiers = new HashMap<>();
+        
+    public String drawingMode = null;
     
-    public List<GoogleMapMarker> markersChanged = new ArrayList();
-    public List<GoogleMapPolyline> polylinesChanged = new ArrayList();
-    public List<GoogleMapPolygon> polygonsChanged = new ArrayList();
+    public boolean showMarkerLabels = false;
+    public boolean showPolylineLabels = false;
+    public boolean showPolygonLabels = false;
+    public boolean showEdgeLabels = false;
+    /**
+     * Google Map source of the edge
+     */
+    public GoogleMapMarker markerSource = null;
+    
+    public boolean disableDoubleClickZoom = false;
+        
+    public Map<GoogleMapPolyline, List<GoogleMapMarker>> edges = new HashMap<>();
 }

@@ -33,6 +33,8 @@ public class GoogleMapPolyline implements Serializable {
     private boolean geodesic = false;
     
     private boolean visible = true;
+    
+    private boolean editable = false;
 
     public GoogleMapPolyline() {
         id = idCounter;
@@ -184,7 +186,7 @@ public class GoogleMapPolyline implements Serializable {
     public void setGeodesic(boolean geodesic) {
         this.geodesic = geodesic;
     }
-    
+        
     /**
      * Checks if the polyline is visible
      * 
@@ -201,6 +203,24 @@ public class GoogleMapPolyline implements Serializable {
      */
     public void setVisible(boolean visible) {
         this.visible = visible;
+    }
+    
+    /**
+     * Checks if the polyline is editable
+     * 
+     * @return true, if polyline is editable
+     */
+    public boolean isEditable() {
+        return editable;
+    }
+    
+    /**
+     * Enables/disables edit of the polyline.
+     * 
+     * @param editable Set true to edit the polyline
+     */
+    public void setEditable(boolean editable) {
+        this.editable = editable;
     }
 
     public long getId() {
@@ -237,18 +257,22 @@ public class GoogleMapPolyline implements Serializable {
         return true;
     }
     
-    public boolean hasSameCoordinates(GoogleMapPolyline other) {
-        if (other.getCoordinates() == null || getCoordinates() == null)
+    public boolean hasSameCoordinates(GoogleMapPolyline other) {        
+        if (other.getCoordinates() == null && getCoordinates() == null)
             return true;
         
+        if (other.getCoordinates() == null || getCoordinates() == null)
+            return false;
+                
         if (other.getCoordinates().size() != getCoordinates().size())
             return false;
         
-        for (int i = 0; i < getCoordinates().size(); i += 1)
+        for (int i = 0; i < getCoordinates().size(); i += 1) {
             if (!other.getCoordinates().get(i)
-                    .hasSameFieldValues(getCoordinates().get(i)))
+                    .hasSameFieldValues(getCoordinates().get(i))) {
                 return false;
-        
+            }
+        }
         return true;
     }
     
@@ -270,6 +294,9 @@ public class GoogleMapPolyline implements Serializable {
             return false;
         
         if (other.isVisible() != isVisible())
+            return false;
+        
+        if (other.isEditable() != isEditable())
             return false;
         
         return true;

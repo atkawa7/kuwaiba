@@ -34,6 +34,10 @@ public class GoogleMapPolygon implements Serializable {
     private boolean geodesic = false;
     
     private boolean visible = true;
+    
+    private boolean editable = false;
+    
+    private String caption = "";
 
     /**
      * Instantiates a new polygon overlay using default values.
@@ -242,6 +246,24 @@ public class GoogleMapPolygon implements Serializable {
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
+    
+    /**
+     * Checks if the polygon is editable
+     * 
+     * @return true, if the polygon is editable
+     */
+    public boolean isEditable() {
+        return editable;
+    }
+    
+    /**
+     * Enables/disables edit of the polygon.
+     * 
+     * @param editable Set true to edit the polygon
+     */
+    public void setEditable(boolean editable) {
+        this.editable = editable;
+    }
 
     public long getId() {
         return id;
@@ -249,6 +271,14 @@ public class GoogleMapPolygon implements Serializable {
 
     public void setId(long id) {
         this.id = id;
+    }
+    
+    public String getCaption() {
+        return caption;
+    }
+    
+    public void setCaption(String caption) {
+        this.caption = caption;        
     }
 
     @Override
@@ -274,6 +304,7 @@ public class GoogleMapPolygon implements Serializable {
         if (id != other.id) {
             return false;
         }
+        
         return true;
     }
     
@@ -319,6 +350,12 @@ public class GoogleMapPolygon implements Serializable {
         if (other.isVisible() != isVisible())
             return false;
         
+        if (other.isEditable() != isEditable())
+            return false;
+        
+        if (!other.getCaption().equals(getCaption()))
+            return false;
+                
         return true;        
     }
 }

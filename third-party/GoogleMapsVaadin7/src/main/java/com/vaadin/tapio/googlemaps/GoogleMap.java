@@ -13,9 +13,14 @@ import org.apache.commons.lang3.StringUtils;
 import com.vaadin.tapio.googlemaps.client.GoogleMapControl;
 import com.vaadin.tapio.googlemaps.client.GoogleMapState;
 import com.vaadin.tapio.googlemaps.client.LatLon;
+import com.vaadin.tapio.googlemaps.client.events.EdgeClickListener;
+import com.vaadin.tapio.googlemaps.client.events.EdgeCompleteListener;
+import com.vaadin.tapio.googlemaps.client.events.EdgeRightClickListener;
 import com.vaadin.tapio.googlemaps.client.events.InfoWindowClosedListener;
 import com.vaadin.tapio.googlemaps.client.events.MapClickListener;
 import com.vaadin.tapio.googlemaps.client.events.MapDblClickListener;
+import com.vaadin.tapio.googlemaps.client.events.MapMouseMoveListener;
+import com.vaadin.tapio.googlemaps.client.events.MapMouseOverListener;
 import com.vaadin.tapio.googlemaps.client.events.MapMoveListener;
 import com.vaadin.tapio.googlemaps.client.events.MapRightClickListener;
 import com.vaadin.tapio.googlemaps.client.events.MarkerClickListener;
@@ -23,9 +28,11 @@ import com.vaadin.tapio.googlemaps.client.events.MarkerDblClickListener;
 import com.vaadin.tapio.googlemaps.client.events.MarkerDragListener;
 import com.vaadin.tapio.googlemaps.client.events.MarkerRightClickListener;
 import com.vaadin.tapio.googlemaps.client.events.PolygonClickListener;
+import com.vaadin.tapio.googlemaps.client.events.PolygonCompleteListener;
 import com.vaadin.tapio.googlemaps.client.events.PolygonDblClickListener;
 import com.vaadin.tapio.googlemaps.client.events.PolygonRightClickListener;
 import com.vaadin.tapio.googlemaps.client.events.PolylineClickListener;
+import com.vaadin.tapio.googlemaps.client.events.PolylineCompleteListener;
 import com.vaadin.tapio.googlemaps.client.events.PolylineDblClickListener;
 import com.vaadin.tapio.googlemaps.client.events.PolylineRightClickListener;
 import com.vaadin.tapio.googlemaps.client.layers.GoogleMapKmlLayer;
@@ -33,9 +40,14 @@ import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapInfoWindow;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolygon;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
+import com.vaadin.tapio.googlemaps.client.rpcs.EdgeClickedRpc;
+import com.vaadin.tapio.googlemaps.client.rpcs.EdgeCompletedRpc;
+import com.vaadin.tapio.googlemaps.client.rpcs.EdgeRightClickedRpc;
 import com.vaadin.tapio.googlemaps.client.rpcs.InfoWindowClosedRpc;
 import com.vaadin.tapio.googlemaps.client.rpcs.MapClickedRpc;
 import com.vaadin.tapio.googlemaps.client.rpcs.MapDblClickedRpc;
+import com.vaadin.tapio.googlemaps.client.rpcs.MapMouseMovedRpc;
+import com.vaadin.tapio.googlemaps.client.rpcs.MapMouseOverRpc;
 import com.vaadin.tapio.googlemaps.client.rpcs.MapMovedRpc;
 import com.vaadin.tapio.googlemaps.client.rpcs.MapRightClickedRpc;
 import com.vaadin.tapio.googlemaps.client.rpcs.MapTypeChangedRpc;
@@ -44,9 +56,11 @@ import com.vaadin.tapio.googlemaps.client.rpcs.MarkerDblClickedRpc;
 import com.vaadin.tapio.googlemaps.client.rpcs.MarkerDraggedRpc;
 import com.vaadin.tapio.googlemaps.client.rpcs.MarkerRightClickedRpc;
 import com.vaadin.tapio.googlemaps.client.rpcs.PolygonClickedRpc;
+import com.vaadin.tapio.googlemaps.client.rpcs.PolygonCompletedRpc;
 import com.vaadin.tapio.googlemaps.client.rpcs.PolygonDblClickedRpc;
 import com.vaadin.tapio.googlemaps.client.rpcs.PolygonRightClickedRpc;
 import com.vaadin.tapio.googlemaps.client.rpcs.PolylineClickedRpc;
+import com.vaadin.tapio.googlemaps.client.rpcs.PolylineCompletedRpc;
 import com.vaadin.tapio.googlemaps.client.rpcs.PolylineDblClickedRpc;
 import com.vaadin.tapio.googlemaps.client.rpcs.PolylineRightClickedRpc;
 import com.vaadin.ui.AbstractComponentContainer;
@@ -64,7 +78,7 @@ public class GoogleMap extends AbstractComponentContainer {
     public enum MapType {
         Hybrid, Roadmap, Satellite, Terrain
     }
-
+    
     private final MarkerClickedRpc markerClickedRpc = new MarkerClickedRpc() {
         @Override
         public void markerClicked(long markerId) {
@@ -109,7 +123,7 @@ public class GoogleMap extends AbstractComponentContainer {
             }
         }
     };
-    
+        
     private final PolygonClickedRpc polygonClickedRpc = new PolygonClickedRpc() {
         @Override
         public void polygonClicked(long polygonId) {
@@ -143,6 +157,26 @@ public class GoogleMap extends AbstractComponentContainer {
         }
     };
     
+    private final PolygonCompletedRpc polygonCompletedRpc = new PolygonCompletedRpc() {
+
+        @Override
+        public void polygonComplete(GoogleMapPolygon gmPolygon) {
+            for (PolygonCompleteListener listener : polygonCompleteListeners) {
+                listener.polygonCompleted(gmPolygon);
+            }
+        }
+    };
+    
+    private final PolylineCompletedRpc polylineCompletedRpc = new PolylineCompletedRpc() {
+
+        @Override
+        public void polylineCompleted(GoogleMapPolyline gmPolyline) {
+            
+            for (PolylineCompleteListener listener : polylineCompleteListeners)
+                listener.polylineCompleted(gmPolyline);
+        }
+    };
+    
     private final PolylineClickedRpc polylineClickedRpc = new PolylineClickedRpc() {
         @Override
         public void polylineClicked(long polylineId) {
@@ -153,8 +187,6 @@ public class GoogleMap extends AbstractComponentContainer {
             }
         }
     };
-    
-
     
     private final PolylineDblClickedRpc polylineDblClickedRpc = new PolylineDblClickedRpc() {
         @Override
@@ -174,6 +206,53 @@ public class GoogleMap extends AbstractComponentContainer {
             GoogleMapPolyline polyline = getState().polylines.get(polylineId);
             for (PolylineRightClickListener listener : polylineRightClickListeners) {
                 listener.polylineRightClicked(polyline);
+            }
+        }
+    };
+    
+    private final EdgeClickedRpc edgeClickedRpc = new EdgeClickedRpc() {
+
+        @Override
+        public void edgeClicked(GoogleMapPolyline clickedEdge) {
+            if (edgeIDs.containsKey(clickedEdge.getId())) {
+                GoogleMapPolyline edge = edgeIDs.get(clickedEdge.getId());
+
+                for (EdgeClickListener listener : edgeClickListeners) {
+                    listener.edgeClicked(edge);
+                }
+            }
+        }
+    };
+    
+    private final EdgeCompletedRpc edgeCompletedRpc = new EdgeCompletedRpc() {
+
+        @Override
+        public void edgeCompleted(GoogleMapPolyline edgeComplete) {
+            if (edgeIDs.containsKey(edgeComplete.getId())) {
+                GoogleMapPolyline edge = edgeIDs.get(edgeComplete.getId());
+                edge.getCoordinates().clear();
+                
+                for (LatLon coordinates : edgeComplete.getCoordinates()) {
+                    edge.getCoordinates().add(coordinates);
+                }
+                
+                for (EdgeCompleteListener listener : edgeCompleteListeners) {
+                    listener.edgeCompleted(edge);
+                }
+            }
+        }
+    };
+    
+    private final EdgeRightClickedRpc edgeRightClickedRpc = new EdgeRightClickedRpc() {
+
+        @Override
+        public void edgeRightClicked(GoogleMapPolyline clickedEdge) {
+            if (edgeIDs.containsKey(clickedEdge.getId())) {
+                GoogleMapPolyline edge = edgeIDs.get(clickedEdge.getId());
+
+                for (EdgeRightClickListener listener : edgeRightClickListeners) {
+                    listener.edgeRightClicked(edge);
+                }
             }
         }
     };
@@ -241,24 +320,54 @@ public class GoogleMap extends AbstractComponentContainer {
             setMapType(mapType);
         }
     };
+    
+    private final MapMouseMovedRpc mapMouseMovedRpc = new MapMouseMovedRpc() {
+
+        @Override
+        public void mapMouseMoved(LatLon position) {
+            for (MapMouseMoveListener listener : mapMouseMoveListeners) {
+                listener.mapMouseMoved(position);
+            }
+        }
+    };
+    
+    private final MapMouseOverRpc mapMouseOverRpc = new MapMouseOverRpc() {
+        
+        @Override
+        public void mapMouseOver(LatLon position) {
+            for (MapMouseOverListener listener : mapMouseOverListeners) {
+                listener.mapMouseOver(position);
+            }
+        }
+    };
 
     private final List<MarkerClickListener> markerClickListeners = new ArrayList<>();
     
     private final List<MarkerDblClickListener> markerDblClickListeners = new ArrayList<>();
     
     private final List<MarkerRightClickListener> markerRightClickListeners = new ArrayList<>();
-    
+        
     private final List<PolygonClickListener> polygonClickListeners = new ArrayList<>();
     
     private final List<PolygonDblClickListener> polygonDblClickListeners = new ArrayList<>();
     
     private final List<PolygonRightClickListener> polygonRightClickListeners = new ArrayList<>();
     
+    private final List<PolygonCompleteListener> polygonCompleteListeners = new ArrayList<>();
+    
+    private final List<PolylineCompleteListener> polylineCompleteListeners = new ArrayList<>();
+    
     private final List<PolylineClickListener> polylineClickListeners = new ArrayList<>();
     
     private final List<PolylineDblClickListener> polylineDblClickListeners = new ArrayList<>();
     
     private final List<PolylineRightClickListener> polylineRightClickListeners = new ArrayList<>();
+    
+    private final List<EdgeClickListener> edgeClickListeners = new ArrayList();
+    
+    private final List<EdgeCompleteListener> edgeCompleteListeners = new ArrayList();
+    
+    private final List<EdgeRightClickListener> edgeRightClickListeners = new ArrayList<>();
 
     private final List<MapMoveListener> mapMoveListeners = new ArrayList<>();
 
@@ -269,10 +378,16 @@ public class GoogleMap extends AbstractComponentContainer {
     private final List<MapRightClickListener> mapRightClickListeners = new ArrayList<>();
     
     private final List<MarkerDragListener> markerDragListeners = new ArrayList<>();
+    
+    private final List<MapMouseMoveListener> mapMouseMoveListeners = new ArrayList<>();
+    
+    private final List<MapMouseOverListener> mapMouseOverListeners = new ArrayList<>();
 
     private final List<InfoWindowClosedListener> infoWindowClosedListeners = new ArrayList<>();
 
     private final Map<GoogleMapInfoWindow, Component> infoWindowContents = new HashMap<>();
+    
+    private final Map<Long, GoogleMapPolyline> edgeIDs = new HashMap<>();
 
     /**
      * The layout that actually contains the contents of Info Windows (if Vaadin components are used).
@@ -316,13 +431,20 @@ public class GoogleMap extends AbstractComponentContainer {
         registerRpc(polygonClickedRpc);
         registerRpc(polygonDblClickedRpc);
         registerRpc(polygonRightClickedRpc);
+        registerRpc(polygonCompletedRpc);
+        registerRpc(polylineCompletedRpc);
         registerRpc(polylineClickedRpc);
         registerRpc(polylineDblClickedRpc);
         registerRpc(polylineRightClickedRpc);
+        registerRpc(edgeClickedRpc);
+        registerRpc(edgeCompletedRpc);
+        registerRpc(edgeRightClickedRpc);
         registerRpc(mapMovedRpc);
         registerRpc(mapClickedRpc);
         registerRpc(mapDblClickedRpc);
         registerRpc(mapRightClickedRpc);
+        registerRpc(mapMouseMovedRpc);
+        registerRpc(mapMouseOverRpc);
         registerRpc(markerDraggedRpc);
         registerRpc(infoWindowClosedRpc);
         registerRpc(mapTypeChangedRpc);
@@ -587,6 +709,42 @@ public class GoogleMap extends AbstractComponentContainer {
     }
     
     /**
+     * Adds a PolygonCompleteListener to the map.
+     *
+     * @param listener The listener to add.
+     */
+    public void addPolygonCompleteListener(PolygonCompleteListener listener) {
+        polygonCompleteListeners.add(listener);
+    }
+    
+    /**
+     * Removes a PolygonCompleteListener from the map.
+     *
+     * @param listener The listener to remove.
+     */
+    public void removePolygonCompleteListener(PolygonCompleteListener listener) {
+        polygonCompleteListeners.remove(listener);
+    }
+    
+    /**
+     * Adds a PolylineCompleteListener to the map.
+     *
+     * @param listener The listener to add.
+     */
+    public void addPolylineCompleteListener(PolylineCompleteListener listener) {
+        polylineCompleteListeners.add(listener);
+    }
+    
+    /**
+     * Removes a PolylineCompleteListener from the map.
+     *
+     * @param listener The listener to remove.
+     */
+    public void removePolylineClickListener(PolylineCompleteListener listener) {
+        polylineCompleteListeners.remove(listener);
+    }
+    
+    /**
      * Adds a PolylineClickListener to the map.
      *
      * @param listener The listener to add.
@@ -639,6 +797,60 @@ public class GoogleMap extends AbstractComponentContainer {
     public void removePolylineRightClickListener(PolylineRightClickListener listener) {
         polylineRightClickListeners.remove(listener);
     }
+    
+    /**
+     * Adds a EdgeClickListener to the map.
+     *
+     * @param listener The listener to add.
+     */
+    public void addEdgeClickListener(EdgeClickListener listener) {
+        edgeClickListeners.add(listener);
+    }
+
+    /**
+     * Removes a EdgeClickListener from the map.
+     *
+     * @param listener The listener to remove.
+     */
+    public void removeEdgeClickListener(EdgeClickListener listener) {
+        edgeClickListeners.remove(listener);
+    }
+    
+    /**
+     * Adds a EdgeCompleteListener to the map.
+     *
+     * @param listener The listener to add.
+     */
+    public void addEdgeCompleteListener(EdgeCompleteListener listener) {
+        edgeCompleteListeners.add(listener);
+    }
+
+    /**
+     * Removes a EdgeCompleteListener from the map.
+     *
+     * @param listener The listener to remove.
+     */
+    public void removeEdgeCompleteListener(EdgeCompleteListener listener) {
+        edgeCompleteListeners.remove(listener);
+    }
+    
+    /**
+     * Adds a EdgeRightClickListener to the map.
+     *
+     * @param listener The listener to add.
+     */
+    public void addEdgeRightClickListener(EdgeRightClickListener listener) {
+        edgeRightClickListeners.add(listener);
+    }
+
+    /**
+     * Removes a EdgeRightClickListener from the map.
+     *
+     * @param listener The listener to remove.
+     */
+    public void removeEdgeRightClickListener(EdgeRightClickListener listener) {
+        edgeRightClickListeners.remove(listener);
+    }
 
     /**
      * Adds a MapMoveListener to the map.
@@ -688,7 +900,7 @@ public class GoogleMap extends AbstractComponentContainer {
     /**
      * Removes a MapDblClickListener from the map.
      *
-     * @param listener The listener to add.
+     * @param listener The listener to remove.
      */
     public void removeMapClickListener(MapDblClickListener listener) {
         mapDblClickListeners.remove(listener);
@@ -706,10 +918,46 @@ public class GoogleMap extends AbstractComponentContainer {
     /**
      * Removes a MapRightClickListener from the map.
      *
-     * @param listener The listener to add.
+     * @param listener The listener to remove.
      */
     public void removeMapRightClickListener(MapRightClickListener listener) {
         mapRightClickListeners.remove(listener);
+    }
+    
+    /**
+     * Adds a MapMouseMoveListener to the map.
+     *
+     * @param listener The listener to add.
+     */
+    public void addMapMouseMoveListener(MapMouseMoveListener listener) {
+        mapMouseMoveListeners.add(listener);
+    }
+    
+    /**
+     * Removes a MapMouseMoveListener from the map.
+     *
+     * @param listener The listener to remove.
+     */
+    public void removeMapMouseMoveListener(MapMouseMoveListener listener) {
+        mapMouseMoveListeners.remove(listener);
+    }
+    
+    /**
+     * Adds a MapMouseOverListener to the map.
+     *
+     * @param listener The listener to add.
+     */
+    public void addMapMouseOverListener(MapMouseOverListener listener) {
+        mapMouseOverListeners.add(listener);
+    }
+    
+    /**
+     * Removes a MapMouseOverListener from the map.
+     *
+     * @param listener The listener to remove.
+     */
+    public void removeMapMouseOverListener(MapMouseOverListener listener) {
+        mapMouseOverListeners.remove(listener);
     }
 
     /**
@@ -1114,5 +1362,33 @@ public class GoogleMap extends AbstractComponentContainer {
         getState().infoWindowContentIdentifiers
             .put(window.getId(), contentIdentifier);
     }
-
+    
+    public boolean isDisableDoubleClickZoom() {
+        return getState().disableDoubleClickZoom;
+    }
+    
+    public void setDisableDoubleClickZoom(boolean disableDoubleClickZoom) {
+        getState().disableDoubleClickZoom = disableDoubleClickZoom;
+    }
+    
+    public void addEdge(GoogleMapPolyline edge, GoogleMapMarker sourceNode, GoogleMapMarker targetNode) {
+        if (!getState().edges.containsKey(edge)) {
+            List<GoogleMapMarker> nodes = new ArrayList();
+            nodes.add(sourceNode);
+            nodes.add(targetNode);
+            
+            edgeIDs.put(edge.getId(), edge);
+            getState().edges.put(edge, nodes);
+        }
+    }
+    
+    public void removeEdge(GoogleMapPolyline edge) {
+        edgeIDs.remove(edge.getId());
+        getState().edges.remove(edge);
+    }
+    
+    public void removeEdges() {
+        edgeIDs.clear();
+        getState().edges.clear();
+    }
 }
