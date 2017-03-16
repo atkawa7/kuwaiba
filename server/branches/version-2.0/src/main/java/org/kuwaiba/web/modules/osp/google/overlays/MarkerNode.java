@@ -15,13 +15,14 @@
  */
 package org.kuwaiba.web.modules.osp.google.overlays;
 
+import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
  * Custom GoogleMapMarker for Kuwaiba
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class MarkerNode extends Marker {
+public class MarkerNode extends GoogleMapMarker {
     private RemoteObjectLight remoteObjectLight;
     
     public MarkerNode(RemoteObjectLight remoteObjectLight) {

@@ -124,6 +124,7 @@ public class GoogleMapWrapper extends DragAndDropWrapper implements EmbeddableCo
             }
             return;
         }
+        
         if (component instanceof Button) {
             Button btn = (Button) component;
                         
@@ -134,6 +135,24 @@ public class GoogleMapWrapper extends DragAndDropWrapper implements EmbeddableCo
                 filterByWindow.setNodesFilter(map.getNodeFilter());
                 filterByWindow.setConnectionFilter(map.getConnectionsFilter());
                 getUI().addWindow(filterByWindow);
+                return;
+            }
+                        
+            if (OutsidePlantTooledComponent.ACTION_SHOW_NODE_LABELS
+                    .equals(btn.getDescription())) {
+                map.enableShowNodeLabelsTool();
+                return;
+            }
+            
+            if (OutsidePlantTooledComponent.ACTION_SHOW_CONNECTION_LABELS
+                    .equals(btn.getDescription())) {
+                map.enableShowConnectionLabelsTool();
+                return;
+            }
+            
+            if (OutsidePlantTooledComponent.ACTION_SHOW_POLYGON_LABELS
+                    .equals(btn.getDescription())) {
+                map.enableShowPolygonLabelsTool();
                 return;
             }
             
@@ -175,30 +194,33 @@ public class GoogleMapWrapper extends DragAndDropWrapper implements EmbeddableCo
                 }
                 return;
             }
+            
+            if (OutsidePlantTooledComponent.ACTION_SELECT_CAPTION
+                    .equals(btn.getDescription())) {
+                map.enableSelectTool();
+            }
 
             if (OutsidePlantTooledComponent.ACTION_CONNECT_CAPTION
-                    .equals(btn.getDescription())) {
-
+                    .equals(btn.getDescription())) {                
                 if (map.getMarkers().size() >= 2)
-                    map.enableConnectionTool(true);
+                    map.enableConnectionTool();
                 else
                     Notification.show("There are not nodes to connect", Type.WARNING_MESSAGE);
             }
             if (OutsidePlantTooledComponent.ACTION_POLYGON_CAPTION
                     .equals(btn.getDescription())) {
 
-                map.enablePolygonTool(true);
+                map.enablePolygonTool();
             }
             if (OutsidePlantTooledComponent.ACTION_CLEAN_CAPTION
                     .equals(btn.getDescription())) {
 
-                if (view != null || view.getId() != -1) {
+                if (view != null && view.getId() != -1) {
                     CleanViewWindow window = new CleanViewWindow(this);
                     getUI().addWindow(window);
                 }
                 else {
-                    map.removeAllPhysicalConnection();
-                    map.clear();
+                    map.enableCleanTool();
                     Notification.show("The view was cleaned", Type.TRAY_NOTIFICATION);
                 }
             }
@@ -272,14 +294,12 @@ public class GoogleMapWrapper extends DragAndDropWrapper implements EmbeddableCo
                         ipAddress, sessioId);
                         view = wsBean.getGeneralView(id, ipAddress, sessioId);
                         
-                        map.connectionsSaved();
                         Notification.show("OSP View Saved", Type.TRAY_NOTIFICATION);
                     }
                     else {
                         wsBean.updateGeneralView(view.getId(), viewName, 
                                 viewDescription, map.getAsXML(), null, 
                                 ipAddress, sessioId);
-                        map.connectionsSaved();
                         Notification.show("OSP View Updated", Type.TRAY_NOTIFICATION);
                     }
                     if (windowCallSaveView) {
@@ -299,7 +319,7 @@ public class GoogleMapWrapper extends DragAndDropWrapper implements EmbeddableCo
                     if (view != null) {
                         wsBean.deleteGeneralView(new long[]{view.getId()}, 
                                 ipAddress, sessioId);
-                        map.removeAllPhysicalConnection();
+//                        map.removeAllPhysicalConnection();
                         map.clear();
                         view = null;
                         ((OutsidePlantComponent) parentComponent).removeMainComponentToTooledComponent();
@@ -314,7 +334,7 @@ public class GoogleMapWrapper extends DragAndDropWrapper implements EmbeddableCo
                 CleanViewWindow window = (CleanViewWindow) e.getWindow();
                 if (window.getOption() == MessageDialogWindow.OK_OPTION) {                    
                     if (view != null || view.getId() != -1) {
-                        map.removeAllPhysicalConnection();
+//                        map.removeAllPhysicalConnection();
                         map.clear();
                         
                         wsBean.updateGeneralView(view.getId(), view.getName(), 
@@ -337,7 +357,6 @@ public class GoogleMapWrapper extends DragAndDropWrapper implements EmbeddableCo
                 }
                                
                 if (window.getOption() == MessageDialogWindow.NO_OPTION) {
-                    map.removeConnectionsUnsave();
                     map.clear();
                     view = null;
                 }

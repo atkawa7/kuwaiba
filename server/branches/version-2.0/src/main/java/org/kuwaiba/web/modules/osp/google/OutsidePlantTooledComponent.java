@@ -37,8 +37,13 @@ public class OutsidePlantTooledComponent extends AbstractTooledComponent impleme
     public static final String ACTION_OPEN_CAPTION = "Open";
     public static final String ACTION_SAVE_CAPTION = "Save";
     public static final String ACTION_DELETE_CAPTION = "Delete";
+    public static final String ACTION_SELECT_CAPTION = "Select";
     public static final String ACTION_CONNECT_CAPTION = "Connect";
     public static final String ACTION_POLYGON_CAPTION = "Draw polygon";
+//    public static final String ACTION_EDIT_CAPTION = "Edit";
+    public static final String ACTION_SHOW_NODE_LABELS = "Show/hide node labels";
+    public static final String ACTION_SHOW_CONNECTION_LABELS = "Show/hide connection labels";
+    public static final String ACTION_SHOW_POLYGON_LABELS = "Show/hide polygon labels";
     public static final String ACTION_CLEAN_CAPTION = "Clean";
     public static final String ACTION_FILTER_CAPTION = "Filter";
     public static final String ACTION_SEARCH_CAPTION = "Search";
@@ -78,15 +83,27 @@ public class OutsidePlantTooledComponent extends AbstractTooledComponent impleme
         
         actions.add(new AbstractActionImpl(ACTION_SAVE_CAPTION, 
                 new ThemeResource("img/mod_osp_icon_save.png")));
+                        
+        actions.add(new AbstractActionImpl(ACTION_SHOW_NODE_LABELS, 
+                new ThemeResource("img/mod_osp_icon_hide_node_labels.png")));
         
-        actions.add(new AbstractActionImpl(ACTION_DELETE_CAPTION, 
-                new ThemeResource("img/mod_osp_icon_delete.png")));
+        actions.add(new AbstractActionImpl(ACTION_SHOW_CONNECTION_LABELS, 
+                new ThemeResource("img/mod_osp_icon_hide_connection_labels.png")));
+        
+        actions.add(new AbstractActionImpl(ACTION_SHOW_POLYGON_LABELS, 
+                new ThemeResource("img/mod_osp_icon_hide_polygon_labels.png")));
+                
+        actions.add(new AbstractActionImpl(ACTION_SELECT_CAPTION,
+                new ThemeResource("img/mod_osp_icon_select.png")));
         
         actions.add(new AbstractActionImpl(ACTION_CONNECT_CAPTION, 
                 new ThemeResource("img/mod_osp_icon_connect.png")));
         
         actions.add(new AbstractActionImpl(ACTION_POLYGON_CAPTION, 
                 new ThemeResource("img/mod_osp_icon_polygon.png")));
+        
+//        actions.add(new AbstractActionImpl(ACTION_EDIT_CAPTION, 
+//                new ThemeResource("img/mod_osp_icon_edit.png")));
         
         actions.add(new AbstractActionImpl(ACTION_CLEAN_CAPTION, 
                 new ThemeResource("img/mod_osp_icon_clean.png")));

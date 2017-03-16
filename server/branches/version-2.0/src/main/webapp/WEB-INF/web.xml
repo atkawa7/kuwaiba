@@ -9,10 +9,6 @@
             <param-value>org.kuwaiba.KuwaibaWidgetSet</param-value>
         </init-param>
         <init-param>
-            <param-name>widgetset</param-name>
-            <param-value>org.vaadin.risto.stepper.widgetset.StepperDemoWidgetset</param-value>
-        </init-param>
-        <init-param>
             <param-name>UIProvider</param-name>
             <param-value>com.vaadin.cdi.CDIUIProvider</param-value>
         </init-param>

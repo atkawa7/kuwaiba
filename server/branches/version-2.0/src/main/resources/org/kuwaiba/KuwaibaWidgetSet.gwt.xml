@@ -6,6 +6,8 @@
     
     <set-property name="user.agent" value="gecko1_8"/>
     
-    <inherits name="com.vaadin.tapio.googlemaps.Widgetset" />
+    
     <inherits name="org.vaadin.risto.stepper.widgetset.StepperWidgetset" />
+
+    <inherits name="com.vaadin.tapio.googlemaps.Widgetset" />
 </module>
