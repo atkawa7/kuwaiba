@@ -15,25 +15,20 @@
  */
 package org.kuwaiba.web.modules.navtree.actions;
 
-import com.vaadin.server.Page;
 import com.vaadin.ui.Notification;
-import java.util.ArrayList;
-import java.util.List;
-import org.kuwaiba.apis.web.gui.actions.AbstractComposedAction;
-import org.kuwaiba.apis.web.gui.modules.TopComponent;
+import org.kuwaiba.apis.web.gui.actions.CreateInventoryObjectChildAction;
 import org.kuwaiba.apis.web.gui.nodes.AbstractNode;
 import org.kuwaiba.apis.web.gui.nodes.InventoryObjectNode;
 import org.kuwaiba.apis.web.gui.nodes.InventoryObjectRootNode;
-import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
 import org.kuwaiba.web.modules.physicalconnections.windows.EndpointNode;
 
 /**
  * Action that requests an Inventory Object creation
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class CreateInventoryObjectAction extends AbstractComposedAction {
+public class CreateInventoryObjectAction extends CreateInventoryObjectChildAction {
+    private AbstractNode parentNode;
 
     public CreateInventoryObjectAction() {
         super("New");
@@ -41,69 +36,40 @@ public class CreateInventoryObjectAction extends AbstractComposedAction {
 
     @Override
     public void finalActionPerformed(Object sourceComponent, Object targetObject, Object selectedOption) {
-        try {
-            TopComponent parentComponent = ((AbstractNode) targetObject).getTree().getTopComponent();
+        super.finalActionPerformed(sourceComponent, targetObject, selectedOption);
             
-            long oid = parentComponent.getWsBean().createObject(
-                    ((ClassInfoLight) selectedOption).getClassName(), 
-                    targetObject instanceof InventoryObjectRootNode ? null : ((RemoteObjectLight) ((InventoryObjectNode) targetObject).getObject()).getClassName(),
-                    targetObject instanceof InventoryObjectRootNode ? -1 : ((RemoteObjectLight) ((InventoryObjectNode) targetObject).getObject()).getOid(),
-                    new String[0],
-                    new String[0][0],
-                    0,
-                    Page.getCurrent().getWebBrowser().getAddress(), 
-                    parentComponent.getApplicationSession().getSessionId());
+        RemoteObjectLight object = getNewObject();
             
-            RemoteObjectLight object = parentComponent.getWsBean().getObjectLight(
-                    ((ClassInfoLight) selectedOption).getClassName(), 
-                    oid, 
-                    Page.getCurrent().getWebBrowser().getAddress(), 
-                    parentComponent.getApplicationSession().getSessionId());
+        AbstractNode childNode = null;
+        // special case of inventory object that represent a port
+        if (parentNode instanceof EndpointNode) 
+            childNode = new EndpointNode(object);
+        else
+            childNode = new InventoryObjectNode(object);
+        
+        childNode.setTree(parentNode.getTree());
+        parentNode.getTree().setParent(childNode, parentNode);            
             
-            AbstractNode childNode = null;
-            // special case of inventory object that represent a port
-            if (targetObject instanceof EndpointNode) 
-                childNode = new EndpointNode(object);
-            else
-                childNode = new InventoryObjectNode(object);
-                        
-            childNode.setTree(((AbstractNode) targetObject).getTree());
-            
-            ((AbstractNode) targetObject).getTree().setParent(childNode, targetObject);            
-//            ((AbstractNode) targetObject).expand();
-            
-            Notification.show("Object created successfully",  Notification.Type.TRAY_NOTIFICATION);
-        } catch (ServerSideException ex) {
-            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-        }
+        Notification.show("Object created successfully",  Notification.Type.TRAY_NOTIFICATION);
     }
 
     @Override
     public void actionPerformed(Object sourceComponent, Object targetObject) {
         if (targetObject instanceof AbstractNode) {
-            TopComponent parentComponent = ((AbstractNode) targetObject).getTree().getTopComponent();
+            parentNode = (AbstractNode) targetObject;           
             
-            List<ClassInfoLight> children = new ArrayList();
-            try {
-                if (targetObject instanceof InventoryObjectRootNode)
-                    children = parentComponent.getWsBean().getPossibleChildren(
-                            "DummyRoot", 
-                            Page.getCurrent().getWebBrowser().getAddress(), 
-                            parentComponent.getApplicationSession().getSessionId());
-                
-                if (targetObject instanceof InventoryObjectNode)
-                    children = parentComponent.getWsBean().getPossibleChildren(
-                            ((RemoteObjectLight)((InventoryObjectNode) targetObject).getObject()).getClassName(), 
-                            Page.getCurrent().getWebBrowser().getAddress(), 
-                            parentComponent.getApplicationSession().getSessionId());
-                    
-                if (!children.isEmpty())
-                    showSubMenu(sourceComponent, targetObject, children);
-                
-            } catch (ServerSideException ex) {
-                Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+            if (targetObject instanceof InventoryObjectRootNode) {
+                super.actionPerformed(
+                        parentNode.getTree(),
+                        new RemoteObjectLight(-1, null, "DummyRoot"));
             }
             
+            if (targetObject instanceof InventoryObjectNode) {
+                super.actionPerformed(
+                    parentNode.getTree(), 
+                    ((RemoteObjectLight) parentNode.getObject())
+                );
+            }
         }
     }
 }

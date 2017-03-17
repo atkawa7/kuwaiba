@@ -132,7 +132,7 @@ public class SecondStepConnectionSettings implements WizardStep {
                 ClassInfoLight portClass = (ClassInfoLight) ((NativeSelect) content.getComponent(2)).getValue();
                 connConfig.setPortType(portClass.getClassName());
                 
-                int numChildren = ((IntStepper) content.getComponent(3)).getValue();//Integer.valueOf((String) ((TextField)content.getComponent(3)).getValue());
+                int numChildren = ((IntStepper) content.getComponent(3)).getValue();
                 connConfig.setNumChildren(numChildren);
             }
             return true;

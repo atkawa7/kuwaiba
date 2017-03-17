@@ -157,7 +157,7 @@ public class PhysicalConnectionWizard extends Window implements
                     NotificationsUtil.showError(errorMessage);
                 }
             }
-            RemoteObjectLight connInfo = new RemoteObjectLight(connection.getId(), name, connectionClass);
+            RemoteObjectLight connInfo = new RemoteObjectLight(connectionId, name, connectionClass);
             connection.setConnectionInfo(connInfo);
             
             Notification.show("The object was created successfully", Notification.Type.HUMANIZED_MESSAGE);

@@ -47,55 +47,9 @@ public class MoreInformationAction extends AbstractAction implements Window.Clos
         node = (InventoryObjectNode) targetObject;
         
         UI.getCurrent().addWindow(
-                new ShowObjectIdWindow());
+                new ShowObjectIdWindow(node.getTree().getTopComponent(), (RemoteObjectLight) node.getObject()));
     }
 
     @Override
     public void windowClose(Window.CloseEvent e) {}
-    
-    public class ShowObjectIdWindow extends MessageDialogWindow {
-
-        public ShowObjectIdWindow() {
-            super(MoreInformationAction.this, "Additional Information", 
-                    MessageDialogWindow.ONLY_OK_OPTION);
-        }
-
-        @Override
-        public Component initSimpleMainComponent() {
-            try {
-                RemoteObjectLight object = (RemoteObjectLight) node.getObject();
-                
-                TopComponent parentComponent = node.getTree().getTopComponent();
-                List<RemoteObjectLight> parents = parentComponent.getWsBean().getParents(
-                        object.getClassName(),
-                        object.getOid(),
-                        Page.getCurrent().getWebBrowser().getAddress(),
-                        parentComponent.getApplicationSession().getSessionId());
-                
-                String containmentPath = "";
-                for (RemoteObjectLight parent : parents)
-                    containmentPath += ":" + parent;
-                
-                                
-                VerticalLayout content = new VerticalLayout();
-                content.setMargin(true);
-                
-                Label lblId = new Label(String.format("<b>id: </b>%s", object.getOid(),ContentMode.HTML));
-                Label lblClass = new Label(String.format("<b>Class: </b>%s", object.getClassName(),ContentMode.HTML));
-                Label lblContainment = new Label(String.format("<b>Containment Path: </b>%s", containmentPath,ContentMode.HTML));
-                
-                content.addComponent(lblId);
-                content.addComponent(lblClass);
-                content.addComponent(lblContainment);
-                
-                return content;
-            } catch (ServerSideException ex) {
-                Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-                return null;
-            }
-        }
-
-        @Override
-        public void initComplexMainComponent() {}
-    }
 }

@@ -57,7 +57,8 @@ public abstract class MessageDialogWindow extends Window {
             String title, int options) {
         super(title);
         center();
-        addCloseListener(closeListener);
+        if (closeListener != null)
+            addCloseListener(closeListener);
         
         content = new VerticalLayout();
         

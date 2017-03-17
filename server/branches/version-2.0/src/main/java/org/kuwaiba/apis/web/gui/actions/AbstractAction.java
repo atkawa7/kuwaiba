@@ -37,4 +37,9 @@ public abstract class AbstractAction extends Action {
      * @param targetObject The object related to the action (usually a node)
      */
     public abstract void actionPerformed (Object sourceComponent, Object targetObject);
+    
+    @Override
+    public String toString() {
+        return getCaption();
+    }
 }

@@ -16,14 +16,20 @@
 package org.kuwaiba.web.modules.osp.google.overlays;
 
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
+import java.util.ArrayList;
+import java.util.List;
+import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.web.custom.wizards.physicalconnection.PhysicalConnectionConfiguration;
+import org.kuwaiba.web.modules.osp.google.actions.ActionsFactory;
+import org.kuwaiba.web.modules.osp.google.actions.DeletePhysicalConnectionAction;
 
 /**
  * Polyline that represent a physical connection
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ConnectionPolyline extends GoogleMapPolyline {
-//public class ConnectionPolyline extends Polyline {
+    List<AbstractAction> actions;
     /**
      * Saved. is used to know if the connection was stored in the view 
      * of the data base
@@ -72,6 +78,31 @@ public class ConnectionPolyline extends GoogleMapPolyline {
     public void setTarget(MarkerNode target) {
         this.target = target;
         getCoordinates().add(target.getPosition());
+    }
+    
+    public List<AbstractAction> getActions() {
+        boolean isLink = true;
+        
+        if (connectionInfo.getClassName().equals(PhysicalConnectionConfiguration.CLASS_WIRECONTAINER) || 
+            connectionInfo.getClassName().equals(PhysicalConnectionConfiguration.CLASS_WIRELESSCONTAINER))
+            isLink = false;
+        
+        DeletePhysicalConnectionAction delete = null;
+        if (isLink)
+            delete = ActionsFactory.createDeletePhysicalConnectionAction("Delete Physical Link");
+        else
+            delete = ActionsFactory.createDeletePhysicalConnectionAction("Delete Physical Container");
+        
+        if (actions == null) {
+            actions = new ArrayList();
+            
+            actions.add(delete);
+            if (!isLink)
+                actions.add(ActionsFactory.createConnectLinksAction());
+            
+            actions.add(ActionsFactory.createShowObjectIdAction());
+        }
+        return actions;
     }
     
     @Override
