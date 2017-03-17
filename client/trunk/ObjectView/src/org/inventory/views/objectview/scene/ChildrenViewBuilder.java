@@ -90,7 +90,7 @@ public class ChildrenViewBuilder implements AbstractViewBuilder {
             List<LocalObject> myConnections = com.getChildrenOfClass(object.getOid(),object.getClassName(), Constants.CLASS_GENERICCONNECTION);
            
             if(views.isEmpty()){ //There are no saved views
-                buildDefaultView(myChildren, myConnections);
+                buildDefaultView(object, myChildren, myConnections);
                 currentView = null;
             } else {
                 currentView = com.getObjectRelatedView(object.getOid(),object.getClassName(), views.get(0).getId());
@@ -202,7 +202,7 @@ public class ChildrenViewBuilder implements AbstractViewBuilder {
                 if (!myChildren.isEmpty() || !myConnections.isEmpty())
                     currentView.setDirty(true);
                 
-                buildDefaultView(myChildren, myConnections);
+                buildDefaultView(object, myChildren, myConnections);
                 
                 scene.setBackgroundImage(currentView.getBackground());
                 if (currentView.isDirty()){
@@ -223,7 +223,7 @@ public class ChildrenViewBuilder implements AbstractViewBuilder {
      * Builds a simple default view using the object's children and putting them one after another
      * @param myChildren
      */
-    public void buildDefaultView(List<LocalObjectLight> myNodes,
+    public void buildDefaultView(LocalObjectLight currentObject, List<LocalObjectLight> myNodes,
             List<LocalObject> myPhysicalConnections) {
         int lastX = 0;
 
@@ -239,18 +239,25 @@ public class ChildrenViewBuilder implements AbstractViewBuilder {
 
         //TODO: This algorithm to find the endpoints for a connection could be improved in many ways
         for (LocalObject container : myPhysicalConnections){
-
+            System.out.println(container.getName() + "(" +container.getOid() + ")");
+            
             List<LocalObjectLight> aSide = com.getSpecialAttribute(container.getClassName(), container.getOid(),"endpointA");
             if (aSide == null)
                 return;
 
-            Widget aSideWidget = scene.findWidget(aSide.get(0));
-
             List<LocalObjectLight> bSide = com.getSpecialAttribute(container.getClassName(), container.getOid(),"endpointB");
             if (bSide == null)
                 return;
+            
+            //The nodes in the view correspond to equipment or infrastructure, not the actual ports
+            //so we have to find the equipment being dislay so we can find them in the scene            
+            List<LocalObjectLight> parentsASide = com.getParents(aSide.get(0).getClassName(), aSide.get(0).getOid());
+            List<LocalObjectLight> parentsBSide = com.getParents(bSide.get(0).getClassName(), bSide.get(0).getOid());
 
-            Widget bSideWidget = scene.findWidget(bSide.get(0));
+            int currentObjectIndexASide = parentsASide.indexOf(currentObject);
+            Widget aSideWidget = scene.findWidget(parentsASide.get(currentObjectIndexASide == 0 ? 0 : currentObjectIndexASide - 1));
+            int currentObjectIndexBSide = parentsBSide.indexOf(currentObject);
+            Widget bSideWidget = scene.findWidget(parentsBSide.get(currentObjectIndexBSide == 0 ? 0 : currentObjectIndexBSide - 1));
 
             ConnectionWidget newEdge = (ConnectionWidget)scene.addEdge(container);
             newEdge.setLineColor(Utils.getConnectionColor(container.getClassName()));

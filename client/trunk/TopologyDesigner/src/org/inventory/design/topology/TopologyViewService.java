@@ -27,7 +27,7 @@ import org.inventory.design.topology.scene.TopologyViewScene;
 import org.openide.util.Lookup;
 
 /**
- *
+ * Service class for the Topology Designer module
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class TopologyViewService {

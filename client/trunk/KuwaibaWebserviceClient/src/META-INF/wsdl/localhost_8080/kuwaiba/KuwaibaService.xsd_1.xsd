@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI (http://jax-ws.java.net). RI's version is Metro/2.3.1-b419 (branches/2.3.1.x-7937; 2014-08-04T08:11:03+0000) JAXWS-RI/2.2.10-b140803.1500 JAXWS-API/2.2.11 JAXB-RI/2.2.10-b140802.1033 JAXB-API/2.2.12-b140109.1041 svn-revision#unknown. --><xs:schema xmlns:tns="http://ws.kuwaiba.org/" xmlns:ns1="http://jaxb.dev.java.net/array" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" targetNamespace="http://ws.kuwaiba.org/">
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI (http://jax-ws.java.net). RI's version is Metro/2.3.2-b608 (trunk-7979; 2015-01-21T12:50:19+0000) JAXWS-RI/2.2.11-b150120.1832 JAXWS-API/2.2.12 JAXB-RI/2.2.12-b141219.1637 JAXB-API/2.2.13-b141020.1521 svn-revision#unknown. --><xs:schema xmlns:tns="http://ws.kuwaiba.org/" xmlns:ns1="http://jaxb.dev.java.net/array" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" targetNamespace="http://ws.kuwaiba.org/">
 
 <xs:import namespace="http://jaxb.dev.java.net/array" schemaLocation="http://localhost:8080/kuwaiba/KuwaibaService?xsd=2"/>
 
@@ -576,6 +576,10 @@
 
 <xs:element name="moveObjectsResponse" type="tns:moveObjectsResponse"/>
 
+<xs:element name="moveObjectsToPool" type="tns:moveObjectsToPool"/>
+
+<xs:element name="moveObjectsToPoolResponse" type="tns:moveObjectsToPoolResponse"/>
+
 <xs:element name="relateIPtoPort" type="tns:relateIPtoPort"/>
 
 <xs:element name="relateIPtoPortResponse" type="tns:relateIPtoPortResponse"/>
@@ -726,6 +730,19 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="deleteObject">
+<xs:sequence>
+<xs:element name="className" type="xs:string" minOccurs="0"/>
+<xs:element name="oid" type="xs:long"/>
+<xs:element name="releaseRelationships" type="xs:boolean"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteObjectResponse">
+<xs:sequence/>
+</xs:complexType>
+
 <xs:complexType name="getPossibleChildrenNoRecursive">
 <xs:sequence>
 <xs:element name="parentClassName" type="xs:string" minOccurs="0"/>
@@ -761,19 +778,6 @@
 <xs:element name="label" type="xs:string" minOccurs="0"/>
 <xs:element name="value" type="xs:int"/>
 </xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="deleteObject">
-<xs:sequence>
-<xs:element name="className" type="xs:string" minOccurs="0"/>
-<xs:element name="oid" type="xs:long"/>
-<xs:element name="releaseRelationships" type="xs:boolean"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="deleteObjectResponse">
-<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="getUsers">
@@ -1440,21 +1444,6 @@
 <xs:sequence/>
 </xs:complexType>
 
-<xs:complexType name="getSubnetPools">
-<xs:sequence>
-<xs:element name="limit" type="xs:int"/>
-<xs:element name="parentId" type="xs:long"/>
-<xs:element name="className" type="xs:string" minOccurs="0"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getSubnetPoolsResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:remotePool" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="setAttributePropertiesForClassWithId">
 <xs:sequence>
 <xs:element name="classId" type="xs:long"/>
@@ -1474,6 +1463,21 @@
 
 <xs:complexType name="setAttributePropertiesForClassWithIdResponse">
 <xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="getSubnetPools">
+<xs:sequence>
+<xs:element name="limit" type="xs:int"/>
+<xs:element name="parentId" type="xs:long"/>
+<xs:element name="className" type="xs:string" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getSubnetPoolsResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remotePool" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="createTask">
@@ -2261,6 +2265,21 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="getParentOfClass">
+<xs:sequence>
+<xs:element name="objectclass" type="xs:string" minOccurs="0"/>
+<xs:element name="oid" type="xs:long"/>
+<xs:element name="parentClass" type="xs:string" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getParentOfClassResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObject" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="getChildrenOfClass">
 <xs:sequence>
 <xs:element name="parentOid" type="xs:long"/>
@@ -2274,21 +2293,6 @@
 <xs:complexType name="getChildrenOfClassResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:remoteObject" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getParentOfClass">
-<xs:sequence>
-<xs:element name="objectclass" type="xs:string" minOccurs="0"/>
-<xs:element name="oid" type="xs:long"/>
-<xs:element name="parentClass" type="xs:string" minOccurs="0"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getParentOfClassResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:remoteObject" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -3221,6 +3225,20 @@
 <xs:sequence>
 <xs:element name="return" type="xs:long"/>
 </xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="moveObjectsToPool">
+<xs:sequence>
+<xs:element name="targetClass" type="xs:string" minOccurs="0"/>
+<xs:element name="targetOid" type="xs:long"/>
+<xs:element name="objectsClasses" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="objectsOids" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="moveObjectsToPoolResponse">
+<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="createSession">
