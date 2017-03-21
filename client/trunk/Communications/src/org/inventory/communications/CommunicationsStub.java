@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Random;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.soap.SOAPFaultException;
 import org.inventory.communications.core.LocalApplicationLogEntry;
 import org.inventory.communications.core.LocalClassMetadata;
@@ -180,6 +182,10 @@ public class CommunicationsStub {
                 serverURL = new URL("http", "localhost", 8080,"/kuwaiba/KuwaibaService?wsdl"); //NOI18n
 
             this.service = new KuwaibaService_Service(serverURL).getKuwaibaServicePort();
+            
+            //Adds support for HTTP compression (if available). Don't forget to activate compression at server side.
+            ((BindingProvider)service).getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS,
+                Collections.singletonMap("Accept-Encoding",Collections.singletonList("gzip"))); //NOI18N
             
             this.session = new LocalSession(this.service.createSession(user, password));
             return true;
