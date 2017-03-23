@@ -1,0 +1,1 @@
+wsimport -d src -encoding UTF-8 -p org.inventory.communications.wsclient -Xnocompile  http://localhost:8080/kuwaiba/KuwaibaService?wsdl

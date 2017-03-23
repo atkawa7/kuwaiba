@@ -16,8 +16,8 @@
 
 package org.inventory.communications.core;
 
-import org.kuwaiba.wsclient.GroupInfoLight;
-import org.kuwaiba.wsclient.UserInfo;
+import org.inventory.communications.wsclient.GroupInfoLight;
+import org.inventory.communications.wsclient.UserInfo;
 
 /**
  * Implementation for the local representation of an application user

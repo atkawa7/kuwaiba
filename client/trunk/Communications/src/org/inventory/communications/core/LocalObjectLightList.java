@@ -16,8 +16,8 @@
 package org.inventory.communications.core;
 
 import java.util.ArrayList;
-import org.kuwaiba.wsclient.RemoteBusinessObjectLight;
-import org.kuwaiba.wsclient.RemoteBusinessObjectLightList;
+import org.inventory.communications.wsclient.RemoteBusinessObjectLight;
+import org.inventory.communications.wsclient.RemoteBusinessObjectLightList;
 
 /**
  * A list of localobjectlight lists

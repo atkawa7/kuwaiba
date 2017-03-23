@@ -17,7 +17,7 @@
 package org.inventory.communications.core;
 
 import java.util.Date;
-import org.kuwaiba.wsclient.GroupInfo;
+import org.inventory.communications.wsclient.GroupInfo;
 
 /**
  * Implementation for the local representation of an application users group

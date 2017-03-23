@@ -16,7 +16,7 @@
 
 package org.inventory.communications;
 
-import org.kuwaiba.wsclient.RemoteSession;
+import org.inventory.communications.wsclient.RemoteSession;
 
 /**
  * Local representation of a session containing the basic information about it.

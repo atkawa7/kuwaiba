@@ -30,7 +30,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import org.kuwaiba.wsclient.TransientQuery;
+import org.inventory.communications.wsclient.TransientQuery;
 
 /**
  * This class represents a local query in a machine friendly format (this is made of variables, not XML elements)

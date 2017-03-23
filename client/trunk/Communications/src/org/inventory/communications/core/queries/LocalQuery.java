@@ -16,7 +16,7 @@
 
 package org.inventory.communications.core.queries;
 
-import org.kuwaiba.wsclient.RemoteQuery;
+import org.inventory.communications.wsclient.RemoteQuery;
 
 /**
  * This is the local representation of an entity.queries.Query with the information necessary to store it
