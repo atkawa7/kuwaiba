@@ -5,7 +5,7 @@
 %Metadata
 \title{Kuwaiba Open Inventory Administrator's Manual}
 \author{Neotropic SAS}
-\date{09.12.2016}
+\date{24.03.2017}
 
 %Imports
 \usepackage{graphicx}
@@ -30,7 +30,7 @@
 	
 	
 	\begin{figure}[b]
-		\centering System Version \textbf{1.1}
+		\centering System Version \textbf{1.2}
 			
 		Visit \textbf{kuwaiba.org} for documentation, latest updates and upcoming events
 	\end{figure}
@@ -65,6 +65,8 @@
 				July 27th 2016 & Adapted to Kuwaiba version 1.0. LaTeX is now used instead of LibreOffice to create the documentation. \\
 				\midrule
 				December 9th 2016 & Added notes about configuring Glassfish to start on boot. \\
+				\midrule
+				March 24th 2017 & Added notes about configuring Glassfish to support HTTP compression. \\
 				\bottomrule
 			\end{tabular}	
 				
@@ -496,5 +498,32 @@
 					\end{figure}
 					
 				\end{enumerate}
+			\newpage
+			\section{Appendix D. Configuring HTTP Compression on Glassfish} \label{app:AppendixD}
+				Since version 1.2, the Kuwaiba client supports HTTP compression. If you experience delays opening views or expanding trees, enable this option on Glassfish and the information exchanged between the clients and the server will be compressed using gzip.
+				\begin{enumerate}
+					\item Open the Glassfish administration console (http://[SERVER\_IP]:4848) and go to Configurations $\rightarrow$ server-config $\rightarrow$ Network Config $\rightarrow$ Network Listeners.\\
+					\begin{figure}[h!]
+						\centering
+						\includegraphics[width=0.2\linewidth]{img/gf_configurations_server_config.png} 	
+						\caption{HTTP listeners configuration}
+						\label{fig:listeners-config}
+					\end{figure}
+					\item By default, Glassfish starts three listeners\footnote{Administering HTTP Listeners https://docs.oracle.com/cd/E18930\_01/html/821-2416/ggnfu.html}. You need to modify http-listener-1 (http) and http-listener-2 (https) only. For each one, select the "HTTP" tab.
+					\begin{figure}[h!]
+						\centering
+						\includegraphics[width=0.4\linewidth]{img/gf_edit_http_listener.png} 	
+						\caption{HTTP tab}
+						\label{fig:http-tab}
+					\end{figure}
+					\item Enable compression, make sure "text/xml" is included in the list of compressible MIME types and set the value, in bytes, over which, the content is going to be compressed. 2048 is a good default number, but you should change it depending on the size of your views.
+					\begin{figure}[h!]
+						\centering
+						\includegraphics[width=0.7\linewidth]{img/gf_enable_compression.png} 	
+						\caption{Enabling compression}
+						\label{fig:enabling-compression}
+					\end{figure}
+				\end{enumerate}
+			
 		\end{appendices}			
 \end{document}
