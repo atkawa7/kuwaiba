@@ -13130,3 +13130,7 @@ div.v-layout.v-horizontal.v-widget {
 	color: graytext;
 	font-style: italic;
 }
+
+.nuqui .v-button-selected {
+	background: #999999;
+}

@@ -16,15 +16,9 @@
 
 package org.kuwaiba.apis.web.gui.menus;
 
-import com.vaadin.server.Sizeable;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.ListSelect;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
+import de.steinwedel.messagebox.MessageBox;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 
@@ -34,19 +28,12 @@ import org.kuwaiba.apis.web.gui.actions.AbstractAction;
  * context menu based on a window
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class RawContextMenu extends Window {
+public class RawContextMenu {
     /**
-     * The list of actions
+     * message box that content the list of actions
      */
-    private ListSelect lstOptions;
-    /**
-     * The "accept" button
-     */
-    private Button btnOk;
-    /**
-     * The cancel button
-     */
-    private Button btnCancel;
+    private final MessageBox contextMenu;
+    
     /**
      * Main constructor
      * @param actions The list of actions that will be shown
@@ -54,43 +41,25 @@ public class RawContextMenu extends Window {
      * @param targetObject The object related to the action (usually a node)
      */
     public RawContextMenu(List<AbstractAction> actions, Object sourceComponent, Object targetObject) {
-        lstOptions = new ListSelect("", actions);
+        ListSelect lstOptions = new ListSelect("", actions);
         lstOptions.setSizeFull();
         
-        btnCancel = new Button("Cancel", (Button.ClickEvent event) -> {
-                    close();
-                });
-        btnCancel.setWidth(100, Sizeable.Unit.PIXELS);
-
-        btnOk = new Button("OK", (Button.ClickEvent event) -> {
-                    if (lstOptions.getValue() == null)
-                        Notification.show("Select a value from the list", Notification.Type.ERROR_MESSAGE);
-                    else {
-                        ((AbstractAction)lstOptions.getValue()).actionPerformed(sourceComponent, targetObject);
-                        close();
-                    }
-                });
-        btnOk.setWidth(100, Sizeable.Unit.PIXELS);
-        
-        HorizontalLayout actionLayout = new HorizontalLayout(btnCancel, btnOk);
-        actionLayout.setWidth("100%");
-        actionLayout.setComponentAlignment(btnCancel, Alignment.MIDDLE_CENTER);
-        actionLayout.setComponentAlignment(btnOk, Alignment.MIDDLE_CENTER);
-        actionLayout.setMargin(true);
-        actionLayout.setSpacing(true);
-        
-        VerticalLayout layout = new VerticalLayout(lstOptions, actionLayout);
-        layout.setMargin(true);
-        setContent(layout);
-        setModal(true);
+        contextMenu = MessageBox.create()
+            .withCaption("")
+            .withMessage(lstOptions)
+            .withOkButton(() -> {
+                if (lstOptions.getValue() == null)
+                    Notification.show("Select a value from the list", Notification.Type.ERROR_MESSAGE);
+                else
+                    ((AbstractAction)lstOptions.getValue()).actionPerformed(sourceComponent, targetObject);
+            })
+            .withCancelButton();
     }
     
     /**
-     * Shows the submenu window
+     * Shows the submenu message box
      */
     public void show() {
-        center();
-        setResizable(false);
-        UI.getCurrent().addWindow(this);
+        contextMenu.open();
     }
 }

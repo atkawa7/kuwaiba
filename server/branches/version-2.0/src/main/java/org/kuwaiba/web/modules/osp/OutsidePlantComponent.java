@@ -27,40 +27,49 @@ import org.kuwaiba.web.modules.osp.google.OutsidePlantTooledComponent;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class OutsidePlantComponent extends AbstractTopComponent {
-    private final GoogleMapWrapper googleMapsWrapper;
+    private final GoogleMapWrapper googleMapWrapper;
     private final OutsidePlantTooledComponent tooledComponent;
             
     public OutsidePlantComponent(EventBus eventBus, WebserviceBeanLocal wsBean, RemoteSession session) {
         super(wsBean, eventBus, session);
         
-        googleMapsWrapper = new GoogleMapWrapper(this);
-        googleMapsWrapper.setSizeFull();
+        googleMapWrapper = new GoogleMapWrapper(this);
+        googleMapWrapper.setSizeFull();
         
         tooledComponent = new OutsidePlantTooledComponent(this);
         
         setCompositionRoot(tooledComponent);
+        enableTools(false);
         this.setSizeFull();
     }
     
+    public GoogleMapWrapper getGoogleMapWrapper() {
+        return googleMapWrapper;
+    }
+    
     public void addMainComponentToTooledComponent() {
-        tooledComponent.toggleButtons(false);
-        tooledComponent.setMainComponent(googleMapsWrapper);
+        if (tooledComponent.getMainComponent() == null)
+            tooledComponent.setMainComponent(googleMapWrapper);
     }
             
     public void removeMainComponentToTooledComponent() {
-        tooledComponent.toggleButtons(false);
+        enableTools(false);
         tooledComponent.setMainComponent(null);
+    }
+    
+    public void enableTools(boolean enable) {
+        tooledComponent.enableTools(enable);
     }
             
     @Override
     public void registerComponents() {
-        googleMapsWrapper.register();
+        googleMapWrapper.register();
         tooledComponent.register();
     }
     
     @Override
     public void unregisterComponents() {
-        googleMapsWrapper.unregister();
+        googleMapWrapper.unregister();
         tooledComponent.unregister();
     }
 }

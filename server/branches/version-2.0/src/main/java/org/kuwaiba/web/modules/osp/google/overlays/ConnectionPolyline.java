@@ -101,6 +101,7 @@ public class ConnectionPolyline extends GoogleMapPolyline {
                 actions.add(ActionsFactory.createConnectLinksAction());
             
             actions.add(ActionsFactory.createShowObjectIdAction());
+            actions.add(ActionsFactory.createMeasureConnectionDistanceAction());
         }
         return actions;
     }

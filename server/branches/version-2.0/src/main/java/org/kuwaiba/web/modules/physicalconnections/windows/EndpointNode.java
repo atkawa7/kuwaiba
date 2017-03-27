@@ -15,7 +15,6 @@
  */
 package org.kuwaiba.web.modules.physicalconnections.windows;
 
-import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Notification;
 import java.util.List;
@@ -57,7 +56,6 @@ public class EndpointNode extends InventoryObjectNode {
     @Override
     public void setTree(DynamicTree tree) {
         super.setTree(tree);
-        tree.setItemIcon(this, FontAwesome.SQUARE);
         initFreeProperty();
     }
     
@@ -67,7 +65,7 @@ public class EndpointNode extends InventoryObjectNode {
         else
             getTree().setItemCaption(this, getDisplayName());
     }
-
+    
     @Override
     public void expand() {
         if (getTree() == null) //If the tree has not been set previously, do nothing

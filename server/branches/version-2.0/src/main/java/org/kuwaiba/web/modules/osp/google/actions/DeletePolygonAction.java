@@ -19,6 +19,7 @@ import com.vaadin.server.ThemeResource;
 import com.vaadin.tapio.googlemaps.GoogleMap;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolygon;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
+import org.kuwaiba.web.modules.osp.google.CustomGoogleMap;
 
 /**
  * Action to delete a polygon overlay
@@ -33,5 +34,6 @@ public class DeletePolygonAction extends AbstractAction {
     @Override
     public void actionPerformed(Object sourceComponent, Object targetObject) {
         ((GoogleMap) sourceComponent).removePolygonOverlay((GoogleMapPolygon) targetObject);
+        ((CustomGoogleMap) sourceComponent).setUpdateView(true);
     }
 }

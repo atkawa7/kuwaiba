@@ -19,18 +19,20 @@ import com.google.common.eventbus.Subscribe;
 import com.vaadin.data.Property;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.server.Page;
+import com.vaadin.server.Resource;
+import com.vaadin.server.ResourceReference;
 import org.kuwaiba.web.modules.osp.google.overlays.MarkerNode;
 import com.vaadin.tapio.googlemaps.GoogleMap;
 import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.tapio.googlemaps.client.events.EdgeClickListener;
 import com.vaadin.tapio.googlemaps.client.events.EdgeRightClickListener;
-import com.vaadin.tapio.googlemaps.client.events.MapClickListener;
 import com.vaadin.tapio.googlemaps.client.events.MapMouseOverListener;
 import com.vaadin.tapio.googlemaps.client.events.MarkerClickListener;
+import com.vaadin.tapio.googlemaps.client.events.MarkerDragListener;
 import com.vaadin.tapio.googlemaps.client.events.MarkerRightClickListener;
-import com.vaadin.tapio.googlemaps.client.events.PolygonClickListener;
 import com.vaadin.tapio.googlemaps.client.events.PolygonCompleteListener;
 import com.vaadin.tapio.googlemaps.client.events.PolygonRightClickListener;
+import com.vaadin.tapio.googlemaps.client.events.PolylineClickListener;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolygon;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
@@ -50,6 +52,8 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import org.kuwaiba.apis.web.gui.actions.AbstractAction;
+import org.kuwaiba.apis.web.gui.icons.ClassIcon;
 import org.kuwaiba.apis.web.gui.menus.RawContextMenu;
 import org.kuwaiba.apis.web.gui.modules.EmbeddableComponent;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
@@ -87,7 +91,7 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
                         if (getState().markerSource.equals(clickedMarker))
                             return;
                         
-                        getState().markerSource = null;
+                        getState().markerSource = null;                        
                         
                         newConnection.setTarget((MarkerNode) clickedMarker);
                         
@@ -97,7 +101,6 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
                         getUI().addWindow(wizard);
                     }
                 }
-                
                 MarkerNode clickedMarkerNode = (MarkerNode) clickedMarker;
                 RemoteObjectLight clickedObjectNode = clickedMarkerNode.getRemoteObjectLight();
                 
@@ -118,6 +121,14 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
             rawContextMenu.show();
         }
     };
+    
+    private MarkerDragListener markerDragListener = new MarkerDragListener() {
+
+        @Override
+        public void markerDragged(GoogleMapMarker draggedMarker, LatLon oldPosition) {
+            updateView = true;
+        }
+    };
         
     private PolygonRightClickListener polygonRightClickListener = new PolygonRightClickListener() {
 
@@ -135,7 +146,6 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
         public void polygonCompleted(GoogleMapPolygon completedPolygon) {
             if (DRAWING_MODE_POLYGON.equals(getState().drawingMode)) {
                 Polygon polygon = new Polygon(completedPolygon);
-                polygon.setCaption("123");
                 
                 getState().polygons.put(polygon.getId(), polygon);
             }
@@ -145,6 +155,7 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
                 else
                     getState().polygons.get(completedPolygon.getId()).setCoordinates(completedPolygon.getCoordinates());
             }
+            setUpdateView(true);
         }
     };
     
@@ -171,6 +182,19 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
             rawContextMenu.show();
         }
     };
+    /** 
+     * Listener to end the draw of a physical connection. 
+     */
+    private PolylineClickListener polylineClickListener = new PolylineClickListener() {
+
+        @Override
+        public void polylineClicked(GoogleMapPolyline clickedPolyline) {
+            if (clickedPolyline.getId() == -1) {
+                newConnection = null;
+                getState().markerSource = null;
+            }
+        }
+    };
     
     private MapMouseOverListener mapMouseOverListener = new MapMouseOverListener() {
 
@@ -181,32 +205,23 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
                 markerNodeAdded.setPosition(position);
                 getState().markers.put(markerNodeAdded.getId(), markerNodeAdded);
                 
+                nodeClassesFilter.add(markerNodeAdded.getRemoteObjectLight().getClassName());
                 markerNodeAdded = null;
+                
+                setUpdateView(true);
             }
         }
     };
-    
-    private MapClickListener mapClickListener = new MapClickListener() {
-
-        @Override
-        public void mapClicked(LatLon position) {
-            if (newConnection != null) {
-                newConnection = null;
-                getState().markerSource = null;
-            }
-        }
-    };
-    
     /**
      * Constants
      */    
     private static final String FORMAT_VERSION = "0.1";
     private static final String DRAWING_MODE_POLYGON = "Polygon";
     private static final String DRAWING_MODE_EDGE = "Polyline";
-    
+            
     private final TopComponent parentComponent;
     /**
-     * List of edges for node
+     * List of edges for markerNode
      */
     private final Map<Long, List<ConnectionPolyline>> edgesForNode = new HashMap<>();
             
@@ -218,6 +233,12 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
     
     private final List<String> nodeClassesFilter = new ArrayList();
     private final List<String> phyConnClassesFilter = new ArrayList();
+    /**
+     * The view is update when nodes or physical connection was removed
+     */
+    private boolean updateView = false;
+    
+    private List<AbstractAction> actions = null;
             
     public CustomGoogleMap(TopComponent parentComponent, String apiKey, String clientId, String language) {
         super(apiKey, clientId, language);
@@ -225,19 +246,36 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
         this.parentComponent = parentComponent;
                 
         setDisableDoubleClickZoom(true);
+        getState().showEdgeLabels = true;
+        getState().showMarkerLabels = true;
+        getState().showPolygonLabels = false;
+        
+        GoogleMapPolyline dummyPolyline = new GoogleMapPolyline();
+        dummyPolyline.setId(-1);
+        getState().polylines.put(dummyPolyline.getId(), dummyPolyline);
                 
         addMarkerClickListener(markerClickListener);
+        addMarkerDragListener(markerDragListener);
         addMarkerRightClickListener(markerRightClickListener);
         
         addPolygonRightClickListener(polygonRightClickListener);
         addPolygonCompleteListener(polygonCompleteListener);
         
+        addPolylineClickListener(polylineClickListener);
+        
         addEdgeClickListener(edgeClickListener);
         addEdgeRightClickListener(edgeRightClickListener);
         
-        addMapClickListener(mapClickListener);
         addMapMouseOverListener(mapMouseOverListener);
-    } 
+    }
+    
+    public boolean getUpdateView() {
+        return updateView;
+    }
+    
+    public void setUpdateView(boolean updateView) {
+        this.updateView = updateView;
+    }
     
     public void register() {
         if (parentComponent != null)
@@ -276,8 +314,22 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
 
     @Override
     public void clear() {
+        updateView = true;
+        
         for (GoogleMapPolyline edge : getState().edges.keySet())
             deletePhysicalConnection((ConnectionPolyline) edge);
+        removeEdges();
+        getState().polygons.clear();
+        getState().markers.clear();
+    }
+    
+    public void newMap() {
+        updateView = false;
+        for (GoogleMapPolyline edge : getState().edges.keySet()) {
+            if (!((ConnectionPolyline) edge).isSaved()) {
+                deletePhysicalConnection((ConnectionPolyline) edge);
+            }
+        }
         removeEdges();
         getState().polygons.clear();
         getState().markers.clear();
@@ -297,11 +349,17 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
     
     public void enableConnectionTool() {
         toolState(DRAWING_MODE_EDGE);
+        getState().markerSource = null;
         newConnection = null;
     }
             
     public void enablePolygonTool() {
         toolState(DRAWING_MODE_POLYGON);
+    }
+    
+    public void enableMeasureTool() {
+        toolState(null);
+        setMeasureDistance(!getMeasureDistance());
     }
         
     public void enableCleanTool() {
@@ -350,10 +408,14 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
                     .remove(physicalConnection);
             edgesForNode.get(physicalConnection.getTarget().getId())
                     .remove(physicalConnection);
-            // class filter // update xml
         } catch (ServerSideException ex) {
             Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
         }
+    }
+    
+    public void physicalConnectionsSaved() {
+        for (GoogleMapPolyline edge : getState().edges.keySet())
+            ((ConnectionPolyline) edge).setSaved(true);
     }
     
     @Override
@@ -495,7 +557,7 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
             
             return baos.toByteArray();
         } catch (XMLStreamException ex) {
-            
+            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
         }
         return null;
     }
@@ -537,22 +599,27 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
                         String objectClass = reader.getAttributeValue(null, "class");
                         boolean visible = Boolean.valueOf(
                                 reader.getAttributeValue(null, "visible"));
-                        
-                        RemoteObjectLight remoteObjectLight = wsBean.getObjectLight(objectClass, oid, ipAddress, sessioId);
-                        
-                        MarkerNode node = new MarkerNode(remoteObjectLight);
-                        node.setId(oid);
-                        node.setCaption(remoteObjectLight.toString());
-                        node.setPosition(new LatLon(lat, lon));
-                        node.setVisible(visible);
-                        //TODO: set icon url
-                        //node.setIconUrl(ipAddress);
-                        getState().markers.put(oid, node);
-                        
-                        nodeClassesFilter.add(remoteObjectLight.getClassName());
+                                                                                                
+                        try {
+                            RemoteObjectLight objectNode = wsBean
+                                .getObjectLight(objectClass, oid, ipAddress, sessioId);
+                            
+                            MarkerNode markerNode = new MarkerNode(objectNode);
+                            markerNode.setId(oid);
+                            markerNode.setCaption(objectNode.toString());
+                            markerNode.setPosition(new LatLon(lat, lon));
+                            markerNode.setVisible(visible);
+                            markerNode.setIconUrl(getMarkerNodeIconUrl(objectNode));
+                            
+                            getState().markers.put(oid, markerNode);
+                            nodeClassesFilter.add(objectNode.getClassName());
+                        } catch (ServerSideException ex) {
+                            //Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+                            updateView = true;
+                        }
                     }
                     else {
-                        if (reader.getName().equals(qnEdge)) {
+                        if (reader.getName().equals(qnEdge)) {                            
                             long oid = Long.parseLong(reader.getAttributeValue(null, "id"));
                             String strokeColor = reader.getAttributeValue(
                                     null, "strokeColor");
@@ -563,55 +630,61 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
                             boolean visible = Boolean.valueOf(
                                     reader.getAttributeValue(null, "visible"));
                             String name = reader.getAttributeValue(null, "name");
-                            String objectClass = reader.getAttributeValue(null, "objectClass");
+                            String objectClass = reader.getAttributeValue(null, "objectClass");                            
                             
                             long aside = Long.parseLong(reader.getAttributeValue(null, "aside"));
                             long bside = Long.parseLong(reader.getAttributeValue(null, "bside"));
                             
-                            MarkerNode source = (MarkerNode) getState().markers.get(aside);
-                            MarkerNode target = (MarkerNode) getState().markers.get(bside);
-                            
-                            ConnectionPolyline edge = new ConnectionPolyline(source, target);
-                            edge.setId(oid);
-                            edge.setCaption(name);
-                            edge.setStrokeColor(strokeColor);
-                            edge.setStrokeOpacity(strokeOpacity);
-                            edge.setStrokeWeight(strokeWeight);
-                            edge.setVisible(visible);
-                            RemoteObjectLight edgeInfo = new RemoteObjectLight(oid, name, objectClass);//wsBean.getObjectLight(objectClass, oid, ipAddress, sessioId);
-                            edge.setConnectionInfo(edgeInfo);
-                            
-                            List<LatLon> coordinates = new ArrayList();
-                            while (true) {
-                                reader.nextTag();
-                                if (reader.getName().equals(qnCoordinate)) {
-                                    if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
-                                        Double lat = Double.parseDouble(
-                                                reader.getAttributeValue(null, "lat"));
-                                        Double lon = Double.parseDouble(
-                                                reader.getAttributeValue(null, "lon"));
-                                        coordinates.add(new LatLon(lat, lon));
+                            try {
+                                RemoteObjectLight edgeInfo = wsBean.getObjectLight(objectClass, oid, ipAddress, sessioId);
+                                
+                                MarkerNode source = (MarkerNode) getState().markers.get(aside);
+                                MarkerNode target = (MarkerNode) getState().markers.get(bside);
+
+                                ConnectionPolyline edge = new ConnectionPolyline(source, target);
+                                edge.setId(oid);
+                                edge.setCaption(name);
+                                edge.setStrokeColor(strokeColor);
+                                edge.setStrokeOpacity(strokeOpacity);
+                                edge.setStrokeWeight(strokeWeight);
+                                edge.setVisible(visible);
+                                edge.setConnectionInfo(edgeInfo);
+
+                                List<LatLon> coordinates = new ArrayList();
+                                while (true) {
+                                    reader.nextTag();
+                                    if (reader.getName().equals(qnCoordinate)) {
+                                        if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
+                                            Double lat = Double.parseDouble(
+                                                    reader.getAttributeValue(null, "lat"));
+                                            Double lon = Double.parseDouble(
+                                                    reader.getAttributeValue(null, "lon"));
+                                            coordinates.add(new LatLon(lat, lon));
+                                        }
+                                    }
+                                    else {
+                                        edge.setCoordinates(coordinates);
+                                        break;
                                     }
                                 }
-                                else {
-                                    edge.setCoordinates(coordinates);
-                                    break;
-                                }
+                                edge.setSaved(true);
+
+                                if (!edgesForNode.containsKey(source.getId()))
+                                    edgesForNode.put(source.getId(), new ArrayList());
+                                edgesForNode.get(source.getId()).add(edge);
+
+                                if (!edgesForNode.containsKey(target.getId()))
+                                    edgesForNode.put(target.getId(), new ArrayList());
+                                edgesForNode.get(target.getId()).add(edge);
+
+                                if (!phyConnClassesFilter.contains(edge.getConnectionInfo().getClassName()))
+                                    phyConnClassesFilter.add(edge.getConnectionInfo().getClassName());
+
+                                addEdge(edge, edge.getSource(), edge.getTarget());                                
+                            } catch (ServerSideException ex) {
+                                //Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+                                updateView = true;
                             }
-                            edge.setSaved(true);
-                            
-                            if (!edgesForNode.containsKey(source.getId()))
-                                edgesForNode.put(source.getId(), new ArrayList());
-                            edgesForNode.get(source.getId()).add(edge);
-                            
-                            if (!edgesForNode.containsKey(target.getId()))
-                                edgesForNode.put(target.getId(), new ArrayList());
-                            edgesForNode.get(target.getId()).add(edge);
-                            
-                            if (!phyConnClassesFilter.contains(edge.getConnectionInfo().getClassName()))
-                                phyConnClassesFilter.add(edge.getConnectionInfo().getClassName());
-                            
-                            addEdge(edge, edge.getSource(), edge.getTarget());
                         }
                         else {
                             if (reader.getName().equals(qnPolygon)) {                                
@@ -662,7 +735,7 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
                 } // end if
             } // end while
             reader.close();
-        } catch(ServerSideException | NumberFormatException | XMLStreamException ex) {
+        } catch(XMLStreamException ex) {
             Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
         }
     }
@@ -692,6 +765,9 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
                 
                 if (!getConnectionsFilter().contains(newConnection.getConnectionInfo().getClassName()))
                     getConnectionsFilter().add(newConnection.getConnectionInfo().getClassName());
+                
+                newConnection.setSaved(false);
+                setUpdateView(true);
             }
         }
         getUI().removeWindow(wizard);
@@ -718,40 +794,32 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
         markerNodeAdded = new MarkerNode(objectNode);
         markerNodeAdded.setId(objectNode.getOid());
         markerNodeAdded.setCaption(objectNode.toString());
-                
-        nodeClassesFilter.add(objectNode.getClassName());        
+                                
+        markerNodeAdded.setIconUrl(getMarkerNodeIconUrl(objectNode));
     }
     
-//    public void connectionsSaved() {
-//        for (GoogleMapPolyline gmPolyline : getState().polylines.values()) {
-//            if (gmPolyline instanceof ConnectionPolyline) {
-//                ConnectionPolyline connection = (ConnectionPolyline) gmPolyline;
-//                if (!connection.isSaved())
-//                    connection.setSaved(true);
-//            }
-//        }
-//    }
-
-//    public void removeConnectionsUnsave() {
-//        for (GoogleMapPolyline gmPolyline : getState().polylines.values()) {
-//            if (gmPolyline instanceof ConnectionPolyline) {
-//                ConnectionPolyline connection = (ConnectionPolyline) gmPolyline;
-//                if (!connection.isSaved())
-//                    removePolyline(connection);
-//            }
-//        }
-//    }
+    private String getMarkerNodeIconUrl(RemoteObjectLight objectNode) {
+        Resource icon = ClassIcon.newInstance(parentComponent).getIcon(objectNode.getClassName());
         
+        setResource(Long.toString(objectNode.getOid()), icon);
+        ResourceReference rr = ResourceReference.create(icon, this, Long.toString(objectNode.getOid()));
+        
+        return ClassIcon.newInstance(parentComponent).getIconUrl(rr);
+    }
+    
+    public void removeConnectionUnsaved() {
+        for (GoogleMapPolyline edge : getState().edges.keySet()) {
+            ConnectionPolyline phyConn = (ConnectionPolyline) edge;
+            
+            if (!phyConn.isSaved()) {
+                deletePhysicalConnection(phyConn);
+                getState().edges.remove(edge);
+            }
+        }
+    }
+            
     public void filterby(List<String> nodesFilterBy, List<String> connectionsFilterBy) {
-        boolean isNodeVisible = false;
-        boolean isEdgeVisible = false;
         
-        if (nodesFilterBy.isEmpty())
-            isNodeVisible = true;
-        
-        if (connectionsFilterBy.isEmpty())
-            isEdgeVisible = true;       
-                                        
         for (Long nodeID : edgesForNode.keySet()) {
             MarkerNode markerNode = (MarkerNode) getState().markers.get(nodeID);
             
@@ -761,8 +829,8 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
                 }
             }
             else {
-                if (markerNode.isVisible() != isNodeVisible)
-                    markerNode.setVisible(isNodeVisible);
+                if (markerNode.isVisible() != false)
+                    markerNode.setVisible(false);
             }
         }
         
@@ -786,8 +854,8 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
             else {
                 if (phyConn.getSource().isVisible() && phyConn.getTarget().isVisible()) {
                     
-                    if (phyConn.isVisible() != isEdgeVisible)
-                        phyConn.setVisible(isEdgeVisible);
+                    if (phyConn.isVisible() != false)
+                        phyConn.setVisible(false);
                 }
                 else {
                     
@@ -801,12 +869,17 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
     public List<Object> getVisbleNodesAndConnections() {
         List<Object> objects = new ArrayList();
         
+        for (Long markerID : getState().markers.keySet()) {
+            if (getState().markers.get(markerID).isVisible()) {
+                objects.add(getState().markers.get(markerID));
+            }
+        }
+        
         for (Long nodeID : edgesForNode.keySet()) {
             MarkerNode markerNode = (MarkerNode) getState().markers.get(nodeID);
             
             if (markerNode.isVisible()) {
-                objects.add(markerNode);
-                
+                                
                 for (ConnectionPolyline edge : edgesForNode.get(nodeID)) {
                     if (edge.isVisible())
                         objects.add(edge);
@@ -826,7 +899,7 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
     
     public boolean isEmpty() {
         return getState().markers.isEmpty() && getState().polygons.isEmpty() && 
-                getState().polylines.isEmpty();
+                getState().edges.isEmpty();
     }
     
     public List<String> getNodeFilter() {

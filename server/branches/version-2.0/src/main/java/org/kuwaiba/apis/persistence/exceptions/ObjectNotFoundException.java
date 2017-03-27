@@ -22,8 +22,12 @@ package org.kuwaiba.apis.persistence.exceptions;
 public class ObjectNotFoundException extends InventoryException{
 
     public ObjectNotFoundException(String objectClass, Long oid) {
-        super(java.util.ResourceBundle.getBundle("org/kuwaiba/Bundle").
+        super(String.format("There is no object of class %s with and id %s", objectClass == null ? "" : objectClass, oid));
+        /*
+        //Bundle properties don't work
+        super(java.util.ResourceBundle.getBundle("org.kuwaiba.Bundle").
                 getString("LBL_NOSUCHOBJECT")+(objectClass == null ? "" : objectClass)+" "+java.util.
-                ResourceBundle.getBundle("org/kuwaiba/Bundle").getString("LBL_WHICHID") + oid);
+                ResourceBundle.getBundle("org.kuwaiba.Bundle").getString("LBL_WHICHID") + oid);
+        */
     }
 }

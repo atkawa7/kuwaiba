@@ -36,5 +36,6 @@ public class DeletePhysicalConnectionAction extends AbstractAction {
                 .deletePhysicalConnection((ConnectionPolyline) targetObject);
         ((CustomGoogleMap) sourceComponent)
                 .removeEdge((ConnectionPolyline) targetObject);
+        ((CustomGoogleMap) sourceComponent).setUpdateView(true);
     }
 }

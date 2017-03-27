@@ -13,17 +13,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.kuwaiba.web.modules.navtree.actions;
+package org.kuwaiba.apis.web.gui.messagebox;
 
 import com.vaadin.server.Page;
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.VerticalLayout;
+import de.steinwedel.messagebox.MessageBox;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
-import org.kuwaiba.apis.web.gui.windows.MessageDialogWindow;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
@@ -31,21 +30,18 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ShowObjectIdWindow extends MessageDialogWindow {
-    private TopComponent parentComponent;
-    private RemoteObjectLight object;    
+public class MessageBoxShowObjectId {
+    private final TopComponent parentComponent;
+    private final RemoteObjectLight object;    
     
-    public ShowObjectIdWindow(TopComponent parentComponent, RemoteObjectLight object) {
-        super(null, "Additional Information", MessageDialogWindow.ONLY_OK_OPTION);
+    public MessageBoxShowObjectId(TopComponent parentComponent, RemoteObjectLight object) {
         this.parentComponent = parentComponent;
         this.object = object;
-        setMainComponent(initSimpleMainComponent());
     }
-        
-    @Override
-    public Component initSimpleMainComponent() {
+    
+    public void open() {
         if (parentComponent == null || object == null)
-            return null;
+            return;
         
         try {
             List<RemoteObjectLight> parents = parentComponent.getWsBean().getParents(
@@ -68,14 +64,15 @@ public class ShowObjectIdWindow extends MessageDialogWindow {
             content.addComponent(lblId);
             content.addComponent(lblClass);
             content.addComponent(lblContainment);
+            
+            MessageBox messageBox = MessageBox.createInfo()
+                .withCaption("Additional Information")
+                .withMessage(content)
+                .withOkButton();
+            messageBox.open();
                 
-            return content;
         } catch (ServerSideException ex) {
             Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-            return null;
-        }
+        }        
     }
-
-    @Override
-    public void initComplexMainComponent() {}
 }

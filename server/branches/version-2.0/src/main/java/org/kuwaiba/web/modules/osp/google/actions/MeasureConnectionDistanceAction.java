@@ -13,30 +13,29 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.kuwaiba.web.modules.navtree.actions;
+package org.kuwaiba.web.modules.osp.google.actions;
 
-import org.kuwaiba.apis.web.gui.messagebox.MessageBoxShowObjectId;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
-import org.kuwaiba.apis.web.gui.nodes.InventoryObjectNode;
-import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.web.modules.osp.google.CustomGoogleMap;
 
 /**
- * Shows the object id, location and class.
+ * Action to show the Google Map Control for Measure distance
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class MoreInformationAction extends AbstractAction {
+public class MeasureConnectionDistanceAction extends AbstractAction {
     
-    public MoreInformationAction() {
-        super("More Information");
+    public MeasureConnectionDistanceAction() {
+        super("Measure distance");
     }
-
+    
     @Override
     public void actionPerformed(Object sourceComponent, Object targetObject) {
-        InventoryObjectNode node = (InventoryObjectNode) targetObject;
+        CustomGoogleMap map = (CustomGoogleMap) sourceComponent;
         
-        MessageBoxShowObjectId messageBox = new MessageBoxShowObjectId(
-            node.getTree().getTopComponent(), 
-            (RemoteObjectLight) node.getObject());
-        messageBox.open();
-    }
+        map.setMeasureEdgeDistance(!map.getMesaureEdgeDistance());
+        if (map.getMesaureEdgeDistance())
+            setCaption("Clear measurement");
+        else
+            setCaption("Measure distance");
+    }    
 }

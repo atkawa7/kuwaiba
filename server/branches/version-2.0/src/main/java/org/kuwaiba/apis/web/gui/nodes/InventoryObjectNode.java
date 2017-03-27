@@ -16,11 +16,12 @@
 package org.kuwaiba.apis.web.gui.nodes;
 
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
-import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
+import com.vaadin.server.Resource;
 import com.vaadin.ui.Notification;
 import java.util.List;
 import java.util.Objects;
+import org.kuwaiba.apis.web.gui.icons.ClassIcon;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
@@ -47,7 +48,11 @@ public class InventoryObjectNode extends AbstractNode<RemoteObjectLight>{
     @Override
     public void setTree(DynamicTree tree) {
         super.setTree(tree);
-        tree.setItemIcon(this, FontAwesome.SQUARE);
+                
+        Resource icon = ClassIcon.newInstance(tree.getTopComponent()).getSmallIcon(
+            ((RemoteObjectLight) getObject()).getClassName());
+        
+        tree.setItemIcon(this, icon);
     }
     
     @Override

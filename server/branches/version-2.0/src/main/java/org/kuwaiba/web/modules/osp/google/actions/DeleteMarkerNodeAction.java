@@ -33,5 +33,6 @@ public class DeleteMarkerNodeAction extends AbstractAction {
     @Override
     public void actionPerformed(Object sourceComponent, Object targetObject) {
         ((CustomGoogleMap) sourceComponent).deleteMarkerNode((MarkerNode) targetObject);
+        ((CustomGoogleMap) sourceComponent).setUpdateView(true);
     }
 }

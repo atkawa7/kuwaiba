@@ -16,15 +16,9 @@
 package org.kuwaiba.apis.web.gui.actions;
 
 import com.vaadin.server.Resource;
-import com.vaadin.server.Sizeable;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.ListSelect;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
+import de.steinwedel.messagebox.MessageBox;
 import java.util.List;
 
 /**
@@ -48,45 +42,20 @@ public abstract class AbstractComposedAction extends AbstractAction {
      * @param subMenuOptions The options in the submenu
      */
     public void showSubMenu(Object sourceComponent, Object targetObject, List<?> subMenuOptions) {
+        ListSelect lstOptions = new ListSelect("", subMenuOptions);
         
-        final Window selectionWindow = new Window(getCaption());
-        selectionWindow.setModal(true);
-
-        final ListSelect lstOptions = new ListSelect("", subMenuOptions);
-        lstOptions.setSizeFull();
-
-
-        Button btnCancel = new Button("Cancel", (Button.ClickEvent event) -> {
-                    selectionWindow.close();
-                });
-        btnCancel.setWidth(100, Sizeable.Unit.PIXELS);
-
-        Button btnOk = new Button("OK", (Button.ClickEvent event) -> {
-                    if (lstOptions.getValue() == null)
-                        Notification.show("Select a value from the list", Notification.Type.ERROR_MESSAGE);
-                    else {
-                        finalActionPerformed(sourceComponent, targetObject, lstOptions.getValue());
-                        selectionWindow.close();
-                    }
-                });
-        btnOk.setWidth(100, Sizeable.Unit.PIXELS);
-        btnOk.focus();
-
-        HorizontalLayout actionLayout = new HorizontalLayout(btnCancel, btnOk);
-        actionLayout.setWidth("100%");
-        actionLayout.setComponentAlignment(btnCancel, Alignment.MIDDLE_CENTER);
-        actionLayout.setComponentAlignment(btnOk, Alignment.MIDDLE_CENTER);
-        actionLayout.setMargin(true);
-        actionLayout.setSpacing(true);
-
-        selectionWindow.center();
-        selectionWindow.setResizable(false);
-
-        VerticalLayout layout = new VerticalLayout(lstOptions, actionLayout);
-        layout.setMargin(true);
-        selectionWindow.setContent(layout);
-
-        UI.getCurrent().addWindow(selectionWindow);
+        MessageBox mbSelection = MessageBox.create()
+            .withCaption(getCaption())
+            .withMessage(lstOptions)
+            .withOkButton(() -> {
+                if (lstOptions.getValue() == null)
+                    Notification.show("Select a value from the list", Notification.Type.ERROR_MESSAGE);
+                else {
+                    finalActionPerformed(sourceComponent, targetObject, lstOptions.getValue());
+                }
+            })
+            .withCancelButton();
+        mbSelection.open();
     }
     
     /**

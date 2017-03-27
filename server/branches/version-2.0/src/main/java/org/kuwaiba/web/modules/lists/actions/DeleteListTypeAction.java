@@ -17,16 +17,11 @@ package org.kuwaiba.web.modules.lists.actions;
 
 import com.vaadin.server.Page;
 import com.vaadin.server.ThemeResource;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
+import de.steinwedel.messagebox.MessageBox;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.apis.web.gui.nodes.listmanagernodes.ListTypeChildNode;
-import org.kuwaiba.apis.web.gui.windows.MessageDialogWindow;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
@@ -34,8 +29,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
  * 
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class DeleteListTypeAction extends AbstractAction implements Window.CloseListener {
-    ListTypeChildNode node;
+public class DeleteListTypeAction extends AbstractAction {
     
     public DeleteListTypeAction() {
         super("Delete", new ThemeResource("img/warning.gif"));
@@ -43,59 +37,32 @@ public class DeleteListTypeAction extends AbstractAction implements Window.Close
     
     @Override
     public void actionPerformed(Object sourceComponent, Object targetObject) {
-        node = (ListTypeChildNode) targetObject;
-        
-        UI.getCurrent().addWindow(new DeleteListTypeWindows(this));
-    }
+        ListTypeChildNode node = (ListTypeChildNode) targetObject;
+        MessageBox messageBox = MessageBox
+            .createQuestion()
+            .withCaption("Delete List Type")
+            .withMessage("Are you sure you want to delete this item? "
+                    + "(if its already related to another object, it won't be deleted)")
+            .withOkButton(() -> {
+                try {
+                    RemoteObjectLight object = (RemoteObjectLight) node.getObject();
+                    TopComponent parentComponent = node.getTree().getTopComponent();
 
-    @Override
-    public void windowClose(Window.CloseEvent e) {
-        DeleteListTypeWindows window = (DeleteListTypeWindows) e.getWindow();
-        
-        if (window.getOption() == MessageDialogWindow.OK_OPTION) {
-            try {
-                RemoteObjectLight object = (RemoteObjectLight) node.getObject();
-                TopComponent parentComponent = node.getTree().getTopComponent();
-                                
-                parentComponent.getWsBean().deleteListTypeItem(
-                        object.getClassName(), 
-                        object.getOid(), false, 
-                        Page.getCurrent().getWebBrowser().getAddress(),
-                        parentComponent.getApplicationSession().getSessionId());
-                
-                node.delete();
-                
-                Notification.show("The object was removed successfully", Notification.Type.TRAY_NOTIFICATION);
-                
-                window.removeCloseListener(this);
-                UI.getCurrent().removeWindow(window);
-            } catch (ServerSideException ex) {
-                Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-            }
-        }
-    }
-    
-    public class DeleteListTypeWindows extends MessageDialogWindow {
+                    parentComponent.getWsBean().deleteListTypeItem(
+                            object.getClassName(), 
+                            object.getOid(), false, 
+                            Page.getCurrent().getWebBrowser().getAddress(),
+                            parentComponent.getApplicationSession().getSessionId());
 
-        public DeleteListTypeWindows(Window.CloseListener closeListener) {
-            super(closeListener, "Delete List Type", 
-                    MessageDialogWindow.OK_CANCEL_OPTION);
-        }
+                    node.delete();
 
-        @Override
-        public Component initSimpleMainComponent() {
-            VerticalLayout content = new VerticalLayout();
-            content.setMargin(true);
+                    Notification.show("The object was removed successfully", Notification.Type.TRAY_NOTIFICATION);
 
-            Label lblMsg = new Label("Are you sure you want to delete this item? "
-                    + "(if its already related to another object, "
-                    + "it won't be deleted)");
-            content.addComponent(lblMsg);
-
-            return content;
-        }
-
-        @Override
-        public void initComplexMainComponent() {}
+                } catch (ServerSideException ex) {
+                    Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+                }
+            })
+            .withCancelButton();
+        messageBox.open();
     }
 }

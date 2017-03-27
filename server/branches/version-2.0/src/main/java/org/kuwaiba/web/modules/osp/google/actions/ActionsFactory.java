@@ -28,6 +28,7 @@ public class ActionsFactory {
     private static DeletePhysicalConnectionAction deletePhysicalConnectionAction;
     private static ConnectLinksAction connectLinksAction;
     private static ShowObjectIdAction showObjectIdAction;
+    private static MeasureConnectionDistanceAction measureConnectionDistanceAction;
     
     public static NewObjectAction createNewObjectAction() {
         if (newObjectAction == null)
@@ -64,5 +65,11 @@ public class ActionsFactory {
         if (showObjectIdAction == null)
             showObjectIdAction = new ShowObjectIdAction();
         return showObjectIdAction;
+    }
+        
+    public static MeasureConnectionDistanceAction createMeasureConnectionDistanceAction() {
+        if (measureConnectionDistanceAction == null)
+            measureConnectionDistanceAction = new MeasureConnectionDistanceAction();
+        return measureConnectionDistanceAction;
     }
 }

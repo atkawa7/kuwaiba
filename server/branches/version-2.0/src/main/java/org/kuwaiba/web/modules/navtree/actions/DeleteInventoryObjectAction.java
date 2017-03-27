@@ -17,16 +17,11 @@ package org.kuwaiba.web.modules.navtree.actions;
 
 import com.vaadin.server.Page;
 import com.vaadin.server.ThemeResource;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
+import de.steinwedel.messagebox.MessageBox;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.apis.web.gui.nodes.InventoryObjectNode;
-import org.kuwaiba.apis.web.gui.windows.MessageDialogWindow;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
@@ -34,70 +29,41 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
  * Action to delete a inventory object
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class DeleteInventoryObjectAction extends AbstractAction implements Window.CloseListener {
-    InventoryObjectNode node;
-    
+public class DeleteInventoryObjectAction extends AbstractAction {
+        
     public DeleteInventoryObjectAction() {
         super("Delete", new ThemeResource("img/warning.gif"));
     }
 
     @Override
     public void actionPerformed(Object sourceComponent, Object targetObject) {
-        node = (InventoryObjectNode) targetObject;
+        InventoryObjectNode node = (InventoryObjectNode) targetObject;
         
-        UI.getCurrent().addWindow(new DeleteInventoryObjectWindows(this));
-    }
-    
-    @Override
-    public void windowClose(Window.CloseEvent e) {
-        DeleteInventoryObjectWindows window = (DeleteInventoryObjectWindows) e.getWindow();
-        
-        if (window.getOption() == MessageDialogWindow.OK_OPTION) {
-            try {
-                TopComponent parentComponent = node.getTree().getTopComponent();
-                
+        MessageBox messageBox = MessageBox.createQuestion()
+            .withCaption("Delete Object")
+            .withMessage("Are you sure you want to delete this object? (all children will be removed as well)")
+            .withOkButton(() -> {
+                try {
+                    TopComponent parentComponent = node.getTree().getTopComponent();
+                    
+                    RemoteObjectLight object = (RemoteObjectLight) node.getObject();
 
-                RemoteObjectLight object = (RemoteObjectLight) node.getObject();
-                                
-                parentComponent.getWsBean().deleteObjects(
-                        new String[] {object.getClassName()}, 
-                        new long [] {object.getOid()},
-                        false,
-                        Page.getCurrent().getWebBrowser().getAddress(),
-                        parentComponent.getApplicationSession().getSessionId());
-                
-                node.delete();
-                
-                Notification.show("The object was removed successfully", Notification.Type.TRAY_NOTIFICATION);
-                
-                window.removeCloseListener(this);
-                UI.getCurrent().removeWindow(window);
-            } catch (ServerSideException ex) {
-                Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-            }
-        }
-    }
-    
-    public class DeleteInventoryObjectWindows extends MessageDialogWindow {
+                    parentComponent.getWsBean().deleteObjects(
+                            new String[] {object.getClassName()}, 
+                            new long [] {object.getOid()},
+                            false,
+                            Page.getCurrent().getWebBrowser().getAddress(),
+                            parentComponent.getApplicationSession().getSessionId());
 
-        public DeleteInventoryObjectWindows(Window.CloseListener closeListener) {
-            super(closeListener, "Delete Object", 
-                    MessageDialogWindow.OK_CANCEL_OPTION);
-        }
+                    node.delete();
 
-        @Override
-        public Component initSimpleMainComponent() {
-            VerticalLayout content = new VerticalLayout();
-            content.setMargin(true);
+                    Notification.show("The object was removed successfully", Notification.Type.TRAY_NOTIFICATION);
 
-            Label lblMsg = new Label("Are you sure you want to delete this object? "
-                    + "(all children will be removed as well)");
-            content.addComponent(lblMsg);
-
-            return content;
-        }
-
-        @Override
-        public void initComplexMainComponent() {}
+                } catch (ServerSideException ex) {
+                    Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+                }
+            })
+            .withCancelButton();
+        messageBox.open();
     }
 }

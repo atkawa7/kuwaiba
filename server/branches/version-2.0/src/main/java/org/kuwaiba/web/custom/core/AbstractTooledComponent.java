@@ -129,6 +129,10 @@ public abstract class AbstractTooledComponent extends CustomComponent {
             this.mainComponent = null;
         }
     }
+    
+    public Component getMainComponent() {
+        return mainComponent;
+    }
         
     public enum ToolBarSize {
         SMALL(16), NORMAL(24), BIG(32);

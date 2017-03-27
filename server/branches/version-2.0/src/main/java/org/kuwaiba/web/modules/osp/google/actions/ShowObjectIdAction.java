@@ -18,7 +18,7 @@ package org.kuwaiba.web.modules.osp.google.actions;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.web.modules.navtree.actions.ShowObjectIdWindow;
+import org.kuwaiba.apis.web.gui.messagebox.MessageBoxShowObjectId;
 import org.kuwaiba.web.modules.osp.google.CustomGoogleMap;
 import org.kuwaiba.web.modules.osp.google.overlays.ConnectionPolyline;
 import org.kuwaiba.web.modules.osp.google.overlays.MarkerNode;
@@ -44,7 +44,7 @@ public class ShowObjectIdAction extends AbstractAction {
         if (targetObject instanceof MarkerNode)
             object = ((MarkerNode) targetObject).getRemoteObjectLight();
         
-        ((CustomGoogleMap) sourceComponent).getUI()
-            .addWindow(new ShowObjectIdWindow(parentComponent, object));
+        MessageBoxShowObjectId messageBox = new MessageBoxShowObjectId(parentComponent, object);
+        messageBox.open();
     }
 }
