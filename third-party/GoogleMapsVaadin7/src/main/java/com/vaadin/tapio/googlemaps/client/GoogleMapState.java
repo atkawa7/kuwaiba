@@ -81,4 +81,7 @@ public class GoogleMapState extends AbstractComponentState {
     public boolean disableDoubleClickZoom = false;
         
     public Map<GoogleMapPolyline, List<GoogleMapMarker>> edges = new HashMap<>();
+    
+    public boolean measureDistance = false;
+    public boolean mesaureEdgeDistance = false;
 }

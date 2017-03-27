@@ -126,9 +126,11 @@ public class GoogleMap extends AbstractComponentContainer {
         
     private final PolygonClickedRpc polygonClickedRpc = new PolygonClickedRpc() {
         @Override
-        public void polygonClicked(long polygonId) {
+        public void polygonClicked(GoogleMapPolygon gmPolygon) {
             
-            GoogleMapPolygon polygon = getState().polygons.get(polygonId);
+           GoogleMapPolygon polygon = getState().polygons.get(gmPolygon.getId());
+           polygon.setEditable(gmPolygon.isEditable());
+            
             for (PolygonClickListener listener : polygonClickListeners) {
                 listener.polygonClicked(polygon);
             }            
@@ -216,6 +218,7 @@ public class GoogleMap extends AbstractComponentContainer {
         public void edgeClicked(GoogleMapPolyline clickedEdge) {
             if (edgeIDs.containsKey(clickedEdge.getId())) {
                 GoogleMapPolyline edge = edgeIDs.get(clickedEdge.getId());
+                edge.setEditable(clickedEdge.isEditable());
 
                 for (EdgeClickListener listener : edgeClickListeners) {
                     listener.edgeClicked(edge);
@@ -232,10 +235,14 @@ public class GoogleMap extends AbstractComponentContainer {
                 GoogleMapPolyline edge = edgeIDs.get(edgeComplete.getId());
                 edge.getCoordinates().clear();
                 
-                for (LatLon coordinates : edgeComplete.getCoordinates()) {
-                    edge.getCoordinates().add(coordinates);
-                }
+                List<GoogleMapMarker> nodes = getState().edges.get(edge);
+                nodes.get(0).setPosition(edgeComplete.getCoordinates().get(0));
+                nodes.get(1).setPosition(edgeComplete.getCoordinates()
+                    .get(edgeComplete.getCoordinates().size() - 1));
                 
+                for (LatLon coordinate : edgeComplete.getCoordinates()) {
+                    edge.getCoordinates().add(coordinate);
+                }                
                 for (EdgeCompleteListener listener : edgeCompleteListeners) {
                     listener.edgeCompleted(edge);
                 }
@@ -1390,5 +1397,37 @@ public class GoogleMap extends AbstractComponentContainer {
     public void removeEdges() {
         edgeIDs.clear();
         getState().edges.clear();
+    }
+    
+    public boolean getMeasureDistance() {
+        return getState().measureDistance;
+    }
+    
+    public void setMeasureDistance(boolean measureDistance) {
+        getState().measureDistance = measureDistance;
+    }
+    
+    public boolean getMesaureEdgeDistance() {
+        return getState().mesaureEdgeDistance;
+    }
+    
+    public void setMeasureEdgeDistance(boolean measureEdgeDistance) {
+        getState().mesaureEdgeDistance = measureEdgeDistance;
+    }
+    
+    public boolean getShowMarkerLabels() {
+        return getState().showMarkerLabels;
+    } 
+    
+    public void showMarkerLabels(boolean showMarkerLabels) {
+        getState().showMarkerLabels = showMarkerLabels;
+    }
+    
+    public boolean getShowEdgeLabels() {
+        return getState().showEdgeLabels;
+    } 
+    
+    public void showEdgeLabels(boolean showEdgeLabels) {
+        getState().showEdgeLabels = showEdgeLabels;
     }
 }

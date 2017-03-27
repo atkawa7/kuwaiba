@@ -286,9 +286,11 @@ public class GoogleMapConnector extends AbstractComponentContainerConnector
         getWidget().showMarkerLabels(getState().showMarkerLabels);
         getWidget().showPolylineLabels(getState().showPolylineLabels);
         getWidget().showPolygonLabels(getState().showPolygonLabels);
-        
+        getWidget().setMeasureEdgeDistance(getState().mesaureEdgeDistance);
         getWidget().setEdges(getState().edges);
         getWidget().showEdgeLabels(getState().showEdgeLabels);
+        
+        getWidget().setMeasureDistance(getState().measureDistance);
                 
         onConnectorHierarchyChange(null);
     }
@@ -374,7 +376,7 @@ public class GoogleMapConnector extends AbstractComponentContainerConnector
     
     @Override
     public void polygonClicked(GoogleMapPolygon clickedPolygon) {
-        polygonClickedRpc.polygonClicked(clickedPolygon.getId());
+        polygonClickedRpc.polygonClicked(clickedPolygon);
     }
     
     @Override

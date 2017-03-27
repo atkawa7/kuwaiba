@@ -1,5 +1,5 @@
 package com.vaadin.tapio.googlemaps.client;
-
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.ajaxloader.client.Properties;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,6 +13,7 @@ import com.google.gwt.animation.client.AnimationScheduler;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.maps.client.MapImpl;
 import com.google.gwt.maps.client.MapOptions;
 import com.google.gwt.maps.client.MapTypeId;
@@ -63,7 +64,9 @@ import com.google.gwt.maps.client.layers.KmlLayerOptions;
 import com.google.gwt.maps.client.layers.TrafficLayer;
 import com.google.gwt.maps.client.mvc.MVCArray;
 import com.google.gwt.maps.client.overlays.*;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.tapio.googlemaps.client.events.EdgeClickListener;
@@ -178,6 +181,16 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
     
     private DrawingManager drawingManager;
     
+    private boolean measureEdgeDistance = false;
+    private FlowPanel mesaureEdgeDistancePanel = null;
+    private HTML htmlEdgeDistance = null;
+    
+    private boolean measureDistance = false;
+    private Polyline measurePolyline = null;
+    private int lengthPath = 0;    
+    private FlowPanel measureDistancePanel = null;
+    private HTML htmlTotalDistance = null;
+    
     public GoogleMapWidget() {
         setStyleName(CLASSNAME);
     }
@@ -221,6 +234,19 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
                     else
                         tempPolyline.getPath().setAt(1, position);
                 }
+                
+                if (measureDistance) {
+                    if (lengthPath > 0) {
+                        if (measurePolyline.getPath().getLength() == lengthPath) {
+                            measurePolyline.getPath().push(event.getMouseEvent().getLatLng());
+                        } else {
+                            measurePolyline.getPath().pop();
+                            measurePolyline.getPath().push(event.getMouseEvent().getLatLng());
+                        }
+                        updateTotalDistanceHTML(htmlTotalDistance, 
+                            SphericalUtils.computeLength(measurePolyline.getPath()));
+                    }
+                }
             }
         });
         // always when center has changed, check that it does not go out from
@@ -249,6 +275,14 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
                         event.getMouseEvent().getLatLng().getLatitude(),
                         event.getMouseEvent().getLatLng().getLongitude());
                     mapClickListener.mapClicked(position);
+                }
+                
+                if (measureDistance) {
+                    if (measurePolyline == null || measurePolyline.getPath().getLength() == 0) {
+                        initializeMeasurePolyline();
+                        measurePolyline.getPath().push(event.getMouseEvent().getLatLng());
+                        lengthPath = 1;
+                    }
                 }
             }
         });
@@ -280,7 +314,7 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
 
             @Override
             public void onEvent(RightClickMapEvent event) {
-                if (mapRightClickListener != null) {
+                if (mapRightClickListener != null) {                    
                     LatLon position = new LatLon(
                         event.getMouseEvent().getLatLng().getLatitude(),
                         event.getMouseEvent().getLatLng().getLongitude());
@@ -853,6 +887,7 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
                     try {
                         if (event.getProperties().getNumber("vertex") == null) {
                             polygon.setEditable(!polygon.getEditable());
+                            polygonMap.get(polygon).setEditable(polygon.getEditable());
                             
                             if (polygonClickListener != null) {
                                 polygonClickListener.polygonClicked(polygonMap.get(polygon));
@@ -1337,8 +1372,13 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
             return;
         }
         
-        if ("Polygon".equals(drawingMode))
+        if ("Polygon".equals(drawingMode)) {
             drawingManager.setDrawingMode(OverlayType.POLYGON);
+            mapOptions.setDraggableCursor("crosshair");
+            mapOptions.setDraggingCursor("crosshair");
+            map.setOptions(mapOptions);
+            mapOptionsChanged = false;
+        }
     }
     
     private void drawingTool() {
@@ -1443,11 +1483,29 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
         this.sourceTempPolyline = source;     
         if (source == null) {
             if (tempPolyline != null) {
+                tempPolyline.getPath().clear();
                 tempPolyline.setMap((MapWidget) null);
-                tempPolyline = null;
             }
         }
         else {
+            if (tempPolyline == null) {
+                PolylineOptions options = PolylineOptions.newInstance();
+                options.setStrokeColor("black");
+                options.setStrokeOpacity(1);
+                options.setStrokeWeight(3);
+
+                tempPolyline = Polyline.newInstance(options);
+                
+                tempPolyline.addClickHandler(new ClickMapHandler() {
+
+                    @Override
+                    public void onEvent(ClickMapEvent event) {
+                        GoogleMapPolyline gmPolyline = new GoogleMapPolyline();
+                        gmPolyline.setId(-1);
+                        polylineClickListener.polylineClicked(gmPolyline);
+                    }
+                });
+            }
             LatLng latLng = LatLng.newInstance(
                 source.getPosition().getLat(), 
                 source.getPosition().getLon());
@@ -1455,12 +1513,6 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
             MVCArray<LatLng> points = MVCArray.newInstance();
             points.push(latLng);
             
-            PolylineOptions options = PolylineOptions.newInstance();
-            options.setStrokeColor("black");
-            options.setStrokeOpacity(1);
-            options.setStrokeWeight(3);
-                        
-            tempPolyline = Polyline.newInstance(options);
             tempPolyline.setPath(points);
             tempPolyline.setMap(map);
         }
@@ -1529,6 +1581,10 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
                 setCoordinates(points, gmEdge.getCoordinates());
                 updateEdgeLabel(gmEdge);
                 
+                if (measureEdgeDistance) {
+                    updateTotalDistanceHTML(htmlEdgeDistance, 
+                        SphericalUtils.computeLength(points));
+                }
                 if (edgeCompleteListener != null) {
                     edgeCompleteListener.edgeCompleted(gmEdge);
                 }
@@ -1542,6 +1598,10 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
                 setCoordinates(points, gmEdge.getCoordinates());
                 updateEdgeLabel(gmEdge);
                 
+                if (measureEdgeDistance) {
+                    updateTotalDistanceHTML(htmlEdgeDistance, 
+                        SphericalUtils.computeLength(points));
+                }
                 if (edgeCompleteListener != null) {
                     edgeCompleteListener.edgeCompleted(gmEdge);
                 }
@@ -1561,6 +1621,10 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
                 if (event.getIndex() == points.getLength() - 1)
                     lastControlPointMoved(gmEdge);
                 
+                if (measureEdgeDistance) {
+                    updateTotalDistanceHTML(htmlEdgeDistance, 
+                        SphericalUtils.computeLength(points));
+                }
                 if (edgeCompleteListener != null) {
                     edgeCompleteListener.edgeCompleted(gmEdge);
                 }
@@ -1596,11 +1660,17 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
                 try {
                     if (event.getProperties().getNumber("vertex") == null) {
                         edge.setEditable(!edge.getEditable());
+                        edgeMap.get(edge).setEditable(edge.getEditable());
+                        
+                        if (measureEdgeDistance) {
+                            updateTotalDistanceHTML(htmlEdgeDistance, 
+                                SphericalUtils.computeLength(edge.getPath()));
+                        }
                     }
                 } catch (Properties.TypeException ex) {
                     browserLog("com.vaadin.tapio.googlemaps.client.GoogleMapWidget " + ex.getMessage());
                 }
-                if (edgeClickListener != null) {
+                if (edgeClickListener != null) {                    
                     edgeClickListener.edgeClicked(edgeMap.get(edge));
                 }
             }
@@ -1632,6 +1702,12 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
             @Override
             public void onEvent(RightClickMapEvent event) {
                 if (edgeRightClickListener != null) {
+                    if (htmlEdgeDistance == null) {
+                        htmlEdgeDistance = new HTML();
+                    }
+                    updateTotalDistanceHTML(htmlEdgeDistance, 
+                        SphericalUtils.computeLength(edge.getPath()));
+                    
                     edgeRightClickListener.edgeRightClicked(edgeMap.get(edge));
                 }
             }
@@ -1697,4 +1773,128 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
             }
         }
     }
+    
+    public void setMeasureDistance(boolean measureDistance) {
+        this.measureDistance = measureDistance;
+        if (!measureDistance) {
+            if (measurePolyline != null) {
+                measurePolyline.setMap(null);
+                measurePolyline.getPath().clear();
+            }
+            lengthPath = 0;
+            if (measureDistancePanel != null) {
+                measureDistancePanel.removeFromParent();
+            }
+        }
+    }
+    
+    public void setMeasureEdgeDistance(boolean measureEdgeDistance) {
+        this.measureEdgeDistance = measureEdgeDistance;
+        if (measureEdgeDistance) {
+            
+            if (mesaureEdgeDistancePanel == null) {
+                
+                mesaureEdgeDistancePanel = new FlowPanel();
+                mesaureEdgeDistancePanel.add(new HTML("<b> Measure distance </b>"));
+
+                //htmlEdgeDistance = new HTML("");
+                mesaureEdgeDistancePanel.add(htmlEdgeDistance);
+
+                mesaureEdgeDistancePanel.getElement().getStyle().setBackgroundColor("#e6e6e6");
+                mesaureEdgeDistancePanel.getElement().getStyle().setPadding(10, Style.Unit.PX);
+                mesaureEdgeDistancePanel.getElement().getStyle().setMargin(100, Style.Unit.PX);
+                DOM.setStyleAttribute(mesaureEdgeDistancePanel.getElement(), "border", "3px solid #FF0000");
+            }
+            map.setControls(ControlPosition.TOP_RIGHT, mesaureEdgeDistancePanel);
+        } else {
+            if (mesaureEdgeDistancePanel != null) {
+                mesaureEdgeDistancePanel.removeFromParent();
+            }
+        }
+    }
+    
+    private void updateTotalDistanceHTML(HTML html, double totalDistance) {
+        String distanceAsString = NumberFormat.getFormat("#.00").format(totalDistance);
+        
+        html.setHTML("<b>Total distance: </b>" + distanceAsString + " m");
+    }
+        
+    private void initializeMeasurePolyline() {
+        if (measurePolyline == null) {
+            PolylineOptions options = PolylineOptions.newInstance();
+            options.setStrokeColor("black");
+            options.setStrokeOpacity(1);
+            options.setStrokeWeight(3);
+            options.setMap(map);
+            
+            measurePolyline = Polyline.newInstance(options);
+            measurePolyline.setEditable(true);
+            
+            measurePolyline.getPath().addInsertAtHandler(new InsertAtMapHandler() {
+                
+                @Override
+                public void onEvent(InsertAtMapEvent event) {
+                    updateTotalDistanceHTML(htmlTotalDistance, 
+                        SphericalUtils.computeLength(measurePolyline.getPath()));
+                }
+            });
+            
+            measurePolyline.getPath().addRemoveAtHandler(new RemoveAtMapHandler() {
+                
+                @Override
+                public void onEvent(RemoveAtMapEvent event) {
+                    updateTotalDistanceHTML(htmlTotalDistance, 
+                        SphericalUtils.computeLength(measurePolyline.getPath()));
+                }
+            });
+                
+            measurePolyline.getPath().addSetAtHandler(new SetAtMapHandler() {
+                
+                @Override
+                public void onEvent(SetAtMapEvent event) {
+                    updateTotalDistanceHTML(htmlTotalDistance, 
+                        SphericalUtils.computeLength(measurePolyline.getPath()));
+                }
+            });
+            
+            
+            measurePolyline.addClickHandler(new ClickMapHandler() {
+
+                @Override
+                public void onEvent(ClickMapEvent event) {
+                    measurePolyline.getPath().insertAt(lengthPath + 1, event.getMouseEvent().getLatLng());
+                    lengthPath += 1;
+                    
+                    updateTotalDistanceHTML(htmlTotalDistance, 
+                        SphericalUtils.computeLength(measurePolyline.getPath()));
+                }
+            });
+            
+            measurePolyline.addDblClickHandler(new DblClickMapHandler(){
+
+                @Override
+                public void onEvent(DblClickMapEvent event) {
+                    measureDistance = false;
+                }
+            });
+        }
+        else {
+            measurePolyline.setMap(map);
+        }
+        
+        if (measureDistancePanel == null) {
+            measureDistancePanel = new FlowPanel();
+            measureDistancePanel.add(new HTML("<b>Measure distance</b>"));
+            
+            htmlTotalDistance = new HTML("");
+            measureDistancePanel.add(htmlTotalDistance);
+            
+            measureDistancePanel.getElement().getStyle().setBackgroundColor("#e6e6e6");
+            measureDistancePanel.getElement().getStyle().setPadding(10, Style.Unit.PX);
+            measureDistancePanel.getElement().getStyle().setMargin(100, Style.Unit.PX);
+            DOM.setStyleAttribute(measureDistancePanel.getElement(), "border", "3px solid #FF0000");
+        }
+        map.setControls(ControlPosition.RIGHT_CENTER, measureDistancePanel);
+    }
 }
+
