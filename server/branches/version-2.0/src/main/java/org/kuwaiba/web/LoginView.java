@@ -21,10 +21,16 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
+import com.vaadin.server.ThemeResource;
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomComponent;
-import com.vaadin.ui.Panel;
+import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Image;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
@@ -48,56 +54,126 @@ class LoginView extends CustomComponent implements View {
     @Inject
     private WebserviceBeanLocal bean;
    
+    private TextField txtUsername;
+    private PasswordField txtPassword;
+    private Button btnLogin;
+    private Button btnForgotPassword;
+    
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
         setSizeFull();
+        HorizontalLayout row = new HorizontalLayout();
+        row.addStyleName(ValoTheme.LAYOUT_HORIZONTAL_WRAPPING);
+        Component form = buildLoginForm();
+        Component foot = buildLoginFoot();
+
+        setCompositionRoot(new MVerticalLayout(row, form, foot)
+                .withAlign(form, Alignment.MIDDLE_CENTER)
+                .withAlign(foot, Alignment.BOTTOM_RIGHT)
+                .withFullHeight());
+    }
+    
+    private Component buildLoginForm(){
+        Label lblTitle = new Label("<h1>Log into Kuwaiba</h1>",ContentMode.HTML);
+        //Label lblText = new Label("Open Network Inventory");
         
-        Page.getCurrent().setTitle(String.format("Kuwaiba Open Network Inventory - %s", "Login Page"));
+        txtUsername = new TextField();
+        txtUsername.setWidth(18, Unit.EM);
+        txtUsername.setInputPrompt("Type your username");
         
-        final TextField txtUsername = new TextField("Username");
-        final PasswordField txtPassword = new PasswordField("Password");
-        
-        txtUsername.focus();
+        txtPassword = new PasswordField();
         txtPassword.addStyleName(ValoTheme.TEXTFIELD_INLINE_ICON);
+        txtPassword.setWidth(18, Unit.EM);
         txtPassword.setIcon(FontAwesome.LOCK);
-
-        Button btnLogin = new Button("Login");
-        btnLogin.setClickShortcut(KeyCode.ENTER);
         
-        btnLogin.addClickListener(new Button.ClickListener() {
-
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                try {
-                    RemoteSession aSession = bean.createSession(txtUsername.getValue(), //NOI18N
-                            txtPassword.getValue(),  //NOI18N
-                            Page.getCurrent().getWebBrowser().getAddress());
-                    getSession().setAttribute("session", aSession); //NOI18N
-                    getUI().getNavigator().navigateTo(ApplicationView.VIEW_NAME);
-                    
-                } catch (ServerSideException ex) {
-                    NotificationsUtil.showError(ex.getMessage());
-                    txtUsername.focus();
-                }
+        btnForgotPassword = new Button("Forgot Password?");
+        btnForgotPassword.addClickListener((Button.ClickEvent event) -> {
+            NotificationsUtil.showError("Hint: Try anything");
+        });
+        btnForgotPassword.addStyleName("v-button-link");
+        btnForgotPassword.addStyleName("v-button-borderless");
+        
+        btnLogin = new Button();
+        btnLogin.setIcon(FontAwesome.SIGN_IN);
+        btnLogin.addStyleName(ValoTheme.BUTTON_LARGE);
+        
+        
+        btnLogin.setClickShortcut(KeyCode.ENTER);
+        btnLogin.addClickListener((Button.ClickEvent event) -> {
+            try {
+                RemoteSession aSession = bean.createSession(txtUsername.getValue(), //NOI18N
+                        txtPassword.getValue(),  //NOI18N
+                        Page.getCurrent().getWebBrowser().getAddress());
+                getSession().setAttribute("session", aSession); //NOI18N
+                getUI().getNavigator().navigateTo(ApplicationView.VIEW_NAME);
+                
+            } catch (ServerSideException ex) {
+                NotificationsUtil.showError(ex.getMessage());
+                txtUsername.focus();
             }
         });
+        
+        HorizontalLayout lytButtons = new HorizontalLayout(btnLogin, btnForgotPassword);
+        lytButtons.setSpacing(true);
+        
+        VerticalLayout lytForm = new VerticalLayout(txtUsername, txtPassword, lytButtons);
+        lytForm.setSpacing(true);
+        
+        VerticalLayout lytloginPanel = new VerticalLayout();
+        lytloginPanel.addStyleName("login-form");
+        lytloginPanel.addComponents(lblTitle, lytForm);
+        lytloginPanel.setSizeUndefined();
+        
+        return lytloginPanel;
+     }
+    
+    private Component buildLoginFoot(){
+                       
+        Image logo = new Image(null, 
+                        new ThemeResource("img/neotropic_logo.png"));
+        logo.addStyleName("foot-label");
+        logo.addStyleName("v-align-right");
+     
+        Label lblMessage = new Label("");
+        lblMessage.addStyleName("v-align-right");
 
-        Panel pnlLogin = new Panel();
-        pnlLogin.setSizeUndefined();
+        HorizontalLayout lytTopFoot =  new HorizontalLayout(lblMessage,logo);
+        lytTopFoot.setComponentAlignment(lblMessage, Alignment.BOTTOM_RIGHT);
+        
+        GridLayout grid =  new GridLayout(4,1);
+        grid.setSizeFull();
+        grid.addComponent(lytTopFoot, 3, 0);
+        grid.setColumnExpandRatio(0, 0.2f);
+        grid.setColumnExpandRatio(1, 0.2f);
+        grid.setColumnExpandRatio(2, 0.2f);
+        grid.setColumnExpandRatio(3, 0.4f);
+        
+        grid.setComponentAlignment(lytTopFoot, Alignment.BOTTOM_RIGHT);
+        
+        Label lblNeotropic = new Label("Backed by Neotropic SAS");
+        lblNeotropic.addStyleName("foot-label");
+        lblNeotropic.addStyleName("v-align-right");
+        
+        //Label lblTerms = new Label("Terms");
+        //lblTerms.addStyleName("foot-label");
+                
+        HorizontalLayout lytLfoot = new HorizontalLayout();
+        HorizontalLayout lytRfoot=  new HorizontalLayout(lblNeotropic);
+        lytRfoot.setWidth("100%");
+        
+        HorizontalLayout lytBottomFoot = new HorizontalLayout(lytLfoot, lytRfoot);
+        
+        lytBottomFoot.setWidth("100%");
+        lytBottomFoot.setExpandRatio(lytRfoot, 1.0f);
 
-        pnlLogin.setContent(new MVerticalLayout(txtUsername, txtPassword, btnLogin)
-                .withAlign(btnLogin, Alignment.BOTTOM_LEFT));
+        lytBottomFoot.setExpandRatio(lytLfoot, 0.4f);
+        lytBottomFoot.setExpandRatio(lytRfoot, 0.6f);
         
-        btnLogin.focus();
+        VerticalLayout lytFoot = new VerticalLayout(grid, lytBottomFoot);
+        lytFoot.setStyleName("foot");
         
-       
-        VerticalLayout lytHeaderFiller = new VerticalLayout();
-        //Add stuff to the header
-        VerticalLayout lytFooterFiller = new VerticalLayout();
-        //Add stuff to the footer
+        lytLfoot.setSizeUndefined();
         
-        setCompositionRoot(new MVerticalLayout(lytHeaderFiller, pnlLogin, lytFooterFiller)
-                .withAlign(pnlLogin, Alignment.TOP_CENTER)
-                .withFullHeight());
+        return lytFoot;
     }
 }
