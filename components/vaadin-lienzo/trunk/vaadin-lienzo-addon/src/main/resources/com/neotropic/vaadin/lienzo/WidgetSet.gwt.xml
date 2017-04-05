@@ -1,0 +1,14 @@
+<module>
+
+	<!-- WS Compiler: manually edited -->
+
+	<!-- Inherit DefaultWidgetSet -->
+	<inherits name="com.vaadin.DefaultWidgetSet" /> 
+        
+        <inherits name="com.ait.lienzo.Lienzo" />
+
+
+	<!-- Widget styles in public -directory -->
+	<stylesheet src="vaadin-lienzo/styles.css"/>
+
+</module>
