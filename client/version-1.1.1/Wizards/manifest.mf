@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+OpenIDE-Module: org.inventory.core.wizards
+OpenIDE-Module-Localizing-Bundle: org/inventory/core/wizards/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+
