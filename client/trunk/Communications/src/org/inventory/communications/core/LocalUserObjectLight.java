@@ -20,14 +20,23 @@ package org.inventory.communications.core;
  * Implementation for the local representation of an application user with the most basic information
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class LocalUserObjectLight {
+public class LocalUserObjectLight implements Comparable<LocalUserObjectLight> {
 
     private long userId;
     private String userName;
+    private String firstName;
+    private String lastName;
+    private int type;
+    private boolean enabled;
 
-    public LocalUserObjectLight(long userId, String userName) {
+    public LocalUserObjectLight(long userId, String userName, String firstName, 
+            String lastName, boolean enabled, int type) {
         this.userId = userId;
         this.userName = userName;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.enabled = enabled;
+        this.type = type;
     }
 
     public long getUserId() {
@@ -46,8 +55,45 @@ public class LocalUserObjectLight {
         this.userName = userName;
     }
     
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+    
     @Override
     public String toString() {
         return userName;
+    }
+
+    @Override
+    public int compareTo(LocalUserObjectLight o) {
+        return toString().compareTo(o.toString());
     }
 }

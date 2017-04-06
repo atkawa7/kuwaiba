@@ -20,8 +20,6 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;extension base="{http://ws.kuwaiba.org/}groupInfoLight">
  *       &lt;sequence>
  *         &lt;element name="users" type="{http://ws.kuwaiba.org/}userInfo" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="creationDate" type="{http://www.w3.org/2001/XMLSchema}long"/>
- *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="privileges" type="{http://ws.kuwaiba.org/}privilegeInfo" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/extension>
@@ -34,8 +32,6 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "groupInfo", propOrder = {
     "users",
-    "creationDate",
-    "description",
     "privileges"
 })
 public class GroupInfo
@@ -44,8 +40,6 @@ public class GroupInfo
 
     @XmlElement(nillable = true)
     protected List<UserInfo> users;
-    protected long creationDate;
-    protected String description;
     @XmlElement(nillable = true)
     protected List<PrivilegeInfo> privileges;
 
@@ -76,46 +70,6 @@ public class GroupInfo
             users = new ArrayList<UserInfo>();
         }
         return this.users;
-    }
-
-    /**
-     * Gets the value of the creationDate property.
-     * 
-     */
-    public long getCreationDate() {
-        return creationDate;
-    }
-
-    /**
-     * Sets the value of the creationDate property.
-     * 
-     */
-    public void setCreationDate(long value) {
-        this.creationDate = value;
-    }
-
-    /**
-     * Gets the value of the description property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Sets the value of the description property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setDescription(String value) {
-        this.description = value;
     }
 
     /**

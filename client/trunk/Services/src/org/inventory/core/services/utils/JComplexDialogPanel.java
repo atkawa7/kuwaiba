@@ -16,6 +16,7 @@
 
 package org.inventory.core.services.utils;
 
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -31,7 +32,7 @@ import javax.swing.JPanel;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class JComplexDialogPanel extends JPanel {
-
+    public static final String PROPERTY_MANDATORY = "mandatory";
     private HashMap<String, JComponent> components;
 
     public JComplexDialogPanel(String[] labels, JComponent[] components) {
@@ -79,4 +80,5 @@ public class JComplexDialogPanel extends JPanel {
     public JComponent getComponent(String name){
         return components.get(name);
     }
+    
 }

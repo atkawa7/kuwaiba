@@ -1,11 +1,8 @@
 
 package org.inventory.communications.wsclient;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -25,8 +22,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="lastName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="password" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="enabled" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
- *         &lt;element name="privileges" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="groups" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="type" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -44,8 +40,7 @@ import javax.xml.bind.annotation.XmlType;
     "lastName",
     "password",
     "enabled",
-    "privileges",
-    "groups",
+    "type",
     "sessionId"
 })
 public class SetUserProperties {
@@ -56,10 +51,7 @@ public class SetUserProperties {
     protected String lastName;
     protected String password;
     protected boolean enabled;
-    @XmlElement(nillable = true)
-    protected List<Long> privileges;
-    @XmlElement(nillable = true)
-    protected List<Long> groups;
+    protected int type;
     protected String sessionId;
 
     /**
@@ -191,61 +183,19 @@ public class SetUserProperties {
     }
 
     /**
-     * Gets the value of the privileges property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the privileges property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getPrivileges().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Long }
-     * 
+     * Gets the value of the type property.
      * 
      */
-    public List<Long> getPrivileges() {
-        if (privileges == null) {
-            privileges = new ArrayList<Long>();
-        }
-        return this.privileges;
+    public int getType() {
+        return type;
     }
 
     /**
-     * Gets the value of the groups property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the groups property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getGroups().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Long }
-     * 
+     * Sets the value of the type property.
      * 
      */
-    public List<Long> getGroups() {
-        if (groups == null) {
-            groups = new ArrayList<Long>();
-        }
-        return this.groups;
+    public void setType(int value) {
+        this.type = value;
     }
 
     /**

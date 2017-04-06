@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="groupName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="privileges" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="users" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
@@ -36,7 +35,6 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "createGroup", propOrder = {
     "groupName",
     "description",
-    "privileges",
     "users",
     "sessionId"
 })
@@ -44,9 +42,7 @@ public class CreateGroup {
 
     protected String groupName;
     protected String description;
-    @XmlElement(nillable = true)
-    protected List<Long> privileges;
-    @XmlElement(nillable = true)
+    @XmlElement(type = Long.class)
     protected List<Long> users;
     protected String sessionId;
 
@@ -96,35 +92,6 @@ public class CreateGroup {
      */
     public void setDescription(String value) {
         this.description = value;
-    }
-
-    /**
-     * Gets the value of the privileges property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the privileges property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getPrivileges().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Long }
-     * 
-     * 
-     */
-    public List<Long> getPrivileges() {
-        if (privileges == null) {
-            privileges = new ArrayList<Long>();
-        }
-        return this.privileges;
     }
 
     /**

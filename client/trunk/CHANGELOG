@@ -115,3 +115,8 @@
 1.1.1
 * Releasing relationships triggers an "Are you sure?" warning.
 * The connection and node labels can now be hidden/shown in topology views
+* Added various actions to IPs and subnets in the IPAM
+
+1.5
+* User Management module rewritten
+* Web service client component rewritten and simplified

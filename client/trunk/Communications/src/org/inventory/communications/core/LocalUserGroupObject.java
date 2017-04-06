@@ -16,45 +16,51 @@
 
 package org.inventory.communications.core;
 
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 import org.inventory.communications.wsclient.GroupInfo;
+import org.inventory.communications.wsclient.PrivilegeInfo;
+import org.inventory.communications.wsclient.UserInfo;
 
 /**
  * Implementation for the local representation of an application users group
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class LocalUserGroupObject extends LocalUserGroupObjectLight {
-    /**
-     * Group's creation date (actually a timestamp)
-     */
-    private Date creationDate;
-    /**
-     * Group's description
-     */
-    private String description;
+    private List<LocalPrivilege> privileges;
+    private List<LocalUserObject> users;
     
     public LocalUserGroupObject(GroupInfo group) {
-        super(group.getId(),group.getName());
-        this.description = group.getDescription();
-        if (group.getCreationDate() == 0)
-            this.creationDate = null;
-        else
-            this.creationDate = new Date(group.getCreationDate());
+        super(group);
+        this.privileges = new ArrayList<>();
+        this.users = new ArrayList<>();
+        for (PrivilegeInfo remotePrivilege : group.getPrivileges())
+            privileges.add(new LocalPrivilege(remotePrivilege.getFeatureToken(), remotePrivilege.getAccessLevel()));
+        
+        for (UserInfo remoteUser : group.getUsers()) {
+            List<LocalPrivilege> userPrivileges = new ArrayList<>();
+            for (PrivilegeInfo remotePrivilege : remoteUser.getPrivileges())
+                userPrivileges.add(new LocalPrivilege(remotePrivilege.getFeatureToken(), remotePrivilege.getAccessLevel()));
+            
+            users.add(new LocalUserObject(remoteUser.getId(), remoteUser.getUserName(), 
+                    remoteUser.getFirstName(), remoteUser.getLastName(), remoteUser.isEnabled(), 
+                    remoteUser.getType(), userPrivileges));
+            }
     }
 
-    public Date getCreationDate() {
-        return creationDate;
+    public List<LocalPrivilege> getPrivileges() {
+        return privileges;
     }
 
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
+    public void setPrivileges(List<LocalPrivilege> privileges) {
+        this.privileges = privileges;
     }
 
-    public String getDescription() {
-        return description;
+    public List<LocalUserObject> getUsers() {
+        return users;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setUsers(List<LocalUserObject> users) {
+        this.users = users;
     }
 }

@@ -57,7 +57,7 @@ public class CreateContractAction extends AbstractAction implements Presenter.Po
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else {       
             ((ContractPoolNode.ContractPoolChildren)selectedNode.getChildren()).addNotify();
-            NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Contract created");
+            NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Contract created sucessfully");
         }
     }    
 

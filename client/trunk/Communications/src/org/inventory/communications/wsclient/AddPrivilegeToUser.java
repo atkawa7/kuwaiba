@@ -7,18 +7,18 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for setGroupProperties complex type.
+ * <p>Java class for addPrivilegeToUser complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="setGroupProperties">
+ * &lt;complexType name="addPrivilegeToUser">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="oid" type="{http://www.w3.org/2001/XMLSchema}long"/>
- *         &lt;element name="groupName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="userId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="featureToken" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="accessLevel" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -29,81 +29,73 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "setGroupProperties", propOrder = {
-    "oid",
-    "groupName",
-    "description",
+@XmlType(name = "addPrivilegeToUser", propOrder = {
+    "userId",
+    "featureToken",
+    "accessLevel",
     "sessionId"
 })
-public class SetGroupProperties {
+public class AddPrivilegeToUser {
 
-    protected long oid;
-    protected String groupName;
-    protected String description;
+    protected long userId;
+    protected String featureToken;
+    protected int accessLevel;
     protected String sessionId;
 
     /**
-     * Gets the value of the oid property.
+     * Gets the value of the userId property.
      * 
      */
-    public long getOid() {
-        return oid;
+    public long getUserId() {
+        return userId;
     }
 
     /**
-     * Sets the value of the oid property.
+     * Sets the value of the userId property.
      * 
      */
-    public void setOid(long value) {
-        this.oid = value;
+    public void setUserId(long value) {
+        this.userId = value;
     }
 
     /**
-     * Gets the value of the groupName property.
+     * Gets the value of the featureToken property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getGroupName() {
-        return groupName;
+    public String getFeatureToken() {
+        return featureToken;
     }
 
     /**
-     * Sets the value of the groupName property.
+     * Sets the value of the featureToken property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setGroupName(String value) {
-        this.groupName = value;
+    public void setFeatureToken(String value) {
+        this.featureToken = value;
     }
 
     /**
-     * Gets the value of the description property.
+     * Gets the value of the accessLevel property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
      */
-    public String getDescription() {
-        return description;
+    public int getAccessLevel() {
+        return accessLevel;
     }
 
     /**
-     * Sets the value of the description property.
+     * Sets the value of the accessLevel property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
      */
-    public void setDescription(String value) {
-        this.description = value;
+    public void setAccessLevel(int value) {
+        this.accessLevel = value;
     }
 
     /**

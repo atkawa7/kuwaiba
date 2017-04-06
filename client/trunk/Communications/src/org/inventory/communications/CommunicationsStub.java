@@ -25,7 +25,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
 import javax.xml.ws.BindingProvider;
@@ -39,6 +38,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalObjectLightList;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.core.LocalPool;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalReport;
 import org.inventory.communications.core.LocalReportLight;
 import org.inventory.communications.core.LocalTaskResultMessage;
@@ -62,6 +62,7 @@ import org.inventory.communications.wsclient.ClassInfoLight;
 import org.inventory.communications.wsclient.GroupInfo;
 import org.inventory.communications.wsclient.KuwaibaService;
 import org.inventory.communications.wsclient.KuwaibaService_Service;
+import org.inventory.communications.wsclient.PrivilegeInfo;
 import org.inventory.communications.wsclient.RemoteBusinessObjectLight;
 import org.inventory.communications.wsclient.RemoteBusinessObjectLightList;
 import org.inventory.communications.wsclient.RemoteObject;
@@ -1142,7 +1143,8 @@ public class CommunicationsStub {
                 List<LocalUserObjectLight> users = new ArrayList<>();
                 
                 for (UserInfoLight user : remoteTask.getUsers())
-                    users.add(new LocalUserObjectLight(user.getId(), user.getUserName()));
+                    users.add(new LocalUserObjectLight(user.getId(), user.getUserName(),
+                                        user.getFirstName(), user.getLastName(), user.isEnabled(), user.getType()));
                 
                 localTasks.add(new LocalTask(remoteTask.getId(), remoteTask.getName(), 
                         remoteTask.getDescription(), remoteTask.isEnabled(), remoteTask.getScript(), 
@@ -1167,7 +1169,8 @@ public class CommunicationsStub {
             List<LocalUserObjectLight> subscribers = new ArrayList<>();
             
             for (UserInfoLight remoteSubscriber : remoteSubscribers)
-                subscribers.add(new LocalUserObjectLight(remoteSubscriber.getId(), remoteSubscriber.getUserName()));
+                subscribers.add(new LocalUserObjectLight(remoteSubscriber.getId(), remoteSubscriber.getUserName(),
+                                        remoteSubscriber.getFirstName(), remoteSubscriber.getLastName(), remoteSubscriber.isEnabled(), remoteSubscriber.getType()));
             
             return subscribers;
         }catch(Exception ex){
@@ -1944,33 +1947,62 @@ public class CommunicationsStub {
      * @return An array of LocalUserObject
      */
     public List<LocalUserObject> getUsers() {
-        try{
+        try {
             List<UserInfo> users = service.getUsers(this.session.getSessionId());
             List<LocalUserObject> localUsers = new ArrayList<>();
-
-            for (UserInfo user : users)
-                localUsers.add(new LocalUserObject(user));
             
+            for (UserInfo user : users) {
+                List<LocalPrivilege> localPrivileges = new ArrayList<>();
+                for (PrivilegeInfo remotePrivilege : user.getPrivileges())
+                    localPrivileges.add(new LocalPrivilege(remotePrivilege.getFeatureToken(), remotePrivilege.getAccessLevel()));
+                localUsers.add(new LocalUserObject(user.getId(), user.getUserName(),
+                                        user.getFirstName(), user.getLastName(), user.isEnabled(), user.getType(), localPrivileges));
+            }
             return localUsers;
         }catch(Exception ex){
             this.error = ex.getMessage();
             return null;
         }
     }
+    
+    /**
+     * Retrieves the users in a group
+     * @param groupId The id of the group
+     * @return The list of users in the requested group or null if something wrong happened
+     */
+    public List<LocalUserObject> getUsersInGroup(long groupId) {
+        try {
+            List<UserInfo> remoteUsers = service.getUsersInGroup(groupId, session.getSessionId());
+            List<LocalUserObject> localUsers = new ArrayList<>();
+            
+            for (UserInfo remoteUser : remoteUsers) {
+                List<LocalPrivilege> localPrivileges = new ArrayList<>();
+                for (PrivilegeInfo remotePrivilege : remoteUser.getPrivileges())
+                    localPrivileges.add(new LocalPrivilege(remotePrivilege.getFeatureToken(), remotePrivilege.getAccessLevel()));
+                
+                localUsers.add(new LocalUserObject(remoteUser.getId(), remoteUser.getUserName(),
+                                        remoteUser.getFirstName(), remoteUser.getLastName(), 
+                                        remoteUser.isEnabled(), remoteUser.getType(), localPrivileges));
+            }
+            return localUsers;
+        } catch(Exception e){
+            this.error = e.getMessage();
+            return null;
+        }
+    }
+    
     /**
      * Retrieves the group list
      * @return An array of LocalUserObject
      */
-    public LocalUserGroupObject[] getGroups() {
+    public List<LocalUserGroupObject> getGroups() {
         try{
             List<GroupInfo> groups = service.getGroups(this.session.getSessionId());
-            LocalUserGroupObject[] localGroups = new LocalUserGroupObject[groups.size()];
+            List<LocalUserGroupObject> localGroups = new ArrayList<>();
 
-            int i = 0;
-            for (GroupInfo group : groups){
-                localGroups[i] = (LocalUserGroupObject) new LocalUserGroupObject(group);
-                i++;
-            }
+            for (GroupInfo group : groups)
+                localGroups.add(new LocalUserGroupObject(group));
+
             return localGroups;
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -1979,16 +2011,26 @@ public class CommunicationsStub {
     }
 
     /**
-     * Creates a new user
+     * Creates a user
+     * @param username Username
+     * @param firstName User's first name (optional)
+     * @param lastName User's last name (optional)
+     * @param password Password
+     * @param enabled Will this user be enabled by default?
+     * @param type User type. See LocalUserObjectLight.USER_TYPE* for possible values
+     * @param defaultGroupId Id of the default group this user will be associated to. Users <b>always</b> belong to at least one group. Other groups can be added later.
      * @return The newly created user
      */
-    public LocalUserObject addUser(){
+    public LocalUserObject createUser(String username, String firstName, String lastName, 
+            String password, boolean enabled, int type, long defaultGroupId) {
         try{
-            Random random = new Random();
+            long newUserId = service.createUser(username, password, firstName, lastName, 
+                    true, type, null, defaultGroupId, this.session.getSessionId());
+            
             UserInfo newUser = new UserInfo();
-            newUser.setUserName("user"+random.nextInt(10000));
-            newUser.setId(service.createUser(newUser.getUserName(), "kuwaiba", null, null, true, null, null, this.session.getSessionId()));
-            return new LocalUserObject(newUser);
+            newUser.setId(newUserId);
+            newUser.setUserName(username);
+            return new LocalUserObject(newUserId, username, firstName, lastName, enabled, type, null);
         }catch(Exception ex){
             this.error = ex.getMessage();
             return null;
@@ -1996,32 +2038,136 @@ public class CommunicationsStub {
     }
 
     /**
-     * Set user attributes (group membership is managed using other methods)
-     * @param update
-     * @return success or failure
+     * Set an existing user properties
+     * @param oid User id
+     * @param username New username (null if unchanged)
+     * @param firstName New user's first name (null if unchanged)
+     * @param lastName (null if unchanged)
+     * @param password (null if unchanged)
+     * @param enabled (null if unchanged)
+     * @param type The type of the user. See UserProfile.USER_TYPE_* for possible values
+     * @return Success or failure
      */
-    public boolean setUserProperties(long oid, String userName, String password, String firstName,
-            String lastName, long[] groups) {
-        try{
-            List<Long> myGroups = new ArrayList<Long>();
-            for (long aGroup : groups)
-                myGroups.add(aGroup);
-            service.setUserProperties(oid, userName, firstName, lastName, password, true, null, myGroups, this.session.getSessionId());
+    public boolean setUserProperties(long oid, String username, String password, 
+            String firstName, String lastName, boolean enabled, int type) {
+        try {            
+            service.setUserProperties(oid, username, firstName, lastName, password, 
+                    true, type, this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
             return false;
         }
         return true;
     }
+    
+    /**
+     * Adds a user to a group
+     * @param userId The id of the user to be added to the group
+     * @param groupId Id of the group which the user will be added to
+     * @return Success or failure
+     */
+    public boolean addUserToGroup(long userId, long groupId) {
+        try {
+            service.addUserToGroup(userId, groupId, session.getSessionId());
+            return true;
+        } catch(Exception e){
+            this.error = e.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Removes a user from a group
+     * @param userId The id of the user to be added to the group
+     * @param groupId Id of the group which the user will be added to
+     * @return Success or failure
+     */
+    public boolean removeUserFromGroup(long userId, long groupId) {
+        try {
+            service.removeUserFromGroup(userId, groupId, session.getSessionId());
+            return true;
+        } catch(Exception e){
+            this.error = e.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Adds a privilege to a user
+     * @param userId The user Id
+     * @param featureToken The feature token. See class Privilege for details. Note that this token must match to the one expected by the client application. That's the only way the correct features will be enabled.
+     * @param accessLevel The feature token. See class Privilege.ACCESS_LEVEL* for details. 
+     * @return Success or failure 
+     */
+    public boolean addPrivilegeToUser(long userId,  String featureToken, int accessLevel) {
+        try {
+            service.addPrivilegeToUser(userId, featureToken, accessLevel, session.getSessionId());
+            return true;
+        } catch(Exception e){
+            this.error = e.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Adds a privilege to a group
+     * @param groupId The user Id
+     * @param featureToken The feature token. See class Privilege for details. Note that this token must match to the one expected by the client application. That's the only way the correct features will be enabled.
+     * @param accessLevel The feature token. See class Privilege.ACCESS_LEVEL* for details. 
+     * @return Success of failure
+     */
+    public boolean addPrivilegeToGroup(long groupId, String featureToken, int accessLevel) {
+        try {
+            service.addPrivilegeToGroup(groupId, featureToken, accessLevel, session.getSessionId());
+            return true;
+        } catch(Exception e){
+            this.error = e.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Removes a privilege from a user
+     * @param userId Id of the user
+     * @param featureToken The feature token. See class Privilege for details. 
+     * @return Success or failure
+     */
+    public boolean removePrivilegeFromUser(long userId, String featureToken) {
+        try {
+            service.removePrivilegeFromUser(userId, featureToken, session.getSessionId());
+            return true;
+        } catch(Exception e){
+            this.error = e.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Removes a privilege from a user
+     * @param groupId Id of the group
+     * @param featureToken The feature token. See class Privilege for details. 
+     * @return Sucess or failure
+     */
+    public boolean removePrivilegeFromGroup(long groupId, String featureToken) {
+        try {
+            service.removePrivilegeFromGroup(groupId, featureToken, session.getSessionId());
+            return true;
+        } catch(Exception e){
+            this.error = e.getMessage();
+            return false;
+        }
+    }
 
     /**
-     * Set user attributes (group membership is managed using other methods)
-     * @param update
+     * Set group attributes (group membership is managed using other methods)
+     * @param groupId Group id
+     * @param groupName Group name (null if unchanged)
+     * @param description Group description (null if unchanged)
      * @return success or failure
      */
-    public boolean setGroupProperties(long oid, String groupName, String description) {
+    public boolean setGroupProperties(long groupId, String groupName, String description) {
         try{
-            service.setGroupProperties(oid, groupName, description, null, null, this.session.getSessionId());
+            service.setGroupProperties(groupId, groupName, description, this.session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -2032,14 +2178,15 @@ public class CommunicationsStub {
 
     /**
      * Creates a new group
-     * @return The newly created group
+     * @return The newly created group or null in case of error
      */
-    public LocalUserGroupObject addGroup(){
-        try{
-            Random random = new Random();
+    public LocalUserGroupObject createGroup(String groupName, String groupDescription){
+        try {
+            long newGroupId = service.createGroup(groupName, groupDescription, null, this.session.getSessionId()); //By default, the group is empty
             GroupInfo newGroup = new GroupInfo();
-            newGroup.setName("group"+random.nextInt(10000));
-            newGroup.setId(service.createGroup(newGroup.getName(), null, null, null, this.session.getSessionId()));
+            newGroup.setId(newGroupId);
+            newGroup.setName(groupName);
+            newGroup.setDescription(groupDescription);
             return new LocalUserGroupObject(newGroup);
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -2052,31 +2199,24 @@ public class CommunicationsStub {
      * @param oids oids for the users to be deleted
      * @return success or failure
      */
-    public boolean deleteUsers(long[] oids){
-        try{
-            ArrayList<Long> objects = new ArrayList<Long>();
-            for (long oid : oids)
-                objects.add(oid);
-            service.deleteUsers(objects,session.getSessionId());
+    public boolean deleteUsers(List<Long> oids){
+        try {
+            service.deleteUsers(oids, session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
         }
         return true;
     }
 
-
     /**
      * Removes a list of groups
      * @param oids oids for the users to be deleted
      * @return success or failure
      */
-    public boolean deleteGroups(long[] oids){
-        try{
-            ArrayList<Long> objects = new ArrayList<Long>();
-            for (long oid : oids)
-                objects.add(oid);
-            service.deleteGroups(objects,session.getSessionId());
-        }catch(Exception ex){
+    public boolean deleteGroups(List<Long> oids) {
+        try {
+            service.deleteGroups(oids, session.getSessionId());
+        } catch(Exception ex) {
             this.error = ex.getMessage();
         }
         return true;

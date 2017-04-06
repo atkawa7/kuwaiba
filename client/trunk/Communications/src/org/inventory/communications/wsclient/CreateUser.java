@@ -24,8 +24,9 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="firstName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="LastName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="enabled" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
- *         &lt;element name="privileges" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="groups" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="type" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="privileges" type="{http://ws.kuwaiba.org/}privilegeInfo" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="defaultGroupId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -42,8 +43,9 @@ import javax.xml.bind.annotation.XmlType;
     "firstName",
     "lastName",
     "enabled",
+    "type",
     "privileges",
-    "groups",
+    "defaultGroupId",
     "sessionId"
 })
 public class CreateUser {
@@ -54,10 +56,9 @@ public class CreateUser {
     @XmlElement(name = "LastName")
     protected String lastName;
     protected boolean enabled;
-    @XmlElement(nillable = true)
-    protected List<Long> privileges;
-    @XmlElement(nillable = true)
-    protected List<Long> groups;
+    protected int type;
+    protected List<PrivilegeInfo> privileges;
+    protected long defaultGroupId;
     protected String sessionId;
 
     /**
@@ -173,6 +174,22 @@ public class CreateUser {
     }
 
     /**
+     * Gets the value of the type property.
+     * 
+     */
+    public int getType() {
+        return type;
+    }
+
+    /**
+     * Sets the value of the type property.
+     * 
+     */
+    public void setType(int value) {
+        this.type = value;
+    }
+
+    /**
      * Gets the value of the privileges property.
      * 
      * <p>
@@ -190,44 +207,31 @@ public class CreateUser {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Long }
+     * {@link PrivilegeInfo }
      * 
      * 
      */
-    public List<Long> getPrivileges() {
+    public List<PrivilegeInfo> getPrivileges() {
         if (privileges == null) {
-            privileges = new ArrayList<Long>();
+            privileges = new ArrayList<PrivilegeInfo>();
         }
         return this.privileges;
     }
 
     /**
-     * Gets the value of the groups property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the groups property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getGroups().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Long }
-     * 
+     * Gets the value of the defaultGroupId property.
      * 
      */
-    public List<Long> getGroups() {
-        if (groups == null) {
-            groups = new ArrayList<Long>();
-        }
-        return this.groups;
+    public long getDefaultGroupId() {
+        return defaultGroupId;
+    }
+
+    /**
+     * Sets the value of the defaultGroupId property.
+     * 
+     */
+    public void setDefaultGroupId(long value) {
+        this.defaultGroupId = value;
     }
 
     /**

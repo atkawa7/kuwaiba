@@ -1,77 +1,63 @@
 /*
  *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
- * 
- *   Licensed under the EPL License, Version 1.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
- *        http://www.eclipse.org/legal/epl-v10.html
- * 
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
- * 
+ *
+ *  Licensed under the EPL License, Version 1.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.eclipse.org/legal/epl-v10.html
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expregss or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.inventory.core.usermanager.nodes;
 
 import javax.swing.Action;
 import org.inventory.communications.core.LocalUserObject;
-import org.inventory.core.usermanager.UserManagerTopComponent;
-import org.inventory.core.usermanager.actions.DeleteAction;
-import org.inventory.core.usermanager.nodes.properties.UserProperty;
+import org.inventory.core.usermanager.nodes.actions.UserManagerActionFactory;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Sheet;
 import org.openide.util.lookup.Lookups;
-import org.openide.windows.WindowManager;
 
 /**
- * This node wraps an LocalUserObject instance
+ * A node representing an application user
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class UserNode extends AbstractNode{
-    private LocalUserObject object;
-    public static final String PROP_USERNAME = "username";
-    public static final String PROP_LASTNAME = "lastName";
-    public static final String PROP_FIRSTNAME = "name";
-    public static final String PROP_GROUPS = "groups";
-    public static final String PROP_PASSWORD = "password";
+public class UserNode extends AbstractNode {
 
-    public UserNode(LocalUserObject localUserObject) {
-        super(Children.LEAF,Lookups.singleton(localUserObject));
-        this.object = localUserObject;
+    public static final String ICON_PATH="org/inventory/core/usermanager/res/user.png";
+    
+    public UserNode(LocalUserObject user) {
+        super(Children.LEAF, Lookups.singleton(user));
+        setIconBaseWithExtension(ICON_PATH);
+    }
+    
+    @Override
+    public String getName() {
+        return getLookup().lookup(LocalUserObject.class).getUserName();
+    }
+    
+    @Override
+    public String getDisplayName() {
+        return getLookup().lookup(LocalUserObject.class).toString();
     }
 
     @Override
-    public String getDisplayName(){
-        return object.getUserName();
+    protected Sheet createSheet() {
+        return super.createSheet(); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
     @Override
-    protected Sheet createSheet(){
-        Sheet s = super.createSheet();
-        Sheet.Set ss = s.get(Sheet.PROPERTIES);
-        if (ss == null) {
-            ss = Sheet.createPropertiesSet();
-            s.put(ss);
-        }
-        ss.put(new UserProperty(PROP_USERNAME, "Username", "User name used in the login process", object.getUserName(),this.object));
-        ss.put(new UserProperty(PROP_LASTNAME, "Last Name", "User's last name", object.getLastName()==null? "" : object.getLastName(),this.object));
-        ss.put(new UserProperty(PROP_FIRSTNAME, "First Name", "User's first name", object.getFirstName()==null ? "" : object.getFirstName(),this.object));
-        ss.put(new UserProperty(PROP_GROUPS, "Groups", "Groups this user belongs to", object.getGroups(),this.object));
-        ss.put(new UserProperty(PROP_PASSWORD, "Password", "User's password", "****",this.object));
-        return s;      
-    }
-
-    public LocalUserObject getObject(){
-        return this.object;
-    }
-
-    @Override
-    public Action[] getActions(boolean context){
-        UserManagerTopComponent tc =(UserManagerTopComponent)WindowManager.getDefault().findTopComponent("UserManagerTopComponent");
-        return new Action[]{new DeleteAction(this,tc.getUserManagerServiceInstance())};
+    public Action[] getActions(boolean context) {
+        return new Action[] { UserManagerActionFactory.getRelateToGroupAction(), 
+                              UserManagerActionFactory.getRemoveFromGroupAction(),
+                              null, //Separator
+                              UserManagerActionFactory.getDeleteUserAction()
+                            };
     }
 }

@@ -327,8 +327,7 @@ public class TransientQuery {
         }
         return this.visibleAttributeNames;
     }
-
-    public void setAttributeNames(List<String> attributeNames) {
+public void setAttributeNames(List<String> attributeNames) {
         this.attributeNames = attributeNames;
     }
 

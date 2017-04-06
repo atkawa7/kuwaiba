@@ -7,17 +7,18 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for privilegeInfo complex type.
+ * <p>Java class for removePrivilegeFromGroup complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="privilegeInfo">
+ * &lt;complexType name="removePrivilegeFromGroup">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element name="groupId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="featureToken" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="accessLevel" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -27,14 +28,32 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "privilegeInfo", propOrder = {
+@XmlType(name = "removePrivilegeFromGroup", propOrder = {
+    "groupId",
     "featureToken",
-    "accessLevel"
+    "sessionId"
 })
-public class PrivilegeInfo {
+public class RemovePrivilegeFromGroup {
 
+    protected long groupId;
     protected String featureToken;
-    protected int accessLevel;
+    protected String sessionId;
+
+    /**
+     * Gets the value of the groupId property.
+     * 
+     */
+    public long getGroupId() {
+        return groupId;
+    }
+
+    /**
+     * Sets the value of the groupId property.
+     * 
+     */
+    public void setGroupId(long value) {
+        this.groupId = value;
+    }
 
     /**
      * Gets the value of the featureToken property.
@@ -61,19 +80,27 @@ public class PrivilegeInfo {
     }
 
     /**
-     * Gets the value of the accessLevel property.
+     * Gets the value of the sessionId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public int getAccessLevel() {
-        return accessLevel;
+    public String getSessionId() {
+        return sessionId;
     }
 
     /**
-     * Sets the value of the accessLevel property.
+     * Sets the value of the sessionId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setAccessLevel(int value) {
-        this.accessLevel = value;
+    public void setSessionId(String value) {
+        this.sessionId = value;
     }
 
 }

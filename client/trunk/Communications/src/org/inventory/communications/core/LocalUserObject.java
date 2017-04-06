@@ -16,53 +16,32 @@
 
 package org.inventory.communications.core;
 
-import org.inventory.communications.wsclient.GroupInfoLight;
-import org.inventory.communications.wsclient.UserInfo;
+import java.util.List;
 
 /**
  * Implementation for the local representation of an application user
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class LocalUserObject extends LocalUserObjectLight {
-    private String firstName;
-    private String lastName;
-    private LocalUserGroupObjectLight[] groups;
+    
+    private List<LocalPrivilege> privileges;
 
-    public LocalUserObject(UserInfo user) {
-        super(user.getId(), user.getUserName());
-        this.firstName = user.getFirstName();
-        this.lastName = user.getLastName();
-        if (user.getGroups() == null)
-            this.groups = null;
-        else{
-            groups = new LocalUserGroupObjectLight[user.getGroups().size()];
-
-            int i = 0;
-            for(GroupInfoLight group : user.getGroups()){
-                groups[i] = new LocalUserGroupObjectLight(group);
-                i++;
-            }
-        }
+    public LocalUserObject(long userId, String username, String firstName, String lastName, 
+            boolean enabled, int type, List<LocalPrivilege> privileges) {
+        super(userId, username, firstName, lastName, enabled, type);
+        this.privileges = privileges;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public List<LocalPrivilege> getPrivileges() {
+        return privileges;
     }
 
-    public LocalUserGroupObjectLight[] getGroups() {
-        return groups;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setGroups(LocalUserGroupObjectLight[] groups) {
-        this.groups = groups;
+    public void setPrivileges(List<LocalPrivilege> privileges) {
+        this.privileges = privileges;
     }
     
     @Override
     public String toString() {
-        return firstName == null || lastName == null ? getUserName() : String.format("%s, %s - %s", lastName, firstName, getUserName());
+        return getFirstName() == null || getLastName() == null ? getUserName() : String.format("%s, %s  (%s)", getLastName(), getFirstName(), getUserName());
     }
 }
