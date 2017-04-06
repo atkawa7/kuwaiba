@@ -29,6 +29,8 @@ $v-font-family: lato-normal, sans-serif;
 // For more information, see: https://vaadin.com/book/-/page/themes.valo.html
 // Example variants can be copy/pasted from https://vaadin.com/wiki/-/wiki/Main/Valo+Examples
 
+$v-focus-style: none;
+
 $foot-login-padding: 10px !default;
 
 $v-luminance-threshold: 180 !default;
@@ -68,6 +70,12 @@ $v-layout-spacing-horizontal: round($v-unit-size / 1.8) !default;
 
 @mixin nuqui {
     @include valo;
+    
+    
+    .blueicon .v-icon {
+        color: #57afff;
+        font-size: 20px;
+    }
 
     .v-button-link{
         text-decoration: underline;
@@ -152,6 +160,74 @@ $v-layout-spacing-horizontal: round($v-unit-size / 1.8) !default;
         background-color: gainsboro;
         color: graytext;
         font-style: italic;
+    }
+    
+    // make
+    .main-area {
+        position: relative;
+    }
+    
+    .work-area{
+        position: absolute;
+    }
+    
+    .right-area {
+      z-index:9999;
+      position: absolute;
+      right: 0;
+      height: 100%;
+      min-width: 30%;
+      background: #f0f0f0;
+      @include transition(all 300ms);
+      @include transform(translatex(100%));
+    }
+
+    // Enables animation for opening rigth panel 
+    .visible-right {
+        @include transform(none);
+        @include box-shadow($editor-shadow);
+    }
+  
+    .left-area {
+      z-index:9999;
+      position: absolute;
+      left: 0;
+      height: 100%;
+      min-width: 30%;
+      background: #f0f0f0;
+      @include transition(all 300ms);
+      @include transform(translatex(-100%));
+    }
+    
+    // Enables animation for opening left panel 
+    .visible-left {
+      @include transform(none);
+      @include box-shadow($editor-shadow);
+    }
+  
+    .top-area {
+      top: 0;
+      background: chartreuse;
+      @include transition(all 300ms);
+      @include transform(translatey(-100%));
+    }
+  
+    // Enables animation for opening top panel 
+    .visible-top {
+      @include transform(none);
+      @include box-shadow($editor-shadow);
+    }
+  
+    .bottom-area {
+      bottom: 0;
+      background: #eb2977;
+      @include transition(all 300ms);
+      @include transform(translatey(100%));
+    }
+    // Enables animation for opening rigth panel 
+    .visible-bottom {
+      @include transform(none);
+      @include box-shadow($editor-shadow);
     }
     
     .v-button-selected {

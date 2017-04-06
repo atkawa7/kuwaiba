@@ -52,13 +52,6 @@ public class NodeProperty extends CustomComponent implements
             Sheet p = new Sheet(null, null);
             setCompositionRoot(null);
         }
-        
-        sheet.close.addClickListener(new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                ((PropertySheetComponent)parentComponent).showSheet(null);
-            }
-        });
     }
     
     /** 

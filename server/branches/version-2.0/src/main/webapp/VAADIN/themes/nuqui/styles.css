@@ -1798,8 +1798,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui select:focus {
 	outline: none;
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
 }
 
 .nuqui button {
@@ -2211,8 +2209,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .v-button:focus:after {
 	border-color: #60a0ea;
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
 }
 
 .nuqui .v-button:active:after {
@@ -2255,8 +2251,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .v-button-primary:focus:after {
 	border: inherit;
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
 }
 
 .nuqui .v-button-primary:active:after {
@@ -2300,8 +2294,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .v-button-friendly:focus:after {
 	border: inherit;
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
 }
 
 .nuqui .v-button-friendly:active:after {
@@ -2341,8 +2333,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .v-button-danger:focus:after {
 	border: inherit;
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
 }
 
 .nuqui .v-button-danger:active:after {
@@ -2611,10 +2601,8 @@ div.v-layout.v-horizontal.v-widget {
 
 :root .nuqui .v-checkbox > input:focus ~ label:before {
 	border-color: #60a0ea;
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5), inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5), inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
+	-webkit-box-shadow: inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
+	box-shadow: inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
 }
 
 :root .nuqui .v-checkbox > input ~ label:before, :root .nuqui .v-checkbox > input ~ label:after {
@@ -2741,10 +2729,8 @@ div.v-layout.v-horizontal.v-widget {
 
 :root .nuqui .v-checkbox-small > input:focus ~ label:before {
 	border-color: #60a0ea;
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5), inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5), inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
+	-webkit-box-shadow: inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
+	box-shadow: inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
 }
 
 :root .nuqui .v-checkbox-small > input ~ label:before, :root .nuqui .v-checkbox-small > input ~ label:after {
@@ -2871,10 +2857,8 @@ div.v-layout.v-horizontal.v-widget {
 
 :root .nuqui .v-checkbox-large > input:focus ~ label:before {
 	border-color: #60a0ea;
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5), inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5), inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
+	-webkit-box-shadow: inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
+	box-shadow: inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
 }
 
 :root .nuqui .v-checkbox-large > input ~ label:before, :root .nuqui .v-checkbox-large > input ~ label:after {
@@ -3028,10 +3012,8 @@ div.v-layout.v-horizontal.v-widget {
 	-moz-transition: none;
 	transition: none;
 	border-color: #60a0ea;
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5), inset 0 1px 0 #f7f7f7, 0 1px 0 rgba(255, 255, 255, 0.1);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5), inset 0 1px 0 #f7f7f7, 0 1px 0 rgba(255, 255, 255, 0.1);
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
+	-webkit-box-shadow: inset 0 1px 0 #f7f7f7, 0 1px 0 rgba(255, 255, 255, 0.1);
+	box-shadow: inset 0 1px 0 #f7f7f7, 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .nuqui .v-filterselect [class*="input"][class*="prompt"] {
@@ -3376,10 +3358,8 @@ div.v-layout.v-horizontal.v-widget {
 	-moz-transition: none;
 	transition: none;
 	border-color: #60a0ea;
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5), inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5), inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
+	-webkit-box-shadow: inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
+	box-shadow: inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
 }
 
 .nuqui .v-filterselect-no-input [class$="button"] {
@@ -4204,10 +4184,8 @@ div.v-layout.v-horizontal.v-widget {
 	-moz-transition: none;
 	transition: none;
 	border-color: #60a0ea;
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5), none;
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5), none;
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
+	-webkit-box-shadow: none;
+	box-shadow: none;
 }
 
 .nuqui .v-formlayout.light  > table > tbody > [class*="row"] > [class*="contentcell"]  > .v-textfield:focus, .nuqui .v-formlayout.light  > table > tbody > [class*="row"] > [class*="contentcell"]  > .v-textarea:focus, .nuqui .v-formlayout.light  > table > tbody > [class*="row"] > [class*="contentcell"]  > .v-filterselect input:focus, .nuqui .v-formlayout.light  > table > tbody > [class*="row"] > [class*="contentcell"]  > .v-datefield input:focus, .nuqui .v-formlayout.light  > table > tbody > [class*="row"] > [class*="contentcell"]  > .v-richtextarea:focus {
@@ -4940,8 +4918,6 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-grid-editor {
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
 	border-color: #60a0ea;
 }
 
@@ -5143,10 +5119,8 @@ div.v-layout.v-horizontal.v-widget {
 	-moz-transition: none;
 	transition: none;
 	border-color: #60a0ea;
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5), inset 0 1px 0 #f7f7f7, 0 1px 0 rgba(255, 255, 255, 0.1);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5), inset 0 1px 0 #f7f7f7, 0 1px 0 rgba(255, 255, 255, 0.1);
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
+	-webkit-box-shadow: inset 0 1px 0 #f7f7f7, 0 1px 0 rgba(255, 255, 255, 0.1);
+	box-shadow: inset 0 1px 0 #f7f7f7, 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .nuqui .v-textfield[class*="prompt"] {
@@ -5613,10 +5587,8 @@ div.v-layout.v-horizontal.v-widget {
 	-moz-transition: none;
 	transition: none;
 	border-color: #60a0ea;
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5), inset 0 1px 0 #f7f7f7, 0 1px 0 rgba(255, 255, 255, 0.1);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5), inset 0 1px 0 #f7f7f7, 0 1px 0 rgba(255, 255, 255, 0.1);
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
+	-webkit-box-shadow: inset 0 1px 0 #f7f7f7, 0 1px 0 rgba(255, 255, 255, 0.1);
+	box-shadow: inset 0 1px 0 #f7f7f7, 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .nuqui .v-textarea[class*="prompt"] {
@@ -5902,10 +5874,8 @@ div.v-layout.v-horizontal.v-widget {
 	-moz-transition: none;
 	transition: none;
 	border-color: #60a0ea;
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5), inset 0 1px 0 #f7f7f7, 0 1px 0 rgba(255, 255, 255, 0.1);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5), inset 0 1px 0 #f7f7f7, 0 1px 0 rgba(255, 255, 255, 0.1);
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
+	-webkit-box-shadow: inset 0 1px 0 #f7f7f7, 0 1px 0 rgba(255, 255, 255, 0.1);
+	box-shadow: inset 0 1px 0 #f7f7f7, 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .nuqui .v-datefield [class*="textfield"][class*="prompt"] {
@@ -6121,8 +6091,6 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-datefield-popup .v-datefield-calendarpanel-day.v-datefield-calendarpanel-day-focused {
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
 	position: relative;
 }
 
@@ -6314,8 +6282,6 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-datefield-calendarpanel-day.v-datefield-calendarpanel-day-focused {
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
 	position: relative;
 }
 
@@ -7009,8 +6975,6 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-inline-datefield-calendarpanel-day.v-inline-datefield-calendarpanel-day-focused {
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
 	position: relative;
 }
 
@@ -7240,8 +7204,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .v-menubar:focus:after {
 	border-color: #60a0ea;
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
 }
 
 .nuqui .v-menubar  > .v-menubar-menuitem {
@@ -7641,10 +7603,8 @@ div.v-layout.v-horizontal.v-widget {
 
 :root .nuqui .v-radiobutton > input:focus ~ label:before {
 	border-color: #60a0ea;
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5), inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5), inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
+	-webkit-box-shadow: inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
+	box-shadow: inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
 }
 
 :root .nuqui .v-radiobutton > input ~ label:before, :root .nuqui .v-radiobutton > input ~ label:after {
@@ -7804,10 +7764,8 @@ div.v-layout.v-horizontal.v-widget {
 
 :root .nuqui .v-select-optiongroup-small .v-checkbox > input:focus ~ label:before {
 	border-color: #60a0ea;
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5), inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5), inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
+	-webkit-box-shadow: inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
+	box-shadow: inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
 }
 
 :root .nuqui .v-select-optiongroup-small .v-checkbox > input ~ label:before, :root .nuqui .v-select-optiongroup-small .v-checkbox > input ~ label:after {
@@ -7933,10 +7891,8 @@ div.v-layout.v-horizontal.v-widget {
 
 :root .nuqui .v-select-optiongroup-small .v-radiobutton > input:focus ~ label:before {
 	border-color: #60a0ea;
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5), inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5), inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
+	-webkit-box-shadow: inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
+	box-shadow: inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
 }
 
 :root .nuqui .v-select-optiongroup-small .v-radiobutton > input ~ label:before, :root .nuqui .v-select-optiongroup-small .v-radiobutton > input ~ label:after {
@@ -8096,10 +8052,8 @@ div.v-layout.v-horizontal.v-widget {
 
 :root .nuqui .v-select-optiongroup-large .v-checkbox > input:focus ~ label:before {
 	border-color: #60a0ea;
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5), inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5), inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
+	-webkit-box-shadow: inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
+	box-shadow: inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
 }
 
 :root .nuqui .v-select-optiongroup-large .v-checkbox > input ~ label:before, :root .nuqui .v-select-optiongroup-large .v-checkbox > input ~ label:after {
@@ -8225,10 +8179,8 @@ div.v-layout.v-horizontal.v-widget {
 
 :root .nuqui .v-select-optiongroup-large .v-radiobutton > input:focus ~ label:before {
 	border-color: #60a0ea;
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5), inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5), inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
+	-webkit-box-shadow: inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
+	box-shadow: inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
 }
 
 :root .nuqui .v-select-optiongroup-large .v-radiobutton > input ~ label:before, :root .nuqui .v-select-optiongroup-large .v-radiobutton > input ~ label:after {
@@ -9261,8 +9213,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .v-table-column-selector:focus:after {
 	border-color: #60a0ea;
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
 }
 
 .nuqui .v-table-column-selector:active:after {
@@ -9623,8 +9573,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .v-splitpanel-horizontal  > div > .v-splitpanel-hsplitter div:before:focus:after {
 	border-color: #60a0ea;
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
 }
 
 .nuqui .v-splitpanel-horizontal  > div > .v-splitpanel-hsplitter div:before:active:after {
@@ -9680,8 +9628,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .v-splitpanel-vertical  > div > .v-splitpanel-vsplitter div:before:focus:after {
 	border-color: #60a0ea;
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
 }
 
 .nuqui .v-splitpanel-vertical  > div > .v-splitpanel-vsplitter div:before:active:after {
@@ -9736,8 +9682,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .v-splitpanel-horizontal.large  > div > .v-splitpanel-hsplitter div:before:focus:after {
 	border-color: #60a0ea;
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
 }
 
 .nuqui .v-splitpanel-horizontal.large  > div > .v-splitpanel-hsplitter div:before:active:after {
@@ -9807,8 +9751,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .v-splitpanel-vertical.large  > div > .v-splitpanel-vsplitter div:before:focus:after {
 	border-color: #60a0ea;
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
 }
 
 .nuqui .v-splitpanel-vertical.large  > div > .v-splitpanel-vsplitter div:before:active:after {
@@ -10038,8 +9980,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .v-slider-handle:before:focus:after {
 	border-color: #60a0ea;
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
 }
 
 .nuqui .v-slider-handle:before:active:after {
@@ -10049,8 +9989,6 @@ div.v-layout.v-horizontal.v-widget {
 .nuqui .v-slider-handle:after {
 	border: 1px solid #c5c5c5;
 	border-color: #60a0ea;
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
 	opacity: 0;
 	-webkit-transition: opacity 200ms;
 	-moz-transition: opacity 200ms;
@@ -10955,8 +10893,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .v-select-twincol select:focus {
 	outline: none;
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
 }
 
 .nuqui .v-select-twincol .v-textfield, .nuqui .v-select-twincol .v-nativebutton {
@@ -11045,8 +10981,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .v-select select:focus {
 	outline: none;
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
 }
 
 .nuqui .v-select-select {
@@ -11777,8 +11711,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .v-select select:focus {
 	outline: none;
-	-webkit-box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
-	box-shadow: 0 0 0 2px rgba(96, 160, 234, 0.5);
 }
 
 .nuqui .v-select-select {
@@ -13047,6 +12979,11 @@ div.v-layout.v-horizontal.v-widget {
 	overflow: hidden;
 }
 
+.nuqui .blueicon .v-icon {
+	color: #57afff;
+	font-size: 20px;
+}
+
 .nuqui .v-button-link {
 	text-decoration: underline;
 	border: none !important;
@@ -13129,6 +13066,114 @@ div.v-layout.v-horizontal.v-widget {
 	background-color: gainsboro;
 	color: graytext;
 	font-style: italic;
+}
+
+.nuqui .main-area {
+	position: relative;
+}
+
+.nuqui .work-area {
+	position: absolute;
+}
+
+.nuqui .right-area {
+	z-index: 9999;
+	position: absolute;
+	right: 0;
+	height: 100%;
+	min-width: 30%;
+	background: #f0f0f0;
+	-webkit-transition: all 300ms;
+	-moz-transition: all 300ms;
+	transition: all 300ms;
+	-webkit-transform: translatex(100%);
+	-moz-transform: translatex(100%);
+	-ms-transform: translatex(100%);
+	-o-transform: translatex(100%);
+	transform: translatex(100%);
+}
+
+.nuqui .visible-right {
+	-webkit-transform: none;
+	-moz-transform: none;
+	-ms-transform: none;
+	-o-transform: none;
+	transform: none;
+	-webkit-box-shadow: 0 0 10px 10px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 0 10px 10px rgba(0, 0, 0, 0.1);
+}
+
+.nuqui .left-area {
+	z-index: 9999;
+	position: absolute;
+	left: 0;
+	height: 100%;
+	min-width: 30%;
+	background: #f0f0f0;
+	-webkit-transition: all 300ms;
+	-moz-transition: all 300ms;
+	transition: all 300ms;
+	-webkit-transform: translatex(-100%);
+	-moz-transform: translatex(-100%);
+	-ms-transform: translatex(-100%);
+	-o-transform: translatex(-100%);
+	transform: translatex(-100%);
+}
+
+.nuqui .visible-left {
+	-webkit-transform: none;
+	-moz-transform: none;
+	-ms-transform: none;
+	-o-transform: none;
+	transform: none;
+	-webkit-box-shadow: 0 0 10px 10px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 0 10px 10px rgba(0, 0, 0, 0.1);
+}
+
+.nuqui .top-area {
+	top: 0;
+	background: chartreuse;
+	-webkit-transition: all 300ms;
+	-moz-transition: all 300ms;
+	transition: all 300ms;
+	-webkit-transform: translatey(-100%);
+	-moz-transform: translatey(-100%);
+	-ms-transform: translatey(-100%);
+	-o-transform: translatey(-100%);
+	transform: translatey(-100%);
+}
+
+.nuqui .visible-top {
+	-webkit-transform: none;
+	-moz-transform: none;
+	-ms-transform: none;
+	-o-transform: none;
+	transform: none;
+	-webkit-box-shadow: 0 0 10px 10px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 0 10px 10px rgba(0, 0, 0, 0.1);
+}
+
+.nuqui .bottom-area {
+	bottom: 0;
+	background: #eb2977;
+	-webkit-transition: all 300ms;
+	-moz-transition: all 300ms;
+	transition: all 300ms;
+	-webkit-transform: translatey(100%);
+	-moz-transform: translatey(100%);
+	-ms-transform: translatey(100%);
+	-o-transform: translatey(100%);
+	transform: translatey(100%);
+}
+
+.nuqui .visible-bottom {
+	-webkit-transform: none;
+	-moz-transform: none;
+	-ms-transform: none;
+	-o-transform: none;
+	transform: none;
+	-webkit-box-shadow: 0 0 10px 10px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 0 10px 10px rgba(0, 0, 0, 0.1);
 }
 
 .nuqui .v-button-selected {

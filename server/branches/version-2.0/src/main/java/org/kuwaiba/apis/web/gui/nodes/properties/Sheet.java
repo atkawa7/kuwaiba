@@ -35,7 +35,6 @@ public class Sheet<T extends Object> extends Table {
     private final AbstractNodePorpertyValueChangeListener<T> valueChangeListener;
     protected BeanItem<T> object;
     private final Label descriptionText;  
-    Button close;
         
     public Sheet(BeanItem<T> object, AbstractNodePorpertyValueChangeListener<T> valueChangeListener) {
         this.object = object;
@@ -46,8 +45,6 @@ public class Sheet<T extends Object> extends Table {
         addContainerProperty("Attribute", Label.class, null);
         addContainerProperty("Value", Component.class, null);
         addSelectedObjectId();
-        close =  new Button(">");
-        this.addItem(new Object[] {new Label("a"), close}, 1212);
     }
     
     public void createDateProperty(String propertyCaption, String description, Date date, int i){
@@ -109,7 +106,6 @@ public class Sheet<T extends Object> extends Table {
             Label id = new Label(Constants.PROPERTY_ID);
             id.addStyleName(ValoTheme.LABEL_BOLD);
             this.addItem(new Object[] {id, objectId}, 0);
-            this.addItem(new Object[] {new Label("dsdsdsa"), close}, 20);
         }
     }
    
