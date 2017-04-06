@@ -105,7 +105,7 @@ public final class LoadDataFromFile{
             NotAuthorizedException, RemoteException, MetadataObjectNotFoundException, 
             InvalidArgumentException, ObjectNotFoundException, OperationNotPermittedException, WrongMappingException
     {
-        this.userId = aem.getUserInSession(IPAddress, sessionId).getId();
+        this.userId = aem.getUserInSession(sessionId).getId();
         
         DateFormat dateFormat = new SimpleDateFormat(DATE_HOUR_FORMAT);
         FileOutputStream fileOuputStream = null;

@@ -16,30 +16,13 @@
 
 package org.kuwaiba.apis.persistence.application;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
- * Represents a group
+ * A group of users
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class GroupProfile implements Serializable{
-    /**
-     * Group's id (oid)
-     */
-    private long id;
-    /**
-     * Group's name
-     */
-    private String name;
-    /**
-     * Group's description
-     */
-    private String description;
-    /**
-     * Group's creation date (in milliseconds, it's a timestamp)
-     */
-    private long creationDate;
+public class GroupProfile extends GroupProfileLight {
     /**
      * Group's users
      */
@@ -49,51 +32,18 @@ public class GroupProfile implements Serializable{
      */
     private List<Privilege> privileges;
 
-    public GroupProfile() {
-    }
-
     public GroupProfile(long id, String name, String description, long creationDate) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.creationDate = creationDate;
+        super(id, name, description, creationDate);
+        
     }
 
     public GroupProfile(long id, String name, String description, long creationDate,
             List<UserProfile> users, List<Privilege> privileges) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.creationDate = creationDate;
+        super(id, name, description, creationDate);
         this.users = users;
         this.privileges = privileges;
     }
     
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long groupId) {
-        this.id = groupId;
-    }
-
-    
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String groupDescription) {
-        this.description = groupDescription;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String groupName) {
-        this.name = groupName;
-    }
-
     public List<Privilege> getPrivileges() {
         return privileges;
     }
@@ -108,13 +58,5 @@ public class GroupProfile implements Serializable{
 
     public void setUsers(List<UserProfile> users) {
         this.users = users;
-    }
-
-    public long getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(long creationDate) {
-        this.creationDate = creationDate;
     }
 }

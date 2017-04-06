@@ -35,10 +35,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
+import org.kuwaiba.apis.persistence.application.GroupProfileLight;
 import org.kuwaiba.apis.persistence.application.Pool;
 import org.kuwaiba.apis.persistence.application.Privilege;
 import org.kuwaiba.apis.persistence.application.Task;
 import org.kuwaiba.apis.persistence.application.UserProfile;
+import org.kuwaiba.apis.persistence.application.UserProfileLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
@@ -50,6 +52,7 @@ import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.apis.persistence.metadata.GenericObjectList;
+import org.kuwaiba.services.persistence.cache.CacheManager;
 import org.kuwaiba.services.persistence.impl.neo4j.RelTypes;
 import org.kuwaiba.ws.todeserialize.StringPair;
 import org.kuwaiba.ws.toserialize.application.RemotePool;
@@ -61,6 +64,7 @@ import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Path;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.traversal.TraversalDescription;
 import org.neo4j.kernel.impl.traversal.MonoDirectionalTraversalDescription;
 
@@ -464,10 +468,10 @@ public class Util {
         TaskNotificationDescriptor notificationType = new TaskNotificationDescriptor(taskNode.hasProperty(Constants.PROPERTY_EMAIL) ? (String)taskNode.getProperty(Constants.PROPERTY_EMAIL) : "", 
                                                                             taskNode.hasProperty(Constants.PROPERTY_NOTIFICATION_TYPE) ? (int)taskNode.getProperty(Constants.PROPERTY_NOTIFICATION_TYPE) : 0);
         
-        List<UserProfile> subscribedUsers = new ArrayList<>();
+        List<UserProfileLight> subscribedUsers = new ArrayList<>();
         
         for (Relationship rel : taskNode.getRelationships(Direction.INCOMING, RelTypes.SUBSCRIBED_TO))
-            subscribedUsers.add(createUserProfileFromNode(rel.getStartNode()));
+            subscribedUsers.add(createUserProfileLightFromNode(rel.getStartNode()));
         
         return new Task(taskNode.getId(),
                                 (String)taskNode.getProperty(Constants.PROPERTY_NAME), 
@@ -535,47 +539,115 @@ public class Util {
     }
 
     /**
-     * Converts a node representing a user into a UserProfile object
-     * @param userNode
-     * @return UserProfile
+     * Creates a UserProfileLight object (a user object without privileges) from a node
+     * @param userNode The source user node
+     * @return The UserProfileLight object built with the information of the source node
      */
 
-    public static UserProfile createUserProfileFromNode(Node userNode){
-       List<GroupProfile> groups = new ArrayList<>();
+    public static UserProfileLight createUserProfileLightFromNode(Node userNode){
+       
+       return   new UserProfileLight(userNode.getId(),
+                (String)userNode.getProperty(UserProfile.PROPERTY_NAME),
+                (String)userNode.getProperty(UserProfile.PROPERTY_FIRST_NAME),
+                (String)userNode.getProperty(UserProfile.PROPERTY_LAST_NAME),
+                (boolean)userNode.getProperty(UserProfile.PROPERTY_ENABLED),
+                (long)userNode.getProperty(UserProfile.PROPERTY_CREATION_DATE),
+                userNode.hasProperty(UserProfile.PROPERTY_TYPE) ?  //To keep backward compatibility
+                        (int)userNode.getProperty(UserProfile.PROPERTY_TYPE) : UserProfile.USER_TYPE_GUI);
+    }
+    
+    /**
+     * Converts a node representing a user into a UserProfile object. The privileges inherited from the 
+     * group <b>will not</b> be taken into account. See also <code>createUserProfileFromNode</code>.
+     * @param userNode The source user node
+     * @return UserProfile The UserProfile object built with the information of the source node
+     */
+
+    public static UserProfile createUserProfileWithoutGroupPrivilegesFromNode(Node userNode){
        List<Privilege> privileges = new ArrayList<>();
-       Iterable<Relationship> groupRelationships = userNode.getRelationships(RelTypes.BELONGS_TO_GROUP, Direction.OUTGOING);
-       //groups
-       for (Relationship relationship : groupRelationships) {
-           //group Privileges         
-           Node groupNode = relationship.getEndNode();
-           List<Privilege> groupPrivileges = new ArrayList<>();
-           for(Relationship rel: groupNode.getRelationships(RelTypes.HAS_PRIVILEGE, Direction.INCOMING))
-                groupPrivileges.add(createPrivilegeFromNode(rel.getStartNode()));
-           //TODO get users
-           groups.add(new GroupProfile(groupNode.getId(),
-                        (String)groupNode.getProperty(Constants.PROPERTY_NAME),
-                        groupNode.hasProperty(Constants.PROPERTY_DESCRIPTION) ? (String)groupNode.getProperty(Constants.PROPERTY_DESCRIPTION) : "",
-                        (Long)groupNode.getProperty(Constants.PROPERTY_CREATION_DATE),
-                        null,groupPrivileges));
-            
-       }//end for
+
        for(Relationship relationship: userNode.getRelationships(RelTypes.HAS_PRIVILEGE, Direction.INCOMING))
            privileges.add(createPrivilegeFromNode(relationship.getStartNode()));
        
-       UserProfile user =  new UserProfile(userNode.getId(),
-                (String)userNode.getProperty(Constants.PROPERTY_NAME),
-                (String)userNode.getProperty(Constants.PROPERTY_FIRST_NAME),
-                (String)userNode.getProperty(Constants.PROPERTY_LAST_NAME),
-                (Long)userNode.getProperty(Constants.PROPERTY_CREATION_DATE),
-                (Boolean)userNode.getProperty(Constants.PROPERTY_ENABLED),
-                groups, privileges);
-        return user;
+       return   new UserProfile(userNode.getId(),
+                (String)userNode.getProperty(UserProfile.PROPERTY_NAME),
+                (String)userNode.getProperty(UserProfile.PROPERTY_FIRST_NAME),
+                (String)userNode.getProperty(UserProfile.PROPERTY_LAST_NAME),
+                (boolean)userNode.getProperty(UserProfile.PROPERTY_ENABLED),
+                (long)userNode.getProperty(UserProfile.PROPERTY_CREATION_DATE),
+                userNode.hasProperty(UserProfile.PROPERTY_TYPE) ?  //To keep backward compatibility
+                        (int)userNode.getProperty(UserProfile.PROPERTY_TYPE) : UserProfile.USER_TYPE_GUI, 
+                privileges);
+    }
+    
+    /**
+     * Converts a node representing a user into a UserProfile object. The privileges inherited from the 
+     * group <b>will</b> be computed. Note that the user privileges override the group privileges with the same feature token. 
+     * See also <code>createUserProfileWithoutGroupPrivilegesFromNode</code>.
+     * @param userNode The source user node
+     * @return UserProfile The UserProfile object built with the information of the source node
+     */
+    public static UserProfile createUserProfileWithGroupPrivilegesFromNode(Node userNode){
+       List<Privilege> privileges = new ArrayList<>();
+       
+       for (Relationship relationship : userNode.getRelationships(RelTypes.BELONGS_TO_GROUP, Direction.OUTGOING)) {
+           //group Privileges         
+           Node groupNode = relationship.getEndNode();
+           
+           for(Relationship rel: groupNode.getRelationships(RelTypes.HAS_PRIVILEGE, Direction.INCOMING))
+                privileges.add(createPrivilegeFromNode(rel.getStartNode()));
+       }
+
+       for(Relationship relationship: userNode.getRelationships(RelTypes.HAS_PRIVILEGE, Direction.INCOMING)) {
+            Privilege userPrivilege = createPrivilegeFromNode(relationship.getStartNode());
+            //If the privilege already exists, override it
+            privileges.remove(userPrivilege); //Note that two privileges with the same feature token and different access level are equals.
+            privileges.add(userPrivilege);
+       }
+       
+       return   new UserProfile(userNode.getId(),
+                (String)userNode.getProperty(UserProfile.PROPERTY_NAME),
+                (String)userNode.getProperty(UserProfile.PROPERTY_FIRST_NAME),
+                (String)userNode.getProperty(UserProfile.PROPERTY_LAST_NAME),
+                (boolean)userNode.getProperty(UserProfile.PROPERTY_ENABLED),
+                (long)userNode.getProperty(UserProfile.PROPERTY_CREATION_DATE),
+                userNode.hasProperty(UserProfile.PROPERTY_TYPE) ?  //To keep backward compatibility
+                        (int)userNode.getProperty(UserProfile.PROPERTY_TYPE) : UserProfile.USER_TYPE_GUI, 
+                privileges);
+    }
+    
+    /**
+     * Releases all the relationships associated to a user, and deletes the node corresponding to such user.
+     * should be released but the caller
+     * @param userNode The user node
+     * @param userIndex Index of users. Used to remove the user node before top actually delete it
+     * @throws InvalidArgumentException If you try to delete the default administrator
+     */
+    public static void deleteUserNode(Node userNode, Index<Node> userIndex) throws InvalidArgumentException {
+        
+        if (UserProfile.DEFAULT_ADMIN.equals(userNode.getProperty(UserProfile.PROPERTY_NAME)))
+            throw new InvalidArgumentException("The default administrator can not be deleted");
+
+        //Delete the privilege nodes
+        for (Relationship hasPrivilegeRelationship : userNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_PRIVILEGE)) { 
+            Node privilegeNode = hasPrivilegeRelationship.getEndNode();
+            hasPrivilegeRelationship.delete();
+            privilegeNode.delete();
+        }
+
+        //Delete the rest of relationships
+        for (Relationship relationship : userNode.getRelationships()) 
+            relationship.delete();
+        
+        userIndex.remove(userNode);
+        userNode.delete();
+        CacheManager.getInstance().removeUser((String)userNode.getProperty(Constants.PROPERTY_NAME));
     }
 
     /**
      * Converts a node representing a group into a GroupProfile object
-     * @param groupNode
-     * @return
+     * @param groupNode The source node
+     * @return A GroupProfile object built from the source node information
      */
     public static GroupProfile createGroupProfileFromNode(Node groupNode){
         
@@ -588,39 +660,50 @@ public class Util {
             List<Privilege> userPrivileges = new ArrayList<>();
             for(Relationship rel: userNode.getRelationships(RelTypes.HAS_PRIVILEGE, Direction.INCOMING))
                 userPrivileges.add(createPrivilegeFromNode(rel.getStartNode()));
-            //TODO User Groups
+
             users.add(new UserProfile(userNode.getId(),
-                        (String)userNode.getProperty(Constants.PROPERTY_NAME),
-                        (String)userNode.getProperty(Constants.PROPERTY_FIRST_NAME),
-                        (String)userNode.getProperty(Constants.PROPERTY_LAST_NAME),
-                        (Boolean)userNode.getProperty(Constants.PROPERTY_ENABLED),
-                        (Long)userNode.getProperty(Constants.PROPERTY_CREATION_DATE),
-                        userPrivileges)
-                     );
+                        (String)userNode.getProperty(UserProfile.PROPERTY_NAME),
+                        (String)userNode.getProperty(UserProfile.PROPERTY_FIRST_NAME),
+                        (String)userNode.getProperty(UserProfile.PROPERTY_LAST_NAME),
+                        (boolean)userNode.getProperty(UserProfile.PROPERTY_ENABLED),
+                        (long)userNode.getProperty(UserProfile.PROPERTY_CREATION_DATE),
+                        userNode.hasProperty(UserProfile.PROPERTY_TYPE) ?  //To keep backward compatibility
+                            (int)userNode.getProperty(UserProfile.PROPERTY_TYPE) :
+                            UserProfile.USER_TYPE_GUI, userPrivileges));
         }
+        
         List<Privilege> privileges = new ArrayList<>();
         for(Relationship relationship: groupNode.getRelationships(RelTypes.HAS_PRIVILEGE, Direction.INCOMING)){
            Node node = relationship.getStartNode();
            privileges.add(createPrivilegeFromNode(node));
         }
         
-        GroupProfile group =  new GroupProfile(
-                groupNode.getId(),
+        GroupProfile group =  new GroupProfile(groupNode.getId(),
                 (String)groupNode.getProperty(Constants.PROPERTY_NAME),
                 groupNode.hasProperty(Constants.PROPERTY_DESCRIPTION) ? 
                         (String)groupNode.getProperty(Constants.PROPERTY_DESCRIPTION) : "",
                 (Long)groupNode.getProperty(Constants.PROPERTY_CREATION_DATE),
-                users,privileges);
+                users, privileges);
         return group;
+    }
+    
+    /**
+     * Converts a node representing a group into a GroupProfileLight object
+     * @param groupNode The source node
+     * @return A GroupProfileLight object built from the source node information
+     */
+    public static GroupProfileLight createGroupProfileLightFromNode(Node groupNode){        
+        return  new GroupProfileLight(groupNode.getId(),
+                (String)groupNode.getProperty(Constants.PROPERTY_NAME),
+                groupNode.hasProperty(Constants.PROPERTY_DESCRIPTION) ? 
+                        (String)groupNode.getProperty(Constants.PROPERTY_DESCRIPTION) : "",
+                (Long)groupNode.getProperty(Constants.PROPERTY_CREATION_DATE));
     }
     
     
     public static Privilege createPrivilegeFromNode(Node privilegeNode){
-        return new Privilege((Long)privilegeNode.getProperty(Constants.PROPERTY_CODE), 
-                (String)privilegeNode.getProperty(Constants.PROPERTY_METHOD_GROUP),
-                (String)privilegeNode.getProperty(Constants.PROPERTY_NAME), 
-                (String)privilegeNode.getProperty(Constants.PROPERTY_METHOD_MANAGER), 
-                (long[])privilegeNode.getProperty(Constants.PROPERTY_DEPENDS_OF));
+        return new Privilege((String)privilegeNode.getProperty(Privilege.PROPERTY_FEATURE_TOKEN), 
+                (int)privilegeNode.getProperty(Privilege.PROPERTY_ACCESS_LEVEL));
     }
     
     /**

@@ -16,104 +16,77 @@
 
 package org.kuwaiba.apis.persistence.application;
 
-import java.io.Serializable;
+import java.util.Objects;
+
 
 /**
- * Codes assigned to the different available privileges
+ * A privilege is composed by a string token (unique id of the module or method 
+ * the privilege refers to, for example "nav-tree" or "create-object") and a number 
+ * that specifies the access level (see ACCESS_LEVEL* for possible values)
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class Privilege implements Serializable{
+public class Privilege {
+
     /**
-     * User/ group can login into the application. It's a dummy permission
+     * The user can access the feature in a read-only mode
      */
-    public static final int PRIVILEGE_LOGIN = 0;
+    public static final int ACCESS_LEVEL_READ = 1;
     /**
-     * User/group can create objects
+     * The user can access the feature in a read and write mode
      */
-    public static final int PRIVILEGE_CREATE_OBJECT = 1;
+    public static final int ACCESS_LEVEL_READ_WRITE = 2;
     /**
-     * User/group can create classes
+     * Feature token property name to be used in the data base
      */
-    public static final int PRIVILEGE_CREATE_CLASS = 2;
+    public static final String PROPERTY_FEATURE_TOKEN = "featureToken";
     /**
-     * Privilege id
+     * Access level property name to be used in the data base
      */
-    private long id;
+    public static final String PROPERTY_ACCESS_LEVEL = "accessLevel";
     /**
-     * Privilege code 
+     * The unique id of the feature (for example, a web service method or a simple string with the name of the module)
      */
-    private long code;
+    private String featureToken;
     /**
-     * 
+     * Access level. See ACCESS_LEVEL* for possible values 
      */
-    private String methodGroup;
-    /**
-     * 
-     */
-    private String methodName;
-    /**
-     * 
-     */
-    private String methodManager;
-    /**
-     * 
-     */
-    private long [] dependsOf;
+    private int accessLevel;
+    
 
-    public Privilege(long code, String methodGroup, String methodName, String methodManager, long[] dependsOf) {
-        this.code = code;
-        this.methodGroup = methodGroup;
-        this.methodName = methodName;
-        this.methodManager = methodManager;
-        this.dependsOf = dependsOf;
+    public Privilege(String featureToken, int accessLevel) {
+        this.featureToken = featureToken;
+        this.accessLevel = accessLevel;
     }
 
-    public long getId() {
-        return id;
+    public String getFeatureToken() {
+        return featureToken;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setFeatureToken(String featureToken) {
+        this.featureToken = featureToken;
     }
 
-    public long getCode() {
-        return code;
+    public int getAccessLevel() {
+        return accessLevel;
     }
 
-    public void setCode(long code) {
-        this.code = code;
-    }
-
-    public String getMethodGroup() {
-        return methodGroup;
-    }
-
-    public void setMethodGroup(String methodGroup) {
-        this.methodGroup = methodGroup;
-    }
-
-    public String getMethodName() {
-        return methodName;
-    }
-
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
-    }
-
-    public String getMethodManager() {
-        return methodManager;
-    }
-
-    public void setMethodManager(String methodManager) {
-        this.methodManager = methodManager;
-    }
-
-    public long[] getDependsOf() {
-        return dependsOf;
-    }
-
-    public void setDependsOf(long[] dependsOf) {
-        this.dependsOf = dependsOf;
+    public void setAccessLevel(int accessLevel) {
+        this.accessLevel = accessLevel;
     }
     
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Privilege) 
+            return featureToken.equals(((Privilege)obj).getFeatureToken()); //Only the feature token is enough
+         else
+            return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 13 * hash + Objects.hashCode(this.featureToken);
+        hash = 13 * hash + this.accessLevel;
+        return hash;
+    }
 }

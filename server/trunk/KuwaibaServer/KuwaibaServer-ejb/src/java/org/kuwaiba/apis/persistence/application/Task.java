@@ -61,10 +61,10 @@ public final class Task {
     /**
      * Users subscribed to the task
      */
-    private List<UserProfile> users;
+    private List<UserProfileLight> users;
 
     public Task(long id, String name, String description, boolean enabled, String script, 
-            List<StringPair> parameters, TaskScheduleDescriptor schedule, TaskNotificationDescriptor notificationType, List<UserProfile> users) {
+            List<StringPair> parameters, TaskScheduleDescriptor schedule, TaskNotificationDescriptor notificationType, List<UserProfileLight> users) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -140,11 +140,11 @@ public final class Task {
         this.id = id;
     }
 
-    public List<UserProfile> getUsers() {
+    public List<UserProfileLight> getUsers() {
         return users;
     }
 
-    public void setUsers(List<UserProfile> users) {
+    public void setUsers(List<UserProfileLight> users) {
         this.users = users;
     }
     

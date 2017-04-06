@@ -52,7 +52,9 @@ import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
 import org.kuwaiba.apis.persistence.application.CompactQuery;
 import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
+import org.kuwaiba.apis.persistence.application.GroupProfileLight;
 import org.kuwaiba.apis.persistence.application.Pool;
+import org.kuwaiba.apis.persistence.application.Privilege;
 import org.kuwaiba.apis.persistence.application.ResultRecord;
 import org.kuwaiba.apis.persistence.application.Session;
 import org.kuwaiba.apis.persistence.application.Task;
@@ -137,10 +139,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
      */
     private Index<Node> poolsIndex;
     /**
-     * Privilege index 
-     */
-    private Index<Node> privilegeIndex;
-    /**
      * Task index
      */
     private Index<Node> taskIndex;
@@ -183,7 +181,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             this.objectIndex = graphDb.index().forNodes(Constants.INDEX_OBJECTS);
             this.generalViewsIndex = graphDb.index().forNodes(Constants.INDEX_GENERAL_VIEWS);
             this.poolsIndex = graphDb.index().forNodes(Constants.INDEX_POOLS);
-            this.privilegeIndex = graphDb.index().forNodes(Constants.INDEX_PRIVILEGE_NODES);
             this.taskIndex = graphDb.index().forNodes(Constants.INDEX_TASKS);
             this.specialNodesIndex = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES);
             for (Node listTypeNode : listTypeItemsIndex.query(Constants.PROPERTY_ID, "*")){
@@ -205,9 +202,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     //TODO add ipAddress, sessionId
     @Override
     public long createUser(String userName, String password, String firstName,
-            String lastName, boolean enabled, long[] privileges, long[] groups)
-            throws InvalidArgumentException 
-    {
+            String lastName, boolean enabled, int type, List<Privilege> privileges, long defaultGroupId)
+            throws InvalidArgumentException {
         if (userName == null)
             throw new InvalidArgumentException("User name can not be null");
         
@@ -223,6 +219,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         if (password.trim().isEmpty())
             throw new InvalidArgumentException("Password can not be an empty string");
         
+        if (type != UserProfile.USER_TYPE_GUI && type != UserProfile.USER_TYPE_WEB_SERVICE && type != UserProfile.USER_TYPE_SOUTHBOUND)
+            throw new InvalidArgumentException("Invalid user type");
+            
         try(Transaction tx = graphDb.beginTx()) {
             Node storedUser = userIndex.get(Constants.PROPERTY_NAME, userName).getSingle();
             if (storedUser != null)
@@ -231,121 +230,111 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             Label label = DynamicLabel.label(Constants.INDEX_USERS);
             Node newUserNode = graphDb.createNode(label);
 
-            newUserNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
-            newUserNode.setProperty(Constants.PROPERTY_NAME, userName);
-            newUserNode.setProperty(Constants.PROPERTY_PASSWORD, BCrypt.hashpw(password, BCrypt.gensalt()));
-                
-            if(firstName == null)
-                firstName = "";
-            newUserNode.setProperty(Constants.PROPERTY_FIRST_NAME, firstName);
-            if(lastName == null)
-                lastName = "";
-            newUserNode.setProperty(Constants.PROPERTY_LAST_NAME, lastName);
-
+            newUserNode.setProperty(UserProfile.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
+            newUserNode.setProperty(UserProfile.PROPERTY_NAME, userName);
+            newUserNode.setProperty(UserProfile.PROPERTY_PASSWORD, BCrypt.hashpw(password, BCrypt.gensalt()));
+            newUserNode.setProperty(UserProfile.PROPERTY_FIRST_NAME, firstName == null ? "" : firstName);
+            newUserNode.setProperty(UserProfile.PROPERTY_LAST_NAME, lastName == null ? "" : lastName);
+            newUserNode.setProperty(UserProfile.PROPERTY_TYPE, type);
             newUserNode.setProperty(Constants.PROPERTY_ENABLED, enabled);
   
-            if (groups != null){
-                for (long groupId : groups){
-                    Node group = groupIndex.get(Constants.PROPERTY_ID,groupId).getSingle();
-                    if (group != null)
-                        newUserNode.createRelationshipTo(group, RelTypes.BELONGS_TO_GROUP);
-                    
-                    else{
-                        tx.failure();
-                        throw new InvalidArgumentException(String.format("Group with id %s can not be found",groupId));
-                    }
+
+            Node defaultGroupNode = groupIndex.get(Constants.PROPERTY_ID, defaultGroupId).getSingle();
+            if (defaultGroupNode != null)
+                newUserNode.createRelationshipTo(defaultGroupNode, RelTypes.BELONGS_TO_GROUP);
+
+            else{
+                tx.failure();
+                throw new InvalidArgumentException(String.format("Group with id %s can not be found", defaultGroupId));
+            }
+
+            if (privileges != null) {
+                for (Privilege privilege : privileges) {
+                    Node privilegeNode = graphDb.createNode();
+                    privilegeNode.setProperty(Privilege.PROPERTY_FEATURE_TOKEN, privilege.getFeatureToken());
+                    privilegeNode.setProperty(Privilege.PROPERTY_ACCESS_LEVEL, privilege.getAccessLevel());
+                    newUserNode.createRelationshipTo(privilegeNode, RelTypes.HAS_PRIVILEGE);
                 }
             }
+                
             userIndex.putIfAbsent(newUserNode, Constants.PROPERTY_ID, newUserNode.getId());
             userIndex.putIfAbsent(newUserNode, Constants.PROPERTY_NAME, userName);
                        
             tx.success();
             
-            cm.putUser(Util.createUserProfileFromNode(newUserNode));
+            cm.putUser(Util.createUserProfileWithGroupPrivilegesFromNode(newUserNode));
             return newUserNode.getId();
         }
     }
 
     @Override
     public void setUserProperties(long oid, String userName, String password, String firstName,
-            String lastName, boolean enabled, long[] privileges, long[] groups)
+            String lastName, boolean enabled, int type)
             throws InvalidArgumentException, ApplicationObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx()) {
             Node userNode = userIndex.get(Constants.PROPERTY_ID, oid).getSingle();
             if(userNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("Can not find a user with id %s",oid));
+                throw new ApplicationObjectNotFoundException(String.format("Can not find a user with id %s", oid));
 
-            if(userName != null){
-                if (userName.trim().isEmpty())
-                    throw new InvalidArgumentException("User name can not be an empty string");
-
-                if (!userName.matches("^[a-zA-Z0-9_.]*$"))
-                    throw new InvalidArgumentException(String.format("The user name %s contains invalid characters", userName));
-
-                Node storedUser = userIndex.get(Constants.PROPERTY_NAME, userName).getSingle();
-                if (storedUser != null)
-                    throw new InvalidArgumentException(String.format("User name %s already exists", userName));
-            }
-            if(password != null){
+            if(password != null) {
                 if (password.trim().isEmpty())
                     throw new InvalidArgumentException("Password can't be an empty string");
             }
-        
-            if (userName != null){
-                //refresh the userindex
-                userIndex.remove(userNode, Constants.PROPERTY_NAME, (String)userNode.getProperty(Constants.PROPERTY_NAME));
-                cm.removeUser(userName);
-                userNode.setProperty(Constants.PROPERTY_NAME, userName);
-                userIndex.putIfAbsent(userNode, Constants.PROPERTY_NAME, userName);
-            }
+            
             if (password != null)
                 userNode.setProperty(Constants.PROPERTY_PASSWORD, BCrypt.hashpw(password, BCrypt.gensalt()));
             if (firstName != null)
                 userNode.setProperty(Constants.PROPERTY_FIRST_NAME, firstName);
             if (lastName != null)
                 userNode.setProperty(Constants.PROPERTY_LAST_NAME, lastName);
-            if (groups != null){
-                Iterable<Relationship> relationships = userNode.getRelationships(Direction.OUTGOING, RelTypes.BELONGS_TO_GROUP);
-                for (Relationship relationship : relationships)
-                    relationship.delete();
-                for (long id : groups) {
-                    Node groupNode = groupIndex.get(Constants.PROPERTY_ID, id).getSingle();
-                    userNode.createRelationshipTo(groupNode, RelTypes.BELONGS_TO_GROUP);
-                }
+            
+            if (type != UserProfile.USER_TYPE_GUI && type != UserProfile.USER_TYPE_WEB_SERVICE && type != UserProfile.USER_TYPE_SOUTHBOUND)
+                throw new InvalidArgumentException("User type provided is not valid");
+            
+            if(userName != null) {
+                
+                if (userName.trim().isEmpty())
+                    throw new InvalidArgumentException("User name can not be an empty string");
+
+                if (!userName.matches("^[a-zA-Z0-9_.]*$"))
+                    throw new InvalidArgumentException(String.format("The user name %s contains invalid characters", userName));
+
+                if (UserProfile.DEFAULT_ADMIN.equals(userNode.getProperty(UserProfile.PROPERTY_NAME)))
+                    throw new InvalidArgumentException("The default administrator user name can not be changed");
+                
+                Node aUser = userIndex.get(Constants.PROPERTY_NAME, userName).getSingle();
+                if (aUser != null)
+                    throw new InvalidArgumentException(String.format("User name %s already exists", userName));
+                
+                //Refresh the user index and update the user name
+                userIndex.remove(userNode, Constants.PROPERTY_NAME, userNode.getProperty(Constants.PROPERTY_NAME));
+                userNode.setProperty(Constants.PROPERTY_NAME, userName);
+                userIndex.putIfAbsent(userNode, Constants.PROPERTY_NAME, userName);
+                cm.removeUser(userName);
             }
-            if (privileges != null){
-                Iterable<Relationship> privilegesRelationships = userNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_PRIVILEGE);
-                for (Relationship relationship : privilegesRelationships)
-                    relationship.delete();
-                for(long privilegeCode : privileges){
-                    Node privilegeNode = privilegeIndex.get(Constants.PROPERTY_CODE, privilegeCode).getSingle();
-                    if(privilegeNode != null)
-                        privilegeNode.createRelationshipTo(userNode, RelTypes.HAS_PRIVILEGE);
-                    else{
-                        tx.failure();
-                        throw new InvalidArgumentException(String.format("Privilege with coded %s can not be found",privilegeCode));
-                    }
-                }
-            }
+
             tx.success();
-            cm.putUser(Util.createUserProfileFromNode(userNode));
+            
+            cm.putUser(Util.createUserProfileWithGroupPrivilegesFromNode(userNode));
         }
     }
 
     @Override
     public void setUserProperties(String formerUsername, String newUserName, String password, String firstName,
-            String lastName, boolean enabled, long[] privileges, long[] groups)
+            String lastName, boolean enabled, int type)
             throws InvalidArgumentException, ApplicationObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx()) { 
             Node userNode = userIndex.get(Constants.PROPERTY_NAME, formerUsername).getSingle();
             if(userNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Can not find a user with name %s", formerUsername));
 
-            if(newUserName != null)
-            {
+            if(newUserName != null) {
                 if (newUserName.trim().isEmpty())
                     throw new InvalidArgumentException("User name can not be an empty string");
 
+                if (UserProfile.DEFAULT_ADMIN.equals(formerUsername))
+                    throw new InvalidArgumentException("The default administrator user name can not be changed");
+                
                 Node storedUser = userIndex.get(Constants.PROPERTY_NAME, newUserName).getSingle();
                 if (storedUser != null)
                     throw new InvalidArgumentException(String.format("User name %s already exists", newUserName));
@@ -371,37 +360,146 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 userNode.setProperty(Constants.PROPERTY_FIRST_NAME, firstName);
             if(lastName != null)
                 userNode.setProperty(Constants.PROPERTY_LAST_NAME, lastName);
-            if(groups != null){
-                Iterable<Relationship> relationships = userNode.getRelationships(Direction.OUTGOING, RelTypes.BELONGS_TO_GROUP);
-                for (Relationship relationship : relationships)
-                    relationship.delete();
-                for (long id : groups) {
-                    Node groupNode = groupIndex.get(Constants.PROPERTY_ID, id).getSingle();
-                    userNode.createRelationshipTo(groupNode, RelTypes.BELONGS_TO_GROUP);
-                }
-            }
-            if (privileges != null){
-                Iterable<Relationship> privilegesRelationships = userNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_PRIVILEGE);
-                for (Relationship relationship : privilegesRelationships)
-                    relationship.delete();
-                for(long privilegeCode : privileges){
-                    Node privilegeNode = privilegeIndex.get(Constants.PROPERTY_CODE, privilegeCode).getSingle();
-                    if(privilegeNode != null)
-                        privilegeNode.createRelationshipTo(userNode, RelTypes.HAS_PRIVILEGE);
-                    else{
-                        tx.failure();
-                        throw new InvalidArgumentException(String.format("Privilege with coded %s can not be found",privilegeCode));
-                    }
-                }
-            }
+            if (type != UserProfile.USER_TYPE_GUI && type != UserProfile.USER_TYPE_WEB_SERVICE && type != UserProfile.USER_TYPE_SOUTHBOUND)
+                throw new InvalidArgumentException("User type provided is not valid");
+            
             tx.success();
-            cm.putUser(Util.createUserProfileFromNode(userNode));
+            
+            cm.putUser(Util.createUserProfileWithGroupPrivilegesFromNode(userNode));
+        }
+    }
+
+    @Override
+    public void addUserToGroup(long userId, long groupId) throws InvalidArgumentException, ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node groupNode = groupIndex.get(Constants.PROPERTY_ID, groupId).getSingle();
+            if (groupNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Group with id %s could not be found", groupId));
+            
+            for (Relationship belongsToGroupRelationship : groupNode.getRelationships(Direction.INCOMING, RelTypes.BELONGS_TO_GROUP)) {
+                if (belongsToGroupRelationship.getStartNode().getId() == userId)
+                    throw new InvalidArgumentException(String.format("The user with id %s already belongs to group with id %s", userId, groupId));
+            }
+
+            Node userNode = userIndex.get(Constants.PROPERTY_ID, userId).getSingle();
+            if (userNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("User with id %s could not be found", userId));
+            
+            userNode.createRelationshipTo(groupNode, RelTypes.BELONGS_TO_GROUP);
+            
+            tx.success();
+        }
+    }
+
+    @Override
+    public void removeUserFromGroup(long userId, long groupId) throws InvalidArgumentException, ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node groupNode = groupIndex.get(Constants.PROPERTY_ID, groupId).getSingle();
+            if (groupNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Group with id %s could not be found", groupId));
+            
+            for (Relationship belongsToGroupRelationship : groupNode.getRelationships(Direction.INCOMING, RelTypes.BELONGS_TO_GROUP)) {
+                Node userNode = belongsToGroupRelationship.getStartNode();
+                if (userNode.getId() == userId) {
+                    belongsToGroupRelationship.delete();
+                    if (!userNode.hasRelationship(Direction.OUTGOING, RelTypes.BELONGS_TO_GROUP))
+                        throw new InvalidArgumentException("No orphan users are allowed. Put it in another group before removing it from this one");
+                    
+                    tx.success();
+                    return;
+                }
+            }
+            throw new ApplicationObjectNotFoundException(String.format("User with id %s is not related to group with id %s", userId, groupId));
+        }
+    }
+
+    @Override
+    public void addPrivilegeToUser(long userId, String featureToken, int accessLevel) throws InvalidArgumentException, ApplicationObjectNotFoundException {
+        //TODO: This method should check the new privilege against a list of predefined feature tokens to avoi adding bogus items
+        try (Transaction tx = graphDb.beginTx()) {
+            Node userNode = userIndex.get(Constants.PROPERTY_ID, userId).getSingle();
+            if (userNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("User with id %s could not be found", userId));
+
+            for (Relationship hasPrivilegeRelationship : userNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_PRIVILEGE)) {
+                if(featureToken.equals(hasPrivilegeRelationship.getEndNode().getProperty(Privilege.PROPERTY_FEATURE_TOKEN)))
+                    throw new InvalidArgumentException(String.format("The user with id %s already has the privilege %s", userId, featureToken));
+            }
+        
+            Node privilegeNode = graphDb.createNode();
+            privilegeNode.setProperty(Privilege.PROPERTY_FEATURE_TOKEN, featureToken);
+            privilegeNode.setProperty(Privilege.PROPERTY_ACCESS_LEVEL, accessLevel);
+            
+            userNode.createRelationshipTo(privilegeNode, RelTypes.HAS_PRIVILEGE);
+            tx.success();
+        }
+    }
+
+    @Override
+    public void addPrivilegeToGroup(long groupId, String featureToken, int accessLevel) throws InvalidArgumentException, ApplicationObjectNotFoundException {
+        //TODO: This method should check the new privilege against a list of predefined feature tokens to avoi adding bogus items
+        try (Transaction tx = graphDb.beginTx()) {
+            Node groupNode = groupIndex.get(Constants.PROPERTY_ID, groupId).getSingle();
+            if (groupNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Group with id %s could not be found", groupId));
+
+            for (Relationship hasPrivilegeRelationship : groupNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_PRIVILEGE)) {
+                if(featureToken.equals(hasPrivilegeRelationship.getEndNode().getProperty(Privilege.PROPERTY_FEATURE_TOKEN)))
+                    throw new InvalidArgumentException(String.format("The group with id %s already has the privilege %s", groupId, featureToken));
+            }
+        
+            Node privilegeNode = graphDb.createNode();
+            privilegeNode.setProperty(Privilege.PROPERTY_FEATURE_TOKEN, featureToken);
+            privilegeNode.setProperty(Privilege.PROPERTY_ACCESS_LEVEL, accessLevel);
+            
+            groupNode.createRelationshipTo(privilegeNode, RelTypes.HAS_PRIVILEGE);
+            tx.success();
+        }
+    }
+
+    @Override
+    public void removePrivilegeFromUser(long userId, String featureToken) throws InvalidArgumentException, ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node userNode = userIndex.get(Constants.PROPERTY_ID, userId).getSingle();
+            if (userNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("User with id %s could not be found", userId));
+        
+            for (Relationship hasPrivilegeRelationship : userNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_PRIVILEGE)) {
+                if (featureToken.equals(hasPrivilegeRelationship.getEndNode().getProperty(Privilege.PROPERTY_FEATURE_TOKEN))) {
+                    hasPrivilegeRelationship.delete();
+                    hasPrivilegeRelationship.getEndNode().delete();
+                    tx.success();
+                    return; 
+                }
+            }
+            tx.failure();
+            throw new InvalidArgumentException(String.format("The user with id %s already does not have the privilege %s", userId, featureToken));
+        }
+    }
+
+    @Override
+    public void removePrivilegeFromGroup(long groupId, String featureToken) throws InvalidArgumentException, ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node groupNode = groupIndex.get(Constants.PROPERTY_ID, groupId).getSingle();
+            if (groupNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Group with id %s could not be found", groupId));
+        
+            for (Relationship hasPrivilegeRelationship : groupNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_PRIVILEGE)) {
+                if (featureToken.equals(hasPrivilegeRelationship.getEndNode().getProperty(Privilege.PROPERTY_FEATURE_TOKEN))) {
+                    hasPrivilegeRelationship.delete();
+                    hasPrivilegeRelationship.getEndNode().delete();
+                    tx.success();
+                    return; 
+                }
+            }
+            tx.failure();
+            throw new InvalidArgumentException(String.format("The group with id %s already does not have the privilege %s", groupId, featureToken));
         }
     }
     
     @Override
-    public long createGroup(String groupName, String description,
-            long[] privileges, long[] users) throws InvalidArgumentException {
+    public long createGroup(String groupName, String description, List<Long> users) throws InvalidArgumentException, 
+                    ApplicationObjectNotFoundException {
         if (groupName == null)
             throw new InvalidArgumentException("Group name can not be null");
         if (groupName.trim().isEmpty())
@@ -427,23 +525,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     Node userNode = userIndex.get(Constants.PROPERTY_ID, userId).getSingle();
                     if(userNode != null)
                         userNode.createRelationshipTo(newGroupNode, RelTypes.BELONGS_TO_GROUP);
-                    else{
+                    else {
                         tx.failure();
-                        throw new InvalidArgumentException(String.format("User with id %s can not be found",userId));
+                        throw new ApplicationObjectNotFoundException(String.format("User with id %s can not be found. Group creation aborted.", userId));
                     }
                 }
             }
-            if (privileges != null){
-                for(long privilegeCode : privileges){
-                    Node privilegeNode = privilegeIndex.get(Constants.PROPERTY_CODE, privilegeCode).getSingle();
-                    if(privilegeNode != null)
-                        privilegeNode.createRelationshipTo(newGroupNode, RelTypes.HAS_PRIVILEGE);
-                    else{
-                        tx.failure();
-                        throw new InvalidArgumentException(String.format("Privilege with coded %s can not be found",privilegeCode));
-                    }
-                }
-            }
+            
             specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_GROUPS).getSingle().createRelationshipTo(newGroupNode, RelTypes.GROUP);
 
             groupIndex.putIfAbsent(newGroupNode, Constants.PROPERTY_ID, newGroupNode.getId());
@@ -457,12 +545,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
     @Override
     public List<UserProfile> getUsers() {
-        try(Transaction tx = graphDb.beginTx())
-        {
+        try(Transaction tx = graphDb.beginTx()) {
             IndexHits<Node> usersNodes = userIndex.query(Constants.PROPERTY_NAME, "*");
             List<UserProfile> users = new ArrayList<>();
             for (Node node : usersNodes)
-                users.add(Util.createUserProfileFromNode(node));
+                users.add(Util.createUserProfileWithGroupPrivilegesFromNode(node));
             return users;
         }
     }
@@ -480,8 +567,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public void setGroupProperties(long id, String groupName, String description,
-            long[] privileges, long[] users)
+    public void setGroupProperties(long id, String groupName, String description)
             throws InvalidArgumentException, ApplicationObjectNotFoundException {
         
         try(Transaction tx = graphDb.beginTx()) {
@@ -505,30 +591,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             }
             if(description != null)
                 groupNode.setProperty(Constants.PROPERTY_DESCRIPTION, description);
-            if(users != null && users.length != 0){
-                Iterable<Relationship> relationships = groupNode.getRelationships(Direction.INCOMING, RelTypes.BELONGS_TO_GROUP);
-                for (Relationship relationship : relationships)
-                    relationship.delete();
-                for (long userId : users) {
-                    Node userNode = userIndex.get(Constants.PROPERTY_ID, userId).getSingle();
-                    if(userNode != null)
-                        userNode.createRelationshipTo(groupNode, RelTypes.BELONGS_TO_GROUP);
-                    else
-                        throw new ApplicationObjectNotFoundException(String.format("User with id %s can not be found",userId));
-                }
-            }
-            if (privileges != null && privileges.length != 0){
-                Iterable<Relationship> privilegesRelationships = groupNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_PRIVILEGE);
-                for (Relationship relationship : privilegesRelationships)
-                    relationship.delete();
-                for(long privilegeCode : privileges){
-                    Node privilegeNode = privilegeIndex.get(Constants.PROPERTY_CODE, privilegeCode).getSingle();
-                    if(privilegeNode != null)
-                        privilegeNode.createRelationshipTo(groupNode, RelTypes.HAS_PRIVILEGE);
-                    else
-                        throw new InvalidArgumentException(String.format("Privilege with coded %s can not be found",privilegeCode));
-                }
-            }
             
             cm.putGroup(Util.createGroupProfileFromNode(groupNode));
             tx.success();
@@ -536,24 +598,14 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public void deleteUsers(long[] oids) throws ApplicationObjectNotFoundException {
+    public void deleteUsers(long[] oids) throws ApplicationObjectNotFoundException, InvalidArgumentException {
         
         try(Transaction tx = graphDb.beginTx()) {
             //TODO watch if there are relationships you can/should not delete
             if(oids != null){
-                for (long id : oids)
-                {
+                for (long id : oids) {
                     Node userNode = userIndex.get(Constants.PROPERTY_ID, id).getSingle();
-                    if(userNode == null){
-                        throw new ApplicationObjectNotFoundException(String.format("Can not find a user with id %s",id));
-                    }
-                    cm.removeUser((String)userNode.getProperty(Constants.PROPERTY_NAME));
-                    Iterable<Relationship> relationships = userNode.getRelationships();
-                    for (Relationship relationship : relationships) 
-                        relationship.delete();
-
-                    userIndex.remove(userNode);
-                    userNode.delete();
+                    Util.deleteUserNode(userNode, userIndex);
                 }
             }
             
@@ -562,7 +614,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public void deleteGroups(long[] oids) throws ApplicationObjectNotFoundException {
+    public void deleteGroups(long[] oids) throws ApplicationObjectNotFoundException, InvalidArgumentException {
         
         try(Transaction tx = graphDb.beginTx()) {
             if(oids != null){
@@ -573,11 +625,26 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     
                     cm.removeGroup((String)groupNode.getProperty(Constants.PROPERTY_NAME));
 
-                    Iterable<Relationship> relationships = groupNode.getRelationships();
-                    for (Relationship relationship : relationships) 
+                    for (Relationship relationship : groupNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_PRIVILEGE)) {
+                        Node privilegeNode = relationship.getEndNode();
                         relationship.delete();
+                        privilegeNode.delete();
+                    }
+                    
+                    for (Relationship relationship : groupNode.getRelationships(Direction.INCOMING, RelTypes.BELONGS_TO_GROUP)) {
+                        Node userNode = relationship.getStartNode();
+                        
+                        relationship.delete();
+                        relationship.getEndNode().delete();
+                        
+                        //This will delete all users associated *only* to this group. The users associated to other groups will be kept and the relationship with this group will be released
+                        if (!userNode.hasRelationship(Direction.OUTGOING, RelTypes.BELONGS_TO_GROUP)) 
+                            Util.deleteUserNode(userNode, userIndex);
+                            
+                    }
                     
                     groupIndex.remove(groupNode);
+                    cm.removeGroup((String)groupNode.getProperty(GroupProfile.PROPERTY_NAME));
                     groupNode.delete();
                 }
                 tx.success();
@@ -1545,67 +1612,95 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public void validateCall(String methodName, String ipAddress, String sessionId)
-            throws NotAuthorizedException{
+    public void validateWebServiceCall(String methodName, String ipAddress, String sessionId)
+            throws NotAuthorizedException {
         Session aSession = sessions.get(sessionId);
-//        try {
-//        if(cm!=null){
-//            for (Privilege privilege : cm.getUser(user.getUserName()).getPrivileges()){
-//                if(privilege.getMethodName().contentEquals(methodName))
-//                    return;
-//            }
-//            for (GroupProfile groupProfile : cm.getUser(user.getUserName()).getGroups()) {
-//                for (Privilege privilege : groupProfile.getPrivileges()){
-//                    if(privilege.getMethodName().equals(methodName))
-//                        return;
-//                }
-//            }
-//        }
-            if(aSession == null)
-                throw new NotAuthorizedException("Invalid session ID");
-            if (!aSession.getIpAddress().equals(ipAddress))
-                throw new NotAuthorizedException(String.format("The IP %s does not match with the one registered for this session", ipAddress));
-    }
+        
+        if(aSession == null)
+                throw new NotAuthorizedException("Invalid session");
+        
+        if (!aSession.getIpAddress().equals(ipAddress))
+            throw new NotAuthorizedException(String.format("The IP %s does not match with the one registered for this session", ipAddress));
 
+//        We won't be using this for now, since the desktop client still uses the web service. This will work as of version 2.0        
+//        if (aSession.getUser().getType() != UserProfile.USER_TYPE_WEB_SERVICE)
+//            throw new NotAuthorizedException(String.format("The user %s is not authorized to call web service methods", aSession.getUser().getUserName()));
+        
+//        for (Privilege privilege : aSession.getUser().getPrivileges()) { //The featureToken for web service users is the method name itself
+//            if (methodName.equals(privilege.getFeatureToken()))
+//                return;
+//        }
+//                
+//        throw new NotAuthorizedException(String.format("The user %s is not authorized to call web service method %s", aSession.getUser().getUserName(), methodName));
+            
+    }
+    
     @Override
-    public Session createSession(String userName, String password, String IPAddress) throws ApplicationObjectNotFoundException 
-    {
+    public Session createSession(String userName, String password, String IPAddress) throws ApplicationObjectNotFoundException, NotAuthorizedException {
         if (userName == null || password == null)
             throw  new ApplicationObjectNotFoundException("User or Password can not be null");
+        
         try(Transaction tx = graphDb.beginTx()) {
             Node userNode = userIndex.get(Constants.PROPERTY_NAME, userName).getSingle();
-            
+
             if (userNode == null)
                 throw new ApplicationObjectNotFoundException("User does not exist");
 
             if (!(Boolean)userNode.getProperty(Constants.PROPERTY_ENABLED))
-                throw new ApplicationObjectNotFoundException("This user is not enabled");
+                throw new NotAuthorizedException("This user is not enabled");
 
             if (BCrypt.checkpw(password, (String)userNode.getProperty(Constants.PROPERTY_PASSWORD))){
-                UserProfile user = Util.createUserProfileFromNode(userNode);
-                cm.putUser(user);
-            }
-            else
-                throw new ApplicationObjectNotFoundException("User or password incorrect");
+                UserProfile user = Util.createUserProfileWithGroupPrivilegesFromNode(userNode);
 
-            for (Session aSession : sessions.values()){
-                if (aSession.getUser().getUserName().equals(userName)){
-                    Logger.getLogger("createSession").log(Level.INFO, String.format("An existing session for user %s has been dropped", aSession.getUser().getUserName()));
-                    sessions.remove(aSession.getToken());
-                    break;
+                for (Session aSession : sessions.values()){
+                    if (aSession.getUser().getUserName().equals(userName)){
+                        Logger.getLogger("createSession").log(Level.INFO, String.format("An existing session for user %s has been dropped", aSession.getUser().getUserName()));
+                        sessions.remove(aSession.getToken());
+                        break;
+                    }
                 }
-            }
-            Session newSession = new Session(Util.createUserProfileFromNode(userNode), IPAddress);
-            sessions.put(newSession.getToken(), newSession);
-            
-            return newSession;
+                Session newSession = new Session(user, IPAddress);
+                sessions.put(newSession.getToken(), newSession);
+                cm.putUser(user);
+                return newSession;
+            } else
+                throw new NotAuthorizedException("User or password incorrect");
         }
     }
     
     @Override
-    public UserProfile getUserInSession(String IPAddress, String sessionId) throws NotAuthorizedException{
-        validateCall("getUserInSession", IPAddress, sessionId);
+    public UserProfile getUserInSession(String sessionId) {
         return sessions.get(sessionId).getUser();
+    }
+    
+    @Override
+    public List<UserProfile> getUsersInGroup(long groupId) throws ApplicationObjectNotFoundException {
+        try(Transaction tx = graphDb.beginTx()) {
+            Node groupNode = groupIndex.get(Constants.PROPERTY_ID, groupId).getSingle();
+            if (groupNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Group with id %s could not be found", groupId));
+
+            List<UserProfile> usersInGroup = new ArrayList<>();
+            for (Relationship userInGroupRelationship : groupNode.getRelationships(Direction.INCOMING, RelTypes.BELONGS_TO_GROUP))
+                usersInGroup.add(Util.createUserProfileWithoutGroupPrivilegesFromNode(userInGroupRelationship.getStartNode()));
+
+            return usersInGroup;
+        }
+    }
+    
+    @Override
+    public List<GroupProfileLight> getGroupsForUser(long userId) throws ApplicationObjectNotFoundException {
+        try(Transaction tx = graphDb.beginTx()) {
+            Node userNode = userIndex.get(Constants.PROPERTY_ID, userId).getSingle();
+            if (userNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("User with id %s could not be found", userId));
+
+            List<GroupProfileLight> groupsForUser = new ArrayList<>();
+            for (Relationship groupForUserRelationship : userNode.getRelationships(Direction.OUTGOING, RelTypes.BELONGS_TO_GROUP))
+                groupsForUser.add(Util.createGroupProfileLightFromNode(groupForUserRelationship.getEndNode()));
+
+            return groupsForUser;
+        }
     }
 
     @Override

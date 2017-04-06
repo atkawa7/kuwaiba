@@ -216,10 +216,6 @@ public class Constants {
     public static final String PROPERTY_NEW_VALUE = "newValue"; //NOI18N
     public static final String PROPERTY_NOTES = "notes"; //NOI18N
     public static final String PROPERTY_AFFECTED_PROPERTY = "affectedProperty"; //NOI18N
-    public static final String PROPERTY_CODE = "code"; //NOI18N
-    public static final String PROPERTY_METHOD_GROUP = "methodGroup"; //NOI18N
-    public static final String PROPERTY_METHOD_MANAGER = "methodManager"; //NOI18N
-    public static final String PROPERTY_DEPENDS_OF = "dependsOf"; //NOI18N
     public static final String PROPERTY_CATEGORY = "category"; //NOI18N
     public static final String PROPERTY_SUPPORT_PHONE_NUMBER = "supportPhoneNumber"; //NOI18N
     public static final String PROPERTY_SUPPORT_EMAIL = "supportEmail"; //NOI18N

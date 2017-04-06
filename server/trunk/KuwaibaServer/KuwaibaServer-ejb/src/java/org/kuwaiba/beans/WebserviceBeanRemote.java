@@ -29,6 +29,8 @@ import org.kuwaiba.ws.todeserialize.StringPair;
 import org.kuwaiba.ws.todeserialize.TransientQuery;
 import org.kuwaiba.ws.toserialize.application.ApplicationLogEntry;
 import org.kuwaiba.ws.toserialize.application.GroupInfo;
+import org.kuwaiba.ws.toserialize.application.GroupInfoLight;
+import org.kuwaiba.ws.toserialize.application.PrivilegeInfo;
 import org.kuwaiba.ws.toserialize.application.RemotePool;
 import org.kuwaiba.ws.toserialize.application.RemoteQuery;
 import org.kuwaiba.ws.toserialize.application.RemoteQueryLight;
@@ -196,23 +198,30 @@ public interface WebserviceBeanRemote {
 
     // <editor-fold defaultstate="collapsed" desc="Application methods. Click on the + sign on the left to edit the code.">
     public void setUserProperties(long oid, String userName, String password, String firstName,
-            String lastName, boolean enabled, long[] privileges, long[] groups, String ipAddress, String sessionId)
+            String lastName, boolean enabled, int type, String ipAddress, String sessionId)
             throws ServerSideException;
 
+    public void addUserToGroup(long userId, long groupId, String ipAddress, String sessionId) throws ServerSideException;
+    public void removeUserFromGroup(long userId, long groupId, String ipAddress, String sessionId) throws ServerSideException;
+    public void addPrivilegeToUser(long userId, String featureToken, int accessLevel, String ipAddress, String sessionId) throws ServerSideException;
+    public void addPrivilegeToGroup(long groupId, String featureToken, int accessLevel, String ipAddress, String sessionId) throws ServerSideException;
+    public void removePrivilegeFromUser(long userId, String featureToken, String ipAddress, String sessionId) throws ServerSideException;
+    public void removePrivilegeFromGroup(long groupId, String featureToken, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public long createGroup(String groupName, String description, List<Long> users, String ipAddress, String sessionId) throws ServerSideException;
 
-    public long createGroup(String groupName, String description,
-            long[] privileges, long[] users, String ipAddress, String sessionId) throws ServerSideException;
+    public List<UserInfo> getUsers(String ipAddress, String sessionId) throws ServerSideException;
+    public List<UserInfo> getUsersInGroup(long groupId, String ipAddress, String sessionId) throws ServerSideException;
 
-    public UserInfo[] getUsers(String ipAddress, String sessionId) throws ServerSideException;
+    public List<GroupInfoLight> getGroupsForUser(long userId, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public List<GroupInfo> getGroups(String ipAddress, String sessionId) throws ServerSideException;
 
-    public GroupInfo[] getGroups(String ipAddress, String sessionId) throws ServerSideException;
+    public long createUser(String userName, String password, String firstName, 
+        String lastName, boolean enabled, int type, List<PrivilegeInfo> privileges, 
+        long defaultGroupId, String ipAddress, String sessionId) throws ServerSideException;
 
-    public long createUser(String userName, String password, String firstName,
-            String lastName, boolean enabled, long[] privileges, long[] groups, String ipAddress, String sessionId)
-            throws ServerSideException;
-
-    public void setGroupProperties(long oid, String groupName, String description,
-            long[] privileges, long[] users, String ipAddress, String sessionId)throws ServerSideException;
+    public void setGroupProperties(long oid, String groupName, String description, String ipAddress, String sessionId)throws ServerSideException;
 
     public void deleteUsers(long[] oids, String ipAddress, String sessionId)throws ServerSideException;
 

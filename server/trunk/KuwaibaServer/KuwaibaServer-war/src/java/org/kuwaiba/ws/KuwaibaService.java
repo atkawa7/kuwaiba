@@ -40,6 +40,8 @@ import org.kuwaiba.ws.toserialize.application.RemoteQueryLight;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.ws.toserialize.application.ResultRecord;
 import org.kuwaiba.ws.toserialize.application.GroupInfo;
+import org.kuwaiba.ws.toserialize.application.GroupInfoLight;
+import org.kuwaiba.ws.toserialize.application.PrivilegeInfo;
 import org.kuwaiba.ws.toserialize.application.RemotePool;
 import org.kuwaiba.ws.toserialize.application.RemoteTask;
 import org.kuwaiba.ws.toserialize.application.RemoteTaskResult;
@@ -124,7 +126,7 @@ public class KuwaibaService {
      */
 
     @WebMethod(operationName = "getUsers")
-    public UserInfo[] getUsers(@WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+    public List<UserInfo> getUsers(@WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try
         {
             return wsBean.getUsers(getIPAddress(), sessionId);
@@ -137,7 +139,51 @@ public class KuwaibaService {
             }
         }
     }
-
+    
+    /**
+     * Retrieves the users in a group
+     * @param groupId The id of the group
+     * @param sessionId Session token
+     * @return The list of users in the requested group
+     * @throws ServerSideException If the group does not exist or something unexpected happened.
+     */
+    @WebMethod(operationName = "getUsersInGroup")
+    public List<UserInfo> getUsersInGroup(@WebParam(name = "groupId")long groupId, 
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getUsersInGroup(groupId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getUsersInGroup: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Retrieves the groups a user belongs to
+     * @param userId  The id of the user
+     * @param sessionId Session token
+     * @return The list of groups the user belongs to
+     * @throws ServerSideException If the group does not exist or something unexpected happened.
+     */
+    @WebMethod(operationName = "getGroupsForUser")
+    public List<GroupInfoLight> getGroupsForUser(@WebParam(name = "userId")long userId, 
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getGroupsForUser(userId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getGroupsForUser: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
     /**
      * Retrieves the list of groups
      * @param sessionId Session token
@@ -145,9 +191,8 @@ public class KuwaibaService {
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getGroups")
-    public GroupInfo[] getGroups(@WebParam(name = "sessionId")String sessionId) throws ServerSideException {
-        try
-        {
+    public List<GroupInfo> getGroups(@WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
             return wsBean.getGroups(getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
@@ -166,8 +211,9 @@ public class KuwaibaService {
      * @param firstName User's first name
      * @param lastName User's last name
      * @param enabled Is this user enable by default?
-     * @param privileges A list of ints specifying the privileges for this user. Does nothing for now
-     * @param groups List of the ids of the groups to relate to this user
+     * @param type The type of the user. See UserProfileLight.USER_TYPE* for possible values
+     * @param privileges A list privileges that will be granted to this user.
+     * @param defaultGroupId Default group this user will be associated to. Users <b>always</b> belong to at least one group. Other groups can be added later.
      * @param sessionId Session token
      * @return The new user Id
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
@@ -179,12 +225,12 @@ public class KuwaibaService {
             @WebParam(name = "firstName")String firstName,
             @WebParam(name = "LastName")String lastName,
             @WebParam(name = "enabled")boolean enabled,
-            @WebParam(name = "privileges")long[] privileges,
-            @WebParam(name = "groups")long[] groups,
+            @WebParam(name = "type") int type,
+            @WebParam(name = "privileges")List<PrivilegeInfo> privileges,
+            @WebParam(name = "defaultGroupId")long defaultGroupId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
-        try
-        {
-            return wsBean.createUser(username, password, firstName, lastName, enabled, privileges, groups, getIPAddress(), sessionId);
+        try {
+            return wsBean.createUser(username, password, firstName, lastName, enabled, type, privileges, defaultGroupId, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -203,8 +249,7 @@ public class KuwaibaService {
      * @param lastName (null if unchanged)
      * @param password (null if unchanged)
      * @param enabled (null if unchanged)
-     * @param privileges (null if unchanged). Does nothing for now
-     * @param groups List of ids of the groups to be related to this user(null if unchanged)
+     * @param type The type of the user. See UserProfile.USER_TYPE_* for possible values
      * @param sessionId Session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
@@ -216,12 +261,10 @@ public class KuwaibaService {
             @WebParam(name = "lastName")String lastName,
             @WebParam(name = "password")String password,
             @WebParam(name = "enabled")boolean enabled,
-            @WebParam(name = "privileges")long[] privileges,
-            @WebParam(name = "groups")long[] groups,
+            @WebParam(name = "type")int type,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
-        try
-        {
-            wsBean.setUserProperties(oid, username, password, firstName, lastName, enabled, privileges, groups, getIPAddress(), sessionId);
+        try {
+            wsBean.setUserProperties(oid, username, password, firstName, lastName, enabled, type, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -231,12 +274,153 @@ public class KuwaibaService {
             }
         }
     }
+    
+    /**
+     * Adds a user to a group
+     * @param userId The id of the user to be added to the group
+     * @param groupId Id of the group which the user will be added to
+     * @param sessionId Session token
+     * @throws ServerSideException If the user is already related to that group or if the user or group can not be found.
+     */
+    @WebMethod(operationName = "addUserToGroup")
+    public void addUserToGroup(@WebParam(name = "userId") long userId, 
+            @WebParam(name = "groupId") long groupId, 
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            wsBean.addUserToGroup(userId, groupId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in addUserToGroup: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Removes a user from a group
+     * @param userId The id of the user to be added to the group
+     * @param groupId Id of the group which the user will be added to
+     * @param sessionId Session token
+     * @throws ServerSideException If the user is not related to that group or if the user or the group could not be found
+     */
+    @WebMethod(operationName = "removeUserFromGroup")
+    public void removeUserFromGroup(@WebParam(name = "userId") long userId, 
+            @WebParam(name = "groupId") long groupId,
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            wsBean.removeUserFromGroup(userId, groupId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in removeUserFromGroup: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Adds a privilege to a user
+     * @param userId The user Id
+     * @param featureToken The feature token. See class Privilege for details. Note that this token must match to the one expected by the client application. That's the only way the correct features will be enabled.
+     * @param accessLevel The feature token. See class Privilege.ACCESS_LEVEL* for details. 
+     * @param sessionId Session token
+     * @throws ServerSideException If the access level is invalid, if the featureToken has a wrong format or if the user already has that privilege or if the user could not be found.
+     */
+    @WebMethod(operationName = "addPrivilegeToUser")
+    public void addPrivilegeToUser(@WebParam(name = "userId") long userId, 
+            @WebParam(name = "featureToken") String featureToken, 
+            @WebParam(name = "accessLevel") int accessLevel, 
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            wsBean.addPrivilegeToUser(userId, featureToken, accessLevel, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in addPrivilegeToUser: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Adds a privilege to a group
+     * @param groupId The user Id
+     * @param featureToken The feature token. See class Privilege for details. Note that this token must match to the one expected by the client application. That's the only way the correct features will be enabled.
+     * @param accessLevel The feature token. See class Privilege.ACCESS_LEVEL* for details. 
+     * @param sessionId Session token
+     * @throws ServerSideException If the access level is invalid, if the featureToken has a wrong format or if the group already has that privilege or if the group could not be found
+     */
+    @WebMethod(operationName = "addPrivilegeToGroup")
+    public void addPrivilegeToGroup(@WebParam(name = "groupId") long groupId, 
+            @WebParam(name = "featureToken") String featureToken, 
+            @WebParam(name = "accessLevel") int accessLevel, 
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            wsBean.addPrivilegeToGroup(groupId, featureToken, accessLevel, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in addPrivilegeToGroup: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Removes a privilege from a user
+     * @param userId Id of the user
+     * @param featureToken The feature token. See class Privilege for details. 
+     * @param sessionId Session token
+     * @throws ServerSideException If the feature token is not related to the user or if the user could not be found
+     */
+    @WebMethod(operationName = "removePrivilegeFromUser")
+    public void removePrivilegeFromUser(@WebParam(name = "userId") long userId, 
+            @WebParam(name = "featureToken") String featureToken, 
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            wsBean.removePrivilegeFromUser(userId, featureToken, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in removePrivilegeFromUser: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Removes a privilege from a user
+     * @param groupId Id of the group
+     * @param featureToken The feature token. See class Privilege for details. 
+     * @param sessionId Session token
+     * @throws ServerSideException If the feature token is not related to the group or if the group could not be found
+     */
+    @WebMethod(operationName = "removePrivilegeFromGroup")
+    public void removePrivilegeFromGroup(@WebParam(name = "groupId") long groupId, 
+            @WebParam(name = "featureToken") String featureToken, 
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            wsBean.removePrivilegeFromGroup(groupId, featureToken, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in removePrivilegeFromGroup: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
 
     /**
      * Creates a group
      * @param groupName Group name
      * @param description Group description
-     * @param privileges Group privileges. Does nothing for now
      * @param users List of user ids to be related to this group
      * @param sessionId Session token
      * @return The group id
@@ -246,12 +430,11 @@ public class KuwaibaService {
     public long createGroup(
             @WebParam(name = "groupName")String groupName,
             @WebParam(name = "description")String description,
-            @WebParam(name = "privileges")long[] privileges,
-            @WebParam(name = "users")long[] users,
+            @WebParam(name = "users")List<Long> users,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try
         {
-            return wsBean.createGroup(groupName, description, privileges, users, getIPAddress(), sessionId);
+            return wsBean.createGroup(groupName, description, users, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -267,8 +450,6 @@ public class KuwaibaService {
      * @param oid Group id
      * @param groupName New group name (null if unchanged)
      * @param description New group description (null if unchanged)
-     * @param privileges New group privileges (null if unchanged)
-     * @param users New group users (null if unchanged)
      * @param sessionId Session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
@@ -276,12 +457,10 @@ public class KuwaibaService {
     public void setGroupProperties(@WebParam(name = "oid")long oid,
             @WebParam(name = "groupName")String groupName,
             @WebParam(name = "description")String description,
-            @WebParam(name = "privileges")long[] privileges,
-            @WebParam(name = "users")long[] users,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try
         {
-            wsBean.setGroupProperties(oid, groupName, description, privileges, users, getIPAddress(), sessionId);
+            wsBean.setGroupProperties(oid, groupName, description, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;

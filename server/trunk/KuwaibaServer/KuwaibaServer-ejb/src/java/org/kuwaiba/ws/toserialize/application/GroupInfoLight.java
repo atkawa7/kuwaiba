@@ -19,7 +19,7 @@ package org.kuwaiba.ws.toserialize.application;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import org.kuwaiba.apis.persistence.application.GroupProfile;
+import org.kuwaiba.apis.persistence.application.GroupProfileLight;
 
 /**
  * Wrapper for entity class GroupProfile. This light version has the basic info necessary
@@ -36,13 +36,24 @@ public class GroupInfoLight implements Serializable {
      * UserGroup's name
      */
     protected String name;
+    /**
+     * Object's creation date. Since there's no a seamless map for java.util.Date
+     * (xsd:date has less information than Date, so it's mapped into Calendar), we use a long instead (a timestamp)
+     */
+    protected long creationDate;
+    /**
+     * UserGroup's description
+     */
+    protected String description;
 
     //No-arg constructor required
     public GroupInfoLight(){}
 
-    public GroupInfoLight(GroupProfile group){
+    public GroupInfoLight(GroupProfileLight group){
         this.id = group.getId();
         this.name = group.getName();
+        this.description = group.getDescription();
+        this.creationDate = group.getCreationDate();
     }
 
     public long getId() {
@@ -59,5 +70,21 @@ public class GroupInfoLight implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+    
+    public long getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(long creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

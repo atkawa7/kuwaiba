@@ -25,40 +25,31 @@ import org.kuwaiba.apis.persistence.application.GroupProfile;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GroupInfo extends GroupInfoLight{
+public class GroupInfo extends GroupInfoLight {
     
     /**
      * Membres of the group;
      */
     protected UserInfo[] users;
-    /**
-     * Object's creation date. Since there's no a seamless map for java.util.Date
-     * (xsd:date has less information than Date, so it's mapped into Calendar), we use a long instead (a timestamp)
-     */
-    protected long creationDate;
-    /**
-     * UserGroup's description
-     */
-    protected String description;
+    
     /**
      * Group's privileges
      */
     private PrivilegeInfo[] privileges;
 
     //No-arg constructor required
-    public GroupInfo(){}
+    public GroupInfo(){ }
     
     public GroupInfo(GroupProfile group){
         super (group);
-        this.description = group.getDescription();
-        this.creationDate = group.getCreationDate();
+        
         users = new UserInfo[group.getUsers().size()];
         privileges = new PrivilegeInfo[group.getPrivileges().size()];
         
-        for(int i=0; i < group.getUsers().size(); i++)
+        for(int i = 0; i < group.getUsers().size(); i++)
             users[i]= new UserInfo(group.getUsers().get(i));
         
-        for(int i=0; i < group.getPrivileges().size(); i++)
+        for(int i = 0; i < group.getPrivileges().size(); i++)
             privileges[i] = new PrivilegeInfo(group.getPrivileges().get(i));
     } 
 
@@ -68,22 +59,6 @@ public class GroupInfo extends GroupInfoLight{
 
     public void setUsers(UserInfo[] users) {
         this.users = users;
-    }
-
-    public long getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(long creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public PrivilegeInfo[] getPrivileges() {

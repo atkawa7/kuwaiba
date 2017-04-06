@@ -28,87 +28,37 @@ import org.kuwaiba.apis.persistence.application.Privilege;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PrivilegeInfo implements Serializable{
     /**
-     * 
+     * The unique id of the feature (for example, a web service method or a simple string with the name of the module)
      */
-    private long id;
+    private String featureToken;
     /**
-     * Privilege code 
+     * Access level. See ACCESS_LEVEL* for possible values 
      */
-    private long code;
-    /**
-     * 
-     */
-    private String methodGroup;
-    /**
-     * 
-     */
-    private String methodName;
-    /**
-     * 
-     */
-    private String methodManager;
-    /**
-     * 
-     */
-    private long [] dependsOf;
+    private int accessLevel;
 
     //No-arg constructor required
     public PrivilegeInfo() { }
     
     public PrivilegeInfo(Privilege privilege) {
-        id=privilege.getId();
-        code=privilege.getCode();
-        methodGroup=privilege.getMethodGroup();
-        methodName=privilege.getMethodName();
-        methodManager=privilege.getMethodManager();
-        dependsOf = privilege.getDependsOf();
+        this.featureToken = privilege.getFeatureToken();
+        this.accessLevel = privilege.getAccessLevel();
     }
 
-    public long getId() {
-        return id;
+    public String getFeatureToken() {
+        return featureToken;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setFeatureToken(String featureToken) {
+        this.featureToken = featureToken;
     }
 
-    public long getCode() {
-        return code;
+    public int getAccessLevel() {
+        return accessLevel;
     }
 
-    public void setCode(long code) {
-        this.code = code;
+    public void setAccessLevel(int accessLevel) {
+        this.accessLevel = accessLevel;
     }
 
-    public String getMethodGroup() {
-        return methodGroup;
-    }
-
-    public void setMethodGroup(String methodGroup) {
-        this.methodGroup = methodGroup;
-    }
-
-    public String getMethodName() {
-        return methodName;
-    }
-
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
-    }
-
-    public String getMethodManager() {
-        return methodManager;
-    }
-
-    public void setMethodManager(String methodManager) {
-        this.methodManager = methodManager;
-    }
-
-    public long[] getDependsOf() {
-        return dependsOf;
-    }
-
-    public void setDependsOf(long[] dependsOf) {
-        this.dependsOf = dependsOf;
-    }
+    
 }

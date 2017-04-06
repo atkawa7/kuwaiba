@@ -77,13 +77,13 @@ public interface ApplicationEntityManager {
      * @param firstName New user's first name
      * @param lastName New user's last name
      * @param enabled Shall the new user be enabled by default
-     * @param privileges New user's privileges. See Privileges class documentation for a list of available permissions. Use null for none
-     * @param groups A list with the ids of the groups this user will belong to. Use null for none
+     * @param privileges New user's privileges. Use null for none
+     * @param defaultGroupId Default group this user will be associated to
      * @return The id of the newly created user
      * @throws InvalidArgumentException Thrown if the username is null or empty or the username already exists
      */
     public long createUser(String userName, String password, String firstName,
-            String lastName, boolean enabled, long[] privileges, long[] groups)//)
+            String lastName, boolean enabled, int type, List<Privilege> privileges, long defaultGroupId)
             throws InvalidArgumentException;
     
     /**
@@ -94,13 +94,12 @@ public interface ApplicationEntityManager {
      * @param firstName New user's first name. Use null to leave it unchanged
      * @param lastName New user's last name. Use null to leave it unchanged
      * @param enabled If the user is enabled.
-     * @param privileges New user's privileges. See Privileges class documentation for a list of available permissions. Use null to leave it unchanged
-     * @param groups A list with the ids of the groups this user will belong to. Use null to leave it unchanged
+     * @param type User type. See UserProfile.USER_TYPE* for possible values
      * @throws InvalidArgumentException Thrown if the username is null or empty or the username already exists
-     * @throws ApplicationObjectNotFoundException Thrown if any of the ids provided for the groups does not belong to an existing group
+     * @throws ApplicationObjectNotFoundException If the user could not be found
      */
     public void setUserProperties(long oid, String userName, String password, String firstName,
-            String lastName, boolean enabled, long[] privileges, long[] groups)
+            String lastName, boolean enabled, int type)
             throws InvalidArgumentException, ApplicationObjectNotFoundException;
     /**
      * Updates the attributes of a user, using its username as key to find it
@@ -110,33 +109,82 @@ public interface ApplicationEntityManager {
      * @param firstName User's first name. Null if unchanged
      * @param lastName User's last name. Null if unchanged
      * @param enabled Is this user enabled?
-     * @param privileges Privileges
-     * @param groups List of ids with the groups. It overwrites the existing ones
+     * @param type User type. See UserProfile.USER_TYPE* for possible values
      * @throws InvalidArgumentException If the format of any of the parameters provided is erroneous
-     * @throws ApplicationObjectNotFoundException If the user can not be found
+     * @throws ApplicationObjectNotFoundException If the user could not be found
      */
     public void setUserProperties(String formerUsername, String newUserName, String password, String firstName,
-            String lastName, boolean enabled, long[] privileges, long[] groups)
+            String lastName, boolean enabled, int type)
             throws InvalidArgumentException, ApplicationObjectNotFoundException;
+    
+    /**
+     * Adds a user to a group
+     * @param userId The id of the user to be added to the group
+     * @param groupId Id of the group which the user will be added to
+     * @throws InvalidArgumentException If the user is already related to that group.
+     * @throws ApplicationObjectNotFoundException If the user or group can not be found
+     */
+    public void addUserToGroup(long userId, long groupId) throws InvalidArgumentException, ApplicationObjectNotFoundException;
+    /**
+     * Removes a user from a group
+     * @param userId The id of the user to be added to the group
+     * @param groupId Id of the group which the user will be added to
+     * @throws InvalidArgumentException If the user is not related to that group
+     * @throws ApplicationObjectNotFoundException If the user or the group could not be found
+     */
+    public void removeUserFromGroup(long userId, long groupId) throws InvalidArgumentException, ApplicationObjectNotFoundException;
+    /**
+     * Adds a privilege to a user
+     * @param userId The user Id
+     * @param featureToken The feature token. See class Privilege for details. Note that this token must match to the one expected by the client application. That's the only way the correct features will be enabled.
+     * @param accessLevel The feature token. See class Privilege.ACCESS_LEVEL* for details. 
+     * @throws InvalidArgumentException If the access level is invalid, if the featureToken has a wrong format or if the user already has that privilege
+     * @throws ApplicationObjectNotFoundException If the user could not be found.
+     */
+    public void addPrivilegeToUser(long userId, String featureToken, int accessLevel) throws InvalidArgumentException, ApplicationObjectNotFoundException;
+    /**
+     * Adds a privilege to a group
+     * @param groupId The user Id
+     * @param featureToken The feature token. See class Privilege for details. Note that this token must match to the one expected by the client application. That's the only way the correct features will be enabled.
+     * @param accessLevel The feature token. See class Privilege.ACCESS_LEVEL* for details. 
+     * @throws InvalidArgumentException If the access level is invalid, if the featureToken has a wrong format or if the group already has that privilege
+     * @throws ApplicationObjectNotFoundException If the group could not be found
+     */
+    public void addPrivilegeToGroup(long groupId, String featureToken, int accessLevel) throws InvalidArgumentException, ApplicationObjectNotFoundException;
+    
+    /**
+     * Removes a privilege from a user
+     * @param userId Id of the user
+     * @param featureToken The feature token. See class Privilege for details. 
+     * @throws InvalidArgumentException If the feature token is not related to the user
+     * @throws ApplicationObjectNotFoundException If the user could not be found
+     */
+    public void removePrivilegeFromUser(long userId, String featureToken) throws InvalidArgumentException, ApplicationObjectNotFoundException;
+    /**
+     * Removes a privilege from a user
+     * @param groupId Id of the group
+     * @param featureToken The feature token. See class Privilege for details. 
+     * @throws InvalidArgumentException If the feature token is not related to the group
+     * @throws ApplicationObjectNotFoundException If the group could not be found
+     */
+    public void removePrivilegeFromGroup(long groupId, String featureToken) throws InvalidArgumentException, ApplicationObjectNotFoundException;
     /**
      * Creates a group
      * @param groupName The group name
      * @param description The group description
-     * @param privileges Group privileges
      * @param users users who belong the group
      * @return The new group id.
      * @throws InvalidArgumentException if there's already a group with that name
+     * @throws ApplicationObjectNotFoundException If any of the provided users could not be found
      */
-     public long createGroup(String groupName, String description, long[]
-            privileges, long[] users)
-            throws InvalidArgumentException;
+     public long createGroup(String groupName, String description, List<Long> users)
+            throws InvalidArgumentException, ApplicationObjectNotFoundException;
 
     /**
      * Retrieves the list of all users
-     * @return An array of UserProfile
-     * @throws NotAuthorizedException
+     * @return The list of users
      */
-    public List<UserProfile> getUsers() throws NotAuthorizedException;
+    public List<UserProfile> getUsers() ;
 
     /**
      * Retrieves the list of all groups
@@ -149,29 +197,28 @@ public interface ApplicationEntityManager {
      * @param oid The oid of the group.
      * @param groupName The name of the group. Use null to leave the old value.
      * @param description The description of the group. Use null to leave the old value.
-     * @param privileges The ids of the privileges. Use null to leave the old value.
-     * @param users The ids of the users in this group. Use null to keep the old value.
      * @throws InvalidArgumentException If any of the privileges ids is invalid.
      * @throws ApplicationObjectNotFoundException If the group could not be found.
      */
-    public void setGroupProperties(long oid, String groupName, String description,
-            long[] privileges, long[] users)
+    public void setGroupProperties(long oid, String groupName, String description)
             throws InvalidArgumentException, ApplicationObjectNotFoundException;
 
    /**
      * Removes a list of users
      * @param oids The ids of the users to be deleted.
      * @throws ApplicationObjectNotFoundException If any of the users could not be found.
+     * @throws InvalidArgumentException If any of the users is the default administrator, which can't be deleted
      */
     public void deleteUsers(long[] oids)
-            throws ApplicationObjectNotFoundException;
+            throws ApplicationObjectNotFoundException, InvalidArgumentException;
 
     /**
      * Removes a list of groups
      * @param oids The oid of the groups to delete.
      * @throws ApplicationObjectNotFoundException If any of the groups could not be found.
+     * @throws InvalidArgumentException If the group you are trying to delete contains the default administrator
      */
-    public void deleteGroups(long[] oids) throws ApplicationObjectNotFoundException;
+    public void deleteGroups(long[] oids) throws ApplicationObjectNotFoundException, InvalidArgumentException;
     
    /**
      * Creates a list type item
@@ -539,34 +586,46 @@ public interface ApplicationEntityManager {
     public List<ActivityLogEntry> getGeneralActivityAuditTrail(int page, int limit);
     
     /**
-     * Validates if an user is allowed to perform an operation
-     * @param methodName the method name
-     * @param ipAddress
-     * @param sessionId
-     * @throws org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException
+     * Validates if an user is allowed to call a given web service method
+     * @param methodName The method to check if the user is allowed to call it.
+     * @param ipAddress The IP address the method is being invoked from
+     * @param sessionId The session token
+     * @throws NotAuthorizedException If the user is not allowed to invoke the method
      */
-    public void validateCall(String methodName, String ipAddress, String sessionId) throws NotAuthorizedException;
+    public void validateWebServiceCall(String methodName, String ipAddress, String sessionId) throws NotAuthorizedException;
     
     /**
-     * 
-     * @param user
-     * @param password
-     * @param IPAddress
-     * @return
-     * @throws ApplicationObjectNotFoundException 
+     * Creates a session
+     * @param user User name
+     * @param password Password
+     * @param IPAddress IP address the session is created from
+     * @return A session object with information about the session itself plus information about the user
+     * @throws ApplicationObjectNotFoundException If the user does not exist
+     * @throws NotAuthorizedException If the password is incorrect or if the user is not enabled.
      */
-    public Session createSession(String user, String password, String IPAddress)throws ApplicationObjectNotFoundException;
+    public Session createSession(String user, String password, String IPAddress) throws ApplicationObjectNotFoundException, NotAuthorizedException;
     
     /**
-     * 
-     * @param IPAddress
-     * @param sessionId
-     * @return
-     * @throws ApplicationObjectNotFoundException
-     * @throws NotAuthorizedException 
+     * Retrieves a user from the session ring given a session id
+     * @param sessionId The session token
+     * @return The user associated to a given session
+     * @throws ApplicationObjectNotFoundException If the user could not be found
      */
-    public UserProfile getUserInSession(String IPAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException;
-    
+    public UserProfile getUserInSession(String sessionId) throws ApplicationObjectNotFoundException;
+    /**
+     * Gets all the users in a group
+     * @param groupId The id of the group
+     * @return The list of users in that group
+     * @throws ApplicationObjectNotFoundException If the group could not be found. 
+     */
+    public List<UserProfile> getUsersInGroup(long groupId) throws ApplicationObjectNotFoundException;
+    /**
+     * Retrieves the list of groups a user belongs to
+     * @param userId The id of the user
+     * @return The list of groups for this user
+     * @throws ApplicationObjectNotFoundException If the user could not be found 
+     */
+    public List<GroupProfileLight> getGroupsForUser(long userId) throws ApplicationObjectNotFoundException;
     /**
      * Executes a set of patches
      * @return The error messages (if any) for every executed patch. If null, the execution was successful
@@ -575,20 +634,20 @@ public interface ApplicationEntityManager {
     
     /**
      * Closes a session
-     * @param sessionId
+     * @param sessionId The session id
      * @param remoteAddress
      * @throws NotAuthorizedException 
      */
     public void closeSession(String sessionId, String remoteAddress) throws NotAuthorizedException;
  
     /**
-     * Set the configuration variables of this manager
+     * Sets the configuration variables of this manager
      * @param properties A Properties object with the configuration variables
      */
     public void setConfiguration(Properties properties);
     
     /**
-     * Set the configuration variables of this manager
+     * Gets the configuration variables of this manager
      * @return A Properties object with the configuration variables
      */
     public Properties getConfiguration();

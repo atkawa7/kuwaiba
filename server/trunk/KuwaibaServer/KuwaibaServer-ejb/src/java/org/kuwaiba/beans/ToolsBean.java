@@ -17,6 +17,9 @@
 package org.kuwaiba.beans;
 
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import javax.ejb.Stateless;
 import org.kuwaiba.apis.persistence.PersistenceService;
@@ -44,13 +47,10 @@ public class ToolsBean implements ToolsBeanRemote {
     public void resetAdmin()  throws ServerSideException, NotAuthorizedException{
         
         try {
-            PersistenceService.getInstance().getApplicationEntityManager().setUserProperties("admin",null, "kuwaiba", null, null, true, null, null);
-        }catch(ApplicationObjectNotFoundException ex){ //If the user does not exist, create it
-            try {
-                PersistenceService.getInstance().getApplicationEntityManager().createUser("admin", "kuwaiba", "John", "Doe", true, null, null);
-            }catch(InvalidArgumentException ie){
-                throw new ServerSideException(ie.getMessage());
-            }
+            PersistenceService.getInstance().getApplicationEntityManager().setUserProperties(UserProfile.DEFAULT_ADMIN,null, "kuwaiba", null, null, true, UserProfile.USER_TYPE_GUI);
+        }catch(ApplicationObjectNotFoundException ex){ //If the user does not exist the database might not be initialized, so display an error
+            throw new ServerSideException("The user \"admin\" does not exist. Make sure you are using a database with a default schema.");
+            
         } catch(InvalidArgumentException | IllegalStateException ex){
             throw new ServerSideException(ex.getMessage());
         }
@@ -69,7 +69,7 @@ public class ToolsBean implements ToolsBeanRemote {
     @Override
     public String[] executePatches(String[] patches) {
         String[] results = new String[patches.length];
-        //Implementation for version 1.0 -> 1.1
+        
         
         ApplicationEntityManager aem = PersistenceService.getInstance().getApplicationEntityManager();
                     
@@ -80,18 +80,19 @@ public class ToolsBean implements ToolsBeanRemote {
         
         for (int i = 0; i < patches.length; i++) {
             switch (patches[i]) {
+                //<editor-fold desc="Implementation for version 1.0 -> 1.1" defaultstate="collapsed">
                 case "1": 
                     try {
                         //Reset passwords
                         List<UserProfile> users = aem.getUsers();
                         for (UserProfile user : users)
                             aem.setUserProperties(user.getId(), null, user.getUserName(), //Sets the new password to the "username" value 
-                                    null, null, true, null, null);
+                                    null, null, true, UserProfile.USER_TYPE_GUI);
                         
-                        aem.createGeneralActivityLogEntry("admin", ActivityLogEntry.ACTIVITY_TYPE_MASSIVE_UPDATE_APPLICATION_OBJECT, 
+                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, ActivityLogEntry.ACTIVITY_TYPE_MASSIVE_UPDATE_APPLICATION_OBJECT, 
                                 new ChangeDescriptor("password", "", "", "Passwords reset due to security patch"));
                         
-                    } catch (NotAuthorizedException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
+                    } catch (InvalidArgumentException | ApplicationObjectNotFoundException ex) {
                         results[i] = ex.getMessage();
                     }
                 break;
@@ -191,7 +192,7 @@ public class ToolsBean implements ToolsBeanRemote {
                                 String.format(template, "Logical configuration of some MPLS-related entities", "buildLogicalConfigurationInterfacesReport(objectClassName, objectId)",
                                         "Configuration Details"), RemoteReportLight.TYPE_HTML, true);
                         
-                        aem.createGeneralActivityLogEntry("admin", ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
                                 new ChangeDescriptor("reports", "", "", "Hard-coded reports migrated"));
 
                     } catch (MetadataObjectNotFoundException | ApplicationObjectNotFoundException ex) {
@@ -199,6 +200,30 @@ public class ToolsBean implements ToolsBeanRemote {
                     }
             
                 break;
+                //</editor-fold>
+                case "3": //Move all users without group to a default group. Required for Kuwaiba 1.5
+                    try {
+                        List<UserProfile> allUsers = aem.getUsers();
+                        List<Long> usersToMove = new ArrayList<>();
+
+                        for (UserProfile user : allUsers) {
+                            if (aem.getGroupsForUser(user.getId()).isEmpty())
+                                usersToMove.add(user.getId());
+                        }
+
+                        if (!usersToMove.isEmpty()) {
+                            SimpleDateFormat formatter = new SimpleDateFormat("MMMM dd yyyy");
+                            String defaultGroupName = "Default Group " + formatter.format(Calendar.getInstance().getTime());
+
+                            aem.createGroup(defaultGroupName, "Default group created by the Migration Wizard", usersToMove);
+
+                            aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+                                    new ChangeDescriptor("reports", "", "", usersToMove.size() + " groups moved to " + defaultGroupName));
+                        }
+                    } catch (InvalidArgumentException | ApplicationObjectNotFoundException ex) {
+                        results[i] = ex.getMessage();
+                    }
+                    break;
                 default:
                     results[i] = String.format("Invalid patch id %s", i);
             }
