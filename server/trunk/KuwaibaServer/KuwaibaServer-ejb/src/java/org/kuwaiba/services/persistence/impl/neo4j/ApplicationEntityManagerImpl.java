@@ -269,7 +269,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
     @Override
     public void setUserProperties(long oid, String userName, String password, String firstName,
-            String lastName, boolean enabled, int type)
+            String lastName, int enabled, int type)
             throws InvalidArgumentException, ApplicationObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx()) {
             Node userNode = userIndex.get(Constants.PROPERTY_ID, oid).getSingle();
@@ -288,8 +288,17 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (lastName != null)
                 userNode.setProperty(Constants.PROPERTY_LAST_NAME, lastName);
             
-            if (type != UserProfile.USER_TYPE_GUI && type != UserProfile.USER_TYPE_WEB_SERVICE && type != UserProfile.USER_TYPE_SOUTHBOUND)
+            if (type != -1 && type != UserProfile.USER_TYPE_GUI && type != UserProfile.USER_TYPE_WEB_SERVICE && type != UserProfile.USER_TYPE_SOUTHBOUND)
                 throw new InvalidArgumentException("User type provided is not valid");
+            
+            if (type != -1)
+                userNode.setProperty(Constants.PROPERTY_TYPE, type);
+            
+            if (enabled != -1 && enabled != 0 && enabled != 1)
+                throw new InvalidArgumentException("User enabled state is not valid");
+            
+            if (enabled != -1)
+                userNode.setProperty(Constants.PROPERTY_ENABLED, enabled == 1 );
             
             if(userName != null) {
                 
@@ -321,7 +330,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
     @Override
     public void setUserProperties(String formerUsername, String newUserName, String password, String firstName,
-            String lastName, boolean enabled, int type)
+            String lastName, int enabled, int type)
             throws InvalidArgumentException, ApplicationObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx()) { 
             Node userNode = userIndex.get(Constants.PROPERTY_NAME, formerUsername).getSingle();
@@ -360,8 +369,14 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 userNode.setProperty(Constants.PROPERTY_FIRST_NAME, firstName);
             if(lastName != null)
                 userNode.setProperty(Constants.PROPERTY_LAST_NAME, lastName);
-            if (type != UserProfile.USER_TYPE_GUI && type != UserProfile.USER_TYPE_WEB_SERVICE && type != UserProfile.USER_TYPE_SOUTHBOUND)
+            if (type != -1 && type != UserProfile.USER_TYPE_GUI && type != UserProfile.USER_TYPE_WEB_SERVICE && type != UserProfile.USER_TYPE_SOUTHBOUND)
                 throw new InvalidArgumentException("User type provided is not valid");
+            if (type != -1)
+                userNode.setProperty(Constants.PROPERTY_TYPE, type );
+            if (enabled != -1 && enabled != 0 && enabled != 1)
+                throw new InvalidArgumentException("User enabled state is not valid");
+            if (enabled != -1)
+                userNode.setProperty(Constants.PROPERTY_ENABLED, enabled == 1 );
             
             tx.success();
             
@@ -504,14 +519,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             throw new InvalidArgumentException("Group name can not be null");
         if (groupName.trim().isEmpty())
             throw new InvalidArgumentException("Group name can not be an empty string");
-        if (!groupName.matches("^[a-zA-Z0-9_.]*$"))
-            throw new InvalidArgumentException(String.format("Class %s contains invalid characters", groupName));
+        if (!groupName.matches("^[a-zA-Z0-9_. ]*$"))
+            throw new InvalidArgumentException(String.format("Group \"%s\" contains invalid characters", groupName));
         
-        try (Transaction tx = graphDb.beginTx())
-        {
-            Node storedGroup = groupIndex.get(Constants.PROPERTY_NAME,groupName).getSingle();
+        try (Transaction tx = graphDb.beginTx()) {
+            Node storedGroup = groupIndex.get(Constants.PROPERTY_NAME, groupName).getSingle();
             if (storedGroup != null)
-                throw new InvalidArgumentException(String.format("Group %s already exists", groupName));
+                throw new InvalidArgumentException(String.format("Group \"%s\" already exists", groupName));
 
             Label label = DynamicLabel.label(Constants.INDEX_GROUPS);
             Node newGroupNode = graphDb.createNode(label);
@@ -557,10 +571,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override
     public List<GroupProfile> getGroups() {
         try(Transaction tx = graphDb.beginTx()) {
-            IndexHits<Node> groupsNodes = groupIndex.query(Constants.PROPERTY_NAME, "*");
+            IndexHits<Node> groupNodes = groupIndex.query(Constants.PROPERTY_NAME, "*");
 
             List<GroupProfile> groups =  new ArrayList<>();
-            for (Node node : groupsNodes)
+            for (Node node : groupNodes)
                 groups.add((Util.createGroupProfileFromNode(node)));
             return groups;
         }
@@ -575,11 +589,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if(groupNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Can not find the group with id %s",id));
             
-            if(groupName != null){
-                if (groupName.isEmpty())
+            if(groupName != null) {
+                if (groupName.trim().isEmpty())
                     throw new InvalidArgumentException("Group name can not be an empty string");
-                if (!groupName.matches("^[a-zA-Z0-9_.]*$"))
-                    throw new InvalidArgumentException(String.format("Class %s contains invalid characters", groupName));
+                if (!groupName.matches("^[a-zA-Z0-9_. ]*$"))
+                    throw new InvalidArgumentException(String.format("Group %s contains invalid characters", groupName));
 
                 Node storedGroup = groupIndex.get(Constants.PROPERTY_NAME, groupName).getSingle();
                     if (storedGroup != null)
@@ -617,13 +631,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public void deleteGroups(long[] oids) throws ApplicationObjectNotFoundException, InvalidArgumentException {
         
         try(Transaction tx = graphDb.beginTx()) {
-            if(oids != null){
+            if(oids != null) {
                 for (long id : oids) {
                     Node groupNode = groupIndex.get(Constants.PROPERTY_ID, id).getSingle();
                     if(groupNode == null)
                         throw new ApplicationObjectNotFoundException(String.format("Can not find the group with id %s",id));
-                    
-                    cm.removeGroup((String)groupNode.getProperty(Constants.PROPERTY_NAME));
 
                     for (Relationship relationship : groupNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_PRIVILEGE)) {
                         Node privilegeNode = relationship.getEndNode();
@@ -635,20 +647,23 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                         Node userNode = relationship.getStartNode();
                         
                         relationship.delete();
-                        relationship.getEndNode().delete();
                         
                         //This will delete all users associated *only* to this group. The users associated to other groups will be kept and the relationship with this group will be released
-                        if (!userNode.hasRelationship(Direction.OUTGOING, RelTypes.BELONGS_TO_GROUP)) 
+                        if (userNode.hasRelationship(Direction.OUTGOING, RelTypes.BELONGS_TO_GROUP)) 
                             Util.deleteUserNode(userNode, userIndex);
                             
                     }
+                    
+                    //Now we release the rest of the relationships
+                    for (Relationship otherRelationship : groupNode.getRelationships())
+                        otherRelationship.delete();
                     
                     groupIndex.remove(groupNode);
                     cm.removeGroup((String)groupNode.getProperty(GroupProfile.PROPERTY_NAME));
                     groupNode.delete();
                 }
-                tx.success();
             }
+            tx.success();
         }
     }
     

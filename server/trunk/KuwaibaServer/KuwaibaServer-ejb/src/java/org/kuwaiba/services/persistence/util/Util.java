@@ -624,8 +624,8 @@ public class Util {
      * @throws InvalidArgumentException If you try to delete the default administrator
      */
     public static void deleteUserNode(Node userNode, Index<Node> userIndex) throws InvalidArgumentException {
-        
-        if (UserProfile.DEFAULT_ADMIN.equals(userNode.getProperty(UserProfile.PROPERTY_NAME)))
+        String userName = (String)userNode.getProperty(Constants.PROPERTY_NAME);
+        if (UserProfile.DEFAULT_ADMIN.equals(userName))
             throw new InvalidArgumentException("The default administrator can not be deleted");
 
         //Delete the privilege nodes
@@ -641,7 +641,7 @@ public class Util {
         
         userIndex.remove(userNode);
         userNode.delete();
-        CacheManager.getInstance().removeUser((String)userNode.getProperty(Constants.PROPERTY_NAME));
+        CacheManager.getInstance().removeUser(userName);
     }
 
     /**

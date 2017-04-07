@@ -242,16 +242,16 @@ public class KuwaibaService {
     }
 
     /**
-     * Set an existing user properties
+     * Sets the properties of a given user using the id to search for it
      * @param oid User id
-     * @param username New username (null if unchanged)
-     * @param firstName New user's first name (null if unchanged)
-     * @param lastName (null if unchanged)
-     * @param password (null if unchanged)
-     * @param enabled (null if unchanged)
-     * @param type The type of the user. See UserProfile.USER_TYPE_* for possible values
+     * @param username New user's name. Use null to leave it unchanged.
+     * @param password New user's password. Use null to leave it unchanged
+     * @param firstName New user's first name. Use null to leave it unchanged
+     * @param lastName New user's last name. Use null to leave it unchanged
+     * @param enabled 0 for false, 1 for true, -1 to leave it unchanged
+     * @param type User type. See UserProfile.USER_TYPE* for possible values. Use -1 to leave it unchanged
      * @param sessionId Session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Thrown if the username is null or empty or the username already exists or if the user could not be found
      */
     @WebMethod(operationName = "setUserProperties")
     public void setUserProperties(
@@ -260,7 +260,7 @@ public class KuwaibaService {
             @WebParam(name = "firstName")String firstName,
             @WebParam(name = "lastName")String lastName,
             @WebParam(name = "password")String password,
-            @WebParam(name = "enabled")boolean enabled,
+            @WebParam(name = "enabled")int enabled,
             @WebParam(name = "type")int type,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {

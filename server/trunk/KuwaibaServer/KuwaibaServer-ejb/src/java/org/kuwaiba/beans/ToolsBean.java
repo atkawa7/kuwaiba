@@ -47,7 +47,7 @@ public class ToolsBean implements ToolsBeanRemote {
     public void resetAdmin()  throws ServerSideException, NotAuthorizedException{
         
         try {
-            PersistenceService.getInstance().getApplicationEntityManager().setUserProperties(UserProfile.DEFAULT_ADMIN,null, "kuwaiba", null, null, true, UserProfile.USER_TYPE_GUI);
+            PersistenceService.getInstance().getApplicationEntityManager().setUserProperties(UserProfile.DEFAULT_ADMIN,null, "kuwaiba", null, null, 1, UserProfile.USER_TYPE_GUI);
         }catch(ApplicationObjectNotFoundException ex){ //If the user does not exist the database might not be initialized, so display an error
             throw new ServerSideException("The user \"admin\" does not exist. Make sure you are using a database with a default schema.");
             
@@ -87,7 +87,7 @@ public class ToolsBean implements ToolsBeanRemote {
                         List<UserProfile> users = aem.getUsers();
                         for (UserProfile user : users)
                             aem.setUserProperties(user.getId(), null, user.getUserName(), //Sets the new password to the "username" value 
-                                    null, null, true, UserProfile.USER_TYPE_GUI);
+                                    null, null, -1, UserProfile.USER_TYPE_GUI);
                         
                         aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, ActivityLogEntry.ACTIVITY_TYPE_MASSIVE_UPDATE_APPLICATION_OBJECT, 
                                 new ChangeDescriptor("password", "", "", "Passwords reset due to security patch"));

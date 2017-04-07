@@ -1540,7 +1540,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
 
     @Override
     public void setUserProperties(long oid, String userName, String password, 
-    String firstName, String lastName, boolean enabled, int type, String ipAddress, String sessionId) throws ServerSideException{
+    String firstName, String lastName, int enabled, int type, String ipAddress, String sessionId) throws ServerSideException{
         if (aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
