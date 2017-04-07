@@ -19,6 +19,12 @@ package org.inventory.core.usermanager.nodes;
 import javax.swing.Action;
 import org.inventory.communications.core.LocalUserObject;
 import org.inventory.core.usermanager.nodes.actions.UserManagerActionFactory;
+import org.inventory.core.usermanager.nodes.properties.PropertyUserEnabled;
+import org.inventory.core.usermanager.nodes.properties.PropertyUserFirstName;
+import org.inventory.core.usermanager.nodes.properties.PropertyUserLastName;
+import org.inventory.core.usermanager.nodes.properties.PropertyUserName;
+import org.inventory.core.usermanager.nodes.properties.PropertyUserPassword;
+import org.inventory.core.usermanager.nodes.properties.PropertyUserType;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Sheet;
@@ -49,7 +55,28 @@ public class UserNode extends AbstractNode {
 
     @Override
     protected Sheet createSheet() {
-        return super.createSheet(); //To change body of generated methods, choose Tools | Templates.
+        Sheet sheet = Sheet.createDefault();
+        Sheet.Set defaultSet = Sheet.createPropertiesSet();
+        LocalUserObject user = getLookup().lookup(LocalUserObject.class);
+        
+        user.addPropertyChangeListener(UserNodePropertyChangeListener.getInstance());
+        
+        PropertyUserName prpName = new PropertyUserName(user);
+        PropertyUserPassword prpPassword = new PropertyUserPassword(user);
+        PropertyUserFirstName prpFirstName = new PropertyUserFirstName(user);
+        PropertyUserLastName prpLastName = new PropertyUserLastName(user);
+        PropertyUserEnabled prpEnabled = new PropertyUserEnabled(user);
+        PropertyUserType prpType = new PropertyUserType(user);
+        
+        defaultSet.put(prpName);
+        defaultSet.put(prpPassword);
+        defaultSet.put(prpFirstName);
+        defaultSet.put(prpLastName);
+        defaultSet.put(prpEnabled);
+        defaultSet.put(prpType);
+
+        sheet.put(defaultSet);
+        return sheet;
     }
     
     @Override

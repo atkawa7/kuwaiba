@@ -48,7 +48,7 @@ class UnsubscribeUserAction extends AbstractAction {
             LocalTask task = taskNode.getLookup().lookup(LocalTask.class);
             
             CommunicationsStub com = CommunicationsStub.getInstance();
-            if (com.unsubscribeUserFromTask(userNode.getLookup().lookup(LocalUserObjectLight.class).getUserId(), 
+            if (com.unsubscribeUserFromTask(userNode.getLookup().lookup(LocalUserObjectLight.class).getId(), 
                     task.getId())) {
                 
                 NotificationUtil.getInstance().showSimplePopup("User Subscription", NotificationUtil.INFO_MESSAGE, "User subscription canceled");

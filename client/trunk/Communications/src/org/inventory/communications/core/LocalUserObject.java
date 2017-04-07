@@ -42,6 +42,6 @@ public class LocalUserObject extends LocalUserObjectLight {
     
     @Override
     public String toString() {
-        return getFirstName() == null || getLastName() == null ? getUserName() : String.format("%s, %s  (%s)", getLastName(), getFirstName(), getUserName());
+        return getFirstName() == null || getLastName() == null || getFirstName().isEmpty() || getLastName().isEmpty() ? getUserName() : String.format("%s, %s  (%s)", getLastName(), getFirstName(), getUserName());
     }
 }

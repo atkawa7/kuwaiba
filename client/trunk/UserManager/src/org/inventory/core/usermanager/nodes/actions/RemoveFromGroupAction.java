@@ -49,7 +49,7 @@ public class RemoveFromGroupAction extends AbstractAction {
                 UserNode userNode = selectedNodes.next();
                 GroupNode groupNode =  (GroupNode)userNode.getParentNode();
                 
-                if(CommunicationsStub.getInstance().removeUserFromGroup(userNode.getLookup().lookup(LocalUserObject.class).getUserId(),
+                if(CommunicationsStub.getInstance().removeUserFromGroup(userNode.getLookup().lookup(LocalUserObject.class).getId(),
                         groupNode.getLookup().lookup(LocalUserGroupObject.class).getId())) {
                     ((GroupNode.UserChildren)groupNode.getChildren()).addNotify();
                     NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "User successfully removed from group");

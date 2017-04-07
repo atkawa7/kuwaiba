@@ -37,7 +37,7 @@ public class UserManagerRootNode extends AbstractNode {
     
     public UserManagerRootNode() {
         super(new GroupChildren());
-        setDisplayName("Uner Manager Root");
+        setDisplayName("User Manager");
         setIconBaseWithExtension(ICON_PATH);
     }
     

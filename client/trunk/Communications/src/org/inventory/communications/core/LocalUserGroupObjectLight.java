@@ -59,11 +59,10 @@ public class LocalUserGroupObjectLight implements Comparable<LocalUserGroupObjec
     }
     
     public void setName(String newName) {
-        String oldName = this.name;
         try {
-            firePropertyChange(PROPERTY_NAME, oldName, newName);
+            firePropertyChange(PROPERTY_NAME, this.name, newName);
             this.name = newName;
-        } catch (PropertyVetoException e) {}
+        } catch (PropertyVetoException e) { }
     }
     
     public Date getCreationDate() {
@@ -75,11 +74,22 @@ public class LocalUserGroupObjectLight implements Comparable<LocalUserGroupObjec
     }
 
     public void setDescription(String newDescription) {
-        String oldDescription = this.description;
         try {
-            firePropertyChange(PROPERTY_DESCRIPTION, oldDescription, newDescription);
+            firePropertyChange(PROPERTY_DESCRIPTION, this.description, newDescription);
             this.description = newDescription;
         } catch (PropertyVetoException e) {}
+    }
+    
+    public void addPropertyChangeListener(VetoableChangeListener listener) {
+        changeListeners.add(listener);
+    }
+    
+    public void removePropertyChangeListener(VetoableChangeListener listener) {
+        changeListeners.remove(listener);
+    }
+    
+    public void removeAllPropertyChangeListeners() {
+        changeListeners.clear();
     }
     
     public void firePropertyChange(String propertyName, Object oldValue, Object newValue) throws PropertyVetoException {

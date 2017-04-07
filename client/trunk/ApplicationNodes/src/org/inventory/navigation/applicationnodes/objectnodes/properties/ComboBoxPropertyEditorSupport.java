@@ -28,7 +28,7 @@ import org.openide.explorer.propertysheet.PropertyEnv;
 import org.openide.explorer.propertysheet.PropertyModel;
 
 /**
- * Property support for dates. Mostly as seen on https://platform.netbeans.org/tutorials/nbm-property-editors.html#inplace-editor
+ * Property support for list types. Mostly as seen on https://platform.netbeans.org/tutorials/nbm-property-editors.html#inplace-editor
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  * @param <T> The kind of objects in the drop down list
  */

@@ -124,7 +124,7 @@ public class UsersFrame extends JFrame {
                 JOptionPane.showMessageDialog(null, "Select a user from the list");
             else {
                 CommunicationsStub com =CommunicationsStub.getInstance();
-                if (com.subscribeUserToTask(lstAvailableUsers.getSelectedValue().getUserId(), 
+                if (com.subscribeUserToTask(lstAvailableUsers.getSelectedValue().getId(), 
                         selectedTaskNode.getLookup().lookup(LocalTask.class).getId())) {
                     
                     JOptionPane.showMessageDialog(null, "User subscribed successfully");

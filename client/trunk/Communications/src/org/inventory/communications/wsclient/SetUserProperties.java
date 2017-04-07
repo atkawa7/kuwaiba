@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="firstName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="lastName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="password" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="enabled" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="enabled" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="type" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
@@ -50,7 +50,7 @@ public class SetUserProperties {
     protected String firstName;
     protected String lastName;
     protected String password;
-    protected boolean enabled;
+    protected int enabled;
     protected int type;
     protected String sessionId;
 
@@ -170,7 +170,7 @@ public class SetUserProperties {
      * Gets the value of the enabled property.
      * 
      */
-    public boolean isEnabled() {
+    public int getEnabled() {
         return enabled;
     }
 
@@ -178,7 +178,7 @@ public class SetUserProperties {
      * Sets the value of the enabled property.
      * 
      */
-    public void setEnabled(boolean value) {
+    public void setEnabled(int value) {
         this.enabled = value;
     }
 

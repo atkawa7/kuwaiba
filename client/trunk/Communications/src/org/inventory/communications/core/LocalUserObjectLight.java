@@ -16,35 +16,48 @@
 
 package org.inventory.communications.core;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyVetoException;
+import java.beans.VetoableChangeListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 /**
  * Implementation for the local representation of an application user with the most basic information
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class LocalUserObjectLight implements Comparable<LocalUserObjectLight> {
 
-    private long userId;
+    public static final String PROPERTY_USER_NAME = "username";
+    public static final String PROPERTY_PASSWORD = "password";
+    public static final String PROPERTY_FIRST_NAME = "firstName";
+    public static final String PROPERTY_LAST_NAME = "lastName";
+    public static final String PROPERTY_ENABLED = "enabled";
+    public static final String PROPERTY_TYPE = "type";
+    
+    private long id;
     private String userName;
     private String firstName;
     private String lastName;
     private int type;
     private boolean enabled;
+    
+    protected List<VetoableChangeListener> changeListeners;
 
-    public LocalUserObjectLight(long userId, String userName, String firstName, 
+    public LocalUserObjectLight(long id, String userName, String firstName, 
             String lastName, boolean enabled, int type) {
-        this.userId = userId;
+        this.id = id;
         this.userName = userName;
         this.firstName = firstName;
         this.lastName = lastName;
         this.enabled = enabled;
         this.type = type;
+        this.changeListeners = new ArrayList<>();
     }
 
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
+    public long getId() {
+        return id;
     }
 
     public String getUserName() {
@@ -52,7 +65,11 @@ public class LocalUserObjectLight implements Comparable<LocalUserObjectLight> {
     }
 
     public void setUserName(String userName) {
-        this.userName = userName;
+        try {
+            firePropertyChange(PROPERTY_USER_NAME, this.userName, userName);
+            this.userName = userName;
+        } catch (PropertyVetoException ex) { }
+        
     }
     
     public String getFirstName() {
@@ -60,7 +77,11 @@ public class LocalUserObjectLight implements Comparable<LocalUserObjectLight> {
     }
 
     public void setFirstName(String firstName) {
-        this.firstName = firstName;
+        try {
+            firePropertyChange(PROPERTY_FIRST_NAME, this.firstName, firstName);
+            this.firstName = firstName;
+        } catch (PropertyVetoException ex) { }
+        
     }
 
     public String getLastName() {
@@ -68,7 +89,10 @@ public class LocalUserObjectLight implements Comparable<LocalUserObjectLight> {
     }
 
     public void setLastName(String lastName) {
-        this.lastName = lastName;
+        try {
+            firePropertyChange(PROPERTY_LAST_NAME, this.lastName, lastName);
+            this.lastName = lastName;
+        } catch (PropertyVetoException ex) { }
     }
 
     public int getType() {
@@ -76,7 +100,10 @@ public class LocalUserObjectLight implements Comparable<LocalUserObjectLight> {
     }
 
     public void setType(int type) {
-        this.type = type;
+        try {
+            firePropertyChange(PROPERTY_TYPE, this.type, type);
+            this.type = type;
+        } catch (PropertyVetoException ex) { }
     }
 
     public boolean isEnabled() {
@@ -84,7 +111,27 @@ public class LocalUserObjectLight implements Comparable<LocalUserObjectLight> {
     }
 
     public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+        try {
+            firePropertyChange(PROPERTY_ENABLED, this.enabled, enabled);
+            this.enabled = enabled;
+        } catch (PropertyVetoException ex) { }
+    }
+    
+    public void addPropertyChangeListener(VetoableChangeListener listener) {
+        changeListeners.add(listener);
+    }
+    
+    public void removePropertyChangeListener(VetoableChangeListener listener) {
+        changeListeners.remove(listener);
+    }
+    
+    public void removeAllPropertyChangeListeners() {
+        changeListeners.clear();
+    }
+    
+    public void firePropertyChange(String propertyName, Object oldValue, Object newValue) throws PropertyVetoException {
+        for (VetoableChangeListener listener : changeListeners)
+            listener.vetoableChange(new PropertyChangeEvent(this, propertyName, oldValue, newValue));
     }
     
     @Override
@@ -95,5 +142,21 @@ public class LocalUserObjectLight implements Comparable<LocalUserObjectLight> {
     @Override
     public int compareTo(LocalUserObjectLight o) {
         return toString().compareTo(o.toString());
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof LocalUserGroupObjectLight)
+            return ((LocalUserGroupObjectLight)obj).getId() == id;
+        else
+            return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 41 * hash + (int) (this.id ^ (this.id >>> 32));
+        hash = 41 * hash + Objects.hashCode(this.userName);
+        return hash;
     }
 }

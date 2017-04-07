@@ -38,7 +38,7 @@ import org.openide.util.NbBundle.Messages;
 @TopComponent.Description(
         preferredID = "UserManagerTopComponent",
         //iconBase="SET/PATH/TO/ICON/HERE", 
-        persistenceType = TopComponent.PERSISTENCE_ALWAYS
+        persistenceType = TopComponent.PERSISTENCE_NEVER
 )
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
 @ActionID(category = "Window", id = "org.inventory.core.usermanager.UserManagerTopComponent")
@@ -49,8 +49,8 @@ import org.openide.util.NbBundle.Messages;
 )
 @Messages({
     "CTL_UserManagerAction=UserManager",
-    "CTL_UserManagerTopComponent=UserManager Window",
-    "HINT_UserManagerTopComponent=This is a UserManager window"
+    "CTL_UserManagerTopComponent=User Manager",
+    "HINT_UserManagerTopComponent=Manage users and groups"
 })
 public final class UserManagerTopComponent extends TopComponent 
         implements ExplorerManager.Provider, Refreshable {
@@ -68,7 +68,7 @@ public final class UserManagerTopComponent extends TopComponent
     
     private void initCustomComponents() {
         treeMain = new BeanTreeView();
-        pnlScrollMain.setViewportView(treeMain);
+        add(treeMain);
         associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
     }
     
@@ -80,14 +80,10 @@ public final class UserManagerTopComponent extends TopComponent
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        pnlScrollMain = new javax.swing.JScrollPane();
-
         setLayout(new java.awt.BorderLayout());
-        add(pnlScrollMain, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JScrollPane pnlScrollMain;
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {

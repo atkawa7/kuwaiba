@@ -2038,21 +2038,21 @@ public class CommunicationsStub {
     }
 
     /**
-     * Set an existing user properties
+     * Sets the properties of a given user using the id to search for it
      * @param oid User id
-     * @param username New username (null if unchanged)
-     * @param firstName New user's first name (null if unchanged)
-     * @param lastName (null if unchanged)
-     * @param password (null if unchanged)
-     * @param enabled (null if unchanged)
-     * @param type The type of the user. See UserProfile.USER_TYPE_* for possible values
-     * @return Success or failure
+     * @param username New user's name. Use null to leave it unchanged.
+     * @param password New user's password. Use null to leave it unchanged
+     * @param firstName New user's first name. Use null to leave it unchanged
+     * @param lastName New user's last name. Use null to leave it unchanged
+     * @param enabled 0 for false, 1 for true, -1 to leave it unchanged
+     * @param type User type. See UserProfile.USER_TYPE* for possible values. Use -1 to leave it unchanged
+     * @return ServerSideException Thrown if the username is null or empty or the username already exists or if the user could not be found
      */
     public boolean setUserProperties(long oid, String username, String password, 
-            String firstName, String lastName, boolean enabled, int type) {
+            String firstName, String lastName, int enabled, int type) {
         try {            
             service.setUserProperties(oid, username, firstName, lastName, password, 
-                    true, type, this.session.getSessionId());
+                    enabled, type, this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
             return false;
@@ -2204,6 +2204,7 @@ public class CommunicationsStub {
             service.deleteUsers(oids, session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
+            return false;
         }
         return true;
     }
@@ -2218,6 +2219,7 @@ public class CommunicationsStub {
             service.deleteGroups(oids, session.getSessionId());
         } catch(Exception ex) {
             this.error = ex.getMessage();
+            return false;
         }
         return true;
     }// </editor-fold>

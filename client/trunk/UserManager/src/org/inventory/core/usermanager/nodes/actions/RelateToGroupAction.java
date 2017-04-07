@@ -45,7 +45,7 @@ class RelateToGroupAction extends AbstractAction implements Presenter.Popup {
     @Override
     public void actionPerformed(ActionEvent e) {
         LocalUserGroupObject destinationGroup = (LocalUserGroupObject)((JMenuItem)e.getSource()).getClientProperty("destinationGroup");
-        if (CommunicationsStub.getInstance().addUserToGroup(currentUser.getUserId(), destinationGroup.getId()))
+        if (CommunicationsStub.getInstance().addUserToGroup(currentUser.getId(), destinationGroup.getId()))
             NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE,
                     String.format("The user %s has been successfully added to group %s", currentUser.toString(), destinationGroup));
         else
@@ -54,7 +54,7 @@ class RelateToGroupAction extends AbstractAction implements Presenter.Popup {
 
     @Override
     public JMenuItem getPopupPresenter() {
-        JMenu mnuGroups = new JMenu();
+        JMenu mnuGroups = new JMenu(this);
         mnuGroups.setEnabled(false);
         Iterator<? extends UserNode> selectedNodes = 
                 Utilities.actionsGlobalContext().lookupResult(UserNode.class).allInstances().iterator();
@@ -66,9 +66,10 @@ class RelateToGroupAction extends AbstractAction implements Presenter.Popup {
             
             List<LocalUserGroupObject> allGroups = CommunicationsStub.getInstance().getGroups();
             for (LocalUserGroupObject aGroup : allGroups) { //We should display only the other groups
-                if (aGroup != currentGroup) {
+                if (!aGroup.equals(currentGroup)) {
                     JMenuItem mnuGroup = new JMenuItem(aGroup.getName());
                     mnuGroup.putClientProperty("destinationGroup", aGroup);
+                    mnuGroup.addActionListener(this);
                     mnuGroups.add(mnuGroup);
                 }
             }

@@ -20,8 +20,8 @@ import java.awt.event.ActionEvent;
 import java.util.Iterator;
 import javax.swing.AbstractAction;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -66,7 +66,7 @@ class CreateUserAction extends AbstractAction {
         JCheckBox chkEnabled = new JCheckBox();
         chkEnabled.setSelected(true);
         chkEnabled.setName("chkEnabled");
-        JList<UserType> lstUserTypes = new JList<>(new UserType[] { new UserType("GUI User", 1), 
+        JComboBox<UserType> lstUserTypes = new JComboBox<>(new UserType[] { new UserType("GUI User", 1), 
                                                                     new UserType("Web Service Interface User", 2),
                                                                     new UserType("Southbound Interface User", 3) });
         lstUserTypes.setName("lstUserTypes");
@@ -82,7 +82,7 @@ class CreateUserAction extends AbstractAction {
                     ((JTextField)pnlNewUser.getComponent("txtLastName")).getText(),
                     new String(((JPasswordField)pnlNewUser.getComponent("txtPassword")).getPassword()),
                     ((JCheckBox)pnlNewUser.getComponent("chkEnabled")).isSelected(),
-                    ((JList<UserType>)pnlNewUser.getComponent("lstUserTypes")).getSelectedValue().type,
+                    ((UserType)((JComboBox<UserType>)pnlNewUser.getComponent("lstUserTypes")).getSelectedItem()).type,
                     selectedNode.getLookup().lookup(LocalUserGroupObject.class).getId());
             
             if (newUser == null)

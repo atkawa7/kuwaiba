@@ -53,7 +53,7 @@ public class DeleteUserAction extends AbstractAction {
             
             while (selectedNodes.hasNext()) {
                 lastSelectedNode = selectedNodes.next();
-                usersToDelete.add(lastSelectedNode.getLookup().lookup(LocalUserObject.class).getUserId());
+                usersToDelete.add(lastSelectedNode.getLookup().lookup(LocalUserObject.class).getId());
             }
             
             if (!usersToDelete.isEmpty()) {

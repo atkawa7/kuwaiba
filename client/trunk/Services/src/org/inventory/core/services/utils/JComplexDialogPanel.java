@@ -40,17 +40,21 @@ public class JComplexDialogPanel extends JPanel {
             throw new RuntimeException("You must provide the same number of labels and components");
         
         this.components = new HashMap<>();
-        setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
+        //setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
+        //setBorder(BorderFactory.createLineBorder(Color.RED));
         setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
-        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.fill = GridBagConstraints.BOTH;
         gc.insets = new Insets(2, 2, 2, 2);
+        
         for (int i = 0 ; i < components.length;  i++ ){
             this.components.put(components[i].getName(), components[i]);
+            gc.weightx=0;
             gc.gridy = i;
             gc.gridx = 0;
             add(new JLabel(labels[i]), gc);
             gc.gridx = 1;
+            gc.weightx=1;
             add(components[i], gc);
         }
     }

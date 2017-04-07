@@ -25,6 +25,9 @@ import org.inventory.communications.core.LocalUserGroupObject;
 import org.inventory.communications.core.LocalUserObject;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.usermanager.nodes.actions.UserManagerActionFactory;
+import org.inventory.core.usermanager.nodes.properties.PropertyGroupCreationDate;
+import org.inventory.core.usermanager.nodes.properties.PropertyGroupDescription;
+import org.inventory.core.usermanager.nodes.properties.PropertyGroupName;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
@@ -60,25 +63,26 @@ public class GroupNode extends AbstractNode {
         Sheet sheet = Sheet.createDefault();
         Sheet.Set defaultSet = Sheet.createPropertiesSet();
         LocalUserGroupObject group = getLookup().lookup(LocalUserGroupObject.class);
-        try {
-            Property<String> nameProperty = new PropertySupport.Reflection<>(group, String.class, LocalUserGroupObject.PROPERTY_NAME);
-            Property<String> descriptionProperty = new PropertySupport.Reflection<>(group, String.class, LocalUserGroupObject.PROPERTY_DESCRIPTION);
-            Property<Date> creationDateProperty = new PropertySupport.Reflection<>(group, Date.class, LocalUserGroupObject.PROPERTY_CREATION_DATE);
-            
-            defaultSet.put(nameProperty);
-            defaultSet.put(descriptionProperty);
-            defaultSet.put(creationDateProperty);
-            
-            sheet.put(defaultSet);
-        } catch (NoSuchMethodException ex) {
-            Exceptions.printStackTrace(ex);
-        }
+        
+        group.addPropertyChangeListener(GroupNodePropertyChangeListener.getInstance());
+        
+        PropertyGroupName prpName = new PropertyGroupName(group);
+        PropertyGroupDescription prpDescription = new PropertyGroupDescription(group);
+        PropertyGroupCreationDate prpCreationDateProperty = new PropertyGroupCreationDate(group);
+
+        defaultSet.put(prpName);
+        defaultSet.put(prpDescription);
+        defaultSet.put(prpCreationDateProperty);
+
+        sheet.put(defaultSet);
         return sheet;
     }
     
     @Override
     public Action[] getActions(boolean context) {
-        return new Action[] { UserManagerActionFactory.getRefreshUserListAction(),
+        return new Action[] { 
+            UserManagerActionFactory.getCreateUserAction(),
+            UserManagerActionFactory.getRefreshUserListAction(),
             null,
             UserManagerActionFactory.getDeleteGroupAction() };
     }
