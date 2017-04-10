@@ -25,6 +25,11 @@ public class HTMLRow extends HTMLComponent {
     public HTMLRow(HTMLColumn[] columns) {
         this.columns = columns;
     }
+    
+    public HTMLRow(String cssClass, HTMLColumn[] columns) {
+        setCssClass(cssClass);
+        this.columns = columns;
+    }
 
     public HTMLRow(String style, String cssClass, HTMLColumn[] columns) {
         super(style, cssClass);

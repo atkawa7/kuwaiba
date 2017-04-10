@@ -87,7 +87,7 @@ public class DefaultReports {
 
 
         List<RemoteBusinessObjectLight> parents = bem.getParents(theRack.getClassName(), theRack.getId());
-        String location = formatLocation(parents);
+        String location = Util.formatLocation(parents);
 
         totalRackUnits = theRack.getAttributes().get("rackUnits") == null ? 0 : Integer.valueOf(theRack.getAttributes().get("rackUnits").get(0));
 
@@ -211,7 +211,7 @@ public class DefaultReports {
             portList += "</table>\n";
             
             List<RemoteBusinessObjectLight> parents = bem.getParents(theFrame.getClassName(), theFrame.getId());
-            String location = formatLocation(parents);
+            String location = Util.formatLocation(parents);
             float usePercentage = frameChildren.isEmpty() ? 0 : (usedPorts * 100 / frameChildren.size());
             
             frameUsageReportText += "<table><tr><td class=\"generalInfoLabel\">Name</td><td class=\"generalInfoValue\">" + theFrame.getName() + "</td></tr>"
@@ -469,7 +469,7 @@ public class DefaultReports {
 
         networkEquipmentInLocationReportText += "<table><tr><td class=\"generalInfoLabel\">Name</td><td>" + location.getName() + "</td></tr>\n"
                 + "<tr><td class=\"generalInfoLabel\">Type</td><td>" + location.getClassName() + "</td></tr>\n"
-                + "<tr><td class=\"generalInfoLabel\">Location</td><td>" + formatLocation(bem.getParents(location.getClassName(), location.getId())) + "</td></tr>\n</table>\n";
+                + "<tr><td class=\"generalInfoLabel\">Location</td><td>" + Util.formatLocation(bem.getParents(location.getClassName(), location.getId())) + "</td></tr>\n</table>\n";
 
         if (theResult.get("networkEquipment").getList().isEmpty())
             networkEquipmentInLocationReportText += "<div class=\"warning\">This location does not have any network equipment</div>";
@@ -481,7 +481,7 @@ public class DefaultReports {
                                                             + "<td>" + networkEquipment.getName() + "</td>"
                                                             + "<td>" + networkEquipment.getClassName() + "</td>"
                                                             + "<td>" + (networkEquipment.getAttributes().get("serialNumber") == null ? asError("Not Set") : networkEquipment.getAttributes().get("serialNumber").get(0)) + "</td>"
-                                                            + "<td>" + formatLocation(bem.getParents(networkEquipment.getClassName(), networkEquipment.getId())) + "</td>"
+                                                            + "<td>" + Util.formatLocation(bem.getParents(networkEquipment.getClassName(), networkEquipment.getId())) + "</td>"
                                                             + "<td>" + (networkEquipment.getAttributes().get("vendor") == null ? asError("Not Set") : bem.getObjectLight("EquipmentVendor", Long.valueOf(networkEquipment.getAttributes().get("vendor").get(0))).getName() ) + "</td>"
                                                             + "<td>" + (networkEquipment.getAttributes().get("state") == null ? asError("Not Set") : bem.getObjectLight("OperationalState", Long.valueOf(networkEquipment.getAttributes().get("state").get(0))).getName() ) + "</td></tr>";
                 i ++;
@@ -504,7 +504,7 @@ public class DefaultReports {
 
         serviceResourcesReportText += "<table><tr><td class=\"generalInfoLabel\">Name</td><td>" + service.getName() + "</td></tr>\n"
                 + "<tr><td class=\"generalInfoLabel\">Type</td><td>" + service.getClassName() + "</td></tr>\n"
-                + "<tr><td class=\"generalInfoLabel\">Location</td><td>" + formatLocation(bem.getParents(service.getClassName(), service.getId())) + "</td></tr>\n</table>\n";
+                + "<tr><td class=\"generalInfoLabel\">Location</td><td>" + Util.formatLocation(bem.getParents(service.getClassName(), service.getId())) + "</td></tr>\n</table>\n";
         List<RemoteBusinessObjectLight> resources = bem.getSpecialAttribute(service.getClassName(), service.getId(), "uses");
         if (resources.isEmpty()) {
             serviceResourcesReportText += "<div class=\"warning\">This service does not use any network resources</div>";
@@ -515,7 +515,7 @@ public class DefaultReports {
                 serviceResourcesReportText += "<tr class=\"" + (i % 2 == 0 ? "even" :"odd") + "\">"
                                                             + "<td>" + resource.getName() + "</td>"
                                                             + "<td>" + resource.getClassName() + "</td>"
-                                                            + "<td>" + formatLocation(bem.getParents(resource.getClassName(), resource.getId())) + "</td></tr>";
+                                                            + "<td>" + Util.formatLocation(bem.getParents(resource.getClassName(), resource.getId())) + "</td></tr>";
                 i ++;
             }
             serviceResourcesReportText += "</table>";
@@ -570,7 +570,7 @@ public class DefaultReports {
         
         if(!vlans.isEmpty())
             vlan = "<b>" + vlans.get(0).getName() + " ["+ vlans.get(0).getClassName()+ "]</b> |"+
-            formatLocation(bem.getParents(vlans.get(0).getClassName(), vlans.get(0).getId()));
+            Util.formatLocation(bem.getParents(vlans.get(0).getClassName(), vlans.get(0).getId()));
         
         if(!vrfs.isEmpty())
             vrf = "<b>" + vrfs.get(0).getName() + " ["+ vrfs.get(0).getClassName()+ "]</b>";
@@ -649,7 +649,7 @@ public class DefaultReports {
                 if(!ipDevices.isEmpty()){
                     device = ipDevices.get(0).getName() + " [" + ipDevices.get(0).getClassName()+"]";
                     List<RemoteBusinessObjectLight> parents = bem.getParents(ipDevices.get(0).getClassName(), ipDevices.get(0).getId());
-                    location =  formatLocation(parents);
+                    location =  Util.formatLocation(parents);
                 }
                 
                 List<RemoteBusinessObjectLight> ipServices = bem.getSpecialAttribute(Constants.CLASS_IP_ADDRESS, ip.getId(), "uses");
@@ -803,7 +803,7 @@ public class DefaultReports {
                 if(ports != null){
                     device = ports.getName() + " [" + ports.getClassName()+"]";
                     List<RemoteBusinessObjectLight> parents = bem.getParents(ports.getClassName(), ports.getId());
-                    location =  formatLocation(parents);
+                    location =  Util.formatLocation(parents);
                 }
                 
                 instance += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") +"\"><td>" + serviceInstance.getName() + " [" + serviceInstance.getClassName()+"] </td>"
@@ -869,7 +869,7 @@ public class DefaultReports {
                     if(port != null){
                         device = port.getName() + " [" + port.getClassName()+"]";
                         List<RemoteBusinessObjectLight> parents = bem.getParents(port.getClassName(), port.getId());
-                        location =  formatLocation(parents);
+                        location =  Util.formatLocation(parents);
                     }
 
                     String ips = "  ";
@@ -962,7 +962,7 @@ public class DefaultReports {
                 if(inventoryObject != null){
                     objectName = inventoryObject.getName() + " [" + inventoryObject.getClassName()+"]";
                     List<RemoteBusinessObjectLight> parents = bem.getParents(inventoryObject.getClassName(), inventoryObject.getId());
-                    location =  formatLocation(parents);
+                    location = Util.formatLocation(parents);
                 }
                 
                 instance += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") +"\"><td>" + serviceInstance.getName() + " [" + serviceInstance.getClassName()+"] </td>"
@@ -1065,17 +1065,6 @@ public class DefaultReports {
     private String getFooter() {
         return "  <div class=\"footer\">This report is powered by <a href=\"http://www.kuwaiba.org\">Kuwaiba Open Network Inventory</a></div></body>\n" +
                                 "</html>";
-    }
-    
-    private String formatLocation (List<RemoteBusinessObjectLight> containmentHierarchy) {
-        String location = "";
-        if (containmentHierarchy.size() == 1 && !(Constants.NODE_DUMMYROOT).equals((containmentHierarchy.get(0).getClassName())))
-            location += containmentHierarchy.get(0).toString();
-        else{
-            for (int i = 0; i < containmentHierarchy.size() - 1; i ++)
-                location += containmentHierarchy.get(i).toString() + " | ";
-        }
-        return location;
     }
     
     private String asOk(String text) {
