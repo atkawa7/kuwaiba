@@ -28,6 +28,7 @@ import javax.swing.JTextField;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalUserGroupObject;
 import org.inventory.communications.core.LocalUserObject;
+import org.inventory.communications.core.LocalUserObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.core.usermanager.nodes.GroupNode;
@@ -66,9 +67,9 @@ class CreateUserAction extends AbstractAction {
         JCheckBox chkEnabled = new JCheckBox();
         chkEnabled.setSelected(true);
         chkEnabled.setName("chkEnabled");
-        JComboBox<UserType> lstUserTypes = new JComboBox<>(new UserType[] { new UserType("GUI User", 1), 
-                                                                    new UserType("Web Service Interface User", 2),
-                                                                    new UserType("Southbound Interface User", 3) });
+        JComboBox<LocalUserObjectLight.UserType> lstUserTypes = new JComboBox<>(new LocalUserObjectLight.UserType[] { new LocalUserObjectLight.UserType("GUI User", 1), 
+                                                                    new LocalUserObjectLight.UserType("Web Service Interface User", 2),
+                                                                    new LocalUserObjectLight.UserType("Southbound Interface User", 3) });
         lstUserTypes.setName("lstUserTypes");
         lstUserTypes.setSelectedIndex(0);
         
@@ -82,7 +83,7 @@ class CreateUserAction extends AbstractAction {
                     ((JTextField)pnlNewUser.getComponent("txtLastName")).getText(),
                     new String(((JPasswordField)pnlNewUser.getComponent("txtPassword")).getPassword()),
                     ((JCheckBox)pnlNewUser.getComponent("chkEnabled")).isSelected(),
-                    ((UserType)((JComboBox<UserType>)pnlNewUser.getComponent("lstUserTypes")).getSelectedItem()).type,
+                    ((LocalUserObjectLight.UserType)((JComboBox<LocalUserObjectLight.UserType>)pnlNewUser.getComponent("lstUserTypes")).getSelectedItem()).getType(),
                     selectedNode.getLookup().lookup(LocalUserGroupObject.class).getId());
             
             if (newUser == null)
@@ -91,21 +92,6 @@ class CreateUserAction extends AbstractAction {
                 ((GroupNode.UserChildren)selectedNode.getChildren()).addNotify();
                 NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "User created successfully");
             }
-        }
-    }
-    
-    private class UserType {
-        private String label;
-        private int type;
-
-        public UserType(String label, int type) {
-            this.label = label;
-            this.type = type;
-        }
-        
-        @Override
-        public String toString() {
-            return label;
         }
     }
 }
