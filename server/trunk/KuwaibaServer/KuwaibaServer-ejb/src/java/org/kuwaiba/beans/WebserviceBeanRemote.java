@@ -203,8 +203,8 @@ public interface WebserviceBeanRemote {
 
     public void addUserToGroup(long userId, long groupId, String ipAddress, String sessionId) throws ServerSideException;
     public void removeUserFromGroup(long userId, long groupId, String ipAddress, String sessionId) throws ServerSideException;
-    public void addPrivilegeToUser(long userId, String featureToken, int accessLevel, String ipAddress, String sessionId) throws ServerSideException;
-    public void addPrivilegeToGroup(long groupId, String featureToken, int accessLevel, String ipAddress, String sessionId) throws ServerSideException;
+    public void setPrivilegeToUser(long userId, String featureToken, int accessLevel, String ipAddress, String sessionId) throws ServerSideException;
+    public void setPrivilegeToGroup(long groupId, String featureToken, int accessLevel, String ipAddress, String sessionId) throws ServerSideException;
     public void removePrivilegeFromUser(long userId, String featureToken, String ipAddress, String sessionId) throws ServerSideException;
     public void removePrivilegeFromGroup(long groupId, String featureToken, String ipAddress, String sessionId) throws ServerSideException;
     

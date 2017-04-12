@@ -134,23 +134,23 @@ public interface ApplicationEntityManager {
      */
     public void removeUserFromGroup(long userId, long groupId) throws InvalidArgumentException, ApplicationObjectNotFoundException;
     /**
-     * Adds a privilege to a user
+     * Sets a privilege to a user. If the feature token provided already has been assigned to the user, the access level will be changed, otherwise, a privilege will be created
      * @param userId The user Id
      * @param featureToken The feature token. See class Privilege for details. Note that this token must match to the one expected by the client application. That's the only way the correct features will be enabled.
      * @param accessLevel The feature token. See class Privilege.ACCESS_LEVEL* for details. 
-     * @throws InvalidArgumentException If the access level is invalid, if the featureToken has a wrong format or if the user already has that privilege
+     * @throws InvalidArgumentException If the access level is invalid or if the featureToken has a wrong format
      * @throws ApplicationObjectNotFoundException If the user could not be found.
      */
-    public void addPrivilegeToUser(long userId, String featureToken, int accessLevel) throws InvalidArgumentException, ApplicationObjectNotFoundException;
+    public void setPrivilegeToUser(long userId, String featureToken, int accessLevel) throws InvalidArgumentException, ApplicationObjectNotFoundException;
     /**
-     * Adds a privilege to a group
-     * @param groupId The user Id
+     * Sets a privilege to a group. If the feature token provided already has been assigned to the group, the access level will be changed, otherwise, a privilege will be created
+     * @param groupId The group Id
      * @param featureToken The feature token. See class Privilege for details. Note that this token must match to the one expected by the client application. That's the only way the correct features will be enabled.
      * @param accessLevel The feature token. See class Privilege.ACCESS_LEVEL* for details. 
-     * @throws InvalidArgumentException If the access level is invalid, if the featureToken has a wrong format or if the group already has that privilege
+     * @throws InvalidArgumentException If the access level is invalid or if the featureToken has a wrong format
      * @throws ApplicationObjectNotFoundException If the group could not be found
      */
-    public void addPrivilegeToGroup(long groupId, String featureToken, int accessLevel) throws InvalidArgumentException, ApplicationObjectNotFoundException;
+    public void setPrivilegeToGroup(long groupId, String featureToken, int accessLevel) throws InvalidArgumentException, ApplicationObjectNotFoundException;
     
     /**
      * Removes a privilege from a user

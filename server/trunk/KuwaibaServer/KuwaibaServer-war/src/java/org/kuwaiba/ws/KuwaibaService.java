@@ -322,20 +322,20 @@ public class KuwaibaService {
     }
     
     /**
-     * Adds a privilege to a user
+     * Sets a privilege to a user. If the privilege already exists, the access level is updated, otherwise, the new privilege is added to the user.
      * @param userId The user Id
      * @param featureToken The feature token. See class Privilege for details. Note that this token must match to the one expected by the client application. That's the only way the correct features will be enabled.
      * @param accessLevel The feature token. See class Privilege.ACCESS_LEVEL* for details. 
      * @param sessionId Session token
      * @throws ServerSideException If the access level is invalid, if the featureToken has a wrong format or if the user already has that privilege or if the user could not be found.
      */
-    @WebMethod(operationName = "addPrivilegeToUser")
-    public void addPrivilegeToUser(@WebParam(name = "userId") long userId, 
+    @WebMethod(operationName = "setPrivilegeToUser")
+    public void setPrivilegeToUser(@WebParam(name = "userId") long userId, 
             @WebParam(name = "featureToken") String featureToken, 
             @WebParam(name = "accessLevel") int accessLevel, 
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try {
-            wsBean.addPrivilegeToUser(userId, featureToken, accessLevel, getIPAddress(), sessionId);
+            wsBean.setPrivilegeToUser(userId, featureToken, accessLevel, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -347,20 +347,20 @@ public class KuwaibaService {
     }
     
     /**
-     * Adds a privilege to a group
+     * Sets a privilege to a group. If the privilege already exists, the access level is updated, otherwise, the new privilege is added to the group.
      * @param groupId The user Id
      * @param featureToken The feature token. See class Privilege for details. Note that this token must match to the one expected by the client application. That's the only way the correct features will be enabled.
      * @param accessLevel The feature token. See class Privilege.ACCESS_LEVEL* for details. 
      * @param sessionId Session token
      * @throws ServerSideException If the access level is invalid, if the featureToken has a wrong format or if the group already has that privilege or if the group could not be found
      */
-    @WebMethod(operationName = "addPrivilegeToGroup")
-    public void addPrivilegeToGroup(@WebParam(name = "groupId") long groupId, 
+    @WebMethod(operationName = "setPrivilegeToGroup")
+    public void setPrivilegeToGroup(@WebParam(name = "groupId") long groupId, 
             @WebParam(name = "featureToken") String featureToken, 
             @WebParam(name = "accessLevel") int accessLevel, 
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try {
-            wsBean.addPrivilegeToGroup(groupId, featureToken, accessLevel, getIPAddress(), sessionId);
+            wsBean.setPrivilegeToGroup(groupId, featureToken, accessLevel, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;

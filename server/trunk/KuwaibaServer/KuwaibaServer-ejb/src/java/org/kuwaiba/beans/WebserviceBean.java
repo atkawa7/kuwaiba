@@ -1576,24 +1576,24 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void addPrivilegeToUser(long userId, String featureToken, int accessLevel, String ipAddress, String sessionId) throws ServerSideException {
+    public void setPrivilegeToUser(long userId, String featureToken, int accessLevel, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("addPrivilegeToUser", ipAddress, sessionId);
-            aem.addPrivilegeToUser(userId, featureToken, accessLevel);
+            aem.setPrivilegeToUser(userId, featureToken, accessLevel);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
 
     @Override
-    public void addPrivilegeToGroup(long groupId, String featureToken, int accessLevel, String ipAddress, String sessionId) throws ServerSideException {
+    public void setPrivilegeToGroup(long groupId, String featureToken, int accessLevel, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("addPrivilegeToGroup", ipAddress, sessionId);
-            aem.addPrivilegeToGroup(groupId, featureToken, accessLevel);
+            aem.setPrivilegeToGroup(groupId, featureToken, accessLevel);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }

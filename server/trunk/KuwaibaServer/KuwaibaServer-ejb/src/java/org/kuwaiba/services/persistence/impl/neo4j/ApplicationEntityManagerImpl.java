@@ -429,45 +429,57 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public void addPrivilegeToUser(long userId, String featureToken, int accessLevel) throws InvalidArgumentException, ApplicationObjectNotFoundException {
-        //TODO: This method should check the new privilege against a list of predefined feature tokens to avoi adding bogus items
+    public void setPrivilegeToUser(long userId, String featureToken, int accessLevel) throws InvalidArgumentException, ApplicationObjectNotFoundException {
+        //TODO: This method should check the new privilege against a list of predefined feature tokens to avoid setting/adding bogus items
+        if (accessLevel != Privilege.ACCESS_LEVEL_READ && accessLevel != Privilege.ACCESS_LEVEL_READ_WRITE)
+            throw new InvalidArgumentException(String.format("The access level privided is not valid: %s", accessLevel));
+            
         try (Transaction tx = graphDb.beginTx()) {
             Node userNode = userIndex.get(Constants.PROPERTY_ID, userId).getSingle();
             if (userNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("User with id %s could not be found", userId));
 
+            Node privilegeNode = null;
             for (Relationship hasPrivilegeRelationship : userNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_PRIVILEGE)) {
                 if(featureToken.equals(hasPrivilegeRelationship.getEndNode().getProperty(Privilege.PROPERTY_FEATURE_TOKEN)))
-                    throw new InvalidArgumentException(String.format("The user with id %s already has the privilege %s", userId, featureToken));
+                    privilegeNode = hasPrivilegeRelationship.getEndNode();
             }
         
-            Node privilegeNode = graphDb.createNode();
-            privilegeNode.setProperty(Privilege.PROPERTY_FEATURE_TOKEN, featureToken);
-            privilegeNode.setProperty(Privilege.PROPERTY_ACCESS_LEVEL, accessLevel);
+            if (privilegeNode == null) {
+                privilegeNode = graphDb.createNode();
+                userNode.createRelationshipTo(privilegeNode, RelTypes.HAS_PRIVILEGE);
+                privilegeNode.setProperty(Privilege.PROPERTY_FEATURE_TOKEN, featureToken);
+            }
             
-            userNode.createRelationshipTo(privilegeNode, RelTypes.HAS_PRIVILEGE);
+            privilegeNode.setProperty(Privilege.PROPERTY_ACCESS_LEVEL, accessLevel);
             tx.success();
         }
     }
 
     @Override
-    public void addPrivilegeToGroup(long groupId, String featureToken, int accessLevel) throws InvalidArgumentException, ApplicationObjectNotFoundException {
-        //TODO: This method should check the new privilege against a list of predefined feature tokens to avoi adding bogus items
+    public void setPrivilegeToGroup(long groupId, String featureToken, int accessLevel) throws InvalidArgumentException, ApplicationObjectNotFoundException {
+        //TODO: This method should check the new privilege against a list of predefined feature tokens to avoid adding bogus items
+        if (accessLevel != Privilege.ACCESS_LEVEL_READ && accessLevel != Privilege.ACCESS_LEVEL_READ_WRITE)
+            throw new InvalidArgumentException(String.format("The access level privided is not valid: %s", accessLevel));
+        
         try (Transaction tx = graphDb.beginTx()) {
             Node groupNode = groupIndex.get(Constants.PROPERTY_ID, groupId).getSingle();
             if (groupNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Group with id %s could not be found", groupId));
 
+            Node privilegeNode = null;
             for (Relationship hasPrivilegeRelationship : groupNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_PRIVILEGE)) {
                 if(featureToken.equals(hasPrivilegeRelationship.getEndNode().getProperty(Privilege.PROPERTY_FEATURE_TOKEN)))
-                    throw new InvalidArgumentException(String.format("The group with id %s already has the privilege %s", groupId, featureToken));
+                    privilegeNode = hasPrivilegeRelationship.getEndNode();
             }
         
-            Node privilegeNode = graphDb.createNode();
-            privilegeNode.setProperty(Privilege.PROPERTY_FEATURE_TOKEN, featureToken);
-            privilegeNode.setProperty(Privilege.PROPERTY_ACCESS_LEVEL, accessLevel);
+            if (privilegeNode == null) {
+                privilegeNode = graphDb.createNode();
+                groupNode.createRelationshipTo(privilegeNode, RelTypes.HAS_PRIVILEGE);
+                privilegeNode.setProperty(Privilege.PROPERTY_FEATURE_TOKEN, featureToken);
+            }
             
-            groupNode.createRelationshipTo(privilegeNode, RelTypes.HAS_PRIVILEGE);
+            privilegeNode.setProperty(Privilege.PROPERTY_ACCESS_LEVEL, accessLevel);
             tx.success();
         }
     }

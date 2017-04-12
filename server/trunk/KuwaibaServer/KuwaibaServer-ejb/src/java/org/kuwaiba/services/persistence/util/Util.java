@@ -566,8 +566,8 @@ public class Util {
     public static UserProfile createUserProfileWithoutGroupPrivilegesFromNode(Node userNode){
        List<Privilege> privileges = new ArrayList<>();
 
-       for(Relationship relationship: userNode.getRelationships(RelTypes.HAS_PRIVILEGE, Direction.INCOMING))
-           privileges.add(createPrivilegeFromNode(relationship.getStartNode()));
+       for(Relationship relationship: userNode.getRelationships(RelTypes.HAS_PRIVILEGE, Direction.OUTGOING))
+           privileges.add(createPrivilegeFromNode(relationship.getEndNode()));
        
        return   new UserProfile(userNode.getId(),
                 (String)userNode.getProperty(UserProfile.PROPERTY_NAME),
@@ -594,12 +594,12 @@ public class Util {
            //group Privileges         
            Node groupNode = relationship.getEndNode();
            
-           for(Relationship rel: groupNode.getRelationships(RelTypes.HAS_PRIVILEGE, Direction.INCOMING))
-                privileges.add(createPrivilegeFromNode(rel.getStartNode()));
+           for(Relationship rel: groupNode.getRelationships(RelTypes.HAS_PRIVILEGE, Direction.OUTGOING))
+                privileges.add(createPrivilegeFromNode(rel.getEndNode()));
        }
 
-       for(Relationship relationship: userNode.getRelationships(RelTypes.HAS_PRIVILEGE, Direction.INCOMING)) {
-            Privilege userPrivilege = createPrivilegeFromNode(relationship.getStartNode());
+       for(Relationship relationship: userNode.getRelationships(RelTypes.HAS_PRIVILEGE, Direction.OUTGOING)) {
+            Privilege userPrivilege = createPrivilegeFromNode(relationship.getEndNode());
             //If the privilege already exists, override it
             privileges.remove(userPrivilege); //Note that two privileges with the same feature token and different access level are equals.
             privileges.add(userPrivilege);
@@ -658,8 +658,8 @@ public class Util {
             Node userNode = relationship.getStartNode();
             //user Privileges
             List<Privilege> userPrivileges = new ArrayList<>();
-            for(Relationship rel: userNode.getRelationships(RelTypes.HAS_PRIVILEGE, Direction.INCOMING))
-                userPrivileges.add(createPrivilegeFromNode(rel.getStartNode()));
+            for(Relationship rel: userNode.getRelationships(RelTypes.HAS_PRIVILEGE, Direction.OUTGOING))
+                userPrivileges.add(createPrivilegeFromNode(rel.getEndNode()));
 
             users.add(new UserProfile(userNode.getId(),
                         (String)userNode.getProperty(UserProfile.PROPERTY_NAME),
@@ -673,10 +673,9 @@ public class Util {
         }
         
         List<Privilege> privileges = new ArrayList<>();
-        for(Relationship relationship: groupNode.getRelationships(RelTypes.HAS_PRIVILEGE, Direction.INCOMING)){
-           Node node = relationship.getStartNode();
-           privileges.add(createPrivilegeFromNode(node));
-        }
+        for(Relationship relationship: groupNode.getRelationships(RelTypes.HAS_PRIVILEGE, Direction.OUTGOING))
+           privileges.add(createPrivilegeFromNode(relationship.getEndNode()));
+        
         
         GroupProfile group =  new GroupProfile(groupNode.getId(),
                 (String)groupNode.getProperty(Constants.PROPERTY_NAME),
