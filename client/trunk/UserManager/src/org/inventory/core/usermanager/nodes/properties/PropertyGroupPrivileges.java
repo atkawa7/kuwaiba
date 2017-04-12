@@ -23,7 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.event.TableModelListener;
-import javax.swing.table.TableModel;
+import javax.swing.table.AbstractTableModel;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalUserGroupObject;
 import org.openide.nodes.PropertySupport;
@@ -79,7 +79,7 @@ public class PropertyGroupPrivileges extends PropertySupport.ReadWrite<String> {
             setViewportView(this.privilegeListTable);
         }
         
-        private class PrivilegeTableModel implements TableModel {
+        private class PrivilegeTableModel extends AbstractTableModel {
 
             @Override
             public int getRowCount() {
@@ -145,9 +145,11 @@ public class PropertyGroupPrivileges extends PropertySupport.ReadWrite<String> {
                 if (columnIndex == 1) //Read access
                     group.setPrivilege(LocalPrivilege.DEFAULT_PRIVILEGES[ rowIndex * 2 ], 
                             (boolean)aValue ? LocalPrivilege.ACCESS_LEVEL_READ : LocalPrivilege.ACCESS_LEVEL_UNSET);
-                else
+                else 
                     group.setPrivilege(LocalPrivilege.DEFAULT_PRIVILEGES[ rowIndex * 2 ], 
                             (boolean)aValue ? LocalPrivilege.ACCESS_LEVEL_READ_WRITE : LocalPrivilege.ACCESS_LEVEL_UNSET);
+                
+                repaint(); //Oddly, it's required to properly uncheck a box when the other is checked
             }
 
             @Override

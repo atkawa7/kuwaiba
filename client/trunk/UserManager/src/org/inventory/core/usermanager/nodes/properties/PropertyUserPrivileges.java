@@ -148,6 +148,8 @@ public class PropertyUserPrivileges extends PropertySupport.ReadWrite<String> {
                 else
                     user.setPrivilege(LocalPrivilege.DEFAULT_PRIVILEGES[ rowIndex * 2 ], 
                             (boolean)aValue ? LocalPrivilege.ACCESS_LEVEL_READ_WRITE : LocalPrivilege.ACCESS_LEVEL_UNSET);
+                
+                repaint(); //Oddly, it's required to properly uncheck a box when the other is checked
             }
 
             @Override
