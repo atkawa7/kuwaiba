@@ -15,27 +15,12 @@
  */
 package org.inventory.core.usermanager.nodes.properties;
 
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorSupport;
 import java.lang.reflect.InvocationTargetException;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.KeyStroke;
 import org.inventory.communications.core.LocalUserObject;
 import org.inventory.communications.core.LocalUserObjectLight;
-import org.openide.explorer.propertysheet.ExPropertyEditor;
-import org.openide.explorer.propertysheet.InplaceEditor;
-import org.openide.explorer.propertysheet.PropertyEnv;
-import org.openide.explorer.propertysheet.PropertyModel;
 import org.openide.nodes.PropertySupport;
-import org.openide.util.Exceptions;
 
 /**
  * The user type property
@@ -57,7 +42,7 @@ public class PropertyUserType extends PropertySupport.ReadWrite<LocalUserObjectL
 
     @Override
     public void setValue(LocalUserObjectLight.UserType val) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        user.setType(val.getType());
+        //To avoid double sets, this is handled in the PropertyEditorSupport
     }
 
     @Override
@@ -66,32 +51,31 @@ public class PropertyUserType extends PropertySupport.ReadWrite<LocalUserObjectL
     }
     
     public static class UserTypePropertyEditorSupport extends PropertyEditorSupport {
-        PropertyUserType property;
+        private PropertyUserType property;
 
         public UserTypePropertyEditorSupport(PropertyUserType property) {
             this.property = property;
         }
         
         @Override
-        public Object getValue() {
+        public String getAsText() {
             try {
-                return property.getValue();
-            } catch (Exception ex) {return null;}
-        }
-
-        @Override
-        public void setValue(Object value) {
-            try {
-                property.setValue((LocalUserObjectLight.UserType)value); //To change body of generated methods, choose Tools | Templates.
-            } catch (Exception e) {
-            }
+                return property.getValue().getLabel();
+            } catch (IllegalAccessException | InvocationTargetException ex) {return null;}
         }
         
         
 
+        //setValue is never called (?), instead, this one is called 
         @Override
         public void setAsText(String text){
-            //throw new RuntimeException("sdsdafsfsdfsd");
+            for (LocalUserObjectLight.UserType userType : LocalUserObjectLight.UserType.DEFAULT_USER_TYPES) {
+                if (userType.getLabel().equals(text)) {
+                    try {
+                        property.user.setType(userType.getType());
+                    } catch (Exception ex) { } //Should never happen, however, if it does, do nothing
+                }
+            }
         }
 
         @Override
@@ -102,11 +86,10 @@ public class PropertyUserType extends PropertySupport.ReadWrite<LocalUserObjectL
         }
 
         @Override
-        public boolean supportsCustomEditor(){
+        public boolean supportsCustomEditor() {
             return false;
         }
     }
-        
 }
 
 

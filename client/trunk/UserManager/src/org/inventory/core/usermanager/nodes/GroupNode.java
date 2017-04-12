@@ -28,12 +28,11 @@ import org.inventory.core.usermanager.nodes.actions.UserManagerActionFactory;
 import org.inventory.core.usermanager.nodes.properties.PropertyGroupCreationDate;
 import org.inventory.core.usermanager.nodes.properties.PropertyGroupDescription;
 import org.inventory.core.usermanager.nodes.properties.PropertyGroupName;
+import org.inventory.core.usermanager.nodes.properties.PropertyGroupPrivileges;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
-import org.openide.nodes.PropertySupport;
 import org.openide.nodes.Sheet;
-import org.openide.util.Exceptions;
 import org.openide.util.lookup.Lookups;
 
 /**
@@ -69,10 +68,12 @@ public class GroupNode extends AbstractNode {
         PropertyGroupName prpName = new PropertyGroupName(group);
         PropertyGroupDescription prpDescription = new PropertyGroupDescription(group);
         PropertyGroupCreationDate prpCreationDateProperty = new PropertyGroupCreationDate(group);
+        PropertyGroupPrivileges prpPrivileges = new PropertyGroupPrivileges(group);
 
         defaultSet.put(prpName);
         defaultSet.put(prpDescription);
         defaultSet.put(prpCreationDateProperty);
+        defaultSet.put(prpPrivileges);
 
         sheet.put(defaultSet);
         return sheet;

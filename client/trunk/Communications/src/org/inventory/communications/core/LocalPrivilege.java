@@ -16,11 +16,44 @@
 
 package org.inventory.communications.core;
 
+import java.util.Objects;
+
 /**
  * A local, simplified representation of a user/group privilege
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class LocalPrivilege {
+    /**
+     * For now, these privileges will be hardcoded, however in the near future, every module will provide its own set of tokens
+     */
+    public static String[] DEFAULT_PRIVILEGES = new String[] {
+                                                "navigation-tree", "Navigation Tree",
+                                                "relationship-explorer", "Relationship Explorer",
+                                                "special-children-explorer", "Special Children Explorer",
+                                                "physical-view", "Physical View",
+                                                "topology-designer", "Topology Designer",
+                                                "data-model-manager", "Data Model Manager",
+                                                "list-type-manager", "List Type Manager",
+                                                "containment-manager", "Containment Manager",
+                                                "sdh-module", "SDH Module",
+                                                "mpls-module", "MPLS Module",
+                                                "contract-manager", "Contract Manager",
+                                                "ip-address-manager", "IP Address Manager",
+                                                "service-manager", "Service Manager",
+                                                "user-manager", "User Manager",
+                                                "software-asset-manager", "Software Asset Manager",
+                                                "reports", "Reports",
+                                                "templates", "Templates",
+                                                "pools", "Pools",
+                                                "bulk-import", "Bulk Import",
+                                                "audit-trail", "Audit Trail",
+                                                "query-manager", "Query Manager",
+                                                "task-manager", "Task Manager"
+                                               };
+    /**
+     * Not an actual privilege. Use this to indicate that an existing privilege should be removed
+     */
+    public static final int ACCESS_LEVEL_UNSET = 0;
     /**
      * Read-only privilege
      */
@@ -58,6 +91,21 @@ public class LocalPrivilege {
     public void setAccessLevel(int accessLevel) {
         this.accessLevel = accessLevel;
     }
-   
+    
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof LocalPrivilege)
+            return featureToken.equals(((LocalPrivilege)obj).featureToken);
+        else
+            return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + Objects.hashCode(this.featureToken);
+        return hash;
+    }
    
 }

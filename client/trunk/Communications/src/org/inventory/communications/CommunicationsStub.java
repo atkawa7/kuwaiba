@@ -2093,15 +2093,15 @@ public class CommunicationsStub {
     }
     
     /**
-     * Adds a privilege to a user
+     * Sets a privilege to a user. If the privilege does not exist already, one is created, otherwise, the access level is updated
      * @param userId The user Id
      * @param featureToken The feature token. See class Privilege for details. Note that this token must match to the one expected by the client application. That's the only way the correct features will be enabled.
      * @param accessLevel The feature token. See class Privilege.ACCESS_LEVEL* for details. 
      * @return Success or failure 
      */
-    public boolean addPrivilegeToUser(long userId,  String featureToken, int accessLevel) {
+    public boolean setPrivilegeToUser(long userId,  String featureToken, int accessLevel) {
         try {
-            service.addPrivilegeToUser(userId, featureToken, accessLevel, session.getSessionId());
+            service.setPrivilegeToUser(userId, featureToken, accessLevel, session.getSessionId());
             return true;
         } catch(Exception e){
             this.error = e.getMessage();
@@ -2110,15 +2110,15 @@ public class CommunicationsStub {
     }
     
     /**
-     * Adds a privilege to a group
+     * Adds a privilege to a group. If the privilege does not exist already, one is created, otherwise, the access level is updated
      * @param groupId The user Id
      * @param featureToken The feature token. See class Privilege for details. Note that this token must match to the one expected by the client application. That's the only way the correct features will be enabled.
      * @param accessLevel The feature token. See class Privilege.ACCESS_LEVEL* for details. 
      * @return Success of failure
      */
-    public boolean addPrivilegeToGroup(long groupId, String featureToken, int accessLevel) {
+    public boolean setPrivilegeToGroup(long groupId, String featureToken, int accessLevel) {
         try {
-            service.addPrivilegeToGroup(groupId, featureToken, accessLevel, session.getSessionId());
+            service.setPrivilegeToGroup(groupId, featureToken, accessLevel, session.getSessionId());
             return true;
         } catch(Exception e){
             this.error = e.getMessage();

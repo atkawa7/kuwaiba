@@ -20,7 +20,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeListener;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalUserGroupObjectLight;
+import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.communications.core.LocalUserGroupObject;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 
 /**
@@ -42,11 +43,28 @@ public class GroupNodePropertyChangeListener implements VetoableChangeListener {
     
     @Override
     public void vetoableChange(PropertyChangeEvent evt) throws PropertyVetoException {
-        if (!com.setGroupProperties(((LocalUserGroupObjectLight)evt.getSource()).getId(), 
-                LocalUserGroupObjectLight.PROPERTY_NAME.equals(evt.getPropertyName()) ? (String)evt.getNewValue() : null , 
-                LocalUserGroupObjectLight.PROPERTY_DESCRIPTION.equals(evt.getPropertyName()) ? (String)evt.getNewValue() : null)) {
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
-            throw new PropertyVetoException(com.getError(), evt);
+        if (evt.getPropertyName().equals(LocalUserGroupObject.PROPERTY_PRIVILEGES)) {
+            if (evt.getNewValue() == null) { //Remove privilege
+                if (!com.removePrivilegeFromGroup(((LocalUserGroupObject)evt.getSource()).getId(), ((LocalPrivilege)evt.getOldValue()).getFeatureToken())) {
+                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+                    throw new PropertyVetoException(com.getError(), evt);
+                } else
+                    NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Privilege removed successfully");
+            } else {
+                if (!com.setPrivilegeToGroup(((LocalUserGroupObject)evt.getSource()).getId(), ((LocalPrivilege)evt.getNewValue()).getFeatureToken(), 
+                        ((LocalPrivilege)evt.getNewValue()).getAccessLevel())) {
+                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+                    throw new PropertyVetoException(com.getError(), evt);
+                } else
+                    NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Privilege updated successfully");
+            }
+        } else {
+            if (!com.setGroupProperties(((LocalUserGroupObject)evt.getSource()).getId(), 
+                    LocalUserGroupObject.PROPERTY_NAME.equals(evt.getPropertyName()) ? (String)evt.getNewValue() : null , 
+                    LocalUserGroupObject.PROPERTY_DESCRIPTION.equals(evt.getPropertyName()) ? (String)evt.getNewValue() : null)) {
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+                throw new PropertyVetoException(com.getError(), evt);
+            }
         }
     }
 }

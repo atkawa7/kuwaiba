@@ -16,6 +16,7 @@
 
 package org.inventory.communications.core;
 
+import java.beans.PropertyVetoException;
 import java.util.ArrayList;
 import java.util.List;
 import org.inventory.communications.wsclient.GroupInfo;
@@ -27,6 +28,9 @@ import org.inventory.communications.wsclient.UserInfo;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class LocalUserGroupObject extends LocalUserGroupObjectLight {
+    
+    public static final String PROPERTY_PRIVILEGES = "privileges";
+    
     private List<LocalPrivilege> privileges;
     private List<LocalUserObject> users;
     
@@ -62,5 +66,43 @@ public class LocalUserGroupObject extends LocalUserGroupObjectLight {
 
     public void setUsers(List<LocalUserObject> users) {
         this.users = users;
+    }
+    
+    public LocalPrivilege getPrivilege(String featureToken) {
+        for (LocalPrivilege privilege : privileges) {
+            if (privilege.getFeatureToken().equals(featureToken))
+                return privilege;
+        }
+        return null;
+    }
+    
+    /**
+     * Sets a privilege. If the privilege already exists, the access level is updated, otherwise, a new privilege is created
+     * @param featureToken
+     * @param accessLevel New access level. Check ACCESS_LEVEL* for possible values. Use ACCESS_LEVEL_UNSET to remove an existing privilege 
+     */
+    public void setPrivilege(String featureToken, int accessLevel) {
+        LocalPrivilege privilege = new LocalPrivilege(featureToken, accessLevel);
+        
+        if (accessLevel == LocalPrivilege.ACCESS_LEVEL_UNSET) { //Delete an existing privilege
+            try {       
+                firePropertyChange(PROPERTY_PRIVILEGES, privilege, null);
+                privileges.remove(privilege);
+            } catch (PropertyVetoException ex) { }
+        } else {
+            try {
+                LocalPrivilege newPrivilege = new LocalPrivilege(featureToken, accessLevel);
+                int existingPrivilegeIndex = privileges.contains(privilege) ? privileges.indexOf(privilege) : -1;
+                if (existingPrivilegeIndex != -1) {
+                    LocalPrivilege existingPrivilege = privileges.get(existingPrivilegeIndex);
+                    
+                    firePropertyChange(PROPERTY_PRIVILEGES, existingPrivilege, newPrivilege);
+                    privileges.set(existingPrivilegeIndex, newPrivilege);
+                } else {
+                    firePropertyChange(PROPERTY_PRIVILEGES, null, newPrivilege);
+                    privileges.add(newPrivilege);
+                }
+            } catch (PropertyVetoException ex) { }
+        }
     }
 }

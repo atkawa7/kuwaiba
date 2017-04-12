@@ -24,6 +24,7 @@ import org.inventory.core.usermanager.nodes.properties.PropertyUserFirstName;
 import org.inventory.core.usermanager.nodes.properties.PropertyUserLastName;
 import org.inventory.core.usermanager.nodes.properties.PropertyUserName;
 import org.inventory.core.usermanager.nodes.properties.PropertyUserPassword;
+import org.inventory.core.usermanager.nodes.properties.PropertyUserPrivileges;
 import org.inventory.core.usermanager.nodes.properties.PropertyUserType;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
@@ -67,6 +68,7 @@ public class UserNode extends AbstractNode {
         PropertyUserLastName prpLastName = new PropertyUserLastName(user);
         PropertyUserEnabled prpEnabled = new PropertyUserEnabled(user);
         PropertyUserType prpType = new PropertyUserType(user);
+        PropertyUserPrivileges prpPrivileges = new PropertyUserPrivileges(user);
         
         defaultSet.put(prpName);
         defaultSet.put(prpPassword);
@@ -74,6 +76,7 @@ public class UserNode extends AbstractNode {
         defaultSet.put(prpLastName);
         defaultSet.put(prpEnabled);
         defaultSet.put(prpType);
+        defaultSet.put(prpPrivileges);
 
         sheet.put(defaultSet);
         return sheet;
