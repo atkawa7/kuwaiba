@@ -30,7 +30,7 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.core.services.utils.MenuScroller;
 import org.inventory.core.templates.nodes.TemplateElementNode;
-import org.inventory.navigation.applicationnodes.objectnodes.AbstractChildren;
+import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
 import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter;
 

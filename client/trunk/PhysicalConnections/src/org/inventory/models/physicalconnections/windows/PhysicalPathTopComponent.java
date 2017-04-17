@@ -33,7 +33,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.models.physicalconnections.PhysicalConnectionsService;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.nodes.Node;

@@ -33,7 +33,7 @@ import javax.swing.event.ListSelectionListener;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.utils.ExplorablePanel;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.openide.explorer.view.BeanTreeView;
 import org.openide.util.Lookup;
 import org.openide.util.Lookup.Result;

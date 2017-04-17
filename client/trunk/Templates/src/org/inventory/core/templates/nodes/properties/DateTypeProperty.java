@@ -20,7 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.util.Constants;
-import org.inventory.navigation.applicationnodes.objectnodes.properties.DatePickerPropertyEditorSupport;
+import org.inventory.navigation.navigationtree.nodes.properties.DatePickerPropertyEditorSupport;
 import org.openide.nodes.PropertySupport;
 
 /**

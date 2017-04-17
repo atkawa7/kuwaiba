@@ -20,7 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectListItem;
-import org.inventory.navigation.applicationnodes.objectnodes.properties.ItemListPropertyEditor;
+import org.inventory.navigation.navigationtree.nodes.properties.ItemListPropertyEditor;
 import org.openide.nodes.PropertySupport;
 
 /**

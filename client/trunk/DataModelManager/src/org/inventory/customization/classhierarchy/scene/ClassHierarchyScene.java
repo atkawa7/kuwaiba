@@ -23,7 +23,8 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.visual.actions.providers.CustomSelectProvider;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.core.visual.scene.SelectableVMDNodeWidget;
-import org.inventory.customization.classhierarchy.actions.ClassHierarchyActions;
+import org.inventory.customization.classhierarchy.scene.actions.ClassHierarchyActions;
+import org.inventory.customization.classhierarchy.nodes.ClassMetadataNode;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.WidgetAction;
@@ -163,7 +164,7 @@ public class ClassHierarchyScene extends AbstractScene<LocalClassMetadata, Strin
 
     @Override
     protected Widget attachNodeWidget(LocalClassMetadata node) {
-        VMDNodeWidget nodeWidget = new SelectableVMDNodeWidget(this, node);
+        VMDNodeWidget nodeWidget = new SelectableVMDNodeWidget(this, new ClassMetadataNode(node));
         
         nodeWidget.setNodeName(node.isAbstract() ?  node.getClassName() + " [Abstract]" : node.getClassName());
         nodeWidget.getActions().addAction(selectAction);

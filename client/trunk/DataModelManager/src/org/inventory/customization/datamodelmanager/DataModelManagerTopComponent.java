@@ -23,7 +23,7 @@ import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.customization.classhierarchy.ClassHierarchyTopComponent;
-import org.inventory.navigation.applicationnodes.classmetadatanodes.ClassMetadataChildren;
+import org.inventory.customization.classhierarchy.nodes.ClassMetadataChildren;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;

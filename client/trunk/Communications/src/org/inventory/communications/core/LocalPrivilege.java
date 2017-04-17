@@ -24,7 +24,7 @@ import java.util.Objects;
  */
 public class LocalPrivilege {
     /**
-     * For now, these privileges will be hardcoded, however in the near future, every module will provide its own set of tokens
+     * For now, these privileges will be hard-coded, however in the near future, every module will provide its own set of tokens
      */
     public static String[] DEFAULT_PRIVILEGES = new String[] {
                                                 "navigation-tree", "Navigation Tree",

@@ -33,7 +33,7 @@ public class SoftwareManagerRootNode extends AbstractNode {
     public SoftwareManagerRootNode(List<LocalObjectLight> softwareAssets) {
         super(new Children.Array());
         icon = ImageUtilities.loadImage("org/kuwaiba/management/software/res/root.png");
-        setDisplayName("Root");
+        setDisplayName("Software Asset Manager");
         for (LocalObjectLight softwareAsset : softwareAssets)
             getChildren().add(new SoftwareAssetNode[]{new SoftwareAssetNode(softwareAsset)});
     }

@@ -16,7 +16,7 @@
 package org.inventory.models.physicalconnections.scene;
 
 import java.awt.Color;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 
 /**
  * Repeated. Should be merged with the one from ObjectView

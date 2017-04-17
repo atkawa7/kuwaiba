@@ -17,7 +17,7 @@
 package org.inventory.core.visual.scene;
 
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Lookup;

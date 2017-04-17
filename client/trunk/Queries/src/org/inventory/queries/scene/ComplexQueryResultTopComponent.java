@@ -38,7 +38,7 @@ import org.inventory.core.services.api.export.ExportableTable;
 import org.inventory.core.services.api.export.filters.CSVFilter;
 import org.inventory.core.services.api.export.filters.TextExportFilter;
 import org.inventory.core.services.api.export.filters.XMLFilter;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.queries.QueryManagerService;
 import org.netbeans.swing.etable.ETable;
 import org.openide.DialogDescriptor;

@@ -23,7 +23,7 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
-                    <code-name-base>org.inventory.navigation.applicationnodes</code-name-base>
+                    <code-name-base>org.inventory.navigation.navigationtree</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
@@ -88,7 +88,11 @@
                     </run-dependency>
                 </dependency>
             </module-dependencies>
-            <public-packages/>
+            <public-packages>
+                <package>org.inventory.navigation.pools.nodes</package>
+                <package>org.inventory.navigation.pools.nodes.actions</package>
+                <package>org.inventory.navigation.pools.nodes.properties</package>
+            </public-packages>
         </data>
     </configuration>
 </project>

@@ -20,8 +20,8 @@ import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.applicationnodes.objectnodes.AbstractChildren;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
+import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.openide.nodes.Node;
 
 /**

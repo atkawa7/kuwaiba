@@ -17,9 +17,9 @@ package org.kuwaiba.management.services.nodes;
 
 import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
-import org.inventory.navigation.applicationnodes.objectnodes.actions.ExecuteClassLevelReportAction;
-import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
+import org.inventory.navigation.navigationtree.nodes.ObjectNode;
+import org.inventory.navigation.navigationtree.nodes.actions.ExecuteClassLevelReportAction;
+import org.inventory.navigation.navigationtree.nodes.actions.ShowObjectIdAction;
 import org.kuwaiba.management.services.nodes.actions.ServiceManagerActionFactory;
 
 /**

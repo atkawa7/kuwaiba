@@ -39,7 +39,7 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.templates.nodes.actions.TemplateActionsFactory;
 import org.inventory.core.templates.nodes.properties.ListTypeProperty;
 import org.inventory.core.templates.nodes.properties.PrimitiveTypeProperty;
-import org.inventory.navigation.applicationnodes.objectnodes.AbstractChildren;
+import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
 import org.openide.actions.CopyAction;
 import org.openide.actions.PasteAction;
 import org.openide.nodes.AbstractNode;

@@ -20,7 +20,7 @@ import javax.swing.JLabel;
 import org.inventory.core.services.utils.ExplorablePanel;
 import javax.swing.JPanel;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.openide.explorer.view.BeanTreeView;
 
 public final class ConnectionWizardVisualPanel1 extends JPanel{

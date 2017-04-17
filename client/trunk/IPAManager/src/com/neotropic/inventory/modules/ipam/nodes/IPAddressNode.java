@@ -24,7 +24,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.openide.nodes.Sheet;
 
 
@@ -32,7 +32,7 @@ import org.openide.nodes.Sheet;
  * Represents an IPv4 or an IPv6 inside of a subnet
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class IPAddressNode extends ObjectNode{
+public class IPAddressNode extends ObjectNode {
 
     public IPAddressNode(LocalObjectLight lol) {
         super(lol, true);

@@ -23,7 +23,7 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.applicationnodes.objectnodes.AbstractChildren;
+import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
 
 import org.openide.nodes.Node;
 
@@ -31,7 +31,7 @@ import org.openide.nodes.Node;
  * Children for subnet nodes
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class SubnetChildren extends AbstractChildren{
+public class SubnetChildren extends AbstractChildren {
     
     @Override
     public void addNotify(){

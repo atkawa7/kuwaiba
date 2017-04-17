@@ -16,8 +16,8 @@
 package org.inventory.navigation.navigationtree.windows;
 
 import java.awt.BorderLayout;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
-import org.inventory.navigation.applicationnodes.objectnodes.SpecialRelatedObjectNode;
+import org.inventory.navigation.navigationtree.nodes.ObjectNode;
+import org.inventory.navigation.navigationtree.nodes.SpecialRelatedObjectNode;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;

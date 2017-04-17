@@ -17,7 +17,7 @@ package org.inventory.core.visual.menu;
 
 import java.awt.Point;
 import javax.swing.JPopupMenu;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.netbeans.api.visual.action.PopupMenuProvider;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Utilities;

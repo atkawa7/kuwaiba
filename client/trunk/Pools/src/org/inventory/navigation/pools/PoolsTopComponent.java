@@ -22,7 +22,7 @@ import javax.swing.text.DefaultEditorKit;
 import org.inventory.communications.core.LocalPool;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.applicationnodes.pools.PoolRootNode;
+import org.inventory.navigation.pools.nodes.PoolRootNode;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;

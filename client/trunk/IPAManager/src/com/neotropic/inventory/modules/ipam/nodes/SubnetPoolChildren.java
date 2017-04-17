@@ -21,14 +21,14 @@ import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPool;
-import org.inventory.navigation.applicationnodes.objectnodes.AbstractChildren;
+import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
 import org.openide.nodes.Node;
 
 /**
  * Children for subnet pool nodes
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class SubnetPoolChildren extends AbstractChildren{
+public class SubnetPoolChildren extends AbstractChildren {
     
     @Override
     public void addNotify(){

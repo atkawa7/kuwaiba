@@ -16,13 +16,12 @@
 package com.neotropic.inventory.modules.sdh.actions.generic;
 
 import java.awt.event.ActionEvent;
-import static javax.swing.Action.NAME;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.applicationnodes.objectnodes.AbstractChildren;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
+import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.openide.util.Utilities;
 import org.openide.util.lookup.ServiceProvider;
 

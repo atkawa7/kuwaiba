@@ -16,7 +16,7 @@
 package org.kuwaiba.management.software.nodes;
 
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 
 /**
  * A node representing a software asset (typically a software license)

@@ -15,35 +15,21 @@
  */
 package org.inventory.core.visual.scene;
 
-import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalClassMetadata;
-import org.inventory.navigation.applicationnodes.classmetadatanodes.ClassMetadataNode;
 import org.netbeans.api.visual.vmd.VMDNodeWidget;
 import org.netbeans.api.visual.widget.Scene;
+import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
 
 /**
- *
+ * A VMD node widget that can be selected and the properties displayed in the properties window
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class SelectableVMDNodeWidget extends VMDNodeWidget {
-    private ClassMetadataNode node;
     private Lookup lookup;
 
-    public SelectableVMDNodeWidget(Scene scene, LocalClassMetadata lcm) {
+    public SelectableVMDNodeWidget(Scene scene, Node node) {
         super(scene);
-        LocalClassMetadata thelcm = CommunicationsStub.getInstance().getMetaForClass(lcm.getClassName(), true);
-        node = new ClassMetadataNode(thelcm);
-        lookup = Lookups.singleton(node);
-    }
-
-    public ClassMetadataNode getNode() {
-        return node;
-    }
-
-    public void setNode(ClassMetadataNode node) {
-        this.node = node;
         lookup = Lookups.singleton(node);
     }
     
