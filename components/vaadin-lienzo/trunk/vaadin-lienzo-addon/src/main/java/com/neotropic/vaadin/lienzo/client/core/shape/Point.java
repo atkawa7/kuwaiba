@@ -15,38 +15,37 @@
  */
 package com.neotropic.vaadin.lienzo.client.core.shape;
 
+import java.io.Serializable;
+
 /**
- * 
+ *
  * @author Johny Andres Ortega Ruiz johny.ortega@kuwaiba.org
  */
-public class LienzoNode extends LienzoElement {
-    private static long idCounter = 0;
-    private String caption;
-    private String urlIcon;
+public class Point implements Serializable {
+    private double x;
+    private double y;
     
-    public LienzoNode() {        
-        super(idCounter);
-        idCounter += 1;
+    public Point() {
     }
     
-    public LienzoNode(LienzoElement parent) {
-        super(idCounter, parent);
-        idCounter += 1;        
+    public Point(double x, double y) {
+        this.x = x;
+        this.y = y;
     }
     
-    public String getCaption() {
-        return caption;
+    public double getX() {
+        return x;
     }
     
-    public void setCaption(String caption) {
-        this.caption = caption;
+    public void setX(double x) {
+        this.x = x;
     }
     
-    public String getUrlIcon() {
-        return urlIcon;
+    public double getY() {
+        return y;
     }
     
-    public void setUrlIcon(String urlIcon) {
-        this.urlIcon = urlIcon;
+    public void setY(double y) {
+        this.y = y;
     }
 }

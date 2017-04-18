@@ -13,24 +13,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.vaadin.lienzo.client;
+package com.neotropic.vaadin.lienzo.client.events;
 
-import com.vaadin.shared.AbstractComponentState;
+import java.io.Serializable;
 
 /**
- * 
+ * Interface for listening Node Right Click events initiated by the user
  * @author Johny Andres Ortega Ruiz johny.ortega@kuwaiba.org
  */
-public class LienzoComponentState extends AbstractComponentState {
-    // State is directly readable in the client after it is set in server
-    
-    public boolean enableConnectionTool = false;    
-    
-    public double labelsFontSize = 11;
-    public double labelsPaddingTop = 16;
-    public double labelsPaddingLeft = 16;
-    // Scene background
-    public String backgroundUrl = null;
-    public double backgroundY = 0;
-    public double backgroundX = 0;
+public interface NodeWidgetRightClickListener extends Serializable {
+    /**
+     * Handle a Node Right Click event
+     * 
+     * @param id node id
+     */
+    void nodeWidgetRightClicked(long id);    
 }

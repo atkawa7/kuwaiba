@@ -21,11 +21,11 @@ import java.io.Serializable;
  * Interface for listening Node Click events initiated by the user
  * @author Johny Andres Ortega Ruiz johny.ortega@kuwaiba.org
  */
-public interface LienzoNodeClickListener extends Serializable {
+public interface NodeWidgetClickListener extends Serializable {
     /**
-     * Handle an Node Click event
+     * Handle a Node Click event
      * 
      * @param id node id
      */
-    void lienzoNodeClicked(long id);    
+    void nodeWidgetClicked(long id);    
 }

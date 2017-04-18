@@ -15,35 +15,23 @@
  */
 package com.neotropic.vaadin.lienzo.client.core.shape;
 
-import java.io.Serializable;
-
 /**
  * 
  * @author Johny Andres Ortega Ruiz johny.ortega@kuwaiba.org
  */
-public class LienzoEdge implements Serializable {
-    private LienzoNode source;
-    private LienzoNode target;
+public class SrvNodeWidget extends ServerElement {
+    private static long idCounter = 0;
     private String caption;
-    private String color;
+    private String urlIcon;
     
-    public LienzoEdge() {
+    public SrvNodeWidget() {        
+        super(idCounter);
+        idCounter += 1;
     }
     
-    public LienzoNode getSource() {
-        return source;
-    }
-    
-    public void setSource(LienzoNode source) {
-        this.source = source;
-    }
-    
-    public LienzoNode getTarget() {
-        return target;
-    }
-    
-    public void setTarget(LienzoNode target) {
-        this.target = target;
+    public SrvNodeWidget(ServerElement parent) {
+        super(idCounter, parent);
+        idCounter += 1;        
     }
     
     public String getCaption() {
@@ -54,11 +42,11 @@ public class LienzoEdge implements Serializable {
         this.caption = caption;
     }
     
-    public String getColor() {
-        return color;
+    public String getUrlIcon() {
+        return urlIcon;
     }
     
-    public void setColor(String color) {
-        this.color = color;
+    public void setUrlIcon(String urlIcon) {
+        this.urlIcon = urlIcon;
     }
 }

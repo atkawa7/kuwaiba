@@ -15,12 +15,13 @@
  */
 package com.neotropic.vaadin.lienzo.client.rpcs;
 
+import com.neotropic.vaadin.lienzo.client.core.shape.SrvFrameWidget;
 import com.vaadin.shared.communication.ClientRpc;
 
 /**
- * ClientRpc used to receive RemoveLienzoNode RPC events from server
+ * ClientRpc used to receive UpdateFrameWidget RPC events from server
  * @author Johny Andres Ortega Ruiz johny.ortega@kuwaiba.org
  */
-public interface RemoveLienzoNodeClientRpc extends ClientRpc {
-    public void removeLienzoNode(long id);
+public interface UpdateFrameWidgetClientRpc extends ClientRpc {
+    public void updateFrameWidget(SrvFrameWidget frameWidget);
 }

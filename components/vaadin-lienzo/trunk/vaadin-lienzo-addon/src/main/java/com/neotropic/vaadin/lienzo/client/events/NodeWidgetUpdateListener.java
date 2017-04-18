@@ -13,24 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.vaadin.lienzo.client;
+package com.neotropic.vaadin.lienzo.client.events;
 
-import com.vaadin.shared.AbstractComponentState;
+import com.neotropic.vaadin.lienzo.client.core.shape.SrvNodeWidget;
+import java.io.Serializable;
 
 /**
- * 
+ * Interface for listening Node Widget Update events initiated by the user
  * @author Johny Andres Ortega Ruiz johny.ortega@kuwaiba.org
  */
-public class LienzoComponentState extends AbstractComponentState {
-    // State is directly readable in the client after it is set in server
-    
-    public boolean enableConnectionTool = false;    
-    
-    public double labelsFontSize = 11;
-    public double labelsPaddingTop = 16;
-    public double labelsPaddingLeft = 16;
-    // Scene background
-    public String backgroundUrl = null;
-    public double backgroundY = 0;
-    public double backgroundX = 0;
+public interface NodeWidgetUpdateListener extends Serializable {
+    /**
+     * Handle a Node Widget Update event
+     * 
+     * @param clntNode Node Widget Updated
+     */
+    void nodeWidgetUpdated(SrvNodeWidget clntNode);
 }

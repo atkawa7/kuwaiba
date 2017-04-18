@@ -13,24 +13,15 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.vaadin.lienzo.client;
+package com.neotropic.vaadin.lienzo.client.rpcs;
 
-import com.vaadin.shared.AbstractComponentState;
+import com.neotropic.vaadin.lienzo.client.core.shape.SrvNodeWidget;
+import com.vaadin.shared.communication.ClientRpc;
 
 /**
- * 
+ * ClientRpc used to receive RemoveLienzoNode RPC events from server
  * @author Johny Andres Ortega Ruiz johny.ortega@kuwaiba.org
  */
-public class LienzoComponentState extends AbstractComponentState {
-    // State is directly readable in the client after it is set in server
-    
-    public boolean enableConnectionTool = false;    
-    
-    public double labelsFontSize = 11;
-    public double labelsPaddingTop = 16;
-    public double labelsPaddingLeft = 16;
-    // Scene background
-    public String backgroundUrl = null;
-    public double backgroundY = 0;
-    public double backgroundX = 0;
+public interface RemoveNodeWidgetClientRpc extends ClientRpc {
+    public void removeNodeWidget(SrvNodeWidget srvNode);
 }

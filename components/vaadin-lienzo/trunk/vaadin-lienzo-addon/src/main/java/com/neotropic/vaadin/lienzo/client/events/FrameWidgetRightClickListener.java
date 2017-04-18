@@ -18,14 +18,14 @@ package com.neotropic.vaadin.lienzo.client.events;
 import java.io.Serializable;
 
 /**
- * Interface for listening Node Double Click events initiated by the user
+ * Interface for listening Frame Widget Right Click events initiated by the user
  * @author Johny Andres Ortega Ruiz johny.ortega@kuwaiba.org
  */
-public interface LienzoNodeDblClickListener extends Serializable {
+public interface FrameWidgetRightClickListener extends Serializable {
     /**
-     * Handle an Node Double Click event
+     * Handle a Frame Widget Right Click event
      * 
-     * @param id node id
+     * @param id Frame Widget id
      */
-    void lienzoNodeDoubleClicked(long id);    
+    void frameWidgetRightClicked(long id);
 }

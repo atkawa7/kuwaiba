@@ -13,19 +13,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.vaadin.lienzo.client.events;
+package com.neotropic.vaadin.lienzo.client.rpcs;
 
-import java.io.Serializable;
+import com.vaadin.shared.communication.ServerRpc;
 
 /**
- * Interface for listening Node Right Click events initiated by the user
+ * ServerRpc used to send Frame Widget Double Click events to server
  * @author Johny Andres Ortega Ruiz johny.ortega@kuwaiba.org
  */
-public interface LienzoNodeRightClickListener extends Serializable {
-    /**
-     * Handle an Node Right Click event
-     * 
-     * @param id node id
-     */
-    void lienzoNodeRightClicked(long id);    
+public interface FrameWidgetDblClickedServerRpc extends ServerRpc {
+    public void frameWidgetDblClicked(long id);    
 }

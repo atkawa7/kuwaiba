@@ -16,17 +16,46 @@
 package com.neotropic.vaadin.lienzo;
 
 import com.neotropic.vaadin.lienzo.client.LienzoComponentState;
-import com.neotropic.vaadin.lienzo.client.core.shape.LienzoNode;
+import com.neotropic.vaadin.lienzo.client.core.shape.SrvEdgeWidget;
+import com.neotropic.vaadin.lienzo.client.core.shape.SrvNodeWidget;
+import com.neotropic.vaadin.lienzo.client.core.shape.SrvFrameWidget;
+import com.neotropic.vaadin.lienzo.client.events.EdgeWidgetAddListener;
+import com.neotropic.vaadin.lienzo.client.events.EdgeWidgetClickListener;
+import com.neotropic.vaadin.lienzo.client.events.EdgeWidgetDblClickListener;
+import com.neotropic.vaadin.lienzo.client.events.EdgeWidgetRightClickListener;
+import com.neotropic.vaadin.lienzo.client.events.EdgeWidgetUpdateListener;
+import com.neotropic.vaadin.lienzo.client.events.FrameWidgetClickListener;
+import com.neotropic.vaadin.lienzo.client.events.FrameWidgetDblClickListener;
+import com.neotropic.vaadin.lienzo.client.events.FrameWidgetRightClickListener;
+import com.neotropic.vaadin.lienzo.client.events.FrameWidgetUpdateListener;
 import com.neotropic.vaadin.lienzo.client.events.LienzoMouseOverListener;
-import com.neotropic.vaadin.lienzo.client.events.LienzoNodeClickListener;
-import com.neotropic.vaadin.lienzo.client.events.LienzoNodeDblClickListener;
-import com.neotropic.vaadin.lienzo.client.events.LienzoNodeRightClickListener;
-import com.neotropic.vaadin.lienzo.client.rpcs.AddLienzoNodeClientRpc;
+import com.neotropic.vaadin.lienzo.client.events.NodeWidgetClickListener;
+import com.neotropic.vaadin.lienzo.client.events.NodeWidgetDblClickListener;
+import com.neotropic.vaadin.lienzo.client.events.NodeWidgetRightClickListener;
+import com.neotropic.vaadin.lienzo.client.events.NodeWidgetUpdateListener;
+import com.neotropic.vaadin.lienzo.client.rpcs.AddEdgeWidgetClientRpc;
+import com.neotropic.vaadin.lienzo.client.rpcs.AddFrameWidgetClientRpc;
+import com.neotropic.vaadin.lienzo.client.rpcs.AddNodeWidgetClientRpc;
+import com.neotropic.vaadin.lienzo.client.rpcs.EdgeWidgetAddedServerRpc;
+import com.neotropic.vaadin.lienzo.client.rpcs.EdgeWidgetClickedServerRpc;
+import com.neotropic.vaadin.lienzo.client.rpcs.EdgeWidgetDblClickedServerRpc;
+import com.neotropic.vaadin.lienzo.client.rpcs.EdgeWidgetRightClickedServerRpc;
+import com.neotropic.vaadin.lienzo.client.rpcs.EdgeWidgetUpdatedServerRpc;
+import com.neotropic.vaadin.lienzo.client.rpcs.FrameWidgetClickedServerRpc;
+import com.neotropic.vaadin.lienzo.client.rpcs.FrameWidgetDblClickedServerRpc;
+import com.neotropic.vaadin.lienzo.client.rpcs.FrameWidgetRightClickedServerRpc;
+import com.neotropic.vaadin.lienzo.client.rpcs.FrameWidgetUpdatedServerRpc;
 import com.neotropic.vaadin.lienzo.client.rpcs.LienzoMouseOverServerRpc;
-import com.neotropic.vaadin.lienzo.client.rpcs.LienzoNodeClickedServerRpc;
-import com.neotropic.vaadin.lienzo.client.rpcs.LienzoNodeDblClickedServerRpc;
-import com.neotropic.vaadin.lienzo.client.rpcs.LienzoNodeRightClickedServerRpc;
-import com.neotropic.vaadin.lienzo.client.rpcs.RemoveLienzoNodeClientRpc;
+import com.neotropic.vaadin.lienzo.client.rpcs.NodeWidgetClickedServerRpc;
+import com.neotropic.vaadin.lienzo.client.rpcs.NodeWidgetDblClickedServerRpc;
+import com.neotropic.vaadin.lienzo.client.rpcs.NodeWidgetRightClickedServerRpc;
+import com.neotropic.vaadin.lienzo.client.rpcs.NodeWidgetUpdatedServerRpc;
+import com.neotropic.vaadin.lienzo.client.rpcs.RemoveEdgeWidgetClientRpc;
+import com.neotropic.vaadin.lienzo.client.rpcs.RemoveFrameWidgetClientRpc;
+import com.neotropic.vaadin.lienzo.client.rpcs.RemoveNodeWidgetClientRpc;
+import com.neotropic.vaadin.lienzo.client.rpcs.UpdateEdgeWidgetClientRpc;
+import com.neotropic.vaadin.lienzo.client.rpcs.UpdateFrameWidgetClientRpc;
+import com.neotropic.vaadin.lienzo.client.rpcs.UpdateNodeWidgetClientRpc;
 
 import com.vaadin.ui.AbstractComponent;
 import java.util.ArrayList;
@@ -41,9 +70,17 @@ import java.util.Map;
 // This is the server-side UI component that provides public API 
 // for LienzoComponent
 public class LienzoComponent extends AbstractComponent {
-    protected Map<Long, LienzoNode> nodes = new HashMap<>();
-            
-    private LienzoMouseOverServerRpc lienzoMouseOverServerRpc = new LienzoMouseOverServerRpc() {
+    private Map<Long, SrvFrameWidget> frames = new HashMap<>();
+    private Map<Long, SrvNodeWidget> nodes = new HashMap<>();
+    private final Map<Long, SrvEdgeWidget> edges = new HashMap<>();
+    
+    private final Map<SrvEdgeWidget, SrvNodeWidget> edgeSourceNodes = new HashMap<>();
+    private final Map<SrvEdgeWidget, SrvNodeWidget> edgeTargetNodes = new HashMap<>();
+    
+    private final Map<SrvNodeWidget, List<SrvEdgeWidget>> nodeInputEdges = new HashMap<>();
+    private final Map<SrvNodeWidget, List<SrvEdgeWidget>> nodeOutputEdges = new HashMap<>();
+    
+    private final LienzoMouseOverServerRpc lienzoMouseOverServerRpc = new LienzoMouseOverServerRpc() {
 
         @Override
         public void lienzoMouseOver(int x, int y) {
@@ -52,45 +89,165 @@ public class LienzoComponent extends AbstractComponent {
         }
     };
     
-    private LienzoNodeClickedServerRpc lienzoNodeClickedServerRpc = new LienzoNodeClickedServerRpc() {
+    private final NodeWidgetClickedServerRpc nodeWidgetClickedServerRpc = new NodeWidgetClickedServerRpc() {
 
         @Override
         public void lienzoNodeClicked(long id) {
-            for (LienzoNodeClickListener listener : lienzoNodeClickListeners)
-                listener.lienzoNodeClicked(id);
+            for (NodeWidgetClickListener listener : nodeWidgetClickListeners)
+                listener.nodeWidgetClicked(id);
         }
-        
-    };
-    
-    private LienzoNodeRightClickedServerRpc lienzoNodeRightClickedServerRpc = new LienzoNodeRightClickedServerRpc() {
+    };    
+    private final NodeWidgetRightClickedServerRpc nodeWidgetRightClickedServerRpc = new NodeWidgetRightClickedServerRpc() {
 
         @Override
         public void lienzoNodeRightClicked(long id) {
-            for (LienzoNodeRightClickListener listener : lienzoNodeRightClickListeners)
-                listener.lienzoNodeRightClicked(id);
+            for (NodeWidgetRightClickListener listener : nodeWidgetRightClickListeners)
+                listener.nodeWidgetRightClicked(id);
         }
-    };
-    
-    private LienzoNodeDblClickedServerRpc lienzoNodeDblClickedServerRpc = new LienzoNodeDblClickedServerRpc() {
+    };    
+    private final NodeWidgetDblClickedServerRpc nodeWidgetDblClickedServerRpc = new NodeWidgetDblClickedServerRpc() {
 
         @Override
         public void lienzoNodeDblClicked(long id) {
-            for (LienzoNodeDblClickListener listener : lienzoNodeDblClickListeners)
-                listener.lienzoNodeDoubleClicked(id);
+            for (NodeWidgetDblClickListener listener : nodeWidgetDblClickListeners)
+                listener.nodeWidgetDoubleClicked(id);
+        }
+    };
+    private final NodeWidgetUpdatedServerRpc nodeWidgetUpdatedServerRpc = new NodeWidgetUpdatedServerRpc() {
+
+        @Override
+        public void nodeWidgetUpdated(SrvNodeWidget clntNode) {
+            SrvNodeWidget srvNode = nodes.get(clntNode.getId());
+            srvNode.setX(clntNode.getX());
+            srvNode.setY(clntNode.getY());
+            
+            for (NodeWidgetUpdateListener listener : nodeWidgetUpdateListeners)
+                listener.nodeWidgetUpdated(srvNode);
+        }
+    };
+    
+    private final FrameWidgetClickedServerRpc frameWidgetClickedServerRpc = new FrameWidgetClickedServerRpc() {
+
+        @Override
+        public void frameWidgetClicked(long id) {
+            for (FrameWidgetClickListener listener : frameWidgetClickListeners)
+                listener.frameWidgetClicked(id);
+        }
+    };
+    private final FrameWidgetDblClickedServerRpc frameWidgetDblClickedServerRpc = new FrameWidgetDblClickedServerRpc() {
+
+        @Override
+        public void frameWidgetDblClicked(long id) {
+            for (FrameWidgetDblClickListener listener : frameWidgetDblClickListeners)
+                listener.frameWidgetDblClicked(id);
+        }
+    };
+    private final FrameWidgetRightClickedServerRpc frameWidgetRightClickedServerRpc = new FrameWidgetRightClickedServerRpc() {
+
+        @Override
+        public void frameWidgetRightClicked(long id) {
+            for (FrameWidgetRightClickListener listener : frameWidgetRightClickListeners)
+                listener.frameWidgetRightClicked(id);
+        }
+    };
+    private final FrameWidgetUpdatedServerRpc frameWidgetUpdatedServerRpc = new FrameWidgetUpdatedServerRpc() {
+
+        @Override
+        public void frameWidgetUpdated(SrvFrameWidget svrFrameWidget) {
+            SrvFrameWidget oldSrvFrame = frames.get(svrFrameWidget.getId());
+            
+            oldSrvFrame.setCaption(svrFrameWidget.getCaption());
+            oldSrvFrame.setX(svrFrameWidget.getX());
+            oldSrvFrame.setY(svrFrameWidget.getY());
+            oldSrvFrame.setWidth(svrFrameWidget.getWidth());
+            oldSrvFrame.setHeight(svrFrameWidget.getHeight());
+            
+            for (FrameWidgetUpdateListener listener : frameWidgetUpdateListeners)
+                listener.frameWidgetUpdated(oldSrvFrame);
+        }
+    };
+    
+    private final EdgeWidgetAddedServerRpc edgeWidgetAddedServerRpc = new EdgeWidgetAddedServerRpc() {
+
+        @Override
+        public void edgeWidgetAdded(SrvEdgeWidget clntEdge) {
+            for (EdgeWidgetAddListener listener : edgeWidgetAddListeners)
+                listener.edgeWidetAdded(clntEdge);
+        }
+    };
+    private final EdgeWidgetClickedServerRpc edgeWidgetClickedServerRpc = new EdgeWidgetClickedServerRpc() {
+
+        @Override
+        public void edgeWidgetClicked(long id) {
+            for (EdgeWidgetClickListener listener : edgeWidgetClickListeners)
+                listener.edgeWidgetClicked(id);
+        }
+    };
+    private final EdgeWidgetDblClickedServerRpc edgeWidgetDblClickedServerRpc = new EdgeWidgetDblClickedServerRpc() {
+
+        @Override
+        public void edgeWidgetDblClicked(long id) {
+            for (EdgeWidgetDblClickListener listener : edgeWidgetDblClickListeners)
+                listener.edgeWidgetDblClicked(id);
+        }
+    };
+    private final EdgeWidgetRightClickedServerRpc edgeWidgetRightClickedServerRpc = new EdgeWidgetRightClickedServerRpc() {
+
+        @Override
+        public void edgeWidgetRightClicked(long id) {
+            for (EdgeWidgetRightClickListener listener : edgeWidgetRightClickListeners)
+                listener.edgeWidgetRightClicked(id);
+        }
+    };
+    private final EdgeWidgetUpdatedServerRpc edgeWidgetUpdatedServerRpc = new EdgeWidgetUpdatedServerRpc() {
+
+        @Override
+        public void edgeWidgetUpdated(SrvEdgeWidget clntEdge) {
+            SrvEdgeWidget srvEdge = edges.get(clntEdge.getId());
+            srvEdge.setControlPoints(clntEdge.getControlPoints());
+            
+            for (EdgeWidgetUpdateListener listener : edgeWidgetUpdateListeners)
+                listener.edgeWidgetUpdated(clntEdge);
         }
     };
     
     List<LienzoMouseOverListener> lienzoMouseOverListeners = new ArrayList();
-    List<LienzoNodeClickListener> lienzoNodeClickListeners = new ArrayList();
-    List<LienzoNodeRightClickListener> lienzoNodeRightClickListeners = new ArrayList();
-    List<LienzoNodeDblClickListener> lienzoNodeDblClickListeners = new ArrayList();
+    
+    List<NodeWidgetClickListener> nodeWidgetClickListeners = new ArrayList();
+    List<NodeWidgetRightClickListener> nodeWidgetRightClickListeners = new ArrayList();
+    List<NodeWidgetDblClickListener> nodeWidgetDblClickListeners = new ArrayList();
+    List<NodeWidgetUpdateListener> nodeWidgetUpdateListeners = new ArrayList();
+    
+    List<FrameWidgetClickListener> frameWidgetClickListeners = new ArrayList();
+    List<FrameWidgetDblClickListener> frameWidgetDblClickListeners = new ArrayList();
+    List<FrameWidgetRightClickListener> frameWidgetRightClickListeners = new ArrayList();
+    List<FrameWidgetUpdateListener> frameWidgetUpdateListeners = new ArrayList();
+    
+    List<EdgeWidgetAddListener> edgeWidgetAddListeners = new ArrayList();
+    List<EdgeWidgetClickListener> edgeWidgetClickListeners = new ArrayList();
+    List<EdgeWidgetDblClickListener> edgeWidgetDblClickListeners = new ArrayList();
+    List<EdgeWidgetRightClickListener> edgeWidgetRightClickListeners = new ArrayList();
+    List<EdgeWidgetUpdateListener> edgeWidgetUpdateListeners = new ArrayList();
         
     public LienzoComponent() {
         // To receive events from the client, we register ServerRpc
         registerRpc(lienzoMouseOverServerRpc);
-        registerRpc(lienzoNodeClickedServerRpc);
-        registerRpc(lienzoNodeRightClickedServerRpc);
-        registerRpc(lienzoNodeDblClickedServerRpc);
+        
+        registerRpc(nodeWidgetClickedServerRpc);
+        registerRpc(nodeWidgetRightClickedServerRpc);
+        registerRpc(nodeWidgetDblClickedServerRpc);
+        registerRpc(nodeWidgetUpdatedServerRpc);
+        
+        registerRpc(frameWidgetClickedServerRpc);
+        registerRpc(frameWidgetDblClickedServerRpc);
+        registerRpc(frameWidgetRightClickedServerRpc);
+        registerRpc(frameWidgetUpdatedServerRpc);
+        
+        registerRpc(edgeWidgetAddedServerRpc);
+        registerRpc(edgeWidgetClickedServerRpc);
+        registerRpc(edgeWidgetDblClickedServerRpc);
+        registerRpc(edgeWidgetRightClickedServerRpc);
+        registerRpc(edgeWidgetUpdatedServerRpc);
     }
     
     // We must override getState() to cast the state to LienzoComponentState
@@ -99,51 +256,203 @@ public class LienzoComponent extends AbstractComponent {
         return (LienzoComponentState) super.getState();
     }
     
+    public boolean isEnableConnectionTool() {
+        return getState().enableConnectionTool;
+    }
+    
+    public void setEnableConnectionTool(boolean enableConnectionTool) {
+        getState().enableConnectionTool = enableConnectionTool;
+    }
+    
     public void addLienzoMouseOverListener(LienzoMouseOverListener listener) {
         lienzoMouseOverListeners.add(listener);
     }
-    
     public void removeLienzoMouseOverListener(LienzoMouseOverListener listener) {
         lienzoMouseOverListeners.remove(listener);
     }
     
-    public void addLienzoNodeClickListener(LienzoNodeClickListener listener) {
-        lienzoNodeClickListeners.add(listener);
+    public void addNodeWidgetClickListener(NodeWidgetClickListener listener) {
+        nodeWidgetClickListeners.add(listener);
+    }
+    public void removeNodeWidgetClickListener(NodeWidgetClickListener listener) {
+        nodeWidgetClickListeners.remove(listener);
+    }    
+    public void addNodeWidgetRightClickListener(NodeWidgetRightClickListener listener) {
+        nodeWidgetRightClickListeners.add(listener);
+    }
+    public void removeNodeWidgetRightClickListener(NodeWidgetRightClickListener listener) {
+        nodeWidgetRightClickListeners.remove(listener);
+    }    
+    public void addNodeWidgetDblClickListener(NodeWidgetDblClickListener listener) {
+        nodeWidgetDblClickListeners.add(listener);
+    }
+    public void removeNodeWidgetDblClickListener(NodeWidgetDblClickListener listener) {
+        nodeWidgetDblClickListeners.remove(listener);
+    }
+    public void addNodeWidgetUpdateListener(NodeWidgetUpdateListener listener) {
+        nodeWidgetUpdateListeners.add(listener);
+    }
+    public void removeNodeWidgetUpdateListener(NodeWidgetUpdateListener listener) {
+        nodeWidgetUpdateListeners.remove(listener);
     }
     
-    public void removeLienzoNodeClickListener(LienzoNodeClickListener listener) {
-        lienzoNodeClickListeners.remove(listener);
+    public void addFrameWidgetClickListener(FrameWidgetClickListener listener) {
+        frameWidgetClickListeners.add(listener);
+    }
+    public void removeFrameWidgetClickListener(FrameWidgetClickListener listener) {
+        frameWidgetClickListeners.remove(listener);
+    }    
+    public void addFrameWidgetDblClickListener(FrameWidgetDblClickListener listener) {
+        frameWidgetDblClickListeners.add(listener);
+    }
+    public void removeFrameWidgetDblClickListener(FrameWidgetDblClickListener listener) {
+        frameWidgetDblClickListeners.remove(listener);
+    }    
+    public void addFrameWidgetRightClickListener(FrameWidgetRightClickListener listener) {
+        frameWidgetRightClickListeners.add(listener);
+    }
+    public void removeFrameWidgetRightClickListener(FrameWidgetRightClickListener listener) {
+        frameWidgetRightClickListeners.remove(listener);
+    }    
+    public void addFrameWidgetUpdateListener(FrameWidgetUpdateListener listener) {
+        frameWidgetUpdateListeners.add(listener);
+    }
+    public void removerFrameWidgetUpdateListener(FrameWidgetUpdateListener listener) {
+        frameWidgetUpdateListeners.remove(listener);
     }
     
-    public void addLienzoNodeRightClickListener(LienzoNodeRightClickListener listener) {
-        lienzoNodeRightClickListeners.add(listener);
+    public void addEdgeWidgetAddListener(EdgeWidgetAddListener listener) {
+        edgeWidgetAddListeners.add(listener);
+    }
+    public void removeEdgeWidgetAddListener(EdgeWidgetAddListener listener) {
+        edgeWidgetAddListeners.remove(listener);
+    }
+    public void addEdgeWidgetClickListener(EdgeWidgetClickListener listener) {
+        edgeWidgetClickListeners.add(listener);
+    }
+    public void removeEdgeWidgetClickListener(EdgeWidgetClickListener listener) {
+        edgeWidgetClickListeners.remove(listener);
+    }
+    public void addEdgeWidgetDblClickListener(EdgeWidgetDblClickListener listener) {
+        edgeWidgetDblClickListeners.add(listener);
+    }
+    public void removeEdgeWidgetDblClickListener(EdgeWidgetDblClickListener listener) {
+        edgeWidgetDblClickListeners.remove(listener);
+    }
+    public void addEdgeWidgetRightClickListener(EdgeWidgetRightClickListener listener) {
+        edgeWidgetRightClickListeners.add(listener);
+    }
+    public void removeEdgeWidgetRightClickListener(EdgeWidgetRightClickListener listener) {
+        edgeWidgetRightClickListeners.remove(listener);
+    }
+    public void addEdgeWidgetUpdateListener(EdgeWidgetUpdateListener listener) {
+        edgeWidgetUpdateListeners.add(listener);
+    }
+    public void removeEdgeWidgetUpdateListener(EdgeWidgetUpdateListener listener) {
+        edgeWidgetUpdateListeners.remove(listener);
+    }    
+    
+    public void addBackground(String url, double x, double y) {
+        getState().backgroundUrl = url;
+        getState().backgroundX = x;
+        getState().backgroundY = y;        
+    }    
+    public void removeBackground() {
+        getState().backgroundUrl = null;
     }
     
-    public void removeLienzoNodeRightClickListener(LienzoNodeRightClickListener listener) {
-        lienzoNodeRightClickListeners.remove(listener);
+    public SrvNodeWidget getNodeWidget(long id) {
+        return nodes.get(id);
     }
-    
-    public void addLienzoNodeDblClickListener(LienzoNodeDblClickListener listener) {
-        lienzoNodeDblClickListeners.add(listener);
-    }
-    
-    public void removeLienzoNodeDblClickListener(LienzoNodeDblClickListener listener) {
-        lienzoNodeDblClickListeners.remove(listener);
-    }
-    
-    public void addLienzoNode(LienzoNode node) {
+    public void addNodeWidget(SrvNodeWidget node) {
         if (node == null)        
             return;
         
         nodes.put(node.getId(), node);
-        getRpcProxy(AddLienzoNodeClientRpc.class).addLienzoNode(node);
+        getRpcProxy(AddNodeWidgetClientRpc.class).addNodeWidget(node);
+    }
+    public void updateNodeWidget(long id) {
+        if (nodes.containsKey(id))
+            getRpcProxy(UpdateNodeWidgetClientRpc.class).updateNodeWidget(nodes.get(id));
+    }
+    public void removeNodeWidget(Long id) {
+        if (nodes.containsKey(id)) {
+            SrvNodeWidget node = nodes.remove(id);
+            
+            if (nodeOutputEdges.containsKey(node)) {
+                for (SrvEdgeWidget edge : nodeOutputEdges.remove(node)) {
+                    edges.remove(edge.getId());
+                    edgeSourceNodes.remove(edge);
+                    
+                    SrvNodeWidget target = edgeTargetNodes.remove(edge);
+                    nodeInputEdges.get(target).remove(edge);
+                }
+            }
+            if (nodeInputEdges.containsKey(node)) {
+                for (SrvEdgeWidget edge : nodeInputEdges.remove(node)) {
+                    edges.remove(edge.getId());
+                    edgeTargetNodes.remove(edge);
+                    
+                    SrvNodeWidget source = edgeSourceNodes.remove(edge);
+                    nodeOutputEdges.get(source).remove(edge);
+                }
+            }
+            getRpcProxy(RemoveNodeWidgetClientRpc.class).removeNodeWidget(node);
+        }
+    }    
+
+    public SrvFrameWidget getFrameWidget(long id) {
+        return frames.get(id);
+    }    
+    public void addFrameWidget(SrvFrameWidget frame) {
+        frames.put(frame.getId(), frame);
+        getRpcProxy(AddFrameWidgetClientRpc.class).addFrameWidget(frame);
+    }    
+    public void updateFrameWidget(SrvFrameWidget srvFrame) {
+        getRpcProxy(UpdateFrameWidgetClientRpc.class).updateFrameWidget(srvFrame);
+    }    
+    public void removeFrameWidget(long id) {
+        SrvFrameWidget srvFrame = frames.remove(id);
+        getRpcProxy(RemoveFrameWidgetClientRpc.class).removeFrameWidget(srvFrame);
     }
     
-    public void removeLienzoNode(Long id) {
-        if (id == null)
-            return;
+    public SrvEdgeWidget getEdge(long id) {
+        return edges.get(id);
+    }    
+    public void addEdgeWidget(SrvEdgeWidget srvEdge) {
+        edges.put(srvEdge.getId(), srvEdge);
         
-        LienzoNode node = nodes.remove(id);
-        getRpcProxy(RemoveLienzoNodeClientRpc.class).removeLienzoNode(node.getId());
+        edgeSourceNodes.put(srvEdge, srvEdge.getSource());
+        edgeTargetNodes.put(srvEdge, srvEdge.getTarget());
+        
+        if (!nodeOutputEdges.containsKey(srvEdge.getSource()))
+            nodeOutputEdges.put(srvEdge.getSource(), new ArrayList());
+        nodeOutputEdges.get(srvEdge.getSource()).add(srvEdge);
+        
+        if (!nodeInputEdges.containsKey(srvEdge.getTarget()))
+            nodeInputEdges.put(srvEdge.getTarget(), new ArrayList());
+        nodeInputEdges.get(srvEdge.getTarget()).add(srvEdge);
+        
+        getRpcProxy(AddEdgeWidgetClientRpc.class).addEdgeWidget(srvEdge);
+    }    
+    public void updateEdgeWidget(long id) {
+        if (edges.containsKey(id))
+            getRpcProxy(UpdateEdgeWidgetClientRpc.class).updateEdgeWidget(edges.get(id));
+    }    
+    public void removeEdgeWidget(long id) {
+        if (edges.containsKey(id)) {
+            SrvEdgeWidget srvEdge = edges.remove(id);
+            
+            SrvNodeWidget source = edgeSourceNodes.remove(srvEdge);
+            SrvNodeWidget target = edgeTargetNodes.remove(srvEdge);
+            
+            if (nodeOutputEdges.containsKey(source))
+                nodeOutputEdges.get(source).remove(srvEdge);
+            
+            if (nodeInputEdges.containsKey(target))
+                nodeInputEdges.get(target).remove(srvEdge);
+                        
+            getRpcProxy(RemoveEdgeWidgetClientRpc.class).removeEdgeWidget(srvEdge);
+        }
     }
 }

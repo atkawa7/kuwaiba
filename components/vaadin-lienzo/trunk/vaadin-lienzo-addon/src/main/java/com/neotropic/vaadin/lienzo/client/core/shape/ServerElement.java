@@ -23,10 +23,10 @@ import java.util.List;
  * The Class representing a Lienzo Shape
  * @author Johny Andres Ortega Ruiz johny.ortega@kuwaiba.org
  */
-public class LienzoElement implements Serializable {
+public class ServerElement implements Serializable {
     private long id;
-    private LienzoElement parent;
-    private List<LienzoElement> children;
+    private ServerElement parent;
+    private List<ServerElement> children;
     /**
      * x position.
      */
@@ -40,14 +40,14 @@ public class LienzoElement implements Serializable {
     private boolean resizable = false;
     private boolean draggable = true;   
     
-    public LienzoElement() {
+    public ServerElement() {
     }
     
-    public LienzoElement(long id) {
+    public ServerElement(long id) {
         this.id = id;
     }
     
-    public LienzoElement(long id, LienzoElement parent) {
+    public ServerElement(long id, ServerElement parent) {
         this(id);
         this.parent = parent;
     }
@@ -60,22 +60,22 @@ public class LienzoElement implements Serializable {
         this.id = id;
     }
     
-    public LienzoElement getParent() {
+    public ServerElement getParent() {
         return parent;
     }
     
-    public void setParent(LienzoElement parent) {
+    public void setParent(ServerElement parent) {
         this.parent = parent;
     }
     
-    public void addChild(LienzoElement child) {
+    public void addChild(ServerElement child) {
         if (children == null)
             children = new ArrayList();
                 
         children.add(child);
     }
     
-    public void removeChild(LienzoElement child) {
+    public void removeChild(ServerElement child) {
         if (children == null)
             return;
         
@@ -138,7 +138,7 @@ public class LienzoElement implements Serializable {
         if (getClass() != obj.getClass())
             return false;
         
-        return getId() == ((LienzoElement) obj).getId();
+        return getId() == ((ServerElement) obj).getId();
     }
 
     @Override

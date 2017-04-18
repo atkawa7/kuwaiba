@@ -13,14 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.vaadin.lienzo.client.rpcs;
+package com.neotropic.vaadin.lienzo.client.events;
 
-import com.vaadin.shared.communication.ServerRpc;
+import com.neotropic.vaadin.lienzo.client.core.shape.SrvEdgeWidget;
+import java.io.Serializable;
 
 /**
- * ServerRpc used to send NodeRightClick events to server
+ * Interface for listening Edge Widget Update events initiated by the user
  * @author Johny Andres Ortega Ruiz johny.ortega@kuwaiba.org
  */
-public interface LienzoNodeRightClickedServerRpc extends ServerRpc {
-    public void lienzoNodeRightClicked(long id);
+public interface EdgeWidgetUpdateListener extends Serializable {
+    /**
+     * Handle a Edge Widget Update event
+     * 
+     * @param clntEdge server edge widget updated
+     */
+    void edgeWidgetUpdated(SrvEdgeWidget clntEdge);
 }

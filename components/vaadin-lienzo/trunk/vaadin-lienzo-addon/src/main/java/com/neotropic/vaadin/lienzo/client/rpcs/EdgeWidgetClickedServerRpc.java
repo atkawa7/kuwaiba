@@ -18,9 +18,10 @@ package com.neotropic.vaadin.lienzo.client.rpcs;
 import com.vaadin.shared.communication.ServerRpc;
 
 /**
- * ServerRpc used to send NodeClick events to server
+ * ServerRpc used to send Edge Widget Click events to server
  * @author Johny Andres Ortega Ruiz johny.ortega@kuwaiba.org
  */
-public interface LienzoNodeClickedServerRpc extends ServerRpc {
-    public void lienzoNodeClicked(long id);    
+public interface EdgeWidgetClickedServerRpc extends ServerRpc {
+    public void edgeWidgetClicked(long id);
+    
 }
