@@ -20,6 +20,7 @@ import javax.servlet.annotation.WebServlet;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.annotations.VaadinServletConfiguration;
+import com.vaadin.server.Sizeable;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.HorizontalSplitPanel;
@@ -45,27 +46,28 @@ public class DemoUI extends UI
     @Override
     protected void init(VaadinRequest request) {
         HorizontalSplitPanel hSplitPanel = new HorizontalSplitPanel();
+        hSplitPanel.setSplitPosition(25, Sizeable.UNITS_PERCENTAGE);
         
         Tree tree = new Tree();
-        tree.addItem("Colombia");
-        tree.addItem("Valle del Cauca");
-        tree.addItem("Santiago de Cali");
-        tree.addItem("Cauca");
-        tree.addItem("Popayán");
-        tree.addItem("Nariño");
-        tree.addItem("Pasto");
+        tree.addItem("node 1");
+        tree.addItem("node 1.1");
+        tree.addItem("node 1.1.1");
+        tree.addItem("node 1.2");
+        tree.addItem("node 1.2.1");
+        tree.addItem("node 1.3");
+        tree.addItem("node 1.3.1");
         
-        tree.setParent("Valle del Cauca", "Colombia");
-        tree.setParent("Cauca", "Colombia");
-        tree.setParent("Nariño", "Colombia");
-        tree.setParent("Santiago de Cali", "Valle del Cauca");
-        tree.setParent("Popayán", "Cauca");
-        tree.setParent("Pasto", "Nariño");
+        tree.setParent("node 1.1", "node 1");
+        tree.setParent("node 1.2", "node 1");
+        tree.setParent("node 1.3", "node 1");
+        tree.setParent("node 1.1.1", "node 1.1");
+        tree.setParent("node 1.2.1", "node 1.2");
+        tree.setParent("node 1.3.1", "node 1.3");
         
-        tree.expandItem("Colombia");
-        tree.expandItem("Valle del Cauca");
-        tree.expandItem("Cauca");
-        tree.expandItem("Nariño");
+        tree.expandItem("node 1");
+        tree.expandItem("node 1.1");
+        tree.expandItem("node 1.2");
+        tree.expandItem("node 1.3");
         
         tree.setDragMode(TreeDragMode.NODE);
         

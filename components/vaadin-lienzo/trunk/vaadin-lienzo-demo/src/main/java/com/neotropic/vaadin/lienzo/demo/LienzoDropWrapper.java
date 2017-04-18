@@ -16,17 +16,29 @@
 package com.neotropic.vaadin.lienzo.demo;
 
 import com.neotropic.vaadin.lienzo.LienzoComponent;
-import com.neotropic.vaadin.lienzo.client.core.shape.LienzoNode;
+import com.neotropic.vaadin.lienzo.client.core.shape.SrvEdgeWidget;
+
 import com.neotropic.vaadin.lienzo.client.events.LienzoMouseOverListener;
-import com.neotropic.vaadin.lienzo.client.events.LienzoNodeClickListener;
-import com.neotropic.vaadin.lienzo.client.events.LienzoNodeDblClickListener;
-import com.neotropic.vaadin.lienzo.client.events.LienzoNodeRightClickListener;
+import com.neotropic.vaadin.lienzo.client.events.NodeWidgetClickListener;
+import com.neotropic.vaadin.lienzo.client.events.NodeWidgetDblClickListener;
+import com.neotropic.vaadin.lienzo.client.events.NodeWidgetRightClickListener;
+import com.neotropic.vaadin.lienzo.client.core.shape.SrvNodeWidget;
+import com.neotropic.vaadin.lienzo.client.core.shape.SrvFrameWidget;
+import com.neotropic.vaadin.lienzo.client.events.EdgeWidgetAddListener;
+import com.neotropic.vaadin.lienzo.client.events.EdgeWidgetClickListener;
+import com.neotropic.vaadin.lienzo.client.events.EdgeWidgetDblClickListener;
+import com.neotropic.vaadin.lienzo.client.events.EdgeWidgetRightClickListener;
+import com.neotropic.vaadin.lienzo.client.events.EdgeWidgetUpdateListener;
+import com.neotropic.vaadin.lienzo.client.events.FrameWidgetClickListener;
+import com.neotropic.vaadin.lienzo.client.events.FrameWidgetDblClickListener;
+import com.neotropic.vaadin.lienzo.client.events.FrameWidgetRightClickListener;
+import com.neotropic.vaadin.lienzo.client.events.FrameWidgetUpdateListener;
+import com.neotropic.vaadin.lienzo.client.events.NodeWidgetUpdateListener;
 import com.vaadin.event.dd.DragAndDropEvent;
 import com.vaadin.event.dd.DropHandler;
 import com.vaadin.event.dd.acceptcriteria.AcceptAll;
 import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.ui.DragAndDropWrapper;
-import com.vaadin.ui.Notification;
 
 /**
  * 
@@ -34,16 +46,18 @@ import com.vaadin.ui.Notification;
  */
 public class LienzoDropWrapper extends DragAndDropWrapper {
     private final LienzoComponent lienzoComponent;
-    private LienzoNode lienzoNode = null;
+    private SrvNodeWidget srvNodeWidget = null;
     
     private final DropHandler dropHandler = new DropHandler() {
 
         @Override
         public void drop(DragAndDropEvent event) {
+            String caption = (String) event.getTransferable().getData("itemId");
+            
             String url = "http://localhost:8080/vaadin-lienzo-demo/VAADIN/themes/demo/images/node.png";
-            lienzoNode = new LienzoNode();
-            lienzoNode.setUrlIcon(url);
-            lienzoNode.setCaption("Node Id = " + lienzoNode.getId());
+            srvNodeWidget = new SrvNodeWidget();
+            srvNodeWidget.setUrlIcon(url);
+            srvNodeWidget.setCaption(caption + " id = " + srvNodeWidget.getId());
         }
 
         @Override
@@ -53,51 +67,206 @@ public class LienzoDropWrapper extends DragAndDropWrapper {
     };
     
     public LienzoDropWrapper() {
-        lienzoComponent = new LienzoComponent();
+        lienzoComponent = new LienzoComponent();        
         setCompositionRoot(lienzoComponent);
+        
+        String url = "http://localhost:8080/vaadin-lienzo-demo/VAADIN/themes/demo/images/background.png";        
+        lienzoComponent.addBackground(url, 0, 0);
+                
+        SrvFrameWidget frame = new SrvFrameWidget("Frame", 400, 100, 300, 300);
+        lienzoComponent.addFrameWidget(frame);
+        
+        String cloudUrlIcon = "http://localhost:8080/vaadin-lienzo-demo/VAADIN/themes/demo/images/cloud-big.png";
+        SrvNodeWidget cloudNode = new SrvNodeWidget();
+        cloudNode.setCaption("Cloud");
+        cloudNode.setUrlIcon(cloudUrlIcon);
+        cloudNode.setX(100);
+        cloudNode.setY(100);
+        cloudNode.setWidth(60);
+        cloudNode.setHeight(34);
+        lienzoComponent.addNodeWidget(cloudNode);
+        
         setDropHandler(dropHandler);
         lienzoComponent.addLienzoMouseOverListener(lienzoMouseOverListener);
-        lienzoComponent.addLienzoNodeClickListener(lienzoNodeClickListener);
-        lienzoComponent.addLienzoNodeDblClickListener(lienzoNodeDblClickListener);
-        lienzoComponent.addLienzoNodeRightClickListener(lienzoNodeRightClickListener);
+        
+        lienzoComponent.addNodeWidgetClickListener(nodeWidgetClickListener);
+        lienzoComponent.addNodeWidgetDblClickListener(nodeWidgetDblClickListener);
+        lienzoComponent.addNodeWidgetRightClickListener(nodeWidgetRightClickListener);
+        lienzoComponent.addNodeWidgetUpdateListener(nodeWidgetUpdateListener);
+        
+        lienzoComponent.addFrameWidgetClickListener(frameWidgetClickListener);
+        lienzoComponent.addFrameWidgetDblClickListener(frameWidgetDblClickListener);
+        lienzoComponent.addFrameWidgetRightClickListener(frameWidgetRightClickListener);
+        lienzoComponent.addFrameWidgetUpdateListener(frameWidgetUpdateListener);
+        
+        lienzoComponent.addEdgeWidgetAddListener(edgeWidgetAddListener);
+        lienzoComponent.addEdgeWidgetClickListener(edgeWidgetClickListener);
+        lienzoComponent.addEdgeWidgetDblClickListener(edgeWidgetDblClickListener);
+        lienzoComponent.addEdgeWidgetRightClickListener(edgeWidgetRigthClickListener);
+        lienzoComponent.addEdgeWidgetUpdateListener(edgeWidgetUpdateListener);
+        
+        lienzoComponent.setEnableConnectionTool(true);
+    }
+    
+    public LienzoComponent getLienzoComponent() {
+        return lienzoComponent;
     }
     
     LienzoMouseOverListener lienzoMouseOverListener = new LienzoMouseOverListener() {
 
         @Override
         public void lienzoMouseOver(int x, int y) {
-            if (lienzoNode != null) {
-                lienzoNode.setX(x);
-                lienzoNode.setY(y);
-                lienzoNode.setWidth(32);
-                lienzoNode.setHeight(32);
-                lienzoComponent.addLienzoNode(lienzoNode);
-                lienzoNode = null;
+            if (srvNodeWidget != null) {
+                srvNodeWidget.setX(x);
+                srvNodeWidget.setY(y);
+                srvNodeWidget.setWidth(32);
+                srvNodeWidget.setHeight(32);
+                lienzoComponent.addNodeWidget(srvNodeWidget);
+                srvNodeWidget = null;
             }
         }
     };
     
-    LienzoNodeClickListener lienzoNodeClickListener = new LienzoNodeClickListener() {
+    NodeWidgetClickListener nodeWidgetClickListener = new NodeWidgetClickListener() {
 
         @Override
-        public void lienzoNodeClicked(long id) {
-            //Notification.show("Node clicked", Notification.Type.ERROR_MESSAGE);
+        public void nodeWidgetClicked(long id) {
+            SrvNodeWidget srvNode = lienzoComponent.getNodeWidget(id);
+            srvNode.setCaption("id = " + id + " Clicked");
+            lienzoComponent.updateNodeWidget(id);
         }
     };
     
-    LienzoNodeRightClickListener lienzoNodeRightClickListener = new LienzoNodeRightClickListener() {
+    NodeWidgetRightClickListener nodeWidgetRightClickListener = new NodeWidgetRightClickListener() {
 
         @Override
-        public void lienzoNodeRightClicked(long id) {
-            Notification.show("Node Right Clicked", Notification.Type.ERROR_MESSAGE);
+        public void nodeWidgetRightClicked(long id) {
+            /*
+            SrvNodeWidget srvNode = lienzoComponent.getNodeWidget(id);
+            srvNode.setCaption("id = " + id + " Right Clicked");
+            lienzoComponent.updateNodeWidget(id);
+            */
+            lienzoComponent.removeNodeWidget(id);
         }
     };
     
-    LienzoNodeDblClickListener lienzoNodeDblClickListener = new LienzoNodeDblClickListener() {
+    NodeWidgetDblClickListener nodeWidgetDblClickListener = new NodeWidgetDblClickListener() {
 
         @Override
-        public void lienzoNodeDoubleClicked(long id) {
-            Notification.show("Node Double Clicked", Notification.Type.ERROR_MESSAGE);
+        public void nodeWidgetDoubleClicked(long id) {
+            SrvNodeWidget srvNode = lienzoComponent.getNodeWidget(id);
+            srvNode.setCaption("id = " + id + " Double Clicked");
+            lienzoComponent.updateNodeWidget(id);
+        }
+    };
+    
+    NodeWidgetUpdateListener nodeWidgetUpdateListener = new NodeWidgetUpdateListener() {
+
+        @Override
+        public void nodeWidgetUpdated(SrvNodeWidget clntNode) {
+            clntNode.setCaption("id = " +  clntNode.getId() + " Updated");
+            lienzoComponent.updateNodeWidget(clntNode.getId());
+        }
+    };
+    
+    private FrameWidgetClickListener frameWidgetClickListener = new FrameWidgetClickListener() {
+
+        @Override
+        public void frameWidgetClicked(long id) {
+            SrvFrameWidget srvFrame = lienzoComponent.getFrameWidget(id);
+            srvFrame.setCaption("id = " + id + " Click");
+            lienzoComponent.updateFrameWidget(srvFrame);
+        }
+    };
+    
+    private FrameWidgetDblClickListener frameWidgetDblClickListener = new FrameWidgetDblClickListener() {
+
+        @Override
+        public void frameWidgetDblClicked(long id) {
+            SrvFrameWidget srvFrame = lienzoComponent.getFrameWidget(id);
+            srvFrame.setCaption("id = " + id + " Double click");
+            lienzoComponent.updateFrameWidget(srvFrame);
+        }
+    };
+    
+    private FrameWidgetRightClickListener frameWidgetRightClickListener = new FrameWidgetRightClickListener() {
+
+        @Override
+        public void frameWidgetRightClicked(long id) {
+            /*
+            SrvFrameWidget srvFrame = lienzoComponent.getFrameWidget(id);
+            srvFrame.setCaption("id = " + id + " Right click");
+            lienzoComponent.updateFrameWidget(srvFrame);
+            */
+            lienzoComponent.removeFrameWidget(id);
+        }
+    };
+    
+    private FrameWidgetUpdateListener frameWidgetUpdateListener = new FrameWidgetUpdateListener() {
+
+        @Override
+        public void frameWidgetUpdated(SrvFrameWidget clntFrameWidget) {
+            clntFrameWidget.setCaption("id = " + clntFrameWidget.getId() + " Updated");
+            lienzoComponent.updateFrameWidget(clntFrameWidget);
+        }
+    };
+    
+    private EdgeWidgetAddListener edgeWidgetAddListener = new EdgeWidgetAddListener() {
+
+        @Override
+        public void edgeWidetAdded(SrvEdgeWidget clntNewEdge) {
+            if (clntNewEdge.getId() == 0)
+                clntNewEdge.setColor("RED");
+            if (clntNewEdge.getId() == 2)
+                clntNewEdge.setColor("GREEN");
+            if (clntNewEdge.getId() == 4)
+                clntNewEdge.setColor("BLUE");
+                
+            clntNewEdge.setCaption("Edge id = " + clntNewEdge.getId());
+            lienzoComponent.addEdgeWidget(clntNewEdge);                            
+        }
+    };
+    
+    private EdgeWidgetClickListener edgeWidgetClickListener = new EdgeWidgetClickListener() {
+
+        @Override
+        public void edgeWidgetClicked(long id) {
+            SrvEdgeWidget srvEdge = lienzoComponent.getEdge(id);
+            srvEdge.setCaption("id = " + srvEdge.getId() + " Clicked");
+            lienzoComponent.updateEdgeWidget(srvEdge.getId());
+        }
+    };
+    
+    private EdgeWidgetDblClickListener edgeWidgetDblClickListener = new EdgeWidgetDblClickListener() {
+
+        @Override
+        public void edgeWidgetDblClicked(long id) {
+            SrvEdgeWidget srvEdge = lienzoComponent.getEdge(id);
+            srvEdge.setCaption("id = " + srvEdge.getId() + " Double Clicked");
+            lienzoComponent.updateEdgeWidget(srvEdge.getId());
+        }
+    };
+    
+    private EdgeWidgetRightClickListener edgeWidgetRigthClickListener = new EdgeWidgetRightClickListener() {
+
+        @Override
+        public void edgeWidgetRightClicked(long id) {
+            /*
+            SrvEdgeWidget srvEdge = lienzoComponent.getEdge(id);
+            srvEdge.setCaption("id = " + srvEdge.getId() + " Right Clicked");
+            lienzoComponent.updateEdgeWidget(srvEdge.getId());
+            */
+            lienzoComponent.removeEdgeWidget(id);
+        }
+    };
+    
+    private EdgeWidgetUpdateListener edgeWidgetUpdateListener = new EdgeWidgetUpdateListener() {
+
+        @Override
+        public void edgeWidgetUpdated(SrvEdgeWidget clntEdge) {
+            SrvEdgeWidget srvEdge = lienzoComponent.getEdge(clntEdge.getId());
+            srvEdge.setCaption("id = " + srvEdge.getId() + " Updated");
+            lienzoComponent.updateEdgeWidget(srvEdge.getId());
         }
     };
 }
