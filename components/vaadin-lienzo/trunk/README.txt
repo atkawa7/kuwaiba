@@ -18,16 +18,29 @@ Workflow
   <inherits name="com.neotropic.vaadin.lienzo.WidgetSet" />
 
 Supported Features
-
- Add Lienzo Nodes
+ Add and Remove Background
+ Add, Update and Remove Node Widgets
+ Add, Update and Remove Edge Widgets
+ Add, Update and Remove Frame Widgets
 
 Supported Events
 
  Lienzo Component Mouse Over
- Lienzo Node Click
- Lienzo Node Right Click
- Lienzo Node Double Click
 
+ Node Widget Click
+ Node Widget Right Click
+ Node Widget Double Click
+ Node Widget Update
+ 
+ Edge Widget Click
+ Edge Widget Right Click
+ Edge Widget Double Click
+ Edge Widget Update
+
+ Frame Widget Click
+ Frame Widget Right Click
+ Frame Widget Double Click 
+ Frame Widget Update
 License:
  
  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
