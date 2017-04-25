@@ -16,8 +16,10 @@
  */
 package org.inventory.navigation.navigationtree.nodes;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -43,12 +45,32 @@ public class SpecialRelatedObjectNode extends ObjectNode {
          public void addNotify() {
             LocalObjectLight object = ((SpecialRelatedObjectNode)getNode()).getLookup().lookup(LocalObjectLight.class);
             children = CommunicationsStub.getInstance().getSpecialAttributes(object.getClassName(), object.getOid());
+            
+            String parentKey = "parent";
+            List<LocalObjectLight> listOfParents = CommunicationsStub.getInstance()
+                .getParents(object.getClassName(), object.getOid());
+                        
+            LocalObjectLight [] parents = new LocalObjectLight[] {listOfParents.get(0)};
+            if (parents != null) {
+                children.put(parentKey, parents);
+            }
+            
             if (children == null) {
                  NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                  setKeys(Collections.EMPTY_LIST);
             }
-            else 
-                setKeys(children.keySet());
+            else {
+                List<String> listOfKey = new ArrayList();
+                
+                for (String child : children.keySet())
+                    listOfKey.add(child);
+                Collections.sort(listOfKey);
+                
+                listOfKey.remove(parentKey);
+                listOfKey.add(0, parentKey);
+                
+                setKeys(listOfKey);
+            }
          }
          
          @Override
