@@ -21,7 +21,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.navigationtree.windows.SpecialChildrenTopComponent;
+import org.inventory.specialexplorer.specialchildren.SpecialChildrenTopComponent;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
