@@ -14,7 +14,7 @@
  *  limitations under the License.
  *  under the License.
  */
-package org.inventory.navigation.navigationtree.nodes;
+package org.inventory.specialexplorer.specialrelationships.nodes;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -25,6 +25,7 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 
@@ -41,10 +42,10 @@ public class SpecialRelatedObjectNode extends ObjectNode {
     }
     
     public static class SpecialRelationshipChildren extends Children.Keys<String> {
-         private HashMap<String, LocalObjectLight[]> specialRelationships;
+        private HashMap<String, LocalObjectLight[]> specialRelationships;
 
-         @Override
-         public void addNotify() {
+        @Override
+        public void addNotify() {
             LocalObjectLight object = ((SpecialRelatedObjectNode)getNode()).getLookup().lookup(LocalObjectLight.class);
             specialRelationships = CommunicationsStub.getInstance().getSpecialAttributes(object.getClassName(), object.getOid());
             
@@ -87,7 +88,6 @@ public class SpecialRelatedObjectNode extends ObjectNode {
                 default:
                     return new Node[]{ new RelationshipNode(key, specialRelationships.get(key)) };
              }
-             
          }
      }
 }
