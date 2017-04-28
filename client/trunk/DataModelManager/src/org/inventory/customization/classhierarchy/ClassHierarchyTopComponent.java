@@ -29,7 +29,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import javax.swing.AbstractAction;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -67,16 +66,7 @@ import org.openide.util.NbBundle.Messages;
         persistenceType = TopComponent.PERSISTENCE_NEVER
 )
 @TopComponent.Registration(mode = "editor", openAtStartup = false)
-//@ActionID(category= "Tools", id = "org.inventory.customization.classhierarchy.ClassHierarchyTopComponent")
-//@ActionReference(path = "Menu/Tools/Administrative/Class Management" /*, position = 333 */)
-//@ActionReferences(value = {@ActionReference(path = "Menu/Tools/Administrative/Class Management") , 
-//    @ActionReference(path = "Toolbars/Tools")})
-@TopComponent.OpenActionRegistration(
-        displayName = "#CTL_ClassHierarchyAction",
-        preferredID = "ClassHierarchyTopComponent"
-)
 @Messages({
-    "CTL_ClassHierarchyAction=Class Hierarchy View",
     "CTL_ClassHierarchyTopComponent=Class Hierarchy View",
     "HINT_ClassHierarchyTopComponent=Update Class Hierarchy View"
 })

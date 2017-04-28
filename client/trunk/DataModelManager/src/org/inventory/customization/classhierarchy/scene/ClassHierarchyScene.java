@@ -195,8 +195,6 @@ public class ClassHierarchyScene extends AbstractScene<LocalClassMetadata, Strin
         ConnectionWidget connectionWidget = (ConnectionWidget) findWidget(edge);
         Widget sourceWidget = findWidget(sourceNode);
         connectionWidget.setSourceAnchor(sourceWidget != null ? AnchorFactory.createDirectionalAnchor(sourceWidget, AnchorFactory.DirectionalAnchorKind.VERTICAL) : null);
-        
-
     }
 
     @Override
