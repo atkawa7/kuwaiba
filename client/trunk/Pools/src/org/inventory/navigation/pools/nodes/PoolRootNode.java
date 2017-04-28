@@ -30,12 +30,12 @@ import org.openide.util.ImageUtilities;
  */
 public class PoolRootNode extends AbstractNode {
     
-    public static final String ICON_PATH="org/inventory/navigation/applicationnodes/res/root.png";
+    public static final String ICON_PATH="org/inventory/navigation/pools/res/root.png";
     private static Image defaultIcon = ImageUtilities.loadImage(ICON_PATH);
 
     public PoolRootNode (List<LocalPool> pools){
         super (new Children.Array());
-        setName(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_POOLS"));
+        setName("Pools");
         for (LocalPool pool : pools)
             getChildren().add(new PoolNode[] { new PoolNode(pool)});
     }

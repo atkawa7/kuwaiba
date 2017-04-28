@@ -24,7 +24,7 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
-import org.inventory.navigation.navigationtree.nodes.actions.ShowObjectIdAction;
+import org.inventory.navigation.navigationtree.nodes.actions.ShowMoreInformationAction;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 
@@ -41,12 +41,12 @@ public class ContractNode extends ObjectNode {
 
     @Override
     public Action[] getActions(boolean context) {
-        if (showObjectIdAction == null) 
-            showObjectIdAction = new ShowObjectIdAction(getObject().getOid(), getObject().getClassName());
+        if (showMoreInformationAction == null) 
+            showMoreInformationAction = new ShowMoreInformationAction(getObject().getOid(), getObject().getClassName());
 
         return new Action[] { ContractManagerActionFactory.getDeleteContractAction(), 
                                 null, 
-                                showObjectIdAction
+                                showMoreInformationAction
                             };
     }
     

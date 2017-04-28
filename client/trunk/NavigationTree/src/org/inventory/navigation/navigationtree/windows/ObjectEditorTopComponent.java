@@ -18,7 +18,6 @@ package org.inventory.navigation.navigationtree.windows;
 import java.awt.BorderLayout;
 import org.openide.explorer.propertysheet.PropertySheetView;
 import org.openide.nodes.Node;
-import org.openide.util.ImageUtilities;
 import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -27,16 +26,12 @@ import org.openide.windows.WindowManager;
  * Shows an editor for a given object embedding a PropertySheetView
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ObjectEditorTopComponent extends TopComponent{
-
-    static final String ICON_PATH = "org/inventory/navigation/applicationnodes/res/edit.png";
+public class ObjectEditorTopComponent extends TopComponent {
 
     private PropertySheetView editor;
     private Node node;
 
     public ObjectEditorTopComponent(Node node) {
-
-        setIcon(ImageUtilities.loadImage(ICON_PATH, true));
         editor = new PropertySheetView();
         this.node = node;
         this.setDisplayName(node.getDisplayName());
@@ -55,6 +50,6 @@ public class ObjectEditorTopComponent extends TopComponent{
     @Override
     public void componentOpened() {
         //This is important. If setNodes is called in the constructor, it won't work!
-        editor.setNodes(new Node[]{node});
+        editor.setNodes(new Node[]{ node });
     }
 }

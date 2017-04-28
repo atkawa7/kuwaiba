@@ -87,22 +87,22 @@ class ExecuteInventoryLevelReportAction extends AbstractAction {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else {           
             try {
-            File tempFile = File.createTempFile("inventory_report_" + reportId + "_" + Calendar.getInstance().getTimeInMillis(), ".html"); //NOI18N
+                File tempFile = File.createTempFile("inventory_report_" + reportId + "_" + Calendar.getInstance().getTimeInMillis(), ".html"); //NOI18N
 
-            try (FileOutputStream faos = new FileOutputStream(tempFile)) {
-                faos.write(reportAsByteArray);
-                faos.flush();
-            }
-            if(Desktop.isDesktopSupported()) 
-            try {
-                Desktop.getDesktop().browse(Utilities.toURI(tempFile));
+                try (FileOutputStream faos = new FileOutputStream(tempFile)) {
+                    faos.write(reportAsByteArray);
+                    faos.flush();
+                }
+                if (Desktop.isDesktopSupported()) 
+                try {
+                    Desktop.getDesktop().browse(Utilities.toURI(tempFile));
+                } catch (IOException ex) {
+                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());
+                }
+
             } catch (IOException ex) {
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());
             }
-
-        } catch (IOException ex) {
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());
-        }
         }
            
     }

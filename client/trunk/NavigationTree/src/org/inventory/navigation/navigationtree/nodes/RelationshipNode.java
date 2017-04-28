@@ -23,13 +23,23 @@ import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Node;
 
 /**
- * A node that represents only a label and has LocalObjectLights as children
+ * This node represents a special relationship of the parent node. Its children are the related objects
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class LabelNode extends AbstractNode {
-    private static final Image icon = Utils.createRectangleIcon(new Color(170, 212,0), 10, 10);
-    public LabelNode(String label, LocalObjectLight[] children) {
-        super (new LabelChildren(children));
-        setDisplayName(label);
+public class RelationshipNode extends AbstractNode {
+    private static final Image DEFAULT_ICON = Utils.createRectangleIcon(new Color(170, 212,0), 10, 10);
+    private Image icon;
+    
+    public RelationshipNode(String relationshipName, LocalObjectLight[] children) {
+        super (new RelationshipNodeChildren(children));
+        setDisplayName(relationshipName);
+        icon = DEFAULT_ICON;
+    }
+    
+    public RelationshipNode(String relationshipName, LocalObjectLight[] children, Color iconColor) {
+        super (new RelationshipNodeChildren(children));
+        setDisplayName(relationshipName);
+        icon = Utils.createRectangleIcon(iconColor, 10, 10);
     }
 
     @Override
@@ -42,9 +52,9 @@ public class LabelNode extends AbstractNode {
         return getIcon(type);
     }
     
-    public static class LabelChildren extends AbstractChildren {
+    public static class RelationshipNodeChildren extends AbstractChildren {
 
-        public LabelChildren(LocalObjectLight[] children) {
+        public RelationshipNodeChildren(LocalObjectLight[] children) {
             setKeys(children);
         }
         

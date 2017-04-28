@@ -33,7 +33,7 @@ public class CreateClassAction extends AbstractAction {
     private CommunicationsStub com;
 
     public CreateClassAction() {
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW_SUBCLASS"));
+        putValue(NAME, "Create Class");
         com = CommunicationsStub.getInstance();
     }
 
@@ -52,13 +52,12 @@ public class CreateClassAction extends AbstractAction {
         long classId = com.createClassMetadata(className, "","", node.getClassMetadata().getClassName(), 
                 true, true, 0, false, true);
         if (classId == -1)
-            NotificationUtil.getInstance().showSimplePopup(java.util.
-                    ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.ERROR_MESSAGE,
+            NotificationUtil.getInstance().showSimplePopup("New Class", NotificationUtil.ERROR_MESSAGE,
                     com.getError());
         else {           
             ((ClassMetadataChildren)node.getChildren()).refreshList();
-            NotificationUtil.getInstance().showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.INFO_MESSAGE,
-                    java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CLASS_CREATED"));
+            NotificationUtil.getInstance().showSimplePopup("New Class", NotificationUtil.INFO_MESSAGE,
+                    "Class created successfully");
         }
     }
  }

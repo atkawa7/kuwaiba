@@ -19,28 +19,19 @@ import java.awt.Image;
 import org.inventory.communications.core.LocalPool;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
-import org.openide.util.ImageUtilities;
 
 /**
  * This is the root node for all the IPAM Nodes, this is not visible
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class IPAMRootNode extends AbstractNode{
+public class IPAMRootNode extends AbstractNode {
     
-    private static final String ICON_PATH="org/inventory/navigation/applicationnodes/res/folder-icon.png";
-    private static Image defaultIcon = ImageUtilities.loadImage(ICON_PATH);
-
     public IPAMRootNode(LocalPool[] subnetPools) {
         super (new Children.Array());
         for (LocalPool subnetPool : subnetPools)
             getChildren().add(new SubnetPoolNode[] { new SubnetPoolNode(subnetPool)});
     }
    
-    @Override
-    public Image getIcon(int i){
-        return defaultIcon;
-    }
-
     @Override
     public Image getOpenedIcon(int i){
         return getIcon(i);

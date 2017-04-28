@@ -24,15 +24,15 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 
 /**
- * Gets the selected object oid
+ * Shows the database id of the selected object. Useful for troubleshooting purposes. It will also show the object's complete containment structure.
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public final class ShowObjectIdAction extends AbstractAction{
+public final class ShowMoreInformationAction extends AbstractAction{
     private long id;
     private String className;
 
-    public ShowObjectIdAction(long id, String className) {
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_SHOW_OBJECT_ID_ACTION"));
+    public ShowMoreInformationAction(long id, String className) {
+        putValue(NAME, "Show More Information");
         this.id  = id;
         this.className = className;
     }
@@ -47,7 +47,7 @@ public final class ShowObjectIdAction extends AbstractAction{
         }
         JOptionPane.showMessageDialog(null, 
                 new SelectableLabel("<strong>id:</strong> " + id + "<br/><strong>Class: </strong>"+ className +"<br/><strong>Containment Path: </strong>" + msg), //NOI18N
-                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_SHOW_OBJECT_ID_ACTION_TITLE"),
+                "Extra Information",
                 JOptionPane.INFORMATION_MESSAGE);
     }
 

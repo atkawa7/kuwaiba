@@ -16,14 +16,11 @@
 package org.inventory.customization.classhierarchy.nodes.actions;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import javax.swing.AbstractAction;
-import javax.swing.KeyStroke;
 import org.inventory.customization.classhierarchy.nodes.ClassMetadataNode;
 
 /**
- * Action to refresh a class metadata
+ * Action to refresh a class node information
  * @author Adrian Martinez Molina <charles.bedon@kuwaiba.org>
  */
 public class RefreshClassMetadataAction extends AbstractAction {
@@ -31,9 +28,7 @@ public class RefreshClassMetadataAction extends AbstractAction {
 
     public RefreshClassMetadataAction(ClassMetadataNode node) {
         this.node = node;
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_REFRESH"));
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_R,InputEvent.CTRL_MASK));
-        putValue(MNEMONIC_KEY,KeyEvent.VK_R);
+        putValue(NAME, "Refresh");
     }
     
     @Override

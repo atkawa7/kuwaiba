@@ -39,7 +39,7 @@ public class NewPoolItemAction extends AbstractAction implements Presenter.Popup
 
     public NewPoolItemAction(PoolNode node) {
         this.poolNode = node;
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW"));
+        putValue(NAME, "New Pool Item");
         com = CommunicationsStub.getInstance();
     }
     
@@ -50,13 +50,13 @@ public class NewPoolItemAction extends AbstractAction implements Presenter.Popup
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else {
             ((AbstractChildren)poolNode.getChildren()).addNotify();
-            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATED"));
+            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Pool item created successfully");
         }
     }
     
     @Override
     public JMenuItem getPopupPresenter() {
-        JMenu mnuPossibleChildren = new JMenu(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW"));
+        JMenu mnuPossibleChildren = new JMenu("New Pool Item");
 
         List<LocalClassMetadataLight> items = com.getLightSubclasses(poolNode.getPool().getClassName(), false, true);
 

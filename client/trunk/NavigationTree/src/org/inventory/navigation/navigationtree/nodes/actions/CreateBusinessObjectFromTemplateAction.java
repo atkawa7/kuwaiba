@@ -66,7 +66,7 @@ public final class CreateBusinessObjectFromTemplateAction extends AbstractAction
 
     @Override
     public JMenuItem getPopupPresenter() {
-        JMenu mnuPossibleChildren = new JMenu(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW_FROM_TEMPLATE"));
+        JMenu mnuPossibleChildren = new JMenu("New from Template");
 
         LocalObjectLight selectedObject = Utilities.actionsGlobalContext().lookup(LocalObjectLight.class);
         
@@ -132,7 +132,7 @@ public final class CreateBusinessObjectFromTemplateAction extends AbstractAction
                                 ((AbstractChildren)selectedNode.getChildren()).addNotify();
 
                             NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE,
-                                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATED"));
+                                "Element created successfully");
                         }
                     }
                 }

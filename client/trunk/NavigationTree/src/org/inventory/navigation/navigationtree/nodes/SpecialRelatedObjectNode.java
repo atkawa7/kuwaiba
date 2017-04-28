@@ -16,12 +16,14 @@
  */
 package org.inventory.navigation.navigationtree.nodes;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
@@ -39,37 +41,36 @@ public class SpecialRelatedObjectNode extends ObjectNode {
     }
     
     public static class SpecialRelationshipChildren extends Children.Keys<String> {
-         private HashMap<String, LocalObjectLight[]> children;
+         private HashMap<String, LocalObjectLight[]> specialRelationships;
 
          @Override
          public void addNotify() {
             LocalObjectLight object = ((SpecialRelatedObjectNode)getNode()).getLookup().lookup(LocalObjectLight.class);
-            children = CommunicationsStub.getInstance().getSpecialAttributes(object.getClassName(), object.getOid());
+            specialRelationships = CommunicationsStub.getInstance().getSpecialAttributes(object.getClassName(), object.getOid());
             
-            String parentKey = "parent";
-            List<LocalObjectLight> listOfParents = CommunicationsStub.getInstance()
-                .getParents(object.getClassName(), object.getOid());
-                        
-            LocalObjectLight [] parents = new LocalObjectLight[] {listOfParents.get(0)};
-            if (parents != null) {
-                children.put(parentKey, parents);
-            }
-            
-            if (children == null) {
+            if (specialRelationships == null) {
                  NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                  setKeys(Collections.EMPTY_LIST);
             }
             else {
-                List<String> listOfKey = new ArrayList();
+                List<LocalObjectLight> listOfParents = CommunicationsStub.getInstance()
+                                                           .getParents(object.getClassName(), object.getOid());
                 
-                for (String child : children.keySet())
-                    listOfKey.add(child);
-                Collections.sort(listOfKey);
+                if (listOfParents == null) {
+                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                     setKeys(Collections.EMPTY_LIST);
+                } else {
                 
-                listOfKey.remove(parentKey);
-                listOfKey.add(0, parentKey);
-                
-                setKeys(listOfKey);
+                    List<String> relationshipNames = new ArrayList(specialRelationships.keySet());
+                    Collections.sort(relationshipNames);
+                    
+                    if (!listOfParents.isEmpty() && listOfParents.get(0).getOid() != -1) { //Ignore the dummy root
+                        relationshipNames.add(0, Constants.PROPERTY_PARENT);
+                        specialRelationships.put(Constants.PROPERTY_PARENT, new LocalObjectLight[] { listOfParents.get(0) });
+                    }
+                    
+                    setKeys(relationshipNames);
+                }
             }
          }
          
@@ -80,7 +81,13 @@ public class SpecialRelatedObjectNode extends ObjectNode {
 
          @Override
          protected Node[] createNodes(String key) {
-             return new Node[]{ new LabelNode(key, children.get(key)) };
+             switch (key) { //Using a switch in case we need to add some other special relationships or if in the future we will also assign color sto relationships
+                case Constants.PROPERTY_PARENT:
+                    return new Node[]{ new RelationshipNode(key, specialRelationships.get(key), new Color(180, 32, 32)) };
+                default:
+                    return new Node[]{ new RelationshipNode(key, specialRelationships.get(key)) };
+             }
+             
          }
      }
 }

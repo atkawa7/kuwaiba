@@ -25,7 +25,7 @@ import org.openide.nodes.Node;
 
 /**
  * Deletes a pool
- * @author Charles Edward Bedon Cortazar <charles.bedon@neotropic.co>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class DeletePoolAction extends AbstractAction {
     /**
@@ -38,7 +38,7 @@ public class DeletePoolAction extends AbstractAction {
     private PoolNode node;
 
     public DeletePoolAction(PoolNode pn){
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETE"));
+        putValue(NAME, "Delete Pool");
         com = CommunicationsStub.getInstance();
         this.node = pn;
     }
@@ -52,7 +52,7 @@ public class DeletePoolAction extends AbstractAction {
             if (com.deletePool(node.getPool().getOid())){
                 node.getParentNode().getChildren().remove(new Node[]{node});
                 NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
-                        java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TEXT_OK"));
+                        "Pool deleted successfully");
             }
             else
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());

@@ -44,7 +44,7 @@ public class NewPoolAction extends AbstractAction{
     private PoolRootNode prn;
 
     public NewPoolAction(PoolRootNode prn){
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW_POOL"));
+        putValue(NAME, "New Pool");
         com = CommunicationsStub.getInstance();
         this.prn = prn;
     }
@@ -61,12 +61,12 @@ public class NewPoolAction extends AbstractAction{
         JComboBox<LocalClassMetadataLight> lstType = new JComboBox<>(allMeta);
         lstType.setName("lstType"); //NOI18N
         JComplexDialogPanel pnlMyDialog = new JComplexDialogPanel(
-                new String[]{java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NAME"), java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DESCRIPTION"), java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_TYPE")},
-                new JComponent []{txtName, txtDescription, lstType});
+                new String[]{ "Name", "Description", "Type" },
+                new JComponent []{ txtName, txtDescription, lstType });
 
         if (JOptionPane.showConfirmDialog(null,
                 pnlMyDialog,
-                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW_POOL"),
+                "New Pool",
                 JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION){
         
@@ -79,7 +79,7 @@ public class NewPoolAction extends AbstractAction{
                         NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
                     else{
                         prn.getChildren().add(new PoolNode[]{new PoolNode(newPool)});
-                        NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATED"));
+                        NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Pool created successfully");
                     }
         }
     }

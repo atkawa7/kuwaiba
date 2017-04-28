@@ -137,43 +137,33 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
             return sheet;
         }
         ClassMetadataProperty nameProp = new ClassMetadataProperty(Constants.PROPERTY_NAME, 
-                                                                           String.class, lcm.getClassName(), 
-                                                                           java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NAME")
-                                                                           , "", this);
+                                                                           String.class, lcm.getClassName(), "Name", "", this);
         ClassMetadataProperty displayNameProp = new ClassMetadataProperty(Constants.PROPERTY_DISPLAYNAME, 
                                                                            String.class, lcm.getDisplayName(), 
-                                                                           java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DISPLAYNAME")
-                                                                           , "", this);
+                                                                           "Display Name", "", this);
         ClassMetadataProperty descProp = new ClassMetadataProperty(Constants.PROPERTY_DESCRIPTION, 
                                                                            String.class, lcm.getDescription(), 
-                                                                           java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DESCRIPTION")
-                                                                           , "", this);
+                                                                           "Description", "", this);
         ClassMetadataProperty abstractProp = new ClassMetadataProperty(Constants.PROPERTY_ABSTRACT, 
                                                                            Boolean.class, lcm.isAbstract(), 
-                                                                           java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_ABSTRACT")
-                                                                           , "", this);
+                                                                           "Abstract", "", this);
         ClassMetadataProperty inDesignProp = new ClassMetadataProperty(Constants.PROPERTY_INDESIGN, 
                                                                            Boolean.class, lcm.isInDesign(), 
-                                                                           java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_INDESIGN")
-                                                                           , "", this);
+                                                                           "In Design Stage", "", this);
         ClassMetadataProperty countableProp = new ClassMetadataProperty(Constants.PROPERTY_COUNTABLE, 
                                                                            Boolean.class, lcm.isCountable(), 
-                                                                           java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_COUNTABLE")
-                                                                           , "", this);
+                                                                           "Countable", "", this);
         ClassMetadataProperty colorProp = new ClassMetadataProperty(Constants.PROPERTY_COLOR, 
                                                                            Color.class, lcm.getColor(), 
-                                                                           java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_COLOR")
-                                                                           , "", this);
+                                                                           "Color", "", this);
         ClassMetadataProperty smallIconProp = new ClassMetadataProperty(Constants.PROPERTY_SMALLICON, 
                                                                              Byte.class, null, 
-                                                                           java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_SMALL_ICON")
-                                                                           , "", this);
+                                                                           "Small Icon", "", this);
         ClassMetadataProperty iconProp = new ClassMetadataProperty(Constants.PROPERTY_ICON, 
                                                                            Byte.class, null, 
-                                                                           java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_ICON")
-                                                                           , "", this);
+                                                                           "Icon", "", this);
         generalPropertySet.setName("1");
-        generalPropertySet.setDisplayName(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_GENERAL_ATTRIBUTES"));
+        generalPropertySet.setDisplayName("General Attributes");
         generalPropertySet.put(nameProp);
         generalPropertySet.put(displayNameProp);
         generalPropertySet.put(descProp);
@@ -185,7 +175,7 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
         generalPropertySet.put(iconProp);
         
         attributePropertySet.setName("2");
-        attributePropertySet.setDisplayName(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CLASS_ATTRIBUTES"));
+        attributePropertySet.setDisplayName("Class Attributes");
         attributePropertySet.setExpert(true);
         LocalAttributeMetadata[] attributes = lcm.getAttributes();
         

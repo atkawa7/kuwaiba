@@ -24,7 +24,7 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPool;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.navigationtree.nodes.actions.ShowObjectIdAction;
+import org.inventory.navigation.navigationtree.nodes.actions.ShowMoreInformationAction;
 import org.inventory.navigation.pools.nodes.PoolNode;
 import org.kuwaiba.management.services.nodes.actions.ServiceManagerActionFactory;
 import org.openide.nodes.Children;
@@ -53,7 +53,7 @@ public class ServicePoolNode extends PoolNode {
     public Action[] getActions(boolean context){
         return new Action[]{ServiceManagerActionFactory.getCreateServiceAction(), 
             ServiceManagerActionFactory.getDeleteServicePoolAction(),
-            new ShowObjectIdAction(getPool().getOid(), getPool().getClassName())};
+            new ShowMoreInformationAction(getPool().getOid(), getPool().getClassName())};
     }
     
     @Override

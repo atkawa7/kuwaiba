@@ -42,7 +42,7 @@ import org.inventory.navigation.navigationtree.nodes.actions.DeleteBusinessObjec
 import org.inventory.navigation.navigationtree.nodes.actions.EditObjectAction;
 import org.inventory.navigation.navigationtree.nodes.actions.ExecuteClassLevelReportAction;
 import org.inventory.navigation.navigationtree.nodes.actions.RefreshObjectAction;
-import org.inventory.navigation.navigationtree.nodes.actions.ShowObjectIdAction;
+import org.inventory.navigation.navigationtree.nodes.actions.ShowMoreInformationAction;
 import org.inventory.navigation.navigationtree.nodes.properties.DateTypeProperty;
 import org.inventory.navigation.navigationtree.nodes.properties.ListTypeProperty;
 import org.inventory.navigation.navigationtree.nodes.properties.NativeTypeProperty;
@@ -78,7 +78,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
     protected CreateBusinessObjectFromTemplateAction createFromTemplateAction;
     protected RefreshObjectAction refreshAction;
     protected EditObjectAction editAction;
-    protected ShowObjectIdAction showObjectIdAction;
+    protected ShowMoreInformationAction showMoreInformationAction;
     protected Sheet sheet;
     private Image icon;
 
@@ -93,7 +93,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
         if (lol.getClassName() != null) {
             object.addPropertyChangeListener(WeakListeners.propertyChange(this, object));
             icon = com.getMetaForClass(lol.getClassName(), false).getSmallIcon();
-            explorerAction.putValue(OpenLocalExplorerAction.NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_EXPLORE"));
+            explorerAction.putValue(OpenLocalExplorerAction.NAME, "Open a Navigation Tree from Here");
         }
     }
 
@@ -103,7 +103,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
         object.addPropertyChangeListener(WeakListeners.propertyChange(this, object));
         com = CommunicationsStub.getInstance();
         icon = com.getMetaForClass(lol.getClassName(), false).getSmallIcon();
-        explorerAction.putValue(OpenLocalExplorerAction.NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_EXPLORE"));
+        explorerAction.putValue(OpenLocalExplorerAction.NAME, "Open a Navigation Tree from Here");
     }
 
     /**
@@ -197,7 +197,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
             }
         }
         generalPropertySet.setName("General Info");
-        generalPropertySet.setDisplayName(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_GENERAL_ATTRIBUTES"));
+        generalPropertySet.setDisplayName("General Attributes");
         sheet.put(generalPropertySet);
         return sheet;
     }
@@ -278,7 +278,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
         }
         actions.add(null); //Separator
         actions.add(explorerAction);
-        actions.add(showObjectIdAction == null ? showObjectIdAction = new ShowObjectIdAction(object.getOid(), object.getClassName()) : showObjectIdAction);
+        actions.add(showMoreInformationAction == null ? showMoreInformationAction = new ShowMoreInformationAction(object.getOid(), object.getClassName()) : showMoreInformationAction);
         return actions.toArray(new Action[]{});
     }
 
@@ -359,7 +359,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
                         }
                     } else 
                         NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE,
-                                String.format(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_MOVEOPERATION_TEXT"), obj.getClassName(), object.getClassName()));
+                                String.format("An instance of %s can't be moved into an instance of %s", obj.getClassName(), object.getClassName()));
                 } catch (Exception ex) {
                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());
                 }

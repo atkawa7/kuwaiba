@@ -39,7 +39,7 @@ public final class CreateSpecialBusinessObjectAction extends AbstractAction
     private CommunicationsStub com;
 
     public CreateSpecialBusinessObjectAction(SpecialObjectNode node) {
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW_SPECIAL_OBJECT"));
+        putValue(NAME, "New Special");
         com = CommunicationsStub.getInstance();
         this.node = node;
     }
@@ -55,14 +55,13 @@ public final class CreateSpecialBusinessObjectAction extends AbstractAction
         else {
             ((AbstractChildren)node.getChildren()).addNotify();
                 
-            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE,
-                        java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATED"));
+            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "The special object was created successfully");
         }
     }
 
     @Override
     public JMenuItem getPopupPresenter() {
-        JMenu mnuPossibleChildren = new JMenu(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW"));
+        JMenu mnuPossibleChildren = new JMenu("New Special");
 
         List<LocalClassMetadataLight> items = com.getSpecialPossibleChildren(node.getObject().getClassName());
         

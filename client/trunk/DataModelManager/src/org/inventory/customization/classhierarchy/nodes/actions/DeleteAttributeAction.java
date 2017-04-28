@@ -29,7 +29,7 @@ import org.inventory.customization.classhierarchy.nodes.ClassMetadataNode;
 import org.openide.util.actions.Presenter;
 
 /**
- *
+ * Deletes an attribute
  * @author Adrian Martinez Molina <charles.bedon@kuwaiba.org>
  */
 public class DeleteAttributeAction extends AbstractAction implements Presenter.Popup{
@@ -38,7 +38,7 @@ public class DeleteAttributeAction extends AbstractAction implements Presenter.P
     private CommunicationsStub com;
 
     public DeleteAttributeAction() {
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETE_ATTRIBUTE"));
+        putValue(NAME, "Delete Attribute");
         com = CommunicationsStub.getInstance();
     }
 
@@ -65,13 +65,13 @@ public class DeleteAttributeAction extends AbstractAction implements Presenter.P
 
     @Override
     public JMenuItem getPopupPresenter() {
-        JMenu deleteAttributeMenu = new JMenu (java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETE_ATTRIBUTE"));
+        JMenu deleteAttributeMenu = new JMenu ("Delete Attribute");
         LocalClassMetadata metaForThisClass = com.getMetaForClass(this.classNode.getClassMetadata().getOid(), false);
         
         if (metaForThisClass == null){
             deleteAttributeMenu.setEnabled(false);
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
-        }else{
+        } else {
             for (LocalAttributeMetadata anAttribute : metaForThisClass.getAttributes()){
                 JMenuItem menuEntry = new JMenuItem(anAttribute.getName());
                 menuEntry.setName(anAttribute.getName());

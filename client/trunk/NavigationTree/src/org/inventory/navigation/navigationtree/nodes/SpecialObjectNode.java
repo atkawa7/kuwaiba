@@ -22,7 +22,7 @@ import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.navigation.navigationtree.nodes.actions.CreateSpecialBusinessObjectAction;
 import org.inventory.navigation.navigationtree.nodes.actions.EditObjectAction;
 import org.inventory.navigation.navigationtree.nodes.actions.RefreshObjectAction;
-import org.inventory.navigation.navigationtree.nodes.actions.ShowObjectIdAction;
+import org.inventory.navigation.navigationtree.nodes.actions.ShowMoreInformationAction;
 import org.openide.util.Lookup;
 
 /**
@@ -58,7 +58,7 @@ public class SpecialObjectNode extends ObjectNode {
             }
         }
         actions.add(null); //Separator
-        actions.add(showObjectIdAction == null ? showObjectIdAction = new ShowObjectIdAction(object.getOid(), object.getClassName()) : showObjectIdAction);
+        actions.add(showMoreInformationAction == null ? showMoreInformationAction = new ShowMoreInformationAction(object.getOid(), object.getClassName()) : showMoreInformationAction);
         
         return actions.toArray(new Action[]{});
     }

@@ -32,11 +32,11 @@ import org.openide.util.lookup.Lookups;
  */
 public class RootObjectNode extends AbstractNode {
 
-   public static final String DEFAULT_ICON_PATH = "org/inventory/navigation/applicationnodes/res/root.png";
+   public static final String DEFAULT_ICON_PATH = "org/inventory/navigation/navigationtree/res/root.png";
 
     public RootObjectNode(Children children) {
         super(children, Lookups.singleton(new LocalObjectLight(-1, Constants.DUMMYROOT, Constants.DUMMYROOT))); //Dummy object
-        setDisplayName(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_ROOT"));
+        setDisplayName("Navigation Tree Root");
         setIconBaseWithExtension(DEFAULT_ICON_PATH);
     }
 

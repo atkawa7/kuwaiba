@@ -244,7 +244,7 @@ public class TemplateElementNode extends AbstractNode implements PropertyChangeL
                         
                     } else 
                         NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE,
-                                String.format(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_MOVEOPERATION_TEXT"), 
+                                String.format("An instance of %s can't be moved into a %s instance", 
                                         incomingObject.getClassName(), currentObject.getClassName()));
                 } catch (Exception ex) {
                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());
@@ -288,7 +288,7 @@ public class TemplateElementNode extends AbstractNode implements PropertyChangeL
         
         @Override
         protected Node[] createNodes(LocalObjectLight t) {
-            return new Node[] {new TemplateElementNode(t)};
+            return new Node[] { new TemplateElementNode(t) };
         }
     }
 }

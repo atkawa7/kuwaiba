@@ -120,3 +120,5 @@
 1.5
 * User Management module rewritten
 * Web service client component rewritten and simplified
+* The Relationship Explorer shows also the "parent" relationship
+* A graphical explorer was added to the Relationship Explorer

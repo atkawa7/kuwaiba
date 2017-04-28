@@ -41,13 +41,13 @@ public final class CreateBusinessObjectAction extends AbstractAction implements 
     private CommunicationsStub com;
 
     public CreateBusinessObjectAction(ObjectNode node) {
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW"));
+        putValue(NAME, "New");
         com = CommunicationsStub.getInstance();
         this.node = node;
     }
 
     public CreateBusinessObjectAction(RootObjectNode node) {
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW"));
+        putValue(NAME, "New");
         com = CommunicationsStub.getInstance();
         this.node = node;
     }
@@ -64,14 +64,13 @@ public final class CreateBusinessObjectAction extends AbstractAction implements 
             if (node.getChildren() instanceof AbstractChildren) //Some nodes are created on the fly and does not have children. For those cases, let's avoid refreshing their children lists
                 ((AbstractChildren)node.getChildren()).addNotify();
             
-            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE,
-                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATED"));
+            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Element created successfully");
         }
     }
 
     @Override
     public JMenuItem getPopupPresenter() {
-        JMenu mnuPossibleChildren = new JMenu(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW"));
+        JMenu mnuPossibleChildren = new JMenu("New");
 
         List<LocalClassMetadataLight> items;
         if (node instanceof RootObjectNode) //For the root node
@@ -98,7 +97,6 @@ public final class CreateBusinessObjectAction extends AbstractAction implements 
             MenuScroller.setScrollerFor(mnuPossibleChildren, 20, 100);
         }
         
-		
         return mnuPossibleChildren;
     }
 }

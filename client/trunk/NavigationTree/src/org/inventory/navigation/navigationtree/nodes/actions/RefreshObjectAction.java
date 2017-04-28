@@ -17,10 +17,7 @@
 package org.inventory.navigation.navigationtree.nodes.actions;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import javax.swing.AbstractAction;
-import javax.swing.KeyStroke;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 
 /**
@@ -32,9 +29,7 @@ public final class RefreshObjectAction extends AbstractAction {
 
     public RefreshObjectAction(ObjectNode node) {
         this.node = node;
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_REFRESH"));
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_R,InputEvent.CTRL_MASK));
-        putValue(MNEMONIC_KEY,KeyEvent.VK_R);
+        putValue(NAME, "Update");
     }
 
     @Override

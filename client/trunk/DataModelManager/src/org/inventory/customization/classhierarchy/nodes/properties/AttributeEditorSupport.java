@@ -20,7 +20,6 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.beans.PropertyEditorSupport;
 import org.inventory.customization.classhierarchy.nodes.AttributeMetadataNode;
-import org.inventory.customization.classhierarchy.nodes.properties.ClassAttributeMetadataProperty;
 import org.openide.explorer.propertysheet.ExPropertyEditor;
 import org.openide.explorer.propertysheet.PropertyEnv;
 import org.openide.explorer.propertysheet.PropertySheetView;

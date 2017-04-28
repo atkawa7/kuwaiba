@@ -19,7 +19,7 @@ import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.navigation.navigationtree.nodes.actions.ExecuteClassLevelReportAction;
-import org.inventory.navigation.navigationtree.nodes.actions.ShowObjectIdAction;
+import org.inventory.navigation.navigationtree.nodes.actions.ShowMoreInformationAction;
 import org.kuwaiba.management.services.nodes.actions.ServiceManagerActionFactory;
 
 /**
@@ -38,7 +38,7 @@ public class ServiceNode extends ObjectNode {
         return new Action [] { 
             ExecuteClassLevelReportAction.createExecuteReportAction(),
             ServiceManagerActionFactory.getDeleteServiceAction(),
-            showObjectIdAction == null ? showObjectIdAction = new ShowObjectIdAction(object.getOid(), object.getClassName()) : showObjectIdAction
+            showMoreInformationAction == null ? showMoreInformationAction = new ShowMoreInformationAction(object.getOid(), object.getClassName()) : showMoreInformationAction
         };        
     }
 }

@@ -30,14 +30,12 @@ import org.openide.util.lookup.Lookups;
  */
 public class AttributeMetadataNode extends AbstractNode  {
     
-    static final String ICON_PATH = "org/inventory/customization/attributecustomizer/res/flag-blue.png";
     private LocalAttributeMetadata attribute;
     private ClassMetadataNode classNode;
     private Sheet sheet;
 
     public AttributeMetadataNode(LocalAttributeMetadata lam, ClassMetadataNode classNode) {
         super(Children.LEAF,Lookups.singleton(lam));
-        setIconBaseWithExtension(ICON_PATH);
         this.attribute = lam;
         this.classNode = classNode;
     }
@@ -53,34 +51,30 @@ public class AttributeMetadataNode extends AbstractNode  {
         
         Sheet.Set generalPropertySet = Sheet.createPropertiesSet();
 
-        generalPropertySet.put(new AttributeMetadataProperty(Constants.PROPERTY_NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NAME"), 
+        generalPropertySet.put(new AttributeMetadataProperty(Constants.PROPERTY_NAME, "Name", 
                 attribute.getName(),this,classNode.getClassMetadata().getOid()));
         
-        generalPropertySet.put(new AttributeMetadataProperty(Constants.PROPERTY_DISPLAYNAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DISPLAYNAME"), 
+        generalPropertySet.put(new AttributeMetadataProperty(Constants.PROPERTY_DISPLAYNAME, "Displa name", 
                 attribute.getDisplayName(),this,classNode.getClassMetadata().getOid()));
         
-        generalPropertySet.put(new AttributeMetadataProperty(Constants.PROPERTY_DESCRIPTION, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DESCRIPTION"), 
+        generalPropertySet.put(new AttributeMetadataProperty(Constants.PROPERTY_DESCRIPTION, "Description", 
                 attribute.getDescription(),this,classNode.getClassMetadata().getOid()));
         
-        generalPropertySet.put(new AttributeMetadataProperty(Constants.PROPERTY_TYPE, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_TYPE"), 
+        generalPropertySet.put(new AttributeMetadataProperty(Constants.PROPERTY_TYPE, "Type", 
                (attribute.getType() == LocalObjectLight.class) ? this.attribute.getListAttributeClassName() : attribute.getType().getSimpleName(),this, classNode.getClassMetadata().getOid()));
         
-        generalPropertySet.put(new AttributeMetadataProperty(Constants.PROPERTY_VISIBLE, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_VISIBLE"), 
+        generalPropertySet.put(new AttributeMetadataProperty(Constants.PROPERTY_VISIBLE, "Visible", 
                 attribute.isVisible(),this,classNode.getClassMetadata().getOid()));
         
-        generalPropertySet.put(new AttributeMetadataProperty(Constants.PROPERTY_ADMINISTRATIVE, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_ADMINISTRATIVE"), 
+        generalPropertySet.put(new AttributeMetadataProperty(Constants.PROPERTY_ADMINISTRATIVE, "Is this not an attribute use for operational purposes?", 
                 attribute.isAdministrative(),this,classNode.getClassMetadata().getOid()));
-
-//      Commented out for now 
-//      generalPropertySet.put(new AttributeMetadataProperty(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_UNIQUE"), 
-//              attribute.isUnique(),this,classId));
         
-        generalPropertySet.put(new AttributeMetadataProperty(Constants.PROPERTY_NOCOPY, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NO_COPY"), 
+        generalPropertySet.put(new AttributeMetadataProperty(Constants.PROPERTY_NOCOPY, "Can this attribute be transferred in copy operations?", 
                 attribute.isNoCopy(),this,classNode.getClassMetadata().getOid()));
                 
         generalPropertySet.setName("1");
 
-        generalPropertySet.setDisplayName(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_GENERAL_ATTRIBUTES"));
+        generalPropertySet.setDisplayName("General Attributes");
 
         sheet.put(generalPropertySet);
         return sheet;  

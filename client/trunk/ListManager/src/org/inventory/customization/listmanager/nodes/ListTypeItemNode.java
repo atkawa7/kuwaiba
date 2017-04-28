@@ -31,7 +31,7 @@ import org.openide.util.ImageUtilities;
  */
 public class ListTypeItemNode extends ObjectNode {
 
-    private static Image icon = ImageUtilities.loadImage("org/inventory/navigation/applicationnodes/res/list-type-item.png");
+    private static Image icon = ImageUtilities.loadImage("org/inventory/customization/listmanager/res/list-type-item.png");
 
     public ListTypeItemNode(LocalObjectListItem lol) {
         super(lol, true);

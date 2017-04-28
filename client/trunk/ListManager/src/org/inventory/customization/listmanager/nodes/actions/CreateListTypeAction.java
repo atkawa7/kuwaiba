@@ -32,7 +32,7 @@ public final class CreateListTypeAction extends AbstractAction {
     private CommunicationsStub com;
 
     public CreateListTypeAction(ListTypeNode node) {
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW"));
+        putValue(NAME, "New Item");
         com = CommunicationsStub.getInstance();
         this.node = node;
     }

@@ -33,18 +33,18 @@ public final class DeleteListTypeAction extends AbstractAction {
     private ListTypeItemNode node;
     
     public DeleteListTypeAction(ListTypeItemNode node) {
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETE"));
+        putValue(NAME, "Delete Item");
         this.node = node;
     }
     
     @Override
     public void actionPerformed(ActionEvent ev) {
 
-        if(JOptionPane.showConfirmDialog(null, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETE_LIST_TYPE_ITEM"),
-                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CONFIRMATION"),JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
+        if(JOptionPane.showConfirmDialog(null, "Delete Item",
+                "Are you sure you want to delete this list type item?",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
 
             if (CommunicationsStub.getInstance().deleteListTypeItem(node.getObject().getClassName(), node.getObject().getOid(),false)){
-                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TEXT_OK"));
+                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "List type item deleted successfully");
                 ((AbstractChildren)node.getParentNode().getChildren()).addNotify();
                 //Refresh cache
                 CommunicationsStub.getInstance().getList(node.getObject().getClassName(), false, true);

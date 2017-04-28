@@ -34,7 +34,7 @@ public class DeleteClassAction extends AbstractAction {
     private CommunicationsStub com;
 
     public DeleteClassAction(ClassMetadataNode node) {
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETE_CLASS"));
+        putValue(NAME, "Delete Class");
         com = CommunicationsStub.getInstance();
         this.node = node;
     }

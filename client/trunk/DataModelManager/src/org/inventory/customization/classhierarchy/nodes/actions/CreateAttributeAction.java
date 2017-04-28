@@ -41,7 +41,7 @@ public class CreateAttributeAction extends AbstractAction {
     private ClassMetadataNode classNode;
 
     public CreateAttributeAction() {
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW_ATTRIBUTE"));
+        putValue(NAME, "New Attribute");
     }
 
     public CreateAttributeAction(ClassMetadataNode classNode) {
@@ -73,14 +73,11 @@ public class CreateAttributeAction extends AbstractAction {
         lstType.setName("lstType");
                 
         JComplexDialogPanel pnlMyDialog = new JComplexDialogPanel(
-                new String[]{java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NAME"), 
-                    java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DISPLAYNAME"), 
-                    java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DESCRIPTION"), 
-                    java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_TYPE")},
+                new String[]{"Name", "Display Name", "Description", "Type"},
                 new JComponent []{txtName, txtDisplayName, txtDescription, lstType});
         if (JOptionPane.showConfirmDialog(null,
                 pnlMyDialog,
-                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW_ATTRIBUTE"),
+                "New Attribute",
                 JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION){
                     if (CommunicationsStub.getInstance().createAttribute(classNode.getClassMetadata().getOid(), 

@@ -27,7 +27,7 @@ import org.inventory.communications.core.LocalPool;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
-import org.inventory.navigation.navigationtree.nodes.actions.ShowObjectIdAction;
+import org.inventory.navigation.navigationtree.nodes.actions.ShowMoreInformationAction;
 import org.inventory.navigation.pools.nodes.actions.DeletePoolAction;
 import org.inventory.navigation.pools.nodes.actions.NewPoolItemAction;
 import org.inventory.navigation.pools.nodes.properties.PoolNativeTypeProperty;
@@ -41,13 +41,13 @@ import org.openide.util.WeakListeners;
 import org.openide.util.datatransfer.PasteType;
 /**
  * Represents a pool (a set of objects of a certain kind)
- * @author Charles edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class PoolNode extends AbstractNode implements PropertyChangeListener {
-    private static final Image defaultIcon = ImageUtilities.loadImage("org/inventory/navigation/applicationnodes/res/pool.png");
+    private static final Image defaultIcon = ImageUtilities.loadImage("org/inventory/navigation/pools/res/pool.png");
     private NewPoolItemAction newPoolItemAction;
     private DeletePoolAction deletePoolAction;
-    private ShowObjectIdAction showObjectIdAction;
+    private ShowMoreInformationAction showMoreInformationAction;
     private LocalPool pool;
     protected Sheet sheet;
     
@@ -91,9 +91,9 @@ public class PoolNode extends AbstractNode implements PropertyChangeListener {
         if (newPoolItemAction == null){
             newPoolItemAction = new NewPoolItemAction(this);
             deletePoolAction = new DeletePoolAction(this);
-            showObjectIdAction = new ShowObjectIdAction (pool.getOid(), pool.getClassName());
+            showMoreInformationAction = new ShowMoreInformationAction(pool.getOid(), pool.getClassName());
         }
-        return new Action[]{ newPoolItemAction, deletePoolAction, showObjectIdAction};
+        return new Action[]{ newPoolItemAction, deletePoolAction, showMoreInformationAction};
     }
  
     @Override
@@ -134,7 +134,7 @@ public class PoolNode extends AbstractNode implements PropertyChangeListener {
                 this, lp.getDescription());
         generalPropertySet.put(propertyDescription);
         
-        generalPropertySet.setDisplayName(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_GENERAL_ATTRIBUTES"));
+        generalPropertySet.setDisplayName("General");
         sheet.put(generalPropertySet);
         return sheet;
     }
@@ -167,10 +167,8 @@ public class PoolNode extends AbstractNode implements PropertyChangeListener {
                 public Transferable paste() throws IOException {
                     switch (action) {
                         case DnDConstants.ACTION_COPY:
-                            System.out.println("Hohoho");
                             break;
                         case DnDConstants.ACTION_MOVE:
-                            System.out.println("Hehehe");
                             break;    
                     }
                     return  null;
