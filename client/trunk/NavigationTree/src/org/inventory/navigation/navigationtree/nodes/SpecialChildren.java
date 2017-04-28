@@ -20,6 +20,8 @@ import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.navigation.navigationtree.nodes.ObjectChildren;
+import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 
 /**
  * Children to SpecialNodes
