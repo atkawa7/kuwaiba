@@ -7,18 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for addPrivilegeToGroup complex type.
+ * <p>Java class for updateBookmark complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="addPrivilegeToGroup">
+ * &lt;complexType name="updateBookmark">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="groupId" type="{http://www.w3.org/2001/XMLSchema}long"/>
- *         &lt;element name="featureToken" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="accessLevel" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="bookmarkId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="bookmarkName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -29,73 +28,55 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "addPrivilegeToGroup", propOrder = {
-    "groupId",
-    "featureToken",
-    "accessLevel",
+@XmlType(name = "updateBookmark", propOrder = {
+    "bookmarkId",
+    "bookmarkName",
     "sessionId"
 })
-public class AddPrivilegeToGroup {
+public class UpdateBookmark {
 
-    protected long groupId;
-    protected String featureToken;
-    protected int accessLevel;
+    protected long bookmarkId;
+    protected String bookmarkName;
     protected String sessionId;
 
     /**
-     * Gets the value of the groupId property.
+     * Gets the value of the bookmarkId property.
      * 
      */
-    public long getGroupId() {
-        return groupId;
+    public long getBookmarkId() {
+        return bookmarkId;
     }
 
     /**
-     * Sets the value of the groupId property.
+     * Sets the value of the bookmarkId property.
      * 
      */
-    public void setGroupId(long value) {
-        this.groupId = value;
+    public void setBookmarkId(long value) {
+        this.bookmarkId = value;
     }
 
     /**
-     * Gets the value of the featureToken property.
+     * Gets the value of the bookmarkName property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getFeatureToken() {
-        return featureToken;
+    public String getBookmarkName() {
+        return bookmarkName;
     }
 
     /**
-     * Sets the value of the featureToken property.
+     * Sets the value of the bookmarkName property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setFeatureToken(String value) {
-        this.featureToken = value;
-    }
-
-    /**
-     * Gets the value of the accessLevel property.
-     * 
-     */
-    public int getAccessLevel() {
-        return accessLevel;
-    }
-
-    /**
-     * Sets the value of the accessLevel property.
-     * 
-     */
-    public void setAccessLevel(int value) {
-        this.accessLevel = value;
+    public void setBookmarkName(String value) {
+        this.bookmarkName = value;
     }
 
     /**

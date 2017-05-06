@@ -31,6 +31,7 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.soap.SOAPFaultException;
 import org.inventory.communications.core.LocalApplicationLogEntry;
+import org.inventory.communications.core.LocalBookmark;
 import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObject;
@@ -63,6 +64,7 @@ import org.inventory.communications.wsclient.GroupInfo;
 import org.inventory.communications.wsclient.KuwaibaService;
 import org.inventory.communications.wsclient.KuwaibaService_Service;
 import org.inventory.communications.wsclient.PrivilegeInfo;
+import org.inventory.communications.wsclient.RemoteBookmark;
 import org.inventory.communications.wsclient.RemoteBusinessObjectLight;
 import org.inventory.communications.wsclient.RemoteBusinessObjectLightList;
 import org.inventory.communications.wsclient.RemoteObject;
@@ -3529,4 +3531,116 @@ public class CommunicationsStub {
         return false;
     }
     // </editor-fold>
+    
+    public boolean associateObjectsToBookmark(List<String> objectClass, List<Long> objectId, long bookmarkId) {
+        try {
+            service.associateObjectsToBookmark(objectClass, objectId, bookmarkId, session.getSessionId());
+            return true;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    public boolean releaseObjectsFromBookmark(List<String> objectClass, List<Long> objectId, long bookmarkId) {
+        try {
+            service.releaseObjectsFromBookmark(objectClass, objectId, bookmarkId, session.getSessionId());
+            return true;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    public List<LocalObjectLight> getBookmarkItems(long oid, int limit) {
+        try {
+            List<RemoteObjectLight> bookmarkItems = service.getBookmarkItems(oid, limit, session.getSessionId());
+
+            List<LocalObjectLight> res = new ArrayList<>();
+
+            for (RemoteObjectLight rol : bookmarkItems) {
+                HashMap<String, Integer> validators = new HashMap<>();
+                for (Validator validator : rol.getValidators())
+                    validators.put(validator.getLabel(), validator.getValue());
+                res.add(new LocalObjectLight(rol.getClassName(), rol.getName(), rol.getOid(), validators));
+            }
+
+            return res;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+        
+    public LocalBookmark createBookmarkForUser(String bookmarkName) {
+        try {
+            long id = service.createBookmarkForUser(bookmarkName, session.getUserId(), session.getSessionId());
+            return new LocalBookmark(id, bookmarkName);
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    public boolean deleteBookmark(List<Long> bookmarkId) {
+        try {
+            service.deleteBookmarks(bookmarkId, session.getSessionId());
+            return true;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    public List<LocalBookmark> getBookmarksForUser() {
+        try {
+            List<RemoteBookmark> remoteBookmarks = service.getBookmarksForUser(session.getUserId(), session.getSessionId());
+            
+            List<LocalBookmark> localBookmarks = new ArrayList();
+            
+            for (RemoteBookmark remoteBookmark : remoteBookmarks)
+                localBookmarks.add(new LocalBookmark(remoteBookmark.getId(), remoteBookmark.getName()));
+            
+            return localBookmarks;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    public List<LocalBookmark> objectIsBookmarkItemIn(String objectClass, long objectId) {
+        try {
+            List<RemoteBookmark> remoteBookmarks = service.objectIsBookmarkItemIn(objectClass, objectId, session.getSessionId());
+            
+            List<LocalBookmark> localBookmarks = new ArrayList();
+            
+            for (RemoteBookmark remoteBookmark : remoteBookmarks)
+                localBookmarks.add(new LocalBookmark(remoteBookmark.getId(), remoteBookmark.getName()));
+            
+            return localBookmarks;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    public LocalBookmark getBookmark(long bookmarkId) {
+        try {
+            RemoteBookmark remoteBookmark = service.getBookmark(bookmarkId, session.getSessionId());
+            return new LocalBookmark(remoteBookmark.getId(), remoteBookmark.getName());
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    public boolean updateBookmark(long bookmarkId, String bookmarkName) {
+        try {
+            service.updateBookmark(bookmarkId, bookmarkName, session.getSessionId());
+            return true;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
 }
