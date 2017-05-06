@@ -42,6 +42,7 @@ import org.kuwaiba.ws.toserialize.application.ResultRecord;
 import org.kuwaiba.ws.toserialize.application.GroupInfo;
 import org.kuwaiba.ws.toserialize.application.GroupInfoLight;
 import org.kuwaiba.ws.toserialize.application.PrivilegeInfo;
+import org.kuwaiba.ws.toserialize.application.RemoteBookmark;
 import org.kuwaiba.ws.toserialize.application.RemotePool;
 import org.kuwaiba.ws.toserialize.application.RemoteTask;
 import org.kuwaiba.ws.toserialize.application.RemoteTaskResult;
@@ -1062,7 +1063,8 @@ public class KuwaibaService {
      * @param parentClassname Class name of the parent object
      * @param parentId Id of the parent object
      * @param name Pool name
-     * @param description Pool description
+     * @param description Pool descriptionCreates a pool that will have as parent an inventory object. This special containment structure can be used to 
+     * provide support for new models
      * @param instancesOfClass What kind of objects can this pool contain? 
      * @param type Type of pool. For possible values see ApplicationManager.POOL_TYPE_XXX
      * @param sessionId The session token
@@ -5014,4 +5016,231 @@ public class KuwaibaService {
         return ((HttpServletRequest)context.getMessageContext().
                     get("javax.xml.ws.servlet.request")).getRemoteAddr(); //NOI18N
     }// </editor-fold>
+
+    
+    /**
+     * Creates a Bookmark for User.
+     * @param bookmarkName bookmark name
+     * @param userId user id
+     * @param sessionId The session token
+     * @return The id of the new Bookmark
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "createBookmarkForUser")
+    public long createBookmarkForUser(
+        @WebParam(name = "bookmarkName") String bookmarkName, 
+        @WebParam(name = "userId") long userId, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        
+        try {
+            return wsBean.createBookmarkForUser(bookmarkName, userId, getIPAddress(), sessionId);
+        } catch (Exception ex) {
+            if (ex instanceof ServerSideException)
+                throw ex;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createBookmarkForUser: " + ex.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Delete a Bookmark
+     * @param bookmarkId bookmark id
+     * @param sessionId The session token
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "deleteBookmarks")
+    public void deleteBookmarks(
+        @WebParam(name = "bookmarkId") long[] bookmarkId, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        
+        try {
+            wsBean.deleteBookmarks(bookmarkId, getIPAddress(), sessionId);
+        } catch (Exception ex) {
+            if (ex instanceof ServerSideException)
+                throw ex;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteBookmark: " + ex.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+        
+    /**
+     * Get list of Bookmarks for User.
+     * @param userId User id
+     * @param sessionId The session token
+     * @return The list of Bookmarks for user
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "getBookmarksForUser")
+    public List<RemoteBookmark> getBookmarksForUser(
+        @WebParam(name = "userId") long userId, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+                
+        try {
+            return wsBean.getBookmarksForUser(userId, getIPAddress(), sessionId);
+        } catch (Exception ex) {
+            if (ex instanceof ServerSideException)
+                throw ex;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getBookmarksForUser: " + ex.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Associates a list of objects (resources) to an existing bookmark
+     * @param objectClass object class
+     * @param objectId object id
+     * @param bookmarkId bookmark id
+     * @param sessionId Session token
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "associateObjectsToBookmark")    
+    public void associateObjectsToBookmark(
+        @WebParam(name = "objectClass") String[] objectClass, 
+        @WebParam(name = "objectId") long[] objectId, 
+        @WebParam(name = "bookmarkId") long bookmarkId, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        
+        try {
+            wsBean.associateObjectsToBookmark(objectClass, objectId, bookmarkId, getIPAddress(), sessionId);
+        } catch(Exception ex) {
+            if (ex instanceof ServerSideException)
+                throw ex;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in associateObjectsToBookmark: " + ex.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Release a list of objects (resources) to an existing bookmark
+     * @param objectClass object class
+     * @param objectId object id
+     * @param bookmarkId bookmark id
+     * @param sessionId Session token
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "releaseObjectsFromBookmark")
+    public void releaseObjectsFromBookmark(
+        @WebParam(name = "objectClass") String[] objectClass, 
+        @WebParam(name = "objectId") long[] objectId, 
+        @WebParam(name = "bookmarkId") long bookmarkId, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        
+        try {
+            wsBean.releaseObjectsFromBookmark(objectClass, objectId, bookmarkId, getIPAddress(), sessionId);
+        } catch(Exception ex) {
+            if (ex instanceof ServerSideException)
+                throw ex;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in releaseObjectsFromBookmark: " + ex.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * @param bookmarkId bookmark id
+     * @param limit Max number of results
+     * @param sessionId Session token
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @return a set of bookmark items
+     */
+    @WebMethod(operationName = "getBookmarkItems")
+    public RemoteObjectLight[] getBookmarkItems(
+        @WebParam(name = "bookmarkId") long bookmarkId, 
+        @WebParam(name = "limit") int limit,
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getBookmarkItems(bookmarkId, limit, getIPAddress(), sessionId);
+        } catch(Exception ex) {
+            if (ex instanceof ServerSideException)
+                throw ex;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getBookmarkItems: " + ex.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Get the bookmarks where an object are an item
+     * @param objectClass Object Class
+     * @param objectId Object id
+     * @param sessionId Session token
+     * @return A list of bookmarks where an object are an item
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "objectIsBookmarkItemIn")
+    public List<RemoteBookmark> objectIsBookmarkItemIn(
+        @WebParam(name = "objectClass") String objectClass, 
+        @WebParam(name = "objectId") long objectId, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        
+        try {
+            return wsBean.objectIsBookmarkItemIn(objectClass, objectId, getIPAddress(), sessionId);
+        } catch(Exception ex) {
+            if (ex instanceof ServerSideException)
+                throw ex;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in objectIsBookmarkItemIn: " + ex.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+        
+    /**
+     * Get a bookmark using the id
+     * @param bookmarkId bookmark id
+     * @param sessionId Session token
+     * @return The bookmark
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "getBookmark")
+    public RemoteBookmark getBookmark(
+        @WebParam(name = "bookmarkId") long bookmarkId, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        
+        try {
+            return wsBean.getBookmark(bookmarkId, getIPAddress(), sessionId);
+        } catch(Exception ex) {
+            if (ex instanceof ServerSideException)
+                throw ex;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getBookmark: " + ex.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Update a bookmark using the id
+     * @param bookmarkId bookmark id
+     * @param bookmarkName bookmark name
+     * @param sessionId Session token
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "updateBookmark")
+    public void updateBookmark(
+        @WebParam(name = "bookmarkId") long bookmarkId, 
+        @WebParam(name = "bookmarkName") String bookmarkName, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        
+        try {
+            wsBean.updateBookmark(bookmarkId, bookmarkName, getIPAddress(), sessionId);
+        } catch(Exception ex) {
+            if (ex instanceof ServerSideException)
+                throw ex;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in updateBookmark: " + ex.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
 }
