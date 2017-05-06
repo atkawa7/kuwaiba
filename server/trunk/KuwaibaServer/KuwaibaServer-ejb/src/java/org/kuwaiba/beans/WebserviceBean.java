@@ -30,10 +30,13 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Singleton;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
+import org.kuwaiba.apis.persistence.application.Bookmark;
 import org.kuwaiba.apis.persistence.application.CompactQuery;
 import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
@@ -69,6 +72,7 @@ import org.kuwaiba.ws.toserialize.application.ApplicationLogEntry;
 import org.kuwaiba.ws.toserialize.application.GroupInfo;
 import org.kuwaiba.ws.toserialize.application.GroupInfoLight;
 import org.kuwaiba.ws.toserialize.application.PrivilegeInfo;
+import org.kuwaiba.ws.toserialize.application.RemoteBookmark;
 import org.kuwaiba.ws.toserialize.application.RemotePool;
 import org.kuwaiba.ws.toserialize.application.RemoteQuery;
 import org.kuwaiba.ws.toserialize.application.RemoteQueryLight;
@@ -3131,5 +3135,146 @@ public class WebserviceBean implements WebserviceBeanRemote {
             return null;
         return aSession.getUser().getUserName();
     }
-    // </editor-fold>    
+    // </editor-fold>
+    
+    // Bookmarks
+    @Override
+    public void associateObjectsToBookmark(String[] objectClass, long[] objectId, long bookmarkId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        
+        if (objectClass.length != objectId.length)
+            throw new ServerSideException("The arrays provided have different lengths");
+        
+        try {
+            aem.validateWebServiceCall("associateObjectsToBookmark", ipAddress, sessionId);
+            
+            for (int i = 0; i < objectId.length; i += 1)
+                aem.associateObjectToBookmark(objectClass[i], objectId[i], bookmarkId);
+            
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void releaseObjectsFromBookmark(String[] objectClass, long[] objectId, long bookmarkId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        
+        if (objectClass.length != objectId.length)
+            throw new ServerSideException("The arrays provided have different lengths");
+        
+        try {
+            aem.validateWebServiceCall("releaseObjectsFromBookmark", ipAddress, sessionId);
+            
+            for (int i = 0; i < objectId.length; i += 1)
+                aem.releaseObjectFromBookmark(objectClass[i], objectId[i], bookmarkId);
+                        
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public RemoteObjectLight[] getBookmarkItems(long bookmarkId, int limit, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("getBookmarkItems", ipAddress, sessionId);
+            return RemoteObjectLight.toRemoteObjectLightArray(aem.getBookmarkItems(bookmarkId, limit));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public long createBookmarkForUser(String bookmarkName, long userId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("createBookmarkForUser", ipAddress, sessionId);
+            
+            return aem.createBookmarkForUser(bookmarkName, userId);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void deleteBookmarks(long[] bookmarkId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("deleteBookmark", ipAddress, sessionId);
+            
+            aem.deleteBookmarks(bookmarkId);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }    
+    
+    @Override
+    public List<RemoteBookmark> getBookmarksForUser(long userId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("getBookmarksForUser", ipAddress, sessionId);
+            
+            List<RemoteBookmark> remoteBookmarks = new ArrayList();
+            List<Bookmark> bookmarks = aem.getBookmarksForUser(userId);
+            
+            for (Bookmark bookmark : bookmarks)
+                remoteBookmarks.add(new RemoteBookmark(bookmark));
+            
+            return remoteBookmarks;
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public List<RemoteBookmark> objectIsBookmarkItemIn(String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        
+        try {
+            aem.validateWebServiceCall("objectIsBookmarkItemIn", ipAddress, sessionId);
+            
+            List<RemoteBookmark> remoteBookmarks = new ArrayList();
+            List<Bookmark> bookmarks = aem.objectIsBookmarkItemIn(objectClass, objectId);
+            
+            for (Bookmark bookmark : bookmarks)
+                remoteBookmarks.add(new RemoteBookmark(bookmark));
+            
+            return remoteBookmarks;
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());            
+        }
+    }
+    
+    @Override
+    public RemoteBookmark getBookmark(long bookmarkId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("deleteBookmark", ipAddress, sessionId);
+            
+            return new RemoteBookmark(aem.getBookmark(bookmarkId));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    @Override
+    public void updateBookmark(long bookmarkId, String bookmarkName, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("deleteBookmark", ipAddress, sessionId);
+            
+            aem.updateBookmark(bookmarkId, bookmarkName);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
 }

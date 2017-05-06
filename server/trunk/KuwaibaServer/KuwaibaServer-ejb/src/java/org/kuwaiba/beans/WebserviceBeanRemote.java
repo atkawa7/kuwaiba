@@ -22,6 +22,7 @@ import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
 import java.util.List;
 import javax.ejb.Remote;
+import org.kuwaiba.apis.persistence.application.Bookmark;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
 import org.kuwaiba.exceptions.NotAuthorizedException;
 import org.kuwaiba.exceptions.ServerSideException;
@@ -31,6 +32,7 @@ import org.kuwaiba.ws.toserialize.application.ApplicationLogEntry;
 import org.kuwaiba.ws.toserialize.application.GroupInfo;
 import org.kuwaiba.ws.toserialize.application.GroupInfoLight;
 import org.kuwaiba.ws.toserialize.application.PrivilegeInfo;
+import org.kuwaiba.ws.toserialize.application.RemoteBookmark;
 import org.kuwaiba.ws.toserialize.application.RemotePool;
 import org.kuwaiba.ws.toserialize.application.RemoteQuery;
 import org.kuwaiba.ws.toserialize.application.RemoteQueryLight;
@@ -186,6 +188,7 @@ public interface WebserviceBeanRemote {
     public RemoteObjectLight[] getConnectionEndpoints(String connectionClass, long connectionId, String ipAddress, String sessionId) throws ServerSideException;
     public void connectPhysicalLinks(String[] sideAClassNames, Long[] sideAIds, String[] linksClassNames, Long[] linksIds, String[] sideBClassNames, Long[] sideBIds, String ipAddress, String sessionId) throws ServerSideException;
     public RemoteObjectLight[] getPhysicalPath(String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;
+                
     //Service Manager
     public void associateObjectToService(String objectClass, long objectId, String serviceClass, long serviceId, String ipAddress, String sessionId) throws ServerSideException;
     public void associateObjectsToService(String[] objectClass, long[] objectId, String serviceClass, long serviceId, String ipAddress, String sessionId) throws ServerSideException;
@@ -461,7 +464,7 @@ public interface WebserviceBeanRemote {
     public void releaseObjectFromContract(String deviceClass, long deviceId, long contractId,
             String ipAddress, String sessionId) throws ServerSideException;    
         //</editor-fold>
-    
+      
         // <editor-fold defaultstate="collapsed" desc="MPLS Networks Module">
          public long createMPLSLink(String classNameEndpointA, long idEndpointA, 
             String classNameEndpointB, long idEndpointB, String linkType, String defaultName, String ipAddress, String sessionId) throws ServerSideException;
@@ -475,4 +478,15 @@ public interface WebserviceBeanRemote {
     // <editor-fold defaultstate="collapsed" desc="Help methods. Click on the + sign on the left to edit the code.">
     public boolean isSubclassOf(String className, String subclassOf, String remoteAddress, String sessionId);
     // </editor-fold>
+    
+    // Bookmark Manager
+    public void associateObjectsToBookmark(String[] objectClass, long[] objectId, long bookmarkId, String ipAddress, String sessionId) throws ServerSideException;
+    public void releaseObjectsFromBookmark(String[] objectClass, long[] objectId, long bookmarkId, String ipAddress, String sessionId) throws ServerSideException;
+    public long createBookmarkForUser(String bookmarkName, long userId, String ipAddress, String sessionId) throws ServerSideException;
+    public void deleteBookmarks(long[] bookmarkId, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteBookmark> getBookmarksForUser(long userId, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteObjectLight[] getBookmarkItems(long bookmarkId, int limit, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteBookmark> objectIsBookmarkItemIn(String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteBookmark getBookmark(long bookmarkId, String ipAddress, String sessionId) throws ServerSideException;
+    public void updateBookmark(long bookmarkId, String bookmarkName, String ipAddress, String sessionId) throws ServerSideException;
 }

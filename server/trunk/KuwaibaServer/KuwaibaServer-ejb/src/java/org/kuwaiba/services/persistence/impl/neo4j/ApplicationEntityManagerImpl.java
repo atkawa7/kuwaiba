@@ -51,6 +51,7 @@ import org.kuwaiba.apis.persistence.ConnectionManager;
 import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
 import org.kuwaiba.apis.persistence.application.CompactQuery;
 import org.kuwaiba.apis.persistence.application.ExtendedQuery;
+import org.kuwaiba.apis.persistence.application.Bookmark;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.GroupProfileLight;
 import org.kuwaiba.apis.persistence.application.Pool;
@@ -2621,5 +2622,207 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         return reportNode;
     }
     
-    //End of Helpers   
+    //End of Helpers  
+    
+    // Bookmarks
+    @Override
+    public void associateObjectToBookmark(String objectClass, long objectId, long bookmarkId) 
+        throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException {
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            Node bookmarkNode = graphDb.getNodeById(bookmarkId);
+            if (bookmarkNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Can not find the bookmark with id %s", bookmarkId));
+            
+            Node objectNode = getInstanceOfClass(objectClass, objectId);
+            
+            if (objectNode.hasRelationship(Direction.OUTGOING, RelTypes.IS_BOOKMARK_ITEM_IN)) {
+                for (Relationship relationship : objectNode.getRelationships(Direction.OUTGOING, RelTypes.IS_BOOKMARK_ITEM_IN)) {
+                    if (bookmarkNode.getId() == relationship.getEndNode().getId())
+                        throw new OperationNotPermittedException("An object can not be associated with the same bookmark");
+                }
+            }
+            objectNode.createRelationshipTo(bookmarkNode, RelTypes.IS_BOOKMARK_ITEM_IN);
+            
+            tx.success();
+        }
+    }
+    
+    @Override
+    public void releaseObjectFromBookmark(String objectClass, long objectId, long bookmarkId) 
+        throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, ObjectNotFoundException {
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            
+            Node objectNode = getInstanceOfClass(objectClass, objectId);
+            
+            if (objectNode.hasRelationship(Direction.OUTGOING, RelTypes.IS_BOOKMARK_ITEM_IN)) {
+                
+                Node bookmarkNode = graphDb.getNodeById(bookmarkId);
+                if (bookmarkNode == null)
+                    throw new ApplicationObjectNotFoundException(String.format("Can not find the bookmark with id %s", bookmarkId));
+                
+                for (Relationship relationship : objectNode.getRelationships(Direction.OUTGOING, RelTypes.IS_BOOKMARK_ITEM_IN)) {
+                    
+                    if (bookmarkNode.getId() == relationship.getEndNode().getId()) {
+                        relationship.delete();
+                        tx.success();
+                        return;
+                    }
+                }
+            }
+        }
+    }
+    
+    @Override
+    public long createBookmarkForUser(String name, long userId) throws ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node userNode = userIndex.get(Constants.PROPERTY_ID, userId).getSingle();
+            
+            if (userNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("User with id %s could not be found", userId));
+            
+            Node bookmarkNode = graphDb.createNode();
+            
+            if (name != null)
+                bookmarkNode.setProperty(Constants.PROPERTY_NAME, name);            
+            
+            userNode.createRelationshipTo(bookmarkNode, RelTypes.HAS_BOOKMARK);
+            
+            tx.success();
+            return bookmarkNode.getId();
+        }
+    }
+    
+    @Override
+    public void deleteBookmarks(long[] bookmarkId) throws ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            if (bookmarkId != null) {
+                for (long id : bookmarkId) {
+                    Node bookmarkNode = graphDb.getNodeById(id);
+                    
+                    if (bookmarkNode == null)
+                        throw new ApplicationObjectNotFoundException(String.format("Can not find the bookmark with id %s",id));
+                    
+                    for (Relationship relationship : bookmarkNode.getRelationships(Direction.INCOMING, RelTypes.HAS_BOOKMARK))
+                        relationship.delete();
+                    
+                    for (Relationship relationship : bookmarkNode.getRelationships(Direction.INCOMING, RelTypes.IS_BOOKMARK_ITEM_IN))
+                        relationship.delete();
+                    
+                    bookmarkNode.delete();
+                    tx.success();
+                }
+            }
+        }
+    }
+    
+    @Override
+    public List<Bookmark> getBookmarksForUser(long userId) throws ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node userNode = userIndex.get(Constants.PROPERTY_ID, userId).getSingle();
+            
+            if (userNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("User with id %s could not be found", userId));
+            
+            List<Bookmark> bookmarks = new ArrayList(); 
+            
+            if (userNode.hasRelationship(Direction.OUTGOING, RelTypes.HAS_BOOKMARK)) {
+                
+                for (Relationship relationship : userNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_BOOKMARK)) {
+                    Node bookmarkNode = relationship.getEndNode();
+                    String name = bookmarkNode.hasProperty(Constants.PROPERTY_NAME) ? (String) bookmarkNode.getProperty(Constants.PROPERTY_NAME) : null;
+                    
+                    bookmarks.add(new Bookmark(bookmarkNode.getId(), name));
+                }
+            }
+            return bookmarks;
+        }
+    }
+    
+    
+    @Override
+    public List<RemoteBusinessObjectLight> getBookmarkItems(long bookmarkId, int limit) throws ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node bookmarkNode = graphDb.getNodeById(bookmarkId);
+            
+            if (bookmarkNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Can not find the bookmark with id %s",bookmarkId));
+            
+            List<RemoteBusinessObjectLight> bookmarkItems = new ArrayList<>();
+            
+            int i = 0;
+            for (Relationship relationship : bookmarkNode.getRelationships(Direction.INCOMING, RelTypes.IS_BOOKMARK_ITEM_IN)) {
+                if (limit != -1) {
+                    if (i >= limit)
+                        break;
+                    i += 1;
+                }
+                Node bookmarkItem = relationship.getStartNode();
+                
+                RemoteBusinessObjectLight rbol = new RemoteBusinessObjectLight(
+                    bookmarkItem.getId(), 
+                    bookmarkItem.hasProperty(Constants.PROPERTY_NAME) ? (String) bookmarkItem.getProperty(Constants.PROPERTY_NAME) : null, 
+                    Util.getClassName(bookmarkItem));
+                
+                bookmarkItems.add(rbol);
+            }
+            return bookmarkItems;
+        }
+    }
+    
+    @Override
+    public List<Bookmark> objectIsBookmarkItemIn(String objectClass, long objectId) 
+        throws MetadataObjectNotFoundException, ObjectNotFoundException {
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            Node objectNode = getInstanceOfClass(objectClass, objectId);
+                        
+            List<Bookmark> bookmarks = new ArrayList(); 
+            
+            if (objectNode.hasRelationship(Direction.OUTGOING, RelTypes.IS_BOOKMARK_ITEM_IN)) {
+                
+                for (Relationship relationship : objectNode.getRelationships(Direction.OUTGOING, RelTypes.IS_BOOKMARK_ITEM_IN)) {
+                    Node bookmarkNode = relationship.getEndNode();
+                    String name = bookmarkNode.hasProperty(Constants.PROPERTY_NAME) ? (String) bookmarkNode.getProperty(Constants.PROPERTY_NAME) : null;
+                    
+                    bookmarks.add(new Bookmark(bookmarkNode.getId(), name));
+                }
+            }
+            return bookmarks;
+        }
+    }
+    
+    @Override
+    public Bookmark getBookmark(long bookmarkId) throws ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node bookmarkNode = graphDb.getNodeById(bookmarkId);
+            
+            if (bookmarkNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Can not find the bookmark with id %s", bookmarkId));
+            
+            String name = bookmarkNode.hasProperty(Constants.PROPERTY_NAME) ? (String) bookmarkNode.getProperty(Constants.PROPERTY_NAME) : null;
+                    
+            tx.success();
+            return new Bookmark(bookmarkNode.getId(), name);
+        }
+    }
+    
+    @Override
+    public void updateBookmark(long bookmarkId, String bookmarkName) throws ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node bookmarkNode = graphDb.getNodeById(bookmarkId);
+            
+            if (bookmarkNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Can not find the bookmark with id %s", bookmarkId));
+            
+            if (bookmarkNode.hasProperty(Constants.PROPERTY_NAME)) {
+                
+                if (bookmarkName != null) {
+                    bookmarkNode.setProperty(Constants.PROPERTY_NAME, bookmarkName);
+                    tx.success();
+                }
+            }
+        }
+    }
 }

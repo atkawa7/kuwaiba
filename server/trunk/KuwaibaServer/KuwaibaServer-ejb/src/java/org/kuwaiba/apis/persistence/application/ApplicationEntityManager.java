@@ -906,4 +906,95 @@ public interface ApplicationEntityManager {
      */
     public long[] copyTemplateElements(String[] sourceObjectsClassNames, long[] sourceObjectsIds, 
             String newParentClassName, long newParentId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException;
+    
+    // Bookmarks
+    /**
+     * Add an item (object) to the bookmark
+     * @param objectClass object class
+     * @param objectId object id
+     * @param bookmarkId bookmark id
+     * @throws ApplicationObjectNotFoundException If the bookmark can not be found
+     * @throws MetadataObjectNotFoundException If the object can not be found
+     * @throws ObjectNotFoundException If the object can not be found
+     * @throws OperationNotPermittedException If the object have a relationship with the bookmark
+     */
+    public void associateObjectToBookmark(String objectClass, long objectId, long bookmarkId) 
+        throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException;
+    
+    /**
+     * Remove an item (object) to the bookmark
+     * @param objectClass object class
+     * @param objectId object id
+     * @param bookmarkId bookmark id
+     * @throws ApplicationObjectNotFoundException If the bookmark can not be found
+     * @throws MetadataObjectNotFoundException If the object can not be found
+     * @throws ObjectNotFoundException If the object can not be found
+     */
+    public void releaseObjectFromBookmark(String objectClass, long objectId, long bookmarkId) 
+        throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, ObjectNotFoundException;
+        
+    /**
+     * Create a relationship between an user and a bookmark with name name
+     * @param name bookmark name
+     * @param userId user id
+     * @return the new bookmark id
+     * @throws ApplicationObjectNotFoundException If the user can not be found
+     */
+    public long createBookmarkForUser(String name, long userId) 
+        throws ApplicationObjectNotFoundException;
+    
+    /**
+     * Delete a Bookmark of an User
+     * @param bookmarkId bookmark id
+     * @throws ApplicationObjectNotFoundException If any bookmark in the array can not be found
+     */
+    public void deleteBookmarks(long[] bookmarkId)
+        throws ApplicationObjectNotFoundException;
+    
+    /**
+     * Get the bookmarks create by an user.
+     * @param userId user id
+     * @return List of bookmarks for an User
+     * @throws ApplicationObjectNotFoundException If the user can not be found
+     */
+    public List<Bookmark> getBookmarksForUser(long userId) 
+        throws ApplicationObjectNotFoundException;
+    
+    /**
+     * Get the items (objects) assigned to the bookmark
+     * @param bookmarkId bookmark id
+     * @param limit Max number of results
+     * @throws ApplicationObjectNotFoundException If the bookmark can not be found
+     * @return List of objects related to bookmark
+     */
+    public List<RemoteBusinessObjectLight> getBookmarkItems(long bookmarkId, int limit) 
+        throws ApplicationObjectNotFoundException;
+    /**
+     * Get the bookmarks where an object are an item
+     * @param objectClass object class
+     * @param objectId object id
+     * @throws MetadataObjectNotFoundException If the object can not be found
+     * @throws ObjectNotFoundException If the object can not be found
+     * @return list of bookmarks where an object are an item
+     */
+    public List<Bookmark> objectIsBookmarkItemIn(String objectClass, long objectId) 
+        throws MetadataObjectNotFoundException, ObjectNotFoundException;
+    
+    /**
+     * Get a bookmark with the id
+     * @param bookmarkId object class
+     * @throws ApplicationObjectNotFoundException If the bookmark can not be found
+     * @return The bookmark with id
+     */
+    public Bookmark getBookmark(long bookmarkId) 
+        throws ApplicationObjectNotFoundException;
+    
+    /**
+     * Update a bookmark with the id
+     * @param bookmarkId bookmark id
+     * @param bookmarkName bookmark name
+     * @throws ApplicationObjectNotFoundException If the bookmark can not be found
+     */
+    public void updateBookmark(long bookmarkId, String bookmarkName) 
+        throws ApplicationObjectNotFoundException;
 }
