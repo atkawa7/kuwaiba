@@ -54,7 +54,9 @@ public class LocalBookmark implements Comparable<LocalBookmark> {
     }
 
     public void setName(String name) {
+        String oldName = this.name;
         this.name = name;
+        firePropertyChangeEvent(Constants.PROPERTY_NAME, oldName, name);
     }
     
     public void addPropertyChangeListener(PropertyChangeListener newListener){
