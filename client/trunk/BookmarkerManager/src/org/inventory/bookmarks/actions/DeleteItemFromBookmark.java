@@ -23,7 +23,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import org.inventory.bookmarks.nodes.BookmarkNode;
-import org.inventory.bookmarks.nodes.BookmarkNode.BookmarkNodeChildren;
+import org.inventory.bookmarks.nodes.BookmarkNode.BookmarkChildren;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalBookmark;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
@@ -70,7 +70,7 @@ public class DeleteItemFromBookmark extends GenericObjectNodeAction implements P
                     Long.valueOf(((JMenuItem)e.getSource()).getName()))) {
                     
                     if (selectedNode.getParentNode() instanceof BookmarkNode)
-                        ((BookmarkNodeChildren) selectedNode.getParentNode().getChildren()).addNotify();
+                        ((BookmarkChildren) selectedNode.getParentNode().getChildren()).addNotify();
                     
 
                 } else {

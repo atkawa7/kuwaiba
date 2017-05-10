@@ -112,10 +112,12 @@ public final class BookmarkManagerTopComponent extends TopComponent implements
     @Override
     public void componentOpened() {
         em.setRootContext(new BookmarkRootNode());
+        ExplorerUtils.activateActions(em, true);
     }
 
     @Override
     public void componentClosed() {
+        ExplorerUtils.activateActions(em, false);
         em.setRootContext(Node.EMPTY);
     }
 

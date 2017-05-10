@@ -34,7 +34,7 @@ import org.openide.util.ImageUtilities;
  */
 public class BookmarkRootNode extends AbstractNode {
     public static final String ICON_PATH = "org/inventory/bookmarks/res/root.png";
-    private static Image icon = ImageUtilities.loadImage(ICON_PATH);
+    private static final Image icon = ImageUtilities.loadImage(ICON_PATH);
     
     public BookmarkRootNode() {
         super(new BookmarkRootChildren());

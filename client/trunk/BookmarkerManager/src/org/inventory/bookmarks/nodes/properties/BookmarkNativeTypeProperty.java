@@ -29,7 +29,7 @@ import org.openide.nodes.PropertySupport;
  */
 public class BookmarkNativeTypeProperty extends PropertySupport.ReadWrite {
 
-    private final BookmarkNode bookmarkNode;
+    private BookmarkNode bookmarkNode;
     private Object value;
     
     public BookmarkNativeTypeProperty(String name, Class type, String displayName, 

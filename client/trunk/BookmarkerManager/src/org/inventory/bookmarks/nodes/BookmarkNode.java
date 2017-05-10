@@ -29,12 +29,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.swing.Action;
-import org.inventory.bookmarks.nodes.BookmarkRootNode.BookmarkRootChildren;
 import org.inventory.bookmarks.nodes.properties.BookmarkNativeTypeProperty;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.openide.actions.PasteAction;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
@@ -60,18 +60,23 @@ public class BookmarkNode extends AbstractNode implements PropertyChangeListener
     protected Sheet sheet;
     
     public BookmarkNode(LocalBookmark localBookmark) {
-        super(new BookmarkNodeChildren(), Lookups.singleton(localBookmark));
+        super(new BookmarkChildren(), Lookups.singleton(localBookmark));
         this.localBookmark = localBookmark;
-        localBookmark.addPropertyChangeListener(WeakListeners.propertyChange(this, localBookmark));
+        if (localBookmark.getName() != null)
+            localBookmark.addPropertyChangeListener(WeakListeners.propertyChange(this, localBookmark));
     }
     
     @Override
     public void setName(String newName) {
-        LocalBookmark lb = CommunicationsStub.getInstance().getBookmark(localBookmark.getId());
-        if (lb == null) {
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+        if (newName != null) {
+            if (CommunicationsStub.getInstance().updateBookmark(localBookmark.getId(), newName)) {
+                localBookmark.setName(newName);
+                if (getSheet() != null)
+                    setSheet(createSheet());
+            } else {
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());                
+            }
         }
-        localBookmark.setName(lb.getName() == null ? Constants.LABEL_NONAME : lb.getName());
     }
     
     @Override
@@ -130,7 +135,7 @@ public class BookmarkNode extends AbstractNode implements PropertyChangeListener
             return null;
         
         //The clipboard does not contain an Bookmark Item Node
-        if (!BookmarkItemNode.class.isInstance(dropNode))
+        if (!ObjectNode.class.isInstance(dropNode))
             return null;
         
         //Can't move to the same parent, only copy
@@ -141,8 +146,8 @@ public class BookmarkNode extends AbstractNode implements PropertyChangeListener
             @Override
             public Transferable paste() throws IOException {
                 if (action == DnDConstants.ACTION_COPY) {
-                    if (dropNode instanceof BookmarkItemNode) {
-                        BookmarkItemNode bookmarkItem = (BookmarkItemNode) dropNode;
+                    if (dropNode instanceof ObjectNode) {
+                        ObjectNode bookmarkItem = (ObjectNode) dropNode;
                         
                         if (bookmarkItem.getParentNode() instanceof BookmarkNode) {
                             List<String> objClass = new ArrayList();
@@ -153,7 +158,7 @@ public class BookmarkNode extends AbstractNode implements PropertyChangeListener
                                 
                             if (CommunicationsStub.getInstance().associateObjectsToBookmark(objClass, objId, localBookmark.getId())) {
                                 
-                                ((BookmarkNodeChildren) getChildren()).addNotify();
+                                ((BookmarkChildren) getChildren()).addNotify();
                             } else {
                                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE, 
                                 CommunicationsStub.getInstance().getError());
@@ -162,8 +167,8 @@ public class BookmarkNode extends AbstractNode implements PropertyChangeListener
                     }
                 }
                 if (action == DnDConstants.ACTION_MOVE) {
-                    if (dropNode instanceof BookmarkItemNode) {
-                        BookmarkItemNode bookmarkItem = (BookmarkItemNode) dropNode;
+                    if (dropNode instanceof ObjectNode) {
+                        ObjectNode bookmarkItem = (ObjectNode) dropNode;
                         
                         if (bookmarkItem.getParentNode() instanceof BookmarkNode) {
                             BookmarkNode bookmark = (BookmarkNode) bookmarkItem.getParentNode();
@@ -178,11 +183,11 @@ public class BookmarkNode extends AbstractNode implements PropertyChangeListener
                                 objId, 
                                 bookmark.getLocalBookmark().getId())) {
                                 
-                                ((BookmarkNodeChildren) bookmark.getChildren()).addNotify();
+                                ((BookmarkChildren) bookmark.getChildren()).addNotify();
                                     
                                 if (CommunicationsStub.getInstance().associateObjectsToBookmark(objClass, objId, localBookmark.getId())) {
                                     
-                                    ((BookmarkNodeChildren) getChildren()).addNotify();
+                                    ((BookmarkChildren) getChildren()).addNotify();
                                 } else {
                                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE, 
                                         CommunicationsStub.getInstance().getError());
@@ -209,13 +214,14 @@ public class BookmarkNode extends AbstractNode implements PropertyChangeListener
             return sheet;
         }
         localBookmark.setName(lb.getName());
-        
+                
         PropertySupport.ReadWrite propertyName = new BookmarkNativeTypeProperty(
                 Constants.PROPERTY_NAME, String.class, Constants.PROPERTY_NAME, 
                 Constants.PROPERTY_NAME, this, lb.getName());
         generalPropertySet.put(propertyName);
         
-        generalPropertySet.setDisplayName("General");
+        generalPropertySet.setName("General Info");
+        generalPropertySet.setDisplayName("General Attributes");
         sheet.put(generalPropertySet);
         return sheet;
     }
@@ -252,7 +258,7 @@ public class BookmarkNode extends AbstractNode implements PropertyChangeListener
         }
     }
     
-    public static class BookmarkNodeChildren extends Children.Keys<LocalObjectLight> {
+    public static class BookmarkChildren extends Children.Keys<LocalObjectLight> {
         
         @Override
         public void addNotify() {
@@ -277,7 +283,7 @@ public class BookmarkNode extends AbstractNode implements PropertyChangeListener
         
         @Override
         protected Node[] createNodes(LocalObjectLight key) {
-            return new Node [] { new BookmarkItemNode(key) };
+            return new Node [] { new ObjectNode(key) };
         }
     }
 }
