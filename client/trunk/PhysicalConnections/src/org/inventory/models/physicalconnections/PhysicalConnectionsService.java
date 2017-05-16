@@ -21,7 +21,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.models.physicalconnections.scene.ObjectBoxWidget;
 import org.inventory.models.physicalconnections.scene.PhysicalPathScene;
-import org.inventory.models.physicalconnections.scene.SimpleObjectConnectionWidget;
+import org.inventory.models.physicalconnections.scene.SimpleConnectionWidget;
 import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.netbeans.api.visual.widget.Widget;
 
@@ -35,7 +35,7 @@ public class PhysicalConnectionsService {
         CommunicationsStub com = CommunicationsStub.getInstance();
         PhysicalPathScene scene = new PhysicalPathScene();
         ObjectBoxWidget lastPortWidget = null;
-        SimpleObjectConnectionWidget lastConnectionWidget = null;
+        SimpleConnectionWidget lastConnectionWidget = null;
         for (LocalObjectLight element : trace){
             if (com.getMetaForClass(element.getClassName(), false).
                     getValidator(Constants.VALIDATOR_PHYSICAL_LINK) != 1) { //It's a port
@@ -66,7 +66,7 @@ public class PhysicalConnectionsService {
                     }
                 }
             }else{
-                lastConnectionWidget = (SimpleObjectConnectionWidget)scene.addEdge(element);
+                lastConnectionWidget = (SimpleConnectionWidget)scene.addEdge(element);
                 if (lastPortWidget != null)
                     lastConnectionWidget.setSourceAnchor(AnchorFactory.createCenterAnchor(lastPortWidget));
                 lastPortWidget = null;

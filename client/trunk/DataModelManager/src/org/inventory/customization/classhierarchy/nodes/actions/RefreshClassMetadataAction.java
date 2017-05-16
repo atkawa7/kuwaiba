@@ -16,14 +16,15 @@
 package org.inventory.customization.classhierarchy.nodes.actions;
 
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
+import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.customization.classhierarchy.nodes.ClassMetadataNode;
 
 /**
  * Action to refresh a class node information
  * @author Adrian Martinez Molina <charles.bedon@kuwaiba.org>
  */
-public class RefreshClassMetadataAction extends AbstractAction {
+public class RefreshClassMetadataAction extends GenericInventoryAction {
     ClassMetadataNode node;
 
     public RefreshClassMetadataAction(ClassMetadataNode node) {
@@ -34,5 +35,10 @@ public class RefreshClassMetadataAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent ev) {
         node.refresh();
+    }
+    
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_DATA_MODEL_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ);
     }
 }

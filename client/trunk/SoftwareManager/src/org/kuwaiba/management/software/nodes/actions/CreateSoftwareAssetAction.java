@@ -18,9 +18,10 @@ package org.kuwaiba.management.software.nodes.actions;
 import java.awt.event.ActionEvent;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
-import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.inventory.specialexplorer.specialchildren.SpecialChildrenTopComponent;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -37,8 +38,10 @@ public class CreateSoftwareAssetAction extends GenericObjectNodeAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        LocalObjectLight newLicense = CommunicationsStub.getInstance().createSpecialObject("SoftwareLicense", object.getClassName(), 
-                object.getOid(), 0);
+        super.actionPerformed(e);
+        
+        LocalObjectLight newLicense = CommunicationsStub.getInstance().createSpecialObject("SoftwareLicense", selectedObjects.get(0).getClassName(), 
+                selectedObjects.get(0).getOid(), 0);
         if (newLicense == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else{
@@ -55,4 +58,9 @@ public class CreateSoftwareAssetAction extends GenericObjectNodeAction {
     public String getValidator() {
         return Constants.VALIDATOR_APPLICATION_ELEMENT;
     }   
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_SOFTWARE_ASSETS_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+    }
 }

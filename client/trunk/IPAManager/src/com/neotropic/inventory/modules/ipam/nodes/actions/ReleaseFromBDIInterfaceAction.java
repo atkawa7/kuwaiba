@@ -22,10 +22,11 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
-import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter;
 import org.openide.util.lookup.ServiceProvider;
@@ -35,15 +36,12 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ReleaseFromBDIInterface extends GenericObjectNodeAction implements Presenter.Popup {
-    
-    private long id;
-    private String className;
-    
+public class ReleaseFromBDIInterfaceAction extends GenericObjectNodeAction implements Presenter.Popup {
+       
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (CommunicationsStub.getInstance().releasePortFromInterface(className,
-                id, Long.valueOf(((JMenuItem)e.getSource()).getName())))
+        if (CommunicationsStub.getInstance().releasePortFromInterface((String)((JMenuItem)e.getSource()).getClientProperty("portClassName"),  //NOI18N
+                (long)((JMenuItem)e.getSource()).getClientProperty("portId"), (long)((JMenuItem)e.getSource()).getClientProperty("bdiId")))
             NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
                     java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_SUCCESS"));
         else
@@ -57,38 +55,39 @@ public class ReleaseFromBDIInterface extends GenericObjectNodeAction implements 
 
     @Override
     public JMenuItem getPopupPresenter() {
-        JMenu mnuServices = new JMenu(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELEASE_INTERFACE"));
+        
+        JMenu mnuAction = new JMenu(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELEASE_INTERFACE"));
         Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
         
-        if (!selectedNodes.hasNext())
-            return null;
+        ObjectNode selectedNode = (ObjectNode)selectedNodes.next();
         
-        while (selectedNodes.hasNext()) {
-            ObjectNode selectedNode = (ObjectNode)selectedNodes.next();
-            className = selectedNode.getObject().getClassName();
-            id = selectedNode.getObject().getOid();
-        }
-        
-        List<LocalObjectLight> services = CommunicationsStub.getInstance().getSpecialAttribute(className, 
-                id, Constants.RELATIONSHIP_MPLSPORTBELONGSTOINTERFACE);
+        List<LocalObjectLight> bdis = CommunicationsStub.getInstance().getSpecialAttribute(selectedNode.getObject().getClassName(), 
+                selectedNode.getObject().getOid(), Constants.RELATIONSHIP_MPLSPORTBELONGSTOINTERFACE);
 
-        if (services != null) {
+        if (bdis != null) {
         
-            if (services.isEmpty())
-                mnuServices.setEnabled(false);
+            if (bdis.isEmpty())
+                mnuAction.setEnabled(false);
             else {
-                for (LocalObjectLight service : services){
-                    JMenuItem smiServices = new JMenuItem(service.toString());
-                    smiServices.setName(String.valueOf(service.getOid()));
-                    smiServices.addActionListener(this);
-                    mnuServices.add(smiServices);
+                for (LocalObjectLight bdi : bdis){
+                    JMenuItem mnuBdis = new JMenuItem(bdi.toString());
+                    mnuBdis.putClientProperty("bdiId", bdi.getOid()); //NOI18N
+                    mnuBdis.putClientProperty("portClassName", selectedNode.getObject().getClassName());  //NOI18N
+                    mnuBdis.putClientProperty("portId", selectedNode.getObject().getOid()); //NOI18N
+                    mnuBdis.addActionListener(this);
+                    mnuAction.add(mnuBdis);
                 }
             }
-            return mnuServices;
+            return mnuAction;
         } else {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             return null;
         } 
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_IP_ADDRESS_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
     
 }

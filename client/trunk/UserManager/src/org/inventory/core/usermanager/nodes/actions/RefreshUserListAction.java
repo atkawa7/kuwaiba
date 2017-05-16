@@ -18,7 +18,8 @@ package org.inventory.core.usermanager.nodes.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
-import javax.swing.AbstractAction;
+import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.usermanager.nodes.GroupNode;
 import org.openide.util.Utilities;
 
@@ -26,7 +27,7 @@ import org.openide.util.Utilities;
  * Refreshes a group node
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-class RefreshUserListAction extends AbstractAction {
+class RefreshUserListAction extends GenericInventoryAction {
 
     public RefreshUserListAction() {
         putValue(NAME, "Refresh User List");
@@ -41,5 +42,10 @@ class RefreshUserListAction extends AbstractAction {
             return;
         
         ((GroupNode.UserChildren)selectedNodes.next().getChildren()).addNotify();
+    }
+    
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_USER_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ);
     }
 }

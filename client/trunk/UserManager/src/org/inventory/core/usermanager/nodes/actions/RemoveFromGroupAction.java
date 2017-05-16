@@ -17,11 +17,12 @@ package org.inventory.core.usermanager.nodes.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
-import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalUserGroupObject;
 import org.inventory.communications.core.LocalUserObject;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.usermanager.nodes.GroupNode;
 import org.inventory.core.usermanager.nodes.UserNode;
@@ -31,7 +32,7 @@ import org.openide.util.Utilities;
  * Removes a user from a group (provided that the user is already related to at least one other group)
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class RemoveFromGroupAction extends AbstractAction {
+public class RemoveFromGroupAction extends GenericInventoryAction {
 
     public RemoveFromGroupAction() {
         putValue(NAME, "Remove from Group");
@@ -57,6 +58,11 @@ public class RemoveFromGroupAction extends AbstractAction {
                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             }
         }
+    }
+    
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_USER_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 
 }

@@ -16,15 +16,12 @@
 package com.neotropic.inventory.modules.ipam.nodes.actions;
 
 import com.neotropic.inventory.modules.ipam.engine.SubnetEngine;
-import com.neotropic.inventory.modules.ipam.nodes.SubnetChildren;
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import com.neotropic.inventory.modules.ipam.nodes.SubnetNode;
-import com.neotropic.inventory.modules.ipam.nodes.SubnetPoolChildren;
 import com.neotropic.inventory.modules.ipam.nodes.SubnetPoolNode;
 import com.neotropic.inventory.modules.ipam.windows.PTextField;
 import java.awt.BorderLayout;
@@ -34,64 +31,65 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import org.inventory.communications.core.LocalObject;
+import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
+import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
 import org.openide.nodes.AbstractNode;
 import org.openide.util.Utilities;
-
 
 /**
  * Creates a subnet as a node
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class CreateSubnetAction extends AbstractAction{
+public class CreateSubnetAction extends GenericInventoryAction {
     /**
      * Reference to the communications stub singleton
      */
     private CommunicationsStub com;
-    private SubnetPoolNode subnetPoolNode;
-    private SubnetNode subnetNode;
+    private static CreateSubnetAction instance;
     
-    public CreateSubnetAction(SubnetPoolNode subnetPoolNode) {
+    private CreateSubnetAction() {
         putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_NEW_SUBNET"));
         com = CommunicationsStub.getInstance();
-        this.subnetPoolNode = subnetPoolNode;
     }
     
-    public CreateSubnetAction(SubnetNode subnetNode) {
-        putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_NEW_SUBNET"));
-        com = CommunicationsStub.getInstance();
-        this.subnetNode = subnetNode;
+    public static CreateSubnetAction getInstance() {
+        return instance == null ? new CreateSubnetAction() : instance;
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
         Iterator<? extends AbstractNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(AbstractNode.class).allInstances().iterator();
-        String className = "";
-        String subnetFather = "";
-        long id = 0;
+        String className;
+        String subnetParent;
+        long id;
         
         if (!selectedNodes.hasNext())
             return;
         
-        while (selectedNodes.hasNext()) {
-            AbstractNode selectedNode = selectedNodes.next();
-            if(selectedNode instanceof SubnetPoolNode){
-                SubnetPoolNode node = (SubnetPoolNode)selectedNode;
-                className = node.getSubnetPool().getClassName();
-                id = node.getSubnetPool().getOid();
-                subnetFather = null;
-            }
-            else if(selectedNode instanceof SubnetNode){
-                SubnetNode node = (SubnetNode)selectedNode;
-                className = node.getObject().getClassName();
-                id = node.getObject().getOid();
-                subnetFather =  node.getObject().getName();
-            }
+        AbstractNode selectedNode = selectedNodes.next();
+        if(selectedNode instanceof SubnetPoolNode) {
+            SubnetPoolNode node = (SubnetPoolNode)selectedNode;
+            className = node.getSubnetPool().getClassName();
+            id = node.getSubnetPool().getOid();
+            subnetParent = null;
         }
-        CreateSubnetFrame subnetFrame = new CreateSubnetFrame(id, className, subnetFather);
+        else { //It's a subnet node
+            SubnetNode node = (SubnetNode)selectedNode;
+            className = node.getObject().getClassName();
+            id = node.getObject().getOid();
+            subnetParent =  node.getObject().getName();
+        }
+        CreateSubnetFrame subnetFrame = new CreateSubnetFrame(id, className, subnetParent, selectedNode);
         subnetFrame.setVisible(true);
     }    
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_IP_ADDRESS_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+    }
     
-    private class CreateSubnetFrame extends JFrame{
+    private class CreateSubnetFrame extends JFrame {
 
         private javax.swing.JButton btnAddSubnet;
         private javax.swing.JButton btnClose;
@@ -105,17 +103,20 @@ public class CreateSubnetAction extends AbstractAction{
         
         private final String className;
         private final long parentId;
-        private final String subnetFather;
+        private final String subnetParent;
         private LocalObjectLight newSubnet;
+        
+        private AbstractNode selectedNode;
 
-        public CreateSubnetFrame(long parentId, String className, String subnetFather) {
+        public CreateSubnetFrame(long parentId, String className, String subnetParent, AbstractNode selectedNode) {
             this.className = className;
             this.parentId = parentId;
-            this.subnetFather = subnetFather;
+            this.subnetParent = subnetParent;
+            this.selectedNode = selectedNode;
             initComponents();
             txtDescription.requestFocus();
-            if(subnetFather != null){
-                String[] split = subnetFather.split("/");
+            if(subnetParent != null){
+                String[] split = subnetParent.split("/");
                 txtIpAddress.setText(split[0]+"/");
             }
         }
@@ -241,10 +242,10 @@ public class CreateSubnetAction extends AbstractAction{
                     attributeValues[4] = Integer.toString(subnetEngine.calculateNumberOfHosts());
                     attributeValues[0] = ipCIDR;
                     
-                    if(subnetFather != null)
-                        isSubnet = subnetEngine.isSubnetofSubnet(ipCIDR, subnetFather);
+                    if(subnetParent != null)
+                        isSubnet = subnetEngine.isSubnetofSubnet(ipCIDR, subnetParent);
                     
-                }else if(className.equals(Constants.CLASS_SUBNET_IPV6)){
+                } else if(className.equals(Constants.CLASS_SUBNET_IPV6)){
                     subnetEngine.calculateSubnetsIpv6(ipCIDR);
                     List<String> subnets = subnetEngine.getSubnets();
                     attributeValues[2] = subnets.get(subnets.size()-1);
@@ -252,24 +253,21 @@ public class CreateSubnetAction extends AbstractAction{
                     attributeValues[4] = Integer.toString(subnetEngine.calculateNumberOfHostsIpV6());
                     attributeValues[0] = ipCIDR;
                     
-                    if(subnetFather != null)
-                        isSubnet = subnetEngine.isSubnetofSubnetIPv6(ipCIDR, subnetFather);
+                    if(subnetParent != null)
+                        isSubnet = subnetEngine.isSubnetofSubnetIPv6(ipCIDR, subnetParent);
                 }
                 
-                if(subnetFather != null && !isSubnet){
-                    lblError.setText("this is not a subnet of "+ subnetFather);
+                if(subnetParent != null && !isSubnet){
+                    lblError.setText("This is not a subnet of "+ subnetParent);
                     lblError.setVisible(true);
                     return;
                 }
                 
                 if(cbxCreateAllIps.isSelected()){
-                    int dialogButton = JOptionPane.YES_NO_OPTION;
                     int dialogResult = JOptionPane.showConfirmDialog (null, 
-                                      "\nThis could be dangerous!!!"
-                                    + "\nIf the subnet has to many IP Addresses\n"
-                                    + "\nWould You like to create all the possible ip address?","Warning!!",dialogButton);
-                    if(dialogResult == JOptionPane.YES_OPTION)
-                            createIps=true;
+                                    "Are you sure you want to create all the possible address space? This could be a long process depending the number of IP addresses","Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                    if (dialogResult == JOptionPane.YES_OPTION)
+                            createIps = true;
                 }
                 
                 newSubnet = CommunicationsStub.getInstance().createSubnet(parentId, className,
@@ -280,12 +278,8 @@ public class CreateSubnetAction extends AbstractAction{
                 
                 if (newSubnet == null)
                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
-                else{
-                    if(subnetPoolNode != null)
-                        ((SubnetPoolChildren)subnetPoolNode.getChildren()).addNotify();
-                    else
-                        ((SubnetChildren)subnetNode.getChildren()).addNotify();
-                    
+                else {
+                    ((AbstractChildren)selectedNode.getChildren()).addNotify();
                     NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_CREATED"));
                 }
                 dispose();

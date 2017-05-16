@@ -20,10 +20,11 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalUserGroupObject;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.usermanager.nodes.GroupNode;
 import org.inventory.core.usermanager.nodes.UserManagerRootNode;
@@ -34,7 +35,7 @@ import org.openide.util.Utilities;
  * Deletes a group and all the users within <b>that are not related to another group</b>
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-class DeleteGroupAction extends AbstractAction {
+class DeleteGroupAction extends GenericInventoryAction {
 
     public DeleteGroupAction() {
         putValue(NAME, "Delete Group");
@@ -58,12 +59,16 @@ class DeleteGroupAction extends AbstractAction {
             
             if (!groupsToDelete.isEmpty()) {
                 if(CommunicationsStub.getInstance().deleteGroups(groupsToDelete)) {
-                    ((UserManagerRootNode.GroupChildren)lastSelectedNode.getParentNode().getChildren()).addNotify(); //lastSelectedNode eill never be null in this if
+                    ((UserManagerRootNode.GroupChildren)lastSelectedNode.getParentNode().getChildren()).addNotify(); //lastSelectedNode will never be null in this if
                     NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Group deleted successfully");
                 } else
                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             }
         }
     }
-
+    
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_USER_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+    }
 }

@@ -23,22 +23,27 @@ import java.util.Iterator;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
-import org.inventory.core.services.api.actions.GenericObjectNodeAction;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.util.Lookup;
 import org.openide.util.Utilities;
-import org.openide.util.lookup.ServiceProvider;
 
 /**
  * Relates a VRF with a subnet
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-@ServiceProvider(service=GenericObjectNodeAction.class)
-public class RelateSubnetToVRFAction extends GenericObjectNodeAction{
+public class RelateSubnetToVRFAction extends GenericInventoryAction {
 
-    public RelateSubnetToVRFAction(){
+    private static RelateSubnetToVRFAction instance;
+    
+    private RelateSubnetToVRFAction() {
         putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELATE_VRF"));
+    }
+    
+    public static RelateSubnetToVRFAction getInstance() {
+        return instance == null ? new RelateSubnetToVRFAction() : instance;
     }
     
     @Override
@@ -64,7 +69,7 @@ public class RelateSubnetToVRFAction extends GenericObjectNodeAction{
     }
 
     @Override
-    public String getValidator() {
-        return Constants.VALIDATOR_SUBNET;
-    }    
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_IP_ADDRESS_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+    }
 }

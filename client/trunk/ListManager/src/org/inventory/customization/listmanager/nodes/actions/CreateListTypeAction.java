@@ -16,9 +16,10 @@
 package org.inventory.customization.listmanager.nodes.actions;
 
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectListItem;
+import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.customization.listmanager.nodes.ListTypeNode;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
@@ -27,7 +28,7 @@ import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
  * Action to create a new list type item
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public final class CreateListTypeAction extends AbstractAction {
+public final class CreateListTypeAction extends GenericInventoryAction {
     private ListTypeNode node;
     private CommunicationsStub com;
 
@@ -47,5 +48,10 @@ public final class CreateListTypeAction extends AbstractAction {
             //Refresh cache
             com.getList(node.getObject().getClassName(), false, true);
         }
+    }
+    
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_LIST_TYPE_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

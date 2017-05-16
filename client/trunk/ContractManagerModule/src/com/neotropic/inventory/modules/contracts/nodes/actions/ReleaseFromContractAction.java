@@ -24,9 +24,10 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.core.services.api.actions.GenericObjectNodeAction;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter;
 import org.openide.util.lookup.ServiceProvider;
@@ -43,6 +44,7 @@ public class ReleaseFromContractAction extends GenericObjectNodeAction implement
         if (JOptionPane.showConfirmDialog(null, 
                 "The selected objects will no longer be related to this contract\n Are you sure you want to continue?", "Warning", 
                 JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+            
             Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
 
             boolean success = true;
@@ -66,6 +68,11 @@ public class ReleaseFromContractAction extends GenericObjectNodeAction implement
     @Override
     public String getValidator() {
         return null;
+    }
+    
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_CONTRACT_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 
     @Override

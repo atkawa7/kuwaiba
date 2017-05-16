@@ -21,8 +21,9 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
-import org.inventory.core.services.api.actions.GenericObjectNodeAction;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.openide.util.lookup.ServiceProvider;
@@ -40,7 +41,9 @@ public class ConnectMirrorPortAction extends GenericObjectNodeAction {
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        LocalObjectLight[] siblings = CommunicationsStub.getInstance().getSiblings(object.getClassName(), object.getOid());
+        super.actionPerformed(e);
+        
+        LocalObjectLight[] siblings = CommunicationsStub.getInstance().getSiblings(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getOid());
         if (siblings == null){
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             return;
@@ -52,7 +55,7 @@ public class ConnectMirrorPortAction extends GenericObjectNodeAction {
         if (JOptionPane.showConfirmDialog(null, dialog, "Mirror Port Connection", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
             LocalObjectLight selectedObject = (LocalObjectLight)((JComboBox)dialog.getComponent("cmbSiblings")).getSelectedItem();
             if (selectedObject != null){
-                if (CommunicationsStub.getInstance().connectMirrorPort(object.getClassName(), object.getOid(),
+                if (CommunicationsStub.getInstance().connectMirrorPort(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getOid(),
                         selectedObject.getClassName(), selectedObject.getOid()))
                     NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Port mirrored successfully");
                 else
@@ -65,4 +68,9 @@ public class ConnectMirrorPortAction extends GenericObjectNodeAction {
     public String getValidator() {
         return Constants.VALIDATOR_PHYSICAL_ENDPOINT;
     }  
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_PHYSICAL_VIEW, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+    }
 }

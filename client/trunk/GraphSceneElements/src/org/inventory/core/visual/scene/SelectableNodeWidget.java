@@ -28,7 +28,6 @@ import org.openide.util.lookup.Lookups;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public abstract class SelectableNodeWidget extends Widget {
-    protected ObjectNode node;
     private Lookup lookup;
     
     public SelectableNodeWidget(Scene scene, LocalObjectLight businessObject) {

@@ -16,15 +16,16 @@
 package org.inventory.customization.classhierarchy.nodes.actions;
 
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalAttributeMetadata;
 import org.inventory.communications.core.LocalClassMetadata;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.communications.core.caching.Cache;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.customization.classhierarchy.nodes.ClassMetadataNode;
 import org.openide.util.actions.Presenter;
 
@@ -32,7 +33,7 @@ import org.openide.util.actions.Presenter;
  * Deletes an attribute
  * @author Adrian Martinez Molina <charles.bedon@kuwaiba.org>
  */
-public class DeleteAttributeAction extends AbstractAction implements Presenter.Popup{
+public class DeleteAttributeAction extends GenericInventoryAction implements Presenter.Popup{
 
     private ClassMetadataNode classNode;
     private CommunicationsStub com;
@@ -83,4 +84,8 @@ public class DeleteAttributeAction extends AbstractAction implements Presenter.P
         return deleteAttributeMenu;
     }
     
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_DATA_MODEL_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+    }
 }

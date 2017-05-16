@@ -13,20 +13,17 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.neotropic.inventory.modules.ipam.nodes.actions;
+package com.neotropic.inventory.modules.mpls.actions;
 
-import com.neotropic.inventory.modules.ipam.windows.BDIsInterfaceFrame;
+import com.neotropic.inventory.modules.mpls.windows.InterfaceFrame;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
-import org.inventory.core.services.api.actions.GenericObjectNodeAction;
-import org.openide.util.Lookup;
-import org.openide.util.Utilities;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -34,34 +31,49 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class RelateIPToBDIInterface extends GenericObjectNodeAction{
+public class RelateToInterfaceAction extends GenericObjectNodeAction {
 
-    public RelateIPToBDIInterface(){
-        putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELATE_TO_BDIS"));
+    public RelateToInterfaceAction(){
+        putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/mpls/Bundle").getString("LBL_RELATE_TO"));
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
+        super.actionPerformed(e);
+        
         List<LocalObjectLight> interfaces = new ArrayList<>();
         List<LocalObjectLight> objects = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_BRIDGEDOMAININTERFACE);
         if(objects != null){
             for(LocalObjectLight o : objects)
                 interfaces.add(o);
-        }      
-        Lookup.Result<LocalObjectLight> selectedNodes = Utilities.actionsGlobalContext().lookupResult(LocalObjectLight.class);
-        Collection<? extends LocalObjectLight> lookupResult = selectedNodes.allInstances();
-        List<LocalObjectLight> selectedObjects = new ArrayList<>();
-        Iterator<? extends LocalObjectLight> iterator = lookupResult.iterator();
-
-        while (iterator.hasNext())
-            selectedObjects.add((LocalObjectLight)iterator.next());
-
-        BDIsInterfaceFrame frame = new BDIsInterfaceFrame(selectedObjects, interfaces);
+        }
+        objects = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_VRFINSTANCE);
+        if(objects != null){
+            for(LocalObjectLight o : objects)
+                interfaces.add(o);
+        }
+        objects = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_MPLSTUNNEL);
+        if(objects != null){
+            for(LocalObjectLight o : objects)
+                interfaces.add(o);
+        }
+        objects = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_FRAMERELAYCIRCUIT);
+        if(objects != null){
+            for(LocalObjectLight o : objects)
+                interfaces.add(o);
+        }        
+        
+        InterfaceFrame frame = new InterfaceFrame(selectedObjects, interfaces);
         frame.setVisible(true);
     }
     
     @Override
     public String getValidator() {
-        return Constants.VALIDATOR_LOGICAL_SET;
+        return Constants.VALIDATOR_PHYSICAL_ENDPOINT;
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_MPLS_MODULE, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

@@ -18,7 +18,6 @@ package org.inventory.core.usermanager.nodes.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
-import javax.swing.AbstractAction;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -26,9 +25,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalUserGroupObject;
 import org.inventory.communications.core.LocalUserObject;
 import org.inventory.communications.core.LocalUserObjectLight;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.core.usermanager.nodes.GroupNode;
@@ -38,7 +39,7 @@ import org.openide.util.Utilities;
  * Creates a user in the current group
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-class CreateUserAction extends AbstractAction {
+class CreateUserAction extends GenericInventoryAction {
 
     public CreateUserAction() {
         putValue(NAME, "Create User");
@@ -93,5 +94,10 @@ class CreateUserAction extends AbstractAction {
                 NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "User created successfully");
             }
         }
+    }
+    
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_USER_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

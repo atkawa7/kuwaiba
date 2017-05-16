@@ -16,10 +16,11 @@
 package org.inventory.customization.classhierarchy.nodes.actions;
 
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadata;
+import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.customization.classhierarchy.nodes.ClassMetadataChildren;
 import org.inventory.customization.classhierarchy.nodes.ClassMetadataNode;
@@ -28,7 +29,7 @@ import org.inventory.customization.classhierarchy.nodes.ClassMetadataNode;
  * Action to delete a class metadata
  * @author Adrian Martinez Molina <charles.bedon@kuwaiba.org>
  */
-public class DeleteClassAction extends AbstractAction {
+public class DeleteClassAction extends GenericInventoryAction {
 
     private ClassMetadataNode node;
     private CommunicationsStub com;
@@ -53,5 +54,10 @@ public class DeleteClassAction extends AbstractAction {
         }
         else
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+    }
+    
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_DATA_MODEL_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

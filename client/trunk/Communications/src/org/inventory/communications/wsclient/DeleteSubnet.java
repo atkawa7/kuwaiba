@@ -10,12 +10,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for deleteSubnets complex type.
+ * <p>Java class for deleteSubnet complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="deleteSubnets">
+ * &lt;complexType name="deleteSubnet">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
@@ -32,13 +32,13 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "deleteSubnets", propOrder = {
+@XmlType(name = "deleteSubnet", propOrder = {
     "className",
     "oids",
     "releaseRelationships",
     "sessionId"
 })
-public class DeleteSubnets {
+public class DeleteSubnet {
 
     protected String className;
     @XmlElement(type = Long.class)

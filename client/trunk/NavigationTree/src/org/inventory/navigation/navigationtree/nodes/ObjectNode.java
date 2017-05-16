@@ -34,7 +34,7 @@ import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.util.Constants;
-import org.inventory.core.services.api.actions.GenericObjectNodeAction;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.navigationtree.nodes.actions.CreateBusinessObjectAction;
 import org.inventory.navigation.navigationtree.nodes.actions.CreateBusinessObjectFromTemplateAction;
@@ -70,7 +70,6 @@ import org.openide.util.lookup.Lookups;
  */
 public class ObjectNode extends AbstractNode implements PropertyChangeListener {
 
-    protected LocalObjectLight object;
     //There can be only one instance for OpenLocalExplorerAction, this attribute is a kind of singleton
     protected static OpenLocalExplorerAction explorerAction = new OpenLocalExplorerAction();
     protected CommunicationsStub com;
@@ -88,10 +87,9 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
     
     public ObjectNode(LocalObjectLight lol) {
         super(new ObjectChildren(), Lookups.singleton(lol));
-        this.object = lol;
         com = CommunicationsStub.getInstance();
         if (lol.getClassName() != null) {
-            object.addPropertyChangeListener(WeakListeners.propertyChange(this, object));
+            lol.addPropertyChangeListener(WeakListeners.propertyChange(this, lol));
             icon = com.getMetaForClass(lol.getClassName(), false).getSmallIcon();
             explorerAction.putValue(OpenLocalExplorerAction.NAME, "Open a Navigation Tree from Here");
         }
@@ -99,8 +97,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
 
     public ObjectNode(LocalObjectLight lol, boolean isLeaf) {
         super(Children.LEAF, Lookups.singleton(lol));
-        this.object = lol;
-        object.addPropertyChangeListener(WeakListeners.propertyChange(this, object));
+        lol.addPropertyChangeListener(WeakListeners.propertyChange(this, lol));
         com = CommunicationsStub.getInstance();
         icon = com.getMetaForClass(lol.getClassName(), false).getSmallIcon();
         explorerAction.putValue(OpenLocalExplorerAction.NAME, "Open a Navigation Tree from Here");
@@ -112,18 +109,20 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
      * @return returns the related business object
      */
     public LocalObjectLight getObject() {
-        return this.object;
+        return getLookup().lookup(LocalObjectLight.class);
     }
 
     @Override
     public String getDisplayName() {
-        return object.toString();
+        return getObject().toString();
     }
 
     @Override
     protected Sheet createSheet() {
         sheet = Sheet.createDefault();
         Set generalPropertySet = Sheet.createPropertiesSet(); //General attributes category
+        
+        LocalObjectLight object = getObject();
         LocalClassMetadata meta = com.getMetaForClass(object.getClassName(), false);
         if (meta == null) {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
@@ -203,7 +202,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
     }
 
     public boolean refresh() {
-             
+         LocalObjectLight object = getObject();
         //Force to get the attributes again, but only if there's a property sheet already asigned
         if (this.sheet != null) 
             setSheet(createSheet());
@@ -246,6 +245,8 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
     @Override
     public Action[] getActions(boolean context) {
         List<Action> actions = new ArrayList<>();
+        LocalObjectLight object = getObject();
+        
         actions.add(createAction == null ? createAction = new CreateBusinessObjectAction(this) : createAction);
         actions.add(createFromTemplateAction == null ? createFromTemplateAction = new CreateBusinessObjectFromTemplateAction() : createFromTemplateAction);
         if (getParentNode() != null) {
@@ -263,15 +264,13 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
             actions.add(null); //Separator
         }
         
-        actions.add(ExecuteClassLevelReportAction.createExecuteReportAction());
+        actions.add(ExecuteClassLevelReportAction.getInstance());
         
         for (GenericObjectNodeAction action : Lookup.getDefault().lookupAll(GenericObjectNodeAction.class)) {
             if (action.getValidator() == null) {
-                action.setObject(object);
                 actions.add(action);
             } else {
                 if (com.getMetaForClass(object.getClassName(), false).getValidator(action.getValidator()) == 1) {
-                    action.setObject(object);
                     actions.add(action);
                 }
             }
@@ -297,7 +296,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
 
     @Override
     public Transferable drag() throws IOException {
-        return object;
+        return getObject();
     }
 
     //This method is called when the node is copied or cut
@@ -313,6 +312,8 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
         //The clipboard does not contain an ObjectNode
         if (!ObjectNode.class.isInstance(dropNode))
             return null;
+        
+        LocalObjectLight object = getObject();
             
         //Ignore those noisy attempts to move it to itself
         if (dropNode.getLookup().lookup(LocalObjectLight.class).equals(object))
@@ -329,7 +330,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
                 try {
                     LocalObjectLight obj = dropNode.getLookup().lookup(LocalObjectLight.class);
                     //Check if the current object can contain the drop node
-                    List<LocalClassMetadataLight> possibleChildren = com.getPossibleChildren(object.getClassName(), false);
+                    List<LocalClassMetadataLight> possibleChildren = com.getPossibleChildren(getObject().getClassName(), false);
                     for (LocalClassMetadataLight lcml : possibleChildren) {
                         if (lcml.getClassName().equals(obj.getClassName()))
                             canMove = true;
@@ -359,7 +360,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
                         }
                     } else 
                         NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE,
-                                String.format("An instance of %s can't be moved into an instance of %s", obj.getClassName(), object.getClassName()));
+                                String.format("An instance of %s can't be moved into an instance of %s", obj.getClassName(), getObject().getClassName()));
                 } catch (Exception ex) {
                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());
                 }
@@ -400,9 +401,9 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
 
     @Override
     public void setName(String newName) {
-        LocalObject update = new LocalObject(object.getClassName(), object.getOid(), new String[]{Constants.PROPERTY_NAME}, new Object[]{newName});
+        LocalObject update = new LocalObject(getObject().getClassName(), getObject().getOid(), new String[]{Constants.PROPERTY_NAME}, new Object[]{ newName });
         if (com.saveObject(update)) {
-            object.setName(newName);
+            getObject().setName(newName);
             if (getSheet() != null)
                 setSheet(createSheet());
         }
@@ -412,11 +413,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
 
     @Override
     public String getName() {
-        return getEditableText();
-    }
-
-    public String getEditableText() {
-        return object.getName() == null ? "" : object.getName();
+        return getObject().getName() == null ? "" : getObject().getName();
     }
 
     /**
@@ -426,11 +423,11 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getSource().equals(object)) {
-            object = (LocalObjectLight) evt.getSource();
+        if (evt.getSource().equals(getObject())) {
             if (evt.getPropertyName().equals(Constants.PROPERTY_NAME)) {
-                setDisplayName(getDisplayName());
-                fireNameChange(null, object.getName()); //Weird, this should be fireDisplayNameChange, but it isn't
+                getObject().setName((String)evt.getNewValue());
+                setDisplayName((String)evt.getNewValue());
+                fireNameChange(null, ""); //Weird, this should be fireDisplayNameChange, but it isn't
             }
         }
     }
@@ -446,8 +443,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 79 * hash + (this.object != null ? this.object.hashCode() : 0);
-        return hash;
+        return super.hashCode();
     }
+
 }

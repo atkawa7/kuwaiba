@@ -15,53 +15,48 @@
  */
 package com.neotropic.inventory.modules.ipam.nodes.actions;
 
-import com.neotropic.inventory.modules.ipam.nodes.SubnetPoolChildren;
 import java.awt.event.ActionEvent;
-import static javax.swing.Action.NAME;
 import org.inventory.communications.CommunicationsStub;
 import com.neotropic.inventory.modules.ipam.nodes.SubnetPoolNode;
 import java.awt.Dimension;
-import java.util.Iterator;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.core.services.api.actions.GenericObjectNodeAction;
+import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
+import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
 import org.openide.util.Utilities;
 
 /**
  * This action allows to create a pool of subnets
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class CreateSubnetPoolAction extends GenericObjectNodeAction{
+public class CreateSubnetPoolAction extends GenericInventoryAction {
     
     /**
      * Reference to the communications stub singleton
      */
     private CommunicationsStub com;
+    private static CreateSubnetPoolAction instance;
     
-    private SubnetPoolNode subnetPoolNode;
-    
-    public CreateSubnetPoolAction(SubnetPoolNode subnetPoolNode) {
+    public CreateSubnetPoolAction() {
         putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_NEW_FOLDER"));
         com = CommunicationsStub.getInstance();
-        this.subnetPoolNode = subnetPoolNode;
+    }
+    
+    public static CreateSubnetPoolAction getInstance() {
+        return instance == null ? new CreateSubnetPoolAction() : instance;
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        Iterator<? extends SubnetPoolNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(SubnetPoolNode.class).allInstances().iterator();
-        String className = "";
+        SubnetPoolNode selectedNode = Utilities.actionsGlobalContext().lookup(SubnetPoolNode.class);
         
-        if (!selectedNodes.hasNext())
+        if (selectedNode == null)
             return;
-        
-        while (selectedNodes.hasNext()) {
-            SubnetPoolNode selectedNode = (SubnetPoolNode)selectedNodes.next();
-            className = selectedNode.getSubnetPool().getClassName();
-        }
         
         JTextField txtName = new JTextField(), txtDescription =  new JTextField();
         txtName.setName("txtName"); //NOI18N
@@ -78,22 +73,22 @@ public class CreateSubnetPoolAction extends GenericObjectNodeAction{
                 java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_NEW_FOLDER"),
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION){
             
-            LocalObjectLight newPool = com.createSubnetPool(subnetPoolNode.getSubnetPool().getOid(), 
-                    className,
+            LocalObjectLight newPool = com.createSubnetPool(selectedNode.getSubnetPool().getOid(), 
+                    selectedNode.getSubnetPool().getClassName(),
                     ((JTextField)pnlMyDialog.getComponent("txtName")).getText(), 
                     ((JTextField)pnlMyDialog.getComponent("txtDescription")).getText(), 3); //Type of pool module component. These pools are used in models and are in the lower levels of the pool containment hierarchy
             
             if (newPool ==  null)
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             else{
-                ((SubnetPoolChildren)subnetPoolNode.getChildren()).addNotify();
+                ((AbstractChildren)selectedNode.getChildren()).addNotify();
                 NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_CREATED"));
             }
         }
     }
 
     @Override
-    public String getValidator() {
-        return null;
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_IP_ADDRESS_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

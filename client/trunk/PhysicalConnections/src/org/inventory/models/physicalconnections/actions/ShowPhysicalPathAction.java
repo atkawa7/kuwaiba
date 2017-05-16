@@ -18,8 +18,9 @@ package org.inventory.models.physicalconnections.actions;
 import java.awt.event.ActionEvent;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
-import org.inventory.core.services.api.actions.GenericObjectNodeAction;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.models.physicalconnections.windows.PhysicalPathTopComponent;
 import org.openide.util.lookup.ServiceProvider;
@@ -37,11 +38,13 @@ public class ShowPhysicalPathAction extends GenericObjectNodeAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        LocalObjectLight[] trace = CommunicationsStub.getInstance().getPhysicalPath(object.getClassName(), object.getOid());
+        super.actionPerformed(e);
+        
+        LocalObjectLight[] trace = CommunicationsStub.getInstance().getPhysicalPath(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getOid());
         if (trace == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else{
-            PhysicalPathTopComponent tc = new PhysicalPathTopComponent(object, trace);
+            PhysicalPathTopComponent tc = new PhysicalPathTopComponent(selectedObjects.get(0), trace);
             tc.open();
             tc.requestActive();
         }
@@ -50,5 +53,10 @@ public class ShowPhysicalPathAction extends GenericObjectNodeAction {
     @Override
     public String getValidator() {
         return Constants.VALIDATOR_PHYSICAL_ENDPOINT;
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_PHYSICAL_VIEW, LocalPrivilege.ACCESS_LEVEL_READ);
     }
 }

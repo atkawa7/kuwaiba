@@ -22,12 +22,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
-import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalReportLight;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.MenuScroller;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
@@ -38,17 +39,15 @@ import org.openide.util.actions.Presenter;
  * Shows the class reports available for the selected node (if any) and run any of them
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ExecuteClassLevelReportAction extends AbstractAction implements Presenter.Popup {
+public class ExecuteClassLevelReportAction extends GenericInventoryAction implements Presenter.Popup {
     private static ExecuteClassLevelReportAction instance;
     
-    public ExecuteClassLevelReportAction() {
+    private ExecuteClassLevelReportAction() {
         putValue(NAME, "Reports");
     }
     
-    public static ExecuteClassLevelReportAction createExecuteReportAction() {
-        if (instance == null)
-            instance = new ExecuteClassLevelReportAction();
-        return instance;
+    public static ExecuteClassLevelReportAction getInstance() {
+        return instance == null ? new ExecuteClassLevelReportAction() : instance;
     }
     
     @Override
@@ -133,6 +132,11 @@ public class ExecuteClassLevelReportAction extends AbstractAction implements Pre
             mnuPossibleChildren.setEnabled(false);
             return mnuPossibleChildren;
         }
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_REPORTS, LocalPrivilege.ACCESS_LEVEL_READ);
     }
     
 }

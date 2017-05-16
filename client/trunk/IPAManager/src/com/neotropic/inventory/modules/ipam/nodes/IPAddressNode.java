@@ -41,7 +41,7 @@ public class IPAddressNode extends ObjectNode {
     @Override
     protected Sheet createSheet(){
         LocalObject sp = com.getObjectInfo(getObject().getClassName(), getObject().getOid());
-        LocalObject lo = com.getObjectInfo(object.getClassName(), object.getOid());
+        LocalObject lo = com.getObjectInfo(getObject().getClassName(), getObject().getOid());
         
         sheet = Sheet.createDefault();
         Sheet.Set generalPropertySet = Sheet.createPropertiesSet(); //General attributes category
@@ -80,7 +80,6 @@ public class IPAddressNode extends ObjectNode {
                 Constants.PROPERTY_STATE,
                 Constants.PROPERTY_STATE,list, this, val)); 
         
-        generalPropertySet.setName("1");
         generalPropertySet.setDisplayName(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_GENERAL_ATTRIBUTES"));
         sheet.put(generalPropertySet);
         return sheet;

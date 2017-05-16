@@ -18,7 +18,6 @@ package org.inventory.models.physicalconnections.windows;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Set;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
@@ -26,16 +25,9 @@ import org.inventory.core.visual.export.ExportScenePanel;
 import org.inventory.core.visual.export.filters.ImageFilter;
 import org.inventory.core.visual.export.filters.SceneExportFilter;
 import org.inventory.models.physicalconnections.scene.PhysicalPathScene;
-import org.inventory.models.physicalconnections.scene.SelectableWidget;
-import org.netbeans.api.visual.model.ObjectSceneEvent;
-import org.netbeans.api.visual.model.ObjectSceneEventType;
-import org.netbeans.api.visual.model.ObjectSceneListener;
-import org.netbeans.api.visual.model.ObjectState;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.explorer.ExplorerManager;
-import org.openide.explorer.ExplorerUtils;
-import org.openide.nodes.Node;
 import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -44,7 +36,7 @@ import org.openide.windows.WindowManager;
  * Shows an editor for a given object embedding a PropertySheetView
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class GraphicalPhysicalPathTopComponent extends TopComponent implements ExplorerManager.Provider{
+public class GraphicalPhysicalPathTopComponent extends TopComponent implements ExplorerManager.Provider {
     private ExplorerManager em;
     private JScrollPane pnlScrollMain;
     private PhysicalPathScene scene;
@@ -53,11 +45,10 @@ public class GraphicalPhysicalPathTopComponent extends TopComponent implements E
 
     public GraphicalPhysicalPathTopComponent(PhysicalPathScene scene) {
         this.scene = scene;
-        scene.addObjectSceneListener(new LocalSceneListener(), ObjectSceneEventType.OBJECT_SELECTION_CHANGED);
         this.setDisplayName("Physical Path");
         setLayout(new BorderLayout());
         em = new ExplorerManager();
-        associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
+        associateLookup(scene.getLookup());
         initComponents();
     }
     
@@ -88,12 +79,6 @@ public class GraphicalPhysicalPathTopComponent extends TopComponent implements E
     public int getPersistenceType() {
         return TopComponent.PERSISTENCE_NEVER;
     }
-
-    @Override
-    public void componentOpened() {
-        //This requires that CoreUI to be enable in the project
-        
-    }
     
     @Override
     public void componentClosed() {
@@ -103,39 +88,5 @@ public class GraphicalPhysicalPathTopComponent extends TopComponent implements E
     @Override
     public ExplorerManager getExplorerManager() {
         return em;
-    }
-    
-    private class LocalSceneListener implements ObjectSceneListener {
-            @Override
-            public void objectAdded(ObjectSceneEvent event, Object addedObject) {}
-
-            @Override
-            public void objectRemoved(ObjectSceneEvent event, Object removedObject) {}
-
-            @Override
-            public void objectStateChanged(ObjectSceneEvent event, Object changedObject, ObjectState previousState, ObjectState newState) {}
-
-            @Override
-            public void selectionChanged(ObjectSceneEvent event, Set<Object> previousSelection, Set<Object> newSelection) {
-                if (newSelection.size() == 1){
-                    SelectableWidget selectedWidget = (SelectableWidget)scene.findWidget(newSelection.iterator().next());
-                    selectedWidget.highlight();
-                    setActivatedNodes(new Node[]{selectedWidget.getNode()});
-                }
-                    
-                for (Object object : previousSelection){
-                    SelectableWidget widget = (SelectableWidget)scene.findWidget(object);
-                    widget.reset();
-                }
-            }
-
-            @Override
-            public void highlightingChanged(ObjectSceneEvent event, Set<Object> previousHighlighting, Set<Object> newHighlighting) {}
-
-            @Override
-            public void hoverChanged(ObjectSceneEvent event, Object previousHoveredObject, Object newHoveredObject) {}
-
-            @Override
-            public void focusChanged(ObjectSceneEvent event, Object previousFocusedObject, Object newFocusedObject) {}
     }
 }

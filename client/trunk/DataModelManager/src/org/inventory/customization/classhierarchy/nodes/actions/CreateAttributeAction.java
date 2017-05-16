@@ -19,16 +19,17 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javax.swing.AbstractAction;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.communications.core.caching.Cache;
 import org.inventory.communications.util.Constants;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.customization.classhierarchy.nodes.ClassMetadataNode;
 
@@ -36,7 +37,7 @@ import org.inventory.customization.classhierarchy.nodes.ClassMetadataNode;
  *  Creates an attribute metadata
  * @author Adrian Martinez Molina <charles.bedon@kuwaiba.org>
  */
-public class CreateAttributeAction extends AbstractAction {
+public class CreateAttributeAction extends GenericInventoryAction {
     
     private ClassMetadataNode classNode;
 
@@ -93,5 +94,10 @@ public class CreateAttributeAction extends AbstractAction {
                     else
                         NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         }
+    }
+    
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_DATA_MODEL_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

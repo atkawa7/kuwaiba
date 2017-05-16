@@ -17,8 +17,9 @@ package com.neotropic.inventory.modules.contracts.nodes.actions.generic;
 
 import java.awt.event.ActionEvent;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.core.services.api.actions.GenericObjectNodeAction;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -33,8 +34,10 @@ public class GeneralPurposeDeleteContractAction extends GenericObjectNodeAction 
     }
     
     @Override
-    public void actionPerformed(ActionEvent e) {      
-        if (CommunicationsStub.getInstance().deleteObject(object.getClassName(), object.getOid()))
+    public void actionPerformed(ActionEvent e) {
+        super.actionPerformed(e);
+        
+        if (CommunicationsStub.getInstance().deleteObject(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getOid()))
             NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "The selected contract was deleted");
         else
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());            
@@ -45,4 +48,8 @@ public class GeneralPurposeDeleteContractAction extends GenericObjectNodeAction 
         return "contract";
     }
     
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_CONTRACT_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+    }
 }

@@ -18,9 +18,10 @@ package org.inventory.core.history.actions;
 import java.awt.event.ActionEvent;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalApplicationLogEntry;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.history.windows.ObjectAuditTrailTopComponent;
-import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.windows.TopComponent;
 
@@ -39,11 +40,13 @@ public final class ShowObjectAuditTrailAction extends GenericObjectNodeAction {
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        LocalApplicationLogEntry[] entries = com.getBusinessObjectAuditTrail(object.getClassName(), object.getOid());
+        super.actionPerformed(ev);
+        
+        LocalApplicationLogEntry[] entries = com.getBusinessObjectAuditTrail(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getOid());
         if (entries == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else{
-            TopComponent tc = new ObjectAuditTrailTopComponent(object, entries);
+            TopComponent tc = new ObjectAuditTrailTopComponent(selectedObjects.get(0), entries);
             tc.open();
             tc.requestActive();
         }
@@ -52,5 +55,10 @@ public final class ShowObjectAuditTrailAction extends GenericObjectNodeAction {
     @Override
     public String getValidator() {
         return null; //Enable this action for any object
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_AUDIT_TRAIL, LocalPrivilege.ACCESS_LEVEL_READ);
     }
 }

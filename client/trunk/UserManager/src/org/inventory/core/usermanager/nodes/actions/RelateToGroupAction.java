@@ -19,12 +19,13 @@ package org.inventory.core.usermanager.nodes.actions;
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
 import java.util.List;
-import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalUserGroupObject;
 import org.inventory.communications.core.LocalUserObject;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.usermanager.nodes.UserNode;
 import org.openide.util.Utilities;
@@ -34,7 +35,7 @@ import org.openide.util.actions.Presenter;
  * Relates a user to an existing group
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-class RelateToGroupAction extends AbstractAction implements Presenter.Popup {
+class RelateToGroupAction extends GenericInventoryAction implements Presenter.Popup {
     
     private LocalUserObject currentUser;
     
@@ -78,5 +79,10 @@ class RelateToGroupAction extends AbstractAction implements Presenter.Popup {
                 mnuGroups.setEnabled(true);
         }
         return mnuGroups;
+    }
+    
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_USER_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

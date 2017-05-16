@@ -23,9 +23,10 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.core.services.api.actions.GenericObjectNodeAction;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.kuwaiba.management.services.nodes.ServiceChildren;
 import org.kuwaiba.management.services.nodes.ServiceNode;
 import org.openide.util.Utilities;
@@ -101,6 +102,11 @@ public class ReleaseFromServiceAction extends GenericObjectNodeAction implements
         }
         
         return mnuServices;
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_SERVICE_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
     
 }

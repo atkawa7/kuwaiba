@@ -16,7 +16,7 @@
 
 package org.inventory.core.usermanager.nodes.actions;
 
-import javax.swing.AbstractAction;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 
 /**
  * Action factory for the User Manager module
@@ -31,43 +31,43 @@ public class UserManagerActionFactory {
     private static RemoveFromGroupAction removeFromGroupAction;
     private static RefreshUserListAction refreshUserListAction;
     
-    public static AbstractAction getCreateUserAction() {
+    public static GenericInventoryAction getCreateUserAction() {
         if (createUserAction == null)
             createUserAction = new CreateUserAction();
         return createUserAction;
     }
     
-    public static AbstractAction getCreateGroupAction() {
+    public static GenericInventoryAction getCreateGroupAction() {
         if (createGroupAction == null)
             createGroupAction = new CreateGroupAction();
         return createGroupAction;
     }
     
-    public static AbstractAction getDeleteUserAction() {
+    public static GenericInventoryAction getDeleteUserAction() {
         if (deleteUserAction == null)
             deleteUserAction = new DeleteUserAction();
         return deleteUserAction;
     }
     
-    public static AbstractAction getDeleteGroupAction() {
+    public static GenericInventoryAction getDeleteGroupAction() {
         if (deleteGroupAction == null)
             deleteGroupAction = new DeleteGroupAction();
         return deleteGroupAction;
     }
     
-    public static AbstractAction getRelateToGroupAction() {
+    public static GenericInventoryAction getRelateToGroupAction() {
         if (relateToGroupAction == null)
             relateToGroupAction = new RelateToGroupAction();
         return relateToGroupAction;
     }
     
-    public static AbstractAction getRemoveFromGroupAction() {
+    public static GenericInventoryAction getRemoveFromGroupAction() {
         if (removeFromGroupAction == null)
             removeFromGroupAction = new RemoveFromGroupAction();
         return removeFromGroupAction;
     }
     
-    public static AbstractAction getRefreshUserListAction() {
+    public static GenericInventoryAction getRefreshUserListAction() {
         if (refreshUserListAction == null)
             refreshUserListAction = new RefreshUserListAction();
         return refreshUserListAction;

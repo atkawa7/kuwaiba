@@ -19,12 +19,13 @@ import com.neotropic.inventory.modules.contracts.nodes.ContractPoolNode;
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
 import java.util.List;
-import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter;
@@ -33,7 +34,7 @@ import org.openide.util.actions.Presenter;
  * This action allows to create a contract
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class CreateContractAction extends AbstractAction implements Presenter.Popup {
+public class CreateContractAction extends GenericInventoryAction implements Presenter.Popup {
     private CommunicationsStub com = CommunicationsStub.getInstance();
     public CreateContractAction() {
         putValue(NAME, "New Contract");
@@ -89,5 +90,10 @@ public class CreateContractAction extends AbstractAction implements Presenter.Po
         }
         
         return mnuPossibleContracts;
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_CONTRACT_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

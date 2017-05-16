@@ -18,8 +18,9 @@ package org.inventory.models.physicalconnections.actions;
 import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
-import org.inventory.core.services.api.actions.GenericObjectNodeAction;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -37,12 +38,13 @@ public class ReleaseMirrorPortAction extends GenericObjectNodeAction {
     
     @Override
     public void actionPerformed(ActionEvent e) {
+        super.actionPerformed(e);
         
         if (JOptionPane.showConfirmDialog(null, 
                 "Are you sure you want to release this mirror port?", "Warning", 
                 JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
         
-            if (CommunicationsStub.getInstance().releaseMirrorPort(object.getClassName(), object.getOid()))
+            if (CommunicationsStub.getInstance().releaseMirrorPort(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getOid()))
                 NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Miror port released successfully");
             else
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());        
@@ -52,5 +54,10 @@ public class ReleaseMirrorPortAction extends GenericObjectNodeAction {
     @Override
     public String getValidator() {
         return Constants.VALIDATOR_PHYSICAL_ENDPOINT;
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_PHYSICAL_VIEW, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

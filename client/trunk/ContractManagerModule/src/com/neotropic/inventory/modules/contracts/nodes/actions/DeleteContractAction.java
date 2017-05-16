@@ -19,9 +19,10 @@ import com.neotropic.inventory.modules.contracts.nodes.ContractNode;
 import com.neotropic.inventory.modules.contracts.nodes.ContractPoolNode;
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
-import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.util.Utilities;
 
@@ -29,7 +30,7 @@ import org.openide.util.Utilities;
  * Deletes a contract
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class DeleteContractAction extends AbstractAction {
+public class DeleteContractAction extends GenericInventoryAction {
 
     public DeleteContractAction() {
         putValue(NAME, "Delete Contract");
@@ -57,4 +58,8 @@ public class DeleteContractAction extends AbstractAction {
             
     }
     
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_CONTRACT_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+    }
 }

@@ -23,6 +23,7 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.views.objectview.ObjectViewService;
 import org.netbeans.api.visual.widget.Widget;
 
@@ -51,40 +52,59 @@ public class RackViewBuilder implements AbstractViewBuilder {
         if (rack == null)
             throw new IllegalArgumentException(com.getError());
         
-        Integer rackUnits = (Integer)rack.getAttribute(Constants.PROPERTY_RACKUNITS);
+        Integer rackUnits = (Integer)rack.getAttribute(Constants.PROPERTY_RACK_UNITS);
         if (rackUnits == null || rackUnits == 0)
-            throw new IllegalArgumentException(String.format("Attribute %s in rack %s does not exist or is not set correctly", Constants.PROPERTY_RACKUNITS, lol.toString()));
-        else{
+            throw new IllegalArgumentException(String.format("Attribute %s in rack %s does not exist or is not set correctly", Constants.PROPERTY_RACK_UNITS, lol));
+        else {
+            
+            int rackHeight = RackViewScene.RACK_UNIT_IN_PX * rackUnits;
+            
+            Boolean ascending = (Boolean)rack.getAttribute(Constants.PROPERTY_RACK_UNITS_NUMBERING);      
+            if (ascending == null) {
+                ascending = true;
+                NotificationUtil.getInstance().showSimplePopup("Warning", NotificationUtil.INFO_MESSAGE, String.format("The rack unit sorting has not been set. Ascending is assumed"));
+            }
+            
             List<LocalObjectLight> children = com.getObjectChildren(lol.getOid(), lol.getClassName());
             if (children == null)
                 throw new IllegalArgumentException(com.getError());
-            else{
+            else {
                 int rackUnitsCounter = 0;
                 for (LocalObjectLight child : children){
                     LocalObject theWholeChild = com.getObjectInfo(child.getClassName(), child.getOid());
                     if (theWholeChild == null)
                         throw new IllegalArgumentException(com.getError());
                         
-                    Integer elementRackUnits = (Integer)theWholeChild.getAttribute(Constants.PROPERTY_RACKUNITS);
+                    Integer elementRackUnits = (Integer)theWholeChild.getAttribute(Constants.PROPERTY_RACK_UNITS);
                     Integer position = (Integer)theWholeChild.getAttribute(Constants.PROPERTY_POSITION);
                     
-                    if (elementRackUnits == null ||  position == null || elementRackUnits == 0 || position == 0) 
+                    if (elementRackUnits == null ||  position == null) 
                         throw new IllegalArgumentException(String.format("Attribute %s or %s does not exist or is not set correctly in element %s", 
-                                Constants.PROPERTY_RACKUNITS, Constants.PROPERTY_POSITION, child.toString()));
+                                Constants.PROPERTY_RACK_UNITS, Constants.PROPERTY_POSITION, child.toString()));
                         
+                    if (elementRackUnits < 1 || position < 1) //Some children of the rack do not need to be displayed because they don't use any rack unit
+                        continue;
                     
                     Widget newElement = scene.addNode(theWholeChild);
                     newElement.setPreferredSize(new Dimension(RackViewScene.STANDARD_RACK_WIDTH, RackViewScene.RACK_UNIT_IN_PX * elementRackUnits));
-                    newElement.setPreferredLocation(new Point(0, RackViewScene.RACK_UNIT_IN_PX * position - RackViewScene.RACK_UNIT_IN_PX));
+                    
+                    //Rack position 1 is on top if ascending = true, else it starts from the bottom 
+                    if (ascending)
+                        newElement.setPreferredLocation(new Point(0, RackViewScene.RACK_UNIT_IN_PX * position - RackViewScene.RACK_UNIT_IN_PX));
+                    else
+                        newElement.setPreferredLocation(new Point(0, rackHeight - RackViewScene.RACK_UNIT_IN_PX * position));
+                    
                     rackUnitsCounter += elementRackUnits;
                 }
                 
                 if (rackUnitsCounter > rackUnits)
                     throw new IllegalArgumentException(String.format("The sum of the sizes of the elements (%s) exceeds the rack capacity (%s)", rackUnitsCounter, rackUnits));
                     
-                scene.getRackWidget().setPreferredSize(new Dimension(RackViewScene.STANDARD_RACK_WIDTH , RackViewScene.RACK_UNIT_IN_PX * rackUnits));
+                scene.getRackWidget().setPreferredSize(new Dimension(RackViewScene.STANDARD_RACK_WIDTH , rackHeight));
+                
                 for (String attribute : rack.getObjectMetadata().getAttributeNames())
                     scene.addInfoLabel(attribute +": " + (rack.getAttribute(attribute) == null ? "" : rack.getAttribute(attribute).toString()), false);
+                
                 scene.addInfoLabel("Usage Percentage: "+ Math.round((float)rackUnitsCounter * 100/rackUnits) +"% (" + rackUnitsCounter + "U/" + rackUnits + "U)", true);
             }
         }
@@ -109,7 +129,7 @@ public class RackViewBuilder implements AbstractViewBuilder {
 
     @Override
     public void saveView() {
-        JOptionPane.showMessageDialog(null, "This view does not support the selected action", 
+        JOptionPane.showMessageDialog(null, "This view can not be saved. Try exporting it to an image file instead.", 
                     "Information", JOptionPane.INFORMATION_MESSAGE);
     }
 }

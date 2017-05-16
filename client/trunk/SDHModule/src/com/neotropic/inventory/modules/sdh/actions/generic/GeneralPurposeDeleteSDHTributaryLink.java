@@ -18,10 +18,11 @@ package com.neotropic.inventory.modules.sdh.actions.generic;
 import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.core.services.api.actions.GenericObjectNodeAction;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.openide.util.Utilities;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -47,7 +48,7 @@ public class GeneralPurposeDeleteSDHTributaryLink extends GenericObjectNodeActio
                     "This will delete all relevant relationships. \n Are you sure you want to do this?", 
                     "Delete Tributary Link", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
 
-                if (CommunicationsStub.getInstance().deleteSDHTributaryLink(object.getClassName(), object.getOid())) {
+                if (CommunicationsStub.getInstance().deleteSDHTributaryLink(selectedNode.getObject().getClassName(), selectedNode.getObject().getOid())) {
                     //If the node is on a tree, update the list
                     if (selectedNode.getParentNode() != null && AbstractChildren.class.isInstance(selectedNode.getParentNode().getChildren()))
                         ((AbstractChildren)selectedNode.getParentNode().getChildren()).addNotify();
@@ -62,6 +63,11 @@ public class GeneralPurposeDeleteSDHTributaryLink extends GenericObjectNodeActio
     @Override
     public String getValidator() {
         return "sdhTributaryLink";
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_SDH_MODULE, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }
     

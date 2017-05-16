@@ -13,12 +13,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.neotropic.inventory.modules.mpls.actions;
+package com.neotropic.inventory.modules.ipam.nodes.actions;
 
-import com.neotropic.inventory.modules.mpls.windows.VlansFrame;
+import com.neotropic.inventory.modules.ipam.windows.BDIsInterfaceFrame;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.List;
-import static javax.swing.Action.NAME;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
@@ -28,38 +28,37 @@ import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAc
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- * Relates a VRF with a VLAN
+ * Actions to relate a Service Instance to a BridgeDomain
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class RelateToVlanAction extends GenericObjectNodeAction {
-    
-    public RelateToVlanAction() {
-        putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/mpls/Bundle").getString("LBL_RELATE_VLAN"));
+public class RelateIPToBDIInterfaceAction extends GenericObjectNodeAction {
+
+    public RelateIPToBDIInterfaceAction(){
+        putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELATE_TO_BDIS"));
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
         
-        List<LocalObjectLight> vlans = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_VLAN);
+        List<LocalObjectLight> bdis = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_BRIDGEDOMAININTERFACE);
         
-        if (vlans ==  null)
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-        
-        else {
-            VlansFrame frame = new VlansFrame(selectedObjects, vlans, Constants.CLASS_VLAN);
+        if (bdis != null) {
+            List<LocalObjectLight> interfaces = new ArrayList<>(bdis);
+            BDIsInterfaceFrame frame = new BDIsInterfaceFrame(selectedObjects, interfaces);
             frame.setVisible(true);
-        }
+        } else
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
     }
-
+    
     @Override
     public String getValidator() {
-        return Constants.VALIDATOR_VLAN;
+        return Constants.VALIDATOR_LOGICAL_SET;
     }
     
     @Override
     public LocalPrivilege getPrivilege() {
-        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_MPLS_MODULE, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_IP_ADDRESS_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

@@ -19,28 +19,35 @@ package org.kuwaiba.management.services.nodes.actions.generic;
 import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.core.services.api.actions.GenericObjectNodeAction;
+import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-//import org.openide.util.lookup.ServiceProvider;
+import org.openide.util.Utilities;
 
 /**
  * General purpose version of the DeleteServiceAction, to be used outside the Service Manager module
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-//@ServiceProvider(service=GenericObjectNodeAction.class)
-public class GeneralPurposeDeleteServiceAction extends GenericObjectNodeAction {
+public class GeneralPurposeDeleteServiceAction extends GenericInventoryAction {
 
-    public GeneralPurposeDeleteServiceAction() {
+    private static GeneralPurposeDeleteServiceAction instance;
+    
+    private GeneralPurposeDeleteServiceAction() {
         putValue(NAME, "Delete Service");
+    }
+    
+    public static GeneralPurposeDeleteServiceAction getInstance() {
+        return instance == null ? new GeneralPurposeDeleteServiceAction() : instance;
     }
     
     @Override
     public void actionPerformed(ActionEvent ev) {
-
+        LocalObjectLight selectedObject = Utilities.actionsGlobalContext().lookup(LocalObjectLight.class);
         if(JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this service? All resources associated will be freed",
                 "Delete Service",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
                         
-            if (CommunicationsStub.getInstance().deleteObject(object.getClassName(), object.getOid()))              
+            if (CommunicationsStub.getInstance().deleteObject(selectedObject.getClassName(), selectedObject.getOid()))              
                 NotificationUtil.getInstance().showSimplePopup("Success", 
                         NotificationUtil.INFO_MESSAGE, "The service was deleted successfully");
             else
@@ -49,7 +56,7 @@ public class GeneralPurposeDeleteServiceAction extends GenericObjectNodeAction {
     }
 
     @Override
-    public String getValidator() {
-        return "service"; //NOI18N
+    public LocalPrivilege getPrivilege() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

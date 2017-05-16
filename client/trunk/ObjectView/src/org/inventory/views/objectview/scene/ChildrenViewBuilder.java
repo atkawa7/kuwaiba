@@ -238,9 +238,7 @@ public class ChildrenViewBuilder implements AbstractViewBuilder {
         }
 
         //TODO: This algorithm to find the endpoints for a connection could be improved in many ways
-        for (LocalObject container : myPhysicalConnections){
-            System.out.println(container.getName() + "(" +container.getOid() + ")");
-            
+        for (LocalObject container : myPhysicalConnections) {            
             List<LocalObjectLight> aSide = com.getSpecialAttribute(container.getClassName(), container.getOid(),"endpointA");
             if (aSide == null)
                 return;

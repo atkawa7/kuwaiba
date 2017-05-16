@@ -28,6 +28,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
@@ -145,7 +146,7 @@ public class SDHConnectionWizard {
                     else {
                         LocalObjectLight service = (LocalObjectLight)wizardDescriptor.getProperty("service");
                         if (service != null) {
-                            if (!com.associateObjectsToService(new String[] { newTributaryLink.getClassName() }, new Long[] { newTributaryLink.getOid()}, service.getClassName(), service.getOid()))
+                            if (!com.associateObjectsToService(Arrays.asList(newTributaryLink.getClassName()), Arrays.asList(newTributaryLink.getOid()), service.getClassName(), service.getOid()))
                                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE, com.getError());
                         }
                         NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Tributary link successfully created");

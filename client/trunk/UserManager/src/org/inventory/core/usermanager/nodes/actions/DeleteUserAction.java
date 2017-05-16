@@ -20,10 +20,11 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalUserObject;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.usermanager.nodes.GroupNode;
 import org.inventory.core.usermanager.nodes.UserNode;
@@ -34,7 +35,7 @@ import org.openide.util.Utilities;
  * Deletes a user
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class DeleteUserAction extends AbstractAction {
+public class DeleteUserAction extends GenericInventoryAction {
 
     public DeleteUserAction() {
         putValue(NAME, "Delete Users");
@@ -64,5 +65,10 @@ public class DeleteUserAction extends AbstractAction {
                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             }
         }
+    }
+    
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_USER_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

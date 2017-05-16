@@ -7,17 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for releaseFromVlan complex type.
+ * <p>Java class for releaseSubnetFromVRF complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="releaseFromVlan">
+ * &lt;complexType name="releaseSubnetFromVRF">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="subnetId" type="{http://www.w3.org/2001/XMLSchema}long"/>
- *         &lt;element name="vlanId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="vrfId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -28,15 +28,15 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "releaseFromVlan", propOrder = {
+@XmlType(name = "releaseSubnetFromVRF", propOrder = {
     "subnetId",
-    "vlanId",
+    "vrfId",
     "sessionId"
 })
-public class ReleaseFromVlan {
+public class ReleaseSubnetFromVRF {
 
     protected long subnetId;
-    protected long vlanId;
+    protected long vrfId;
     protected String sessionId;
 
     /**
@@ -56,19 +56,19 @@ public class ReleaseFromVlan {
     }
 
     /**
-     * Gets the value of the vlanId property.
+     * Gets the value of the vrfId property.
      * 
      */
-    public long getVlanId() {
-        return vlanId;
+    public long getVrfId() {
+        return vrfId;
     }
 
     /**
-     * Sets the value of the vlanId property.
+     * Sets the value of the vrfId property.
      * 
      */
-    public void setVlanId(long value) {
-        this.vlanId = value;
+    public void setVrfId(long value) {
+        this.vrfId = value;
     }
 
     /**

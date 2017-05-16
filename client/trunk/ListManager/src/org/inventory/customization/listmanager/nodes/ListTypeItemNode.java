@@ -50,7 +50,7 @@ public class ListTypeItemNode extends ObjectNode {
     public void setName(String newName) {
         super.setName(newName);
         //Refresh the cache
-        CommunicationsStub.getInstance().getList(object.getClassName(), true, true);
+        CommunicationsStub.getInstance().getList(getObject().getClassName(), true, true);
     }
     
     @Override

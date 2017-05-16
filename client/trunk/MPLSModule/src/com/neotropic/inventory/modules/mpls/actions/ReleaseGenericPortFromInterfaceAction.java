@@ -23,10 +23,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
-import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter;
 import org.openide.util.lookup.ServiceProvider;
@@ -36,18 +37,15 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ReleaseGenericPortFromInterface extends GenericObjectNodeAction implements Presenter.Popup {
-    
-    private long id;
-    private String className;
+public class ReleaseGenericPortFromInterfaceAction extends GenericObjectNodeAction implements Presenter.Popup {
     
     @Override
     public void actionPerformed(ActionEvent e) {
         if (JOptionPane.showConfirmDialog(null, 
                 "Are you sure you want to release this interface?", "Warning", 
                 JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-            if (CommunicationsStub.getInstance().releasePortFromInterface(className,
-                    id, Long.valueOf(((JMenuItem)e.getSource()).getName())))
+            if (CommunicationsStub.getInstance().releasePortFromInterface((String)((JMenuItem)e.getSource()).getClientProperty("portClassName"),
+                    (long)((JMenuItem)e.getSource()).getClientProperty("portId"), (long)((JMenuItem)e.getSource()).getClientProperty("serviceInstanceId")))
                 NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
                         java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/mpls/Bundle").getString("LBL_SUCCESS"));
             else
@@ -62,37 +60,40 @@ public class ReleaseGenericPortFromInterface extends GenericObjectNodeAction imp
 
     @Override
     public JMenuItem getPopupPresenter() {
-        JMenu mnuServices = new JMenu(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/mpls/Bundle").getString("LBL_RELEASE_INTERFACE"));
+        JMenu mnuAction = new JMenu(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/mpls/Bundle").getString("LBL_RELEASE_INTERFACE"));
         Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
         
         if (!selectedNodes.hasNext())
             return null;
         
-        while (selectedNodes.hasNext()) {
-            ObjectNode selectedNode = (ObjectNode)selectedNodes.next();
-            className = selectedNode.getObject().getClassName();
-            id = selectedNode.getObject().getOid();
-        }
-        
-        List<LocalObjectLight> services = CommunicationsStub.getInstance().getSpecialAttribute(className, 
-                id, Constants.RELATIONSHIP_MPLSPORTBELONGSTOINTERFACE);
+        ObjectNode selectedNode = (ObjectNode)selectedNodes.next();
 
-        if (services != null) {
+        List<LocalObjectLight> serviceInstances = CommunicationsStub.getInstance().getSpecialAttribute(selectedNode.getObject().getClassName(), 
+                selectedNode.getObject().getOid(), Constants.RELATIONSHIP_MPLSPORTBELONGSTOINTERFACE);
+
+        if (serviceInstances != null) {
         
-            if (services.isEmpty())
-                mnuServices.setEnabled(false);
+            if (serviceInstances.isEmpty())
+                mnuAction.setEnabled(false);
             else {
-                for (LocalObjectLight service : services){
-                    JMenuItem smiServices = new JMenuItem(service.toString());
-                    smiServices.setName(String.valueOf(service.getOid()));
-                    smiServices.addActionListener(this);
-                    mnuServices.add(smiServices);
+                for (LocalObjectLight serviceInstance : serviceInstances){
+                    JMenuItem mnuServiceInstances = new JMenuItem(serviceInstance.toString());
+                    mnuServiceInstances.putClientProperty("serviceInstanceId", serviceInstance.getOid());
+                    mnuServiceInstances.putClientProperty("portClassName", selectedNode.getObject().getClassName());
+                    mnuServiceInstances.putClientProperty("portId", selectedNode.getObject().getOid());
+                    mnuServiceInstances.addActionListener(this);
+                    mnuAction.add(mnuServiceInstances);
                 }
             }
-            return mnuServices;
+            return mnuAction;
         } else {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             return null;
         } 
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_MPLS_MODULE, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

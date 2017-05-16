@@ -47,11 +47,11 @@ public class ServicesFrame extends JFrame {
     private JTextField txtField;
     private JScrollPane pnlScrollMain;
     private JList lstAvailableServices;
-    private LocalObjectLight[] selectedObjects;
+    private List<LocalObjectLight> selectedObjects;
     private List<LocalObjectLight> services;
     
     
-    public ServicesFrame(LocalObjectLight[] selectedObjects, List<LocalObjectLight> services) {
+    public ServicesFrame(List<LocalObjectLight> selectedObjects, List<LocalObjectLight> services) {
         this.selectedObjects = selectedObjects;
         this.services = services;
         setLayout(new BorderLayout());
@@ -119,18 +119,19 @@ public class ServicesFrame extends JFrame {
             if (lstAvailableServices.getSelectedValue() == null)
                 JOptionPane.showMessageDialog(null, "Select a service from the list");
             else{
-                String [] objectsClassName = new String[selectedObjects.length];
-                Long [] objectsId = new Long[selectedObjects.length];
-                for(int i=0; i<selectedObjects.length; i++){
-                    objectsClassName[i] = selectedObjects[i].getClassName();
-                    objectsId [i] = selectedObjects[i].getOid();
+                List<String> classNames = new ArrayList<>();
+                List<Long> objectIds = new ArrayList<>();
+                for(LocalObjectLight selectedObject : selectedObjects){
+                    classNames.add(selectedObject.getClassName());
+                    objectIds.add(selectedObject.getOid());
                 }
                 
                 if (CommunicationsStub.getInstance().associateObjectsToService(
-                    objectsClassName, objectsId, 
+                    classNames, objectIds, 
                     ((LocalObjectLight)lstAvailableServices.getSelectedValue()).getClassName(),
                     ((LocalObjectLight)lstAvailableServices.getSelectedValue()).getOid())){
-                        JOptionPane.showMessageDialog(null, String.format("%s object was related to %s", selectedObjects.length, lstAvailableServices.getSelectedValue()));
+                        JOptionPane.showMessageDialog(null, String.format(selectedObjects.size() > 1 ? 
+                                "%s obejcts were related to service %s" : "%s object was related to service %s", selectedObjects.size(), lstAvailableServices.getSelectedValue()));
                         dispose();
                 }
                 else 

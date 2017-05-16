@@ -110,8 +110,8 @@ public class CommunicationsStub {
                                                                     "VC4", "VC4-04", "VC4-16", "VC4TributaryLink", "VC12TributaryLink", "VC3TributaryLink",
                                                                     "STM1", "STM4", "STM16", "STM64", "STM256",
                                                                     "WireContainer", "WirelessContainer",
-                                                                    "CorporateCustomer", "TelecomOperator", "Provider", "HomeCustomer"
-                                                                    };
+                                                                    "CorporateCustomer", "TelecomOperator", "Provider", "HomeCustomer",
+                                                                    "IPAddress", "Subnet" };
     
     private CommunicationsStub() {
         cache = Cache.getInstace();
@@ -1532,12 +1532,12 @@ public class CommunicationsStub {
     }
     
     //Service Manager
-    public boolean associateObjectsToService(String[] objectClass, Long [] objectId, String serviceClass, long serviceId){
+    public boolean associateObjectsToService(List<String> classNames, List<Long> objectIds, String serviceClass, long serviceId){
         try{
             List<String> objectsClassList = new ArrayList<>();
             List<Long> objectsIdList = new ArrayList<>();
-            objectsClassList.addAll(Arrays.asList(objectClass));
-            objectsIdList.addAll(Arrays.asList(objectId));
+            objectsClassList.addAll(classNames);
+            objectsIdList.addAll(objectIds);
             service.associateObjectsToService(objectsClassList, objectsIdList, serviceClass, serviceId, session.getSessionId());
             return true;
         }catch(Exception ex){
@@ -3243,9 +3243,11 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean deleteSubnet(String className, List<Long> oids){
-        try{
-            service.deleteSubnets(oids, className, false, this.session.getSessionId());
+    public boolean deleteSubnet(String className, long subnetId){
+        try {
+            List<Long> subnetsToBeDeleted = new ArrayList<>();
+            subnetsToBeDeleted.add(subnetId);
+            service.deleteSubnets(className, subnetsToBeDeleted, false, this.session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -3415,9 +3417,15 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean releaseFromVLAN(long vlanId, long id){
+    /**
+     * Releases a subnet from a VLAN
+     * @param vlanId VLAN Id
+     * @param subnetId Subnet Id
+     * @return true if the operation was successful, false otherwise
+     */
+    public boolean releaseFromVLAN(long subnetId, long vlanId){
         try{
-            service.releaseFromVlan(vlanId, id, this.session.getSessionId());
+            service.releaseFromVlan(subnetId, vlanId, this.session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -3425,9 +3433,9 @@ public class CommunicationsStub {
         } 
     }
     
-    public boolean releaseSubnetFromVRF(long vlanId, long id){
+    public boolean releaseSubnetFromVRF(long subnetId, long vrfId){
         try{
-            service.releaseSubnetFromVrf(vlanId, id, this.session.getSessionId());
+            service.releaseSubnetFromVRF(subnetId, vrfId, this.session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = ex.getMessage();

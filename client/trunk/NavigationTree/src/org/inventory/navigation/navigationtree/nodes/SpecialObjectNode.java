@@ -18,7 +18,7 @@ package org.inventory.navigation.navigationtree.nodes;
 import java.util.ArrayList;
 import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.core.services.api.actions.GenericObjectNodeAction;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.inventory.navigation.navigationtree.nodes.actions.CreateSpecialBusinessObjectAction;
 import org.inventory.navigation.navigationtree.nodes.actions.EditObjectAction;
 import org.inventory.navigation.navigationtree.nodes.actions.RefreshObjectAction;
@@ -48,17 +48,15 @@ public class SpecialObjectNode extends ObjectNode {
         actions.add(null); //Separator
         for (GenericObjectNodeAction action : Lookup.getDefault().lookupAll(GenericObjectNodeAction.class)){
             if (action.getValidator() == null){
-                action.setObject(object);
                 actions.add(action);
             }else{
-                if (com.getMetaForClass(object.getClassName(), false).getValidator(action.getValidator()) == 1){
-                    action.setObject(object);
+                if (com.getMetaForClass(getObject().getClassName(), false).getValidator(action.getValidator()) == 1){
                     actions.add(action);
                 }
             }
         }
         actions.add(null); //Separator
-        actions.add(showMoreInformationAction == null ? showMoreInformationAction = new ShowMoreInformationAction(object.getOid(), object.getClassName()) : showMoreInformationAction);
+        actions.add(showMoreInformationAction == null ? showMoreInformationAction = new ShowMoreInformationAction(getObject().getOid(), getObject().getClassName()) : showMoreInformationAction);
         
         return actions.toArray(new Action[]{});
     }

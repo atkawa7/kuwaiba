@@ -14,24 +14,30 @@ import com.neotropic.inventory.modules.ipam.nodes.SubnetPoolChildren;
 import com.neotropic.inventory.modules.ipam.nodes.SubnetPoolNode;
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
-import javax.swing.AbstractAction;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.util.Utilities;
 
 /**
- *
- * @author adrian
+ * Deletes a subnet pool
+ * @author Adrian Fernando Molina Fernandez <adrian.martinez@kuwaiba.org>
  */
-public class DeleteSubnetPoolAction extends AbstractAction{
+public class DeleteSubnetPoolAction extends GenericInventoryAction {
     /**
      * Reference to the communications stub singleton
      */
     private CommunicationsStub com;
-
-    public DeleteSubnetPoolAction(){
+    private static DeleteSubnetPoolAction instance;
+    
+    private DeleteSubnetPoolAction(){
         putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_DELETE"));
         com = CommunicationsStub.getInstance();
+    }
+    
+    public static DeleteSubnetPoolAction getInstance() {
+        return instance  == null ? new DeleteSubnetPoolAction() : instance;
     }
     
     @Override
@@ -56,6 +62,11 @@ public class DeleteSubnetPoolAction extends AbstractAction{
         }
         else
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_IP_ADDRESS_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
     
     

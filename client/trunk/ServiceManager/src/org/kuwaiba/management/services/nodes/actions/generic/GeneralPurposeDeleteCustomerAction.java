@@ -19,8 +19,9 @@ package org.kuwaiba.management.services.nodes.actions.generic;
 import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.core.services.api.actions.GenericObjectNodeAction;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -36,11 +37,12 @@ public class GeneralPurposeDeleteCustomerAction extends GenericObjectNodeAction 
     
     @Override
     public void actionPerformed(ActionEvent ev) {
-
+        super.actionPerformed(ev);
+        
         if(JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this customer? All services associated will be deleted too",
                 "Delete Customer",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
                         
-            if (CommunicationsStub.getInstance().deleteObject(object.getClassName(), object.getOid())) 
+            if (CommunicationsStub.getInstance().deleteObject(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getOid())) 
                 NotificationUtil.getInstance().showSimplePopup("Success", 
                         NotificationUtil.INFO_MESSAGE, "The customer was deleted successfully");
             else
@@ -51,5 +53,10 @@ public class GeneralPurposeDeleteCustomerAction extends GenericObjectNodeAction 
     @Override
     public String getValidator() {
         return "customer";
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_SERVICE_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

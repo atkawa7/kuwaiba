@@ -46,7 +46,7 @@ public class ContractPoolNode extends PoolNode {
     @Override
     public Action[] getActions(boolean context) {
         return new Action[] { ContractManagerActionFactory.getCreateContractAction(), 
-                              ExecuteClassLevelReportAction.createExecuteReportAction(),
+                              ExecuteClassLevelReportAction.getInstance(),
                                 ContractManagerActionFactory.getDeleteContractPoolAction(),
                             };
     }

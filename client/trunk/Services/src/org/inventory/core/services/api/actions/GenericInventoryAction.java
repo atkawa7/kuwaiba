@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
@@ -13,18 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.inventory.models.physicalconnections.scene;
 
-import java.awt.Color;
-import org.inventory.navigation.navigationtree.nodes.ObjectNode;
+package org.inventory.core.services.api.actions;
+
+import javax.swing.AbstractAction;
+import org.inventory.communications.core.LocalPrivilege;
 
 /**
- * Repeated. Should be merged with the one from ObjectView
+ * This must be the root of all actions in Kuwaiba. Subclasses must be able top tell what privilege is necessary to execute them
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public interface SelectableWidget {
-    public static Color selectionColor = new Color(167, 223, 219);
-    public ObjectNode getNode();
-    public void reset();
-    public void highlight();
+public abstract class GenericInventoryAction extends AbstractAction {
+    /**
+     * The feature tokens necessary for this action to be available. The returned values will be checked against the current user privileges.
+     * @return The list of privileges necessary for this action to be invoked
+     */
+    public abstract LocalPrivilege getPrivilege();
 }

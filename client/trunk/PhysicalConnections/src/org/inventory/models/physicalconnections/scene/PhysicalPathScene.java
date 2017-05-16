@@ -51,6 +51,8 @@ public class PhysicalPathScene  extends AbstractScene <LocalObjectLight, LocalOb
     protected Widget attachNodeWidget(LocalObjectLight node) {
         Color randomColor = ObjectBoxWidget.colorPalette[new Random().nextInt(12)];
         Widget widget = new ObjectBoxWidget(this, node, randomColor);
+        widget.getActions().addAction(createSelectAction());
+        initSelectionListener();
         widget.repaint();
         widget.revalidate();
         return widget;
@@ -58,8 +60,9 @@ public class PhysicalPathScene  extends AbstractScene <LocalObjectLight, LocalOb
 
     @Override
     protected Widget attachEdgeWidget(LocalObjectLight edge) {
-        SimpleObjectConnectionWidget widget = new SimpleObjectConnectionWidget(this, edge, Color.BLUE);
-        widget.setStroke(new BasicStroke(2));
+        SimpleConnectionWidget widget = new SimpleConnectionWidget(this, edge, Color.BLUE);
+        widget.getActions().addAction(createSelectAction());
+        widget.setStroke(new BasicStroke(1));
         edgeLayer.addChild(widget);
         return widget;
     }

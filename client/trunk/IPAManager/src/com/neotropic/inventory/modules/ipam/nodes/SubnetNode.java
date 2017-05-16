@@ -41,9 +41,9 @@ import org.kuwaiba.management.services.nodes.actions.RelateToServiceAction;
 import org.kuwaiba.management.services.nodes.actions.ReleaseFromServiceAction;
 import org.openide.nodes.Node;
 import org.openide.nodes.NodeTransfer;
-
 import org.openide.nodes.Sheet;
 import org.openide.util.ImageUtilities;
+import org.openide.util.Lookup;
 import org.openide.util.datatransfer.PasteType;
 
 /**
@@ -63,20 +63,20 @@ public class SubnetNode extends ObjectNode {
     
     @Override
     public Action[] getActions(boolean context){
-        return new Action[]{
-            new AddIPAddressAction(),
-            new CreateSubnetAction(this),
+        return new Action[] {
+            AddIPAddressAction.getInstance(),
+            CreateSubnetAction.getInstance(),
             null,
-            new RelateToServiceAction(),
-            new RelateToVlanAction(),
-            new RelateSubnetToVRFAction(),
+            Lookup.getDefault().lookup(RelateToServiceAction.class),
+            Lookup.getDefault().lookup(ReleaseFromServiceAction.class),
+            RelateToVlanAction.getInstance(),
+            ReleaseFromVlanAction.getInstance(),
+            RelateSubnetToVRFAction.getInstance(),
+            ReleaseSubnetFromVRFAction.getInstance(),
             null,
-            new ReleaseFromServiceAction(),
-            new ReleaseFromVlanAction(),
-            new ReleaseSubnetFromVRFAction(),
-            ExecuteClassLevelReportAction.createExecuteReportAction(),
+            DeleteSubnetAction.getInstance(),
             null,
-            new DeleteSubnetAction()
+            ExecuteClassLevelReportAction.getInstance()
         };
     }
  
@@ -137,7 +137,7 @@ public class SubnetNode extends ObjectNode {
             return null;
         
         //Ignore those noisy attempts to move it to itself
-        if (dropNode.getLookup().lookup(LocalObjectLight.class).equals(object))
+        if (dropNode.getLookup().lookup(LocalObjectLight.class).equals(getObject()))
             return null;
 
         return new PasteType() {
@@ -183,16 +183,14 @@ public class SubnetNode extends ObjectNode {
                                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
                             }
                             else
-                                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE,"The IP: " + obj.getName() + " does not belong to "+ object.getName());
+                                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, String.format("The IP: %s does not belong to %s", obj.getName(), getObject().getName()));
                         }
                         
                         else{ 
                             childNode = com.getObjectInfo(className, obj.getOid());
-                            String childNetworkIp = (String)childNode.getAttribute("networkIp");
-                            String childBroadcastIp = (String)childNode.getAttribute("broadcastIp");
+                            String childNetworkIp = (String)childNode.getAttribute("networkIp"); //NOI18N
+                            String childBroadcastIp = (String)childNode.getAttribute("broadcastIp"); //NOI18N
                         
-                            String[] childSplit = childNode.getName().split("/");
-
                             if(className.equals(Constants.CLASS_SUBNET_IPV4)){
                                 networkIpBelongsTo = SubnetEngine.belongsTo(parentNetworkIp, childNetworkIp, Integer.valueOf(parentSplit[1]));
                                 broadcastIpBelongsTo = SubnetEngine.belongsTo(parentNetworkIp, childBroadcastIp, Integer.valueOf(parentSplit[1]));
@@ -219,7 +217,7 @@ public class SubnetNode extends ObjectNode {
                                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
                             }
                             else
-                                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE,"The subnet: " + obj.getName() + " is not subnet of "+ object.getName());
+                                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, String.format("The subnet: %s is not subnet of %s", obj.getName(), getObject().getName()));
                         }
                     }
                 } catch (Exception ex) {

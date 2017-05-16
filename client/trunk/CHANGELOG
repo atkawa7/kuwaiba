@@ -122,3 +122,5 @@
 * Web service client component rewritten and simplified
 * The Relationship Explorer shows also the "parent" relationship
 * A graphical explorer was added to the Relationship Explorer
+* Added a module to manage favorites
+* Rack views now allow ascending and descending children positioning and also support children that don't need to be displayed.

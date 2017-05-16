@@ -19,8 +19,9 @@ import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.navigation.navigationtree.nodes.ObjectNode;
+import org.inventory.core.visual.scene.SelectableNodeWidget;
 import org.netbeans.api.visual.layout.LayoutFactory;
+import org.netbeans.api.visual.model.ObjectState;
 import org.netbeans.api.visual.widget.LabelWidget;
 import org.netbeans.api.visual.widget.Widget;
 
@@ -28,23 +29,19 @@ import org.netbeans.api.visual.widget.Widget;
  * Represents a node in the Graphical Physical Path view
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ObjectBoxWidget extends Widget implements SelectableWidget {
+public class ObjectBoxWidget extends SelectableNodeWidget {
     public static Color[] colorPalette = new Color[]{Color.PINK, Color.LIGHT_GRAY, Color.ORANGE,
                                                     new Color(240, 218, 0), new Color(190, 240, 137), new Color(255, 164, 133),
                                                     new Color(25, 160, 255), new Color(238, 167, 244), new Color(203, 228, 138),
                                                     new Color(255, 102, 245), new Color(217, 181, 255), new Color(255, 114, 195),
                                                     new Color(166, 243, 66)};
     private static Border emptyBorder = BorderFactory.createEmptyBorder(10, 10 ,10 , 10);
-    private ObjectNode node;
     private Color originalColor;
     private LabelWidget labelWidget;
     private Widget childrenWidget;
     
     public ObjectBoxWidget(PhysicalPathScene scene, LocalObjectLight object) {
-        super(scene);
-        this.node = new ObjectNode(object, true);
-        setToolTipText(object.toString());
-        getActions().addAction(scene.createSelectAction());
+        super(scene, object);
         setOpaque(true);
         setLayout(LayoutFactory.createVerticalFlowLayout());
         this.labelWidget = new LabelWidget(scene, object.toString());
@@ -61,22 +58,20 @@ public class ObjectBoxWidget extends Widget implements SelectableWidget {
         setBackground(originalColor);
     }
     
-    @Override
-    public ObjectNode getNode(){
-        return node;
-    }
     
     public void addBox(Widget child){
         childrenWidget.addChild(child);
     }
     
     @Override
-    public void reset() {
-        setBackground(originalColor == null ? Color.WHITE : originalColor);
-    }
-
-    @Override
-    public void highlight() {
-        setBackground(selectionColor);
+    public void notifyStateChanged (ObjectState previousState, ObjectState state) {
+        if (state.isSelected()) {
+            setBackground(Color.DARK_GRAY);
+            labelWidget.setForeground(Color.WHITE);
+        }
+        if (previousState.isSelected()) {
+            setBackground(originalColor == null ? Color.WHITE : originalColor);
+            labelWidget.setForeground(Color.BLACK);
+        }
     }
 }

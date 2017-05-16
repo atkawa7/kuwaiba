@@ -18,15 +18,12 @@ package com.neotropic.inventory.modules.mpls.actions;
 import com.neotropic.inventory.modules.mpls.windows.InterfaceFrame;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
-import org.inventory.core.services.api.actions.GenericObjectNodeAction;
-import org.openide.util.Lookup;
-import org.openide.util.Utilities;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -34,7 +31,7 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class RelateGenericNetworkElementToInterface extends GenericObjectNodeAction{
+public class RelateGenericNetworkElementToInterface extends GenericObjectNodeAction {
 
     public RelateGenericNetworkElementToInterface(){
         putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/mpls/Bundle").getString("LBL_RELATE_TO"));
@@ -42,6 +39,8 @@ public class RelateGenericNetworkElementToInterface extends GenericObjectNodeAct
     
     @Override
     public void actionPerformed(ActionEvent e) {
+        super.actionPerformed(e);
+        
         List<LocalObjectLight> interfaces = new ArrayList<>();
         List<LocalObjectLight> objects = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_BRIDGEDOMAININTERFACE);
         if(objects != null){
@@ -63,14 +62,6 @@ public class RelateGenericNetworkElementToInterface extends GenericObjectNodeAct
             for(LocalObjectLight o : objects)
                 interfaces.add(o);
         }        
-        Lookup.Result<LocalObjectLight> selectedNodes = Utilities.actionsGlobalContext().lookupResult(LocalObjectLight.class);
-        Collection<? extends LocalObjectLight> lookupResult = selectedNodes.allInstances();
-        List<LocalObjectLight> selectedObjects = new ArrayList<>();
-        Iterator<? extends LocalObjectLight> iterator = lookupResult.iterator();
-
-        while (iterator.hasNext())
-            selectedObjects.add((LocalObjectLight)iterator.next());
-
         InterfaceFrame frame = new InterfaceFrame(selectedObjects, interfaces);
         frame.setVisible(true);
     }
@@ -78,5 +69,10 @@ public class RelateGenericNetworkElementToInterface extends GenericObjectNodeAct
     @Override
     public String getValidator() {
         return Constants.VALIDATOR_LOGICAL_ENDPOINT;
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_MPLS_MODULE, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

@@ -15,70 +15,60 @@
  */
 package com.neotropic.inventory.modules.ipam.nodes.actions;
 
-import com.neotropic.inventory.modules.ipam.nodes.SubnetChildren;
 import com.neotropic.inventory.modules.ipam.nodes.SubnetNode;
-import com.neotropic.inventory.modules.ipam.nodes.SubnetPoolChildren;
-import com.neotropic.inventory.modules.ipam.nodes.SubnetPoolNode;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import static javax.swing.Action.NAME;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.util.Constants;
-import org.inventory.core.services.api.actions.GenericObjectNodeAction;
+import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.openide.nodes.AbstractNode;
+import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
 import org.openide.util.Utilities;
-import org.openide.util.lookup.ServiceProvider;
 
 /**
- *
+ * Deletes a subnet
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-@ServiceProvider(service=GenericObjectNodeAction.class)
-public class DeleteSubnetAction extends GenericObjectNodeAction{
+public class DeleteSubnetAction extends GenericInventoryAction {
     /**
      * Reference to the communications stub singleton
      */
     private CommunicationsStub com;
-
-    public DeleteSubnetAction(){
+    private static DeleteSubnetAction instance;
+    
+    private DeleteSubnetAction(){
         putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_DELETE"));
         com = CommunicationsStub.getInstance();
+    }
+    
+    public static DeleteSubnetAction getInstance() {
+        return instance == null ? new DeleteSubnetAction() : instance;
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
         Iterator<? extends SubnetNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(SubnetNode.class).allInstances().iterator();
-        String className = "";
-        AbstractNode parentNode = null;
         
         if (!selectedNodes.hasNext())
             return;
-        List<Long> ids = new ArrayList<>();
+        
         while (selectedNodes.hasNext()) {
             SubnetNode selectedNode = (SubnetNode)selectedNodes.next();
-            parentNode = (AbstractNode) selectedNode.getParentNode();
-            className = selectedNode.getObject().getClassName();
-            ids.add(selectedNode.getObject().getOid());
-        }
-        
-        if (com.deleteSubnet(className, ids)){
-            if(parentNode instanceof SubnetPoolNode)
-                ((SubnetPoolChildren)parentNode.getChildren()).addNotify();
+            
+            if (com.deleteSubnet(selectedNode.getObject().getClassName(), selectedNode.getObject().getOid())){
+                ((AbstractChildren)selectedNode.getParentNode().getChildren()).addNotify();
+                
+                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
+                        java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_DELETION_TEXT_OK"));
+            }
             else
-                ((SubnetChildren)parentNode.getChildren()).addNotify();
-            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
-                    java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_DELETION_TEXT_OK"));
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());            
         }
-        else
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
     }
 
     @Override
-    public String getValidator() {
-        return Constants.VALIDATOR_SUBNET;
-    }
-    
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_IP_ADDRESS_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+    }    
 }

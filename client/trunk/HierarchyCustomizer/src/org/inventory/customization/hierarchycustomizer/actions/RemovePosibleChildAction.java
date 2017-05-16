@@ -16,8 +16,9 @@
 package org.inventory.customization.hierarchycustomizer.actions;
 
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.customization.hierarchycustomizer.nodes.ClassMetadataChildren;
 import org.inventory.customization.hierarchycustomizer.nodes.ClassMetadataNode;
@@ -27,7 +28,7 @@ import org.openide.nodes.Node;
  * Implements the "remove a class from container hierarchy" action
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class RemovePosibleChildAction extends AbstractAction{
+public class RemovePosibleChildAction extends GenericInventoryAction {
 
     ClassMetadataNode node;
 
@@ -37,6 +38,7 @@ public class RemovePosibleChildAction extends AbstractAction{
         this.node = node;
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         CommunicationsStub com = CommunicationsStub.getInstance();
         if (com.removePossibleChildren(
@@ -50,5 +52,10 @@ public class RemovePosibleChildAction extends AbstractAction{
         }
         else
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE,com.getError());
+    }
+    
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_CONTAINMENT_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

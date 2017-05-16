@@ -18,10 +18,11 @@ package com.neotropic.inventory.modules.sdh.actions.generic;
 import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.core.services.api.actions.GenericObjectNodeAction;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.openide.util.Utilities;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -38,32 +39,31 @@ public class GeneralPurposeDeleteSDHContainerLink extends GenericObjectNodeActio
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        
         ObjectNode selectedNode = Utilities.actionsGlobalContext().lookup(ObjectNode.class);
-        
-        if (selectedNode == null)
-            JOptionPane.showMessageDialog(null, "You must select a node first");
-        else {       
-            if (JOptionPane.showConfirmDialog(null, 
-                    "This will delete all the containers and tributary links \n Are you sure you want to do this?", 
-                    "Delete Container Link", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
+               
+        if (JOptionPane.showConfirmDialog(null, 
+                "This will delete all the containers and tributary links \n Are you sure you want to do this?", 
+                "Delete Container Link", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
 
-                if (CommunicationsStub.getInstance().deleteSDHContainerLink(object.getClassName(), object.getOid())) {
-                    //If the node is on a tree, update the list
-                    if (selectedNode.getParentNode() != null && AbstractChildren.class.isInstance(selectedNode.getParentNode().getChildren()))
-                        ((AbstractChildren)selectedNode.getParentNode().getChildren()).addNotify();
-                    
-                    NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Container link deleted successfully");
-                }
-                else 
-                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE, CommunicationsStub.getInstance().getError());
+            if (CommunicationsStub.getInstance().deleteSDHContainerLink(selectedNode.getObject().getClassName(), selectedNode.getObject().getOid())) {
+                //If the node is on a tree, update the list
+                if (selectedNode.getParentNode() != null && AbstractChildren.class.isInstance(selectedNode.getParentNode().getChildren()))
+                    ((AbstractChildren)selectedNode.getParentNode().getChildren()).addNotify();
+                NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Container link deleted successfully");
             }
+            else 
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE, CommunicationsStub.getInstance().getError());
         }
     }
 
     @Override
     public String getValidator() {
         return "sdhContainerLink";
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_SDH_MODULE, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }
     

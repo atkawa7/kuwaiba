@@ -68,7 +68,7 @@ public class RackViewScene extends AbstractScene<LocalObject, LocalObject> {
         LabelWidget txtName = new LabelWidget(this, node.toString());
         LabelWidget txtInfo  = new LabelWidget(this, "Position: "+ 
                 node.getAttribute(Constants.PROPERTY_POSITION) + "U - " + 
-                "Size: " + node.getAttribute(Constants.PROPERTY_RACKUNITS) + "U");
+                "Size: " + node.getAttribute(Constants.PROPERTY_RACK_UNITS) + "U");
         txtName.setForeground(Color.WHITE);
         txtInfo.setForeground(Color.WHITE);
         widget.addChild(txtName);

@@ -13,21 +13,35 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.inventory.core.services.api.actions;
+package org.inventory.navigation.navigationtree.nodes.actions;
 
-import javax.swing.AbstractAction;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
+import org.inventory.navigation.navigationtree.nodes.ObjectNode;
+import org.openide.util.Utilities;
 
 
 /**
  * Superclass to all actions related to a node
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public abstract class GenericObjectNodeAction extends AbstractAction {
-    protected LocalObjectLight object;
+public abstract class GenericObjectNodeAction extends GenericInventoryAction {
+    protected List<LocalObjectLight> selectedObjects;
 
-    public void setObject(LocalObjectLight object) {
-        this.object = object;
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
+        selectedObjects = new ArrayList<>();
+        
+        while(selectedNodes.hasNext()) {
+            LocalObjectLight selectedObject  = selectedNodes.next().getLookup().lookup(LocalObjectLight.class);
+            if (selectedObject != null)
+                selectedObjects.add(selectedObject);
+        }
     }
     
     /**

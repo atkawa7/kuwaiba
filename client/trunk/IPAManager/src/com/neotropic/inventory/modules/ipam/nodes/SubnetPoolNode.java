@@ -66,11 +66,11 @@ public class SubnetPoolNode extends AbstractNode implements PropertyChangeListen
     public Action[] getActions(boolean context){
         List<Action> actions = new ArrayList<>();
         
-        actions.add(new CreateSubnetAction(this));
-        actions.add(new CreateSubnetPoolAction(this));
+        actions.add(CreateSubnetAction.getInstance());
+        actions.add(CreateSubnetPoolAction.getInstance());
         actions.add(null);
         if (!(getParentNode() instanceof IPAMRootNode)) {
-            actions.add(new DeleteSubnetPoolAction());
+            actions.add(DeleteSubnetPoolAction.getInstance());
             actions.add(null); //Separator
         }
             

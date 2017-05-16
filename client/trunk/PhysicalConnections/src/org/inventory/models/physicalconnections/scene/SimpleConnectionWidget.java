@@ -17,44 +17,36 @@ package org.inventory.models.physicalconnections.scene;
 
 import java.awt.Color;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.navigation.navigationtree.nodes.ObjectNode;
-import org.netbeans.api.visual.action.ActionFactory;
+import org.inventory.core.visual.scene.SelectableConnectionWidget;
 import org.netbeans.api.visual.anchor.PointShape;
-import org.netbeans.api.visual.widget.ConnectionWidget;
+import org.netbeans.api.visual.model.ObjectState;
 
 /**
  * Represents a node in the Graphical Physical Path view
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class SimpleObjectConnectionWidget extends ConnectionWidget implements SelectableWidget {
+public class SimpleConnectionWidget extends SelectableConnectionWidget {
     
-    private ObjectNode node;
     private Color originalColor;
     
-    public SimpleObjectConnectionWidget(PhysicalPathScene scene, LocalObjectLight object, 
-            Color originalColor) {
-        super(scene);
-        this.node = new ObjectNode(object, true);
+    public SimpleConnectionWidget(PhysicalPathScene scene, LocalObjectLight object, Color originalColor) {
+        super(scene, object);
         this.originalColor = originalColor;
         setRouter(scene.getRouter());
-        setLineColor(originalColor);
-        setToolTipText(object.toString());
+        setForeground(originalColor);
         setEndPointShape(PointShape.SQUARE_FILLED_BIG);
-        getActions().addAction(scene.createSelectAction());
-        getActions().addAction(ActionFactory.createAddRemoveControlPointAction());
+        getLabelWidget().setVisible(false);
     }
     
     @Override
-    public ObjectNode getNode(){
-        return node;
-    }
-        @Override
-    public void reset() {
-        setLineColor(originalColor);
-    }
-
-    @Override
-    public void highlight() {
-        setLineColor(selectionColor);
+    public void notifyStateChanged (ObjectState previousState, ObjectState state) {
+        
+        if (state.isSelected())
+            setBackground(Color.ORANGE);
+        
+        if (previousState.isSelected())
+            setForeground(originalColor);
+        
+        setPaintControlPoints (state.isSelected());
     }
 }

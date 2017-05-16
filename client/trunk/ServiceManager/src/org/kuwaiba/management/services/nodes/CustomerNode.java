@@ -29,16 +29,14 @@ public class CustomerNode extends ObjectNode {
     
     public CustomerNode(LocalObjectLight customer) {
         super(customer);
-        this.object = customer;
         setChildren(new CustomerChildren());
     }
     
     @Override
     public Action[] getActions(boolean context) {
-        
         return new Action [] { ServiceManagerActionFactory.getCreateServicePoolAction(),
             ServiceManagerActionFactory.getDeleteCustomerAction(),
-            showMoreInformationAction == null ? showMoreInformationAction = new ShowMoreInformationAction(object.getOid(), object.getClassName()) : showMoreInformationAction
+            showMoreInformationAction == null ? showMoreInformationAction = new ShowMoreInformationAction(getObject().getOid(), getObject().getClassName()) : showMoreInformationAction
         };        
     }
 }

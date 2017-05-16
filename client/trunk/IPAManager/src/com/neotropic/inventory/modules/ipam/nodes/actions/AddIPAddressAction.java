@@ -27,19 +27,18 @@ import javax.swing.JFrame;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
-import org.inventory.core.services.api.actions.GenericObjectNodeAction;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
 import org.openide.util.Utilities;
-import org.openide.util.lookup.ServiceProvider;
 
 /**
- * Allows to relate an IP of a subnet with a GenericNetworkElement
+ * Allows to relate an IP to a subnet
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-@ServiceProvider(service=GenericObjectNodeAction.class)
-public class AddIPAddressAction extends GenericObjectNodeAction {
+public class AddIPAddressAction extends GenericInventoryAction {
 
     /**
      * Reference to the communications stub singleton
@@ -48,17 +47,17 @@ public class AddIPAddressAction extends GenericObjectNodeAction {
     private SubnetNode subnetNode;
     private int maskBits;
     private List<LocalObjectLight> subnetUsedIps;
+    private static AddIPAddressAction instance;
     
-    public AddIPAddressAction() {
+    private AddIPAddressAction() {
         putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_ADD_IP_ADDRESS"));
         com = CommunicationsStub.getInstance();
         maskBits = 32;
         subnetUsedIps = new ArrayList<>();
     }
     
-    @Override
-    public String getValidator() {
-        return Constants.VALIDATOR_SUBNET;
+    public static AddIPAddressAction getInstance() {
+        return instance == null ? new AddIPAddressAction() : instance;
     }
 
     @Override
@@ -105,6 +104,11 @@ public class AddIPAddressAction extends GenericObjectNodeAction {
         }
         AddIPAddressFrame addIpFrame = new AddIPAddressFrame(id, networkIp, broadcastIp, className, nextIp);
         addIpFrame.setVisible(true);
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_IP_ADDRESS_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
     
     
@@ -241,14 +245,14 @@ public class AddIPAddressAction extends GenericObjectNodeAction {
                         belongToSubnet(firstIp) &&
                         belongToSubnet(lastIp))
                 {
-                    isUsed = ipIsInuse(ipAddress);
+                    isUsed = ipIsInUse(ipAddress);
                     if (!isUsed)
                         ips.add(firstIp);
                     String nextRangeIp = firstIp;
                     
                     while(!nextRangeIp.equals(lastIp)){
                         nextRangeIp = nextIpInRange(nextRangeIp, className, networkIp, broadcastIp);
-                        isUsed = ipIsInuse(ipAddress);
+                        isUsed = ipIsInUse(ipAddress);
                         if (!isUsed && nextRangeIp != null)
                             ips.add(nextRangeIp);
                     }
@@ -261,7 +265,7 @@ public class AddIPAddressAction extends GenericObjectNodeAction {
             
             else{
                 if(SubnetEngine.isIPAddress(ipAddress)){
-                    if(belongToSubnet(ipAddress) && !ipIsInuse(ipAddress))
+                    if(belongToSubnet(ipAddress) && !ipIsInUse(ipAddress))
                         ips.add(ipAddress);
                     else{
                         lblError.setText("This IP is outside of the subnet o is already in use");
@@ -295,7 +299,7 @@ public class AddIPAddressAction extends GenericObjectNodeAction {
             }
         }
     
-        private boolean ipIsInuse(String ipAddress){
+        private boolean ipIsInUse(String ipAddress){
             for (LocalObjectLight subnetUsedIp : subnetUsedIps) {
                 if(subnetUsedIp.getName().equals(ipAddress))
                     return true;
@@ -304,7 +308,7 @@ public class AddIPAddressAction extends GenericObjectNodeAction {
         }
     
         private String nextIpInRange(String ipAddress, String className, String networkIp, String broadcastIp){
-            String nextRangeIp = null;
+            String nextRangeIp;
             switch (className) {
                 case Constants.CLASS_SUBNET_IPV4:
                     nextRangeIp = SubnetEngine.nextIpv4(networkIp, broadcastIp, ipAddress, maskBits);

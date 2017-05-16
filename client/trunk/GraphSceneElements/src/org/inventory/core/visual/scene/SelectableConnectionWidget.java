@@ -36,10 +36,13 @@ public abstract class SelectableConnectionWidget extends ConnectionWidget {
     
     public SelectableConnectionWidget(Scene scene, LocalObjectLight businessObject) {
         super(scene);
+        setToolTipText(businessObject.toString());
+        
         labelWidget = new LabelWidget(scene, businessObject.toString());
         labelWidget.setOpaque(true);
-        labelWidget.getActions().addAction(ActionFactory.createMoveAction ());
+        labelWidget.getActions().addAction(ActionFactory.createMoveAction());
         addChild(labelWidget);
+        
         setConstraint(labelWidget, LayoutFactory.ConnectionWidgetLayoutAlignment.CENTER, 0.5f);
         lookup = Lookups.singleton(new ObjectNode(businessObject));
     }

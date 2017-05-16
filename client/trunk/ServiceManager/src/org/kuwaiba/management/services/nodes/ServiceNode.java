@@ -36,9 +36,10 @@ public class ServiceNode extends ObjectNode {
     @Override
     public Action[] getActions(boolean context) {
         return new Action [] { 
-            ExecuteClassLevelReportAction.createExecuteReportAction(),
+            ExecuteClassLevelReportAction.getInstance(),
             ServiceManagerActionFactory.getDeleteServiceAction(),
-            showMoreInformationAction == null ? showMoreInformationAction = new ShowMoreInformationAction(object.getOid(), object.getClassName()) : showMoreInformationAction
+            showMoreInformationAction == null ? showMoreInformationAction = 
+                new ShowMoreInformationAction(getObject().getOid(), getObject().getClassName()) : showMoreInformationAction
         };        
     }
 }
