@@ -2825,7 +2825,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     public long createSubnet(long id, String className, String attributeNames[], 
             String attributeValues[][], String ipAddress, String sessionId) throws ServerSideException{
         try {
-            aem.validateWebServiceCall("CreateSubnet", ipAddress, sessionId);
+            aem.validateWebServiceCall("createSubnet", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
             return ipamModule.createSubnet(id, className, attributeNames, attributeValues);
         } catch (InventoryException ex) {
@@ -2838,11 +2838,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void deleteSubnets(long[] ids, String className, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException{
+    public void deleteSubnets(String className, List<Long> ids, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException{
         try {
-            aem.validateWebServiceCall("DeleteSubnet", ipAddress, sessionId);
+            aem.validateWebServiceCall("deleteSubnets", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            ipamModule.deleteSubnets(ids, className, releaseRelationships);
+            ipamModule.deleteSubnets(className, ids, releaseRelationships);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2941,11 +2941,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void releaseSubnetFromVrf(long vrfId, long id, String ipAddress, String sessionId) throws ServerSideException{
+    public void releaseSubnetFromVRF(long subnetId, long vrfId, String ipAddress, String sessionId) throws ServerSideException{
         try{
             aem.validateWebServiceCall("releaseSubnetFromVRF", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            ipamModule.releaseSubnetFromVRF(vrfId, id);
+            ipamModule.releaseSubnetFromVRF(subnetId, vrfId);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }

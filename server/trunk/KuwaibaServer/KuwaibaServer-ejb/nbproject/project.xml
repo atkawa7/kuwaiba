@@ -5,6 +5,7 @@
         <data xmlns="http://www.netbeans.org/ns/j2ee-ejbjarproject/3">
             <name>KuwaibaServer-ejb</name>
             <minimum-ant-version>1.6.5</minimum-ant-version>
+            <explicit-platform explicit-source-supported="true"/>
             <included-library dirs="200">libs.Groovy_2.4.7.classpath</included-library>
             <included-library dirs="200">libs.JBcrypt_0.4.classpath</included-library>
             <source-roots>

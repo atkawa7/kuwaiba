@@ -430,7 +430,7 @@ public interface WebserviceBeanRemote {
     public List<SDHContainerLinkDefinition> getSDHContainerLinkStructure(String transportLinkClass, long transportLinkId, String ipAddress, String sessionId) throws ServerSideException;
         // </editor-fold>   
     
-        // <editor-fold defaultstate="collapsed" desc="IP Administration manager module">
+        // <editor-fold defaultstate="collapsed" desc="IP Address Manager module">
         public RemotePool[] getSubnetPools(int limit, long parentId, String className, String ipAddress, String sessionId) throws ServerSideException;
         public RemoteObjectLight[] getSubnets(long poolId, int limit, String ipAddress, String sessionId) throws ServerSideException;
         public RemoteObject getSubnet(long id, String className, String ipAddress, String sessionId) throws ServerSideException;
@@ -441,7 +441,7 @@ public interface WebserviceBeanRemote {
         public long createSubnet(long poolId, String className, String attributeNames[], 
             String attributeValues[][], String ipAddress, String sessionId) throws ServerSideException;
         public void updateSubnet() throws ServerSideException;
-        public void deleteSubnets(long[] ids, String className, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
+        public void deleteSubnets(String className, List<Long> ids, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
         public void deleteSubnetPools(long[] ids, String ipAddress, String sessionId) throws ServerSideException;
         public long addIP(long id, String parentClassName, String attributeNames[], 
             String attributeValues[][], String ipAddress, String sessionId) throws ServerSideException;
@@ -451,7 +451,7 @@ public interface WebserviceBeanRemote {
         public void relateSubnetToVrf(long id, String className, long vrfId, String ipAddress, String sessionId) throws ServerSideException;
         public void releasePortFromIP(String deviceClassName, long deviceId, long id, String ipAddress, String sessionId) throws ServerSideException;
         public void releaseFromVlan(long vlanId, long id, String ipAddress, String sessionId) throws ServerSideException;
-        public void releaseSubnetFromVrf(long vrfId, long id, String ipAddress, String sessionId) throws ServerSideException;
+        public void releaseSubnetFromVRF(long subnetId, long vrfId, String ipAddress, String sessionId) throws ServerSideException;
         public RemoteObjectLight[] getSubnetUsedIps(long id, String className, int limit, String ipAddress, String sessionId) throws ServerSideException;
         public RemoteObjectLight[] getSubnetsInSubent(long id, String className, int limit, String ipAddress, String sessionId)  throws ServerSideException;
         public boolean itOverlaps(String networkIp, String broadcastIp, String ipAddress, String sessionId) throws ServerSideException;

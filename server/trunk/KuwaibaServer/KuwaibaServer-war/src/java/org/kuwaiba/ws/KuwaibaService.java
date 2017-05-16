@@ -4476,21 +4476,20 @@ public class KuwaibaService {
     }
     
      /**
-     * Delete a set of subnets. Note that this method must be used only for Subnet objects
-     * @param oids object id from the objects to be deleted
-     * @param className The class of the subnet
+     * Delete a subnet. All subnets must be instances of the same class
+     * @param oids The ids of the subnets to be deleted
+     * @param className The subnet class
      * @param releaseRelationships Should the deletion be forced, deleting all the relationships?
      * @param sessionId Session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "deleteSubnets")
-    public void deleteSubnets(
-            @WebParam(name = "oid")long[] oids,
-            @WebParam(name = "className") String className,
+    public void deleteSubnets(@WebParam(name = "className") String className,
+            @WebParam(name = "oids")List<Long> oids,
             @WebParam(name = "releaseRelationships") boolean releaseRelationships,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
-        try{
-            wsBean.deleteSubnets(oids, className, releaseRelationships, getIPAddress(), sessionId);
+        try {
+            wsBean.deleteSubnets(className, oids, releaseRelationships, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -4504,7 +4503,7 @@ public class KuwaibaService {
     /**
       * Gets the complete information about a given subnet (all its attributes)
       * @param id Subnet id
-      * @param className VPN classs
+      * @param className VPN class
       * @param sessionId Session token
       * @return a representation of the entity as a RemoteObject
       * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
@@ -4654,20 +4653,19 @@ public class KuwaibaService {
     }
     
     /**
-     * release an element From a VLAN
-     * Releases an subnet from a VLAN that is using it
-     * @param id Subnet id
+     * Releases a subnet from a VLAN that is using it
+     * @param subnetId Subnet id
      * @param vlanId the VLAN id
      * @param sessionId Session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime    
      */
     @WebMethod(operationName = "releaseFromVlan")
     public void releaseFromVlan (
-            @WebParam(name = "id")long id,
+            @WebParam(name = "subnetId")long subnetId,
             @WebParam(name = "vlanId")long vlanId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
-            wsBean.releaseFromVlan(vlanId, id, getIPAddress(), sessionId);
+            wsBean.releaseFromVlan(vlanId, subnetId, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -4679,25 +4677,24 @@ public class KuwaibaService {
     }
     
     /**
-     * releaseSubnetFromVRF
-     * Releases an subnet from a VLAN that is using it
-     * @param id Subnet id
+     * Releases an subnet from a VRF instance associated to it
+     * @param subnetId Subnet id
      * @param vrfId the VRF id
      * @param sessionId Session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime    
      */
-    @WebMethod(operationName = "releaseSubnetFromVrf")
-    public void releaseSubnetFromVrf (
-            @WebParam(name = "id")long id,
+    @WebMethod(operationName = "releaseSubnetFromVRF")
+    public void releaseSubnetFromVRF (
+            @WebParam(name = "subnetId")long subnetId,
             @WebParam(name = "vrfId")long vrfId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
-            wsBean.releaseSubnetFromVrf(vrfId, id, getIPAddress(), sessionId);
+            wsBean.releaseSubnetFromVRF(subnetId, vrfId, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in releaseSubnetFromVrf: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in releaseSubnetFromVRF: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }

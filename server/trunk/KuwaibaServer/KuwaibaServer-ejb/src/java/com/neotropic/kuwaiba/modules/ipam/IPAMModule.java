@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.application.Pool;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
@@ -310,13 +308,12 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws OperationNotPermittedException
      * @throws NotAuthorizedException 
      */
-    public void deleteSubnets(long[] ids, String className, boolean releaseRelationships) 
+    public void deleteSubnets(String className, List<Long> ids, boolean releaseRelationships) 
             throws ObjectNotFoundException, MetadataObjectNotFoundException, 
-            OperationNotPermittedException, NotAuthorizedException
-    {
-        if(ids != null)
-            bem.deleteObject(className, ids[0], releaseRelationships);
-        
+            OperationNotPermittedException, NotAuthorizedException {
+        HashMap<String, List<Long>> objectsToBeDeleted = new HashMap<>();
+        objectsToBeDeleted.put(className, ids);
+        bem.deleteObjects(objectsToBeDeleted, releaseRelationships);
     }
     
     /**
@@ -405,17 +402,17 @@ public class IPAMModule implements GenericCommercialModule{
     
     /**
      * Relate a Subnet with a VRF
-     * @param id subnet id
+     * @param subnetId subnet id
      * @param className if the subnet has IPv4 or IPv6 addresses
      * @param vrfId VLAN id
      * @throws ObjectNotFoundException
      * @throws OperationNotPermittedException
      * @throws MetadataObjectNotFoundException 
      */
-    public void relateSubnetToVRF(long id, String className, long vrfId)
+    public void relateSubnetToVRF(long subnetId, String className, long vrfId)
         throws ObjectNotFoundException,
             OperationNotPermittedException, MetadataObjectNotFoundException{
-        bem.createSpecialRelationship(Constants.CLASS_VRF_INSTANCE, vrfId, className, id, RELATIONSHIP_IPAMBELONGSTOVRFINSTACE, true);
+        bem.createSpecialRelationship(Constants.CLASS_VRF_INSTANCE, vrfId, className, subnetId, RELATIONSHIP_IPAMBELONGSTOVRFINSTACE, true);
     }
     
     /**
@@ -439,17 +436,17 @@ public class IPAMModule implements GenericCommercialModule{
     
     /**
      * Release a relationship between a subnet and a VRF
+     * @param subnetId the subnet id
      * @param vrfId the VRF Id
-     * @param id the subnet id
      * @throws ObjectNotFoundException
      * @throws MetadataObjectNotFoundException
      * @throws ApplicationObjectNotFoundException
      * @throws NotAuthorizedException 
      */
-    public void releaseSubnetFromVRF(long vrfId, long id)throws ObjectNotFoundException, MetadataObjectNotFoundException,
+    public void releaseSubnetFromVRF(long subnetId, long vrfId) throws ObjectNotFoundException, MetadataObjectNotFoundException,
             ApplicationObjectNotFoundException, NotAuthorizedException
     {
-        bem.releaseSpecialRelationship(Constants.CLASS_VRF_INSTANCE, vrfId, id, RELATIONSHIP_IPAMBELONGSTOVRFINSTACE);
+        bem.releaseSpecialRelationship(Constants.CLASS_VRF_INSTANCE, vrfId, subnetId, RELATIONSHIP_IPAMBELONGSTOVRFINSTACE);
     }
     
     /**

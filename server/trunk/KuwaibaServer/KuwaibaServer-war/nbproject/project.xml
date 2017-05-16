@@ -8,12 +8,13 @@
         <data xmlns="http://www.netbeans.org/ns/web-project/3">
             <name>KuwaibaServer-war</name>
             <minimum-ant-version>1.6.5</minimum-ant-version>
+            <explicit-platform explicit-source-supported="true"/>
             <web-module-libraries>
                 <library dirs="100">
                     <file>${reference.KuwaibaServer-ejb.dist}</file>
                 </library>
                 <library dirs="200">
-                    <file>${libs.CDI.API.classpath}</file>
+                    <file>${libs.CDI-API.classpath}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
             </web-module-libraries>
