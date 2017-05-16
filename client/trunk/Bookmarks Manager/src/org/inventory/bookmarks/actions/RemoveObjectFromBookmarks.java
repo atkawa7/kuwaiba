@@ -26,9 +26,10 @@ import org.inventory.bookmarks.nodes.BookmarkNode;
 import org.inventory.bookmarks.nodes.BookmarkNode.BookmarkChildren;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalBookmark;
-import org.inventory.core.services.api.actions.GenericObjectNodeAction;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter;
 import org.openide.util.lookup.ServiceProvider;
@@ -38,7 +39,7 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class DeleteItemFromBookmark extends GenericObjectNodeAction implements Presenter.Popup {
+public class RemoveObjectFromBookmarks extends GenericObjectNodeAction implements Presenter.Popup {
     
     @Override
     public String getValidator() {
@@ -49,7 +50,7 @@ public class DeleteItemFromBookmark extends GenericObjectNodeAction implements P
     public void actionPerformed(ActionEvent e) {
         
         if (JOptionPane.showConfirmDialog(null, 
-                "Are you sure you want remove this bookmark?", "Warning", 
+                "Are you sure you want remove this object bookmarks?", "Warning", 
                 JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
         
             Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
@@ -115,5 +116,10 @@ public class DeleteItemFromBookmark extends GenericObjectNodeAction implements P
         }
         
         return mnuServices;
+    }
+    
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_BOOKMARKS, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

@@ -47,10 +47,10 @@ public class BookmarksFrame extends JFrame {
     private JTextField txtField;
     private JScrollPane pnlScrollMain;
     private JList lstAviableBookmarks;
-    private final LocalObjectLight[] selectedObjects;
+    private final List<LocalObjectLight> selectedObjects;
     private final List<LocalBookmark> bookmarks;
     
-    public BookmarksFrame(LocalObjectLight[] selectedObjects, List<LocalBookmark> bookmarks) {
+    public BookmarksFrame(List<LocalObjectLight> selectedObjects, List<LocalBookmark> bookmarks) {
         this.selectedObjects = selectedObjects;
         this.bookmarks = bookmarks;       
         setLayout(new BorderLayout());
@@ -120,14 +120,14 @@ public class BookmarksFrame extends JFrame {
                 List<String> objectsClassName = new ArrayList();
                 List<Long> objectsId = new ArrayList();
                 
-                for (int i = 0; i < selectedObjects.length; i += 1) {
-                    objectsClassName.add(selectedObjects[i].getClassName());
-                    objectsId.add(selectedObjects[i].getOid());
+                for (LocalObjectLight selectedObject : selectedObjects) {
+                    objectsClassName.add(selectedObject.getClassName());
+                    objectsId.add(selectedObject.getOid());
                     
                     if (CommunicationsStub.getInstance()
                         .associateObjectsToBookmark(objectsClassName, objectsId, ((LocalBookmark) lstAviableBookmarks.getSelectedValue()).getId())) {
 
-                        JOptionPane.showMessageDialog(null, String.format("%s object added to bookmark %s", selectedObjects[i], lstAviableBookmarks.getSelectedValue()));
+                        JOptionPane.showMessageDialog(null, String.format("%s added to bookmark category %s", selectedObject, lstAviableBookmarks.getSelectedValue()));
                         dispose();
                     } else {
                         JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError(), 

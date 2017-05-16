@@ -23,41 +23,41 @@ public class BookmarksActionFactory {
     /**
      * Singleton for the create bookmark action
      */
-    private static NewBookmarkAction newBookmarkAction;
+    private static NewBookmarkCategoryAction newBookmarkAction;
     /**
      * Singleton for the delete bookmark action
      */
-    private static DeleteBookmarkAction deleteBookmarkAction;
+    private static DeleteBookmarkCategoryAction deleteBookmarkAction;
     /**
      * Singleton for the add item to bookmarkAction
      */
-    private static AddItemToBookmarkAction addItemToBookmarkAction;
+    private static AddObjectToBookmarksAction addItemToBookmarkAction;
     /**
      * Singleton for the delete item from bookmark
      */
-    private static DeleteItemFromBookmark deleteItemFromBookmark;
+    private static RemoveObjectFromBookmarks deleteItemFromBookmark;
     
-    public static NewBookmarkAction getNewBookmarkAction() {
+    public static NewBookmarkCategoryAction getNewBookmarkAction() {
         if (newBookmarkAction == null)
-            newBookmarkAction = new NewBookmarkAction();
+            newBookmarkAction = new NewBookmarkCategoryAction();
         return newBookmarkAction;
     }
     
-    public static DeleteBookmarkAction getDeleteBookmarkAction() {
+    public static DeleteBookmarkCategoryAction getDeleteBookmarkAction() {
         if (deleteBookmarkAction == null)
-            deleteBookmarkAction = new DeleteBookmarkAction();
+            deleteBookmarkAction = new DeleteBookmarkCategoryAction();
         return deleteBookmarkAction;
     }
     
-    public static AddItemToBookmarkAction getAddItemToBookmarkAction() {
+    public static AddObjectToBookmarksAction getAddItemToBookmarkAction() {
         if (addItemToBookmarkAction == null)
-            addItemToBookmarkAction = new AddItemToBookmarkAction();
+            addItemToBookmarkAction = new AddObjectToBookmarksAction();
         return addItemToBookmarkAction;
     }
     
-    public static DeleteItemFromBookmark getDeleteItemFromBookmark() {
+    public static RemoveObjectFromBookmarks getDeleteItemFromBookmark() {
         if (deleteItemFromBookmark == null)
-            deleteItemFromBookmark = new DeleteItemFromBookmark();
+            deleteItemFromBookmark = new RemoveObjectFromBookmarks();
         return deleteItemFromBookmark;
     }
 }

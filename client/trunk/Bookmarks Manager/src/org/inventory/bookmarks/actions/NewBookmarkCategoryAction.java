@@ -33,9 +33,9 @@ import org.openide.util.Utilities;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class NewBookmarkAction extends AbstractAction {
+public class NewBookmarkCategoryAction extends AbstractAction {
     
-    public NewBookmarkAction() {
+    public NewBookmarkCategoryAction() {
         putValue(NAME, "New Bookmark");
     }
 

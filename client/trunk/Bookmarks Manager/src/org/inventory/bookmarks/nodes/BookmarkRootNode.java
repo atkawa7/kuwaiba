@@ -22,7 +22,7 @@ import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalBookmark;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.bookmarks.actions.NewBookmarkAction;
+import org.inventory.bookmarks.actions.NewBookmarkCategoryAction;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
@@ -43,7 +43,7 @@ public class BookmarkRootNode extends AbstractNode {
     
     @Override
     public Action[] getActions(boolean context){
-        return new Action[]{ new NewBookmarkAction() };
+        return new Action[]{ new NewBookmarkCategoryAction() };
     }
     
     @Override

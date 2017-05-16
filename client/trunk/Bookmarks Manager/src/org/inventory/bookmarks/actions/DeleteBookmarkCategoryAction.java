@@ -19,27 +19,28 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.bookmarks.nodes.BookmarkNode;
 import org.inventory.bookmarks.nodes.BookmarkRootNode.BookmarkRootChildren;
+import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.openide.util.Utilities;
 
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class DeleteBookmarkAction extends AbstractAction {
+public class DeleteBookmarkCategoryAction extends GenericInventoryAction {
     
-    public DeleteBookmarkAction() {
-        putValue(NAME, "Delete Bookmark");
+    public DeleteBookmarkCategoryAction() {
+        putValue(NAME, "Delete Bookmark Category");
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this Bookmark?", 
+        if (JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this bookmark category?", 
             "Warning", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             
             Iterator<? extends BookmarkNode> selectedNodes = Utilities.actionsGlobalContext()
@@ -55,7 +56,7 @@ public class DeleteBookmarkAction extends AbstractAction {
             
             if (CommunicationsStub.getInstance().deleteBookmark(ids)) {
                 NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, 
-                    "The selected bookmark was deleted");
+                    "The selected bookmark category was deleted successfully");
                 
                 ((BookmarkRootChildren) selectedNode.getParentNode().getChildren()).addNotify();
             } else {
@@ -63,5 +64,10 @@ public class DeleteBookmarkAction extends AbstractAction {
                     CommunicationsStub.getInstance().getError());
             }
         }
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_BOOKMARKS, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

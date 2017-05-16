@@ -16,17 +16,13 @@
 package org.inventory.bookmarks.actions;
 
 import java.awt.event.ActionEvent;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.bookmarks.windows.BookmarksFrame;
 import org.inventory.communications.core.LocalBookmark;
-import org.openide.util.Lookup;
-import org.openide.util.Utilities;
+import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -34,9 +30,9 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class AddItemToBookmarkAction extends GenericObjectNodeAction {
+public class AddObjectToBookmarksAction extends GenericObjectNodeAction {
     
-    public AddItemToBookmarkAction() {
+    public AddObjectToBookmarksAction() {
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/bookmarks/Bundle")
             .getString("LBL_ADD_BOOKMARK"));
     }
@@ -48,24 +44,20 @@ public class AddItemToBookmarkAction extends GenericObjectNodeAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        super.actionPerformed(e);
         List<LocalBookmark> bookmarks = CommunicationsStub.getInstance().getBookmarksForUser();
                 
         if (bookmarks == null) {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, 
                 CommunicationsStub.getInstance().getError());
         } else {
-            Lookup.Result<LocalObjectLight> selectedNodes = Utilities
-                .actionsGlobalContext().lookupResult(LocalObjectLight.class);
-            
-            Collection lookupResult = selectedNodes.allInstances();
-            LocalObjectLight[] selectedObjects = new LocalObjectLight[lookupResult.size()];
-            int i = 0;
-            for (Iterator it = lookupResult.iterator(); it.hasNext();) {
-                selectedObjects[i] = (LocalObjectLight) it.next();
-                i += 1;
-            }
             BookmarksFrame frame = new BookmarksFrame(selectedObjects, bookmarks);
             frame.setVisible(true);
         }
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_BOOKMARKS, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }
