@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
-OpenIDE-Module: org.inventory.core.authentication
+OpenIDE-Module: org.inventory.core.authentication/1
+OpenIDE-Module-Implementation-Version: 1
 OpenIDE-Module-Install: org/inventory/core/authentication/Installer.class
 OpenIDE-Module-Localizing-Bundle: org/inventory/core/authentication/Bundle.properties
-OpenIDE-Module-Specification-Version: 1.0
 

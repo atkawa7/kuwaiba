@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.Action;
 import javax.swing.JPopupMenu;
-import javax.swing.JSeparator;
 import org.inventory.graphicalrepresentation.specialrelationships.scene.GraphicalRepSpecialRelationshipsScene;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.netbeans.api.visual.action.PopupMenuProvider;
@@ -33,42 +32,32 @@ import org.openide.util.Utilities;
  */
 public class GraphicalRepSpecialRelationshipsActionsFactory {
     private PopupMenuProvider specialRelatedObjectNodeMenu;
-    private final HideSpecialRelationshipChildrenAction hideSpecialRelationshipChildrenAction; 
-    private final ShowSpecialRelationshipChildrenAction showSpecialRelationshipChildrenAction;
-    
-    public GraphicalRepSpecialRelationshipsActionsFactory(
-        GraphicalRepSpecialRelationshipsScene scene) {
         
-        hideSpecialRelationshipChildrenAction = new HideSpecialRelationshipChildrenAction(scene);
-        showSpecialRelationshipChildrenAction = new ShowSpecialRelationshipChildrenAction(scene);
-    }
-    
     public PopupMenuProvider createSpecialRelatedObjectNodeMenu() {
         if (specialRelatedObjectNodeMenu == null) {
             specialRelatedObjectNodeMenu = new PopupMenuProvider() {
 
                 @Override
-                public JPopupMenu getPopupMenu(Widget widget, Point localLocation) {
-                    JPopupMenu popupMenu = new JPopupMenu("Options");                    
-                    popupMenu.add(showSpecialRelationshipChildrenAction);
-                    popupMenu.add(hideSpecialRelationshipChildrenAction);
-                    popupMenu.add(new JSeparator());
-                    
-                    // Actions for ObjectNode
+                public JPopupMenu getPopupMenu(Widget widget, Point localLocation) {                    
                     List<Action> listOfactions = new ArrayList();
                     
+                    //TODO: manage PoolNodes actions: when the lookup class are not an ObjectNode
+                    // Actions for ObjectNode
                     Action [] arrayOfActions = widget.getLookup().lookup(ObjectNode.class).getActions(true);
                     
                     for (Action action : arrayOfActions)
                         listOfactions.add(action);
+                                        
+                    listOfactions.add(0, null); // separator
                     
-                    listOfactions.add(0, null);
-                    listOfactions.add(0, hideSpecialRelationshipChildrenAction);
-                    listOfactions.add(0, showSpecialRelationshipChildrenAction);
+                    listOfactions.add(0, HideSpecialRelationshipChildrenAction.getInstance(
+                        (GraphicalRepSpecialRelationshipsScene) widget.getScene()));
+                    
+                    listOfactions.add(0, ShowSpecialRelationshipChildrenAction.getInstance(
+                        (GraphicalRepSpecialRelationshipsScene) widget.getScene()));
                     
                     return Utilities.actionsToPopup(listOfactions.toArray(new Action[0]), 
                             widget.getScene().getView());
-                    //TODO: action for PoolNode
                 }
             };
         }

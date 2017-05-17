@@ -43,7 +43,7 @@ public class BookmarkRootNode extends AbstractNode {
     
     @Override
     public Action[] getActions(boolean context){
-        return new Action[]{ new NewBookmarkCategoryAction() };
+        return new Action[]{ NewBookmarkCategoryAction.getInstance() };
     }
     
     @Override

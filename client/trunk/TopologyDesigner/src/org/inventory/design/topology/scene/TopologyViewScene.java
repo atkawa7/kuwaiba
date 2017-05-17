@@ -47,7 +47,9 @@ import org.inventory.core.visual.actions.providers.CustomMoveProvider;
 import org.inventory.core.visual.actions.providers.CustomResizeProvider;
 import org.inventory.core.visual.actions.providers.CustomSelectProvider;
 import org.inventory.core.visual.scene.AbstractScene;
-import org.inventory.design.topology.actions.TopologyViewActions;
+import org.inventory.design.topology.menus.FrameMenu;
+import org.inventory.design.topology.menus.ObjectConnectionWidgetMenu;
+import org.inventory.design.topology.menus.ObjectNodeWidgetMenu;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.ConnectorState;
@@ -79,16 +81,15 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
     public final static String FREE_FRAME = "freeFrame";
     private final Image cloudIcon = ImageUtilities.loadImage(CLOUD_ICON_PATH);
     
-    private LayerWidget iconsLayer;
-    private LayerWidget framesLayer;
+    private final LayerWidget iconsLayer;
+    private final LayerWidget framesLayer;
     
-    private CustomResizeProvider resizeProvider;
-    private CustomMoveProvider moveProvider;
-    private CustomAddRemoveControlPointAction addRemoveControlPointAction;
-    private CustomMoveControlPointAction moveControlPointAction;
-    private WidgetAction selectAction;
-    private TopologyViewActions topologyViewActions;
-    
+    private final CustomResizeProvider resizeProvider;
+    private final CustomMoveProvider moveProvider;
+    private final CustomAddRemoveControlPointAction addRemoveControlPointAction;
+    private final CustomMoveControlPointAction moveControlPointAction;
+    private final WidgetAction selectAction;
+        
     Random randomGenerator; 
     
     public TopologyViewScene() {
@@ -101,9 +102,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
         
         iconsLayer = new LayerWidget(this);
         framesLayer = new LayerWidget(this);
-        
-        topologyViewActions = new TopologyViewActions(this);
-        
+                
         addChild(backgroundLayer);
         addChild(framesLayer);
         addChild(edgeLayer);
@@ -493,7 +492,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
             newNode.getActions(ACTION_SELECT).addAction(ActionFactory.createMoveAction(moveProvider, moveProvider));
             newNode.getActions(ACTION_CONNECT).addAction(selectAction);
             newNode.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(edgeLayer, getConnectProvider()));
-            newNode.getActions().addAction(ActionFactory.createPopupMenuAction(topologyViewActions.createMenuForNode()));
+            newNode.getActions().addAction(ActionFactory.createPopupMenuAction(ObjectNodeWidgetMenu.getInstance()));
             
             fireChangeEvent(new ActionEvent(node, SCENE_CHANGE, "lol-add-operation"));
             
@@ -536,7 +535,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
             cloudWidget.getActions(ACTION_SELECT).addAction(ActionFactory.createMoveAction(moveProvider, moveProvider));
             cloudWidget.getActions(ACTION_CONNECT).addAction(selectAction);
             cloudWidget.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(edgeLayer, getConnectProvider()));
-            cloudWidget.getActions().addAction(ActionFactory.createPopupMenuAction(topologyViewActions.createMenuForNode()));
+            cloudWidget.getActions().addAction(ActionFactory.createPopupMenuAction(ObjectNodeWidgetMenu.getInstance()));
             
             fireChangeEvent(new ActionEvent(node, SCENE_CHANGE, "cloud-add-operation"));
             return cloudWidget;
@@ -554,7 +553,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
             frameWidget.getActions(ACTION_SELECT).addAction(selectAction);
             frameWidget.getActions(ACTION_SELECT).addAction(ActionFactory.createResizeAction(resizeProvider, resizeProvider));
             frameWidget.getActions(ACTION_SELECT).addAction(ActionFactory.createMoveAction(moveProvider, moveProvider));
-            frameWidget.getActions().addAction(ActionFactory.createPopupMenuAction(topologyViewActions.createMenuForFrame()));
+            frameWidget.getActions().addAction(ActionFactory.createPopupMenuAction(FrameMenu.getInstance()));
             frameWidget.getActions().addAction(ActionFactory.createInplaceEditorAction(new TextFieldInplaceEditor() {
 
                 @Override
@@ -598,7 +597,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
         newEdge.setControlPointShape(PointShape.SQUARE_FILLED_BIG);
         newEdge.setEndPointShape(PointShape.SQUARE_FILLED_BIG);
         newEdge.setRouter(RouterFactory.createFreeRouter());
-        newEdge.getActions().addAction(ActionFactory.createPopupMenuAction(topologyViewActions.createMenuForConnection()));
+        newEdge.getActions().addAction(ActionFactory.createPopupMenuAction(ObjectConnectionWidgetMenu.getInstance()));
         edgeLayer.addChild(newEdge);
         return newEdge;
     }

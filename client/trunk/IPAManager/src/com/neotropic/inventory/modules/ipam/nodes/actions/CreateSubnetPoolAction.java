@@ -48,7 +48,7 @@ public class CreateSubnetPoolAction extends GenericInventoryAction {
     }
     
     public static CreateSubnetPoolAction getInstance() {
-        return instance == null ? new CreateSubnetPoolAction() : instance;
+        return instance == null ? instance = new CreateSubnetPoolAction() : instance;
     }
     
     @Override

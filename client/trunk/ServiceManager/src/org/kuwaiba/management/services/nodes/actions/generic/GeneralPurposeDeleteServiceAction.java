@@ -38,7 +38,7 @@ public class GeneralPurposeDeleteServiceAction extends GenericInventoryAction {
     }
     
     public static GeneralPurposeDeleteServiceAction getInstance() {
-        return instance == null ? new GeneralPurposeDeleteServiceAction() : instance;
+        return instance == null ? instance = new GeneralPurposeDeleteServiceAction() : instance;
     }
     
     @Override

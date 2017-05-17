@@ -43,7 +43,7 @@ public class RelateSubnetToVRFAction extends GenericInventoryAction {
     }
     
     public static RelateSubnetToVRFAction getInstance() {
-        return instance == null ? new RelateSubnetToVRFAction() : instance;
+        return instance == null ? instance = new RelateSubnetToVRFAction() : instance;
     }
     
     @Override

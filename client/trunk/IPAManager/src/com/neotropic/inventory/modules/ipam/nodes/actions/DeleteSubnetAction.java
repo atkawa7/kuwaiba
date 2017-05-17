@@ -43,7 +43,7 @@ public class DeleteSubnetAction extends GenericInventoryAction {
     }
     
     public static DeleteSubnetAction getInstance() {
-        return instance == null ? new DeleteSubnetAction() : instance;
+        return instance == null ? instance = new DeleteSubnetAction() : instance;
     }
     
     @Override

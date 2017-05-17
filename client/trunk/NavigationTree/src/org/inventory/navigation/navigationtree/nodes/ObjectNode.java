@@ -274,7 +274,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
                     actions.add(action);
                 }
             }
-        }
+        }        
         actions.add(null); //Separator
         actions.add(explorerAction);
         actions.add(showMoreInformationAction == null ? showMoreInformationAction = new ShowMoreInformationAction(object.getOid(), object.getClassName()) : showMoreInformationAction);
@@ -425,9 +425,16 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getSource().equals(getObject())) {
             if (evt.getPropertyName().equals(Constants.PROPERTY_NAME)) {
-                getObject().setName((String)evt.getNewValue());
-                setDisplayName((String)evt.getNewValue());
-                fireNameChange(null, ""); //Weird, this should be fireDisplayNameChange, but it isn't
+                
+                // The name must be different to avoid a recursive call to getObject().getName()
+                // which fire the name property change event
+                if ((String) evt.getNewValue() != null && 
+                    !((String) evt.getNewValue()).equals(getObject().getName())) {
+                    
+                    getObject().setName((String)evt.getNewValue());
+                }
+                setDisplayName(getObject().getName());
+                fireNameChange(null, getObject().getName()); //Weird, this should be fireDisplayNameChange, but it isn't
             }
         }
     }

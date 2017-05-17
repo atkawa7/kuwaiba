@@ -54,7 +54,7 @@ public class CreateSubnetAction extends GenericInventoryAction {
     }
     
     public static CreateSubnetAction getInstance() {
-        return instance == null ? new CreateSubnetAction() : instance;
+        return instance == null ? instance = new CreateSubnetAction() : instance;
     }
     
     @Override

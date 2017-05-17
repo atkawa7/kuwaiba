@@ -64,7 +64,7 @@ public final class BookmarkManagerTopComponent extends TopComponent implements
     ExplorerManager.Provider, Refreshable {
     
     private BeanTreeView treeMain;
-    private ExplorerManager em;
+    private final ExplorerManager em;
 
     public BookmarkManagerTopComponent() {
         em = new ExplorerManager();

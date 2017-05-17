@@ -47,7 +47,7 @@ public class ExecuteClassLevelReportAction extends GenericInventoryAction implem
     }
     
     public static ExecuteClassLevelReportAction getInstance() {
-        return instance == null ? new ExecuteClassLevelReportAction() : instance;
+        return instance == null ? instance = new ExecuteClassLevelReportAction() : instance;
     }
     
     @Override

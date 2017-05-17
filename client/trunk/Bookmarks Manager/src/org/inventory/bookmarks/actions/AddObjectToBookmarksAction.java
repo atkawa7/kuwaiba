@@ -26,22 +26,22 @@ import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAc
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- *
+ * Action to add object to bookmark
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
 public class AddObjectToBookmarksAction extends GenericObjectNodeAction {
-    
+        
     public AddObjectToBookmarksAction() {
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/bookmarks/Bundle")
             .getString("LBL_ADD_BOOKMARK"));
     }
-    
+            
     @Override
     public String getValidator() {
         return null; //Enable this action for any object
     }
-
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);

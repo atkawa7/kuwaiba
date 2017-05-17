@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 AutoUpdate-Show-In-Client: true
-OpenIDE-Module: org.inventory.core.templates
+OpenIDE-Module: org.inventory.core.templates/1
+OpenIDE-Module-Implementation-Version: 1
 OpenIDE-Module-Localizing-Bundle: org/inventory/core/templates/Bundle.properties
 OpenIDE-Module-Requires: org.openide.windows.WindowManager
-OpenIDE-Module-Specification-Version: 1.0
 

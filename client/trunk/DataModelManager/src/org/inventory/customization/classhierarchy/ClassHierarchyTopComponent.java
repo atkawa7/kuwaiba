@@ -46,6 +46,8 @@ import org.inventory.core.visual.export.filters.ImageFilter;
 import org.inventory.core.visual.export.filters.SceneExportFilter;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.customization.classhierarchy.scene.ClassHierarchyScene;
+import org.inventory.customization.classhierarchy.scene.actions.HideSubclassAction;
+import org.inventory.customization.classhierarchy.scene.actions.ShowSubclassAction;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.*;
@@ -373,17 +375,17 @@ public final class ClassHierarchyTopComponent extends TopComponent implements Ex
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getActionCommand().equals("showSubclasses")) {
+        if (e.getActionCommand().equals(ShowSubclassAction.COMMAND)) {
             service.addSubclasses((LocalClassMetadata) e.getSource(), false);
             listOfClasses();
         }
         
-        if (e.getActionCommand().equals("hideSubclasses")) {
+        if (e.getActionCommand().equals(HideSubclassAction.COMMAND)) {
             service.removeSubclasses((LocalClassMetadata) e.getSource());
             listOfClasses();
         }
         
-        if (e.getActionCommand().equals("expandClassHierarchy")) {
+        if (e.getActionCommand().equals(ClassHierarchyScene.COMMAND_EXPAND)) {
             service.addSubclasses((LocalClassMetadata) e.getSource(), true);
             listOfClasses();
         }

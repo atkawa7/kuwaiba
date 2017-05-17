@@ -23,8 +23,8 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.visual.actions.providers.CustomSelectProvider;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.core.visual.scene.SelectableVMDNodeWidget;
-import org.inventory.customization.classhierarchy.scene.actions.ClassHierarchyActions;
 import org.inventory.customization.classhierarchy.nodes.ClassMetadataNode;
+import org.inventory.customization.classhierarchy.scene.menus.ClassMetadataWidgetMenu;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.WidgetAction;
@@ -50,11 +50,10 @@ import org.netbeans.api.visual.widget.Widget;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ClassHierarchyScene extends AbstractScene<LocalClassMetadata, String> {
+    public static final String COMMAND_EXPAND = "expandClassHierarchy";
     private SceneLayout sceneLayout;
     private WidgetAction selectAction;
-    
-    private ClassHierarchyActions actions;
-    
+        
     public ClassHierarchyScene(LocalClassMetadata root) {
         this(VMDFactory.getOriginalScheme(), root);
     }
@@ -62,9 +61,7 @@ public class ClassHierarchyScene extends AbstractScene<LocalClassMetadata, Strin
     private ClassHierarchyScene(VMDColorScheme scheme, LocalClassMetadata root) {
         nodeLayer = new LayerWidget(this);
         edgeLayer = new LayerWidget(this);
-        
-        actions = new ClassHierarchyActions(this);
-        
+                
         addChild(nodeLayer);
         addChild(edgeLayer);
         
@@ -129,7 +126,7 @@ public class ClassHierarchyScene extends AbstractScene<LocalClassMetadata, Strin
                 setEdgeTarget(edge, subclass);
             }
             if (recursive)
-                fireChangeEvent(new ActionEvent(subclass, AbstractScene.SCENE_CHANGE, "expandClassHierarchy"));
+                fireChangeEvent(new ActionEvent(subclass, AbstractScene.SCENE_CHANGE, ClassHierarchyScene.COMMAND_EXPAND));
         }
     }
     
@@ -169,7 +166,7 @@ public class ClassHierarchyScene extends AbstractScene<LocalClassMetadata, Strin
         nodeWidget.setNodeName(node.isAbstract() ?  node.getClassName() + " [Abstract]" : node.getClassName());
         nodeWidget.getActions().addAction(selectAction);
         nodeWidget.getActions().addAction(ActionFactory.createMoveAction());
-        nodeWidget.getActions().addAction(ActionFactory.createPopupMenuAction(actions.createMenuForNode()));
+        nodeWidget.getActions().addAction(ActionFactory.createPopupMenuAction(ClassMetadataWidgetMenu.getInstance()));
         nodeLayer.addChild(nodeWidget);
         
         return nodeWidget;

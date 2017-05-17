@@ -42,7 +42,7 @@ public class ReleaseFromVlanAction  extends GenericInventoryAction implements Pr
     private ReleaseFromVlanAction() { }
     
     public static ReleaseFromVlanAction getInstance() {
-        return instance == null ? new ReleaseFromVlanAction() : instance;
+        return instance == null ? instance = new ReleaseFromVlanAction() : instance;
     }
     
     @Override

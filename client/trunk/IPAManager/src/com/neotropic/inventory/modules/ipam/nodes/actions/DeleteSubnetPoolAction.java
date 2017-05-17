@@ -37,7 +37,7 @@ public class DeleteSubnetPoolAction extends GenericInventoryAction {
     }
     
     public static DeleteSubnetPoolAction getInstance() {
-        return instance  == null ? new DeleteSubnetPoolAction() : instance;
+        return instance == null ? instance = new DeleteSubnetPoolAction() : instance;
     }
     
     @Override

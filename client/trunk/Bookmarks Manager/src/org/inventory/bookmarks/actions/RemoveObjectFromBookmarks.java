@@ -35,7 +35,7 @@ import org.openide.util.actions.Presenter;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- *
+ * Action to remove an associated object to a bookmark
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)

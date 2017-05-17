@@ -17,7 +17,7 @@ package org.inventory.bookmarks.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
-import javax.swing.AbstractAction;
+import java.util.ResourceBundle;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -27,18 +27,26 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.bookmarks.nodes.BookmarkRootNode;
 import org.inventory.bookmarks.nodes.BookmarkRootNode.BookmarkRootChildren;
+import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.openide.util.Utilities;
 
 /**
- *
+ * Action to create a new Bookmark category
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class NewBookmarkCategoryAction extends AbstractAction {
+public class NewBookmarkCategoryAction extends GenericInventoryAction {
+    private static NewBookmarkCategoryAction instance;
     
-    public NewBookmarkCategoryAction() {
-        putValue(NAME, "New Bookmark");
+    private NewBookmarkCategoryAction() {
+        putValue(NAME, ResourceBundle.getBundle("org/inventory/bookmarks/Bundle")
+            .getString("ACTION_NAME_NEW_BOOKMARK"));
     }
-
+    
+    public static NewBookmarkCategoryAction getInstance() {
+        return instance == null ? instance = new NewBookmarkCategoryAction() : instance;
+    }
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         Iterator<? extends BookmarkRootNode> selectedNodes = Utilities.actionsGlobalContext()
@@ -73,5 +81,10 @@ public class NewBookmarkCategoryAction extends AbstractAction {
                     NotificationUtil.INFO_MESSAGE, "Bookmark created");
             }
         }
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_BOOKMARKS, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

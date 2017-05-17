@@ -74,7 +74,7 @@ public class GraphicalRepSpecialRelationshipsScene extends AbstractScene<LocalOb
         addChild(edgeLayer);
                         
         selectAction = ActionFactory.createSelectAction(new SpecialCustomSelectProvider(this), false);
-        actionsFactory = new GraphicalRepSpecialRelationshipsActionsFactory(this);
+        actionsFactory = new GraphicalRepSpecialRelationshipsActionsFactory();
         
         getActions().addAction(ActionFactory.createZoomAction());
         getActions().addAction(ActionFactory.createPanAction());

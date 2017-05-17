@@ -28,36 +28,16 @@ public class BookmarksActionFactory {
      * Singleton for the delete bookmark action
      */
     private static DeleteBookmarkCategoryAction deleteBookmarkAction;
-    /**
-     * Singleton for the add item to bookmarkAction
-     */
-    private static AddObjectToBookmarksAction addItemToBookmarkAction;
-    /**
-     * Singleton for the delete item from bookmark
-     */
-    private static RemoveObjectFromBookmarks deleteItemFromBookmark;
     
     public static NewBookmarkCategoryAction getNewBookmarkAction() {
         if (newBookmarkAction == null)
-            newBookmarkAction = new NewBookmarkCategoryAction();
+            newBookmarkAction = NewBookmarkCategoryAction.getInstance();
         return newBookmarkAction;
     }
     
     public static DeleteBookmarkCategoryAction getDeleteBookmarkAction() {
         if (deleteBookmarkAction == null)
-            deleteBookmarkAction = new DeleteBookmarkCategoryAction();
+            deleteBookmarkAction = DeleteBookmarkCategoryAction.getInstance();
         return deleteBookmarkAction;
-    }
-    
-    public static AddObjectToBookmarksAction getAddItemToBookmarkAction() {
-        if (addItemToBookmarkAction == null)
-            addItemToBookmarkAction = new AddObjectToBookmarksAction();
-        return addItemToBookmarkAction;
-    }
-    
-    public static RemoveObjectFromBookmarks getDeleteItemFromBookmark() {
-        if (deleteItemFromBookmark == null)
-            deleteItemFromBookmark = new RemoveObjectFromBookmarks();
-        return deleteItemFromBookmark;
     }
 }

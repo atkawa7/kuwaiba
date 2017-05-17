@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-OpenIDE-Module: org.inventory.misc.trash
+OpenIDE-Module: org.inventory.misc.trash/1
+OpenIDE-Module-Implementation-Version: 1
 OpenIDE-Module-Localizing-Bundle: org/inventory/misc/trash/Bundle.properties
-OpenIDE-Module-Specification-Version: 1.0
 

@@ -36,8 +36,8 @@ public class TopologyViewService {
      */
     public static String CLASS_VIEW = "TopologyModuleView";
     private LocalObjectView view;
-    private TopologyViewScene scene;
-    private CommunicationsStub com = CommunicationsStub.getInstance();
+    private final TopologyViewScene scene;
+    private final CommunicationsStub com = CommunicationsStub.getInstance();
     
     public TopologyViewService(TopologyViewScene scene) {
         this.scene = scene;
@@ -116,9 +116,7 @@ public class TopologyViewService {
             }
         }
     }
-    
-    //private void update
-    
+       
     public boolean deleteView() {
         if (view != null) {
             if (com.deleteGeneralViews(new long [] {view.getId()})) {

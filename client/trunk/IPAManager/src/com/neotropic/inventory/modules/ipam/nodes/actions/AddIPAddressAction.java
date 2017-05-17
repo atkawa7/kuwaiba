@@ -57,7 +57,7 @@ public class AddIPAddressAction extends GenericInventoryAction {
     }
     
     public static AddIPAddressAction getInstance() {
-        return instance == null ? new AddIPAddressAction() : instance;
+        return instance == null ? instance = new AddIPAddressAction() : instance;
     }
 
     @Override

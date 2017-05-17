@@ -19,6 +19,7 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ResourceBundle;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -29,15 +30,21 @@ import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.openide.util.Utilities;
 
 /**
- *
+ * Action to delete a Bookmark category
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class DeleteBookmarkCategoryAction extends GenericInventoryAction {
+    private static DeleteBookmarkCategoryAction instance;
     
-    public DeleteBookmarkCategoryAction() {
-        putValue(NAME, "Delete Bookmark Category");
+    private DeleteBookmarkCategoryAction() {
+        putValue(NAME, ResourceBundle.getBundle("org/inventory/bookmarks/Bundle")
+            .getString("ACTION_NAME_DELETE_BOOKMARK"));
     }
-
+    
+    public static DeleteBookmarkCategoryAction getInstance() {
+        return instance == null ? instance = new DeleteBookmarkCategoryAction() : instance;        
+    }
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         if (JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this bookmark category?", 

@@ -42,7 +42,7 @@ public class ReleaseSubnetFromVRFAction extends GenericInventoryAction implement
     private ReleaseSubnetFromVRFAction() { }
     
     public static ReleaseSubnetFromVRFAction getInstance() {
-        return instance == null ? new ReleaseSubnetFromVRFAction() : instance;
+        return instance == null ? instance = new ReleaseSubnetFromVRFAction() : instance;
     }
     
     @Override

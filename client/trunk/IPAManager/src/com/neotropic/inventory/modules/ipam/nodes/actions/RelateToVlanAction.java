@@ -44,7 +44,7 @@ public class RelateToVlanAction extends GenericInventoryAction {
     }
     
     public static RelateToVlanAction getInstance() {
-        return instance == null ? new RelateToVlanAction() : instance;
+        return instance == null ? instance = new RelateToVlanAction() : instance;
     }
     
     @Override

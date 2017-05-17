@@ -17,23 +17,32 @@ package org.inventory.graphicalrepresentation.specialrelationships.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.Set;
-import javax.swing.AbstractAction;
+import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.graphicalrepresentation.specialrelationships.scene.GraphicalRepSpecialRelationshipsScene;
 
 /**
- *
+ * Action to Show Special Relationship Children of the selected node
+ * into a special relationship graphical representation scene.
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ShowSpecialRelationshipChildrenAction  extends AbstractAction {
+public class ShowSpecialRelationshipChildrenAction  extends GenericInventoryAction {
     public static final String COMMAND = "showSpecialRelationshipChildren";
     private final GraphicalRepSpecialRelationshipsScene scene;
+    private static ShowSpecialRelationshipChildrenAction instance;
     
-    public ShowSpecialRelationshipChildrenAction(
+    private ShowSpecialRelationshipChildrenAction(
         GraphicalRepSpecialRelationshipsScene scene) {
         
         this.scene = scene;
         putValue(NAME, "Show special relationships");
+    }
+    
+    public static ShowSpecialRelationshipChildrenAction getInstance(GraphicalRepSpecialRelationshipsScene scene) {
+        if (scene == null)
+            return null;
+        return instance == null ? instance = new ShowSpecialRelationshipChildrenAction(scene) : instance;
     }
 
     @Override
@@ -46,5 +55,10 @@ public class ShowSpecialRelationshipChildrenAction  extends AbstractAction {
                 AbstractScene.SCENE_CHANGE, 
                 ShowSpecialRelationshipChildrenAction.COMMAND));
         }
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_SPECIAL_EXPLORERS, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }
