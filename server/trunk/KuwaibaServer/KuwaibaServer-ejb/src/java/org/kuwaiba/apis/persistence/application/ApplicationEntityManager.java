@@ -918,7 +918,7 @@ public interface ApplicationEntityManager {
      * @throws ObjectNotFoundException If the object can not be found
      * @throws OperationNotPermittedException If the object have a relationship with the bookmark
      */
-    public void associateObjectToBookmark(String objectClass, long objectId, long bookmarkId) 
+    public void addObjectToBookmarkFolder(String objectClass, long objectId, long bookmarkId) 
         throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException;
     
     /**
@@ -930,7 +930,7 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException If the object can not be found
      * @throws ObjectNotFoundException If the object can not be found
      */
-    public void releaseObjectFromBookmark(String objectClass, long objectId, long bookmarkId) 
+    public void removeObjectFromBookmarkFolder(String objectClass, long objectId, long bookmarkId) 
         throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, ObjectNotFoundException;
         
     /**
@@ -940,7 +940,7 @@ public interface ApplicationEntityManager {
      * @return the new bookmark id
      * @throws ApplicationObjectNotFoundException If the user can not be found
      */
-    public long createBookmarkForUser(String name, long userId) 
+    public long createBookmarkFolderForUser(String name, long userId) 
         throws ApplicationObjectNotFoundException;
     
     /**
@@ -948,7 +948,7 @@ public interface ApplicationEntityManager {
      * @param bookmarkId bookmark id
      * @throws ApplicationObjectNotFoundException If any bookmark in the array can not be found
      */
-    public void deleteBookmarks(long[] bookmarkId)
+    public void deleteBookmarkFolders(long[] bookmarkId)
         throws ApplicationObjectNotFoundException;
     
     /**
@@ -957,7 +957,7 @@ public interface ApplicationEntityManager {
      * @return List of bookmarks for an User
      * @throws ApplicationObjectNotFoundException If the user can not be found
      */
-    public List<Bookmark> getBookmarksForUser(long userId) 
+    public List<Bookmark> getBookmarkFoldersForUser(long userId) 
         throws ApplicationObjectNotFoundException;
     
     /**
@@ -967,7 +967,7 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException If the bookmark can not be found
      * @return List of objects related to bookmark
      */
-    public List<RemoteBusinessObjectLight> getBookmarkItems(long bookmarkId, int limit) 
+    public List<RemoteBusinessObjectLight> getBookmarkFolderItems(long bookmarkId, int limit) 
         throws ApplicationObjectNotFoundException;
     /**
      * Get the bookmarks where an object are an item
@@ -986,7 +986,7 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException If the bookmark can not be found
      * @return The bookmark with id
      */
-    public Bookmark getBookmark(long bookmarkId) 
+    public Bookmark getBookmarkFolder(long bookmarkId) 
         throws ApplicationObjectNotFoundException;
     
     /**
@@ -995,6 +995,6 @@ public interface ApplicationEntityManager {
      * @param bookmarkName bookmark name
      * @throws ApplicationObjectNotFoundException If the bookmark can not be found
      */
-    public void updateBookmark(long bookmarkId, String bookmarkName) 
+    public void updateBookmarkFolder(long bookmarkId, String bookmarkName) 
         throws ApplicationObjectNotFoundException;
 }

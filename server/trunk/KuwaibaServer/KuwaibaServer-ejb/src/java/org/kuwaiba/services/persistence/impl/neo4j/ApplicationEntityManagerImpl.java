@@ -2626,20 +2626,20 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     // Bookmarks
     @Override
-    public void associateObjectToBookmark(String objectClass, long objectId, long bookmarkId) 
+    public void addObjectToBookmarkFolder(String objectClass, long objectId, long bookmarkId) 
         throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException {
         
         try (Transaction tx = graphDb.beginTx()) {
             Node bookmarkNode = graphDb.getNodeById(bookmarkId);
             if (bookmarkNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("Can not find the bookmark with id %s", bookmarkId));
+                throw new ApplicationObjectNotFoundException(String.format("Can not find the bookmark folder with id %s", bookmarkId));
             
             Node objectNode = getInstanceOfClass(objectClass, objectId);
             
             if (objectNode.hasRelationship(Direction.OUTGOING, RelTypes.IS_BOOKMARK_ITEM_IN)) {
                 for (Relationship relationship : objectNode.getRelationships(Direction.OUTGOING, RelTypes.IS_BOOKMARK_ITEM_IN)) {
                     if (bookmarkNode.getId() == relationship.getEndNode().getId())
-                        throw new OperationNotPermittedException("An object can not be associated with the same bookmark");
+                        throw new OperationNotPermittedException("An object can not be added twice to the same bookmark folder");
                 }
             }
             objectNode.createRelationshipTo(bookmarkNode, RelTypes.IS_BOOKMARK_ITEM_IN);
@@ -2649,7 +2649,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public void releaseObjectFromBookmark(String objectClass, long objectId, long bookmarkId) 
+    public void removeObjectFromBookmarkFolder(String objectClass, long objectId, long bookmarkId) 
         throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, ObjectNotFoundException {
         
         try (Transaction tx = graphDb.beginTx()) {
@@ -2675,7 +2675,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public long createBookmarkForUser(String name, long userId) throws ApplicationObjectNotFoundException {
+    public long createBookmarkFolderForUser(String name, long userId) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             Node userNode = userIndex.get(Constants.PROPERTY_ID, userId).getSingle();
             
@@ -2695,7 +2695,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public void deleteBookmarks(long[] bookmarkId) throws ApplicationObjectNotFoundException {
+    public void deleteBookmarkFolders(long[] bookmarkId) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             if (bookmarkId != null) {
                 for (long id : bookmarkId) {
@@ -2718,7 +2718,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public List<Bookmark> getBookmarksForUser(long userId) throws ApplicationObjectNotFoundException {
+    public List<Bookmark> getBookmarkFoldersForUser(long userId) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             Node userNode = userIndex.get(Constants.PROPERTY_ID, userId).getSingle();
             
@@ -2742,7 +2742,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     
     @Override
-    public List<RemoteBusinessObjectLight> getBookmarkItems(long bookmarkId, int limit) throws ApplicationObjectNotFoundException {
+    public List<RemoteBusinessObjectLight> getBookmarkFolderItems(long bookmarkId, int limit) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             Node bookmarkNode = graphDb.getNodeById(bookmarkId);
             
@@ -2794,7 +2794,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public Bookmark getBookmark(long bookmarkId) throws ApplicationObjectNotFoundException {
+    public Bookmark getBookmarkFolder(long bookmarkId) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             Node bookmarkNode = graphDb.getNodeById(bookmarkId);
             
@@ -2809,7 +2809,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public void updateBookmark(long bookmarkId, String bookmarkName) throws ApplicationObjectNotFoundException {
+    public void updateBookmarkFolder(long bookmarkId, String bookmarkName) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             Node bookmarkNode = graphDb.getNodeById(bookmarkId);
             

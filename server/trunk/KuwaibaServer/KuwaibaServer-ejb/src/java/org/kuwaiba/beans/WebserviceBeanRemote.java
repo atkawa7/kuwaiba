@@ -480,13 +480,13 @@ public interface WebserviceBeanRemote {
     // </editor-fold>
     
     // Bookmark Manager
-    public void associateObjectsToBookmark(String[] objectClass, long[] objectId, long bookmarkId, String ipAddress, String sessionId) throws ServerSideException;
-    public void releaseObjectsFromBookmark(String[] objectClass, long[] objectId, long bookmarkId, String ipAddress, String sessionId) throws ServerSideException;
-    public long createBookmarkForUser(String bookmarkName, long userId, String ipAddress, String sessionId) throws ServerSideException;
-    public void deleteBookmarks(long[] bookmarkId, String ipAddress, String sessionId) throws ServerSideException;
-    public List<RemoteBookmark> getBookmarksForUser(long userId, String ipAddress, String sessionId) throws ServerSideException;
-    public RemoteObjectLight[] getBookmarkItems(long bookmarkId, int limit, String ipAddress, String sessionId) throws ServerSideException;
+    public void addObjectsToBookmarkFolder(String[] objectClass, long[] objectId, long bookmarkId, String ipAddress, String sessionId) throws ServerSideException;
+    public void removeObjectsFromBookmarkFolder(String[] objectClass, long[] objectId, long bookmarkId, String ipAddress, String sessionId) throws ServerSideException;
+    public long createBookmarkFolderForUser(String bookmarkName, long userId, String ipAddress, String sessionId) throws ServerSideException;
+    public void deleteBookmarkFolders(long[] bookmarkId, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteBookmark> getBookmarkFoldersForUser(long userId, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteObjectLight[] getBookmarkFolderItems(long bookmarkId, int limit, String ipAddress, String sessionId) throws ServerSideException;
     public List<RemoteBookmark> objectIsBookmarkItemIn(String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;
-    public RemoteBookmark getBookmark(long bookmarkId, String ipAddress, String sessionId) throws ServerSideException;
-    public void updateBookmark(long bookmarkId, String bookmarkName, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteBookmark getBookmarkFolder(long bookmarkId, String ipAddress, String sessionId) throws ServerSideException;
+    public void updateBookmarkFolder(long bookmarkId, String bookmarkName, String ipAddress, String sessionId) throws ServerSideException;
 }

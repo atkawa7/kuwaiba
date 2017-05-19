@@ -5023,19 +5023,19 @@ public class KuwaibaService {
      * @return The id of the new Bookmark
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
-    @WebMethod(operationName = "createBookmarkForUser")
-    public long createBookmarkForUser(
+    @WebMethod(operationName = "createBookmarkFolderForUser")
+    public long createBookmarkFolderForUser(
         @WebParam(name = "bookmarkName") String bookmarkName, 
         @WebParam(name = "userId") long userId, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         
         try {
-            return wsBean.createBookmarkForUser(bookmarkName, userId, getIPAddress(), sessionId);
+            return wsBean.createBookmarkFolderForUser(bookmarkName, userId, getIPAddress(), sessionId);
         } catch (Exception ex) {
             if (ex instanceof ServerSideException)
                 throw ex;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in createBookmarkForUser: " + ex.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in createBookmarkFolderForUser: " + ex.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
@@ -5047,13 +5047,13 @@ public class KuwaibaService {
      * @param sessionId The session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
-    @WebMethod(operationName = "deleteBookmarks")
-    public void deleteBookmarks(
+    @WebMethod(operationName = "deleteBookmarkFolders")
+    public void deleteBookmarkFolders(
         @WebParam(name = "bookmarkId") long[] bookmarkId, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         
         try {
-            wsBean.deleteBookmarks(bookmarkId, getIPAddress(), sessionId);
+            wsBean.deleteBookmarkFolders(bookmarkId, getIPAddress(), sessionId);
         } catch (Exception ex) {
             if (ex instanceof ServerSideException)
                 throw ex;
@@ -5071,18 +5071,18 @@ public class KuwaibaService {
      * @return The list of Bookmarks for user
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
-    @WebMethod(operationName = "getBookmarksForUser")
-    public List<RemoteBookmark> getBookmarksForUser(
+    @WebMethod(operationName = "getBookmarkFoldersForUser")
+    public List<RemoteBookmark> getBookmarkFoldersForUser(
         @WebParam(name = "userId") long userId, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
                 
         try {
-            return wsBean.getBookmarksForUser(userId, getIPAddress(), sessionId);
+            return wsBean.getBookmarkFoldersForUser(userId, getIPAddress(), sessionId);
         } catch (Exception ex) {
             if (ex instanceof ServerSideException)
                 throw ex;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in getBookmarksForUser: " + ex.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in getBookmarkFoldersForUser: " + ex.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
@@ -5096,20 +5096,20 @@ public class KuwaibaService {
      * @param sessionId Session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
-    @WebMethod(operationName = "associateObjectsToBookmark")    
-    public void associateObjectsToBookmark(
+    @WebMethod(operationName = "addObjectsToBookmarkFolder")    
+    public void addObjectsToBookmarkFolder(
         @WebParam(name = "objectClass") String[] objectClass, 
         @WebParam(name = "objectId") long[] objectId, 
         @WebParam(name = "bookmarkId") long bookmarkId, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         
         try {
-            wsBean.associateObjectsToBookmark(objectClass, objectId, bookmarkId, getIPAddress(), sessionId);
+            wsBean.addObjectsToBookmarkFolder(objectClass, objectId, bookmarkId, getIPAddress(), sessionId);
         } catch(Exception ex) {
             if (ex instanceof ServerSideException)
                 throw ex;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in associateObjectsToBookmark: " + ex.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in addObjectsToBookmarkFolder: " + ex.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
@@ -5123,15 +5123,15 @@ public class KuwaibaService {
      * @param sessionId Session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
-    @WebMethod(operationName = "releaseObjectsFromBookmark")
-    public void releaseObjectsFromBookmark(
+    @WebMethod(operationName = "removeObjectsFromBookmarkFolder")
+    public void removeObjectsFromBookmarkFolder(
         @WebParam(name = "objectClass") String[] objectClass, 
         @WebParam(name = "objectId") long[] objectId, 
         @WebParam(name = "bookmarkId") long bookmarkId, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         
         try {
-            wsBean.releaseObjectsFromBookmark(objectClass, objectId, bookmarkId, getIPAddress(), sessionId);
+            wsBean.removeObjectsFromBookmarkFolder(objectClass, objectId, bookmarkId, getIPAddress(), sessionId);
         } catch(Exception ex) {
             if (ex instanceof ServerSideException)
                 throw ex;
@@ -5149,18 +5149,18 @@ public class KuwaibaService {
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      * @return a set of bookmark items
      */
-    @WebMethod(operationName = "getBookmarkItems")
-    public RemoteObjectLight[] getBookmarkItems(
+    @WebMethod(operationName = "getBookmarkFolderItems")
+    public RemoteObjectLight[] getBookmarkFolderItems(
         @WebParam(name = "bookmarkId") long bookmarkId, 
         @WebParam(name = "limit") int limit,
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try {
-            return wsBean.getBookmarkItems(bookmarkId, limit, getIPAddress(), sessionId);
+            return wsBean.getBookmarkFolderItems(bookmarkId, limit, getIPAddress(), sessionId);
         } catch(Exception ex) {
             if (ex instanceof ServerSideException)
                 throw ex;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in getBookmarkItems: " + ex.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in getBookmarkFolderItems: " + ex.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
@@ -5199,13 +5199,13 @@ public class KuwaibaService {
      * @return The bookmark
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
-    @WebMethod(operationName = "getBookmark")
-    public RemoteBookmark getBookmark(
+    @WebMethod(operationName = "getBookmarkFolder")
+    public RemoteBookmark getBookmarkFolder(
         @WebParam(name = "bookmarkId") long bookmarkId, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         
         try {
-            return wsBean.getBookmark(bookmarkId, getIPAddress(), sessionId);
+            return wsBean.getBookmarkFolder(bookmarkId, getIPAddress(), sessionId);
         } catch(Exception ex) {
             if (ex instanceof ServerSideException)
                 throw ex;
@@ -5223,19 +5223,19 @@ public class KuwaibaService {
      * @param sessionId Session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
-    @WebMethod(operationName = "updateBookmark")
-    public void updateBookmark(
+    @WebMethod(operationName = "updateBookmarkFolder")
+    public void updateBookmarkFolder(
         @WebParam(name = "bookmarkId") long bookmarkId, 
         @WebParam(name = "bookmarkName") String bookmarkName, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         
         try {
-            wsBean.updateBookmark(bookmarkId, bookmarkName, getIPAddress(), sessionId);
+            wsBean.updateBookmarkFolder(bookmarkId, bookmarkName, getIPAddress(), sessionId);
         } catch(Exception ex) {
             if (ex instanceof ServerSideException)
                 throw ex;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in updateBookmark: " + ex.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in updateBookmarkFolder: " + ex.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
