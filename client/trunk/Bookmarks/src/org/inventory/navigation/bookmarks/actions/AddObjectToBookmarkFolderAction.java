@@ -13,13 +13,13 @@
  *   limitations under the License.
  * 
  */
-package org.inventory.bookmarks.actions;
+package org.inventory.navigation.bookmarks.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.bookmarks.windows.BookmarksFrame;
+import org.inventory.navigation.bookmarks.windows.BookmarksFrame;
 import org.inventory.communications.core.LocalBookmark;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
@@ -30,10 +30,10 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class AddObjectToBookmarksAction extends GenericObjectNodeAction {
+public class AddObjectToBookmarkFolderAction extends GenericObjectNodeAction {
         
-    public AddObjectToBookmarksAction() {
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/bookmarks/Bundle")
+    public AddObjectToBookmarkFolderAction() {
+        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/bookmarks/Bundle")
             .getString("LBL_ADD_BOOKMARK"));
     }
             
@@ -45,7 +45,7 @@ public class AddObjectToBookmarksAction extends GenericObjectNodeAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-        List<LocalBookmark> bookmarks = CommunicationsStub.getInstance().getBookmarksForUser();
+        List<LocalBookmark> bookmarks = CommunicationsStub.getInstance().getBookmarkFoldersForUser();
                 
         if (bookmarks == null) {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, 

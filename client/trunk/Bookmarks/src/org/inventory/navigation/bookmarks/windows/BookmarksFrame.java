@@ -13,7 +13,7 @@
  *   limitations under the License.
  * 
  */
-package org.inventory.bookmarks.windows;
+package org.inventory.navigation.bookmarks.windows;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -54,10 +54,10 @@ public class BookmarksFrame extends JFrame {
         this.selectedObjects = selectedObjects;
         this.bookmarks = bookmarks;       
         setLayout(new BorderLayout());
-        setTitle(java.util.ResourceBundle.getBundle("org/inventory/bookmarks/Bundle").getString("LBL_TITLE_AVAILABLE_BOOKMARKS"));
+        setTitle(java.util.ResourceBundle.getBundle("org/inventory/navigation/bookmarks/Bundle").getString("LBL_TITLE_AVAILABLE_BOOKMARKS"));
         setSize(400, 650);
         setLocationRelativeTo(null);
-        JLabel lblInstructions = new JLabel(java.util.ResourceBundle.getBundle("org/inventory/bookmarks/Bundle").getString("LBL_INSTRUCTIONS_SELECT_BOOKMARK"));
+        JLabel lblInstructions = new JLabel(java.util.ResourceBundle.getBundle("org/inventory/navigation/bookmarks/Bundle").getString("LBL_INSTRUCTIONS_SELECT_BOOKMARK"));
         lblInstructions.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         
         JPanel pnlSearch = new JPanel();
@@ -125,9 +125,9 @@ public class BookmarksFrame extends JFrame {
                     objectsId.add(selectedObject.getOid());
                     
                     if (CommunicationsStub.getInstance()
-                        .associateObjectsToBookmark(objectsClassName, objectsId, ((LocalBookmark) lstAviableBookmarks.getSelectedValue()).getId())) {
+                        .addObjectsToBookmarkFolder(objectsClassName, objectsId, ((LocalBookmark) lstAviableBookmarks.getSelectedValue()).getId())) {
 
-                        JOptionPane.showMessageDialog(null, String.format("%s added to bookmark category %s", selectedObject, lstAviableBookmarks.getSelectedValue()));
+                        JOptionPane.showMessageDialog(null, String.format("%s added to bookmark folder %s", selectedObject, lstAviableBookmarks.getSelectedValue()));
                         dispose();
                     } else {
                         JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError(), 

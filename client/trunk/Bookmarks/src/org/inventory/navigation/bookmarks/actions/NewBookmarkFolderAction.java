@@ -13,7 +13,7 @@
  *   limitations under the License.
  * 
  */
-package org.inventory.bookmarks.actions;
+package org.inventory.navigation.bookmarks.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
@@ -25,26 +25,26 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalBookmark;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
-import org.inventory.bookmarks.nodes.BookmarkRootNode;
-import org.inventory.bookmarks.nodes.BookmarkRootNode.BookmarkRootChildren;
+import org.inventory.navigation.bookmarks.nodes.BookmarkRootNode;
+import org.inventory.navigation.bookmarks.nodes.BookmarkRootNode.BookmarkRootChildren;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.openide.util.Utilities;
 
 /**
- * Action to create a new Bookmark category
+ * Action to create a new Bookmark folder
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class NewBookmarkCategoryAction extends GenericInventoryAction {
-    private static NewBookmarkCategoryAction instance;
+public class NewBookmarkFolderAction extends GenericInventoryAction {
+    private static NewBookmarkFolderAction instance;
     
-    private NewBookmarkCategoryAction() {
-        putValue(NAME, ResourceBundle.getBundle("org/inventory/bookmarks/Bundle")
+    private NewBookmarkFolderAction() {
+        putValue(NAME, ResourceBundle.getBundle("org/inventory/navigation/bookmarks/Bundle")
             .getString("ACTION_NAME_NEW_BOOKMARK"));
     }
     
-    public static NewBookmarkCategoryAction getInstance() {
-        return instance == null ? instance = new NewBookmarkCategoryAction() : instance;
+    public static NewBookmarkFolderAction getInstance() {
+        return instance == null ? instance = new NewBookmarkFolderAction() : instance;
     }
     
     @Override
@@ -58,18 +58,18 @@ public class NewBookmarkCategoryAction extends GenericInventoryAction {
         BookmarkRootNode selectedNode = selectedNodes.next();
         
         JTextField txtPoolName = new JTextField();
-        txtPoolName.setName("txtBookmarkName");
+        txtPoolName.setName("txtBookmarkFolderName");
         txtPoolName.setColumns(10);
         
         JComplexDialogPanel pnlPoolProperties = new JComplexDialogPanel(
-            new String[] {"Bookmark Name"}, 
+            new String[] {"Folder Name"}, 
             new JComponent[] {txtPoolName});
         
-        if (JOptionPane.showConfirmDialog(null, pnlPoolProperties, "New Bookmark", 
+        if (JOptionPane.showConfirmDialog(null, pnlPoolProperties, "New Bookmark Folder", 
             JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             
-            LocalBookmark newBookmark = CommunicationsStub.getInstance().createBookmarkForUser(
-                ((JTextField) pnlPoolProperties.getComponent("txtBookmarkName")).getText());
+            LocalBookmark newBookmark = CommunicationsStub.getInstance().createBookmarkFolderForUser(
+                ((JTextField) pnlPoolProperties.getComponent("txtBookmarkFolderName")).getText());
             
             if (newBookmark == null) {
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, 
@@ -78,7 +78,7 @@ public class NewBookmarkCategoryAction extends GenericInventoryAction {
                 ((BookmarkRootChildren) selectedNode.getChildren()).addNotify();
                 
                 NotificationUtil.getInstance().showSimplePopup("Information", 
-                    NotificationUtil.INFO_MESSAGE, "Bookmark created");
+                    NotificationUtil.INFO_MESSAGE, "Bookmark folder created sucessfully");
             }
         }
     }

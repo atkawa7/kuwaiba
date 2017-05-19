@@ -13,11 +13,11 @@
  *   limitations under the License.
  * 
  */
-package org.inventory.bookmarks.nodes;
+package org.inventory.navigation.bookmarks.nodes;
 
 import java.util.Collections;
 import org.inventory.communications.core.LocalBookmark;
-import org.inventory.bookmarks.actions.BookmarksActionFactory;
+import org.inventory.navigation.bookmarks.actions.BookmarksActionFactory;
 import org.openide.util.ImageUtilities;
 import java.awt.Image;
 import java.awt.datatransfer.Transferable;
@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.swing.Action;
-import org.inventory.bookmarks.nodes.properties.BookmarkNativeTypeProperty;
+import org.inventory.navigation.bookmarks.nodes.properties.BookmarkNativeTypeProperty;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
@@ -53,7 +53,7 @@ import org.openide.util.lookup.Lookups;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class BookmarkNode extends AbstractNode implements PropertyChangeListener {
-    public static final String ICON_PATH = "org/inventory/bookmarks/res/icon.png";
+    public static final String ICON_PATH = "org/inventory/navigation/bookmarks/res/icon.png";
     private static final Image icon = ImageUtilities.loadImage(ICON_PATH);
     
     private LocalBookmark localBookmark;
@@ -69,7 +69,7 @@ public class BookmarkNode extends AbstractNode implements PropertyChangeListener
     @Override
     public void setName(String newName) {
         if (newName != null) {
-            if (CommunicationsStub.getInstance().updateBookmark(localBookmark.getId(), newName)) {
+            if (CommunicationsStub.getInstance().updateBookmarkFolder(localBookmark.getId(), newName)) {
                 localBookmark.setName(newName);
                 if (getSheet() != null)
                     setSheet(createSheet());
@@ -156,7 +156,7 @@ public class BookmarkNode extends AbstractNode implements PropertyChangeListener
                             List<Long> objId = new ArrayList();
                             objId.add(bookmarkItem.getObject().getOid());
                                 
-                            if (CommunicationsStub.getInstance().associateObjectsToBookmark(objClass, objId, localBookmark.getId())) {
+                            if (CommunicationsStub.getInstance().addObjectsToBookmarkFolder(objClass, objId, localBookmark.getId())) {
                                 
                                 ((BookmarkChildren) getChildren()).addNotify();
                             } else {
@@ -178,14 +178,14 @@ public class BookmarkNode extends AbstractNode implements PropertyChangeListener
                                 
                             List<Long> objId = new ArrayList();
                             objId.add(bookmarkItem.getObject().getOid());
-                            if (CommunicationsStub.getInstance().releaseObjectsFromBookmark(
+                            if (CommunicationsStub.getInstance().removeObjectsFromBookmarkFolder(
                                 objClass, 
                                 objId, 
                                 bookmark.getLocalBookmark().getId())) {
                                 
                                 ((BookmarkChildren) bookmark.getChildren()).addNotify();
                                     
-                                if (CommunicationsStub.getInstance().associateObjectsToBookmark(objClass, objId, localBookmark.getId())) {
+                                if (CommunicationsStub.getInstance().addObjectsToBookmarkFolder(objClass, objId, localBookmark.getId())) {
                                     
                                     ((BookmarkChildren) getChildren()).addNotify();
                                 } else {
@@ -208,7 +208,7 @@ public class BookmarkNode extends AbstractNode implements PropertyChangeListener
     protected Sheet createSheet () {
         sheet = Sheet.createDefault();
         Set generalPropertySet = Sheet.createPropertiesSet(); // General attributes category
-        LocalBookmark lb = CommunicationsStub.getInstance().getBookmark(localBookmark.getId());
+        LocalBookmark lb = CommunicationsStub.getInstance().getBookmarkFolder(localBookmark.getId());
         if (lb == null) {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             return sheet;
@@ -264,7 +264,7 @@ public class BookmarkNode extends AbstractNode implements PropertyChangeListener
         public void addNotify() {
             BookmarkNode selectedNode = (BookmarkNode) getNode();
             
-            List<LocalObjectLight> bookmarkItems = CommunicationsStub.getInstance().getBookmarkItems(selectedNode.getLocalBookmark().getId(), -1);
+            List<LocalObjectLight> bookmarkItems = CommunicationsStub.getInstance().getBookmarkFolderItems(selectedNode.getLocalBookmark().getId(), -1);
             
             if (bookmarkItems == null) {
                 setKeys(Collections.EMPTY_LIST);

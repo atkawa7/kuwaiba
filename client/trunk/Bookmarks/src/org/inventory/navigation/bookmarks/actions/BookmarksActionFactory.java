@@ -13,7 +13,7 @@
  *   limitations under the License.
  * 
  */
-package org.inventory.bookmarks.actions;
+package org.inventory.navigation.bookmarks.actions;
 
 /**
  * Action factory for the Bookmark Manager module
@@ -23,21 +23,21 @@ public class BookmarksActionFactory {
     /**
      * Singleton for the create bookmark action
      */
-    private static NewBookmarkCategoryAction newBookmarkAction;
+    private static NewBookmarkFolderAction newBookmarkAction;
     /**
      * Singleton for the delete bookmark action
      */
-    private static DeleteBookmarkCategoryAction deleteBookmarkAction;
+    private static DeleteBookmarkFolderAction deleteBookmarkAction;
     
-    public static NewBookmarkCategoryAction getNewBookmarkAction() {
+    public static NewBookmarkFolderAction getNewBookmarkAction() {
         if (newBookmarkAction == null)
-            newBookmarkAction = NewBookmarkCategoryAction.getInstance();
+            newBookmarkAction = NewBookmarkFolderAction.getInstance();
         return newBookmarkAction;
     }
     
-    public static DeleteBookmarkCategoryAction getDeleteBookmarkAction() {
+    public static DeleteBookmarkFolderAction getDeleteBookmarkAction() {
         if (deleteBookmarkAction == null)
-            deleteBookmarkAction = DeleteBookmarkCategoryAction.getInstance();
+            deleteBookmarkAction = DeleteBookmarkFolderAction.getInstance();
         return deleteBookmarkAction;
     }
 }

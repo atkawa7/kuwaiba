@@ -13,11 +13,11 @@
  *   limitations under the License.
  * 
  */
-package org.inventory.bookmarks.nodes.properties;
+package org.inventory.navigation.bookmarks.nodes.properties;
 
 import java.beans.PropertyEditor;
 import java.lang.reflect.InvocationTargetException;
-import org.inventory.bookmarks.nodes.BookmarkNode;
+import org.inventory.navigation.bookmarks.nodes.BookmarkNode;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -50,7 +50,7 @@ public class BookmarkNativeTypeProperty extends PropertySupport.ReadWrite {
     public void setValue(Object value)  {
         boolean flag = false;
         if (this.getName().equals(Constants.PROPERTY_NAME))
-            flag = CommunicationsStub.getInstance().updateBookmark(bookmarkNode.getLocalBookmark().getId(), (String) value);
+            flag = CommunicationsStub.getInstance().updateBookmarkFolder(bookmarkNode.getLocalBookmark().getId(), (String) value);
 
         if (flag) {
             this.value = value;

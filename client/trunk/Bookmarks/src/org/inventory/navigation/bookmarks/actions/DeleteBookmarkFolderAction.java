@@ -13,7 +13,7 @@
  *   limitations under the License.
  * 
  */
-package org.inventory.bookmarks.actions;
+package org.inventory.navigation.bookmarks.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -23,31 +23,31 @@ import java.util.ResourceBundle;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.bookmarks.nodes.BookmarkNode;
-import org.inventory.bookmarks.nodes.BookmarkRootNode.BookmarkRootChildren;
+import org.inventory.navigation.bookmarks.nodes.BookmarkNode;
+import org.inventory.navigation.bookmarks.nodes.BookmarkRootNode.BookmarkRootChildren;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.openide.util.Utilities;
 
 /**
- * Action to delete a Bookmark category
+ * Action to delete a Bookmark folder
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class DeleteBookmarkCategoryAction extends GenericInventoryAction {
-    private static DeleteBookmarkCategoryAction instance;
+public class DeleteBookmarkFolderAction extends GenericInventoryAction {
+    private static DeleteBookmarkFolderAction instance;
     
-    private DeleteBookmarkCategoryAction() {
-        putValue(NAME, ResourceBundle.getBundle("org/inventory/bookmarks/Bundle")
+    private DeleteBookmarkFolderAction() {
+        putValue(NAME, ResourceBundle.getBundle("org/inventory/navigation/bookmarks/Bundle")
             .getString("ACTION_NAME_DELETE_BOOKMARK"));
     }
     
-    public static DeleteBookmarkCategoryAction getInstance() {
-        return instance == null ? instance = new DeleteBookmarkCategoryAction() : instance;        
+    public static DeleteBookmarkFolderAction getInstance() {
+        return instance == null ? instance = new DeleteBookmarkFolderAction() : instance;        
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this bookmark category?", 
+        if (JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this bookmark folder?", 
             "Warning", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             
             Iterator<? extends BookmarkNode> selectedNodes = Utilities.actionsGlobalContext()
@@ -61,9 +61,9 @@ public class DeleteBookmarkCategoryAction extends GenericInventoryAction {
             List<Long> ids = new ArrayList();
             ids.add(selectedNode.getLocalBookmark().getId());
             
-            if (CommunicationsStub.getInstance().deleteBookmark(ids)) {
+            if (CommunicationsStub.getInstance().deleteBookmarkFolders(ids)) {
                 NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, 
-                    "The selected bookmark category was deleted successfully");
+                    "The selected bookmark folder was deleted successfully");
                 
                 ((BookmarkRootChildren) selectedNode.getParentNode().getChildren()).addNotify();
             } else {

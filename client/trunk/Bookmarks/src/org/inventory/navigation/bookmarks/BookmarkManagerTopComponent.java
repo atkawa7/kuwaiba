@@ -13,9 +13,9 @@
  *   limitations under the License.
  * 
  */
-package org.inventory.bookmarks;
+package org.inventory.navigation.bookmarks;
 
-import org.inventory.bookmarks.nodes.BookmarkRootNode;
+import org.inventory.navigation.bookmarks.nodes.BookmarkRootNode;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
@@ -24,6 +24,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.InputMap;
 import javax.swing.KeyStroke;
 import javax.swing.text.DefaultEditorKit;
+import org.inventory.navigation.bookmarks.Bundle;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.navigation.navigationtree.nodes.actions.DeleteBusinessObjectAction;
 import org.netbeans.api.settings.ConvertAsProperties;
@@ -39,16 +40,16 @@ import org.openide.windows.TopComponent;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 @ConvertAsProperties(
-        dtd = "-//org.inventory.bookmarks//BookmarkManager//EN",
+        dtd = "-//org.inventory.navigation.bookmarks//BookmarkManager//EN",
         autostore = false
 )
 @TopComponent.Description(
         preferredID = "BookmarkManagerTopComponent",
-        iconBase="org/inventory/bookmarks/res/icon.png", 
+        iconBase="org/inventory/navigation/bookmarks/res/icon.png", 
         persistenceType = TopComponent.PERSISTENCE_ALWAYS
 )
 @TopComponent.Registration(mode = "leftSlidingSide", openAtStartup = false)
-@ActionID(category = "Window", id = "org.inventory.bookmarks.BookmarkManagerTopComponent")
+@ActionID(category = "Window", id = "org.inventory.navigation.bookmarks.BookmarkManagerTopComponent")
 @ActionReferences(value = {@ActionReference(path = "Menu/Tools"), 
     @ActionReference(path = "Toolbars/Tools")})
 @TopComponent.OpenActionRegistration(
@@ -56,9 +57,9 @@ import org.openide.windows.TopComponent;
         preferredID = "BookmarkManagerTopComponent"
 )
 @Messages({
-    "CTL_BookmarkManagerAction=Bookmark Manager",
-    "CTL_BookmarkManagerTopComponent=Bookmark Manager",
-    "HINT_BookmarkManagerTopComponent=Bookmark Manager"
+    "CTL_BookmarkManagerAction=Bookmarks",
+    "CTL_BookmarkManagerTopComponent=Bookmarks",
+    "HINT_BookmarkManagerTopComponent=Bookmarks"
 })
 public final class BookmarkManagerTopComponent extends TopComponent implements 
     ExplorerManager.Provider, Refreshable {

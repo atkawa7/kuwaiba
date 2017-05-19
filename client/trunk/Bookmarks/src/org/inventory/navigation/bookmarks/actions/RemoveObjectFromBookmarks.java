@@ -13,7 +13,7 @@
  *   limitations under the License.
  * 
  */
-package org.inventory.bookmarks.actions;
+package org.inventory.navigation.bookmarks.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -22,8 +22,8 @@ import java.util.List;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import org.inventory.bookmarks.nodes.BookmarkNode;
-import org.inventory.bookmarks.nodes.BookmarkNode.BookmarkChildren;
+import org.inventory.navigation.bookmarks.nodes.BookmarkNode;
+import org.inventory.navigation.bookmarks.nodes.BookmarkNode.BookmarkChildren;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalBookmark;
 import org.inventory.communications.core.LocalPrivilege;
@@ -65,7 +65,7 @@ public class RemoveObjectFromBookmarks extends GenericObjectNodeAction implement
                 objClass.add(selectedNode.getObject().getClassName());
                 objId.add(selectedNode.getObject().getOid());
                 
-                if (CommunicationsStub.getInstance().releaseObjectsFromBookmark(
+                if (CommunicationsStub.getInstance().removeObjectsFromBookmarkFolder(
                     objClass, 
                     objId, 
                     Long.valueOf(((JMenuItem)e.getSource()).getName()))) {
@@ -87,7 +87,7 @@ public class RemoveObjectFromBookmarks extends GenericObjectNodeAction implement
     
     @Override
     public JMenuItem getPopupPresenter() {
-        JMenu mnuServices = new JMenu(java.util.ResourceBundle.getBundle("org/inventory/bookmarks/Bundle").getString("LBL_REMOVE_BOOKMARK"));
+        JMenu mnuServices = new JMenu(java.util.ResourceBundle.getBundle("org/inventory/navigation/bookmarks/Bundle").getString("LBL_REMOVE_BOOKMARK"));
         mnuServices.setEnabled(false);
         
         Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();

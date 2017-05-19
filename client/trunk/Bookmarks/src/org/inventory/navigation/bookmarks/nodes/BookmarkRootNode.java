@@ -13,7 +13,7 @@
  *   limitations under the License.
  * 
  */
-package org.inventory.bookmarks.nodes;
+package org.inventory.navigation.bookmarks.nodes;
 
 import java.awt.Image;
 import java.util.Collections;
@@ -22,7 +22,7 @@ import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalBookmark;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.bookmarks.actions.NewBookmarkCategoryAction;
+import org.inventory.navigation.bookmarks.actions.NewBookmarkFolderAction;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
@@ -33,7 +33,7 @@ import org.openide.util.ImageUtilities;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class BookmarkRootNode extends AbstractNode {
-    public static final String ICON_PATH = "org/inventory/bookmarks/res/root.png";
+    public static final String ICON_PATH = "org/inventory/navigation/bookmarks/res/root.png";
     private static final Image icon = ImageUtilities.loadImage(ICON_PATH);
     
     public BookmarkRootNode() {
@@ -43,7 +43,7 @@ public class BookmarkRootNode extends AbstractNode {
     
     @Override
     public Action[] getActions(boolean context){
-        return new Action[]{ NewBookmarkCategoryAction.getInstance() };
+        return new Action[]{ NewBookmarkFolderAction.getInstance() };
     }
     
     @Override
@@ -60,7 +60,7 @@ public class BookmarkRootNode extends AbstractNode {
         
         @Override
         public void addNotify() {
-            List<LocalBookmark> bookmarks = CommunicationsStub.getInstance().getBookmarksForUser();
+            List<LocalBookmark> bookmarks = CommunicationsStub.getInstance().getBookmarkFoldersForUser();
             
             if (bookmarks == null) {
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, 
