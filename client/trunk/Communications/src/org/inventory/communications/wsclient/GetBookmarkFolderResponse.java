@@ -8,16 +8,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for createBookmarkForUserResponse complex type.
+ * <p>Java class for getBookmarkFolderResponse complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="createBookmarkForUserResponse">
+ * &lt;complexType name="getBookmarkFolderResponse">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="return" type="{http://ws.kuwaiba.org/}remoteBookmark" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -27,27 +27,35 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "createBookmarkForUserResponse", propOrder = {
+@XmlType(name = "getBookmarkFolderResponse", propOrder = {
     "_return"
 })
-public class CreateBookmarkForUserResponse {
+public class GetBookmarkFolderResponse {
 
     @XmlElement(name = "return")
-    protected long _return;
+    protected RemoteBookmark _return;
 
     /**
      * Gets the value of the return property.
      * 
+     * @return
+     *     possible object is
+     *     {@link RemoteBookmark }
+     *     
      */
-    public long getReturn() {
+    public RemoteBookmark getReturn() {
         return _return;
     }
 
     /**
      * Sets the value of the return property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link RemoteBookmark }
+     *     
      */
-    public void setReturn(long value) {
+    public void setReturn(RemoteBookmark value) {
         this._return = value;
     }
 

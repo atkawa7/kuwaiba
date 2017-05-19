@@ -7,12 +7,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for createBookmarkForUser complex type.
+ * <p>Java class for createBookmarkFolderForUser complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="createBookmarkForUser">
+ * &lt;complexType name="createBookmarkFolderForUser">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
@@ -28,12 +28,12 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "createBookmarkForUser", propOrder = {
+@XmlType(name = "createBookmarkFolderForUser", propOrder = {
     "bookmarkName",
     "userId",
     "sessionId"
 })
-public class CreateBookmarkForUser {
+public class CreateBookmarkFolderForUser {
 
     protected String bookmarkName;
     protected long userId;

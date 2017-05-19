@@ -38,7 +38,7 @@ import javax.xml.bind.annotation.XmlType;
     "bookmarkId",
     "sessionId"
 })
-public class AssociateObjectsToBookmark {
+public class AddObjectsToBookmarkFolder {
 
     @XmlElement(nillable = true)
     protected List<String> objectClass;

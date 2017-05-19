@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "addObjectsToBookmarkFolderResponse")
-public class AssociateObjectsToBookmarkResponse {
+public class AddObjectsToBookmarkFolderResponse {
 
 
 }

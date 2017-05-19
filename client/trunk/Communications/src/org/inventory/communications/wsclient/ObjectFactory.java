@@ -30,7 +30,6 @@ public class ObjectFactory {
     private final static QName _GetSubscribersForTask_QNAME = new QName("http://ws.kuwaiba.org/", "getSubscribersForTask");
     private final static QName _CreateClassLevelReport_QNAME = new QName("http://ws.kuwaiba.org/", "createClassLevelReport");
     private final static QName _GetParentsResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getParentsResponse");
-    private final static QName _DeleteBookmarks_QNAME = new QName("http://ws.kuwaiba.org/", "deleteBookmarks");
     private final static QName _CreateServiceResponse_QNAME = new QName("http://ws.kuwaiba.org/", "createServiceResponse");
     private final static QName _CreateGeneralView_QNAME = new QName("http://ws.kuwaiba.org/", "createGeneralView");
     private final static QName _GetPhysicalPathResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getPhysicalPathResponse");
@@ -77,17 +76,17 @@ public class ObjectFactory {
     private final static QName _ReleaseMirrorPortResponse_QNAME = new QName("http://ws.kuwaiba.org/", "releaseMirrorPortResponse");
     private final static QName _GetTasks_QNAME = new QName("http://ws.kuwaiba.org/", "getTasks");
     private final static QName _GetTasksResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getTasksResponse");
-    private final static QName _AssociateObjectsToBookmark_QNAME = new QName("http://ws.kuwaiba.org/", "associateObjectsToBookmark");
     private final static QName _ObjectIsBookmarkItemInResponse_QNAME = new QName("http://ws.kuwaiba.org/", "objectIsBookmarkItemInResponse");
     private final static QName _AddIP_QNAME = new QName("http://ws.kuwaiba.org/", "addIP");
     private final static QName _UnsubscribeUserFromTask_QNAME = new QName("http://ws.kuwaiba.org/", "unsubscribeUserFromTask");
     private final static QName _UpdateTaskNotificationType_QNAME = new QName("http://ws.kuwaiba.org/", "updateTaskNotificationType");
     private final static QName _UnsubscribeUserFromTaskResponse_QNAME = new QName("http://ws.kuwaiba.org/", "unsubscribeUserFromTaskResponse");
-    private final static QName _AssociateObjectsToBookmarkResponse_QNAME = new QName("http://ws.kuwaiba.org/", "associateObjectsToBookmarkResponse");
     private final static QName _SaveQueryResponse_QNAME = new QName("http://ws.kuwaiba.org/", "saveQueryResponse");
     private final static QName _GetPossibleChildrenNoRecursive_QNAME = new QName("http://ws.kuwaiba.org/", "getPossibleChildrenNoRecursive");
     private final static QName _CreateObjectRelatedViewResponse_QNAME = new QName("http://ws.kuwaiba.org/", "createObjectRelatedViewResponse");
+    private final static QName _AddObjectsToBookmarkFolder_QNAME = new QName("http://ws.kuwaiba.org/", "addObjectsToBookmarkFolder");
     private final static QName _CreateRootPoolResponse_QNAME = new QName("http://ws.kuwaiba.org/", "createRootPoolResponse");
+    private final static QName _GetBookmarkFoldersForUserResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getBookmarkFoldersForUserResponse");
     private final static QName _GetGeneralViews_QNAME = new QName("http://ws.kuwaiba.org/", "getGeneralViews");
     private final static QName _CopyObjects_QNAME = new QName("http://ws.kuwaiba.org/", "copyObjects");
     private final static QName _DeleteListTypeItem_QNAME = new QName("http://ws.kuwaiba.org/", "deleteListTypeItem");
@@ -96,8 +95,7 @@ public class ObjectFactory {
     private final static QName _RemovePrivilegeFromUserResponse_QNAME = new QName("http://ws.kuwaiba.org/", "removePrivilegeFromUserResponse");
     private final static QName _CopyObjectsResponse_QNAME = new QName("http://ws.kuwaiba.org/", "copyObjectsResponse");
     private final static QName _CreateSubnetPool_QNAME = new QName("http://ws.kuwaiba.org/", "createSubnetPool");
-    private final static QName _CreateBookmarkForUser_QNAME = new QName("http://ws.kuwaiba.org/", "createBookmarkForUser");
-    private final static QName _ReleaseObjectsFromBookmark_QNAME = new QName("http://ws.kuwaiba.org/", "releaseObjectsFromBookmark");
+    private final static QName _RemoveObjectsFromBookmarkFolder_QNAME = new QName("http://ws.kuwaiba.org/", "removeObjectsFromBookmarkFolder");
     private final static QName _DeleteObjects_QNAME = new QName("http://ws.kuwaiba.org/", "deleteObjects");
     private final static QName _CreateBulkPhysicalConnections_QNAME = new QName("http://ws.kuwaiba.org/", "createBulkPhysicalConnections");
     private final static QName _SetUserProperties_QNAME = new QName("http://ws.kuwaiba.org/", "setUserProperties");
@@ -109,6 +107,7 @@ public class ObjectFactory {
     private final static QName _GetGeneralView_QNAME = new QName("http://ws.kuwaiba.org/", "getGeneralView");
     private final static QName _UpdateTemplateElement_QNAME = new QName("http://ws.kuwaiba.org/", "updateTemplateElement");
     private final static QName _CreateListTypeItem_QNAME = new QName("http://ws.kuwaiba.org/", "createListTypeItem");
+    private final static QName _RemoveObjectsFromBookmarkFolderResponse_QNAME = new QName("http://ws.kuwaiba.org/", "removeObjectsFromBookmarkFolderResponse");
     private final static QName _SetUserPropertiesResponse_QNAME = new QName("http://ws.kuwaiba.org/", "setUserPropertiesResponse");
     private final static QName _SubscribeUserToTask_QNAME = new QName("http://ws.kuwaiba.org/", "subscribeUserToTask");
     private final static QName _GetListTypeItems_QNAME = new QName("http://ws.kuwaiba.org/", "getListTypeItems");
@@ -140,7 +139,6 @@ public class ObjectFactory {
     private final static QName _GetInstanceableListTypesResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getInstanceableListTypesResponse");
     private final static QName _CreateObjectRelatedView_QNAME = new QName("http://ws.kuwaiba.org/", "createObjectRelatedView");
     private final static QName _RelatePortToInterface_QNAME = new QName("http://ws.kuwaiba.org/", "relatePortToInterface");
-    private final static QName _GetBookmarksForUser_QNAME = new QName("http://ws.kuwaiba.org/", "getBookmarksForUser");
     private final static QName _GetSubnetsInSubent_QNAME = new QName("http://ws.kuwaiba.org/", "getSubnetsInSubent");
     private final static QName _SetGroupProperties_QNAME = new QName("http://ws.kuwaiba.org/", "setGroupProperties");
     private final static QName _GetSubnet_QNAME = new QName("http://ws.kuwaiba.org/", "getSubnet");
@@ -152,7 +150,6 @@ public class ObjectFactory {
     private final static QName _GetAttributeResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getAttributeResponse");
     private final static QName _CreateSDHTransportLinkResponse_QNAME = new QName("http://ws.kuwaiba.org/", "createSDHTransportLinkResponse");
     private final static QName _CreateSession_QNAME = new QName("http://ws.kuwaiba.org/", "createSession");
-    private final static QName _GetBookmark_QNAME = new QName("http://ws.kuwaiba.org/", "getBookmark");
     private final static QName _DeleteSDHTributaryLinkResponse_QNAME = new QName("http://ws.kuwaiba.org/", "deleteSDHTributaryLinkResponse");
     private final static QName _RemoveIP_QNAME = new QName("http://ws.kuwaiba.org/", "removeIP");
     private final static QName _SetGroupPropertiesResponse_QNAME = new QName("http://ws.kuwaiba.org/", "setGroupPropertiesResponse");
@@ -161,13 +158,13 @@ public class ObjectFactory {
     private final static QName _UpdateTaskNotificationTypeResponse_QNAME = new QName("http://ws.kuwaiba.org/", "updateTaskNotificationTypeResponse");
     private final static QName _GetObjectsOfClassLight_QNAME = new QName("http://ws.kuwaiba.org/", "getObjectsOfClassLight");
     private final static QName _SubscribeUserToTaskResponse_QNAME = new QName("http://ws.kuwaiba.org/", "subscribeUserToTaskResponse");
-    private final static QName _DeleteBookmarksResponse_QNAME = new QName("http://ws.kuwaiba.org/", "deleteBookmarksResponse");
     private final static QName _GetRootPoolsResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getRootPoolsResponse");
     private final static QName _DeleteGeneralViewResponse_QNAME = new QName("http://ws.kuwaiba.org/", "deleteGeneralViewResponse");
     private final static QName _RemovePrivilegeFromUser_QNAME = new QName("http://ws.kuwaiba.org/", "removePrivilegeFromUser");
     private final static QName _GetGeneralActivityAuditTrailResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getGeneralActivityAuditTrailResponse");
     private final static QName _GetServiceResources_QNAME = new QName("http://ws.kuwaiba.org/", "getServiceResources");
     private final static QName _GetTemplateElement_QNAME = new QName("http://ws.kuwaiba.org/", "getTemplateElement");
+    private final static QName _UpdateBookmarkFolder_QNAME = new QName("http://ws.kuwaiba.org/", "updateBookmarkFolder");
     private final static QName _RemovePrivilegeFromGroupResponse_QNAME = new QName("http://ws.kuwaiba.org/", "removePrivilegeFromGroupResponse");
     private final static QName _CreateSpecialObjectResponse_QNAME = new QName("http://ws.kuwaiba.org/", "createSpecialObjectResponse");
     private final static QName _GetChildrenOfClassResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getChildrenOfClassResponse");
@@ -175,6 +172,7 @@ public class ObjectFactory {
     private final static QName _SetPoolPropertiesResponse_QNAME = new QName("http://ws.kuwaiba.org/", "setPoolPropertiesResponse");
     private final static QName _DeleteListTypeItemResponse_QNAME = new QName("http://ws.kuwaiba.org/", "deleteListTypeItemResponse");
     private final static QName _GetObjectRelatedView_QNAME = new QName("http://ws.kuwaiba.org/", "getObjectRelatedView");
+    private final static QName _GetBookmarkFolderResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getBookmarkFolderResponse");
     private final static QName _GetGroupsResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getGroupsResponse");
     private final static QName _SetAttributeProperties_QNAME = new QName("http://ws.kuwaiba.org/", "setAttributeProperties");
     private final static QName _FindSDHRoutesUsingTransportLinksResponse_QNAME = new QName("http://ws.kuwaiba.org/", "findSDHRoutesUsingTransportLinksResponse");
@@ -202,13 +200,13 @@ public class ObjectFactory {
     private final static QName _GetReport_QNAME = new QName("http://ws.kuwaiba.org/", "getReport");
     private final static QName _GetObjectSpecialChildren_QNAME = new QName("http://ws.kuwaiba.org/", "getObjectSpecialChildren");
     private final static QName _UpdateObject_QNAME = new QName("http://ws.kuwaiba.org/", "updateObject");
-    private final static QName _UpdateBookmarkResponse_QNAME = new QName("http://ws.kuwaiba.org/", "updateBookmarkResponse");
     private final static QName _DeleteGroups_QNAME = new QName("http://ws.kuwaiba.org/", "deleteGroups");
     private final static QName _AssociateObjectsToContract_QNAME = new QName("http://ws.kuwaiba.org/", "associateObjectsToContract");
     private final static QName _DeleteGroupsResponse_QNAME = new QName("http://ws.kuwaiba.org/", "deleteGroupsResponse");
     private final static QName _GetListTypeItemsResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getListTypeItemsResponse");
     private final static QName _GetUsersInGroup_QNAME = new QName("http://ws.kuwaiba.org/", "getUsersInGroup");
     private final static QName _GetSubnetResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getSubnetResponse");
+    private final static QName _GetBookmarkFolder_QNAME = new QName("http://ws.kuwaiba.org/", "getBookmarkFolder");
     private final static QName _SetPrivilegeToUser_QNAME = new QName("http://ws.kuwaiba.org/", "setPrivilegeToUser");
     private final static QName _ReleaseObjectFromContract_QNAME = new QName("http://ws.kuwaiba.org/", "releaseObjectFromContract");
     private final static QName _CreateSDHContainerLink_QNAME = new QName("http://ws.kuwaiba.org/", "createSDHContainerLink");
@@ -227,6 +225,7 @@ public class ObjectFactory {
     private final static QName _GetPossibleChildrenResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getPossibleChildrenResponse");
     private final static QName _RemoveUserFromGroup_QNAME = new QName("http://ws.kuwaiba.org/", "removeUserFromGroup");
     private final static QName _AddPossibleChildrenForClassWithIdResponse_QNAME = new QName("http://ws.kuwaiba.org/", "addPossibleChildrenForClassWithIdResponse");
+    private final static QName _GetBookmarkFoldersForUser_QNAME = new QName("http://ws.kuwaiba.org/", "getBookmarkFoldersForUser");
     private final static QName _GetObjectRelatedViewResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getObjectRelatedViewResponse");
     private final static QName _GetGroupsForUserResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getGroupsForUserResponse");
     private final static QName _DeleteClassResponse_QNAME = new QName("http://ws.kuwaiba.org/", "deleteClassResponse");
@@ -241,6 +240,7 @@ public class ObjectFactory {
     private final static QName _CreateBulkPhysicalConnectionsResponse_QNAME = new QName("http://ws.kuwaiba.org/", "createBulkPhysicalConnectionsResponse");
     private final static QName _GetClassHierarchy_QNAME = new QName("http://ws.kuwaiba.org/", "getClassHierarchy");
     private final static QName _DeletePhysicalConnection_QNAME = new QName("http://ws.kuwaiba.org/", "deletePhysicalConnection");
+    private final static QName _DeleteBookmarkFoldersResponse_QNAME = new QName("http://ws.kuwaiba.org/", "deleteBookmarkFoldersResponse");
     private final static QName _CreatePoolItem_QNAME = new QName("http://ws.kuwaiba.org/", "createPoolItem");
     private final static QName _CreateMPLSLink_QNAME = new QName("http://ws.kuwaiba.org/", "createMPLSLink");
     private final static QName _GetObjectRelatedViewsResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getObjectRelatedViewsResponse");
@@ -249,10 +249,8 @@ public class ObjectFactory {
     private final static QName _GetUpstreamContainmentHierarchy_QNAME = new QName("http://ws.kuwaiba.org/", "getUpstreamContainmentHierarchy");
     private final static QName _GetGeneralActivityAuditTrail_QNAME = new QName("http://ws.kuwaiba.org/", "getGeneralActivityAuditTrail");
     private final static QName _CreatePoolInObject_QNAME = new QName("http://ws.kuwaiba.org/", "createPoolInObject");
-    private final static QName _CreateBookmarkForUserResponse_QNAME = new QName("http://ws.kuwaiba.org/", "createBookmarkForUserResponse");
     private final static QName _GetSpecialPossibleChildren_QNAME = new QName("http://ws.kuwaiba.org/", "getSpecialPossibleChildren");
     private final static QName _DeleteSDHContainerLink_QNAME = new QName("http://ws.kuwaiba.org/", "deleteSDHContainerLink");
-    private final static QName _GetBookmarkResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getBookmarkResponse");
     private final static QName _ReleasePortFromInterfaceResponse_QNAME = new QName("http://ws.kuwaiba.org/", "releasePortFromInterfaceResponse");
     private final static QName _CreatePoolInObjectResponse_QNAME = new QName("http://ws.kuwaiba.org/", "createPoolInObjectResponse");
     private final static QName _UpdateTemplateElementResponse_QNAME = new QName("http://ws.kuwaiba.org/", "updateTemplateElementResponse");
@@ -280,9 +278,9 @@ public class ObjectFactory {
     private final static QName _CreatePhysicalConnection_QNAME = new QName("http://ws.kuwaiba.org/", "createPhysicalConnection");
     private final static QName _GetObject_QNAME = new QName("http://ws.kuwaiba.org/", "getObject");
     private final static QName _GetUpstreamContainmentHierarchyResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getUpstreamContainmentHierarchyResponse");
+    private final static QName _DeleteBookmarkFolders_QNAME = new QName("http://ws.kuwaiba.org/", "deleteBookmarkFolders");
     private final static QName _GetPoolsInObject_QNAME = new QName("http://ws.kuwaiba.org/", "getPoolsInObject");
     private final static QName _ConnectMirrorPort_QNAME = new QName("http://ws.kuwaiba.org/", "connectMirrorPort");
-    private final static QName _GetBookmarkItemsResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getBookmarkItemsResponse");
     private final static QName _GetSubnetPoolsResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getSubnetPoolsResponse");
     private final static QName _UpdateReport_QNAME = new QName("http://ws.kuwaiba.org/", "updateReport");
     private final static QName _CreateService_QNAME = new QName("http://ws.kuwaiba.org/", "createService");
@@ -293,7 +291,7 @@ public class ObjectFactory {
     private final static QName _ReleaseObjectFromServiceResponse_QNAME = new QName("http://ws.kuwaiba.org/", "releaseObjectFromServiceResponse");
     private final static QName _ConnectPhysicalLinksResponse_QNAME = new QName("http://ws.kuwaiba.org/", "connectPhysicalLinksResponse");
     private final static QName _GetObjectChildrenForClassWithIdResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getObjectChildrenForClassWithIdResponse");
-    private final static QName _GetBookmarkItems_QNAME = new QName("http://ws.kuwaiba.org/", "getBookmarkItems");
+    private final static QName _UpdateBookmarkFolderResponse_QNAME = new QName("http://ws.kuwaiba.org/", "updateBookmarkFolderResponse");
     private final static QName _ReleaseSubnetFromVRFResponse_QNAME = new QName("http://ws.kuwaiba.org/", "releaseSubnetFromVRFResponse");
     private final static QName _GetInventoryLevelReports_QNAME = new QName("http://ws.kuwaiba.org/", "getInventoryLevelReports");
     private final static QName _GetSpecialPossibleChildrenResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getSpecialPossibleChildrenResponse");
@@ -314,7 +312,7 @@ public class ObjectFactory {
     private final static QName _UpdateTaskScheduleResponse_QNAME = new QName("http://ws.kuwaiba.org/", "updateTaskScheduleResponse");
     private final static QName _GetSubnetsResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getSubnetsResponse");
     private final static QName _GetTask_QNAME = new QName("http://ws.kuwaiba.org/", "getTask");
-    private final static QName _UpdateBookmark_QNAME = new QName("http://ws.kuwaiba.org/", "updateBookmark");
+    private final static QName _CreateBookmarkFolderForUserResponse_QNAME = new QName("http://ws.kuwaiba.org/", "createBookmarkFolderForUserResponse");
     private final static QName _CreateSpecialObject_QNAME = new QName("http://ws.kuwaiba.org/", "createSpecialObject");
     private final static QName _GetChildrenOfClassLightResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getChildrenOfClassLightResponse");
     private final static QName _GetPoolItemsResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getPoolItemsResponse");
@@ -322,6 +320,7 @@ public class ObjectFactory {
     private final static QName _DeleteUsers_QNAME = new QName("http://ws.kuwaiba.org/", "deleteUsers");
     private final static QName _CreateMPLSLinkResponse_QNAME = new QName("http://ws.kuwaiba.org/", "createMPLSLinkResponse");
     private final static QName _GetClass_QNAME = new QName("http://ws.kuwaiba.org/", "getClass");
+    private final static QName _GetBookmarkFolderItems_QNAME = new QName("http://ws.kuwaiba.org/", "getBookmarkFolderItems");
     private final static QName _GetGroups_QNAME = new QName("http://ws.kuwaiba.org/", "getGroups");
     private final static QName _ExecuteInventoryLevelReport_QNAME = new QName("http://ws.kuwaiba.org/", "executeInventoryLevelReport");
     private final static QName _GetClassWithIdResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getClassWithIdResponse");
@@ -363,7 +362,6 @@ public class ObjectFactory {
     private final static QName _SetPoolProperties_QNAME = new QName("http://ws.kuwaiba.org/", "setPoolProperties");
     private final static QName _GetSubClassesLightNoRecursive_QNAME = new QName("http://ws.kuwaiba.org/", "getSubClassesLightNoRecursive");
     private final static QName _CreateTemplateResponse_QNAME = new QName("http://ws.kuwaiba.org/", "createTemplateResponse");
-    private final static QName _GetBookmarksForUserResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getBookmarksForUserResponse");
     private final static QName _CreateTaskResponse_QNAME = new QName("http://ws.kuwaiba.org/", "createTaskResponse");
     private final static QName _GetSpecialAttributes_QNAME = new QName("http://ws.kuwaiba.org/", "getSpecialAttributes");
     private final static QName _UpdateTaskParameters_QNAME = new QName("http://ws.kuwaiba.org/", "updateTaskParameters");
@@ -372,10 +370,11 @@ public class ObjectFactory {
     private final static QName _AssociateObjectsToContractResponse_QNAME = new QName("http://ws.kuwaiba.org/", "associateObjectsToContractResponse");
     private final static QName _GetAllClassesLight_QNAME = new QName("http://ws.kuwaiba.org/", "getAllClassesLight");
     private final static QName _GetSubnetsInSubentResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getSubnetsInSubentResponse");
-    private final static QName _ReleaseObjectsFromBookmarkResponse_QNAME = new QName("http://ws.kuwaiba.org/", "releaseObjectsFromBookmarkResponse");
     private final static QName _GetPool_QNAME = new QName("http://ws.kuwaiba.org/", "getPool");
+    private final static QName _AddObjectsToBookmarkFolderResponse_QNAME = new QName("http://ws.kuwaiba.org/", "addObjectsToBookmarkFolderResponse");
     private final static QName _DeleteObjectResponse_QNAME = new QName("http://ws.kuwaiba.org/", "deleteObjectResponse");
     private final static QName _GetClassLevelReports_QNAME = new QName("http://ws.kuwaiba.org/", "getClassLevelReports");
+    private final static QName _CreateBookmarkFolderForUser_QNAME = new QName("http://ws.kuwaiba.org/", "createBookmarkFolderForUser");
     private final static QName _CreateTemplateElementResponse_QNAME = new QName("http://ws.kuwaiba.org/", "createTemplateElementResponse");
     private final static QName _SetAttributePropertiesForClassWithId_QNAME = new QName("http://ws.kuwaiba.org/", "setAttributePropertiesForClassWithId");
     private final static QName _UpdateTaskPropertiesResponse_QNAME = new QName("http://ws.kuwaiba.org/", "updateTaskPropertiesResponse");
@@ -411,13 +410,14 @@ public class ObjectFactory {
     private final static QName _RelateIPtoPortResponse_QNAME = new QName("http://ws.kuwaiba.org/", "relateIPtoPortResponse");
     private final static QName _CreateSessionResponse_QNAME = new QName("http://ws.kuwaiba.org/", "createSessionResponse");
     private final static QName _CreateSubnetResponse_QNAME = new QName("http://ws.kuwaiba.org/", "createSubnetResponse");
-    private final static QName _DownloadBulkLoadLogResponseReturn_QNAME = new QName("", "return");
-    private final static QName _CreateObjectRelatedViewBackground_QNAME = new QName("", "background");
-    private final static QName _CreateObjectRelatedViewStructure_QNAME = new QName("", "structure");
-    private final static QName _CreateQueryQueryStructure_QNAME = new QName("", "queryStructure");
+    private final static QName _GetBookmarkFolderItemsResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getBookmarkFolderItemsResponse");
+    private final static QName _CreateGeneralViewBackground_QNAME = new QName("", "background");
+    private final static QName _CreateGeneralViewStructure_QNAME = new QName("", "structure");
+    private final static QName _SaveQueryQueryStructure_QNAME = new QName("", "queryStructure");
+    private final static QName _ExecuteClassLevelReportResponseReturn_QNAME = new QName("", "return");
+    private final static QName _SetClassPropertiesIcon_QNAME = new QName("", "icon");
+    private final static QName _SetClassPropertiesSmallIcon_QNAME = new QName("", "smallIcon");
     private final static QName _BulkUploadFile_QNAME = new QName("", "file");
-    private final static QName _CreateClassIcon_QNAME = new QName("", "icon");
-    private final static QName _CreateClassSmallIcon_QNAME = new QName("", "smallIcon");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.inventory.communications.wsclient
@@ -491,22 +491,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link AssociateObjectsToBookmarkResponse }
-     * 
-     */
-    public AssociateObjectsToBookmarkResponse createAssociateObjectsToBookmarkResponse() {
-        return new AssociateObjectsToBookmarkResponse();
-    }
-
-    /**
-     * Create an instance of {@link CreateBookmarkForUser }
-     * 
-     */
-    public CreateBookmarkForUser createCreateBookmarkForUser() {
-        return new CreateBookmarkForUser();
-    }
-
-    /**
      * Create an instance of {@link CopyObjectsResponse }
      * 
      */
@@ -571,11 +555,27 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link GetBookmarkFoldersForUserResponse }
+     * 
+     */
+    public GetBookmarkFoldersForUserResponse createGetBookmarkFoldersForUserResponse() {
+        return new GetBookmarkFoldersForUserResponse();
+    }
+
+    /**
      * Create an instance of {@link GetGeneralViews }
      * 
      */
     public GetGeneralViews createGetGeneralViews() {
         return new GetGeneralViews();
+    }
+
+    /**
+     * Create an instance of {@link AddObjectsToBookmarkFolder }
+     * 
+     */
+    public AddObjectsToBookmarkFolder createAddObjectsToBookmarkFolder() {
+        return new AddObjectsToBookmarkFolder();
     }
 
     /**
@@ -635,11 +635,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ReleaseObjectsFromBookmark }
+     * Create an instance of {@link RemoveObjectsFromBookmarkFolder }
      * 
      */
-    public ReleaseObjectsFromBookmark createReleaseObjectsFromBookmark() {
-        return new ReleaseObjectsFromBookmark();
+    public RemoveObjectsFromBookmarkFolder createRemoveObjectsFromBookmarkFolder() {
+        return new RemoveObjectsFromBookmarkFolder();
     }
 
     /**
@@ -648,6 +648,14 @@ public class ObjectFactory {
      */
     public GetListTypeItems createGetListTypeItems() {
         return new GetListTypeItems();
+    }
+
+    /**
+     * Create an instance of {@link RemoveObjectsFromBookmarkFolderResponse }
+     * 
+     */
+    public RemoveObjectsFromBookmarkFolderResponse createRemoveObjectsFromBookmarkFolderResponse() {
+        return new RemoveObjectsFromBookmarkFolderResponse();
     }
 
     /**
@@ -872,14 +880,6 @@ public class ObjectFactory {
      */
     public CreateServiceResponse createCreateServiceResponse() {
         return new CreateServiceResponse();
-    }
-
-    /**
-     * Create an instance of {@link DeleteBookmarks }
-     * 
-     */
-    public DeleteBookmarks createDeleteBookmarks() {
-        return new DeleteBookmarks();
     }
 
     /**
@@ -1147,14 +1147,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link AssociateObjectsToBookmark }
-     * 
-     */
-    public AssociateObjectsToBookmark createAssociateObjectsToBookmark() {
-        return new AssociateObjectsToBookmark();
-    }
-
-    /**
      * Create an instance of {@link GetTasksResponse }
      * 
      */
@@ -1240,6 +1232,14 @@ public class ObjectFactory {
      */
     public FindSDHRoutesUsingTransportLinksResponse createFindSDHRoutesUsingTransportLinksResponse() {
         return new FindSDHRoutesUsingTransportLinksResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetBookmarkFolderResponse }
+     * 
+     */
+    public GetBookmarkFolderResponse createGetBookmarkFolderResponse() {
+        return new GetBookmarkFolderResponse();
     }
 
     /**
@@ -1467,14 +1467,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link UpdateBookmarkResponse }
-     * 
-     */
-    public UpdateBookmarkResponse createUpdateBookmarkResponse() {
-        return new UpdateBookmarkResponse();
-    }
-
-    /**
      * Create an instance of {@link GetObjectSpecialChildren }
      * 
      */
@@ -1528,6 +1520,14 @@ public class ObjectFactory {
      */
     public GetSDHContainerLinkStructureResponse createGetSDHContainerLinkStructureResponse() {
         return new GetSDHContainerLinkStructureResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetBookmarkFolder }
+     * 
+     */
+    public GetBookmarkFolder createGetBookmarkFolder() {
+        return new GetBookmarkFolder();
     }
 
     /**
@@ -1755,14 +1755,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetBookmarksForUser }
-     * 
-     */
-    public GetBookmarksForUser createGetBookmarksForUser() {
-        return new GetBookmarksForUser();
-    }
-
-    /**
      * Create an instance of {@link RelatePortToInterface }
      * 
      */
@@ -1883,14 +1875,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetBookmark }
-     * 
-     */
-    public GetBookmark createGetBookmark() {
-        return new GetBookmark();
-    }
-
-    /**
      * Create an instance of {@link CreateSDHTransportLinkResponse }
      * 
      */
@@ -1971,14 +1955,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DeleteBookmarksResponse }
-     * 
-     */
-    public DeleteBookmarksResponse createDeleteBookmarksResponse() {
-        return new DeleteBookmarksResponse();
-    }
-
-    /**
      * Create an instance of {@link CreateSpecialObjectResponse }
      * 
      */
@@ -2000,6 +1976,14 @@ public class ObjectFactory {
      */
     public GetTemplateElement createGetTemplateElement() {
         return new GetTemplateElement();
+    }
+
+    /**
+     * Create an instance of {@link UpdateBookmarkFolder }
+     * 
+     */
+    public UpdateBookmarkFolder createUpdateBookmarkFolder() {
+        return new UpdateBookmarkFolder();
     }
 
     /**
@@ -2115,6 +2099,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link DeleteBookmarkFolders }
+     * 
+     */
+    public DeleteBookmarkFolders createDeleteBookmarkFolders() {
+        return new DeleteBookmarkFolders();
+    }
+
+    /**
      * Create an instance of {@link GetPoolsInObject }
      * 
      */
@@ -2219,14 +2211,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetBookmarkItemsResponse }
-     * 
-     */
-    public GetBookmarkItemsResponse createGetBookmarkItemsResponse() {
-        return new GetBookmarkItemsResponse();
-    }
-
-    /**
      * Create an instance of {@link ConnectMirrorPort }
      * 
      */
@@ -2243,11 +2227,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetBookmarkItems }
+     * Create an instance of {@link UpdateBookmarkFolderResponse }
      * 
      */
-    public GetBookmarkItems createGetBookmarkItems() {
-        return new GetBookmarkItems();
+    public UpdateBookmarkFolderResponse createUpdateBookmarkFolderResponse() {
+        return new UpdateBookmarkFolderResponse();
     }
 
     /**
@@ -2419,19 +2403,19 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link CreateBookmarkFolderForUserResponse }
+     * 
+     */
+    public CreateBookmarkFolderForUserResponse createCreateBookmarkFolderForUserResponse() {
+        return new CreateBookmarkFolderForUserResponse();
+    }
+
+    /**
      * Create an instance of {@link CreateSpecialObject }
      * 
      */
     public CreateSpecialObject createCreateSpecialObject() {
         return new CreateSpecialObject();
-    }
-
-    /**
-     * Create an instance of {@link UpdateBookmark }
-     * 
-     */
-    public UpdateBookmark createUpdateBookmark() {
-        return new UpdateBookmark();
     }
 
     /**
@@ -2472,6 +2456,14 @@ public class ObjectFactory {
      */
     public AddPossibleChildrenForClassWithIdResponse createAddPossibleChildrenForClassWithIdResponse() {
         return new AddPossibleChildrenForClassWithIdResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetBookmarkFoldersForUser }
+     * 
+     */
+    public GetBookmarkFoldersForUser createGetBookmarkFoldersForUser() {
+        return new GetBookmarkFoldersForUser();
     }
 
     /**
@@ -2603,6 +2595,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link DeleteBookmarkFoldersResponse }
+     * 
+     */
+    public DeleteBookmarkFoldersResponse createDeleteBookmarkFoldersResponse() {
+        return new DeleteBookmarkFoldersResponse();
+    }
+
+    /**
      * Create an instance of {@link DeletePhysicalConnection }
      * 
      */
@@ -2664,22 +2664,6 @@ public class ObjectFactory {
      */
     public GetSpecialPossibleChildren createGetSpecialPossibleChildren() {
         return new GetSpecialPossibleChildren();
-    }
-
-    /**
-     * Create an instance of {@link CreateBookmarkForUserResponse }
-     * 
-     */
-    public CreateBookmarkForUserResponse createCreateBookmarkForUserResponse() {
-        return new CreateBookmarkForUserResponse();
-    }
-
-    /**
-     * Create an instance of {@link GetBookmarkResponse }
-     * 
-     */
-    public GetBookmarkResponse createGetBookmarkResponse() {
-        return new GetBookmarkResponse();
     }
 
     /**
@@ -2811,11 +2795,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetBookmarksForUserResponse }
+     * Create an instance of {@link AddObjectsToBookmarkFolderResponse }
      * 
      */
-    public GetBookmarksForUserResponse createGetBookmarksForUserResponse() {
-        return new GetBookmarksForUserResponse();
+    public AddObjectsToBookmarkFolderResponse createAddObjectsToBookmarkFolderResponse() {
+        return new AddObjectsToBookmarkFolderResponse();
     }
 
     /**
@@ -2824,14 +2808,6 @@ public class ObjectFactory {
      */
     public GetPool createGetPool() {
         return new GetPool();
-    }
-
-    /**
-     * Create an instance of {@link ReleaseObjectsFromBookmarkResponse }
-     * 
-     */
-    public ReleaseObjectsFromBookmarkResponse createReleaseObjectsFromBookmarkResponse() {
-        return new ReleaseObjectsFromBookmarkResponse();
     }
 
     /**
@@ -2856,6 +2832,14 @@ public class ObjectFactory {
      */
     public AssociateObjectsToContractResponse createAssociateObjectsToContractResponse() {
         return new AssociateObjectsToContractResponse();
+    }
+
+    /**
+     * Create an instance of {@link CreateBookmarkFolderForUser }
+     * 
+     */
+    public CreateBookmarkFolderForUser createCreateBookmarkFolderForUser() {
+        return new CreateBookmarkFolderForUser();
     }
 
     /**
@@ -3075,6 +3059,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link GetBookmarkFolderItemsResponse }
+     * 
+     */
+    public GetBookmarkFolderItemsResponse createGetBookmarkFolderItemsResponse() {
+        return new GetBookmarkFolderItemsResponse();
+    }
+
+    /**
      * Create an instance of {@link CreateSubnetResponse }
      * 
      */
@@ -3152,6 +3144,14 @@ public class ObjectFactory {
      */
     public SaveQuery createSaveQuery() {
         return new SaveQuery();
+    }
+
+    /**
+     * Create an instance of {@link GetBookmarkFolderItems }
+     * 
+     */
+    public GetBookmarkFolderItems createGetBookmarkFolderItems() {
+        return new GetBookmarkFolderItems();
     }
 
     /**
@@ -3865,15 +3865,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteBookmarks }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "deleteBookmarks")
-    public JAXBElement<DeleteBookmarks> createDeleteBookmarks(DeleteBookmarks value) {
-        return new JAXBElement<DeleteBookmarks>(_DeleteBookmarks_QNAME, DeleteBookmarks.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CreateServiceResponse }{@code >}}
      * 
      */
@@ -4288,15 +4279,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link AssociateObjectsToBookmark }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "associateObjectsToBookmark")
-    public JAXBElement<AssociateObjectsToBookmark> createAssociateObjectsToBookmark(AssociateObjectsToBookmark value) {
-        return new JAXBElement<AssociateObjectsToBookmark>(_AssociateObjectsToBookmark_QNAME, AssociateObjectsToBookmark.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ObjectIsBookmarkItemInResponse }{@code >}}
      * 
      */
@@ -4342,15 +4324,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link AssociateObjectsToBookmarkResponse }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "associateObjectsToBookmarkResponse")
-    public JAXBElement<AssociateObjectsToBookmarkResponse> createAssociateObjectsToBookmarkResponse(AssociateObjectsToBookmarkResponse value) {
-        return new JAXBElement<AssociateObjectsToBookmarkResponse>(_AssociateObjectsToBookmarkResponse_QNAME, AssociateObjectsToBookmarkResponse.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SaveQueryResponse }{@code >}}
      * 
      */
@@ -4378,12 +4351,30 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link AddObjectsToBookmarkFolder }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "addObjectsToBookmarkFolder")
+    public JAXBElement<AddObjectsToBookmarkFolder> createAddObjectsToBookmarkFolder(AddObjectsToBookmarkFolder value) {
+        return new JAXBElement<AddObjectsToBookmarkFolder>(_AddObjectsToBookmarkFolder_QNAME, AddObjectsToBookmarkFolder.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CreateRootPoolResponse }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "createRootPoolResponse")
     public JAXBElement<CreateRootPoolResponse> createCreateRootPoolResponse(CreateRootPoolResponse value) {
         return new JAXBElement<CreateRootPoolResponse>(_CreateRootPoolResponse_QNAME, CreateRootPoolResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetBookmarkFoldersForUserResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "getBookmarkFoldersForUserResponse")
+    public JAXBElement<GetBookmarkFoldersForUserResponse> createGetBookmarkFoldersForUserResponse(GetBookmarkFoldersForUserResponse value) {
+        return new JAXBElement<GetBookmarkFoldersForUserResponse>(_GetBookmarkFoldersForUserResponse_QNAME, GetBookmarkFoldersForUserResponse.class, null, value);
     }
 
     /**
@@ -4459,21 +4450,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link CreateBookmarkForUser }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link RemoveObjectsFromBookmarkFolder }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "createBookmarkForUser")
-    public JAXBElement<CreateBookmarkForUser> createCreateBookmarkForUser(CreateBookmarkForUser value) {
-        return new JAXBElement<CreateBookmarkForUser>(_CreateBookmarkForUser_QNAME, CreateBookmarkForUser.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link ReleaseObjectsFromBookmark }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "releaseObjectsFromBookmark")
-    public JAXBElement<ReleaseObjectsFromBookmark> createReleaseObjectsFromBookmark(ReleaseObjectsFromBookmark value) {
-        return new JAXBElement<ReleaseObjectsFromBookmark>(_ReleaseObjectsFromBookmark_QNAME, ReleaseObjectsFromBookmark.class, null, value);
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "removeObjectsFromBookmarkFolder")
+    public JAXBElement<RemoveObjectsFromBookmarkFolder> createRemoveObjectsFromBookmarkFolder(RemoveObjectsFromBookmarkFolder value) {
+        return new JAXBElement<RemoveObjectsFromBookmarkFolder>(_RemoveObjectsFromBookmarkFolder_QNAME, RemoveObjectsFromBookmarkFolder.class, null, value);
     }
 
     /**
@@ -4573,6 +4555,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "createListTypeItem")
     public JAXBElement<CreateListTypeItem> createCreateListTypeItem(CreateListTypeItem value) {
         return new JAXBElement<CreateListTypeItem>(_CreateListTypeItem_QNAME, CreateListTypeItem.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link RemoveObjectsFromBookmarkFolderResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "removeObjectsFromBookmarkFolderResponse")
+    public JAXBElement<RemoveObjectsFromBookmarkFolderResponse> createRemoveObjectsFromBookmarkFolderResponse(RemoveObjectsFromBookmarkFolderResponse value) {
+        return new JAXBElement<RemoveObjectsFromBookmarkFolderResponse>(_RemoveObjectsFromBookmarkFolderResponse_QNAME, RemoveObjectsFromBookmarkFolderResponse.class, null, value);
     }
 
     /**
@@ -4855,15 +4846,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link GetBookmarksForUser }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "getBookmarksForUser")
-    public JAXBElement<GetBookmarksForUser> createGetBookmarksForUser(GetBookmarksForUser value) {
-        return new JAXBElement<GetBookmarksForUser>(_GetBookmarksForUser_QNAME, GetBookmarksForUser.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetSubnetsInSubent }{@code >}}
      * 
      */
@@ -4963,15 +4945,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link GetBookmark }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "getBookmark")
-    public JAXBElement<GetBookmark> createGetBookmark(GetBookmark value) {
-        return new JAXBElement<GetBookmark>(_GetBookmark_QNAME, GetBookmark.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DeleteSDHTributaryLinkResponse }{@code >}}
      * 
      */
@@ -5044,15 +5017,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteBookmarksResponse }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "deleteBookmarksResponse")
-    public JAXBElement<DeleteBookmarksResponse> createDeleteBookmarksResponse(DeleteBookmarksResponse value) {
-        return new JAXBElement<DeleteBookmarksResponse>(_DeleteBookmarksResponse_QNAME, DeleteBookmarksResponse.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetRootPoolsResponse }{@code >}}
      * 
      */
@@ -5104,6 +5068,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "getTemplateElement")
     public JAXBElement<GetTemplateElement> createGetTemplateElement(GetTemplateElement value) {
         return new JAXBElement<GetTemplateElement>(_GetTemplateElement_QNAME, GetTemplateElement.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link UpdateBookmarkFolder }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "updateBookmarkFolder")
+    public JAXBElement<UpdateBookmarkFolder> createUpdateBookmarkFolder(UpdateBookmarkFolder value) {
+        return new JAXBElement<UpdateBookmarkFolder>(_UpdateBookmarkFolder_QNAME, UpdateBookmarkFolder.class, null, value);
     }
 
     /**
@@ -5167,6 +5140,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "getObjectRelatedView")
     public JAXBElement<GetObjectRelatedView> createGetObjectRelatedView(GetObjectRelatedView value) {
         return new JAXBElement<GetObjectRelatedView>(_GetObjectRelatedView_QNAME, GetObjectRelatedView.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetBookmarkFolderResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "getBookmarkFolderResponse")
+    public JAXBElement<GetBookmarkFolderResponse> createGetBookmarkFolderResponse(GetBookmarkFolderResponse value) {
+        return new JAXBElement<GetBookmarkFolderResponse>(_GetBookmarkFolderResponse_QNAME, GetBookmarkFolderResponse.class, null, value);
     }
 
     /**
@@ -5413,15 +5395,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link UpdateBookmarkResponse }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "updateBookmarkResponse")
-    public JAXBElement<UpdateBookmarkResponse> createUpdateBookmarkResponse(UpdateBookmarkResponse value) {
-        return new JAXBElement<UpdateBookmarkResponse>(_UpdateBookmarkResponse_QNAME, UpdateBookmarkResponse.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DeleteGroups }{@code >}}
      * 
      */
@@ -5473,6 +5446,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "getSubnetResponse")
     public JAXBElement<GetSubnetResponse> createGetSubnetResponse(GetSubnetResponse value) {
         return new JAXBElement<GetSubnetResponse>(_GetSubnetResponse_QNAME, GetSubnetResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetBookmarkFolder }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "getBookmarkFolder")
+    public JAXBElement<GetBookmarkFolder> createGetBookmarkFolder(GetBookmarkFolder value) {
+        return new JAXBElement<GetBookmarkFolder>(_GetBookmarkFolder_QNAME, GetBookmarkFolder.class, null, value);
     }
 
     /**
@@ -5638,6 +5620,15 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetBookmarkFoldersForUser }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "getBookmarkFoldersForUser")
+    public JAXBElement<GetBookmarkFoldersForUser> createGetBookmarkFoldersForUser(GetBookmarkFoldersForUser value) {
+        return new JAXBElement<GetBookmarkFoldersForUser>(_GetBookmarkFoldersForUser_QNAME, GetBookmarkFoldersForUser.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetObjectRelatedViewResponse }{@code >}}
      * 
      */
@@ -5764,6 +5755,15 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteBookmarkFoldersResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "deleteBookmarkFoldersResponse")
+    public JAXBElement<DeleteBookmarkFoldersResponse> createDeleteBookmarkFoldersResponse(DeleteBookmarkFoldersResponse value) {
+        return new JAXBElement<DeleteBookmarkFoldersResponse>(_DeleteBookmarkFoldersResponse_QNAME, DeleteBookmarkFoldersResponse.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CreatePoolItem }{@code >}}
      * 
      */
@@ -5836,15 +5836,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link CreateBookmarkForUserResponse }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "createBookmarkForUserResponse")
-    public JAXBElement<CreateBookmarkForUserResponse> createCreateBookmarkForUserResponse(CreateBookmarkForUserResponse value) {
-        return new JAXBElement<CreateBookmarkForUserResponse>(_CreateBookmarkForUserResponse_QNAME, CreateBookmarkForUserResponse.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetSpecialPossibleChildren }{@code >}}
      * 
      */
@@ -5860,15 +5851,6 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "deleteSDHContainerLink")
     public JAXBElement<DeleteSDHContainerLink> createDeleteSDHContainerLink(DeleteSDHContainerLink value) {
         return new JAXBElement<DeleteSDHContainerLink>(_DeleteSDHContainerLink_QNAME, DeleteSDHContainerLink.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link GetBookmarkResponse }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "getBookmarkResponse")
-    public JAXBElement<GetBookmarkResponse> createGetBookmarkResponse(GetBookmarkResponse value) {
-        return new JAXBElement<GetBookmarkResponse>(_GetBookmarkResponse_QNAME, GetBookmarkResponse.class, null, value);
     }
 
     /**
@@ -6115,6 +6097,15 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteBookmarkFolders }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "deleteBookmarkFolders")
+    public JAXBElement<DeleteBookmarkFolders> createDeleteBookmarkFolders(DeleteBookmarkFolders value) {
+        return new JAXBElement<DeleteBookmarkFolders>(_DeleteBookmarkFolders_QNAME, DeleteBookmarkFolders.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetPoolsInObject }{@code >}}
      * 
      */
@@ -6130,15 +6121,6 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "connectMirrorPort")
     public JAXBElement<ConnectMirrorPort> createConnectMirrorPort(ConnectMirrorPort value) {
         return new JAXBElement<ConnectMirrorPort>(_ConnectMirrorPort_QNAME, ConnectMirrorPort.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link GetBookmarkItemsResponse }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "getBookmarkItemsResponse")
-    public JAXBElement<GetBookmarkItemsResponse> createGetBookmarkItemsResponse(GetBookmarkItemsResponse value) {
-        return new JAXBElement<GetBookmarkItemsResponse>(_GetBookmarkItemsResponse_QNAME, GetBookmarkItemsResponse.class, null, value);
     }
 
     /**
@@ -6232,12 +6214,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link GetBookmarkItems }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link UpdateBookmarkFolderResponse }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "getBookmarkItems")
-    public JAXBElement<GetBookmarkItems> createGetBookmarkItems(GetBookmarkItems value) {
-        return new JAXBElement<GetBookmarkItems>(_GetBookmarkItems_QNAME, GetBookmarkItems.class, null, value);
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "updateBookmarkFolderResponse")
+    public JAXBElement<UpdateBookmarkFolderResponse> createUpdateBookmarkFolderResponse(UpdateBookmarkFolderResponse value) {
+        return new JAXBElement<UpdateBookmarkFolderResponse>(_UpdateBookmarkFolderResponse_QNAME, UpdateBookmarkFolderResponse.class, null, value);
     }
 
     /**
@@ -6421,12 +6403,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link UpdateBookmark }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link CreateBookmarkFolderForUserResponse }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "updateBookmark")
-    public JAXBElement<UpdateBookmark> createUpdateBookmark(UpdateBookmark value) {
-        return new JAXBElement<UpdateBookmark>(_UpdateBookmark_QNAME, UpdateBookmark.class, null, value);
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "createBookmarkFolderForUserResponse")
+    public JAXBElement<CreateBookmarkFolderForUserResponse> createCreateBookmarkFolderForUserResponse(CreateBookmarkFolderForUserResponse value) {
+        return new JAXBElement<CreateBookmarkFolderForUserResponse>(_CreateBookmarkFolderForUserResponse_QNAME, CreateBookmarkFolderForUserResponse.class, null, value);
     }
 
     /**
@@ -6490,6 +6472,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "getClass")
     public JAXBElement<GetClass> createGetClass(GetClass value) {
         return new JAXBElement<GetClass>(_GetClass_QNAME, GetClass.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetBookmarkFolderItems }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "getBookmarkFolderItems")
+    public JAXBElement<GetBookmarkFolderItems> createGetBookmarkFolderItems(GetBookmarkFolderItems value) {
+        return new JAXBElement<GetBookmarkFolderItems>(_GetBookmarkFolderItems_QNAME, GetBookmarkFolderItems.class, null, value);
     }
 
     /**
@@ -6862,15 +6853,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link GetBookmarksForUserResponse }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "getBookmarksForUserResponse")
-    public JAXBElement<GetBookmarksForUserResponse> createGetBookmarksForUserResponse(GetBookmarksForUserResponse value) {
-        return new JAXBElement<GetBookmarksForUserResponse>(_GetBookmarksForUserResponse_QNAME, GetBookmarksForUserResponse.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CreateTaskResponse }{@code >}}
      * 
      */
@@ -6943,21 +6925,21 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link ReleaseObjectsFromBookmarkResponse }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "releaseObjectsFromBookmarkResponse")
-    public JAXBElement<ReleaseObjectsFromBookmarkResponse> createReleaseObjectsFromBookmarkResponse(ReleaseObjectsFromBookmarkResponse value) {
-        return new JAXBElement<ReleaseObjectsFromBookmarkResponse>(_ReleaseObjectsFromBookmarkResponse_QNAME, ReleaseObjectsFromBookmarkResponse.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetPool }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "getPool")
     public JAXBElement<GetPool> createGetPool(GetPool value) {
         return new JAXBElement<GetPool>(_GetPool_QNAME, GetPool.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link AddObjectsToBookmarkFolderResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "addObjectsToBookmarkFolderResponse")
+    public JAXBElement<AddObjectsToBookmarkFolderResponse> createAddObjectsToBookmarkFolderResponse(AddObjectsToBookmarkFolderResponse value) {
+        return new JAXBElement<AddObjectsToBookmarkFolderResponse>(_AddObjectsToBookmarkFolderResponse_QNAME, AddObjectsToBookmarkFolderResponse.class, null, value);
     }
 
     /**
@@ -6976,6 +6958,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "getClassLevelReports")
     public JAXBElement<GetClassLevelReports> createGetClassLevelReports(GetClassLevelReports value) {
         return new JAXBElement<GetClassLevelReports>(_GetClassLevelReports_QNAME, GetClassLevelReports.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link CreateBookmarkFolderForUser }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "createBookmarkFolderForUser")
+    public JAXBElement<CreateBookmarkFolderForUser> createCreateBookmarkFolderForUser(CreateBookmarkFolderForUser value) {
+        return new JAXBElement<CreateBookmarkFolderForUser>(_CreateBookmarkFolderForUser_QNAME, CreateBookmarkFolderForUser.class, null, value);
     }
 
     /**
@@ -7294,93 +7285,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetBookmarkFolderItemsResponse }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "", name = "return", scope = DownloadBulkLoadLogResponse.class)
-    public JAXBElement<byte[]> createDownloadBulkLoadLogResponseReturn(byte[] value) {
-        return new JAXBElement<byte[]>(_DownloadBulkLoadLogResponseReturn_QNAME, byte[].class, DownloadBulkLoadLogResponse.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "background", scope = CreateObjectRelatedView.class)
-    public JAXBElement<byte[]> createCreateObjectRelatedViewBackground(byte[] value) {
-        return new JAXBElement<byte[]>(_CreateObjectRelatedViewBackground_QNAME, byte[].class, CreateObjectRelatedView.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "structure", scope = CreateObjectRelatedView.class)
-    public JAXBElement<byte[]> createCreateObjectRelatedViewStructure(byte[] value) {
-        return new JAXBElement<byte[]>(_CreateObjectRelatedViewStructure_QNAME, byte[].class, CreateObjectRelatedView.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "background", scope = UpdateGeneralView.class)
-    public JAXBElement<byte[]> createUpdateGeneralViewBackground(byte[] value) {
-        return new JAXBElement<byte[]>(_CreateObjectRelatedViewBackground_QNAME, byte[].class, UpdateGeneralView.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "structure", scope = UpdateGeneralView.class)
-    public JAXBElement<byte[]> createUpdateGeneralViewStructure(byte[] value) {
-        return new JAXBElement<byte[]>(_CreateObjectRelatedViewStructure_QNAME, byte[].class, UpdateGeneralView.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "return", scope = GetClassHierarchyResponse.class)
-    public JAXBElement<byte[]> createGetClassHierarchyResponseReturn(byte[] value) {
-        return new JAXBElement<byte[]>(_DownloadBulkLoadLogResponseReturn_QNAME, byte[].class, GetClassHierarchyResponse.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "return", scope = ExecuteInventoryLevelReportResponse.class)
-    public JAXBElement<byte[]> createExecuteInventoryLevelReportResponseReturn(byte[] value) {
-        return new JAXBElement<byte[]>(_DownloadBulkLoadLogResponseReturn_QNAME, byte[].class, ExecuteInventoryLevelReportResponse.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "background", scope = UpdateObjectRelatedView.class)
-    public JAXBElement<byte[]> createUpdateObjectRelatedViewBackground(byte[] value) {
-        return new JAXBElement<byte[]>(_CreateObjectRelatedViewBackground_QNAME, byte[].class, UpdateObjectRelatedView.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "structure", scope = UpdateObjectRelatedView.class)
-    public JAXBElement<byte[]> createUpdateObjectRelatedViewStructure(byte[] value) {
-        return new JAXBElement<byte[]>(_CreateObjectRelatedViewStructure_QNAME, byte[].class, UpdateObjectRelatedView.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "queryStructure", scope = CreateQuery.class)
-    public JAXBElement<byte[]> createCreateQueryQueryStructure(byte[] value) {
-        return new JAXBElement<byte[]>(_CreateQueryQueryStructure_QNAME, byte[].class, CreateQuery.class, ((byte[]) value));
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "getBookmarkFolderItemsResponse")
+    public JAXBElement<GetBookmarkFolderItemsResponse> createGetBookmarkFolderItemsResponse(GetBookmarkFolderItemsResponse value) {
+        return new JAXBElement<GetBookmarkFolderItemsResponse>(_GetBookmarkFolderItemsResponse_QNAME, GetBookmarkFolderItemsResponse.class, null, value);
     }
 
     /**
@@ -7389,7 +7299,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "", name = "background", scope = CreateGeneralView.class)
     public JAXBElement<byte[]> createCreateGeneralViewBackground(byte[] value) {
-        return new JAXBElement<byte[]>(_CreateObjectRelatedViewBackground_QNAME, byte[].class, CreateGeneralView.class, ((byte[]) value));
+        return new JAXBElement<byte[]>(_CreateGeneralViewBackground_QNAME, byte[].class, CreateGeneralView.class, ((byte[]) value));
     }
 
     /**
@@ -7398,7 +7308,133 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "", name = "structure", scope = CreateGeneralView.class)
     public JAXBElement<byte[]> createCreateGeneralViewStructure(byte[] value) {
-        return new JAXBElement<byte[]>(_CreateObjectRelatedViewStructure_QNAME, byte[].class, CreateGeneralView.class, ((byte[]) value));
+        return new JAXBElement<byte[]>(_CreateGeneralViewStructure_QNAME, byte[].class, CreateGeneralView.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "queryStructure", scope = SaveQuery.class)
+    public JAXBElement<byte[]> createSaveQueryQueryStructure(byte[] value) {
+        return new JAXBElement<byte[]>(_SaveQueryQueryStructure_QNAME, byte[].class, SaveQuery.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "return", scope = ExecuteClassLevelReportResponse.class)
+    public JAXBElement<byte[]> createExecuteClassLevelReportResponseReturn(byte[] value) {
+        return new JAXBElement<byte[]>(_ExecuteClassLevelReportResponseReturn_QNAME, byte[].class, ExecuteClassLevelReportResponse.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "background", scope = UpdateObjectRelatedView.class)
+    public JAXBElement<byte[]> createUpdateObjectRelatedViewBackground(byte[] value) {
+        return new JAXBElement<byte[]>(_CreateGeneralViewBackground_QNAME, byte[].class, UpdateObjectRelatedView.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "structure", scope = UpdateObjectRelatedView.class)
+    public JAXBElement<byte[]> createUpdateObjectRelatedViewStructure(byte[] value) {
+        return new JAXBElement<byte[]>(_CreateGeneralViewStructure_QNAME, byte[].class, UpdateObjectRelatedView.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "queryStructure", scope = CreateQuery.class)
+    public JAXBElement<byte[]> createCreateQueryQueryStructure(byte[] value) {
+        return new JAXBElement<byte[]>(_SaveQueryQueryStructure_QNAME, byte[].class, CreateQuery.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "return", scope = ExecuteInventoryLevelReportResponse.class)
+    public JAXBElement<byte[]> createExecuteInventoryLevelReportResponseReturn(byte[] value) {
+        return new JAXBElement<byte[]>(_ExecuteClassLevelReportResponseReturn_QNAME, byte[].class, ExecuteInventoryLevelReportResponse.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "icon", scope = SetClassProperties.class)
+    public JAXBElement<byte[]> createSetClassPropertiesIcon(byte[] value) {
+        return new JAXBElement<byte[]>(_SetClassPropertiesIcon_QNAME, byte[].class, SetClassProperties.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "smallIcon", scope = SetClassProperties.class)
+    public JAXBElement<byte[]> createSetClassPropertiesSmallIcon(byte[] value) {
+        return new JAXBElement<byte[]>(_SetClassPropertiesSmallIcon_QNAME, byte[].class, SetClassProperties.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "background", scope = UpdateGeneralView.class)
+    public JAXBElement<byte[]> createUpdateGeneralViewBackground(byte[] value) {
+        return new JAXBElement<byte[]>(_CreateGeneralViewBackground_QNAME, byte[].class, UpdateGeneralView.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "structure", scope = UpdateGeneralView.class)
+    public JAXBElement<byte[]> createUpdateGeneralViewStructure(byte[] value) {
+        return new JAXBElement<byte[]>(_CreateGeneralViewStructure_QNAME, byte[].class, UpdateGeneralView.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "icon", scope = CreateClass.class)
+    public JAXBElement<byte[]> createCreateClassIcon(byte[] value) {
+        return new JAXBElement<byte[]>(_SetClassPropertiesIcon_QNAME, byte[].class, CreateClass.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "smallIcon", scope = CreateClass.class)
+    public JAXBElement<byte[]> createCreateClassSmallIcon(byte[] value) {
+        return new JAXBElement<byte[]>(_SetClassPropertiesSmallIcon_QNAME, byte[].class, CreateClass.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "return", scope = DownloadBulkLoadLogResponse.class)
+    public JAXBElement<byte[]> createDownloadBulkLoadLogResponseReturn(byte[] value) {
+        return new JAXBElement<byte[]>(_ExecuteClassLevelReportResponseReturn_QNAME, byte[].class, DownloadBulkLoadLogResponse.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "return", scope = GetClassHierarchyResponse.class)
+    public JAXBElement<byte[]> createGetClassHierarchyResponseReturn(byte[] value) {
+        return new JAXBElement<byte[]>(_ExecuteClassLevelReportResponseReturn_QNAME, byte[].class, GetClassHierarchyResponse.class, ((byte[]) value));
     }
 
     /**
@@ -7414,54 +7450,18 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "", name = "queryStructure", scope = SaveQuery.class)
-    public JAXBElement<byte[]> createSaveQueryQueryStructure(byte[] value) {
-        return new JAXBElement<byte[]>(_CreateQueryQueryStructure_QNAME, byte[].class, SaveQuery.class, ((byte[]) value));
+    @XmlElementDecl(namespace = "", name = "background", scope = CreateObjectRelatedView.class)
+    public JAXBElement<byte[]> createCreateObjectRelatedViewBackground(byte[] value) {
+        return new JAXBElement<byte[]>(_CreateGeneralViewBackground_QNAME, byte[].class, CreateObjectRelatedView.class, ((byte[]) value));
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "", name = "icon", scope = CreateClass.class)
-    public JAXBElement<byte[]> createCreateClassIcon(byte[] value) {
-        return new JAXBElement<byte[]>(_CreateClassIcon_QNAME, byte[].class, CreateClass.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "smallIcon", scope = CreateClass.class)
-    public JAXBElement<byte[]> createCreateClassSmallIcon(byte[] value) {
-        return new JAXBElement<byte[]>(_CreateClassSmallIcon_QNAME, byte[].class, CreateClass.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "return", scope = ExecuteClassLevelReportResponse.class)
-    public JAXBElement<byte[]> createExecuteClassLevelReportResponseReturn(byte[] value) {
-        return new JAXBElement<byte[]>(_DownloadBulkLoadLogResponseReturn_QNAME, byte[].class, ExecuteClassLevelReportResponse.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "icon", scope = SetClassProperties.class)
-    public JAXBElement<byte[]> createSetClassPropertiesIcon(byte[] value) {
-        return new JAXBElement<byte[]>(_CreateClassIcon_QNAME, byte[].class, SetClassProperties.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "smallIcon", scope = SetClassProperties.class)
-    public JAXBElement<byte[]> createSetClassPropertiesSmallIcon(byte[] value) {
-        return new JAXBElement<byte[]>(_CreateClassSmallIcon_QNAME, byte[].class, SetClassProperties.class, ((byte[]) value));
+    @XmlElementDecl(namespace = "", name = "structure", scope = CreateObjectRelatedView.class)
+    public JAXBElement<byte[]> createCreateObjectRelatedViewStructure(byte[] value) {
+        return new JAXBElement<byte[]>(_CreateGeneralViewStructure_QNAME, byte[].class, CreateObjectRelatedView.class, ((byte[]) value));
     }
 
 }
