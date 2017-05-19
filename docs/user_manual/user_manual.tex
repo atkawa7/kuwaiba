@@ -19,6 +19,7 @@
 \usepackage{nameref}
 \usepackage{textcomp}
 \usepackage{pdflscape}
+\usepackage{textcomp}
 %\usepackage{hyperref}
 
 %Modify some defaults
@@ -31,7 +32,7 @@
 	
 	
 	\begin{figure}[b]
-		\centering System Version \textbf{1.1}
+		\centering System Version \textbf{1.5}
 			
 		Visit \textbf{kuwaiba.org} for documentation, latest updates and upcoming events
 	\end{figure}
@@ -354,7 +355,7 @@
 		\item \textbf{Release from Service:} Removes the association between an object(resource) and a service. If the object is not related to any service, this option will appear grayed out.
 		\item \textbf{Audit Trail:} This will display all the audit trail entries for the selected object, that is, all the changes made to the it.
 		\item \textbf{Open an Explorer from this Node:} Opens a navigation tree whose root node will be the selected object. Useful when you want to explore an object with a many containment levels below.
-		\item \textbf{Show Object Id:} Shows the database id of the selected object. Useful for troubleshooting purposes. It will also show the object's complete containment structure.
+		\item \textbf{Show More Information:} Shows the database id of the selected object. Useful for troubleshooting purposes. It will also show the object's complete containment structure.
 			\begin{figure}[h!]
 				\centering
 				\includegraphics[width=\linewidth]{img/action_show_object_id.png}
@@ -433,7 +434,7 @@
 		\label{fig:template_manager_template_containment}
 	\end{figure}
 	Copy, paste and rename operations work as they do with normal inventory objects and you can use them to construct your templates. Remember that you have to configure correctly the containment hierarchy (see \ref{fig:containment_manager}) before creating templates.\\
-	Now you can create objects from templates. Just right-click on the parent object and select the \textbf{New Object from Template...} action.\\
+	Now you can create objects from templates. Just right-click on the parent object and select the \textbf{New from Template...} action.\\
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.6\linewidth]{img/template_manager_new_from_template.png}
@@ -1519,7 +1520,7 @@
 			\label{fig:task_manager_execute_task}
 		\end{figure}
 		\begin{framed} {\large \textbf{Important}}\\
-			The full set of methods available in a script can be found at \\ \tiny{http://kuwaiba.org/javadoc/persistence/org/kuwaiba/apis/persistence/interfaces/ApplicationEntityManager.html}
+			The full set of methods available in a script can be found at \\ \tiny{http://kuwaiba.org/javadoc/persistence/org/kuwaiba/apis/persistence/application/ApplicationEntityManager.html}
 		\end{framed}
 	\newpage
 	\section{SDH Networks}
@@ -1725,7 +1726,7 @@
 		\end{framed}	
 		
 		\newpage
-		\section{IP Address Manager}\label{sec_ipam_manager}
+		\section{IP Address Manager}\label{sec:ip_address_manager}
 		The IP Address Manager(IPAM) let you store and manage your subnets and their IP addresses, kuwaiba let you integrate your IPAM to the whole network inventory allowing to relate the created subnets to existing VLANs or services, also allow you to associate the IP addresses of a subnet to an existing network device or service.
 		
 		Once you open the IPAM manager you will finds two default nodes IPv4 and IPv6.
@@ -1918,7 +1919,12 @@
 				\caption{Report execution}
 				\label{fig:reports_execute_report}
 			\end{figure}
-			
+	    
+	    
+	    \begin{framed} {\large \textbf{Important}} \\
+	    	If you click on \textit{Execute Report} and nothing seems to happen, the most likely reason is a misconfiguration in your default browser settings. If there's no default browser set in your system, or if the system is not configured to open HTML files with the browser, the report will be created in a temporary location (/tmp in Unix-like systems and C:\textbackslash{}Users\textbackslash{}\textless{}username\textgreater\textbackslash{}AppData\textbackslash{}Local\textbackslash{}Temp in most MS Windows versions). Some times the OS does not report correctly that couldn't open the file, so the client won't be aware of the issue and that's the reason why it won't provide any feedback to the user. 
+	    \end{framed}
+	    
 		\subsection{How to Create Scripts}
 		Creating complex scripts requires some knowledge about the Persistence API and the database structure. It's out of the scope of this document to explore in depth these topics, but this section will give you a starting point. More documentation and examples will be published in the coming releases, for now, use the reports provided in the directory \textbf{scripts} in the client installation bundle as reference.
 		\begin{itemize}
