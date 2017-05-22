@@ -9,17 +9,17 @@ package org.kuwaiba.apis.persistence.application;
  * A POJO representation of a category in a list of favorites.
  * @author johnyortega
  */
-public class Bookmark {
+public class BookmarkFolder {
     /**
-     * Bookmark id
+     * BookmarkFolder id
      */
     private long id;
     /**
-     * Bookmark name
+     * BookmarkFolder name
      */
     private String name;
     
-    public Bookmark(long id, String name) {
+    public BookmarkFolder(long id, String name) {
         this.id = id;
         this.name = name;
     }

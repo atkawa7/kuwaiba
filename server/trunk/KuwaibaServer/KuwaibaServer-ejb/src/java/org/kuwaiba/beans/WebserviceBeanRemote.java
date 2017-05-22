@@ -22,7 +22,7 @@ import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
 import java.util.List;
 import javax.ejb.Remote;
-import org.kuwaiba.apis.persistence.application.Bookmark;
+import org.kuwaiba.apis.persistence.application.BookmarkFolder;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
 import org.kuwaiba.exceptions.NotAuthorizedException;
 import org.kuwaiba.exceptions.ServerSideException;
@@ -32,7 +32,7 @@ import org.kuwaiba.ws.toserialize.application.ApplicationLogEntry;
 import org.kuwaiba.ws.toserialize.application.GroupInfo;
 import org.kuwaiba.ws.toserialize.application.GroupInfoLight;
 import org.kuwaiba.ws.toserialize.application.PrivilegeInfo;
-import org.kuwaiba.ws.toserialize.application.RemoteBookmark;
+import org.kuwaiba.ws.toserialize.application.RemoteBookmarkFolder;
 import org.kuwaiba.ws.toserialize.application.RemotePool;
 import org.kuwaiba.ws.toserialize.application.RemoteQuery;
 import org.kuwaiba.ws.toserialize.application.RemoteQueryLight;
@@ -479,14 +479,14 @@ public interface WebserviceBeanRemote {
     public boolean isSubclassOf(String className, String subclassOf, String remoteAddress, String sessionId);
     // </editor-fold>
     
-    // Bookmark Manager
-    public void addObjectsToBookmarkFolder(String[] objectClass, long[] objectId, long bookmarkId, String ipAddress, String sessionId) throws ServerSideException;
-    public void removeObjectsFromBookmarkFolder(String[] objectClass, long[] objectId, long bookmarkId, String ipAddress, String sessionId) throws ServerSideException;
-    public long createBookmarkFolderForUser(String bookmarkName, long userId, String ipAddress, String sessionId) throws ServerSideException;
-    public void deleteBookmarkFolders(long[] bookmarkId, String ipAddress, String sessionId) throws ServerSideException;
-    public List<RemoteBookmark> getBookmarkFoldersForUser(long userId, String ipAddress, String sessionId) throws ServerSideException;
-    public RemoteObjectLight[] getBookmarkFolderItems(long bookmarkId, int limit, String ipAddress, String sessionId) throws ServerSideException;
-    public List<RemoteBookmark> objectIsBookmarkItemIn(String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;
-    public RemoteBookmark getBookmarkFolder(long bookmarkId, String ipAddress, String sessionId) throws ServerSideException;
-    public void updateBookmarkFolder(long bookmarkId, String bookmarkName, String ipAddress, String sessionId) throws ServerSideException;
+    // Bookmarks
+    public long createBookmarkFolderForUser(String bookmarkFolderName, long userId, String ipAddress, String sessionId) throws ServerSideException;
+    public void deleteBookmarkFolders(long[] bookmarkFolderId, long userId, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteBookmarkFolder> getBookmarkFoldersForUser(long userId, String ipAddress, String sessionId) throws ServerSideException;
+    public void addObjectsToBookmarkFolder(String[] objectClass, long[] objectId, long bookmarkFolderId, long userId, String ipAddress, String sessionId) throws ServerSideException;
+    public void removeObjectsFromBookmarkFolder(String[] objectClass, long[] objectId, long bookmarkFolderId, long userId, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteObjectLight[] getObjectsOfBookmarkFolder(long bookmarkFolderId, long userId, int limit, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteBookmarkFolder> getBookmarkFoldersForObject(long userId ,String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteBookmarkFolder getBookmarkFolder(long bookmarkFolderId, long userId, String ipAddress, String sessionId) throws ServerSideException;
+    public void updateBookmarkFolder(long bookmarkFolderId, long userId, String bookmarkFolderName, String ipAddress, String sessionId) throws ServerSideException;
 }

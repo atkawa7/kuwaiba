@@ -51,7 +51,7 @@ import org.kuwaiba.apis.persistence.ConnectionManager;
 import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
 import org.kuwaiba.apis.persistence.application.CompactQuery;
 import org.kuwaiba.apis.persistence.application.ExtendedQuery;
-import org.kuwaiba.apis.persistence.application.Bookmark;
+import org.kuwaiba.apis.persistence.application.BookmarkFolder;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.GroupProfileLight;
 import org.kuwaiba.apis.persistence.application.Pool;
@@ -2626,91 +2626,51 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     // Bookmarks
     @Override
-    public void addObjectToBookmarkFolder(String objectClass, long objectId, long bookmarkId) 
-        throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException {
+    public void addObjectToBookmarkFolder(String objectClass, long objectId, long bookmarkFolderId, long userId)
+            throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException {
         
         try (Transaction tx = graphDb.beginTx()) {
-            Node bookmarkNode = graphDb.getNodeById(bookmarkId);
-            if (bookmarkNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("Can not find the bookmark folder with id %s", bookmarkId));
+            Node bookmarkFolderNode = getBookmarkFolderForUser(bookmarkFolderId, userId);
+            if (bookmarkFolderNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Can not find the Bookmark folder with id %s", bookmarkFolderId));
             
             Node objectNode = getInstanceOfClass(objectClass, objectId);
             
             if (objectNode.hasRelationship(Direction.OUTGOING, RelTypes.IS_BOOKMARK_ITEM_IN)) {
                 for (Relationship relationship : objectNode.getRelationships(Direction.OUTGOING, RelTypes.IS_BOOKMARK_ITEM_IN)) {
-                    if (bookmarkNode.getId() == relationship.getEndNode().getId())
-                        throw new OperationNotPermittedException("An object can not be added twice to the same bookmark folder");
+                    if (bookmarkFolderNode.getId() == relationship.getEndNode().getId())
+                        throw new OperationNotPermittedException("An object can not be added twice to the same Bookmark folder");
                 }
             }
-            objectNode.createRelationshipTo(bookmarkNode, RelTypes.IS_BOOKMARK_ITEM_IN);
+            objectNode.createRelationshipTo(bookmarkFolderNode, RelTypes.IS_BOOKMARK_ITEM_IN);
             
             tx.success();
         }
     }
     
     @Override
-    public void removeObjectFromBookmarkFolder(String objectClass, long objectId, long bookmarkId) 
+    public void removeObjectFromBookmarkFolder(String objectClass, long objectId, long bookmarkFolderId, long userId) 
         throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, ObjectNotFoundException {
-        
+                
         try (Transaction tx = graphDb.beginTx()) {
             
             Node objectNode = getInstanceOfClass(objectClass, objectId);
             
             if (objectNode.hasRelationship(Direction.OUTGOING, RelTypes.IS_BOOKMARK_ITEM_IN)) {
                 
-                Node bookmarkNode = graphDb.getNodeById(bookmarkId);
-                if (bookmarkNode == null)
-                    throw new ApplicationObjectNotFoundException(String.format("Can not find the bookmark with id %s", bookmarkId));
+                Node bookmarkFolderNode = getBookmarkFolderForUser(bookmarkFolderId, userId);
+                if (bookmarkFolderNode == null)
+                    throw new ApplicationObjectNotFoundException(String.format("Can not find the Bookmark folder with id %s", bookmarkFolderId));
+                
+                Relationship relationshipToDelete = null;
                 
                 for (Relationship relationship : objectNode.getRelationships(Direction.OUTGOING, RelTypes.IS_BOOKMARK_ITEM_IN)) {
                     
-                    if (bookmarkNode.getId() == relationship.getEndNode().getId()) {
-                        relationship.delete();
-                        tx.success();
-                        return;
-                    }
+                    if (bookmarkFolderNode.getId() == relationship.getEndNode().getId())
+                        relationshipToDelete = relationship;
                 }
-            }
-        }
-    }
-    
-    @Override
-    public long createBookmarkFolderForUser(String name, long userId) throws ApplicationObjectNotFoundException {
-        try (Transaction tx = graphDb.beginTx()) {
-            Node userNode = userIndex.get(Constants.PROPERTY_ID, userId).getSingle();
-            
-            if (userNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("User with id %s could not be found", userId));
-            
-            Node bookmarkNode = graphDb.createNode();
-            
-            if (name != null)
-                bookmarkNode.setProperty(Constants.PROPERTY_NAME, name);            
-            
-            userNode.createRelationshipTo(bookmarkNode, RelTypes.HAS_BOOKMARK);
-            
-            tx.success();
-            return bookmarkNode.getId();
-        }
-    }
-    
-    @Override
-    public void deleteBookmarkFolders(long[] bookmarkId) throws ApplicationObjectNotFoundException {
-        try (Transaction tx = graphDb.beginTx()) {
-            if (bookmarkId != null) {
-                for (long id : bookmarkId) {
-                    Node bookmarkNode = graphDb.getNodeById(id);
-                    
-                    if (bookmarkNode == null)
-                        throw new ApplicationObjectNotFoundException(String.format("Can not find the bookmark with id %s",id));
-                    
-                    for (Relationship relationship : bookmarkNode.getRelationships(Direction.INCOMING, RelTypes.HAS_BOOKMARK))
-                        relationship.delete();
-                    
-                    for (Relationship relationship : bookmarkNode.getRelationships(Direction.INCOMING, RelTypes.IS_BOOKMARK_ITEM_IN))
-                        relationship.delete();
-                    
-                    bookmarkNode.delete();
+                if (relationshipToDelete != null) {
+                    relationshipToDelete.delete();
                     tx.success();
                 }
             }
@@ -2718,41 +2678,90 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public List<Bookmark> getBookmarkFoldersForUser(long userId) throws ApplicationObjectNotFoundException {
+    public long createBookmarkFolderForUser(String name, long userId) 
+        throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             Node userNode = userIndex.get(Constants.PROPERTY_ID, userId).getSingle();
             
             if (userNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("User with id %s could not be found", userId));
             
-            List<Bookmark> bookmarks = new ArrayList(); 
+            Node bookmarkFolderNode = graphDb.createNode();
+            
+            if (name != null)
+                bookmarkFolderNode.setProperty(Constants.PROPERTY_NAME, name);            
+            
+            userNode.createRelationshipTo(bookmarkFolderNode, RelTypes.HAS_BOOKMARK);
+            
+            tx.success();
+            return bookmarkFolderNode.getId();
+        }
+    }
+    
+    @Override
+    public void deleteBookmarkFolders(long[] bookmarkFolderId, long userId)
+        throws ApplicationObjectNotFoundException {
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            if (bookmarkFolderId != null) {
+                for (long id : bookmarkFolderId) {
+                    Node bookmarkFolderNode = getBookmarkFolderForUser(id, userId);
+                    
+                    if (bookmarkFolderNode == null)
+                        throw new ApplicationObjectNotFoundException(String.format("Can not find the Bookmark with id %s",id));
+                    
+                    for (Relationship relationship : bookmarkFolderNode.getRelationships(Direction.INCOMING, RelTypes.HAS_BOOKMARK))
+                        relationship.delete();
+                    
+                    for (Relationship relationship : bookmarkFolderNode.getRelationships(Direction.INCOMING, RelTypes.IS_BOOKMARK_ITEM_IN))
+                        relationship.delete();
+                    
+                    bookmarkFolderNode.delete();
+                    tx.success();
+                }
+            }
+        }
+    }
+    
+    @Override
+    public List<BookmarkFolder> getBookmarkFoldersForUser(long userId) 
+        throws ApplicationObjectNotFoundException {
+                
+        try (Transaction tx = graphDb.beginTx()) {
+            Node userNode = userIndex.get(Constants.PROPERTY_ID, userId).getSingle();
+            
+            if (userNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("User with id %s could not be found", userId));
+            
+            List<BookmarkFolder> bookmarkFolders = new ArrayList(); 
             
             if (userNode.hasRelationship(Direction.OUTGOING, RelTypes.HAS_BOOKMARK)) {
                 
                 for (Relationship relationship : userNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_BOOKMARK)) {
-                    Node bookmarkNode = relationship.getEndNode();
-                    String name = bookmarkNode.hasProperty(Constants.PROPERTY_NAME) ? (String) bookmarkNode.getProperty(Constants.PROPERTY_NAME) : null;
+                    Node bookmarkFolderNode = relationship.getEndNode();
+                    String name = bookmarkFolderNode.hasProperty(Constants.PROPERTY_NAME) ? (String) bookmarkFolderNode.getProperty(Constants.PROPERTY_NAME) : null;
                     
-                    bookmarks.add(new Bookmark(bookmarkNode.getId(), name));
+                    bookmarkFolders.add(new BookmarkFolder(bookmarkFolderNode.getId(), name));
                 }
             }
-            return bookmarks;
+            return bookmarkFolders;
         }
     }
     
-    
     @Override
-    public List<RemoteBusinessObjectLight> getBookmarkFolderItems(long bookmarkId, int limit) throws ApplicationObjectNotFoundException {
+    public List<RemoteBusinessObjectLight> getObjectsOfBookmarkFolder(long bookmarkFolderId, long userId, int limit) 
+        throws ApplicationObjectNotFoundException {
+        
         try (Transaction tx = graphDb.beginTx()) {
-            Node bookmarkNode = graphDb.getNodeById(bookmarkId);
+            Node bookmarkFolderNode = getBookmarkFolderForUser(bookmarkFolderId, userId);
             
-            if (bookmarkNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("Can not find the bookmark with id %s",bookmarkId));
+            if (bookmarkFolderNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Can not find the Bookmark folder with id %s", bookmarkFolderId));
             
             List<RemoteBusinessObjectLight> bookmarkItems = new ArrayList<>();
             
             int i = 0;
-            for (Relationship relationship : bookmarkNode.getRelationships(Direction.INCOMING, RelTypes.IS_BOOKMARK_ITEM_IN)) {
+            for (Relationship relationship : bookmarkFolderNode.getRelationships(Direction.INCOMING, RelTypes.IS_BOOKMARK_ITEM_IN)) {
                 if (limit != -1) {
                     if (i >= limit)
                         break;
@@ -2772,57 +2781,91 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public List<Bookmark> objectIsBookmarkItemIn(String objectClass, long objectId) 
-        throws MetadataObjectNotFoundException, ObjectNotFoundException {
+    public List<BookmarkFolder> getBookmarkFoldersForObject(long userId, String objectClass, long objectId) 
+        throws MetadataObjectNotFoundException, ObjectNotFoundException, ApplicationObjectNotFoundException {
         
         try (Transaction tx = graphDb.beginTx()) {
             Node objectNode = getInstanceOfClass(objectClass, objectId);
                         
-            List<Bookmark> bookmarks = new ArrayList(); 
+            List<BookmarkFolder> bookmarkFolders = new ArrayList(); 
             
             if (objectNode.hasRelationship(Direction.OUTGOING, RelTypes.IS_BOOKMARK_ITEM_IN)) {
                 
                 for (Relationship relationship : objectNode.getRelationships(Direction.OUTGOING, RelTypes.IS_BOOKMARK_ITEM_IN)) {
-                    Node bookmarkNode = relationship.getEndNode();
-                    String name = bookmarkNode.hasProperty(Constants.PROPERTY_NAME) ? (String) bookmarkNode.getProperty(Constants.PROPERTY_NAME) : null;
+                    Node bookmarkFolderNode = relationship.getEndNode();
                     
-                    bookmarks.add(new Bookmark(bookmarkNode.getId(), name));
+                    if (getBookmarkFolderForUser(bookmarkFolderNode.getId(), userId) == null)
+                        throw new ApplicationObjectNotFoundException(String.format("Can not find the Bookmark folder with id %s", bookmarkFolderNode.getId()));
+                    
+                    String name = bookmarkFolderNode.hasProperty(Constants.PROPERTY_NAME) ? (String) bookmarkFolderNode.getProperty(Constants.PROPERTY_NAME) : null;
+                    
+                    bookmarkFolders.add(new BookmarkFolder(bookmarkFolderNode.getId(), name));
                 }
             }
-            return bookmarks;
+            return bookmarkFolders;
         }
     }
     
     @Override
-    public Bookmark getBookmarkFolder(long bookmarkId) throws ApplicationObjectNotFoundException {
+    public BookmarkFolder getBookmarkFolder(long bookmarkFolderId, long userId) 
+        throws ApplicationObjectNotFoundException {
+        
         try (Transaction tx = graphDb.beginTx()) {
-            Node bookmarkNode = graphDb.getNodeById(bookmarkId);
+            Node bookmarkFolderNode = getBookmarkFolderForUser(bookmarkFolderId, userId);
             
-            if (bookmarkNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("Can not find the bookmark with id %s", bookmarkId));
+            if (bookmarkFolderNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Can not find the bookmark folder with id %s", bookmarkFolderId));
             
-            String name = bookmarkNode.hasProperty(Constants.PROPERTY_NAME) ? (String) bookmarkNode.getProperty(Constants.PROPERTY_NAME) : null;
+            String name = bookmarkFolderNode.hasProperty(Constants.PROPERTY_NAME) ? (String) bookmarkFolderNode.getProperty(Constants.PROPERTY_NAME) : null;
                     
             tx.success();
-            return new Bookmark(bookmarkNode.getId(), name);
+            return new BookmarkFolder(bookmarkFolderNode.getId(), name);
         }
     }
     
     @Override
-    public void updateBookmarkFolder(long bookmarkId, String bookmarkName) throws ApplicationObjectNotFoundException {
+    public void updateBookmarkFolder(long bookmarkFolderId, long userId, String bookmarkFolderName) 
+        throws ApplicationObjectNotFoundException {
+        
         try (Transaction tx = graphDb.beginTx()) {
-            Node bookmarkNode = graphDb.getNodeById(bookmarkId);
+            Node bookmarkFolderNode = getBookmarkFolderForUser(bookmarkFolderId, userId);
             
-            if (bookmarkNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("Can not find the bookmark with id %s", bookmarkId));
+            if (bookmarkFolderNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Can not find the Bookmark folder with id %s", bookmarkFolderId));
             
-            if (bookmarkNode.hasProperty(Constants.PROPERTY_NAME)) {
+            if (bookmarkFolderNode.hasProperty(Constants.PROPERTY_NAME)) {
                 
-                if (bookmarkName != null) {
-                    bookmarkNode.setProperty(Constants.PROPERTY_NAME, bookmarkName);
+                if (bookmarkFolderName != null) {
+                    bookmarkFolderNode.setProperty(Constants.PROPERTY_NAME, bookmarkFolderName);
                     tx.success();
                 }
             }
+        }
+    }
+    
+    private Node getBookmarkFolderForUser(long bookmarkFolderId, long userId) {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node userNode = userIndex.get(Constants.PROPERTY_ID, userId).getSingle();
+            
+            if (userNode == null) {
+                tx.success();
+                return null; // user not found
+            }
+            
+            if (userNode.hasRelationship(Direction.OUTGOING, RelTypes.HAS_BOOKMARK)) {
+                
+                for (Relationship relationship : userNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_BOOKMARK)) {
+                    
+                    Node bookmarkFolderNode = relationship.getEndNode();
+                    
+                    if (bookmarkFolderNode.getId() == bookmarkFolderId) {
+                        tx.success();
+                        return bookmarkFolderNode;
+                    }
+                }
+            }
+            tx.success();
+            return null; // the user with userId no have a bookmark folder with bookmarkFolderId
         }
     }
 }

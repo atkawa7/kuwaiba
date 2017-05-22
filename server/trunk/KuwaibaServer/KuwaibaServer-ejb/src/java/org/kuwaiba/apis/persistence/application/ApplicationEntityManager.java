@@ -909,92 +909,101 @@ public interface ApplicationEntityManager {
     
     // Bookmarks
     /**
-     * Add an item (object) to the bookmark
-     * @param objectClass object class
-     * @param objectId object id
-     * @param bookmarkId bookmark id
-     * @throws ApplicationObjectNotFoundException If the bookmark can not be found
+     * Adds an object to the Bookmark folder
+     * @param objectClass Object class
+     * @param objectId Object id
+     * @param bookmarkFolderId Bookmark folder id
+     * @param userId User Id
+     * @throws ApplicationObjectNotFoundException If the Bookmark folder can not be found
      * @throws MetadataObjectNotFoundException If the object can not be found
      * @throws ObjectNotFoundException If the object can not be found
      * @throws OperationNotPermittedException If the object have a relationship with the bookmark
      */
-    public void addObjectToBookmarkFolder(String objectClass, long objectId, long bookmarkId) 
+    public void addObjectToBookmarkFolder(String objectClass, long objectId, long bookmarkFolderId, long userId) 
         throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException;
     
     /**
-     * Remove an item (object) to the bookmark
-     * @param objectClass object class
-     * @param objectId object id
-     * @param bookmarkId bookmark id
-     * @throws ApplicationObjectNotFoundException If the bookmark can not be found
+     * Removes an object associated to a Bookmark folder
+     * @param objectClass Object class
+     * @param objectId Object id
+     * @param bookmarkFolderId Bookmark folder id
+     * @param userId User Id
+     * @throws ApplicationObjectNotFoundException If the Bookmark folder can not be found
      * @throws MetadataObjectNotFoundException If the object can not be found
      * @throws ObjectNotFoundException If the object can not be found
      */
-    public void removeObjectFromBookmarkFolder(String objectClass, long objectId, long bookmarkId) 
+    public void removeObjectFromBookmarkFolder(String objectClass, long objectId, long bookmarkFolderId, long userId) 
         throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, ObjectNotFoundException;
         
     /**
-     * Create a relationship between an user and a bookmark with name name
-     * @param name bookmark name
-     * @param userId user id
-     * @return the new bookmark id
+     * Create a relationship between an user and a new Bookmark folder
+     * @param name Bookmark folder name
+     * @param userId User id
+     * @return The new Bookmark folder Id
      * @throws ApplicationObjectNotFoundException If the user can not be found
      */
     public long createBookmarkFolderForUser(String name, long userId) 
         throws ApplicationObjectNotFoundException;
     
     /**
-     * Delete a Bookmark of an User
-     * @param bookmarkId bookmark id
-     * @throws ApplicationObjectNotFoundException If any bookmark in the array can not be found
+     * Delete a Bookmark Folder of an User
+     * @param bookmarkFolderId Bookmark folder id
+     * @param userId User Id
+     * @throws ApplicationObjectNotFoundException If any Bookmark folder in the array can not be found
      */
-    public void deleteBookmarkFolders(long[] bookmarkId)
+    public void deleteBookmarkFolders(long[] bookmarkFolderId, long userId)
         throws ApplicationObjectNotFoundException;
     
     /**
-     * Get the bookmarks create by an user.
+     * Get the Bookmark folders create by an user.
      * @param userId user id
-     * @return List of bookmarks for an User
+     * @return List of Bookmarks folders for an User
      * @throws ApplicationObjectNotFoundException If the user can not be found
      */
-    public List<Bookmark> getBookmarkFoldersForUser(long userId) 
+    public List<BookmarkFolder> getBookmarkFoldersForUser(long userId) 
         throws ApplicationObjectNotFoundException;
     
     /**
-     * Get the items (objects) assigned to the bookmark
-     * @param bookmarkId bookmark id
+     * Get the object assigned to the bookmark
+     * @param bookmarkFolderId Bookmark folder id
      * @param limit Max number of results
-     * @throws ApplicationObjectNotFoundException If the bookmark can not be found
+     * @param userId User Id
+     * @throws ApplicationObjectNotFoundException If the Bookmark folder can not be found
      * @return List of objects related to bookmark
      */
-    public List<RemoteBusinessObjectLight> getBookmarkFolderItems(long bookmarkId, int limit) 
+    public List<RemoteBusinessObjectLight> getObjectsOfBookmarkFolder(long bookmarkFolderId, long userId, int limit) 
         throws ApplicationObjectNotFoundException;
     /**
-     * Get the bookmarks where an object are an item
-     * @param objectClass object class
-     * @param objectId object id
+     * Get the bookmarks where an object is associated
+     * @param userId User id
+     * @param objectClass Object class
+     * @param objectId Object id
      * @throws MetadataObjectNotFoundException If the object can not be found
      * @throws ObjectNotFoundException If the object can not be found
      * @return list of bookmarks where an object are an item
+     * @throws ApplicationObjectNotFoundException If the object is associated to a bookmark folder but 
+     *                                            The Bookmark folder is not associated to the current user
      */
-    public List<Bookmark> objectIsBookmarkItemIn(String objectClass, long objectId) 
-        throws MetadataObjectNotFoundException, ObjectNotFoundException;
+    public List<BookmarkFolder> getBookmarkFoldersForObject(long userId, String objectClass, long objectId) 
+        throws MetadataObjectNotFoundException, ObjectNotFoundException, ApplicationObjectNotFoundException;
     
     /**
-     * Get a bookmark with the id
-     * @param bookmarkId object class
-     * @throws ApplicationObjectNotFoundException If the bookmark can not be found
+     * Gets a Bookmark folder
+     * @param bookmarkFolderId Bookmark folder id
+     * @param userId User id
+     * @throws ApplicationObjectNotFoundException If the Bookmark folder can not be found
      * @return The bookmark with id
      */
-    public Bookmark getBookmarkFolder(long bookmarkId) 
+    public BookmarkFolder getBookmarkFolder(long bookmarkFolderId, long userId) 
         throws ApplicationObjectNotFoundException;
     
     /**
-     * Update a bookmark with the id
-     * @param bookmarkId bookmark id
-     * @param bookmarkName bookmark name
-     * @throws ApplicationObjectNotFoundException If the bookmark can not be found
+     * Updates a Bookmark folder
+     * @param bookmarkFolderId Bookmark folder id
+     * @param userId User Id
+     * @param bookmarkFolderName Bookmark folder name
+     * @throws ApplicationObjectNotFoundException If the Bookmark folder can not be found
      */
-    public void updateBookmarkFolder(long bookmarkId, String bookmarkName) 
+    public void updateBookmarkFolder(long bookmarkFolderId, long userId, String bookmarkFolderName) 
         throws ApplicationObjectNotFoundException;
 }

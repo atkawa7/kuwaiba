@@ -42,7 +42,7 @@ import org.kuwaiba.ws.toserialize.application.ResultRecord;
 import org.kuwaiba.ws.toserialize.application.GroupInfo;
 import org.kuwaiba.ws.toserialize.application.GroupInfoLight;
 import org.kuwaiba.ws.toserialize.application.PrivilegeInfo;
-import org.kuwaiba.ws.toserialize.application.RemoteBookmark;
+import org.kuwaiba.ws.toserialize.application.RemoteBookmarkFolder;
 import org.kuwaiba.ws.toserialize.application.RemotePool;
 import org.kuwaiba.ws.toserialize.application.RemoteTask;
 import org.kuwaiba.ws.toserialize.application.RemoteTaskResult;
@@ -5016,21 +5016,21 @@ public class KuwaibaService {
 
     
     /**
-     * Creates a Bookmark for User.
-     * @param bookmarkName bookmark name
-     * @param userId user id
+     * Creates a Bookmark folder for User.
+     * @param bookmarkFolderName Bookmark folder name
+     * @param userId User id
      * @param sessionId The session token
-     * @return The id of the new Bookmark
+     * @return The id of the new Bookmark folder
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "createBookmarkFolderForUser")
     public long createBookmarkFolderForUser(
-        @WebParam(name = "bookmarkName") String bookmarkName, 
+        @WebParam(name = "bookmarkFolderName") String bookmarkFolderName, 
         @WebParam(name = "userId") long userId, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         
         try {
-            return wsBean.createBookmarkFolderForUser(bookmarkName, userId, getIPAddress(), sessionId);
+            return wsBean.createBookmarkFolderForUser(bookmarkFolderName, userId, getIPAddress(), sessionId);
         } catch (Exception ex) {
             if (ex instanceof ServerSideException)
                 throw ex;
@@ -5042,18 +5042,20 @@ public class KuwaibaService {
     }
     
     /**
-     * Delete a Bookmark
-     * @param bookmarkId bookmark id
+     * Deletes Bookmark folders
+     * @param bookmarkFolderId Bookmark folder id
+     * @param userId The User id
      * @param sessionId The session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "deleteBookmarkFolders")
     public void deleteBookmarkFolders(
-        @WebParam(name = "bookmarkId") long[] bookmarkId, 
+        @WebParam(name = "bookmarkFolderId") long[] bookmarkFolderId, 
+        @WebParam(name = "userId") long userId,
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         
         try {
-            wsBean.deleteBookmarkFolders(bookmarkId, getIPAddress(), sessionId);
+            wsBean.deleteBookmarkFolders(bookmarkFolderId, userId, getIPAddress(), sessionId);
         } catch (Exception ex) {
             if (ex instanceof ServerSideException)
                 throw ex;
@@ -5065,14 +5067,14 @@ public class KuwaibaService {
     }
         
     /**
-     * Get list of Bookmarks for User.
+     * Gets the list of Bookmark folders for User.
      * @param userId User id
      * @param sessionId The session token
      * @return The list of Bookmarks for user
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getBookmarkFoldersForUser")
-    public List<RemoteBookmark> getBookmarkFoldersForUser(
+    public List<RemoteBookmarkFolder> getBookmarkFoldersForUser(
         @WebParam(name = "userId") long userId, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
                 
@@ -5089,10 +5091,11 @@ public class KuwaibaService {
     }
     
     /**
-     * Associates a list of objects (resources) to an existing bookmark
-     * @param objectClass object class
-     * @param objectId object id
-     * @param bookmarkId bookmark id
+     * Associates the list of objects (resources) to an existing Bookmark folder
+     * @param objectClass Object class name
+     * @param objectId Object id
+     * @param bookmarkFolderId Bookmark folder id
+     * @param userId The User id
      * @param sessionId Session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
@@ -5100,11 +5103,12 @@ public class KuwaibaService {
     public void addObjectsToBookmarkFolder(
         @WebParam(name = "objectClass") String[] objectClass, 
         @WebParam(name = "objectId") long[] objectId, 
-        @WebParam(name = "bookmarkId") long bookmarkId, 
+        @WebParam(name = "bookmarkFolderId") long bookmarkFolderId, 
+        @WebParam(name = "userId") long userId, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         
         try {
-            wsBean.addObjectsToBookmarkFolder(objectClass, objectId, bookmarkId, getIPAddress(), sessionId);
+            wsBean.addObjectsToBookmarkFolder(objectClass, objectId, bookmarkFolderId, userId, getIPAddress(), sessionId);
         } catch(Exception ex) {
             if (ex instanceof ServerSideException)
                 throw ex;
@@ -5116,10 +5120,11 @@ public class KuwaibaService {
     }
     
     /**
-     * Release a list of objects (resources) to an existing bookmark
-     * @param objectClass object class
-     * @param objectId object id
-     * @param bookmarkId bookmark id
+     * Releases the list of objects (resources) of a Bookmark folder existing 
+     * @param objectClass Object class name
+     * @param objectId Object id
+     * @param bookmarkFolderId Bookmark folder id
+     * @param userId User Id
      * @param sessionId Session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
@@ -5127,11 +5132,12 @@ public class KuwaibaService {
     public void removeObjectsFromBookmarkFolder(
         @WebParam(name = "objectClass") String[] objectClass, 
         @WebParam(name = "objectId") long[] objectId, 
-        @WebParam(name = "bookmarkId") long bookmarkId, 
+        @WebParam(name = "bookmarkFolderId") long bookmarkFolderId, 
+        @WebParam(name = "userId") long userId,
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         
         try {
-            wsBean.removeObjectsFromBookmarkFolder(objectClass, objectId, bookmarkId, getIPAddress(), sessionId);
+            wsBean.removeObjectsFromBookmarkFolder(objectClass, objectId, bookmarkFolderId, userId, getIPAddress(), sessionId);
         } catch(Exception ex) {
             if (ex instanceof ServerSideException)
                 throw ex;
@@ -5143,19 +5149,22 @@ public class KuwaibaService {
     }
     
     /**
-     * @param bookmarkId bookmark id
+     * Gets the objects associated to Bookmark folder
+     * @param bookmarkFolderId Bookmark folder id
+     * @param userId User Id
      * @param limit Max number of results
      * @param sessionId Session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
-     * @return a set of bookmark items
+     * @return The list of objects
      */
-    @WebMethod(operationName = "getBookmarkFolderItems")
-    public RemoteObjectLight[] getBookmarkFolderItems(
-        @WebParam(name = "bookmarkId") long bookmarkId, 
+    @WebMethod(operationName = "getObjectsOfBookmarkFolder")
+    public RemoteObjectLight[] getObjectsOfBookmarkFolder(
+        @WebParam(name = "bookmarkFolderId") long bookmarkFolderId, 
+        @WebParam(name = "userId") long userId,
         @WebParam(name = "limit") int limit,
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try {
-            return wsBean.getBookmarkFolderItems(bookmarkId, limit, getIPAddress(), sessionId);
+            return wsBean.getObjectsOfBookmarkFolder(bookmarkFolderId, userId, limit, getIPAddress(), sessionId);
         } catch(Exception ex) {
             if (ex instanceof ServerSideException)
                 throw ex;
@@ -5167,21 +5176,23 @@ public class KuwaibaService {
     }
     
     /**
-     * Get the bookmarks where an object are an item
-     * @param objectClass Object Class
+     * Gets the Bookmark folders where an object is associated
+     * @param userId User Id
+     * @param objectClass Object Class name
      * @param objectId Object id
      * @param sessionId Session token
-     * @return A list of bookmarks where an object are an item
+     * @return The list of bookmarks where an object is associated
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
-    @WebMethod(operationName = "objectIsBookmarkItemIn")
-    public List<RemoteBookmark> objectIsBookmarkItemIn(
+    @WebMethod(operationName = "getBookmarkFoldersForObject")
+    public List<RemoteBookmarkFolder> getBookmarkFoldersForObject(
+        @WebParam(name = "userId") long userId,
         @WebParam(name = "objectClass") String objectClass, 
         @WebParam(name = "objectId") long objectId, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         
         try {
-            return wsBean.objectIsBookmarkItemIn(objectClass, objectId, getIPAddress(), sessionId);
+            return wsBean.getBookmarkFoldersForObject(userId, objectClass, objectId, getIPAddress(), sessionId);
         } catch(Exception ex) {
             if (ex instanceof ServerSideException)
                 throw ex;
@@ -5193,19 +5204,21 @@ public class KuwaibaService {
     }
         
     /**
-     * Get a bookmark using the id
-     * @param bookmarkId bookmark id
+     * Gets a Bookmark folder
+     * @param bookmarkFolderId Bookmark folder id
+     * @param userId User id
      * @param sessionId Session token
-     * @return The bookmark
+     * @return The Bookmark folder
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getBookmarkFolder")
-    public RemoteBookmark getBookmarkFolder(
-        @WebParam(name = "bookmarkId") long bookmarkId, 
+    public RemoteBookmarkFolder getBookmarkFolder(
+        @WebParam(name = "bookmarkFolderId") long bookmarkFolderId, 
+        @WebParam(name = "userId") long userId,
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         
         try {
-            return wsBean.getBookmarkFolder(bookmarkId, getIPAddress(), sessionId);
+            return wsBean.getBookmarkFolder(bookmarkFolderId, userId, getIPAddress(), sessionId);
         } catch(Exception ex) {
             if (ex instanceof ServerSideException)
                 throw ex;
@@ -5217,20 +5230,22 @@ public class KuwaibaService {
     }
     
     /**
-     * Update a bookmark using the id
-     * @param bookmarkId bookmark id
-     * @param bookmarkName bookmark name
+     * Updates a Bookmark folder
+     * @param bookmarkFolderId Bookmark folder id
+     * @param bookmarkFolderName Bookmark folder name
+     * @param userId User id
      * @param sessionId Session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "updateBookmarkFolder")
     public void updateBookmarkFolder(
-        @WebParam(name = "bookmarkId") long bookmarkId, 
-        @WebParam(name = "bookmarkName") String bookmarkName, 
+        @WebParam(name = "bookmarkFolderId") long bookmarkFolderId, 
+        @WebParam(name = "bookmarkFolderName") String bookmarkFolderName, 
+        @WebParam(name = "userId") long userId,
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         
         try {
-            wsBean.updateBookmarkFolder(bookmarkId, bookmarkName, getIPAddress(), sessionId);
+            wsBean.updateBookmarkFolder(bookmarkFolderId, userId, bookmarkFolderName, getIPAddress(), sessionId);
         } catch(Exception ex) {
             if (ex instanceof ServerSideException)
                 throw ex;

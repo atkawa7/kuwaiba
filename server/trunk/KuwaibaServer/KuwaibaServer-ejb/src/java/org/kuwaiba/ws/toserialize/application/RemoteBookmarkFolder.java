@@ -17,27 +17,27 @@ package org.kuwaiba.ws.toserialize.application;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import org.kuwaiba.apis.persistence.application.Bookmark;
+import org.kuwaiba.apis.persistence.application.BookmarkFolder;
 
 /**
- * Wrapper for entity class Bookmark
+ * Wrapper for entity class BookmarkFolder
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RemoteBookmark {
+public class RemoteBookmarkFolder {
     
     private long id;
     private String name;
     
-    public RemoteBookmark() {
+    public RemoteBookmarkFolder() {
     }
     
-    public RemoteBookmark(long id, String name) {
+    public RemoteBookmarkFolder(long id, String name) {
         this.id = id;
         this.name = name;
     }
     
-    public RemoteBookmark(Bookmark bookmark) {
+    public RemoteBookmarkFolder(BookmarkFolder bookmark) {
         this.id = bookmark.getId();
         this.name = bookmark.getName();
     }
