@@ -341,6 +341,9 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
         
         return connectionClassMetadata.getColor() == null ? Color.BLACK : connectionClassMetadata.getColor();
     }
+
+    @Override
+    public void render(LocalObjectLight root) { }
     
     /**
      * Own implementation of a connection provider

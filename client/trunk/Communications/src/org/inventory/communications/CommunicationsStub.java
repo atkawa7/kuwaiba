@@ -31,7 +31,7 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.soap.SOAPFaultException;
 import org.inventory.communications.core.LocalApplicationLogEntry;
-import org.inventory.communications.core.LocalBookmark;
+import org.inventory.communications.core.LocalBookmarkFolder;
 import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObject;
@@ -64,7 +64,7 @@ import org.inventory.communications.wsclient.GroupInfo;
 import org.inventory.communications.wsclient.KuwaibaService;
 import org.inventory.communications.wsclient.KuwaibaService_Service;
 import org.inventory.communications.wsclient.PrivilegeInfo;
-import org.inventory.communications.wsclient.RemoteBookmark;
+import org.inventory.communications.wsclient.RemoteBookmarkFolder;
 import org.inventory.communications.wsclient.RemoteBusinessObjectLight;
 import org.inventory.communications.wsclient.RemoteBusinessObjectLightList;
 import org.inventory.communications.wsclient.RemoteObject;
@@ -3541,14 +3541,15 @@ public class CommunicationsStub {
     // </editor-fold>
     
     /**
-     * @param objectClass list of class names
-     * @param objectId list of object id
-     * @param bookmarkId bookmark id
+     * Adds a list of objects to a Bookmark folder
+     * @param objectClass List of class names
+     * @param objectId List of object id
+     * @param bookmarkFolderId Bookmark folder id
      * @return True if objects are associated with the bookmark
      */
-    public boolean addObjectsToBookmarkFolder(List<String> objectClass, List<Long> objectId, long bookmarkId) {
+    public boolean addObjectsToBookmarkFolder(List<String> objectClass, List<Long> objectId, long bookmarkFolderId) {
         try {
-            service.addObjectsToBookmarkFolder(objectClass, objectId, bookmarkId, session.getSessionId());
+            service.addObjectsToBookmarkFolder(objectClass, objectId, bookmarkFolderId, session.getUserId(), session.getSessionId());
             return true;
         } catch (Exception ex) {
             this.error = ex.getMessage();
@@ -3557,14 +3558,15 @@ public class CommunicationsStub {
     }
     
     /**
-     * @param objectClass list of class names
-     * @param objectId list of object id
-     * @param bookmarkId bookmark id
+     * Removes the objects from a Bookmark folder
+     * @param objectClass List of class names
+     * @param objectId List of object id
+     * @param bookmarkFolderId Bookmark folder id
      * @return True if objects are released of the bookmark
      */
-    public boolean removeObjectsFromBookmarkFolder(List<String> objectClass, List<Long> objectId, long bookmarkId) {
+    public boolean removeObjectsFromBookmarkFolder(List<String> objectClass, List<Long> objectId, long bookmarkFolderId) {
         try {
-            service.removeObjectsFromBookmarkFolder(objectClass, objectId, bookmarkId, session.getSessionId());
+            service.removeObjectsFromBookmarkFolder(objectClass, objectId, bookmarkFolderId, session.getUserId(), session.getSessionId());
             return true;
         } catch (Exception ex) {
             this.error = ex.getMessage();
@@ -3573,13 +3575,14 @@ public class CommunicationsStub {
     }
     
     /**
-     * @param bookmarkId bookmark id
-     * @param limit max number of items. Use -1 to results without limit in the number of items
-     * @return A list of items (objects) associated to a bookmark folder
+     * Gets the objects associated to a Bookmark Folder
+     * @param bookmarkFolderId Bookmark folder id
+     * @param limit Max number of items. Use -1 to results without limit in the number of items
+     * @return The list of items (objects) associated to a bookmark folder
      */
-    public List<LocalObjectLight> getBookmarkFolderItems(long bookmarkId, int limit) {
+    public List<LocalObjectLight> getObjectsOfBookmarkFolder(long bookmarkFolderId, int limit) {
         try {
-            List<RemoteObjectLight> bookmarkItems = service.getBookmarkFolderItems(bookmarkId, limit, session.getSessionId());
+            List<RemoteObjectLight> bookmarkItems = service.getObjectsOfBookmarkFolder(bookmarkFolderId, session.getUserId(), limit, session.getSessionId());
 
             List<LocalObjectLight> res = new ArrayList<>();
 
@@ -3598,14 +3601,14 @@ public class CommunicationsStub {
     }
     
     /**
-     * Create a bookmark with for the current user
-     * @param bookmarkName the name of the bookmark
-     * @return The local representation of the bookmark
+     * Create a Bookmark folder with for the current user
+     * @param bookmarkFolderName The name of the bookmark
+     * @return The local representation of the Bookmark folder
      */        
-    public LocalBookmark createBookmarkFolderForUser(String bookmarkName) {
+    public LocalBookmarkFolder createBookmarkFolderForUser(String bookmarkFolderName) {
         try {
-            long id = service.createBookmarkFolderForUser(bookmarkName, session.getUserId(), session.getSessionId());
-            return new LocalBookmark(id, bookmarkName);
+            long id = service.createBookmarkFolderForUser(bookmarkFolderName, session.getUserId(), session.getSessionId());
+            return new LocalBookmarkFolder(id, bookmarkFolderName);
         } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
@@ -3614,12 +3617,12 @@ public class CommunicationsStub {
     
     /**
      * Delete a bookmark with all his relations
-     * @param bookmarkId The bookmark id
-     * @return true if the bookmark was deleted successfully
+     * @param bookmarkFolderId The Bookmark folder id
+     * @return true if the Bookmark folder was deleted successfully
      */
-    public boolean deleteBookmarkFolders(List<Long> bookmarkId) {
+    public boolean deleteBookmarkFolders(List<Long> bookmarkFolderId) {
         try {
-            service.deleteBookmarkFolders(bookmarkId, session.getSessionId());
+            service.deleteBookmarkFolders(bookmarkFolderId, session.getUserId(), session.getSessionId());
             return true;
         } catch (Exception ex) {
             this.error = ex.getMessage();
@@ -3628,16 +3631,17 @@ public class CommunicationsStub {
     }
     
     /**
-     * @return the list of associate bookmark 
+     * Gets the list of Bookmark folders associated to the current user
+     * @return The list of associate bookmark 
      */
-    public List<LocalBookmark> getBookmarkFoldersForUser() {
+    public List<LocalBookmarkFolder> getBookmarkFoldersForUser() {
         try {
-            List<RemoteBookmark> remoteBookmarks = service.getBookmarkFoldersForUser(session.getUserId(), session.getSessionId());
+            List<RemoteBookmarkFolder> remoteBookmarkFolders = service.getBookmarkFoldersForUser(session.getUserId(), session.getSessionId());
             
-            List<LocalBookmark> localBookmarks = new ArrayList();
+            List<LocalBookmarkFolder> localBookmarks = new ArrayList();
             
-            for (RemoteBookmark remoteBookmark : remoteBookmarks)
-                localBookmarks.add(new LocalBookmark(remoteBookmark.getId(), remoteBookmark.getName()));
+            for (RemoteBookmarkFolder remoteBookmark : remoteBookmarkFolders)
+                localBookmarks.add(new LocalBookmarkFolder(remoteBookmark.getId(), remoteBookmark.getName()));
             
             return localBookmarks;
         } catch (Exception ex) {
@@ -3647,19 +3651,19 @@ public class CommunicationsStub {
     }
     
     /**
-     * Get the bookmarks where an object are an item
+     * Gets the Bookmarks folder where an object are an item
      * @param objectClass the class name of the object
      * @param objectId the id of the object
-     * @return list of bookmarks where a given object are an item of the bookmark
+     * @return The list of bookmarks where a given object are an item of the Bookmark folder
      */
-    public List<LocalBookmark> objectIsBookmarkItemIn(String objectClass, long objectId) {
+    public List<LocalBookmarkFolder> objectIsBookmarkItemIn(String objectClass, long objectId) {
         try {
-            List<RemoteBookmark> remoteBookmarks = service.objectIsBookmarkItemIn(objectClass, objectId, session.getSessionId());
+            List<RemoteBookmarkFolder> remoteBookmarkFolders = service.getBookmarkFoldersForObject(session.getUserId(), objectClass, objectId, session.getSessionId());
             
-            List<LocalBookmark> localBookmarks = new ArrayList();
+            List<LocalBookmarkFolder> localBookmarks = new ArrayList();
             
-            for (RemoteBookmark remoteBookmark : remoteBookmarks)
-                localBookmarks.add(new LocalBookmark(remoteBookmark.getId(), remoteBookmark.getName()));
+            for (RemoteBookmarkFolder remoteBookmark : remoteBookmarkFolders)
+                localBookmarks.add(new LocalBookmarkFolder(remoteBookmark.getId(), remoteBookmark.getName()));
             
             return localBookmarks;
         } catch (Exception ex) {
@@ -3669,14 +3673,14 @@ public class CommunicationsStub {
     }
     
     /**
-     * Get the a bookmark with id
-     * @param bookmarkId the bookmark Id
-     * @return a local representation of a bookmark
+     * Gets a Bookmark folder
+     * @param bookmarkFolderId The Bookmark folder Id
+     * @return The local representation of a Bookmark folder
      */
-    public LocalBookmark getBookmarkFolder(long bookmarkId) {
+    public LocalBookmarkFolder getBookmarkFolder(long bookmarkFolderId) {
         try {
-            RemoteBookmark remoteBookmark = service.getBookmarkFolder(bookmarkId, session.getSessionId());
-            return new LocalBookmark(remoteBookmark.getId(), remoteBookmark.getName());
+            RemoteBookmarkFolder remoteBookmark = service.getBookmarkFolder(bookmarkFolderId, session.getUserId(), session.getSessionId());
+            return new LocalBookmarkFolder(remoteBookmark.getId(), remoteBookmark.getName());
         } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
@@ -3684,14 +3688,14 @@ public class CommunicationsStub {
     }
     
     /**
-     * Update a bookmark
-     * @param bookmarkId the bookmark id
-     * @param bookmarkNewName the new name
-     * @return True if the bookmark was updated successfully
+     * Updates a Bookmark folder
+     * @param bookmarkFolderId The Bookmark folder id
+     * @param bookmarkFolderNewName The Bookmark folder new name
+     * @return True if the Bookmark folder was updated successfully
      */
-    public boolean updateBookmarkFolder(long bookmarkId, String bookmarkNewName) {
+    public boolean updateBookmarkFolder(long bookmarkFolderId, String bookmarkFolderNewName) {
         try {
-            service.updateBookmarkFolder(bookmarkId, bookmarkNewName, session.getSessionId());
+            service.updateBookmarkFolder(bookmarkFolderId, bookmarkFolderNewName, session.getUserId(), session.getSessionId());
             return true;
         } catch (Exception ex) {
             this.error = ex.getMessage();

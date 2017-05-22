@@ -124,4 +124,8 @@ public class PhysicalPathScene  extends AbstractScene <LocalObjectLight, LocalOb
     public boolean supportsBackgrounds() {
         return false;
     }
+
+    @Override
+    public void render(LocalObjectLight root) {
+    }
 }

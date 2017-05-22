@@ -22,11 +22,11 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalBookmark;
+import org.inventory.communications.core.LocalBookmarkFolder;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
-import org.inventory.navigation.bookmarks.nodes.BookmarkRootNode;
-import org.inventory.navigation.bookmarks.nodes.BookmarkRootNode.BookmarkRootChildren;
+import org.inventory.navigation.bookmarks.nodes.BookmarkFolderRootNode;
+import org.inventory.navigation.bookmarks.nodes.BookmarkFolderRootNode.BookmarkFolderRootChildren;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.openide.util.Utilities;
@@ -49,13 +49,13 @@ public class NewBookmarkFolderAction extends GenericInventoryAction {
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        Iterator<? extends BookmarkRootNode> selectedNodes = Utilities.actionsGlobalContext()
-            .lookupResult(BookmarkRootNode.class).allInstances().iterator();
+        Iterator<? extends BookmarkFolderRootNode> selectedNodes = Utilities.actionsGlobalContext()
+            .lookupResult(BookmarkFolderRootNode.class).allInstances().iterator();
         
         if (!selectedNodes.hasNext())
             return;
         
-        BookmarkRootNode selectedNode = selectedNodes.next();
+        BookmarkFolderRootNode selectedNode = selectedNodes.next();
         
         JTextField txtPoolName = new JTextField();
         txtPoolName.setName("txtBookmarkFolderName");
@@ -68,14 +68,14 @@ public class NewBookmarkFolderAction extends GenericInventoryAction {
         if (JOptionPane.showConfirmDialog(null, pnlPoolProperties, "New Bookmark Folder", 
             JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             
-            LocalBookmark newBookmark = CommunicationsStub.getInstance().createBookmarkFolderForUser(
+            LocalBookmarkFolder newBookmark = CommunicationsStub.getInstance().createBookmarkFolderForUser(
                 ((JTextField) pnlPoolProperties.getComponent("txtBookmarkFolderName")).getText());
             
             if (newBookmark == null) {
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, 
                     CommunicationsStub.getInstance().getError());
             } else {
-                ((BookmarkRootChildren) selectedNode.getChildren()).addNotify();
+                ((BookmarkFolderRootChildren) selectedNode.getChildren()).addNotify();
                 
                 NotificationUtil.getInstance().showSimplePopup("Information", 
                     NotificationUtil.INFO_MESSAGE, "Bookmark folder created sucessfully");

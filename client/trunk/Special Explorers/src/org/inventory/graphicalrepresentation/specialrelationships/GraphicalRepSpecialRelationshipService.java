@@ -30,11 +30,11 @@ import org.inventory.graphicalrepresentation.specialrelationships.wrappers.Local
  * Provides the business logic for the related TopComponent
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class GraphicalResSpecialRelationshipService {
+public class GraphicalRepSpecialRelationshipService {
     private final GraphicalRepSpecialRelationshipsScene scene;
     private final LocalObjectLightWrapper root;
     
-    public GraphicalResSpecialRelationshipService(
+    public GraphicalRepSpecialRelationshipService(
         GraphicalRepSpecialRelationshipsScene scene, LocalObjectLightWrapper lolWrapper) {
         this.scene = scene;
         root = lolWrapper;        
@@ -44,10 +44,10 @@ public class GraphicalResSpecialRelationshipService {
         return root;
     }
     
-    public void addSpecialRelatedObject(LocalObjectLightWrapper node) {
-        scene.addNode(node);
-        scene.reorganizeNodes();
-    }
+//    public void addSpecialRelatedObject(LocalObjectLightWrapper node) {
+//        scene.addNode(node);
+//        scene.reorganizeNodes();
+//    }
     
     private HashMap<String, LocalObjectLight[]> getSpecialRelationships(LocalObjectLight lol) {
         HashMap<String, LocalObjectLight[]> specialRelationships = CommunicationsStub.getInstance()

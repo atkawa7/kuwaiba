@@ -21,7 +21,8 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="objectClass" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="objectId" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="bookmarkId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="bookmarkFolderId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="userId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -35,7 +36,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "addObjectsToBookmarkFolder", propOrder = {
     "objectClass",
     "objectId",
-    "bookmarkId",
+    "bookmarkFolderId",
+    "userId",
     "sessionId"
 })
 public class AddObjectsToBookmarkFolder {
@@ -44,7 +46,8 @@ public class AddObjectsToBookmarkFolder {
     protected List<String> objectClass;
     @XmlElement(nillable = true)
     protected List<Long> objectId;
-    protected long bookmarkId;
+    protected long bookmarkFolderId;
+    protected long userId;
     protected String sessionId;
 
     /**
@@ -106,19 +109,35 @@ public class AddObjectsToBookmarkFolder {
     }
 
     /**
-     * Gets the value of the bookmarkId property.
+     * Gets the value of the bookmarkFolderId property.
      * 
      */
-    public long getBookmarkId() {
-        return bookmarkId;
+    public long getBookmarkFolderId() {
+        return bookmarkFolderId;
     }
 
     /**
-     * Sets the value of the bookmarkId property.
+     * Sets the value of the bookmarkFolderId property.
      * 
      */
-    public void setBookmarkId(long value) {
-        this.bookmarkId = value;
+    public void setBookmarkFolderId(long value) {
+        this.bookmarkFolderId = value;
+    }
+
+    /**
+     * Gets the value of the userId property.
+     * 
+     */
+    public long getUserId() {
+        return userId;
+    }
+
+    /**
+     * Sets the value of the userId property.
+     * 
+     */
+    public void setUserId(long value) {
+        this.userId = value;
     }
 
     /**

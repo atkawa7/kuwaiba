@@ -87,10 +87,10 @@ public final class ClassHierarchyTopComponent extends TopComponent implements Ex
     
     private void initComponentsCustom() {
         em = new ExplorerManager();
-        service = new ClassHierarchyService();
-        scene = new ClassHierarchyScene(service.getRootClass());
-        service.setScene(scene);
-                        
+        
+        scene = new ClassHierarchyScene();
+        service = new ClassHierarchyService(scene);
+                                
         associateLookup(scene.getLookup());
         pnlMainScrollPane.setViewportView(scene.createView());
         add(scene.createSatelliteView(), BorderLayout.SOUTH);
@@ -341,9 +341,7 @@ public final class ClassHierarchyTopComponent extends TopComponent implements Ex
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
-        scene.setSceneLayout(service.getRootClass());
-        service.addRootClass();
-        
+        scene.render(service.getRootClass());
         scene.addChangeListener(this);
         
         cmbClassList.addActionListener(this);               

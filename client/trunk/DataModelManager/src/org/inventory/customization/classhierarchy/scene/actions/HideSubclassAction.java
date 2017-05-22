@@ -32,6 +32,7 @@ public class HideSubclassAction extends GenericInventoryAction {
     private static HideSubclassAction instance;
     
     private HideSubclassAction(ClassHierarchyScene scene) {
+        putValue(NAME, "Hide Subclasses");
         this.scene = scene;
     }
     

@@ -32,6 +32,7 @@ public class ShowSubclassAction extends GenericInventoryAction {
     private static ShowSubclassAction instance;
     
     private ShowSubclassAction(ClassHierarchyScene scene) {
+        putValue(NAME, "Show Subclasses");
         this.scene = scene;
     }
     

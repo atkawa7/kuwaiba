@@ -274,6 +274,13 @@ public abstract class AbstractScene<N, E> extends GraphScene<N, E> {
     public abstract void render(byte[] structure) throws IllegalArgumentException;
     
     /**
+     * Renders Hierarchical View
+     * @param root The root of the hierarchy
+     * 
+     */
+    public abstract void render(N root);
+    
+    /**
      * Calculates the connection color. This calculation depends on the implementor, and it's usually based on the class of the connection object
      * @param theConnection The object representing the connection
      * @return The color corresponding on the connection. Black should be the default value

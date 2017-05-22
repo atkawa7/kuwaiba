@@ -19,7 +19,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="bookmarkId" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="bookmarkFolderId" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="userId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -31,28 +32,30 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "deleteBookmarkFolders", propOrder = {
-    "bookmarkId",
+    "bookmarkFolderId",
+    "userId",
     "sessionId"
 })
 public class DeleteBookmarkFolders {
 
     @XmlElement(nillable = true)
-    protected List<Long> bookmarkId;
+    protected List<Long> bookmarkFolderId;
+    protected long userId;
     protected String sessionId;
 
     /**
-     * Gets the value of the bookmarkId property.
+     * Gets the value of the bookmarkFolderId property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the bookmarkId property.
+     * This is why there is not a <CODE>set</CODE> method for the bookmarkFolderId property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getBookmarkId().add(newItem);
+     *    getBookmarkFolderId().add(newItem);
      * </pre>
      * 
      * 
@@ -62,11 +65,27 @@ public class DeleteBookmarkFolders {
      * 
      * 
      */
-    public List<Long> getBookmarkId() {
-        if (bookmarkId == null) {
-            bookmarkId = new ArrayList<Long>();
+    public List<Long> getBookmarkFolderId() {
+        if (bookmarkFolderId == null) {
+            bookmarkFolderId = new ArrayList<Long>();
         }
-        return this.bookmarkId;
+        return this.bookmarkFolderId;
+    }
+
+    /**
+     * Gets the value of the userId property.
+     * 
+     */
+    public long getUserId() {
+        return userId;
+    }
+
+    /**
+     * Sets the value of the userId property.
+     * 
+     */
+    public void setUserId(long value) {
+        this.userId = value;
     }
 
     /**

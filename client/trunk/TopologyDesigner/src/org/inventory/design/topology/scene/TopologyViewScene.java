@@ -615,4 +615,8 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
         Widget targetWidget = findWidget(targetNode);
         connectionWidget.setTargetAnchor(targetWidget != null ? AnchorFactory.createCircularAnchor(targetWidget, 3) : null);
     }
+
+    @Override
+    public void render(LocalObjectLight root) {
+    }
 }

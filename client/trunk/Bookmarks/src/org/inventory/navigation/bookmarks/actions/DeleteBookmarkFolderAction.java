@@ -23,8 +23,8 @@ import java.util.ResourceBundle;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.bookmarks.nodes.BookmarkNode;
-import org.inventory.navigation.bookmarks.nodes.BookmarkRootNode.BookmarkRootChildren;
+import org.inventory.navigation.bookmarks.nodes.BookmarkFolderNode;
+import org.inventory.navigation.bookmarks.nodes.BookmarkFolderRootNode.BookmarkFolderRootChildren;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.openide.util.Utilities;
@@ -47,25 +47,25 @@ public class DeleteBookmarkFolderAction extends GenericInventoryAction {
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this bookmark folder?", 
+        if (JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this Bookmark folder?", 
             "Warning", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             
-            Iterator<? extends BookmarkNode> selectedNodes = Utilities.actionsGlobalContext()
-                .lookupResult(BookmarkNode.class).allInstances().iterator();
+            Iterator<? extends BookmarkFolderNode> selectedNodes = Utilities.actionsGlobalContext()
+                .lookupResult(BookmarkFolderNode.class).allInstances().iterator();
 
             if (!selectedNodes.hasNext())
                 return;
             
-            BookmarkNode selectedNode = selectedNodes.next();
+            BookmarkFolderNode selectedNode = selectedNodes.next();
             
             List<Long> ids = new ArrayList();
             ids.add(selectedNode.getLocalBookmark().getId());
             
             if (CommunicationsStub.getInstance().deleteBookmarkFolders(ids)) {
                 NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, 
-                    "The selected bookmark folder was deleted successfully");
+                    "The selected Bookmark folder was deleted successfully");
                 
-                ((BookmarkRootChildren) selectedNode.getParentNode().getChildren()).addNotify();
+                ((BookmarkFolderRootChildren) selectedNode.getParentNode().getChildren()).addNotify();
             } else {
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE, 
                     CommunicationsStub.getInstance().getError());

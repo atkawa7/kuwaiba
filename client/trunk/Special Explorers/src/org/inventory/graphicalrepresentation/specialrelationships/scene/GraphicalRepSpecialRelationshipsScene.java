@@ -63,10 +63,8 @@ public class GraphicalRepSpecialRelationshipsScene extends AbstractScene<LocalOb
      * Reference to the action factory used to assign actions to the nodes
      */
     private final GraphicalRepSpecialRelationshipsActionsFactory actionsFactory;
-    
-
-        
-    public GraphicalRepSpecialRelationshipsScene(LocalObjectLightWrapper root) {
+            
+    public GraphicalRepSpecialRelationshipsScene() {
         nodeLayer = new LayerWidget(this);
         edgeLayer = new LayerWidget(this);
         
@@ -78,22 +76,12 @@ public class GraphicalRepSpecialRelationshipsScene extends AbstractScene<LocalOb
         
         getActions().addAction(ActionFactory.createZoomAction());
         getActions().addAction(ActionFactory.createPanAction());
-                
-        initSceneLayout(root);
     }
     
     public long getEdgeCounter() {
         long current = edgeCounter;
         edgeCounter += 1;
         return current;
-    }
-    
-    private void initSceneLayout(LocalObjectLightWrapper root) {
-        int originX = 50; //TODO: to improve the value of orginX
-        int originY = 50; //TODO: to improve the value of orginY
-        GraphLayout<LocalObjectLightWrapper, String> layout = GraphLayoutFactory.createTreeGraphLayout(originX, originY, 150, 150, false);//.createTreeGraphLayout(originX, originY, 100, 50, false, true);
-        GraphLayoutSupport.setTreeGraphLayoutRootNode(layout, root);
-        sceneLayout = LayoutFactory.createSceneGraphLayout(this, layout);
     }
     
     public void reorganizeNodes() {
@@ -181,6 +169,17 @@ public class GraphicalRepSpecialRelationshipsScene extends AbstractScene<LocalOb
         ConnectionWidget connectionWidget = (ConnectionWidget) findWidget(edge);
         Widget targetWidget = findWidget(targetNode);
         connectionWidget.setTargetAnchor(targetWidget != null ? AnchorFactory.createDirectionalAnchor(targetWidget, AnchorFactory.DirectionalAnchorKind.HORIZONTAL) : null);
+    }
+
+    @Override
+    public void render(LocalObjectLightWrapper root) {
+        int originX = 50; //TODO: to improve the value of orginX
+        int originY = 50; //TODO: to improve the value of orginY
+        GraphLayout<LocalObjectLightWrapper, String> layout = GraphLayoutFactory.createTreeGraphLayout(originX, originY, 150, 150, false);//.createTreeGraphLayout(originX, originY, 100, 50, false, true);
+        GraphLayoutSupport.setTreeGraphLayoutRootNode(layout, root);
+        sceneLayout = LayoutFactory.createSceneGraphLayout(this, layout);
+        
+        addNode(root);
     }
     
     private class SpecialCustomSelectProvider extends CustomSelectProvider {

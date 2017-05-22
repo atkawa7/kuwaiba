@@ -16,28 +16,28 @@
 package org.inventory.navigation.bookmarks.actions;
 
 /**
- * Action factory for the Bookmark Manager module
+ * Action factory for the Bookmark Module
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class BookmarksActionFactory {
     /**
      * Singleton for the create bookmark action
      */
-    private static NewBookmarkFolderAction newBookmarkAction;
+    private static NewBookmarkFolderAction newBookmarkFolderAction;
     /**
      * Singleton for the delete bookmark action
      */
-    private static DeleteBookmarkFolderAction deleteBookmarkAction;
+    private static DeleteBookmarkFolderAction deleteBookmarkFolderAction;
     
-    public static NewBookmarkFolderAction getNewBookmarkAction() {
-        if (newBookmarkAction == null)
-            newBookmarkAction = NewBookmarkFolderAction.getInstance();
-        return newBookmarkAction;
+    public static NewBookmarkFolderAction getNewBookmarkFolderAction() {
+        if (newBookmarkFolderAction == null)
+            newBookmarkFolderAction = NewBookmarkFolderAction.getInstance();
+        return newBookmarkFolderAction;
     }
     
-    public static DeleteBookmarkFolderAction getDeleteBookmarkAction() {
-        if (deleteBookmarkAction == null)
-            deleteBookmarkAction = DeleteBookmarkFolderAction.getInstance();
-        return deleteBookmarkAction;
+    public static DeleteBookmarkFolderAction getDeleteBookmarkFolderAction() {
+        if (deleteBookmarkFolderAction == null)
+            deleteBookmarkFolderAction = DeleteBookmarkFolderAction.getInstance();
+        return deleteBookmarkFolderAction;
     }
 }

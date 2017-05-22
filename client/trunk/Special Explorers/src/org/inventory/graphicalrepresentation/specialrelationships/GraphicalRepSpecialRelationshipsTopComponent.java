@@ -46,10 +46,10 @@ import org.openide.util.NbBundle.Messages;
     "HINT_GraphicalRepSpecialRelationshipsTopComponent=Show a Graphical Representation of Special Relationships"
 })
 public final class GraphicalRepSpecialRelationshipsTopComponent extends TopComponent implements 
-    ExplorerManager.Provider, Refreshable, ActionListener{
+    ExplorerManager.Provider, Refreshable, ActionListener {
     
     private ExplorerManager em;
-    private GraphicalResSpecialRelationshipService service;
+    private GraphicalRepSpecialRelationshipService service;
     private GraphicalRepSpecialRelationshipsScene scene;
 
     public GraphicalRepSpecialRelationshipsTopComponent(LocalObjectLight rootObject) {
@@ -61,10 +61,10 @@ public final class GraphicalRepSpecialRelationshipsTopComponent extends TopCompo
     
     private void initComponentsCustom(LocalObjectLight rootObject) {
         em = new ExplorerManager();
-        LocalObjectLightWrapper lolWrapper = new LocalObjectLightWrapper(rootObject);
-        scene = new GraphicalRepSpecialRelationshipsScene(lolWrapper);
+        
+        scene = new GraphicalRepSpecialRelationshipsScene();
         scene.addChangeListener(this);
-        service = new GraphicalResSpecialRelationshipService(scene, lolWrapper);
+        service = new GraphicalRepSpecialRelationshipService(scene, new LocalObjectLightWrapper(rootObject));
         
         associateLookup(scene.getLookup());
         pnlMainScrollPanel.setViewportView(scene.createView());
@@ -160,7 +160,7 @@ public final class GraphicalRepSpecialRelationshipsTopComponent extends TopCompo
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
-        service.addSpecialRelatedObject(service.getRoot());
+        scene.render(service.getRoot());
         service.showSpecialRelationshipChildren(service.getRoot());
     }
 
@@ -189,6 +189,12 @@ public final class GraphicalRepSpecialRelationshipsTopComponent extends TopCompo
 
     @Override
     public void refresh() {
+    }
+    
+    @Override
+    public String getDisplayName() {
+        
+        return String.format("Relationships for %s", service.getRoot().toString());
     }
 
     @Override

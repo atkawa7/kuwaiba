@@ -22,10 +22,10 @@ import java.util.List;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import org.inventory.navigation.bookmarks.nodes.BookmarkNode;
-import org.inventory.navigation.bookmarks.nodes.BookmarkNode.BookmarkChildren;
+import org.inventory.navigation.bookmarks.nodes.BookmarkFolderNode;
+import org.inventory.navigation.bookmarks.nodes.BookmarkFolderNode.BookmarkChildren;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalBookmark;
+import org.inventory.communications.core.LocalBookmarkFolder;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
@@ -35,11 +35,11 @@ import org.openide.util.actions.Presenter;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- * Action to remove an associated object to a bookmark
+ * Action to remove an associated object to a bookmarkFolder
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class RemoveObjectFromBookmarks extends GenericObjectNodeAction implements Presenter.Popup {
+public class RemoveObjectFromBookmarkFolder extends GenericObjectNodeAction implements Presenter.Popup {
     
     @Override
     public String getValidator() {
@@ -50,7 +50,7 @@ public class RemoveObjectFromBookmarks extends GenericObjectNodeAction implement
     public void actionPerformed(ActionEvent e) {
         
         if (JOptionPane.showConfirmDialog(null, 
-                "Are you sure you want remove this object bookmarks?", "Warning", 
+                "Are you sure you want remove this bookmark?", "Warning", 
                 JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
         
             Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
@@ -70,7 +70,7 @@ public class RemoveObjectFromBookmarks extends GenericObjectNodeAction implement
                     objId, 
                     Long.valueOf(((JMenuItem)e.getSource()).getName()))) {
                     
-                    if (selectedNode.getParentNode() instanceof BookmarkNode)
+                    if (selectedNode.getParentNode() instanceof BookmarkFolderNode)
                         ((BookmarkChildren) selectedNode.getParentNode().getChildren()).addNotify();
                     
 
@@ -81,7 +81,7 @@ public class RemoveObjectFromBookmarks extends GenericObjectNodeAction implement
             }
 
             if (success)
-                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "The selected resources were released from the bookmark");
+                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "The selected resources were released from the Bookmark folder");
         }
     }
     
@@ -96,16 +96,16 @@ public class RemoveObjectFromBookmarks extends GenericObjectNodeAction implement
         
             ObjectNode selectedNode = selectedNodes.next(); //Uses the last selected only
             
-            List<LocalBookmark> bookmarks = CommunicationsStub.getInstance().objectIsBookmarkItemIn(
+            List<LocalBookmarkFolder> bookmarkFolders = CommunicationsStub.getInstance().objectIsBookmarkItemIn(
                 selectedNode.getObject().getClassName(), 
                 selectedNode.getObject().getOid());
             
-            if (bookmarks != null) {
+            if (bookmarkFolders != null) {
 
-                if (!bookmarks.isEmpty()) {
-                    for (LocalBookmark bookmark : bookmarks){
-                        JMenuItem smiServices = new JMenuItem(bookmark.toString());
-                        smiServices.setName(String.valueOf(bookmark.getId()));
+                if (!bookmarkFolders.isEmpty()) {
+                    for (LocalBookmarkFolder bookmarkFolder : bookmarkFolders){
+                        JMenuItem smiServices = new JMenuItem(bookmarkFolder.toString());
+                        smiServices.setName(String.valueOf(bookmarkFolder.getId()));
                         smiServices.addActionListener(this);
                         mnuServices.add(smiServices);
                     }

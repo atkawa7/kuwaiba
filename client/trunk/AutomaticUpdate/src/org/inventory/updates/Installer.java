@@ -21,8 +21,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.prefs.Preferences;
 import javax.swing.JOptionPane;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.updates.windows.UpdateCenterOptionsDialog;
 import org.netbeans.api.autoupdate.InstallSupport;
 import org.netbeans.api.autoupdate.InstallSupport.Validator;
 import org.netbeans.api.autoupdate.OperationContainer;
@@ -60,10 +62,10 @@ public class Installer extends ModuleInstall {
         runAutoUpdate.run();
     }
     
-    private static Runnable runAutoUpdate = new Runnable() {
+    private static final Runnable runAutoUpdate = new Runnable() {
         
-        private List<UpdateElement> modulesForInstall = new ArrayList();
-        private List<UpdateElement> modulesForUpdate = new ArrayList();
+        private final List<UpdateElement> modulesForInstall = new ArrayList();
+        private final List<UpdateElement> modulesForUpdate = new ArrayList();
         private boolean restart = false;
         boolean isUpdateCenterRegistered = true;
                 
@@ -83,9 +85,17 @@ public class Installer extends ModuleInstall {
                         provider.refresh(null, true);
                         isUpdateCenterRegistered = true;
                     } catch (IOException ex) {
-                        NotificationUtil.getInstance().showSimplePopup("Warning", 
-                            NotificationUtil.WARNING_MESSAGE, 
-                            "Update Center could not be reached, please contact your administrator");
+                        Preferences preferences = Preferences.userRoot()
+                            .node(UpdateCenterOptionsDialog.class.getName());
+                        
+                        Boolean isSelected = preferences.getBoolean(UpdateCenterOptionsDialog.PREFERENCE_KEY_UC_WARNINGS, false);
+                        
+                        if (isSelected) {
+                            
+                            NotificationUtil.getInstance().showSimplePopup("Warning", 
+                                NotificationUtil.WARNING_MESSAGE, 
+                                "Update Center could not be reached, please contact your administrator");
+                        }
                     }
                     break;
                 }

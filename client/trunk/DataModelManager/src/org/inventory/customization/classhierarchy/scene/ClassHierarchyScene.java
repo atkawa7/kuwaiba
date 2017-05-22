@@ -37,8 +37,6 @@ import org.netbeans.api.visual.graph.layout.GraphLayoutSupport;
 import org.netbeans.api.visual.layout.LayoutFactory;
 import org.netbeans.api.visual.layout.SceneLayout;
 import org.netbeans.api.visual.router.RouterFactory;
-import org.netbeans.api.visual.vmd.VMDColorScheme;
-import org.netbeans.api.visual.vmd.VMDFactory;
 import org.netbeans.api.visual.vmd.VMDNodeWidget;
 import org.netbeans.api.visual.vmd.VMDPinWidget;
 import org.netbeans.api.visual.widget.ConnectionWidget;
@@ -52,13 +50,9 @@ import org.netbeans.api.visual.widget.Widget;
 public class ClassHierarchyScene extends AbstractScene<LocalClassMetadata, String> {
     public static final String COMMAND_EXPAND = "expandClassHierarchy";
     private SceneLayout sceneLayout;
-    private WidgetAction selectAction;
+    private final WidgetAction selectAction;
         
-    public ClassHierarchyScene(LocalClassMetadata root) {
-        this(VMDFactory.getOriginalScheme(), root);
-    }
-    
-    private ClassHierarchyScene(VMDColorScheme scheme, LocalClassMetadata root) {
+    public ClassHierarchyScene() {
         nodeLayer = new LayerWidget(this);
         edgeLayer = new LayerWidget(this);
                 
@@ -70,35 +64,7 @@ public class ClassHierarchyScene extends AbstractScene<LocalClassMetadata, Strin
         getActions().addAction(ActionFactory.createZoomAction());
         getActions().addAction(ActionFactory.createPanAction());
     }
-    
-    public void setSceneLayout(LocalClassMetadata root) {
-        int originX = 50; ///TODO: to improve the value of orginX
-        GraphLayout<LocalClassMetadata, String> layout = GraphLayoutFactory.createTreeGraphLayout(originX, 50, 100, 50, true, true);
-        GraphLayoutSupport.setTreeGraphLayoutRootNode(layout, root);
-        sceneLayout = LayoutFactory.createSceneGraphLayout(this, layout);
-    }
-    
-    public void addRootNodeClass(LocalClassMetadata root) {
-        VMDNodeWidget nodeWidget = (VMDNodeWidget) addNode(root);
-        nodeWidget.collapseWidget();
         
-        VMDPinWidget pinWidget = new VMDPinWidget(this);
-        nodeWidget.attachPinWidget(pinWidget);
-        
-        int length = root.getAttributeNames().length;
-        for (int i = 0; i < length; i += 1) {
-            String attributeName = root.getAttributeNames()[i];
-            String attributeType = root.getAttributeTypes()[i];
-            
-            String attributePin = String.format("%s [%s]", attributeName, attributeType);
-            
-            pinWidget.setPinName(attributePin);
-        }        
-        validate();
-        sceneLayout.invokeLayout();
-        repaint();
-    }
-    
     public void createSubHierarchyRecursively(LocalClassMetadata rootClass, List<LocalClassMetadata> subclasses, boolean recursive) {
         for (LocalClassMetadata subclass : subclasses) {
             if (findWidget(subclass) == null) {
@@ -203,6 +169,35 @@ public class ClassHierarchyScene extends AbstractScene<LocalClassMetadata, Strin
         
     public void reorganizeNodes() {
         sceneLayout.invokeLayoutImmediately();
+        repaint();
+    }
+    
+    @Override
+    public void render(LocalClassMetadata root) {
+        // Fix Scene Layout
+        int originX = 50; ///TODO: to improve the value of orginX
+        int originY = 50; ///TODO: to improve the value of orginX
+        GraphLayout<LocalClassMetadata, String> layout = GraphLayoutFactory.createTreeGraphLayout(originX, originY, 100, 50, true, true);
+        GraphLayoutSupport.setTreeGraphLayoutRootNode(layout, root);
+        sceneLayout = LayoutFactory.createSceneGraphLayout(this, layout);
+        // Adding Root Node Class       
+        VMDNodeWidget nodeWidget = (VMDNodeWidget) addNode(root);
+        nodeWidget.collapseWidget();
+        
+        VMDPinWidget pinWidget = new VMDPinWidget(this);
+        nodeWidget.attachPinWidget(pinWidget);
+        
+        int length = root.getAttributeNames().length;
+        for (int i = 0; i < length; i += 1) {
+            String attributeName = root.getAttributeNames()[i];
+            String attributeType = root.getAttributeTypes()[i];
+            
+            String attributePin = String.format("%s [%s]", attributeName, attributeType);
+            
+            pinWidget.setPinName(attributePin);
+        }        
+        validate();
+        sceneLayout.invokeLayout();
         repaint();
     }
 }

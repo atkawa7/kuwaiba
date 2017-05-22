@@ -19,8 +19,8 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.bookmarks.windows.BookmarksFrame;
-import org.inventory.communications.core.LocalBookmark;
+import org.inventory.navigation.bookmarks.windows.ChooseBookmarkFolderFrame;
+import org.inventory.communications.core.LocalBookmarkFolder;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.openide.util.lookup.ServiceProvider;
@@ -45,13 +45,13 @@ public class AddObjectToBookmarkFolderAction extends GenericObjectNodeAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-        List<LocalBookmark> bookmarks = CommunicationsStub.getInstance().getBookmarkFoldersForUser();
+        List<LocalBookmarkFolder> bookmarkFolders = CommunicationsStub.getInstance().getBookmarkFoldersForUser();
                 
-        if (bookmarks == null) {
+        if (bookmarkFolders == null) {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, 
                 CommunicationsStub.getInstance().getError());
         } else {
-            BookmarksFrame frame = new BookmarksFrame(selectedObjects, bookmarks);
+            ChooseBookmarkFolderFrame frame = new ChooseBookmarkFolderFrame(selectedObjects, bookmarkFolders);
             frame.setVisible(true);
         }
     }

@@ -7,18 +7,18 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for updateBookmarkFolder complex type.
+ * <p>Java class for getBookmarkFoldersForObject complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="updateBookmarkFolder">
+ * &lt;complexType name="getBookmarkFoldersForObject">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="bookmarkFolderId" type="{http://www.w3.org/2001/XMLSchema}long"/>
- *         &lt;element name="bookmarkFolderName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="userId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="objectClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="objectId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -29,58 +29,18 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "updateBookmarkFolder", propOrder = {
-    "bookmarkFolderId",
-    "bookmarkFolderName",
+@XmlType(name = "getBookmarkFoldersForObject", propOrder = {
     "userId",
+    "objectClass",
+    "objectId",
     "sessionId"
 })
-public class UpdateBookmarkFolder {
+public class GetBookmarkFoldersForObject {
 
-    protected long bookmarkFolderId;
-    protected String bookmarkFolderName;
     protected long userId;
+    protected String objectClass;
+    protected long objectId;
     protected String sessionId;
-
-    /**
-     * Gets the value of the bookmarkFolderId property.
-     * 
-     */
-    public long getBookmarkFolderId() {
-        return bookmarkFolderId;
-    }
-
-    /**
-     * Sets the value of the bookmarkFolderId property.
-     * 
-     */
-    public void setBookmarkFolderId(long value) {
-        this.bookmarkFolderId = value;
-    }
-
-    /**
-     * Gets the value of the bookmarkFolderName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getBookmarkFolderName() {
-        return bookmarkFolderName;
-    }
-
-    /**
-     * Sets the value of the bookmarkFolderName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setBookmarkFolderName(String value) {
-        this.bookmarkFolderName = value;
-    }
 
     /**
      * Gets the value of the userId property.
@@ -96,6 +56,46 @@ public class UpdateBookmarkFolder {
      */
     public void setUserId(long value) {
         this.userId = value;
+    }
+
+    /**
+     * Gets the value of the objectClass property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getObjectClass() {
+        return objectClass;
+    }
+
+    /**
+     * Sets the value of the objectClass property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setObjectClass(String value) {
+        this.objectClass = value;
+    }
+
+    /**
+     * Gets the value of the objectId property.
+     * 
+     */
+    public long getObjectId() {
+        return objectId;
+    }
+
+    /**
+     * Sets the value of the objectId property.
+     * 
+     */
+    public void setObjectId(long value) {
+        this.objectId = value;
     }
 
     /**

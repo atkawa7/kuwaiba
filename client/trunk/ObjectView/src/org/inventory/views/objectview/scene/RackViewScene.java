@@ -140,4 +140,8 @@ public class RackViewScene extends AbstractScene<LocalObject, LocalObject> {
     public boolean supportsBackgrounds() {
         return false;
     }
+
+    @Override
+    public void render(LocalObject root) {
+    }
 }

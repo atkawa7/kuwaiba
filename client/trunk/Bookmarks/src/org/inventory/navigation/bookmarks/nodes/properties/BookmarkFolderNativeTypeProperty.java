@@ -17,25 +17,25 @@ package org.inventory.navigation.bookmarks.nodes.properties;
 
 import java.beans.PropertyEditor;
 import java.lang.reflect.InvocationTargetException;
-import org.inventory.navigation.bookmarks.nodes.BookmarkNode;
+import org.inventory.navigation.bookmarks.nodes.BookmarkFolderNode;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.nodes.PropertySupport;
 
 /**
- *
+ * Bookmark folder name property
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class BookmarkNativeTypeProperty extends PropertySupport.ReadWrite {
+public class BookmarkFolderNativeTypeProperty extends PropertySupport.ReadWrite {
 
-    private BookmarkNode bookmarkNode;
+    private final BookmarkFolderNode bookmarkFolderNode;
     private Object value;
     
-    public BookmarkNativeTypeProperty(String name, Class type, String displayName, 
-            String shortDescription, BookmarkNode bookmarkNode, Object value) {
+    public BookmarkFolderNativeTypeProperty(String name, Class type, String displayName, 
+            String shortDescription, BookmarkFolderNode bookmarkFolderNode, Object value) {
         super(name, type, displayName, shortDescription);
-        this.bookmarkNode = bookmarkNode;
+        this.bookmarkFolderNode = bookmarkFolderNode;
         this.value = value;
     }
 
@@ -50,12 +50,12 @@ public class BookmarkNativeTypeProperty extends PropertySupport.ReadWrite {
     public void setValue(Object value)  {
         boolean flag = false;
         if (this.getName().equals(Constants.PROPERTY_NAME))
-            flag = CommunicationsStub.getInstance().updateBookmarkFolder(bookmarkNode.getLocalBookmark().getId(), (String) value);
+            flag = CommunicationsStub.getInstance().updateBookmarkFolder(bookmarkFolderNode.getLocalBookmark().getId(), (String) value);
 
         if (flag) {
             this.value = value;
             if (this.getName().equals(Constants.PROPERTY_NAME)) {
-                bookmarkNode.getLocalBookmark().setName((String) value);
+                bookmarkFolderNode.getLocalBookmark().setName((String) value);
             }
         }
         else {

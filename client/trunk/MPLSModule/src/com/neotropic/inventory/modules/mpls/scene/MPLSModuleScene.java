@@ -324,6 +324,10 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
         Widget targetWidget = findWidget(targetNode);
         connectionWidget.setTargetAnchor(targetWidget != null ? AnchorFactory.createCircularAnchor(targetWidget, 3) : null);
     }
+
+    @Override
+    public void render(LocalObjectLight root) {
+    }
  
     /**
      * Own implementation of a connection provider

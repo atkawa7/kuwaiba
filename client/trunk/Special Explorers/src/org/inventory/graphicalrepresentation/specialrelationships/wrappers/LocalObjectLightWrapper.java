@@ -41,6 +41,11 @@ public class LocalObjectLightWrapper {
     }
     
     @Override
+    public String toString() {
+        return lolWrapped.toString();
+    }
+    
+    @Override
     public boolean equals(Object obj) {
         if (obj == null)
             return false;

@@ -36,23 +36,24 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalBookmark;
+import org.inventory.communications.core.LocalBookmarkFolder;
 import org.inventory.communications.core.LocalObjectLight;
+import org.openide.util.Lookup;
 
 /**
- * Frame for choose a bookmark
+ * Frame for choose a Bookmark folder
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class BookmarksFrame extends JFrame {
+public class ChooseBookmarkFolderFrame extends JFrame {
     private JTextField txtField;
     private JScrollPane pnlScrollMain;
-    private JList lstAviableBookmarks;
+    private JList lstAviableBookmarkFolders;
     private final List<LocalObjectLight> selectedObjects;
-    private final List<LocalBookmark> bookmarks;
+    private final List<LocalBookmarkFolder> bookmarkFolders;
     
-    public BookmarksFrame(List<LocalObjectLight> selectedObjects, List<LocalBookmark> bookmarks) {
+    public ChooseBookmarkFolderFrame(List<LocalObjectLight> selectedObjects, List<LocalBookmarkFolder> bookmarkFolders) {
         this.selectedObjects = selectedObjects;
-        this.bookmarks = bookmarks;       
+        this.bookmarkFolders = bookmarkFolders;       
         setLayout(new BorderLayout());
         setTitle(java.util.ResourceBundle.getBundle("org/inventory/navigation/bookmarks/Bundle").getString("LBL_TITLE_AVAILABLE_BOOKMARKS"));
         setSize(400, 650);
@@ -62,8 +63,8 @@ public class BookmarksFrame extends JFrame {
         
         JPanel pnlSearch = new JPanel();
         pnlSearch.setLayout(new GridLayout(1, 2));
-        lstAviableBookmarks = new JList<>(bookmarks.toArray(new LocalBookmark[0]));
-        lstAviableBookmarks.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        lstAviableBookmarkFolders = new JList<>(bookmarkFolders.toArray(new LocalBookmarkFolder[0]));
+        lstAviableBookmarkFolders.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         pnlScrollMain = new JScrollPane();
         txtField = new JTextField();
         txtField.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 2));
@@ -72,17 +73,17 @@ public class BookmarksFrame extends JFrame {
 
             @Override
             public void insertUpdate(DocumentEvent e) {
-                bookmarksFilter(txtField.getText());
+                bookmarkFoldersFilter(txtField.getText());
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                bookmarksFilter(txtField.getText());
+                bookmarkFoldersFilter(txtField.getText());
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                bookmarksFilter(txtField.getText());
+                bookmarkFoldersFilter(txtField.getText());
             }
         });
         
@@ -90,14 +91,14 @@ public class BookmarksFrame extends JFrame {
         pnlSearch.add(txtField);
         add(pnlSearch, BorderLayout.NORTH);
         
-        pnlScrollMain.setViewportView(lstAviableBookmarks);
-        add(lstAviableBookmarks, BorderLayout.CENTER);
+        pnlScrollMain.setViewportView(lstAviableBookmarkFolders);
+        add(lstAviableBookmarkFolders, BorderLayout.CENTER);
         
         JPanel pnlButtons = new JPanel();
         pnlButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
         JButton btnRelate = new JButton("Create Relationship");
         pnlButtons.add(btnRelate);
-        btnRelate.addActionListener(new BtnAddToBookmarkActionListener());
+        btnRelate.addActionListener(new BtnAddToBookmarkFolderActionListener());
         JButton btnClose = new JButton("Close");
         btnClose.addActionListener(new ActionListener() {
 
@@ -110,12 +111,12 @@ public class BookmarksFrame extends JFrame {
         add(pnlButtons, BorderLayout.SOUTH);
     }
     
-    private class BtnAddToBookmarkActionListener implements ActionListener {
+    private class BtnAddToBookmarkFolderActionListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (lstAviableBookmarks.getSelectedValue() == null)
-                JOptionPane.showMessageDialog(null, "Select a bookmark from the list");
+            if (lstAviableBookmarkFolders.getSelectedValue() == null)
+                JOptionPane.showMessageDialog(null, "Select a Bookmark folder from the list");
             else {
                 List<String> objectsClassName = new ArrayList();
                 List<Long> objectsId = new ArrayList();
@@ -125,9 +126,10 @@ public class BookmarksFrame extends JFrame {
                     objectsId.add(selectedObject.getOid());
                     
                     if (CommunicationsStub.getInstance()
-                        .addObjectsToBookmarkFolder(objectsClassName, objectsId, ((LocalBookmark) lstAviableBookmarks.getSelectedValue()).getId())) {
-
-                        JOptionPane.showMessageDialog(null, String.format("%s added to bookmark folder %s", selectedObject, lstAviableBookmarks.getSelectedValue()));
+                        .addObjectsToBookmarkFolder(objectsClassName, objectsId, ((LocalBookmarkFolder) lstAviableBookmarkFolders.getSelectedValue()).getId())) {
+                        
+                        
+                        JOptionPane.showMessageDialog(null, String.format("%s added to Bookmark folder %s", selectedObject, lstAviableBookmarkFolders.getSelectedValue()));
                         dispose();
                     } else {
                         JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError(), 
@@ -141,12 +143,12 @@ public class BookmarksFrame extends JFrame {
         }
     }
     
-    public void bookmarksFilter(String text) {
-        List<LocalBookmark> filteredBookmarks = new ArrayList();
-        for (LocalBookmark bookmark : bookmarks) {
-            if (bookmark.getName().toLowerCase().contains(text.toLowerCase()))
-                filteredBookmarks.add(bookmark);
+    public void bookmarkFoldersFilter(String text) {
+        List<LocalBookmarkFolder> filteredBookmarkFolders = new ArrayList();
+        for (LocalBookmarkFolder bookmarkFolder : bookmarkFolders) {
+            if (bookmarkFolder.getName().toLowerCase().contains(text.toLowerCase()))
+                filteredBookmarkFolders.add(bookmarkFolder);
         }
-        lstAviableBookmarks.setListData(filteredBookmarks.toArray(new LocalBookmark[0]));
+        lstAviableBookmarkFolders.setListData(filteredBookmarkFolders.toArray(new LocalBookmarkFolder[0]));
     }
 }

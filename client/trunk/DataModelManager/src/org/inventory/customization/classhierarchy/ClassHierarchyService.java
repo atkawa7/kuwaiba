@@ -31,11 +31,12 @@ import org.netbeans.api.visual.vmd.VMDNodeWidget;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ClassHierarchyService {
-    private ClassHierarchyScene scene;
+    private final ClassHierarchyScene scene;
     private LocalClassMetadata root;
     private List<LocalClassMetadata> roots;
         
-    public ClassHierarchyService() {
+    public ClassHierarchyService(ClassHierarchyScene scene) {
+        this.scene = scene;
         initClassHierarchy();
     }
     
@@ -65,10 +66,6 @@ public class ClassHierarchyService {
         }
     }
     
-    public void setScene(ClassHierarchyScene scene) {
-        this.scene = scene;
-    }
-    
     public void expandClassHierarchy() {
         LocalClassMetadata rootClass = root;
         addSubclasses(rootClass, true);
@@ -81,14 +78,10 @@ public class ClassHierarchyService {
         scene.reorganizeNodes();
     }
     
-    public void addRootClass() {
-        scene.addRootNodeClass(root);
-    }
-    
     public LocalClassMetadata getRootClass() {
         return root;
     }
-        
+            
     private List<LocalClassMetadata> getSubclasses(LocalClassMetadata parent) {
         List children = new ArrayList();
         for (LocalClassMetadata possibleChild : roots) {

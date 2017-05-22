@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="bookmarkName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="bookmarkFolderName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="userId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
@@ -29,38 +29,38 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "createBookmarkFolderForUser", propOrder = {
-    "bookmarkName",
+    "bookmarkFolderName",
     "userId",
     "sessionId"
 })
 public class CreateBookmarkFolderForUser {
 
-    protected String bookmarkName;
+    protected String bookmarkFolderName;
     protected long userId;
     protected String sessionId;
 
     /**
-     * Gets the value of the bookmarkName property.
+     * Gets the value of the bookmarkFolderName property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getBookmarkName() {
-        return bookmarkName;
+    public String getBookmarkFolderName() {
+        return bookmarkFolderName;
     }
 
     /**
-     * Sets the value of the bookmarkName property.
+     * Sets the value of the bookmarkFolderName property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setBookmarkName(String value) {
-        this.bookmarkName = value;
+    public void setBookmarkFolderName(String value) {
+        this.bookmarkFolderName = value;
     }
 
     /**

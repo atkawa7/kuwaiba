@@ -15,7 +15,7 @@
  */
 package org.inventory.navigation.bookmarks;
 
-import org.inventory.navigation.bookmarks.nodes.BookmarkRootNode;
+import org.inventory.navigation.bookmarks.nodes.BookmarkFolderRootNode;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
@@ -24,7 +24,6 @@ import java.awt.event.KeyEvent;
 import javax.swing.InputMap;
 import javax.swing.KeyStroke;
 import javax.swing.text.DefaultEditorKit;
-import org.inventory.navigation.bookmarks.Bundle;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.navigation.navigationtree.nodes.actions.DeleteBusinessObjectAction;
 import org.netbeans.api.settings.ConvertAsProperties;
@@ -40,39 +39,39 @@ import org.openide.windows.TopComponent;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 @ConvertAsProperties(
-        dtd = "-//org.inventory.navigation.bookmarks//BookmarkManager//EN",
+        dtd = "-//org.inventory.navigation.bookmarks//BookmarkModule//EN",
         autostore = false
 )
 @TopComponent.Description(
-        preferredID = "BookmarkManagerTopComponent",
+        preferredID = "BookmarkModuleTopComponent",
         iconBase="org/inventory/navigation/bookmarks/res/icon.png", 
         persistenceType = TopComponent.PERSISTENCE_ALWAYS
 )
 @TopComponent.Registration(mode = "leftSlidingSide", openAtStartup = false)
-@ActionID(category = "Window", id = "org.inventory.navigation.bookmarks.BookmarkManagerTopComponent")
+@ActionID(category = "Window", id = "org.inventory.navigation.bookmarks.BookmarkModuleTopComponent")
 @ActionReferences(value = {@ActionReference(path = "Menu/Tools"), 
     @ActionReference(path = "Toolbars/Tools")})
 @TopComponent.OpenActionRegistration(
-        displayName = "#CTL_BookmarkManagerAction",
-        preferredID = "BookmarkManagerTopComponent"
+        displayName = "#CTL_BookmarkModuleAction",
+        preferredID = "BookmarkModuleTopComponent"
 )
 @Messages({
-    "CTL_BookmarkManagerAction=Bookmarks",
-    "CTL_BookmarkManagerTopComponent=Bookmarks",
-    "HINT_BookmarkManagerTopComponent=Bookmarks"
+    "CTL_BookmarkModuleAction=Bookmarks",
+    "CTL_BookmarkModuleTopComponent=Bookmarks",
+    "HINT_BookmarkModuleTopComponent=Bookmarks"
 })
-public final class BookmarkManagerTopComponent extends TopComponent implements 
+public final class BookmarkModuleTopComponent extends TopComponent implements 
     ExplorerManager.Provider, Refreshable {
     
     private BeanTreeView treeMain;
     private final ExplorerManager em;
 
-    public BookmarkManagerTopComponent() {
+    public BookmarkModuleTopComponent() {
         em = new ExplorerManager();
         initComponents();
         initCustomComponents();
-        setName(Bundle.CTL_BookmarkManagerTopComponent());
-        setToolTipText(Bundle.HINT_BookmarkManagerTopComponent());
+        setName(Bundle.CTL_BookmarkModuleTopComponent());
+        setToolTipText(Bundle.HINT_BookmarkModuleTopComponent());
 
     }
     
@@ -112,7 +111,7 @@ public final class BookmarkManagerTopComponent extends TopComponent implements
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
-        em.setRootContext(new BookmarkRootNode());
+        em.setRootContext(new BookmarkFolderRootNode());
         ExplorerUtils.activateActions(em, true);
     }
 

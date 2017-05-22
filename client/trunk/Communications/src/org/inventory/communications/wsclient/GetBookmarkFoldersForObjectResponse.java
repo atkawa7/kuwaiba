@@ -10,12 +10,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for getBookmarkFoldersForUserResponse complex type.
+ * <p>Java class for getBookmarkFoldersForObjectResponse complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="getBookmarkFoldersForUserResponse">
+ * &lt;complexType name="getBookmarkFoldersForObjectResponse">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
@@ -29,10 +29,10 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getBookmarkFoldersForUserResponse", propOrder = {
+@XmlType(name = "getBookmarkFoldersForObjectResponse", propOrder = {
     "_return"
 })
-public class GetBookmarkFoldersForUserResponse {
+public class GetBookmarkFoldersForObjectResponse {
 
     @XmlElement(name = "return")
     protected List<RemoteBookmarkFolder> _return;

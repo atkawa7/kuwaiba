@@ -16,7 +16,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="bookmarkId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="bookmarkFolderId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="userId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -28,28 +29,46 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getBookmarkFolder", propOrder = {
-    "bookmarkId",
+    "bookmarkFolderId",
+    "userId",
     "sessionId"
 })
 public class GetBookmarkFolder {
 
-    protected long bookmarkId;
+    protected long bookmarkFolderId;
+    protected long userId;
     protected String sessionId;
 
     /**
-     * Gets the value of the bookmarkId property.
+     * Gets the value of the bookmarkFolderId property.
      * 
      */
-    public long getBookmarkId() {
-        return bookmarkId;
+    public long getBookmarkFolderId() {
+        return bookmarkFolderId;
     }
 
     /**
-     * Sets the value of the bookmarkId property.
+     * Sets the value of the bookmarkFolderId property.
      * 
      */
-    public void setBookmarkId(long value) {
-        this.bookmarkId = value;
+    public void setBookmarkFolderId(long value) {
+        this.bookmarkFolderId = value;
+    }
+
+    /**
+     * Gets the value of the userId property.
+     * 
+     */
+    public long getUserId() {
+        return userId;
+    }
+
+    /**
+     * Sets the value of the userId property.
+     * 
+     */
+    public void setUserId(long value) {
+        this.userId = value;
     }
 
     /**

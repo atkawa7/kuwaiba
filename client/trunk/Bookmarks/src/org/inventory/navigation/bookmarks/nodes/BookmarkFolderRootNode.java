@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalBookmark;
+import org.inventory.communications.core.LocalBookmarkFolder;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.bookmarks.actions.NewBookmarkFolderAction;
 import org.openide.nodes.AbstractNode;
@@ -32,13 +32,13 @@ import org.openide.util.ImageUtilities;
  * The root node of the tree of bookmarks.
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class BookmarkRootNode extends AbstractNode {
+public class BookmarkFolderRootNode extends AbstractNode {
     public static final String ICON_PATH = "org/inventory/navigation/bookmarks/res/root.png";
     private static final Image icon = ImageUtilities.loadImage(ICON_PATH);
     
-    public BookmarkRootNode() {
-        super(new BookmarkRootChildren());
-        setDisplayName("Bookmarks");
+    public BookmarkFolderRootNode() {
+        super(new BookmarkFolderRootChildren());
+        setDisplayName("Bookmark Folders");
     }
     
     @Override
@@ -56,11 +56,11 @@ public class BookmarkRootNode extends AbstractNode {
         return getIcon(i);
     }
     
-    public static class BookmarkRootChildren extends Children.Keys<LocalBookmark> {
+    public static class BookmarkFolderRootChildren extends Children.Keys<LocalBookmarkFolder> {
         
         @Override
         public void addNotify() {
-            List<LocalBookmark> bookmarks = CommunicationsStub.getInstance().getBookmarkFoldersForUser();
+            List<LocalBookmarkFolder> bookmarks = CommunicationsStub.getInstance().getBookmarkFoldersForUser();
             
             if (bookmarks == null) {
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, 
@@ -77,8 +77,8 @@ public class BookmarkRootNode extends AbstractNode {
         }
 
         @Override
-        protected Node[] createNodes(LocalBookmark key) {
-            return new Node [] {new BookmarkNode(key)};
+        protected Node[] createNodes(LocalBookmarkFolder key) {
+            return new Node [] {new BookmarkFolderNode(key)};
         }
     }
 }

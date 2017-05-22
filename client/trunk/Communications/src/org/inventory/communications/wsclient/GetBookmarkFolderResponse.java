@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://ws.kuwaiba.org/}remoteBookmark" minOccurs="0"/>
+ *         &lt;element name="return" type="{http://ws.kuwaiba.org/}remoteBookmarkFolder" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -33,17 +33,17 @@ import javax.xml.bind.annotation.XmlType;
 public class GetBookmarkFolderResponse {
 
     @XmlElement(name = "return")
-    protected RemoteBookmark _return;
+    protected RemoteBookmarkFolder _return;
 
     /**
      * Gets the value of the return property.
      * 
      * @return
      *     possible object is
-     *     {@link RemoteBookmark }
+     *     {@link RemoteBookmarkFolder }
      *     
      */
-    public RemoteBookmark getReturn() {
+    public RemoteBookmarkFolder getReturn() {
         return _return;
     }
 
@@ -52,10 +52,10 @@ public class GetBookmarkFolderResponse {
      * 
      * @param value
      *     allowed object is
-     *     {@link RemoteBookmark }
+     *     {@link RemoteBookmarkFolder }
      *     
      */
-    public void setReturn(RemoteBookmark value) {
+    public void setReturn(RemoteBookmarkFolder value) {
         this._return = value;
     }
 

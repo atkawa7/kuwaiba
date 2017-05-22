@@ -257,4 +257,8 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
     public boolean supportsBackgrounds() {
         return true;
     }
+
+    @Override
+    public void render(LocalObjectLight root) {
+    }
 }

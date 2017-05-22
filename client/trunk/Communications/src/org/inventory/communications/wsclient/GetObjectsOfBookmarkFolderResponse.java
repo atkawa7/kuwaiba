@@ -10,16 +10,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for getBookmarkFoldersForUserResponse complex type.
+ * <p>Java class for getObjectsOfBookmarkFolderResponse complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="getBookmarkFoldersForUserResponse">
+ * &lt;complexType name="getObjectsOfBookmarkFolderResponse">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://ws.kuwaiba.org/}remoteBookmarkFolder" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="return" type="{http://ws.kuwaiba.org/}remoteObjectLight" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,13 +29,13 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getBookmarkFoldersForUserResponse", propOrder = {
+@XmlType(name = "getObjectsOfBookmarkFolderResponse", propOrder = {
     "_return"
 })
-public class GetBookmarkFoldersForUserResponse {
+public class GetObjectsOfBookmarkFolderResponse {
 
-    @XmlElement(name = "return")
-    protected List<RemoteBookmarkFolder> _return;
+    @XmlElement(name = "return", nillable = true)
+    protected List<RemoteObjectLight> _return;
 
     /**
      * Gets the value of the return property.
@@ -55,13 +55,13 @@ public class GetBookmarkFoldersForUserResponse {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link RemoteBookmarkFolder }
+     * {@link RemoteObjectLight }
      * 
      * 
      */
-    public List<RemoteBookmarkFolder> getReturn() {
+    public List<RemoteObjectLight> getReturn() {
         if (_return == null) {
-            _return = new ArrayList<RemoteBookmarkFolder>();
+            _return = new ArrayList<RemoteObjectLight>();
         }
         return this._return;
     }
