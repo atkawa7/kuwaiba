@@ -346,7 +346,7 @@ public class Constants {
     /**
      * Property numberingAscending
      */
-    public static final String PROPERTY_RACK_UNITS_NUMBERING = "rackUnitsNumberingAscending";
+    public static final String PROPERTY_RACK_UNITS_NUMBERING = "rackUnitsNumberingDescending";
     /**
      * Property startRackUnit
      */

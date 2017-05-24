@@ -90,9 +90,9 @@ public class RackViewBuilder implements AbstractViewBuilder {
                     
                     //Rack position 1 is on top if ascending = true, else it starts from the bottom 
                     if (ascending)
-                        newElement.setPreferredLocation(new Point(0, RackViewScene.RACK_UNIT_IN_PX * position - RackViewScene.RACK_UNIT_IN_PX));
+                        newElement.setPreferredLocation(new Point(0, RackViewScene.RACK_Y_OFFSET + RackViewScene.RACK_UNIT_IN_PX * position - RackViewScene.RACK_UNIT_IN_PX));
                     else
-                        newElement.setPreferredLocation(new Point(0, rackHeight - RackViewScene.RACK_UNIT_IN_PX * position));
+                        newElement.setPreferredLocation(new Point(0, rackHeight - RackViewScene.RACK_UNIT_IN_PX * position - RackViewScene.RACK_UNIT_IN_PX + RackViewScene.RACK_Y_OFFSET));
                     
                     rackUnitsCounter += elementRackUnits;
                 }
@@ -100,12 +100,17 @@ public class RackViewBuilder implements AbstractViewBuilder {
                 if (rackUnitsCounter > rackUnits)
                     throw new IllegalArgumentException(String.format("The sum of the sizes of the elements (%s) exceeds the rack capacity (%s)", rackUnitsCounter, rackUnits));
                     
-                scene.getRackWidget().setPreferredSize(new Dimension(RackViewScene.STANDARD_RACK_WIDTH , rackHeight));
+                scene.getRackWidget().setPreferredSize(new Dimension(RackViewScene.STANDARD_RACK_WIDTH , rackHeight + RackViewScene.RACK_Y_OFFSET));
                 
-                for (String attribute : rack.getObjectMetadata().getAttributeNames())
-                    scene.addInfoLabel(attribute +": " + (rack.getAttribute(attribute) == null ? "" : rack.getAttribute(attribute).toString()), false);
+                scene.renderPositions(rackUnits, ascending);
                 
+                scene.addInfoLabel("Name: " + rack.getName(), false);
+                scene.addInfoLabel("Serial Number: " + (rack.getAttribute("serialNumber") == null ? "" : rack.getAttribute("serialNumber").toString()), false); //NOI18N
+                scene.addInfoLabel("Vendor: " + (rack.getAttribute("vendor") == null ? "" : rack.getAttribute("vendor").toString()), false); //NOI18N
+                scene.addInfoLabel("Rack Numbering: " + (rack.getAttribute(Constants.PROPERTY_RACK_UNITS_NUMBERING) == null || ascending
+                                                    ? "Ascending" : "Descending"), false); //NOI18N
                 scene.addInfoLabel("Usage Percentage: "+ Math.round((float)rackUnitsCounter * 100/rackUnits) +"% (" + rackUnitsCounter + "U/" + rackUnits + "U)", true);
+                scene.getInfoWidget().setPreferredLocation(new Point((int) (scene.getRackWidget().getPreferredSize().getWidth()), RackViewScene.RACK_Y_OFFSET));
             }
         }
     }   
