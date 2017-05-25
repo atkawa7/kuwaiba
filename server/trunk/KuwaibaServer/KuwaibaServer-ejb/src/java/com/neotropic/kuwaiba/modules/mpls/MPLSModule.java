@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -65,12 +65,7 @@ public class MPLSModule implements GenericCommercialModule {
      * This is used to ease the way to find routes between elements
      */
     public static String RELATIONSHIP_MPLSLINK = "mplsLink";
-    /**
-     * TODO: place this relationships in other place
-     * This relationship is used to relate a network element with extra logical configuration
-     */
-    public static final String RELATIONSHIP_MPLSPORTBELONGSTOINTERFACE = "mplsportbelongtointerface";
-    
+        
     @Override
     public String getName() {
         return "MPLS Networks Module"; //NOI18N
@@ -177,36 +172,4 @@ public class MPLSModule implements GenericCommercialModule {
         
         bem.deleteObject(linkClass, linkId, forceDelete);
     }
-    /**
-     * Relates an interface with a generic communication port
-     * @param portId port id
-     * @param portClassName the classname of the configuration you want to relate with
-     * @param interfaceClassName interface's class
-     * @param interfaceId interface id
-     * @throws ObjectNotFoundException
-     * @throws OperationNotPermittedException
-     * @throws MetadataObjectNotFoundException 
-     */
-    public void relatePortToInterface(long portId, String portClassName, String interfaceClassName, long interfaceId) throws ObjectNotFoundException,
-            OperationNotPermittedException, MetadataObjectNotFoundException{
-        bem.createSpecialRelationship(interfaceClassName, interfaceId, portClassName, portId, RELATIONSHIP_MPLSPORTBELONGSTOINTERFACE, true);
-    }
-    
-    /**
-     * Release the relationship between a GenericPort and an interface
-     * @param interfaceClassName interface's class
-     * @param interfaceId interface id
-     * @param portId port id 
-     * @throws ObjectNotFoundException
-     * @throws MetadataObjectNotFoundException
-     * @throws ApplicationObjectNotFoundException
-     * @throws NotAuthorizedException 
-     */
-    public void releasePortFromInterface(String interfaceClassName, long interfaceId ,long portId)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException,
-            ApplicationObjectNotFoundException, NotAuthorizedException
-    {
-        bem.releaseSpecialRelationship(interfaceClassName, interfaceId, portId, RELATIONSHIP_MPLSPORTBELONGSTOINTERFACE);
-    }
-    
 }

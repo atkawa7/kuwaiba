@@ -440,17 +440,16 @@ public interface WebserviceBeanRemote {
                 String sessionId) throws ServerSideException;
         public long createSubnet(long poolId, String className, String attributeNames[], 
             String attributeValues[][], String ipAddress, String sessionId) throws ServerSideException;
-        public void updateSubnet() throws ServerSideException;
         public void deleteSubnets(String className, List<Long> ids, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
         public void deleteSubnetPools(long[] ids, String ipAddress, String sessionId) throws ServerSideException;
         public long addIP(long id, String parentClassName, String attributeNames[], 
             String attributeValues[][], String ipAddress, String sessionId) throws ServerSideException;
         public void removeIP(long[] ids, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
         public void relateIPtoPort(long id, String deviceClassName, long deviceId, String ipAddress, String sessionId) throws ServerSideException;
-        public void relateToVlan(long id, String className, long vlanId, String ipAddress, String sessionId) throws ServerSideException;
+        public void relateSubnetToVlan(long id, String className, long vlanId, String ipAddress, String sessionId) throws ServerSideException;
+        public void releaseSubnetFromVlan(long vlanId, long id, String ipAddress, String sessionId) throws ServerSideException;
         public void relateSubnetToVrf(long id, String className, long vrfId, String ipAddress, String sessionId) throws ServerSideException;
         public void releasePortFromIP(String deviceClassName, long deviceId, long id, String ipAddress, String sessionId) throws ServerSideException;
-        public void releaseFromVlan(long vlanId, long id, String ipAddress, String sessionId) throws ServerSideException;
         public void releaseSubnetFromVRF(long subnetId, long vrfId, String ipAddress, String sessionId) throws ServerSideException;
         public RemoteObjectLight[] getSubnetUsedIps(long id, String className, int limit, String ipAddress, String sessionId) throws ServerSideException;
         public RemoteObjectLight[] getSubnetsInSubent(long id, String className, int limit, String ipAddress, String sessionId)  throws ServerSideException;

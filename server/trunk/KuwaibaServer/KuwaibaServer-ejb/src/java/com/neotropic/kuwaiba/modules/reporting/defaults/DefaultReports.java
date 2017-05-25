@@ -837,7 +837,7 @@ public class DefaultReports {
             RemoteBusinessObject logicalConfigurationObject = bem.getObject(listOflogicalConfiguration.getClassName(), listOflogicalConfiguration.getId());
             
             HashMap<String, List<String>> attributes = logicalConfigurationObject.getAttributes();
-            List<RemoteBusinessObjectLight> ports = bem.getSpecialAttribute(listOflogicalConfiguration.getClassName(), listOflogicalConfiguration.getId(), MPLSModule.RELATIONSHIP_MPLSPORTBELONGSTOINTERFACE);
+            List<RemoteBusinessObjectLight> ports = bem.getSpecialAttribute(listOflogicalConfiguration.getClassName(), listOflogicalConfiguration.getId(), IPAMModule.RELATIONSHIP_IPAMPORTRELATEDTOINTERFACE);
             
             if (ports == null) 
                 DetailReportText += "<div class=\"error\">No information for" + listOflogicalConfiguration.getName() + " could be found</div>";

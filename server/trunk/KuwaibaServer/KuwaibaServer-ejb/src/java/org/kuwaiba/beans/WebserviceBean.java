@@ -30,8 +30,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.Singleton;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
@@ -2834,10 +2832,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
     
     @Override
-    public void updateSubnet() throws ServerSideException{
-    }
-
-    @Override
     public void deleteSubnets(String className, List<Long> ids, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException{
         try {
             aem.validateWebServiceCall("deleteSubnets", ipAddress, sessionId);
@@ -2898,11 +2892,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
     
     @Override
-    public void relateToVlan(long id, String className, long vlanId, String ipAddress, String sessionId) throws ServerSideException{
-    try{
+    public void relateSubnetToVlan(long id, String className, long vlanId, String ipAddress, String sessionId) throws ServerSideException{
+        try{
             aem.validateWebServiceCall("relateSubnetToVLAN", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            ipamModule.relateToVLAN(id, className, vlanId);
+            ipamModule.relateSubnetToVLAN(id, className, vlanId);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2910,7 +2904,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     
     @Override
     public void relateSubnetToVrf(long id, String className, long vrfId, String ipAddress, String sessionId) throws ServerSideException{
-    try{
+        try{
             aem.validateWebServiceCall("relateSubnetToVRF", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
             ipamModule.relateSubnetToVRF(id, className, vrfId);
@@ -2918,9 +2912,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(ex.getMessage());
         }
     }
+    
     @Override
     public void releasePortFromIP(String deviceClassName, long deviceId, long id, String ipAddress, String sessionId) throws ServerSideException{
-        try{
+    try{
             aem.validateWebServiceCall("releasePortFromIP", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
             ipamModule.releasePortFromIP(deviceClassName, deviceId, id);
@@ -2930,11 +2925,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void releaseFromVlan(long vlanId, long id, String ipAddress, String sessionId) throws ServerSideException{
+    public void releaseSubnetFromVlan(long vlanId, long id, String ipAddress, String sessionId) throws ServerSideException{
         try{
             aem.validateWebServiceCall("releaseSubnetFromVLAN", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            ipamModule.releaseFromVLAN(vlanId, id);
+            ipamModule.releaseSubnetFromVLAN(vlanId, id);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2972,7 +2967,28 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(ex.getMessage());
         }
     }
-        
+    
+    @Override
+    public void relatePortToInterface(long portId, String portClassName, String interfaceClassName, long interfaceId, String ipAddress, String sessionId) throws ServerSideException{
+        try {
+            aem.validateWebServiceCall("relatePortToInterface", ipAddress, sessionId);
+            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+            ipamModule.relatePortToInterface(portId, portClassName, interfaceClassName, interfaceId);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void releasePortFromInterface(String interfaceClassName, long interfaceId ,long portId, String ipAddress, String sessionId) throws ServerSideException{
+        try {
+            aem.validateWebServiceCall("releasePortFromInterface", ipAddress, sessionId);
+            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+            ipamModule.releasePortFromInterface(interfaceClassName, interfaceId, portId);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }    
     @Override
     public boolean itOverlaps(String networkIp, String broadcastIp, String ipAddress, String sessionId) throws ServerSideException{
         try{
@@ -3051,28 +3067,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateWebServiceCall("deleteMPLSLink", ipAddress, sessionId);
             MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
             mplsModule.deleteMPLSLink(linkClass, linkId, forceDelete);
-        } catch (InventoryException ex) {
-            throw new ServerSideException(ex.getMessage());
-        }
-    }
-    
-    @Override
-    public void relatePortToInterface(long portId, String portClassName, String interfaceClassName, long interfaceId, String ipAddress, String sessionId) throws ServerSideException{
-        try {
-            aem.validateWebServiceCall("relatePortToInterface", ipAddress, sessionId);
-            MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
-            mplsModule.relatePortToInterface(portId, portClassName, interfaceClassName, interfaceId);
-        } catch (InventoryException ex) {
-            throw new ServerSideException(ex.getMessage());
-        }
-    }
-    
-    @Override
-    public void releasePortFromInterface(String interfaceClassName, long interfaceId ,long portId, String ipAddress, String sessionId) throws ServerSideException{
-        try {
-            aem.validateWebServiceCall("releasePortFromInterface", ipAddress, sessionId);
-            MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
-            mplsModule.releasePortFromInterface(interfaceClassName, interfaceId, portId);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
