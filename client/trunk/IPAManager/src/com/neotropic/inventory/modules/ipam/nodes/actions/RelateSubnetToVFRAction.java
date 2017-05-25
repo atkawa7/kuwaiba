@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
  *
  * Licensed under the EPL License, Version 1.0 (the "License"); you may not use
@@ -15,7 +15,7 @@
  */
 package com.neotropic.inventory.modules.ipam.nodes.actions;
 
-import com.neotropic.inventory.modules.ipam.windows.VRFsFrame;
+import com.neotropic.inventory.modules.ipam.windows.VFRsFrame;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,23 +34,23 @@ import org.openide.util.Utilities;
  * Relates a VRF with a subnet
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class RelateSubnetToVRFAction extends GenericInventoryAction {
+public class RelateSubnetToVFRAction extends GenericInventoryAction {
 
-    private static RelateSubnetToVRFAction instance;
+    private static RelateSubnetToVFRAction instance;
     
-    private RelateSubnetToVRFAction() {
+    private RelateSubnetToVFRAction() {
         putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELATE_VRF"));
     }
     
-    public static RelateSubnetToVRFAction getInstance() {
-        return instance == null ? instance = new RelateSubnetToVRFAction() : instance;
+    public static RelateSubnetToVFRAction getInstance() {
+        return instance == null ? instance = new RelateSubnetToVFRAction() : instance;
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        List<LocalObjectLight> devices = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_VRFINSTANCE);
+        List<LocalObjectLight> vfrInstances = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_VRFINSTANCE);
         
-        if (devices ==  null)
+        if (vfrInstances ==  null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         
         else {
@@ -62,7 +62,7 @@ public class RelateSubnetToVRFAction extends GenericInventoryAction {
             while (iterator.hasNext())
                 selectedObjects.add((LocalObjectLight)iterator.next());
 
-            VRFsFrame frame = new VRFsFrame(selectedObjects, devices);
+            VFRsFrame frame = new VFRsFrame(selectedObjects, vfrInstances);
             frame.setVisible(true);
         }    
 

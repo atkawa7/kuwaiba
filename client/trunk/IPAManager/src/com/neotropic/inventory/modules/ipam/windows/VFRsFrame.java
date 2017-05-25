@@ -39,32 +39,32 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 
 /**
- * Show the existing VRFs that can be associated to a subnet
+ * Show the existing VFRs that can be associated to a subnet
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 
-public class VRFsFrame  extends JFrame{
+public class VFRsFrame  extends JFrame{
     private JTextField txtField;
     private JScrollPane pnlScrollMain;
-    private JList<LocalObjectLight> lstAvailableVRFs;
+    private JList<LocalObjectLight> lstAvailableVFRs;
     private List<LocalObjectLight> selectedSubnet;
-    private List<LocalObjectLight> vrfs;
+    private List<LocalObjectLight> vfrs;
 
-        public VRFsFrame(List<LocalObjectLight> selectedSubnet, List<LocalObjectLight> vrfs) {
+        public VFRsFrame(List<LocalObjectLight> selectedSubnet, List<LocalObjectLight> vrfs) {
         this.selectedSubnet = selectedSubnet;
-        this.vrfs = vrfs;
+        this.vfrs = vrfs;
         setLayout(new BorderLayout());
-        setTitle(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_TITLE_AVAILABLE_VRFS"));
+        setTitle(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_TITLE_AVAILABLE_VFRS"));
         setSize(400, 650);
         setLocationRelativeTo(null);
-        JLabel lblInstructions = new JLabel(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_INSTRUCTIONS_SELECT_VRF"));
+        JLabel lblInstructions = new JLabel(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_INSTRUCTIONS_SELECT_VFR"));
         lblInstructions.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         
                 
         JPanel pnlSearch = new JPanel();
         pnlSearch.setLayout(new GridLayout(1, 2));
-        lstAvailableVRFs = new JList<>(vrfs.toArray(new LocalObjectLight[0]));
-        lstAvailableVRFs.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        lstAvailableVFRs = new JList<>(vrfs.toArray(new LocalObjectLight[0]));
+        lstAvailableVFRs.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         pnlScrollMain = new JScrollPane();
         txtField = new JTextField();
         txtField.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 2));
@@ -90,14 +90,14 @@ public class VRFsFrame  extends JFrame{
         pnlSearch.add(txtField);
         add(pnlSearch, BorderLayout.NORTH);
         
-        pnlScrollMain.setViewportView(lstAvailableVRFs);
-        add(lstAvailableVRFs, BorderLayout.CENTER);
+        pnlScrollMain.setViewportView(lstAvailableVFRs);
+        add(lstAvailableVFRs, BorderLayout.CENTER);
         
         JPanel pnlButtons = new JPanel();
         pnlButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
         JButton btnRelate = new JButton("Create relationship");
         pnlButtons.add(btnRelate);
-        btnRelate.addActionListener(new VRFsFrame.BtnConnectActionListener());
+        btnRelate.addActionListener(new VFRsFrame.BtnConnectActionListener());
         JButton btnClose = new JButton("Close");
         btnClose.addActionListener(new ActionListener() {
 
@@ -113,13 +113,13 @@ public class VRFsFrame  extends JFrame{
      private class BtnConnectActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (lstAvailableVRFs.getSelectedValue() == null)
-                JOptionPane.showMessageDialog(null, "Select a VRF from the list");
+            if (lstAvailableVFRs.getSelectedValue() == null)
+                JOptionPane.showMessageDialog(null, "Select a VFR from the list");
             else {
-                if (CommunicationsStub.getInstance().relateSubnetToVRF(
-                        selectedSubnet.get(0).getOid(), selectedSubnet.get(0).getClassName(), lstAvailableVRFs.getSelectedValue().getOid())){
-                    JOptionPane.showMessageDialog(null, String.format("The %s subnet was related to VRF %s", selectedSubnet.get(0).getName(), 
-                            lstAvailableVRFs.getSelectedValue().getName()));
+                if (CommunicationsStub.getInstance().relateSubnetToVFR(
+                        selectedSubnet.get(0).getOid(), selectedSubnet.get(0).getClassName(), lstAvailableVFRs.getSelectedValue().getOid())){
+                    JOptionPane.showMessageDialog(null, String.format("The %s subnet was related to VFR %s", selectedSubnet.get(0).getName(), 
+                            lstAvailableVFRs.getSelectedValue().getName()));
                         dispose();
                 }
                 else 
@@ -131,13 +131,13 @@ public class VRFsFrame  extends JFrame{
     
     public void servicesFilter(String text){
         List<LocalObjectLight> filteredServices = new ArrayList<>();
-        for(LocalObjectLight vrf : vrfs){
+        for(LocalObjectLight vrf : vfrs){
             if(vrf.getClassName().toLowerCase().contains(text.toLowerCase()) 
                     || vrf.getName().toLowerCase().contains(text.toLowerCase()))
                 filteredServices.add(vrf);
         }
         LocalObjectLight[] toArray = filteredServices.toArray(new LocalObjectLight[filteredServices.size()]);
-        lstAvailableVRFs.setListData(toArray);
+        lstAvailableVFRs.setListData(toArray);
     }
 
 }

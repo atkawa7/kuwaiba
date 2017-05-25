@@ -22,10 +22,10 @@ import java.awt.Image;
 import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
 import com.neotropic.inventory.modules.ipam.nodes.actions.DeleteSubnetAction;
-import com.neotropic.inventory.modules.ipam.nodes.actions.RelateSubnetToVRFAction;
-import com.neotropic.inventory.modules.ipam.nodes.actions.RelateToVlanAction;
-import com.neotropic.inventory.modules.ipam.nodes.actions.ReleaseFromVlanAction;
-import com.neotropic.inventory.modules.ipam.nodes.actions.ReleaseSubnetFromVRFAction;
+import com.neotropic.inventory.modules.ipam.nodes.actions.RelateSubnetToVFRAction;
+import com.neotropic.inventory.modules.ipam.nodes.actions.RelateSubnetToVlanAction;
+import com.neotropic.inventory.modules.ipam.nodes.actions.ReleaseSubnetFromVlanAction;
+import com.neotropic.inventory.modules.ipam.nodes.actions.ReleaseSubnetFromVFRAction;
 import com.neotropic.inventory.modules.ipam.nodes.properties.GeneralProperty;
 import com.neotropic.inventory.modules.ipam.nodes.properties.NotEditableProperty;
 import java.awt.datatransfer.Transferable;
@@ -69,10 +69,10 @@ public class SubnetNode extends ObjectNode {
             null,
             Lookup.getDefault().lookup(RelateToServiceAction.class),
             Lookup.getDefault().lookup(ReleaseFromServiceAction.class),
-            RelateToVlanAction.getInstance(),
-            ReleaseFromVlanAction.getInstance(),
-            RelateSubnetToVRFAction.getInstance(),
-            ReleaseSubnetFromVRFAction.getInstance(),
+            RelateSubnetToVlanAction.getInstance(),
+            ReleaseSubnetFromVlanAction.getInstance(),
+            RelateSubnetToVFRAction.getInstance(),
+            ReleaseSubnetFromVFRAction.getInstance(),
             null,
             DeleteSubnetAction.getInstance(),
             null,

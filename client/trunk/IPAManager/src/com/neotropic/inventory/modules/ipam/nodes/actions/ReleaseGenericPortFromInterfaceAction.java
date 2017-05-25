@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
  *
  * Licensed under the EPL License, Version 1.0 (the "License"); you may not use
@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.neotropic.inventory.modules.mpls.actions;
+package com.neotropic.inventory.modules.ipam.nodes.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
@@ -33,11 +33,11 @@ import org.openide.util.actions.Presenter;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- * Release a relation between service instance and an interface
+ * Releases a relation between a service instance and an interface
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ReleaseFromInterface extends GenericObjectNodeAction implements Presenter.Popup {
+public class ReleaseGenericPortFromInterfaceAction extends GenericObjectNodeAction implements Presenter.Popup {
     
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -47,7 +47,7 @@ public class ReleaseFromInterface extends GenericObjectNodeAction implements Pre
             if (CommunicationsStub.getInstance().releasePortFromInterface((String)((JMenuItem)e.getSource()).getClientProperty("portClassName"),
                     (long)((JMenuItem)e.getSource()).getClientProperty("portId"), (long)((JMenuItem)e.getSource()).getClientProperty("serviceInstanceId")))
                 NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
-                        java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/mpls/Bundle").getString("LBL_SUCCESS"));
+                        java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_SUCCESS"));
             else
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         }
@@ -55,30 +55,30 @@ public class ReleaseFromInterface extends GenericObjectNodeAction implements Pre
 
     @Override
     public String getValidator() {
-        return Constants.VALIDATOR_LOGICAL_ENDPOINT;
+        return Constants.VALIDATOR_PHYSICAL_ENDPOINT;
     }
 
     @Override
-    public JMenuItem getPopupPresenter() {       
-        JMenu mnuAction = new JMenu(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/mpls/Bundle").getString("LBL_RELEASE_INTERFACE"));
+    public JMenuItem getPopupPresenter() {
+        JMenu mnuAction = new JMenu(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELEASE_INTERFACE"));
         Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
         
         if (!selectedNodes.hasNext())
             return null;
         
         ObjectNode selectedNode = (ObjectNode)selectedNodes.next();
-        
-        List<LocalObjectLight> serviceInstances = CommunicationsStub.getInstance().getSpecialAttribute(selectedNode.getObject().getClassName(), 
-                selectedNode.getObject().getOid(), Constants.RELATIONSHIP_MPLSPORTBELONGSTOINTERFACE);
 
-        if (serviceInstances != null) {
+        List<LocalObjectLight> interfaces = CommunicationsStub.getInstance().getSpecialAttribute(selectedNode.getObject().getClassName(), 
+                selectedNode.getObject().getOid(), Constants.RELATIONSHIP_IPAMPORTRELATEDTOINTERFACE);
+
+        if (interfaces != null) {
         
-            if (serviceInstances.isEmpty())
+            if (interfaces.isEmpty())
                 mnuAction.setEnabled(false);
             else {
-                for (LocalObjectLight serviceInstance : serviceInstances){
-                    JMenuItem mnuInterfaces = new JMenuItem(serviceInstance.toString());
-                    mnuInterfaces.putClientProperty("serviceInstanceId", serviceInstance.getOid());
+                for (LocalObjectLight _interface : interfaces){
+                    JMenuItem mnuInterfaces = new JMenuItem(_interface.toString());
+                    mnuInterfaces.putClientProperty("serviceInstanceId", _interface.getOid());
                     mnuInterfaces.putClientProperty("portClassName", selectedNode.getObject().getClassName());
                     mnuInterfaces.putClientProperty("portId", selectedNode.getObject().getOid());
                     mnuInterfaces.addActionListener(this);
@@ -94,7 +94,6 @@ public class ReleaseFromInterface extends GenericObjectNodeAction implements Pre
 
     @Override
     public LocalPrivilege getPrivilege() {
-        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_MPLS_MODULE, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_IP_ADDRESS_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
-    
 }

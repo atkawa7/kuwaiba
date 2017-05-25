@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
  *
  * Licensed under the EPL License, Version 1.0 (the "License"); you may not use
@@ -13,9 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.neotropic.inventory.modules.mpls.actions;
+package com.neotropic.inventory.modules.ipam.nodes.actions;
 
-import com.neotropic.inventory.modules.mpls.windows.InterfaceFrame;
+
+import com.neotropic.inventory.modules.ipam.windows.InterfaceFrame;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,9 +32,9 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class RelateToInterfaceAction extends GenericObjectNodeAction {
+public class RelateGenericNetworkElementToInterface extends GenericObjectNodeAction {
 
-    public RelateToInterfaceAction(){
+    public RelateGenericNetworkElementToInterface(){
         putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/mpls/Bundle").getString("LBL_RELATE_TO"));
     }
     
@@ -62,18 +63,17 @@ public class RelateToInterfaceAction extends GenericObjectNodeAction {
             for(LocalObjectLight o : objects)
                 interfaces.add(o);
         }        
-        
         InterfaceFrame frame = new InterfaceFrame(selectedObjects, interfaces);
         frame.setVisible(true);
     }
     
     @Override
     public String getValidator() {
-        return Constants.VALIDATOR_PHYSICAL_ENDPOINT;
+        return Constants.VALIDATOR_LOGICAL_ENDPOINT;
     }
 
     @Override
     public LocalPrivilege getPrivilege() {
-        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_MPLS_MODULE, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_IP_ADDRESS_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

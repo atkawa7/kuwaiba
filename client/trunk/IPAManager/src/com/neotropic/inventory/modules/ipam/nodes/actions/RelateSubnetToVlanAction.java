@@ -1,5 +1,5 @@
-/**
- * Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
+/*
+ * Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  * Licensed under the EPL License, Version 1.0 (the "License"); you may not use
  * this file except in compliance with the License. You may obtain a copy of the
@@ -35,16 +35,16 @@ import org.openide.util.Utilities;
  * Relates a subnet with a VLAN
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class RelateToVlanAction extends GenericInventoryAction {
+public class RelateSubnetToVlanAction extends GenericInventoryAction {
     
-    private static RelateToVlanAction instance;
+    private static RelateSubnetToVlanAction instance;
     
-    private RelateToVlanAction() {
+    private RelateSubnetToVlanAction() {
         putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELATE_VLAN"));
     }
     
-    public static RelateToVlanAction getInstance() {
-        return instance == null ? instance = new RelateToVlanAction() : instance;
+    public static RelateSubnetToVlanAction getInstance() {
+        return instance == null ? instance = new RelateSubnetToVlanAction() : instance;
     }
     
     @Override

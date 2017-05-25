@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
  *
  * Licensed under the EPL License, Version 1.0 (the "License"); you may not use
@@ -13,9 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.neotropic.inventory.modules.mpls.actions;
+package com.neotropic.inventory.modules.ipam.nodes.actions;
 
-import com.neotropic.inventory.modules.mpls.windows.VlansFrame;
+import com.neotropic.inventory.modules.ipam.windows.VlansFrame;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import static javax.swing.Action.NAME;
@@ -32,10 +32,10 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class RelateToVlanAction extends GenericObjectNodeAction {
+public class RelateVFRToVlanAction extends GenericObjectNodeAction {
     
-    public RelateToVlanAction() {
-        putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/mpls/Bundle").getString("LBL_RELATE_VLAN"));
+    public RelateVFRToVlanAction() {
+        putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELATE_VLAN"));
     }
     
     @Override
@@ -48,7 +48,7 @@ public class RelateToVlanAction extends GenericObjectNodeAction {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         
         else {
-            VlansFrame frame = new VlansFrame(selectedObjects, vlans, Constants.CLASS_VLAN);
+            VlansFrame frame = new VlansFrame(selectedObjects, vlans);
             frame.setVisible(true);
         }
     }
@@ -60,6 +60,6 @@ public class RelateToVlanAction extends GenericObjectNodeAction {
     
     @Override
     public LocalPrivilege getPrivilege() {
-        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_MPLS_MODULE, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_IP_ADDRESS_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

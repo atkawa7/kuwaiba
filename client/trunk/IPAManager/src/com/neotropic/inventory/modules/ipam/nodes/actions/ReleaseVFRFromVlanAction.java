@@ -1,5 +1,5 @@
-/**
- * Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
+/*
+ * Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  * Licensed under the EPL License, Version 1.0 (the "License"); you may not use
  * this file except in compliance with the License. You may obtain a copy of the
@@ -15,11 +15,13 @@
  */
 package com.neotropic.inventory.modules.ipam.nodes.actions;
 
+
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
@@ -32,50 +34,55 @@ import org.openide.util.actions.Presenter;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- * Release a relation between service instance and an interface
+ * Releases a relation between a VFR and a VLAN
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ReleaseFromBDIInterfaceAction extends GenericObjectNodeAction implements Presenter.Popup {
-       
+public class ReleaseVFRFromVlanAction  extends GenericObjectNodeAction implements Presenter.Popup {
+    
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (CommunicationsStub.getInstance().releasePortFromInterface((String)((JMenuItem)e.getSource()).getClientProperty("portClassName"),  //NOI18N
-                (long)((JMenuItem)e.getSource()).getClientProperty("portId"), (long)((JMenuItem)e.getSource()).getClientProperty("bdiId")))
-            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
-                    java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_SUCCESS"));
-        else
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+        if (JOptionPane.showConfirmDialog(null, 
+                "Are you sure you want to release this relationship?", "Warning", 
+                JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+            if (CommunicationsStub.getInstance().releaseSubnetFromVLAN((long)((JMenuItem)e.getSource()).getClientProperty("vlanId"), 
+                    (long)((JMenuItem)e.getSource()).getClientProperty("subnetId")))
+                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
+                        java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_SUCCESS"));
+            else
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+        }
     }
 
     @Override
     public String getValidator() {
-        return Constants.VALIDATOR_LOGICAL_SET;
+        return Constants.VALIDATOR_VLAN;
     }
 
     @Override
     public JMenuItem getPopupPresenter() {
-        
-        JMenu mnuAction = new JMenu(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELEASE_INTERFACE"));
+        JMenu mnuAction = new JMenu(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELEASE_VLAN"));
         Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
+        
+        if (!selectedNodes.hasNext())
+            return null;
         
         ObjectNode selectedNode = (ObjectNode)selectedNodes.next();
         
-        List<LocalObjectLight> bdis = CommunicationsStub.getInstance().getSpecialAttribute(selectedNode.getObject().getClassName(), 
-                selectedNode.getObject().getOid(), Constants.RELATIONSHIP_MPLSPORTBELONGSTOINTERFACE);
+        List<LocalObjectLight> vlans = CommunicationsStub.getInstance().getSpecialAttribute(selectedNode.getObject().getClassName(), 
+                selectedNode.getObject().getOid(), Constants.RELATIONSHIP_IPAMBELONGSTOVLAN);
 
-        if (bdis != null) {
+        if (vlans != null) {
         
-            if (bdis.isEmpty())
+            if (vlans.isEmpty())
                 mnuAction.setEnabled(false);
             else {
-                for (LocalObjectLight bdi : bdis){
-                    JMenuItem mnuBdis = new JMenuItem(bdi.toString());
-                    mnuBdis.putClientProperty("bdiId", bdi.getOid()); //NOI18N
-                    mnuBdis.putClientProperty("portClassName", selectedNode.getObject().getClassName());  //NOI18N
-                    mnuBdis.putClientProperty("portId", selectedNode.getObject().getOid()); //NOI18N
-                    mnuBdis.addActionListener(this);
-                    mnuAction.add(mnuBdis);
+                for (LocalObjectLight vlan : vlans){
+                    JMenuItem mnuVlans = new JMenuItem(vlans.toString());
+                    mnuVlans.putClientProperty("subnetId", vlan.getOid());
+                    mnuVlans.putClientProperty("vlanId", selectedNode.getObject().getOid());
+                    mnuVlans.addActionListener(this);
+                    mnuAction.add(mnuVlans);
                 }
             }
             return mnuAction;
@@ -89,5 +96,4 @@ public class ReleaseFromBDIInterfaceAction extends GenericObjectNodeAction imple
     public LocalPrivilege getPrivilege() {
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_IP_ADDRESS_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
-    
 }

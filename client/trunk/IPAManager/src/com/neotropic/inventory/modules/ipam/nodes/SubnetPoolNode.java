@@ -1,5 +1,5 @@
-/**
- * Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
+/*
+ * Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  * Licensed under the EPL License, Version 1.0 (the "License"); you may not use
  * this file except in compliance with the License. You may obtain a copy of the
@@ -43,7 +43,7 @@ import org.openide.util.datatransfer.PasteType;
 import org.openide.util.lookup.Lookups;
 
 /**
- * Represent a pool of subnets.
+ * Represent a pool of subnets(IPv4, IPv6) or a pool of VLANs.
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class SubnetPoolNode extends AbstractNode implements PropertyChangeListener{
@@ -81,8 +81,7 @@ public class SubnetPoolNode extends AbstractNode implements PropertyChangeListen
     public String getName(){
         return subnetPool.toString();
     }
- 
-     
+      
     @Override
     public Image getIcon(int i){
         return defaultIcon;

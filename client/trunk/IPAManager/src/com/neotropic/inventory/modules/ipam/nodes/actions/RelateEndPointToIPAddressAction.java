@@ -37,9 +37,9 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class RelateToIPAddressAction extends GenericObjectNodeAction {
+public class RelateEndPointToIPAddressAction extends GenericObjectNodeAction {
 
-    public RelateToIPAddressAction(){
+    public RelateEndPointToIPAddressAction(){
         putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELATE_IP"));
     }
     
