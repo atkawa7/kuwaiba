@@ -212,7 +212,7 @@ public class Constants {
     /**
      * This relationship is used to connect a generic port(service instances) with an interface
      */
-    public static final String RELATIONSHIP_MPLSPORTBELONGSTOINTERFACE = "mplsportbelongtointerface";
+    public static final String RELATIONSHIP_IPAMPORTRELATEDTOINTERFACE = "ipamportrelatedtointerface";
     /**
      * A fixed label to indicate a given node doesn't have a name set
      */
