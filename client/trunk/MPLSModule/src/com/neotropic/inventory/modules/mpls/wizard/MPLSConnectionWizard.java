@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
@@ -16,6 +16,7 @@
 package com.neotropic.inventory.modules.mpls.wizard;
 
 import com.neotropic.inventory.modules.mpls.MPLSConfigurationObject;
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.GridLayout;
@@ -100,7 +101,6 @@ public class MPLSConnectionWizard {
             final JTextField txtConnectionName = new JTextField(20);                 
             txtConnectionName.setName("txtConnectionName"); //NOI18N
             
-            
             thePanel = new JComplexDialogPanel(new String[] {"Connection name"}, new JComponent[] {txtConnectionName});
             thePanel.setName("General Information");
             //Shows what step we're in on the left panel of the wizard
@@ -160,22 +160,16 @@ public class MPLSConnectionWizard {
             pnlTreeASide = new ExplorablePanel();
             pnlTreeBSide = new ExplorablePanel();
             
-            pnlTreeASide.add(treeASide);
-            pnlTreeBSide.add(treeBSide);
+            pnlTreeASide.setViewportView(treeASide);
+            pnlTreeBSide.setViewportView(treeBSide);
             
             pnlTreeASide.getExplorerManager().setRootContext(new ObjectNode(equipmentA));
             pnlTreeBSide.getExplorerManager().setRootContext(new ObjectNode(equipmentB));
-            
-            JScrollPane pnlScrollTreeASide = new JScrollPane();
-            JScrollPane pnlScrollTreeBSide = new JScrollPane();
-            
-            pnlScrollTreeASide.setViewportView(pnlTreeASide);
-            pnlScrollTreeBSide.setViewportView(pnlTreeBSide);
-            
-            GridLayout layout = new GridLayout(1, 2);
+
+            BorderLayout layout = new BorderLayout();
             thePanel.setLayout(layout);
-            thePanel.add(pnlScrollTreeASide);
-            thePanel.add(pnlScrollTreeBSide);
+            thePanel.add(pnlTreeASide, BorderLayout.WEST);
+            thePanel.add(pnlTreeBSide, BorderLayout.EAST);
             
             thePanel.setName("Select the endpoints");
             //Shows what step we're in on the left panel of the wizard
