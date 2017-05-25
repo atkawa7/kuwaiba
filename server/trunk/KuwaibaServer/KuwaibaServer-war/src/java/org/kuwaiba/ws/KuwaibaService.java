@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -4653,24 +4653,54 @@ public class KuwaibaService {
     }
     
     /**
-     * Releases a subnet from a VLAN that is using it
+     * Associates a Subnet to existing VLAN, this method is also using to 
+     * associate VFRs, and BDIs to a VLAN  
+     * TODO: check the model, there are redundant relationships
+     * @param id Subnet id
+     * @param className if the subnet has IPv4 or IPv6 IP addresses
+     * @param vlanId VLAN id
+     * @param sessionId Session token
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
+     */
+    @WebMethod(operationName = "relateSubnetToVlan")
+    public void relateSubnetToVlan (
+            @WebParam(name = "id")long id,
+            @WebParam(name = "className")String className,
+            @WebParam(name = "vlanId")long vlanId,
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try{
+            wsBean.relateSubnetToVlan(id, className, vlanId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in relateSubnetToVlan: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Releases a subnet from a VLAN that is using it, this method is also using 
+     * to release VFRs, and BDIs from a VLAN  
+     * TODO: check the model there are redundant relationships 
      * @param subnetId Subnet id
      * @param vlanId the VLAN id
      * @param sessionId Session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime    
      */
-    @WebMethod(operationName = "releaseFromVlan")
-    public void releaseFromVlan (
+    @WebMethod(operationName = "releaseSubnetFromVlan")
+    public void releaseSubnetFromVlan (
             @WebParam(name = "subnetId")long subnetId,
             @WebParam(name = "vlanId")long vlanId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
-            wsBean.releaseFromVlan(vlanId, subnetId, getIPAddress(), sessionId);
+            wsBean.releaseSubnetFromVlan(subnetId, vlanId, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in releaseFromVlan: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in releaseSubnetFromVlan: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
@@ -4695,32 +4725,6 @@ public class KuwaibaService {
                 throw e;
             else {
                 System.out.println("[KUWAIBA] An unexpected error occurred in releaseSubnetFromVRF: " + e.getMessage());
-                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
-            }
-        }
-    }
-    
-    /**
-     * Associates a element to existing VLAN
-     * @param id Subnet id
-     * @param className if the subnet has IPv4 or IPv6 IP addresses
-     * @param vlanId VLAN id
-     * @param sessionId Session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
-     */
-    @WebMethod(operationName = "relateToVlan")
-    public void relateToVlan (
-            @WebParam(name = "id")long id,
-            @WebParam(name = "className")String className,
-            @WebParam(name = "vlanId")long vlanId,
-            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
-        try{
-            wsBean.relateToVlan(id, className, vlanId, getIPAddress(), sessionId);
-        } catch(Exception e){
-            if (e instanceof ServerSideException)
-                throw e;
-            else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in relateToVlan: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
