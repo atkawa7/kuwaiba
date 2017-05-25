@@ -3387,9 +3387,9 @@ public class CommunicationsStub {
         return null;
     }
 
-    public boolean relateToVLAN(long subnetId, String className, long vlanId){
+    public boolean relateSubnetToVLAN(long subnetId, String className, long vlanId){
         try{
-            service.relateToVlan(subnetId, className, vlanId, this.session.getSessionId());
+            service.relateSubnetToVlan(subnetId, className, vlanId, this.session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -3397,9 +3397,9 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean relateSubnetToVRF(long subnetId, String className, long vlanId){
+    public boolean relateSubnetToVFR(long subnetId, String className, long vfrId){
         try{
-            service.relateSubnetToVrf(subnetId, className, vlanId, this.session.getSessionId());
+            service.relateSubnetToVrf(subnetId, className, vfrId, this.session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -3423,9 +3423,9 @@ public class CommunicationsStub {
      * @param subnetId Subnet Id
      * @return true if the operation was successful, false otherwise
      */
-    public boolean releaseFromVLAN(long subnetId, long vlanId){
+    public boolean releaseSubnetFromVLAN(long subnetId, long vlanId){
         try{
-            service.releaseFromVlan(subnetId, vlanId, this.session.getSessionId());
+            service.releaseSubnetFromVlan(subnetId, vlanId, this.session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -3433,9 +3433,9 @@ public class CommunicationsStub {
         } 
     }
     
-    public boolean releaseSubnetFromVRF(long subnetId, long vrfId){
+    public boolean releaseSubnetFromVFR(long subnetId, long vfrId){
         try{
-            service.releaseSubnetFromVRF(subnetId, vrfId, this.session.getSessionId());
+            service.releaseSubnetFromVRF(subnetId, vfrId, this.session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = ex.getMessage();
