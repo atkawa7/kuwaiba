@@ -16,7 +16,6 @@
 package com.neotropic.kuwaiba.modules.reporting.defaults;
 
 import com.neotropic.kuwaiba.modules.ipam.IPAMModule;
-import com.neotropic.kuwaiba.modules.mpls.MPLSModule;
 import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHModule;
 import java.text.SimpleDateFormat;

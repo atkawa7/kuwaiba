@@ -294,6 +294,14 @@ public class Constants {
      */
     public static final String CLASS_GENERICCONTRACT = "GenericContract"; //NOI18N
     /**
+     * Class Generic Project
+     */
+    public static final String CLASS_GENERICPROJECT = "GenericProject"; //NOI18N
+    /**
+     * Class Generic Activity
+     */
+    public static final String CLASS_GENERICACTIVITY = "GenericActivity"; //NOI18N
+    /**
      * Dummy root node name
      */
     public static final String NODE_DUMMYROOT = "DummyRoot"; //NOI18N
@@ -305,6 +313,10 @@ public class Constants {
      * IPv6 root node name
      */
     public static final String NODE_IPV6ROOT = "IPv6Root"; //NOI18N
+    /**
+     * Project root node name
+     */
+    public static final String NODE_PROJECTROOT = "ProjectRoot"; //NOI18N
     /**
      * General activity log root node name
      */

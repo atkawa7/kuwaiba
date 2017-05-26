@@ -21,6 +21,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
@@ -28,6 +30,7 @@ import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
@@ -70,7 +73,8 @@ public class ToolsBean implements ToolsBeanRemote {
     public String[] executePatches(String[] patches) {
         String[] results = new String[patches.length];
         
-        
+        BusinessEntityManager bem = PersistenceService.getInstance().getBusinessEntityManager();
+        MetadataEntityManager mem = PersistenceService.getInstance().getMetadataEntityManager();
         ApplicationEntityManager aem = PersistenceService.getInstance().getApplicationEntityManager();
                     
         if (aem == null) {
@@ -98,8 +102,6 @@ public class ToolsBean implements ToolsBeanRemote {
                 break;
                 
                 case "2": //Migrate hard-coded reports
-                    BusinessEntityManager bem = PersistenceService.getInstance().getBusinessEntityManager();
-                    MetadataEntityManager mem = PersistenceService.getInstance().getMetadataEntityManager();
                     
                     if (bem == null || mem == null) {
                         results[i] = "The Persistence Service doesn't seem to be running. The reports won't be migrated.";
@@ -223,7 +225,88 @@ public class ToolsBean implements ToolsBeanRemote {
                     } catch (InvalidArgumentException | ApplicationObjectNotFoundException ex) {
                         results[i] = ex.getMessage();
                     }
-                    break;
+                break;
+                case "4": // Update data model: This action add the abstract classes GenericProject, GenericActivity and some project and activities subclasses for the Projects Module.
+                    try {
+                        ClassMetadata cmGenericProyect = new ClassMetadata();
+
+                        cmGenericProyect.setName("GenericProject");
+                        cmGenericProyect.setDisplayName("");
+                        cmGenericProyect.setDescription("");
+                        cmGenericProyect.setParentClassName("AdministrativeItem");
+                        cmGenericProyect.setAbstract(true);
+                        cmGenericProyect.setColor(0);
+                        cmGenericProyect.setCountable(true);
+                        cmGenericProyect.setCreationDate(Calendar.getInstance().getTimeInMillis());
+                        cmGenericProyect.setIcon(null);
+                        cmGenericProyect.setSmallIcon(null);
+                        cmGenericProyect.setCustom(true);
+                        cmGenericProyect.setViewable(true);
+                        cmGenericProyect.setInDesign(false);
+                        
+                        mem.createClass(cmGenericProyect);
+                        
+                        ClassMetadata cmGenericActivity = new ClassMetadata();
+
+                        cmGenericActivity.setName("GenericActivity");
+                        cmGenericActivity.setDisplayName("");
+                        cmGenericActivity.setDescription("");
+                        cmGenericActivity.setParentClassName("AdministrativeItem");
+                        cmGenericActivity.setAbstract(true);
+                        cmGenericActivity.setColor(0);
+                        cmGenericActivity.setCountable(true);
+                        cmGenericActivity.setCreationDate(Calendar.getInstance().getTimeInMillis());
+                        cmGenericActivity.setIcon(null);
+                        cmGenericActivity.setSmallIcon(null);
+                        cmGenericActivity.setCustom(true);
+                        cmGenericActivity.setViewable(true);
+                        cmGenericActivity.setInDesign(false);
+                        
+                        mem.createClass(cmGenericActivity);
+                        
+                        ClassMetadata cmGeneralPurposeActivity = new ClassMetadata();
+
+                        cmGeneralPurposeActivity.setName("GeneralPurposeActivity");
+                        cmGeneralPurposeActivity.setDisplayName("");
+                        cmGeneralPurposeActivity.setDescription("");
+                        cmGeneralPurposeActivity.setParentClassName("GenericActivity");
+                        cmGeneralPurposeActivity.setAbstract(false);
+                        cmGeneralPurposeActivity.setColor(0);
+                        cmGeneralPurposeActivity.setCountable(true);
+                        cmGeneralPurposeActivity.setCreationDate(Calendar.getInstance().getTimeInMillis());
+                        cmGeneralPurposeActivity.setIcon(null);
+                        cmGeneralPurposeActivity.setSmallIcon(null);
+                        cmGeneralPurposeActivity.setCustom(true);
+                        cmGeneralPurposeActivity.setViewable(true);
+                        cmGeneralPurposeActivity.setInDesign(false);
+                        
+                        mem.createClass(cmGeneralPurposeActivity);
+                        
+                        ClassMetadata cmGeneralPurposeProject = new ClassMetadata();
+
+                        cmGeneralPurposeProject.setName("GeneralPurposeProject");
+                        cmGeneralPurposeProject.setDisplayName("");
+                        cmGeneralPurposeProject.setDescription("");
+                        cmGeneralPurposeProject.setParentClassName("GenericProject");
+                        cmGeneralPurposeProject.setAbstract(false);
+                        cmGeneralPurposeProject.setColor(0);
+                        cmGeneralPurposeProject.setCountable(true);
+                        cmGeneralPurposeProject.setCreationDate(Calendar.getInstance().getTimeInMillis());
+                        cmGeneralPurposeProject.setIcon(null);
+                        cmGeneralPurposeProject.setSmallIcon(null);
+                        cmGeneralPurposeProject.setCustom(true);
+                        cmGeneralPurposeProject.setViewable(true);
+                        cmGeneralPurposeProject.setInDesign(false);
+                        
+                        mem.createClass(cmGeneralPurposeProject);
+                    } catch (DatabaseException ex) {
+                        Logger.getLogger(ToolsBean.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (MetadataObjectNotFoundException ex) {
+                        Logger.getLogger(ToolsBean.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (InvalidArgumentException ex) {
+                        Logger.getLogger(ToolsBean.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                break;
                 default:
                     results[i] = String.format("Invalid patch id %s", i);
             }

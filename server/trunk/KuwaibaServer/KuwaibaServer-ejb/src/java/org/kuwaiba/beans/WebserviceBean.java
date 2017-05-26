@@ -18,6 +18,7 @@ package org.kuwaiba.beans;
 
 import com.neotropic.kuwaiba.modules.ipam.IPAMModule;
 import com.neotropic.kuwaiba.modules.mpls.MPLSModule;
+import com.neotropic.kuwaiba.modules.projects.ProjectsModule;
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReport;
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
 import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
@@ -3072,6 +3073,217 @@ public class WebserviceBean implements WebserviceBeanRemote {
         }
     }
     // </editor-fold>
+    
+        // <editor-fold defaultstate="collapsed" desc="Project Manager">
+    @Override
+    public RemotePool getProjectsRootPool(String className, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        
+        try {
+            aem.validateWebServiceCall("getProjectsRootPool", ipAddress, sessionId);
+            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N
+            return projectsModule.getProjectsRootPool(className);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public long addProject(long parentId, String parentClassName, String className, String[] attributeNames, String[][] attributeValues, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        
+        try {
+            aem.validateWebServiceCall("addProject", ipAddress, sessionId);
+            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N
+            
+            long projectId = projectsModule.addProject(parentId, parentClassName, className, attributeNames, attributeValues);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
+                String.format("Create object with id %s", projectId));
+            
+            return projectId;
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void deleteProject(String className, long oid, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        
+        try {
+            aem.validateWebServiceCall("deleteProject", ipAddress, sessionId);
+            
+            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N
+            projectsModule.deleteActivity(className, oid, releaseRelationships);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_DELETE_INVENTORY_OBJECT, 
+                String.format("Delete object with id %s", oid));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public long addActivity(long parentId, String parentClassName, String className, String attributeNames[], String attributeValues[][], String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        
+        try {
+            aem.validateWebServiceCall("addActivity", ipAddress, sessionId);
+            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N
+            
+            long activityId = projectsModule.addActivity(parentId, parentClassName, className, attributeNames, attributeValues);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
+                String.format("Create object with id %s", activityId));
+            
+            return activityId;
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void deleteActivity(String className, long oid, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        
+        try {
+            aem.validateWebServiceCall("deleteActivity", ipAddress, sessionId);
+            
+            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N                        
+            projectsModule.deleteActivity(className, oid, releaseRelationships);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_DELETE_INVENTORY_OBJECT, 
+                String.format("Delete object with id %s", oid));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public RemoteObjectLight[] getProjectsFromProjectsRootPool(long rootPoolId, int limit, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        
+        try {
+            aem.validateWebServiceCall("getProjectsFromProjectRootPool", ipAddress, sessionId);
+            
+            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N                        
+            return RemoteObjectLight.toRemoteObjectLightArray(projectsModule.getProjectsFromProjectRootPool(rootPoolId, limit));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public RemoteObjectLight[] getProjectResurces(String projectClass, long projectId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        
+        try {
+            aem.validateWebServiceCall("getProjectResurces", ipAddress, sessionId);
+            
+            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N                        
+            return RemoteObjectLight.toRemoteObjectLightArray(projectsModule.getProjectResurces(projectClass, projectId));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public RemoteObjectLight[] getProjectActivities(String projectClass, long projectId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        
+        try {
+            aem.validateWebServiceCall("getProjectActivities", ipAddress, sessionId);
+            
+            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N
+            return RemoteObjectLight.toRemoteObjectLightArray(projectsModule.getProjectActivities(projectClass, projectId));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public RemoteObjectLight[] getProjectsFromProject(String projectClass, long projectId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        
+        try {
+            aem.validateWebServiceCall("getProjectsFromProject", ipAddress, sessionId);
+            
+            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N
+            return RemoteObjectLight.toRemoteObjectLightArray(projectsModule.getProjectsFromProject(projectClass, projectId));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void associateObjectsToProject(String projectClass, long projectId, String[] objectClass, long[] objectId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        
+        try {
+            aem.validateWebServiceCall("associateObjectsToProject", ipAddress, sessionId);
+            
+            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N
+            projectsModule.associateObjectsToProject(projectClass, projectId, objectClass, objectId);   
+            
+            for (long objId : objectId) {
+                aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                    ActivityLogEntry.ACTIVITY_TYPE_RELATE_INVENTORY_OBJECT, 
+                    String.format("Relate object with id %s to project with id %s", objId, projectId));
+            }
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void associateObjectToProject(String projectClass, long projectId, String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        
+        try {
+            aem.validateWebServiceCall("associateObjectToProject", ipAddress, sessionId);
+            
+            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N                        
+            projectsModule.associateObjectToProject(projectClass, projectId, objectClass, objectId);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_RELATE_INVENTORY_OBJECT, 
+                String.format("Relate object with id %s to project with id %s", objectId, projectId));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void releaseObjectFromProject(String objectClass, long objectId, String projectClass, long projectId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        
+        try {
+            aem.validateWebServiceCall("releaseObjectFromProject", ipAddress, sessionId);
+            
+            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N                        
+            projectsModule.releaseObjectFromProject(objectClass, objectId, projectClass, projectId);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_RELEASE_INVENTORY_OBJECT, 
+                String.format("Release object with id %s from project with id %s", objectId, projectId));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+        // </editor-fold>
     
     // </editor-fold>
     

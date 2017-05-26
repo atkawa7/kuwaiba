@@ -5006,6 +5006,345 @@ public class KuwaibaService {
     }
     
         // </editor-fold>
+    
+        // <editor-fold defaultstate="collapsed" desc="Projects Module">
+    /**
+     * Gets the projects root pool
+     * @param className Projects root pool class name
+     * @param sessionId Session id token
+     * @return The root pool for projects
+     * @throws ServerSideException 
+     */
+    @WebMethod(operationName = "getProjectsRootPool")
+    public RemotePool getProjectsRootPool(
+        @WebParam(name = "className") String className, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        
+        try {
+            return wsBean.getProjectsRootPool(className, getIPAddress(), sessionId);
+        } catch (Exception ex) {
+            if (ex instanceof ServerSideException)
+                throw ex;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getProjectsRootPool: " + ex.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }    
+    
+    /**
+     * Adds a Project
+     * @param parentId Parent Id
+     * @param parentClassName Parent class name
+     * @param className Class name
+     * @param attributeNames Attributes names
+     * @param attributeValues Attributes values
+     * @param sessionId Session id token
+     * @return The Project id
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "addProject")
+    public long addProject(
+        @WebParam(name = "parentId") long parentId, 
+        @WebParam(name = "parentClassName") String parentClassName, 
+        @WebParam(name = "className") String className, 
+        @WebParam(name = "attributeNames") String[] attributeNames, 
+        @WebParam(name = "attributeValues") String[][] attributeValues, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            return wsBean.addProject(parentId, parentClassName, className, attributeNames, attributeValues, getIPAddress(), sessionId);
+        } catch (Exception ex) {
+            if (ex instanceof ServerSideException)
+                throw ex;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in addProject: " + ex.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Deletes a Project
+     * @param className Class name
+     * @param oid Object id
+     * @param releaseRelationships Release relationships
+     * @param sessionId Session id token
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "deleteProject")
+    public void deleteProject(
+        @WebParam(name = "className") String className, 
+        @WebParam(name = "oid") long oid, 
+        @WebParam(name = "releaseRelationships") boolean releaseRelationships, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        
+        try {
+            wsBean.deleteProject(className, oid, releaseRelationships, getIPAddress(), sessionId);
+        } catch (Exception ex) {
+            if (ex instanceof ServerSideException)
+                throw ex;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteProject: " + ex.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Adds an Activity
+     * @param parentId Parent Id
+     * @param parentClassName Parent class name
+     * @param className Class name
+     * @param attributeNames Attributes names
+     * @param attributeValues Attributes values
+     * @param sessionId Session id token
+     * @return The Activity id
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "addActivity")
+    public long addActivity(
+        @WebParam(name ="parentId") long parentId, 
+        @WebParam(name ="parentClassName") String parentClassName, 
+        @WebParam(name ="className") String className, 
+        @WebParam(name ="attributeNames") String[] attributeNames, 
+        @WebParam(name ="attributeValues") String[][] attributeValues, 
+        @WebParam(name ="sessionId") String sessionId) throws ServerSideException {
+        
+        try {
+            return wsBean.addActivity(parentId, parentClassName, className, attributeNames, attributeValues, getIPAddress(), sessionId);
+        } catch (Exception ex) {
+            if (ex instanceof ServerSideException)
+                throw ex;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in addActivity: " + ex.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Deletes an Activity
+     * @param className Class name
+     * @param oid Object id
+     * @param releaseRelationships Release relationships
+     * @param sessionId Session id token
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "deleteActivity")
+    public void deleteActivity(
+        @WebParam(name ="className") String className, 
+        @WebParam(name ="oid") long oid, 
+        @WebParam(name ="releaseReltationships") boolean releaseRelationships, 
+        @WebParam(name ="sessionId") String sessionId) throws ServerSideException {
+        
+        try {        
+            wsBean.deleteActivity(className, oid, releaseRelationships, getIPAddress(), sessionId);
+        } catch (Exception ex) {
+            if (ex instanceof ServerSideException)
+                throw ex;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteActivity: " + ex.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+        
+    }
+    
+    /**
+     * Gets a set of projects from the projects root pool
+     * @param rootPoolId Project root pool id
+     * @param limit Max number of results, no limit with -1
+     * @param sessionId Session id token
+     * @return The list of projects 
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "getProjectsFromProjectsRootPool")
+    public RemoteObjectLight[] getProjectsFromProjectsRootPool(
+        @WebParam(name = "rootPoolId") long rootPoolId, 
+        @WebParam(name = "limit") int limit, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        
+        try {
+            return wsBean.getProjectsFromProjectsRootPool(rootPoolId, limit, getIPAddress(), sessionId);
+        } catch(Exception ex) {
+            if (ex instanceof ServerSideException)
+                throw ex;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getProjectFromProjectsRootPool: " + ex.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+        
+    /**
+     * Gets the resources (objects) associates with a Project
+     * @param projectClass Project class
+     * @param projectId Project id
+     * @param sessionId Session id
+     * @return An array of resources
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "getProjectResurces")
+    public RemoteObjectLight[] getProjectResurces(
+        @WebParam(name = "projectClass") String projectClass, 
+        @WebParam(name = "projectId") long projectId, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        
+        try {
+            return wsBean.getProjectResurces(projectClass, projectId, getIPAddress(), sessionId);
+           
+        } catch (Exception ex) {
+            if (ex instanceof ServerSideException)
+                throw ex;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getProjectResurces: " + ex.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }      
+    }
+    
+    /**
+     * Gets project activities
+     * @param projectClass Project class
+     * @param projectId Project Id
+     * @param sessionId Session Id
+     * @return An array of activities
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "getProjectActivities")
+    public RemoteObjectLight[] getProjectActivities(
+        @WebParam(name = "projectClass") String projectClass, 
+        @WebParam(name = "projectId") long projectId, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        
+        try {
+            return wsBean.getProjectActivities(projectClass, projectId, getIPAddress(), sessionId);
+            
+        } catch (Exception ex) {
+            if (ex instanceof ServerSideException)
+                throw ex;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getProjectActivities: " + ex.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }  
+    }
+    
+    /**
+     * Gets the project of a Project
+     * @param projectClass Project class
+     * @param projectId Project id
+     * @param sessionId Session id token
+     * @return List of projects
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "getProjectsFromProject")
+    public RemoteObjectLight[] getProjectsFromProject(
+        @WebParam(name = "projectClass") String projectClass, 
+        @WebParam(name = "projectId") long projectId, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        
+        try {
+            return wsBean.getProjectsFromProject(projectClass, projectId, getIPAddress(), sessionId);
+        } catch (Exception ex) {
+            if (ex instanceof ServerSideException)
+                throw ex;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getProjectsFromProject: " + ex.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+        
+    /**
+     * Associates a set of objects with a Project
+     * @param projectClass Project class
+     * @param projectId Project id
+     * @param objectClass Object class
+     * @param objectId Object id
+     * @param sessionId Session id token
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "associateObjectsToProject")
+    public void associateObjectsToProject(
+        @WebParam(name = "projectClass") String projectClass, 
+        @WebParam(name = "projectId") long projectId, 
+        @WebParam(name = "objectClass") String[] objectClass, 
+        @WebParam(name = "objectId") long[] objectId, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        
+        try {
+            wsBean.associateObjectsToProject(projectClass, projectId, objectClass, objectId, getIPAddress(), sessionId);
+        } catch (Exception ex) {
+            if (ex instanceof ServerSideException)
+                throw ex;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in associateObjectsToProject: " + ex.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        } 
+    }
+    
+    /**
+     * Associates an object to a Project
+     * @param projectClass Project class
+     * @param projectId Project id
+     * @param objectClass Object class
+     * @param objectId Object id
+     * @param sessionId Session id token
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "associateObjectToProject")
+    public void associateObjectToProject(
+        @WebParam(name = "projectClass") String projectClass, 
+        @WebParam(name = "projectId") long projectId, 
+        @WebParam(name = "objectClass") String objectClass, 
+        @WebParam(name = "objectId") long objectId, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        
+        try {
+            wsBean.associateObjectToProject(projectClass, projectId, objectClass, objectId, getIPAddress(), sessionId);
+            
+        } catch (Exception ex) {
+            if (ex instanceof ServerSideException)
+                throw ex;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in associateObjectToProject: " + ex.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        } 
+    }
+        
+    /**
+     * Releases an object associated to a Project
+     * @param objectClass Object class
+     * @param objectId Object id
+     * @param projectClass Project class
+     * @param projectId Project id
+     * @param sessionId Session id token
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     */    
+    @WebMethod(operationName = "freeObjectFromProject")
+    public void freeObjectFromProject(
+        @WebParam(name = "objectClass") String objectClass, 
+        @WebParam(name = "objectId") long objectId, 
+        @WebParam(name = "projectClass") String projectClass, 
+        @WebParam(name = "projectId") long projectId, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        
+        try {
+            wsBean.releaseObjectFromProject(objectClass, objectId, projectClass, projectId, getIPAddress(), sessionId);
+            
+        } catch (Exception ex) {
+            if (ex instanceof ServerSideException)
+                throw ex;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in releaseObjectFromProject: " + ex.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+        // </editor-fold>
     // </editor-fold>
         
     // <editor-fold defaultstate="collapsed" desc="Helpers. Click on the + sign on the left to edit the code.">/**

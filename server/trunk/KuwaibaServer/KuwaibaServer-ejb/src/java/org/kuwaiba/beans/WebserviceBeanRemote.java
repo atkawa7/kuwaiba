@@ -472,7 +472,21 @@ public interface WebserviceBeanRemote {
          public void relatePortToInterface(long portId, String portClassName, String interfaceClassName, long interfaceId, String ipAddress, String sessionId) throws ServerSideException;
          public void releasePortFromInterface(String interfaceClassName, long interfaceId ,long portId, String ipAddress, String sessionId) throws ServerSideException;
     // </editor-fold>
-    // </editor-fold>
+         
+        // <editor-fold defaultstate="collapsed" desc="Projects Module">
+        public RemotePool getProjectsRootPool(String className, String ipAddress, String sessionId) throws ServerSideException;
+        public long addProject(long parentId, String parentClassName, String className, String[] attributeNames, String[][] attributeValues, String ipAddress, String sessionId) throws ServerSideException;
+        public void deleteProject(String className, long oid, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
+        public long addActivity(long parentId, String parentClassName, String className, String attributeNames[], String attributeValues[][], String ipAddress, String sessionId) throws ServerSideException;
+        public void deleteActivity(String className, long oid, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
+        public RemoteObjectLight[] getProjectsFromProjectsRootPool(long rootPoolId, int limit, String ipAddress, String sessionId) throws ServerSideException;
+        public RemoteObjectLight[] getProjectResurces(String projectClass, long projectId, String ipAddress, String sessionId) throws ServerSideException;
+        public RemoteObjectLight[] getProjectActivities(String projectClass, long projectId, String ipAddress, String sessionId) throws ServerSideException;
+        public RemoteObjectLight[] getProjectsFromProject(String projectClass, long projectId, String ipAddress, String sessionId) throws ServerSideException;
+        public void associateObjectsToProject(String projectClass, long projectId, String[] objectClass, long[] objectId, String ipAddress, String sessionId) throws ServerSideException;
+        public void associateObjectToProject(String projectClass, long projectId, String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;
+        public void releaseObjectFromProject(String objectClass, long objectId, String projectClass, long projectId, String ipAddress, String sessionId) throws ServerSideException;
+        // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Help methods. Click on the + sign on the left to edit the code.">
     public boolean isSubclassOf(String className, String subclassOf, String remoteAddress, String sessionId);
