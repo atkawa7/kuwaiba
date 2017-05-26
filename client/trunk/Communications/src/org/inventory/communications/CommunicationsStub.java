@@ -111,7 +111,7 @@ public class CommunicationsStub {
                                                                     "STM1", "STM4", "STM16", "STM64", "STM256",
                                                                     "WireContainer", "WirelessContainer",
                                                                     "CorporateCustomer", "TelecomOperator", "Provider", "HomeCustomer",
-                                                                    "IPAddress", "Subnet" };
+                                                                    "IPAddress", "Subnet", "Project", "Activity" };
     
     private CommunicationsStub() {
         cache = Cache.getInstace();
@@ -3521,6 +3521,228 @@ public class CommunicationsStub {
     
     
         // </editor-fold>
+    
+        // <editor-fold defaultstate="collapsed" desc="Projects Module">
+    /**
+     * Gets the projects root pool
+     * @param className Class name
+     * @return The Projects root pool
+     */
+    public LocalPool getProjectsRootPool(String className) {
+        try {
+            RemotePool rootPool = service.getProjectsRootPool(className, session.getSessionId());
+            
+            return new LocalPool(rootPool.getId(), rootPool.getName(), rootPool.getClassName(), rootPool.getDescription(), rootPool.getType());
+        } catch (Exception ex) {
+            error = ex.getMessage();
+            return null;
+        }
+    }
+        
+    /**
+     * Adds a remoteProject
+     * @param parentId Project parent id
+     * @param parentClassName Project parent class name
+     * @param className Project class name
+     * @return The new remoteProject
+     */
+    public LocalObjectLight addProject(long parentId, String parentClassName, String className) {
+        try {
+            long objectId = service.addProject(parentId, parentClassName, className, new ArrayList<String>(),new ArrayList<StringArray>(), session.getSessionId());
+            return new LocalObjectLight(objectId, null, className);
+        } catch (Exception ex) { 
+            error = ex.getMessage(); 
+            return null;
+        }
+    }
+    
+    /**
+     * Deletes a Project
+     * @param projectClass Project class
+     * @param projectId Project id
+     * @return If the remoteProject was deleted
+     */
+    public boolean deleteProject(String projectClass, long projectId) {
+        try {
+            service.deleteProject(projectClass, projectId, false, session.getSessionId());
+            return true;
+        } catch (Exception ex) {
+            error = ex.getMessage();
+            return false;
+        }
+    }
+        
+    /**
+     * Adds an activity
+     * @param projectId Project Id
+     * @param projectClass Project class
+     * @param activityClass Activity class name
+     * @return A new activity
+     */
+    public LocalObjectLight addActivity(long projectId, String projectClass, String activityClass) {
+        try {
+            long activityId = service.addActivity(projectId, projectClass, activityClass, new ArrayList<String>(), new ArrayList<StringArray>(), session.getSessionId());
+            return new LocalObjectLight(activityId, null, activityClass);
+        } catch (Exception ex) {
+            error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Deletes an remoteActivity
+     * @param activityClass Activity Class
+     * @param activityId Activity id
+     * @return True if the remoteActivity was successfully deleted
+     */
+    public boolean deleteActivity(String activityClass, long activityId) {
+        try {
+            service.deleteActivity(activityClass, activityId, false, session.getSessionId());
+            return true;
+            
+        } catch (Exception ex) {
+            error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Gets the projects from projects root pool
+     * @param rootPoolId
+     * @param limit
+     * @return The list of projects
+     */
+    public List<LocalObjectLight> getProjectsFromProjectsRootPool(long rootPoolId, int limit) {
+        try {
+            List<LocalObjectLight> projects = new ArrayList();
+            
+            for (RemoteObjectLight remoteProject : service.getProjectsFromProjectsRootPool(rootPoolId, limit, session.getSessionId()))
+                projects.add(new LocalObjectLight(remoteProject.getOid(), remoteProject.getName(), remoteProject.getClassName()));
+            
+            return projects;
+            
+        } catch (Exception ex) {
+            error = ex.getMessage();
+            return null;
+        }
+    }
+        
+    /**
+     * Gets the objects (resources) associated with a remoteProject
+     * @param projectClass
+     * @param projectId
+     * @return The list of resources
+     */
+    public List<LocalObjectLight> getProjectResources(String projectClass, long projectId) {
+        try {
+            List<LocalObjectLight> resources = new ArrayList<>();
+            
+            for (RemoteObjectLight remoteResource : service.getProjectResurces(projectClass, projectId, session.getSessionId()))
+                resources.add(new LocalObjectLight(remoteResource.getOid(), remoteResource.getName(), remoteResource.getClassName()));
+            
+            return resources;
+            
+        } catch (Exception ex) {
+            error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Gets the activities of an remoteProject
+     * @param projectClass Project class
+     * @param projectId Project id
+     * @return The list of activities
+     */
+    public List<LocalObjectLight> getProjectActivities(String projectClass, long projectId) {
+        try {
+            List<LocalObjectLight> activities = new ArrayList<>();
+            
+            for (RemoteObjectLight remoteActivity : service.getProjectActivities(projectClass, projectId, session.getSessionId()))
+                activities.add(new LocalObjectLight(remoteActivity.getOid(), remoteActivity.getName(), remoteActivity.getClassName()));
+            
+            return activities;
+        } catch (Exception ex) {
+            error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Gets projects from a Project
+     * @param projectClass Project class
+     * @param projectId Project id
+     * @return The list of projects
+     */
+    public List<LocalObjectLight> getProjectsFromProject(String projectClass, long projectId) {
+        try {
+            List<LocalObjectLight> projects = new ArrayList();
+            
+            for (RemoteObjectLight remoteProject : service.getProjectsFromProject(projectClass, projectId, session.getSessionId()))
+                projects.add(new LocalObjectLight(remoteProject.getOid(), remoteProject.getName(), remoteProject.getClassName()));
+            
+            return projects;
+        } catch (Exception ex) {
+            error = ex.getMessage();
+            return null;
+        }
+    }
+        
+    /**
+     * Associates a set of object with a remoteProject
+     * @param projectClass Project class
+     * @param projectId Project id
+     * @param objectClass The list of object classes
+     * @param objectId The list of object ids
+     * @return True if the objects was associated successfully
+     */
+    public boolean associateObjectsToProject(String projectClass, long projectId, List<String> objectClass, List<Long> objectId) {
+        try {
+            service.associateObjectsToProject(projectClass, projectId, objectClass, objectId, session.getSessionId());
+            return true;
+        } catch (Exception ex) {
+            error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Associates an object with a remoteProject
+     * @param projectClass Project class
+     * @param projectId Project id
+     * @param objectClass Object class
+     * @param objectId Object id
+     * @return True if the object was associated successfully
+     */
+    public boolean associateObjectToProject(String projectClass, long projectId, String objectClass, long objectId) {
+        try {
+            service.associateObjectToProject(projectClass, projectId, objectClass, objectId, session.getSessionId());
+            return true;
+        } catch (Exception ex) {
+            error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Releases an object from a Project
+     * @param objectClass Object class
+     * @param objectId Object id
+     * @param projectClass Project class
+     * @param projectId Project id
+     * @return True if the object was released successfully
+     */
+    public boolean releaseObjectFromProject(String objectClass, long objectId, String projectClass, long projectId) {
+        try {
+            service.freeObjectFromProject(objectClass, objectId, projectClass, projectId, session.getSessionId());
+            return true;
+        } catch (Exception ex) {
+            error = ex.getMessage();
+            return false;
+        }
+    }
+        // </editor-fold>
+    
     // </editor-fold>
     
     // <editor-fold desc="Helper Methods" defaultstate="collapsed">

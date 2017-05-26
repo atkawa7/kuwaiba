@@ -58,7 +58,7 @@ public class CreateContractAction extends GenericInventoryAction implements Pres
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else {       
             ((ContractPoolNode.ContractPoolChildren)selectedNode.getChildren()).addNotify();
-            NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Contract created sucessfully");
+            NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Contract created successfully");
         }
     }    
 

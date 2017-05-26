@@ -149,6 +149,17 @@ public class Constants {
      * Name for class GenericContract
      */
     public static final String CLASS_GENERICCONTRACT = "GenericContract";
+    
+    /**
+     * Name for class GenericProject
+     */
+    public static final String CLASS_GENERICPROJECT = "GenericProject";
+    
+    /**
+     * Name for class GenericActivity
+     */
+    public static final String CLASS_GENERICACTIVITY = "GenericActivity";
+    
     /**
      * Not an actual class, but yet used by the service manager to identify a pool mapped to a LocalObjectLight
      */
@@ -197,6 +208,10 @@ public class Constants {
      * Many to Many relationship (such as accountable persons for a given equipment)
      */
     public static final int MAPPING_MANYTOMANY = 6;
+    /**
+     * This relationship is used to relate an Object with a Project
+     */
+    public static final String RELATIONSHIP_PROJECTSPROJECTHAS = "projectsProjectHas";
     /**
      * This relationship is used to relate a GenericPort with an IP address 
      */

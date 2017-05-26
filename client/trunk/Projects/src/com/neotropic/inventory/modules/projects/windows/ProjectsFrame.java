@@ -1,4 +1,4 @@
-/*
+/**
  *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
@@ -11,10 +11,10 @@
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
- * 
  */
-package org.inventory.navigation.bookmarks.windows;
+package com.neotropic.inventory.modules.projects.windows;
 
+import com.neotropic.inventory.modules.projects.ProjectsModuleService;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -36,34 +36,35 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalBookmarkFolder;
 import org.inventory.communications.core.LocalObjectLight;
 
 /**
- * Frame for choose a Bookmark folder
+ * Frame to choose a Project type
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ChooseBookmarkFolderFrame extends JFrame {
+public class ProjectsFrame extends JFrame {    
     private JTextField txtField;
     private JScrollPane pnlScrollMain;
-    private JList lstAviableBookmarkFolders;
+    private JList lstAviableProjects;
     private final List<LocalObjectLight> selectedObjects;
-    private final List<LocalBookmarkFolder> bookmarkFolders;
+    private final List<LocalObjectLight> projects;
     
-    public ChooseBookmarkFolderFrame(List<LocalObjectLight> selectedObjects, List<LocalBookmarkFolder> bookmarkFolders) {
+    public ProjectsFrame(List<LocalObjectLight> selectedObjects, List<LocalObjectLight> projects) {
         this.selectedObjects = selectedObjects;
-        this.bookmarkFolders = bookmarkFolders;       
+        this.projects = projects;
+        
         setLayout(new BorderLayout());
-        setTitle(java.util.ResourceBundle.getBundle("org/inventory/navigation/bookmarks/Bundle").getString("LBL_TITLE_AVAILABLE_BOOKMARKS"));
+        setTitle(ProjectsModuleService.bundle.getString("LBL_TITLE_AVAILABLE_PROJECTS"));
         setSize(400, 650);
         setLocationRelativeTo(null);
-        JLabel lblInstructions = new JLabel(java.util.ResourceBundle.getBundle("org/inventory/navigation/bookmarks/Bundle").getString("LBL_INSTRUCTIONS_SELECT_BOOKMARK"));
+        JLabel lblInstructions = new JLabel(ProjectsModuleService.bundle.getString("LBL_INSTRUCTIONS_SELECT_PROJECTS"));
         lblInstructions.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         
         JPanel pnlSearch = new JPanel();
         pnlSearch.setLayout(new GridLayout(1, 2));
-        lstAviableBookmarkFolders = new JList<>(bookmarkFolders.toArray(new LocalBookmarkFolder[0]));
-        lstAviableBookmarkFolders.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        
+        lstAviableProjects = new JList<>(projects.toArray(new LocalObjectLight[0]));
+        lstAviableProjects.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         pnlScrollMain = new JScrollPane();
         txtField = new JTextField();
         txtField.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 2));
@@ -72,17 +73,17 @@ public class ChooseBookmarkFolderFrame extends JFrame {
 
             @Override
             public void insertUpdate(DocumentEvent e) {
-                bookmarkFoldersFilter(txtField.getText());
+                projectsFilter(txtField.getText());
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                bookmarkFoldersFilter(txtField.getText());
+                projectsFilter(txtField.getText());
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                bookmarkFoldersFilter(txtField.getText());
+                projectsFilter(txtField.getText());
             }
         });
         
@@ -90,14 +91,14 @@ public class ChooseBookmarkFolderFrame extends JFrame {
         pnlSearch.add(txtField);
         add(pnlSearch, BorderLayout.NORTH);
         
-        pnlScrollMain.setViewportView(lstAviableBookmarkFolders);
-        add(lstAviableBookmarkFolders, BorderLayout.CENTER);
+        pnlScrollMain.setViewportView(lstAviableProjects);
+        add(lstAviableProjects, BorderLayout.CENTER);
         
         JPanel pnlButtons = new JPanel();
         pnlButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
         JButton btnRelate = new JButton("Create Relationship");
         pnlButtons.add(btnRelate);
-        btnRelate.addActionListener(new BtnAddToBookmarkFolderActionListener());
+        btnRelate.addActionListener(new BtnAddToProjectActionListener());
         JButton btnClose = new JButton("Close");
         btnClose.addActionListener(new ActionListener() {
 
@@ -108,46 +109,44 @@ public class ChooseBookmarkFolderFrame extends JFrame {
         });
         pnlButtons.add(btnClose);
         add(pnlButtons, BorderLayout.SOUTH);
+                                
     }
     
-    private class BtnAddToBookmarkFolderActionListener implements ActionListener {
+    private class BtnAddToProjectActionListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (lstAviableBookmarkFolders.getSelectedValue() == null)
-                JOptionPane.showMessageDialog(null, "Select a Bookmark folder from the list");
+            if (lstAviableProjects.getSelectedValue() == null)
+                JOptionPane.showMessageDialog(null, "Select a project from the list");
             else {
-                List<String> objectsClassName = new ArrayList();
-                List<Long> objectsId = new ArrayList();
                 
                 for (LocalObjectLight selectedObject : selectedObjects) {
-                    objectsClassName.add(selectedObject.getClassName());
-                    objectsId.add(selectedObject.getOid());
                     
-                    if (CommunicationsStub.getInstance()
-                        .addObjectsToBookmarkFolder(objectsClassName, objectsId, ((LocalBookmarkFolder) lstAviableBookmarkFolders.getSelectedValue()).getId())) {
+                    long objId = selectedObject.getOid();
+                    String objClassName = selectedObject.getClassName();
+                    long projectId = ((LocalObjectLight) lstAviableProjects.getSelectedValue()).getOid();
+                    String projectClass = ((LocalObjectLight) lstAviableProjects.getSelectedValue()).getClassName();
+                    
+                    if (CommunicationsStub.getInstance().associateObjectToProject(projectClass, projectId, objClassName, objId)) {
                         
-                        
-                        JOptionPane.showMessageDialog(null, String.format("%s added to Bookmark folder %s", selectedObject, lstAviableBookmarkFolders.getSelectedValue()));
+                        JOptionPane.showMessageDialog(null, String.format("%s added to project %s", selectedObject, lstAviableProjects.getSelectedValue()));
                         dispose();
                     } else {
                         JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError(), 
                             "Error", JOptionPane.ERROR_MESSAGE);
                     }
-                    
-                    objectsClassName.clear();
-                    objectsId.clear();
                 }
             }
         }
     }
     
-    public void bookmarkFoldersFilter(String text) {
-        List<LocalBookmarkFolder> filteredBookmarkFolders = new ArrayList();
-        for (LocalBookmarkFolder bookmarkFolder : bookmarkFolders) {
-            if (bookmarkFolder.getName().toLowerCase().contains(text.toLowerCase()))
-                filteredBookmarkFolders.add(bookmarkFolder);
+    
+    public void projectsFilter(String text) {
+        List<LocalObjectLight> filteredProjects = new ArrayList();
+        for (LocalObjectLight project : projects) {
+            if (project.getName().toLowerCase().contains(text.toLowerCase()))
+                filteredProjects.add(project);
         }
-        lstAviableBookmarkFolders.setListData(filteredBookmarkFolders.toArray(new LocalBookmarkFolder[0]));
+        lstAviableProjects.setListData(filteredProjects.toArray(new LocalObjectLight[0]));
     }
 }

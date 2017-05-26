@@ -72,7 +72,6 @@ public final class BookmarkModuleTopComponent extends TopComponent implements
         initCustomComponents();
         setName(Bundle.CTL_BookmarkModuleTopComponent());
         setToolTipText(Bundle.HINT_BookmarkModuleTopComponent());
-
     }
     
     public void initCustomComponents() {
