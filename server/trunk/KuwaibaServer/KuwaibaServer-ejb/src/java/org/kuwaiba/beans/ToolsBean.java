@@ -34,6 +34,7 @@ import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
+import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.exceptions.ServerSideException;
@@ -196,7 +197,7 @@ public class ToolsBean implements ToolsBeanRemote {
                         
                         aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
                                 new ChangeDescriptor("reports", "", "", "Hard-coded reports migrated"));
-
+                        
                     } catch (MetadataObjectNotFoundException | ApplicationObjectNotFoundException ex) {
                         results[i] = ex.getMessage();
                     }
@@ -228,84 +229,184 @@ public class ToolsBean implements ToolsBeanRemote {
                 break;
                 case "4": // Update data model: This action add the abstract classes GenericProject, GenericActivity and some project and activities subclasses for the Projects Module.
                     try {
-                        ClassMetadata cmGenericProyect = new ClassMetadata();
-
-                        cmGenericProyect.setName("GenericProject");
-                        cmGenericProyect.setDisplayName("");
-                        cmGenericProyect.setDescription("");
-                        cmGenericProyect.setParentClassName("AdministrativeItem");
-                        cmGenericProyect.setAbstract(true);
-                        cmGenericProyect.setColor(0);
-                        cmGenericProyect.setCountable(true);
-                        cmGenericProyect.setCreationDate(Calendar.getInstance().getTimeInMillis());
-                        cmGenericProyect.setIcon(null);
-                        cmGenericProyect.setSmallIcon(null);
-                        cmGenericProyect.setCustom(true);
-                        cmGenericProyect.setViewable(true);
-                        cmGenericProyect.setInDesign(false);
+                        ClassMetadata cm = new ClassMetadata();
+                        cm.setName("GenericProject");
+                        cm.setDisplayName("");
+                        cm.setDescription("");
+                        cm.setParentClassName("AdministrativeItem");
+                        cm.setAbstract(true);
+                        cm.setColor(0);
+                        cm.setCountable(true);
+                        cm.setCreationDate(Calendar.getInstance().getTimeInMillis());
+                        cm.setIcon(null);
+                        cm.setSmallIcon(null);
+                        cm.setCustom(true);
+                        cm.setViewable(true);
+                        cm.setInDesign(false);
                         
-                        mem.createClass(cmGenericProyect);
+                        long genericProjectId = mem.createClass(cm);
+                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
+                                new ChangeDescriptor("DataBase", "", "", "Add GenericProject Class"));
                         
-                        ClassMetadata cmGenericActivity = new ClassMetadata();
-
-                        cmGenericActivity.setName("GenericActivity");
-                        cmGenericActivity.setDisplayName("");
-                        cmGenericActivity.setDescription("");
-                        cmGenericActivity.setParentClassName("AdministrativeItem");
-                        cmGenericActivity.setAbstract(true);
-                        cmGenericActivity.setColor(0);
-                        cmGenericActivity.setCountable(true);
-                        cmGenericActivity.setCreationDate(Calendar.getInstance().getTimeInMillis());
-                        cmGenericActivity.setIcon(null);
-                        cmGenericActivity.setSmallIcon(null);
-                        cmGenericActivity.setCustom(true);
-                        cmGenericActivity.setViewable(true);
-                        cmGenericActivity.setInDesign(false);
+                        AttributeMetadata attributeMetadata = new AttributeMetadata();
+                        attributeMetadata.setName("notes");
+                        attributeMetadata.setDisplayName("notes");
+                        attributeMetadata.setDescription("");
+                        attributeMetadata.setReadOnly(false);
+                        attributeMetadata.setType("String");
+                        attributeMetadata.setUnique(false);
+                        attributeMetadata.setVisible(true);
+                        attributeMetadata.setNoCopy(false);                        
+                        mem.createAttribute(genericProjectId, attributeMetadata);
                         
-                        mem.createClass(cmGenericActivity);
+                        attributeMetadata.setName("manager");
+                        attributeMetadata.setDisplayName("manager");
+                        attributeMetadata.setType("String");
+                        mem.createAttribute(genericProjectId, attributeMetadata);
                         
-                        ClassMetadata cmGeneralPurposeActivity = new ClassMetadata();
-
-                        cmGeneralPurposeActivity.setName("GeneralPurposeActivity");
-                        cmGeneralPurposeActivity.setDisplayName("");
-                        cmGeneralPurposeActivity.setDescription("");
-                        cmGeneralPurposeActivity.setParentClassName("GenericActivity");
-                        cmGeneralPurposeActivity.setAbstract(false);
-                        cmGeneralPurposeActivity.setColor(0);
-                        cmGeneralPurposeActivity.setCountable(true);
-                        cmGeneralPurposeActivity.setCreationDate(Calendar.getInstance().getTimeInMillis());
-                        cmGeneralPurposeActivity.setIcon(null);
-                        cmGeneralPurposeActivity.setSmallIcon(null);
-                        cmGeneralPurposeActivity.setCustom(true);
-                        cmGeneralPurposeActivity.setViewable(true);
-                        cmGeneralPurposeActivity.setInDesign(false);
+                        attributeMetadata.setName("startDate");
+                        attributeMetadata.setDisplayName("startDate");
+                        attributeMetadata.setType("Date");
+                        mem.createAttribute(genericProjectId, attributeMetadata);
                         
-                        mem.createClass(cmGeneralPurposeActivity);
+                        attributeMetadata.setName("status");
+                        attributeMetadata.setDisplayName("status");
+                        attributeMetadata.setType("String");
+                        mem.createAttribute(genericProjectId, attributeMetadata);
                         
-                        ClassMetadata cmGeneralPurposeProject = new ClassMetadata();
-
-                        cmGeneralPurposeProject.setName("GeneralPurposeProject");
-                        cmGeneralPurposeProject.setDisplayName("");
-                        cmGeneralPurposeProject.setDescription("");
-                        cmGeneralPurposeProject.setParentClassName("GenericProject");
-                        cmGeneralPurposeProject.setAbstract(false);
-                        cmGeneralPurposeProject.setColor(0);
-                        cmGeneralPurposeProject.setCountable(true);
-                        cmGeneralPurposeProject.setCreationDate(Calendar.getInstance().getTimeInMillis());
-                        cmGeneralPurposeProject.setIcon(null);
-                        cmGeneralPurposeProject.setSmallIcon(null);
-                        cmGeneralPurposeProject.setCustom(true);
-                        cmGeneralPurposeProject.setViewable(true);
-                        cmGeneralPurposeProject.setInDesign(false);
+                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
+                                new ChangeDescriptor("Add attributes", "", "", "Add attributes GenericProject Class"));
                         
-                        mem.createClass(cmGeneralPurposeProject);
+                        cm.setName("GenericActivity");
+                        cm.setParentClassName("AdministrativeItem");
+                        cm.setAbstract(true);
+                        long genericActivityId = mem.createClass(cm);
+                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
+                                new ChangeDescriptor("DataBase", "", "", "Add GenericActivity Class"));
+                        
+                        cm.setName("ActivityType");
+                        cm.setParentClassName("GenericType");
+                        cm.setAbstract(false);
+                        mem.createClass(cm);
+                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
+                                new ChangeDescriptor("DataBase", "", "", "Add ActivityType Class"));
+                        
+                        attributeMetadata.setName("notes");
+                        attributeMetadata.setDisplayName("notes");
+                        attributeMetadata.setType("String");
+                        mem.createAttribute(genericActivityId, attributeMetadata);
+                        
+                        attributeMetadata.setName("startDate");
+                        attributeMetadata.setDisplayName("startDate");
+                        attributeMetadata.setType("Date");
+                        mem.createAttribute(genericActivityId, attributeMetadata);
+                        
+                        attributeMetadata.setName("endDate");
+                        attributeMetadata.setDisplayName("endDate");
+                        attributeMetadata.setType("Date");
+                        mem.createAttribute(genericActivityId, attributeMetadata);
+                        
+                        attributeMetadata.setName("lastUpdate");
+                        attributeMetadata.setDisplayName("lastUpdate");
+                        attributeMetadata.setType("Date");
+                        mem.createAttribute(genericActivityId, attributeMetadata);
+                        
+                        attributeMetadata.setName("status");
+                        attributeMetadata.setDisplayName("status");
+                        attributeMetadata.setType("Boolean");
+                        mem.createAttribute(genericActivityId, attributeMetadata);
+                        
+                        attributeMetadata.setName("duration");
+                        attributeMetadata.setDisplayName("duration");
+                        attributeMetadata.setType("Integer");
+                        mem.createAttribute(genericActivityId, attributeMetadata);
+                        
+                        attributeMetadata.setName("cost");
+                        attributeMetadata.setDisplayName("cost");
+                        attributeMetadata.setType("Float");
+                        mem.createAttribute(genericActivityId, attributeMetadata);
+                        
+                        attributeMetadata.setName("manager");
+                        attributeMetadata.setDisplayName("manager");
+                        attributeMetadata.setType("String");
+                        mem.createAttribute(genericActivityId, attributeMetadata);
+                        
+                        attributeMetadata.setName("risk");
+                        attributeMetadata.setDisplayName("risk");
+                        attributeMetadata.setType("Integer");
+                        mem.createAttribute(genericActivityId, attributeMetadata);
+                        
+                        attributeMetadata.setName("activityType");
+                        attributeMetadata.setDisplayName("activityType");
+                        attributeMetadata.setType("ActivityType");
+                        mem.createAttribute(genericActivityId, attributeMetadata);
+                        
+                        attributeMetadata.setName("sequecing");
+                        attributeMetadata.setDisplayName("sequecing");
+                        attributeMetadata.setType("ActivityType");
+                        mem.createAttribute(genericActivityId, attributeMetadata);
+                        
+                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
+                                new ChangeDescriptor("Add attributes", "", "", "Add attributes GenericActivity Class"));
+                        
+                        cm.setName("GeneralPurposeActivity");
+                        cm.setParentClassName("GenericActivity");
+                        cm.setAbstract(false);
+                        mem.createClass(cm);
+                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
+                                new ChangeDescriptor("DataBase", "", "", "Add GeneralPurposeActivity Class"));
+                        
+                        cm.setName("PlanningActivity");
+                        cm.setParentClassName("GenericActivity");
+                        cm.setAbstract(false);
+                        mem.createClass(cm);
+                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
+                                new ChangeDescriptor("DataBase", "", "", "Add PlanningActivity Class"));
+                        
+                        cm.setName("RollOutActivity");
+                        cm.setParentClassName("GenericActivity");
+                        cm.setAbstract(false);
+                        mem.createClass(cm);
+                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
+                                new ChangeDescriptor("DataBase", "", "", "Add RollOutActivity Class"));
+                        
+                        cm.setName("DesignActivity");
+                        cm.setParentClassName("GenericActivity");
+                        cm.setAbstract(false);
+                        mem.createClass(cm);
+                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
+                                new ChangeDescriptor("DataBase", "", "", "Add DesignActivity Class"));
+                        
+                        cm.setName("AuditActivity");
+                        cm.setParentClassName("GenericActivity");
+                        cm.setAbstract(false);
+                        mem.createClass(cm);
+                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
+                                new ChangeDescriptor("DataBase", "", "", "Add AuditActivity Class"));
+                        
+                        cm.setName("GeneralPurposeProject");
+                        cm.setParentClassName("GenericProject");
+                        cm.setAbstract(false);
+                        mem.createClass(cm);
+                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
+                                new ChangeDescriptor("DataBase", "", "", "Add GeneralPurposeProject Class"));
+                        
+                        cm.setName("NetworkProject");
+                        cm.setParentClassName("GenericProject");
+                        cm.setAbstract(false);
+                        mem.createClass(cm);
+                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
+                                new ChangeDescriptor("DataBase", "", "", "Add NetworkProject Class"));
+                        
                     } catch (DatabaseException ex) {
                         Logger.getLogger(ToolsBean.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (MetadataObjectNotFoundException ex) {
                         Logger.getLogger(ToolsBean.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (InvalidArgumentException ex) {
                         Logger.getLogger(ToolsBean.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                    } catch (ApplicationObjectNotFoundException ex) {
+                Logger.getLogger(ToolsBean.class.getName()).log(Level.SEVERE, null, ex);
+            }
                 break;
                 default:
                     results[i] = String.format("Invalid patch id %s", i);

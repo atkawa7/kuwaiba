@@ -3238,7 +3238,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             
             for (long objId : objectId) {
                 aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
-                    ActivityLogEntry.ACTIVITY_TYPE_RELATE_INVENTORY_OBJECT, 
+                    ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
                     String.format("Relate object with id %s to project with id %s", objId, projectId));
             }
         } catch (InventoryException ex) {
@@ -3258,7 +3258,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             projectsModule.associateObjectToProject(projectClass, projectId, objectClass, objectId);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
-                ActivityLogEntry.ACTIVITY_TYPE_RELATE_INVENTORY_OBJECT, 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
                 String.format("Relate object with id %s to project with id %s", objectId, projectId));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -3277,7 +3277,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             projectsModule.releaseObjectFromProject(objectClass, objectId, projectClass, projectId);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
-                ActivityLogEntry.ACTIVITY_TYPE_RELEASE_INVENTORY_OBJECT, 
+                ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
                 String.format("Release object with id %s from project with id %s", objectId, projectId));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
