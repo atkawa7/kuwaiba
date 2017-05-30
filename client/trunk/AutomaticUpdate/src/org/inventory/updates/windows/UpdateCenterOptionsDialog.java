@@ -99,7 +99,7 @@ public class UpdateCenterOptionsDialog extends JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        btnOk = new javax.swing.JButton();
+        btnOK = new javax.swing.JButton();
         btnCancel = new javax.swing.JButton();
         txtUpdateCenterUrl = new javax.swing.JTextField();
         lblUpdateCenter = new javax.swing.JLabel();
@@ -112,10 +112,10 @@ public class UpdateCenterOptionsDialog extends JDialog {
         setModal(true);
         setName("UCOptionsDialog"); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(btnOk, org.openide.util.NbBundle.getMessage(UpdateCenterOptionsDialog.class, "UpdateCenterOptionsDialog.btnOk.text")); // NOI18N
-        btnOk.addMouseListener(new java.awt.event.MouseAdapter() {
+        org.openide.awt.Mnemonics.setLocalizedText(btnOK, org.openide.util.NbBundle.getMessage(UpdateCenterOptionsDialog.class, "UpdateCenterOptionsDialog.btnOK.text")); // NOI18N
+        btnOK.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnOkMouseClicked(evt);
+                btnOKMouseClicked(evt);
             }
         });
 
@@ -150,7 +150,7 @@ public class UpdateCenterOptionsDialog extends JDialog {
                     .addComponent(separator)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnOk)
+                        .addComponent(btnOK)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnCancel))
                     .addGroup(layout.createSequentialGroup()
@@ -178,7 +178,7 @@ public class UpdateCenterOptionsDialog extends JDialog {
                 .addComponent(ckbWarning)
                 .addGap(14, 14, 14)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnOk)
+                    .addComponent(btnOK)
                     .addComponent(btnCancel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -188,7 +188,7 @@ public class UpdateCenterOptionsDialog extends JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnOkMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnOkMouseClicked
+    private void btnOKMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnOKMouseClicked
         if (updateUnitProvider != null) {
             String newUpdateCenterURL = txtUpdateCenterUrl.getText();
             
@@ -204,14 +204,16 @@ public class UpdateCenterOptionsDialog extends JDialog {
                         lblError.setText(String.format("The URL specified %s is not an update center", newUpdateCenterURL));
                         lblError.setVisible(true);
                     } else {
-                        
                         setVisible(false);
                         Installer.runUpdate();
                     }
                 } catch (IOException ex) {
-                    
-                    lblError.setText("Update Center could not be reached, please contact your administrator");
-                    lblError.setVisible(true);
+                    if (oldURL.equals(newUpdateCenterURL)) {
+                        setVisible(false);
+                    } else {
+                        lblError.setText("Update Center could not be reached, please contact your administrator");
+                        lblError.setVisible(true);
+                    }
                 }
             } catch (MalformedURLException ex) {
                 
@@ -220,7 +222,7 @@ public class UpdateCenterOptionsDialog extends JDialog {
             }
         }
         preferences.putBoolean(PREFERENCE_KEY_UC_WARNINGS, ckbWarning.isSelected());
-    }//GEN-LAST:event_btnOkMouseClicked
+    }//GEN-LAST:event_btnOKMouseClicked
 
     private void btnCancelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCancelMouseClicked
         setVisible(false);
@@ -228,7 +230,7 @@ public class UpdateCenterOptionsDialog extends JDialog {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
-    private javax.swing.JButton btnOk;
+    private javax.swing.JButton btnOK;
     private javax.swing.JCheckBox ckbWarning;
     private javax.swing.JLabel lblError;
     private javax.swing.JLabel lblUpdateCenter;

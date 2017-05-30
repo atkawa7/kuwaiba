@@ -42,14 +42,10 @@ public class ProjectNode extends ObjectNode {
         return new Action[] { 
             AddProjectAction.getInstance(), 
             AddActivityAction.getInstance(), 
-            DeleteProjectAction.getIntance() };// TODO: actions
+            null, 
+            DeleteProjectAction.getIntance() };
     }
-    /*
-    @Override
-    protected Sheet createSheet(){
-        return null; // TODO: property
-    }
-    */
+    
     @Override
     public Image getIcon(int i) {
         return defaultIcon;

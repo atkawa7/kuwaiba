@@ -17,51 +17,49 @@ package com.neotropic.inventory.modules.projects;
 
 import com.neotropic.inventory.modules.projects.nodes.ProjectRootNode;
 import org.inventory.core.services.api.behaviors.Refreshable;
-import org.netbeans.api.settings.ConvertAsProperties;
-import org.openide.awt.ActionID;
-import org.openide.awt.ActionReference;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
 import org.openide.nodes.Node;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
+import org.openide.windows.Mode;
+import org.openide.windows.WindowManager;
 
 /**
  * Top component for the Projects Module
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-@ConvertAsProperties(
-        dtd = "-//com.neotropic.inventory.modules.projects//ProjectsModule//EN",
-        autostore = false
-)
 @TopComponent.Description(
-        preferredID = "ProjectsModuleTopComponent",
-        iconBase="com/neotropic/inventory/modules/projects/res/icon.png", 
+        preferredID = "ProjectsModuleTopComponent", 
         persistenceType = TopComponent.PERSISTENCE_NEVER
 )
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
-@ActionID(category = "Window", id = "com.neotropic.inventory.modules.projects.ProjectsModuleTopComponent")
-@ActionReference(path = "Menu/Tools/Advanced" /*, position = 333 */)
-@TopComponent.OpenActionRegistration(
-        displayName = "#CTL_ProjectsModuleAction",
-        preferredID = "ProjectsModuleTopComponent"
-)
 @Messages({
-    "CTL_ProjectsModuleAction=Projects",
     "CTL_ProjectsModuleTopComponent=Projects",
     "HINT_ProjectsModuleTopComponent=Projects"
 })
 public final class ProjectsModuleTopComponent extends TopComponent implements ExplorerManager.Provider, Refreshable {
+    private static ProjectsModuleTopComponent instance;
+    
     private final ExplorerManager em = new ExplorerManager();
     private BeanTreeView treeView;
     private ProjectsModuleService service;
 
-    public ProjectsModuleTopComponent() {
+    private ProjectsModuleTopComponent() {
         initComponents();
         setName(Bundle.CTL_ProjectsModuleTopComponent());
         setToolTipText(Bundle.HINT_ProjectsModuleTopComponent());
         initCustomComponents();
+    }
+    
+    public static ProjectsModuleTopComponent getInstance() {
+        if (instance == null) {
+            instance = new ProjectsModuleTopComponent();
+            Mode navigator = WindowManager.getDefault().findMode("explorer");
+            navigator.dockInto(instance);
+        }
+        return instance;
     }
     
     public void initCustomComponents() {

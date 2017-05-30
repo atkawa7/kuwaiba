@@ -44,7 +44,6 @@ public class ProjectRootChildren extends AbstractChildren {
             Collections.sort(projects);
             setKeys(projects);
         }
-        // TODO: set nodes
     }
     
     @Override
@@ -56,30 +55,4 @@ public class ProjectRootChildren extends AbstractChildren {
     protected Node[] createNodes(LocalObjectLight key) {
         return new Node[] {new ProjectNode(key)};
     }
-    /*
-        @Override
-        public void addNotify() {
-            ContractPoolNode selectedNode = (ContractPoolNode)getNode();
-            List<LocalObjectLight> contracts = CommunicationsStub.getInstance().getPoolItems(selectedNode.getPool().getOid());
-            
-            if (contracts == null) {
-                setKeys(Collections.EMPTY_LIST);
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, 
-                        CommunicationsStub.getInstance().getError());
-            } else {
-                Collections.sort(contracts);
-                setKeys(contracts);
-            }
-        }
-        
-        @Override
-        public void removeNotify() {
-            setKeys(Collections.EMPTY_LIST);
-        }
-        
-        @Override
-        protected Node[] createNodes(LocalObjectLight key) {
-            return new Node[] { new ContractNode(key)};
-        }
-    */
 }

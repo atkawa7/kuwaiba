@@ -34,7 +34,7 @@ import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter;
 
 /**
- * Action to add Activity
+ * Action to add an Activity
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class AddActivityAction extends GenericInventoryAction implements Presenter.Popup {
