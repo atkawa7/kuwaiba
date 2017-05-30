@@ -138,6 +138,14 @@
                         </attributes>
                         <subclasses/>
                       </class>
+                      <class name="ActivityType" classPackage="com.neotropic.inventory.modules.projects" applicationModifiers="6" javaModifiers="0" classType="2">
+                        <attributes>
+                          <attribute name="name" type="String" javaModifiers="0" applicationModifiers="13"/>
+                          <attribute name="displayName" type="String" javaModifiers="0" applicationModifiers="13"/>
+                        </attributes>
+                        <subclasses/>
+                      </class>
+
 		      <class name="BTSType" javaModifiers="1" applicationModifiers="0" classType="2" classPackage="org.kuwaiba.entity.multiple.mobile">
                         <attributes>
                           <attribute name="displayName" type="String" javaModifiers="4" applicationModifiers="0"/>
@@ -2292,6 +2300,68 @@
                   <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                 </attributes>
                 <subclasses>
+
+                  <class name="GenericActivity" classPackage="com.neotropic.inventory.modules.projects" applicationModifiers="6" javaModifiers="1024" classType="1">
+                    <attributes>
+                      <attribute name="sequecing" type="ActivityType" javaModifiers="0" applicationModifiers="8"/>
+                      <attribute name="activityType" type="ActivityType" javaModifiers="0" applicationModifiers="8"/>
+                      <attribute name="risk" type="Integer" javaModifiers="0" applicationModifiers="8"/>
+                      <attribute name="manager" type="String" javaModifiers="0" applicationModifiers="8"/>
+                      <attribute name="cost" type="Float" javaModifiers="0" applicationModifiers="8"/>
+                      <attribute name="duration" type="Integer" javaModifiers="0" applicationModifiers="8"/>
+                      <attribute name="status" type="Boolean" javaModifiers="0" applicationModifiers="8"/>
+                      <attribute name="lastUpdate" type="Date" javaModifiers="0" applicationModifiers="8"/>
+                      <attribute name="endDate" type="Date" javaModifiers="0" applicationModifiers="8"/>
+                      <attribute name="startDate" type="Date" javaModifiers="0" applicationModifiers="8"/>
+                      <attribute name="notes" type="String" javaModifiers="0" applicationModifiers="8"/>
+                      <attribute name="creationDate" type="Date" javaModifiers="0" applicationModifiers="8"/>
+                      <attribute name="name" type="String" javaModifiers="0" applicationModifiers="13"/>
+                    </attributes>
+                    <subclasses>
+                      <class name="AuditActivity" classPackage="com.neotropic.inventory.modules.projects" applicationModifiers="6" javaModifiers="0" classType="1">
+                        <attributes/>
+                        <subclasses/>
+                      </class>
+                      <class name="DesignActivity" classPackage="com.neotropic.inventory.modules.projects" applicationModifiers="6" javaModifiers="0" classType="1">
+                        <attributes/>
+                        <subclasses/>
+                      </class>
+                      <class name="RollOutActivity" classPackage="com.neotropic.inventory.modules.projects" applicationModifiers="6" javaModifiers="0" classType="1">
+                        <attributes/>
+                        <subclasses/>
+                      </class>
+                      <class name="PlanningActivity" classPackage="com.neotropic.inventory.modules.projects" applicationModifiers="6" javaModifiers="0" classType="1">
+                        <attributes/>
+                        <subclasses/>
+                      </class>
+                      <class name="GeneralPurposeActivity" classPackage="com.neotropic.inventory.modules.projects" applicationModifiers="6" javaModifiers="0" classType="1">
+                        <attributes/>
+                        <subclasses/>
+                      </class>
+                    </subclasses>
+                  </class>
+                  
+                  <class name="GenericProject" classPackage="com.neotropic.inventory.modules.projects" applicationModifiers="6" javaModifiers="1024" classType="1">
+                    <attributes>
+                      <attribute name="status" type="String" javaModifiers="0" applicationModifiers="8"/>
+                      <attribute name="startDate" type="Date" javaModifiers="0" applicationModifiers="8"/>
+                      <attribute name="manager" type="String" javaModifiers="0" applicationModifiers="8"/>
+                      <attribute name="notes" type="String" javaModifiers="0" applicationModifiers="8"/>
+                      <attribute name="creationDate" type="Date" javaModifiers="0" applicationModifiers="8"/>
+                      <attribute name="name" type="String" javaModifiers="0" applicationModifiers="13"/>
+                    </attributes>
+                    <subclasses>
+                      <class name="NetworkProject" classPackage="com.neotropic.inventory.modules.projects" applicationModifiers="6" javaModifiers="0" classType="1">
+                        <attributes/>
+                        <subclasses/>
+                      </class>
+                      <class name="GeneralPurposeProject" classPackage="com.neotropic.inventory.modules.projects" applicationModifiers="6" javaModifiers="0" classType="1">
+                        <attributes/>
+                        <subclasses/>
+                      </class>
+                    </subclasses>
+                  </class>
+
                   <class name="GenericOrder" javaModifiers="1025" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.administrative.orders">
                     <attributes>
                       <attribute name="description" type="String" javaModifiers="4" applicationModifiers="0"/>
