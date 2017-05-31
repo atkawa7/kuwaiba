@@ -3429,12 +3429,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
     
     @Override
-    public RemoteObjectLight[] getObjectsOfBookmarkFolder(long bookmarkFolderId, long userId, int limit, String ipAddress, String sessionId) throws ServerSideException {
+    public RemoteObjectLight[] getObjectsInBookmarkFolder(long bookmarkFolderId, long userId, int limit, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
-            aem.validateWebServiceCall("getObjectsOfBookmarkFolder", ipAddress, sessionId);
-            return RemoteObjectLight.toRemoteObjectLightArray(aem.getObjectsOfBookmarkFolder(bookmarkFolderId, userId, limit));
+            aem.validateWebServiceCall("getObjectsInBookmarkFolder", ipAddress, sessionId);
+            return RemoteObjectLight.toRemoteObjectLightArray(aem.getObjectsInBookmarkFolder(bookmarkFolderId, userId, limit));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }

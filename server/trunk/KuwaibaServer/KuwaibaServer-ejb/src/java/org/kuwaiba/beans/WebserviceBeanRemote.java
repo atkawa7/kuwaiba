@@ -497,7 +497,7 @@ public interface WebserviceBeanRemote {
     public List<RemoteBookmarkFolder> getBookmarkFoldersForUser(long userId, String ipAddress, String sessionId) throws ServerSideException;
     public void addObjectsToBookmarkFolder(String[] objectClass, long[] objectId, long bookmarkFolderId, long userId, String ipAddress, String sessionId) throws ServerSideException;
     public void removeObjectsFromBookmarkFolder(String[] objectClass, long[] objectId, long bookmarkFolderId, long userId, String ipAddress, String sessionId) throws ServerSideException;
-    public RemoteObjectLight[] getObjectsOfBookmarkFolder(long bookmarkFolderId, long userId, int limit, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteObjectLight[] getObjectsInBookmarkFolder(long bookmarkFolderId, long userId, int limit, String ipAddress, String sessionId) throws ServerSideException;
     public List<RemoteBookmarkFolder> getBookmarkFoldersForObject(long userId ,String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;
     public RemoteBookmarkFolder getBookmarkFolder(long bookmarkFolderId, long userId, String ipAddress, String sessionId) throws ServerSideException;
     public void updateBookmarkFolder(long bookmarkFolderId, long userId, String bookmarkFolderName, String ipAddress, String sessionId) throws ServerSideException;

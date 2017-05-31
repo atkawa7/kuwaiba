@@ -971,7 +971,7 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException If the Bookmark folder can not be found
      * @return List of objects related to bookmark
      */
-    public List<RemoteBusinessObjectLight> getObjectsOfBookmarkFolder(long bookmarkFolderId, long userId, int limit) 
+    public List<RemoteBusinessObjectLight> getObjectsInBookmarkFolder(long bookmarkFolderId, long userId, int limit) 
         throws ApplicationObjectNotFoundException;
     /**
      * Get the bookmarks where an object is associated

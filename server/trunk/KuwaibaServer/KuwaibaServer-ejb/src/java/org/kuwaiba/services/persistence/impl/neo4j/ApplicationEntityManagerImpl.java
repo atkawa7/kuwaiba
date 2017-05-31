@@ -2749,7 +2749,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public List<RemoteBusinessObjectLight> getObjectsOfBookmarkFolder(long bookmarkFolderId, long userId, int limit) 
+    public List<RemoteBusinessObjectLight> getObjectsInBookmarkFolder(long bookmarkFolderId, long userId, int limit) 
         throws ApplicationObjectNotFoundException {
         
         try (Transaction tx = graphDb.beginTx()) {

@@ -5500,14 +5500,14 @@ public class KuwaibaService {
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      * @return The list of objects
      */
-    @WebMethod(operationName = "getObjectsOfBookmarkFolder")
-    public RemoteObjectLight[] getObjectsOfBookmarkFolder(
+    @WebMethod(operationName = "getObjectsInBookmarkFolder")
+    public RemoteObjectLight[] getObjectsInBookmarkFolder(
         @WebParam(name = "bookmarkFolderId") long bookmarkFolderId, 
         @WebParam(name = "userId") long userId,
         @WebParam(name = "limit") int limit,
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try {
-            return wsBean.getObjectsOfBookmarkFolder(bookmarkFolderId, userId, limit, getIPAddress(), sessionId);
+            return wsBean.getObjectsInBookmarkFolder(bookmarkFolderId, userId, limit, getIPAddress(), sessionId);
         } catch(Exception ex) {
             if (ex instanceof ServerSideException)
                 throw ex;

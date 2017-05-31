@@ -49,6 +49,12 @@
            <env-entry-value>http://neotropic.co/img/logo_blue.png</env-entry-value>
         </env-entry>
         <env-entry>
+           <description>Global locale. Use a hifen to separate the language from the region. E.g. en-US, es-CO, pt-BR</description>
+           <env-entry-name>locale</env-entry-name>
+           <env-entry-type>java.lang.String</env-entry-type>
+           <env-entry-value>en-US</env-entry-value>
+        </env-entry>
+        <env-entry>
            <description>Enable the default security manager</description>
            <env-entry-name>enableSecurityManager</env-entry-name>
            <env-entry-type>java.lang.Boolean</env-entry-type>
