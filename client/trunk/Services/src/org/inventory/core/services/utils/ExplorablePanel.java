@@ -26,7 +26,7 @@ import org.openide.util.Lookup;
  * This panel can embed an explorer view
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ExplorablePanel extends JScrollPane implements Provider, Lookup.Provider{
+public class ExplorablePanel extends JScrollPane implements Provider, Lookup.Provider {
 
     private ExplorerManager em;
     private Lookup lookup;

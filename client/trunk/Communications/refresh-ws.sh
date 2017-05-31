@@ -13,9 +13,14 @@ do
         u) url=${OPTARG};;
         c) clean=true;;
         d) destination=${OPTARG};;
-        h) echo $'Kuwaiba Open Network Inventory - Web Service Stub Generator v0.3\n -u WSDL URL. Default: http://localhost:8080/kuwaiba/KuwaibaService?wsdl\n -c Clean the destination directory before parsing the WSDL\n -d Destination directory. Default: src';exit;;
+        h) echo $'Kuwaiba Open Network Inventory - Web Service Stub Generator v0.4\n -u WSDL URL. Default: http://localhost:8080/kuwaiba/KuwaibaService?wsdl\n -c Clean the destination directory before parsing the WSDL\n -d Destination directory. Default: src';exit;;
     esac
 done
+
+if ! type wsimport >/dev/null; then
+    echo "wsimport command not found. This command is in the bin folder of your Java installation. Check if your PATH is correctly pointing there."
+    exit 1;
+fi
 
 if [ -z ${clean+x} ]
 then

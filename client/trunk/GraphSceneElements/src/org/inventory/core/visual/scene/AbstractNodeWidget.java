@@ -66,8 +66,7 @@ public class AbstractNodeWidget extends SelectableNodeWidget {
         this.labelWidget = new LabelWidget(scene);
         this.labelWidget.setLabel(object.toString());
         //Centers the text, and makes the widgets to stack one onto another
-        setLayout(LayoutFactory.createVerticalFlowLayout(LayoutFactory.SerialAlignment.CENTER, 1 - lookFeel.getMargin()));
-        
+        //setLayout(LayoutFactory.createVerticalFlowLayout(LayoutFactory.SerialAlignment.CENTER, 1 - lookFeel.getMargin()));
         addChild(squareWidget);
         addChild(labelWidget);
                 
@@ -83,13 +82,9 @@ public class AbstractNodeWidget extends SelectableNodeWidget {
         return labelWidget;
     }
     
-//    public void togglelabel(boolean visible) {
-//        //labelWidget.setVisible(visible);
-//        if (!visible)
-//            labelWidget.setPreferredSize(new Dimension(0, 0));
-//        else
-//            labelWidget.setPreferredSize(new Dimension(10, 5));
-//    }
+    public Widget getNodeWidget() {
+        return squareWidget;
+    }
     
     /**
      * Implements the widget-state specific look of the widget.

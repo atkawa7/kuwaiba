@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "getObjectsInBookmarkFolderResponse", propOrder = {
     "_return"
 })
-public class GetObjectsOfBookmarkFolderResponse {
+public class GetObjectsInBookmarkFolderResponse {
 
     @XmlElement(name = "return", nillable = true)
     protected List<RemoteObjectLight> _return;

@@ -34,6 +34,8 @@ import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.communications.util.Utils;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.visual.scene.AbstractConnectionWidget;
+import org.inventory.core.visual.scene.AbstractNodeWidget;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.views.objectview.ObjectViewService;
 import org.netbeans.api.visual.anchor.AnchorFactory;
@@ -147,18 +149,18 @@ public class ChildrenViewBuilder implements AbstractViewBuilder {
                                 if (container != null){
                                     myConnections.remove(container);
                                     LocalObjectLight aSideObject = new LocalObjectLight(aSide, null, null);
-                                    Widget aSideWidget = scene.findWidget(aSideObject);
+                                    AbstractNodeWidget aSideWidget = (AbstractNodeWidget)scene.findWidget(aSideObject);
 
                                     LocalObjectLight bSideObject = new LocalObjectLight(bSide, null, null);
-                                    Widget bSideWidget = scene.findWidget(bSideObject);
+                                    AbstractNodeWidget bSideWidget = (AbstractNodeWidget)scene.findWidget(bSideObject);
 
                                     if (aSideWidget == null || bSideWidget == null)
                                         currentView.setDirty(true);
                                     else{
-                                        ConnectionWidget newEdge = (ConnectionWidget)scene.addEdge(container);
+                                        AbstractConnectionWidget newEdge = (AbstractConnectionWidget)scene.addEdge(container);
                                         newEdge.setLineColor(Utils.getConnectionColor(container.getClassName()));
-                                        newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideWidget));
-                                        newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideWidget));
+                                        newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideWidget.getNodeWidget()));
+                                        newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideWidget.getNodeWidget()));
                                         List<Point> localControlPoints = new ArrayList<>();
                                         while(true) {
                                             reader.nextTag();
@@ -253,14 +255,14 @@ public class ChildrenViewBuilder implements AbstractViewBuilder {
             List<LocalObjectLight> parentsBSide = com.getParents(bSide.get(0).getClassName(), bSide.get(0).getOid());
 
             int currentObjectIndexASide = parentsASide.indexOf(currentObject);
-            Widget aSideWidget = scene.findWidget(parentsASide.get(currentObjectIndexASide == 0 ? 0 : currentObjectIndexASide - 1));
+            AbstractNodeWidget aSideWidget = (AbstractNodeWidget)scene.findWidget(parentsASide.get(currentObjectIndexASide == 0 ? 0 : currentObjectIndexASide - 1));
             int currentObjectIndexBSide = parentsBSide.indexOf(currentObject);
-            Widget bSideWidget = scene.findWidget(parentsBSide.get(currentObjectIndexBSide == 0 ? 0 : currentObjectIndexBSide - 1));
+            AbstractNodeWidget bSideWidget = (AbstractNodeWidget)scene.findWidget(parentsBSide.get(currentObjectIndexBSide == 0 ? 0 : currentObjectIndexBSide - 1));
 
             ConnectionWidget newEdge = (ConnectionWidget)scene.addEdge(container);
             newEdge.setLineColor(Utils.getConnectionColor(container.getClassName()));
-            newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideWidget));
-            newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideWidget));
+//            newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideWidget.getNodeWidget()));
+//            newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideWidget.getNodeWidget()));
             scene.validate();
         }
     }

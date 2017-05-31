@@ -28,7 +28,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPool;
@@ -40,7 +39,7 @@ import org.openide.explorer.view.BeanTreeView;
  * Show the existing generic subnets that can be associated to communications elements
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class SubnetsFrame extends JFrame{
+public class SubnetsFrame extends JFrame {
     private List<LocalObjectLight> selectedPorts;
     private ExplorablePanel pnlSubnets;
 
@@ -54,19 +53,18 @@ public class SubnetsFrame extends JFrame{
         lblInstructions.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         
         pnlSubnets = new ExplorablePanel();
-        pnlSubnets.setSize(300, 400);
         BeanTreeView treeSubnets = new BeanTreeView();
         treeSubnets.setRootVisible(false);
         JPanel pnlInstructions = new JPanel();
         pnlInstructions.setLayout(new GridLayout(1, 1));
         
         pnlSubnets.setViewportView(treeSubnets);
-        pnlSubnets.getExplorerManager().setRootContext(new IPAMRootNode(subnets.toArray(new LocalPool[0])));
+        pnlSubnets.getExplorerManager().setRootContext(new IPAMRootNode(subnets, false));
         add(pnlSubnets, BorderLayout.CENTER);
         
         JPanel pnlButtons = new JPanel();
         pnlButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
-        JButton btnRelate = new JButton("Create relationship");
+        JButton btnRelate = new JButton("Create Relationship");
         pnlButtons.add(btnRelate);
         btnRelate.addActionListener(new SubnetsFrame.BtnConnectActionListener());
         JButton btnClose = new JButton("Close");
@@ -95,9 +93,9 @@ public class SubnetsFrame extends JFrame{
                 List<LocalObjectLight> relatedPortsToIPAddresses = CommunicationsStub.getInstance().getSpecialAttribute(Constants.CLASS_IP_ADDRESS, 
                 selectedIPAddress.getOid(), Constants.RELATIONSHIP_IPAMHASADDRESS);
                 
-                if(relatedPortsToIPAddresses.size()>0){
+                if(!relatedPortsToIPAddresses.isEmpty()){
                     List<LocalObjectLight> parents = CommunicationsStub.getInstance().getParents(selectedPorts.get(0).getClassName(), selectedPorts.get(0).getOid());
-                    String location= "";
+                    String location = "";
                     
                     for (int i = 0; i < parents.size() - 1; i ++)
                         location += parents.get(i).toString() + " | ";

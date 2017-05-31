@@ -26,6 +26,7 @@ import org.openide.nodes.Children;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public abstract class AbstractChildren extends Children.Keys<LocalObjectLight> {
+    
     @Override
     public abstract void addNotify();
     

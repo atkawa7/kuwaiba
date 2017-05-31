@@ -41,8 +41,7 @@ import org.openide.util.Lookup;
 import org.openide.util.lookup.ProxyLookup;
 
 /**
- * Root class to all GraphScenes
- * TODO: This should inherit from ObjectScene
+ * Root class to all scenes involving nodes and edges representing inventory objects
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  * @param <N> The class of the business object behind the nodes
  * @param <E> The class of the business object behind the edges
@@ -68,14 +67,6 @@ public abstract class AbstractScene<N, E> extends GraphScene<N, E> {
      * Default font
      */
     public static final Font defaultFont = new Font(Font.SANS_SERIF, Font.PLAIN, 12);
-    /**
-     * Default foreground color
-     */
-    public static final Color defaultForegroundColor = Color.BLACK;
-    /**
-     * Default background color
-     */
-    public static final Color defaultBackgroundColor = Color.LIGHT_GRAY;
     /**
      * Color to be assigned to the new lines 
      */
@@ -114,13 +105,20 @@ public abstract class AbstractScene<N, E> extends GraphScene<N, E> {
         setActiveTool(ACTION_SELECT);
     }
     
-    public void toggleNodeLabels(boolean visible){
-        for (Widget edge : nodeLayer.getChildren()) 
-            ((AbstractNodeWidget)edge).getLabelWidget().setVisible(visible);
+    public void toggleNodeLabels(boolean visible) {
+        if (nodeLayer == null)
+            return;
+        
+        for (Widget node : nodeLayer.getChildren()) 
+            ((AbstractNodeWidget)node).getLabelWidget().setVisible(visible);
+        
         validate();
     }
     
     public void toggleConnectionLabels(boolean visible) {
+        if (edgeLayer == null)
+            return;
+        
         for (Widget edge : edgeLayer.getChildren()) 
             ((SelectableConnectionWidget)edge).getLabelWidget().setVisible(visible);
         
@@ -181,34 +179,6 @@ public abstract class AbstractScene<N, E> extends GraphScene<N, E> {
             listener.actionPerformed(ev);
     }
     
-    /**
-     * Sets the font used by all text elements in the scene
-     * @param newFont A new font. Null to set to default
-     */
-    public void setSceneFont (Font newFont) {
-        setFont(newFont == null ? defaultFont : newFont);
-        if (labelsLayer != null) { //Not all views will have a layer to place labels
-            for (Widget aLabel : labelsLayer.getChildren())
-                aLabel.setFont(getFont());
-        }
-    }
-    
-    public void setSceneForegroundColor (Color foregroundColor) {
-        setForeground(foregroundColor == null ? defaultForegroundColor : foregroundColor);
-        if (labelsLayer != null) { //Not all views will have a layer to place labels
-            for (Widget aLabel : labelsLayer.getChildren())
-                aLabel.setForeground(getForeground());
-        }
-    }
-
-    public void setSceneBackgroundColor (Color backgroundColor) {
-        setForeground(backgroundColor == null ? defaultForegroundColor : backgroundColor);
-        if (labelsLayer != null) { //Not all views will have a layer to place labels
-            for (Widget aLabel : labelsLayer.getChildren())
-                aLabel.setBackground(getBackground());
-        }
-    }
-    
     public void clear(){
         while (!getNodes().isEmpty())
             removeNode(getNodes().iterator().next());
@@ -227,7 +197,7 @@ public abstract class AbstractScene<N, E> extends GraphScene<N, E> {
         return this.lookup;
     }
     
-    public void setNewLineColor(Color newColor){
+    public void setNewLineColor(Color newColor) {
         newLineColor = newColor;
     }
     
@@ -235,8 +205,9 @@ public abstract class AbstractScene<N, E> extends GraphScene<N, E> {
      * Gets the background image
      * @return
      */
-    public byte[] getBackgroundImage(){
-        if (backgroundLayer.getChildren().isEmpty())
+    public byte[] getBackgroundImage() {
+        
+        if (!supportsBackgrounds() || backgroundLayer.getChildren().isEmpty())
             return null;
         try {
             return Utils.getByteArrayFromImage(((ImageWidget) backgroundLayer.getChildren().iterator().next()).getImage(), "png"); //NOI18n
@@ -251,7 +222,10 @@ public abstract class AbstractScene<N, E> extends GraphScene<N, E> {
      * Sets the current background. Do nothing if supportsBackgrounds always returns false
      * @param im The image. Null of you want to remove the existing one
      */
-    public void setBackgroundImage(Image im){
+    public void setBackgroundImage(Image im) {
+        if (!supportsBackgrounds())
+            return;
+        
         backgroundLayer.removeChildren();
         
         if (im != null)
@@ -274,7 +248,7 @@ public abstract class AbstractScene<N, E> extends GraphScene<N, E> {
     public abstract void render(byte[] structure) throws IllegalArgumentException;
     
     /**
-     * Renders Hierarchical View
+     * Renders a view that is created on the fly and is not saved anywhere. These views are typically built from a root object
      * @param root The root of the hierarchy
      * 
      */

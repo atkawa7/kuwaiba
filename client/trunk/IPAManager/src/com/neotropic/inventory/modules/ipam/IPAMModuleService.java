@@ -15,6 +15,7 @@
  */
 package com.neotropic.inventory.modules.ipam;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalPool;
@@ -34,13 +35,13 @@ public class IPAMModuleService {
         com = CommunicationsStub.getInstance();
     }
     
-    public LocalPool[] getRootChildren(){
+    public List<LocalPool> getRootChildren(){
         List<LocalPool> rootChildren = com.getSubnetPools(-1, null);
         if(rootChildren != null)
-            return rootChildren.toArray(new LocalPool[0]);
-        else{
+            return rootChildren;
+        else {
             ipamtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
-            return new LocalPool[0];
+            return new ArrayList<>();
         }
     }
 }

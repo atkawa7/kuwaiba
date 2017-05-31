@@ -35,7 +35,7 @@ import javax.xml.bind.annotation.XmlType;
     "limit",
     "sessionId"
 })
-public class GetObjectsOfBookmarkFolder {
+public class GetObjectsInBookmarkFolder {
 
     protected long bookmarkFolderId;
     protected long userId;

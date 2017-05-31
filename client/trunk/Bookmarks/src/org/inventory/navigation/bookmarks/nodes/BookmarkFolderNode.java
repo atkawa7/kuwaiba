@@ -264,7 +264,7 @@ public class BookmarkFolderNode extends AbstractNode implements PropertyChangeLi
         public void addNotify() {
             BookmarkFolderNode selectedNode = (BookmarkFolderNode) getNode();
             
-            List<LocalObjectLight> bookmarkItems = CommunicationsStub.getInstance().getObjectsOfBookmarkFolder(selectedNode.getLocalBookmark().getId(), -1);
+            List<LocalObjectLight> bookmarkItems = CommunicationsStub.getInstance().getObjectsInBookmarkFolder(selectedNode.getLocalBookmark().getId(), -1);
             
             if (bookmarkItems == null) {
                 setKeys(Collections.EMPTY_LIST);

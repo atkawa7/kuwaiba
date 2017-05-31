@@ -42,7 +42,7 @@ public final class ConnectionWizardVisualPanel1 extends JPanel{
 
     public void initCustomComponents(){
         
-        lblInstructions = new JLabel("Select the objects (ports or nodes) you'd like to connect.");
+        lblInstructions = new JLabel("Select the objects (ports or nodes) you want to connect.");
         
         treeLeft = new BeanTreeView();
         treeRight = new BeanTreeView();

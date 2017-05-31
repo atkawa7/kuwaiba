@@ -3802,9 +3802,9 @@ public class CommunicationsStub {
      * @param limit Max number of items. Use -1 to results without limit in the number of items
      * @return The list of items (objects) associated to a bookmark folder
      */
-    public List<LocalObjectLight> getObjectsOfBookmarkFolder(long bookmarkFolderId, int limit) {
+    public List<LocalObjectLight> getObjectsInBookmarkFolder(long bookmarkFolderId, int limit) {
         try {
-            List<RemoteObjectLight> bookmarkItems = service.getObjectsOfBookmarkFolder(bookmarkFolderId, session.getUserId(), limit, session.getSessionId());
+            List<RemoteObjectLight> bookmarkItems = service.getObjectsInBookmarkFolder(bookmarkFolderId, session.getUserId(), limit, session.getSessionId());
 
             List<LocalObjectLight> res = new ArrayList<>();
 

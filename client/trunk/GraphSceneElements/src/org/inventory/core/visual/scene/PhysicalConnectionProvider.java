@@ -107,8 +107,8 @@ public class PhysicalConnectionProvider implements ConnectProvider {
 
             ConnectionWidget line = (ConnectionWidget)scene.addEdge(myWizard.getNewConnection());
 
-            line.setTargetAnchor(AnchorFactory.createCenterAnchor(targetWidget));
-            line.setSourceAnchor(AnchorFactory.createCenterAnchor(sourceWidget));
+            line.setTargetAnchor(AnchorFactory.createCenterAnchor(((AbstractNodeWidget)targetWidget).getNodeWidget()));
+            line.setSourceAnchor(AnchorFactory.createCenterAnchor(((AbstractNodeWidget)sourceWidget).getNodeWidget()));
             
             scene.validate();
             scene.fireChangeEvent(new ActionEvent(this, AbstractScene.SCENE_CHANGE, "New Connection"));

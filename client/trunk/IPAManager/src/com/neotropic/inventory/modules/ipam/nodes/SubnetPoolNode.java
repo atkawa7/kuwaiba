@@ -52,18 +52,24 @@ public class SubnetPoolNode extends AbstractNode implements PropertyChangeListen
     private static Image defaultIcon = ImageUtilities.loadImage(ICON_PATH);
     protected Sheet sheet;
     private LocalPool subnetPool;
-    protected CommunicationsStub com;
-
-    public SubnetPoolNode(LocalPool subnetPool) {
+    private CommunicationsStub com;
+    private boolean enableActions;
+    
+    public SubnetPoolNode(LocalPool subnetPool, boolean enableActions) {
         super(new SubnetPoolChildren(), Lookups.singleton(subnetPool));
         this.subnetPool = subnetPool;
+        this.enableActions = enableActions;
         this.subnetPool.addPropertyChangeListener(this);
         com = CommunicationsStub.getInstance();
         setChildren(new SubnetPoolChildren());
     }
     
     @Override
-    public Action[] getActions(boolean context){
+    public Action[] getActions(boolean context) {
+        
+        if (!enableActions)
+            return new Action[0];
+        
         List<Action> actions = new ArrayList<>();
         
         actions.add(CreateSubnetAction.getInstance());
@@ -90,6 +96,10 @@ public class SubnetPoolNode extends AbstractNode implements PropertyChangeListen
     @Override
     public Image getOpenedIcon(int i){
         return getIcon(i);
+    }
+
+    public boolean enableActions() {
+        return enableActions;
     }
     
     @Override

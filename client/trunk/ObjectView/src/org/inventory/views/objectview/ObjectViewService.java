@@ -105,8 +105,6 @@ public class ObjectViewService implements LookupListener {
                     return;
                 }
                 vrtc.setDisplayName(myObject.toString());
-                viewBuilder.getScene().setSceneFont(vrtc.getCurrentFont());
-                viewBuilder.getScene().setSceneForegroundColor(vrtc.getCurrentColor());
                 viewBuilder.getScene().validate();
                 vrtc.toggleButtons(true);
                 

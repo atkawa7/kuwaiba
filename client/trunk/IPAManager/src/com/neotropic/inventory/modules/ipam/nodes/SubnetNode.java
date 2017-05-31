@@ -55,14 +55,22 @@ public class SubnetNode extends ObjectNode {
     private static final String ICON_PATH="com/neotropic/inventory/modules/res/subnet-icon.png";
     private static Image defaultIcon = ImageUtilities.loadImage(ICON_PATH);
     
+    /**
+     * Should the context actions be available?
+     */
+    private boolean enableActions;
 
-    public SubnetNode(LocalObjectLight subnet) {
+    public SubnetNode(LocalObjectLight subnet, boolean enableActions) {
         super(subnet);
+        this.enableActions = enableActions;
         setChildren(new SubnetChildren());
     }
     
     @Override
-    public Action[] getActions(boolean context){
+    public Action[] getActions(boolean context) {
+        if (!enableActions)
+            return new Action[0];
+        
         return new Action[] {
             AddIPAddressAction.getInstance(),
             CreateSubnetAction.getInstance(),
@@ -88,6 +96,10 @@ public class SubnetNode extends ObjectNode {
     @Override
     public Image getOpenedIcon(int i){
         return getIcon(i);
+    }
+
+    public boolean enableActions() {
+        return enableActions;
     }
     
     @Override

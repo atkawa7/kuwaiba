@@ -19,6 +19,7 @@ import com.neotropic.inventory.modules.ipam.nodes.properties.GeneralProperty;
 import com.neotropic.inventory.modules.ipam.nodes.properties.ListTypeProperty;
 import com.neotropic.inventory.modules.ipam.nodes.properties.NotEditableProperty;
 import java.util.List;
+import javax.swing.Action;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalObjectListItem;
@@ -34,8 +35,14 @@ import org.openide.nodes.Sheet;
  */
 public class IPAddressNode extends ObjectNode {
 
-    public IPAddressNode(LocalObjectLight lol) {
+    /**
+     * Should the context actions be available?
+     */
+    private boolean enableActions;
+    
+    public IPAddressNode(LocalObjectLight lol, boolean enableActions) {
         super(lol, true);
+        this.enableActions = enableActions;
     }
     
     @Override
@@ -84,6 +91,16 @@ public class IPAddressNode extends ObjectNode {
         sheet.put(generalPropertySet);
         return sheet;
     }
+
+    @Override
+    public Action[] getActions(boolean context) {
+        if (!enableActions)
+            return new Action[0];
+        
+        return super.getActions(context);
+    }
+    
+    
     
     @Override
     public boolean canRename() {

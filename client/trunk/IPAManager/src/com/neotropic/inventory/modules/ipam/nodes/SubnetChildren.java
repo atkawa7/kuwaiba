@@ -66,10 +66,13 @@ public class SubnetChildren extends AbstractChildren {
 
     @Override
     protected Node[] createNodes(LocalObjectLight key) {
+        
+        boolean enableActions = ((SubnetNode)getNode()).enableActions();
+        
         if(key.getClassName().equals(Constants.CLASS_IP_ADDRESS))
-            return new Node[] { new IPAddressNode(key) };
+            return new Node[] { new IPAddressNode(key, enableActions) };
         else
-            return new Node[] { new SubnetNode(key) };
+            return new Node[] { new SubnetNode(key, enableActions) };
     }
     
     private List<LocalObjectLight> sortIps(List<LocalObjectLight> ips){

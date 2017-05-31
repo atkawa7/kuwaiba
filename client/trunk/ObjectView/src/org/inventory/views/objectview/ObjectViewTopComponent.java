@@ -16,16 +16,12 @@
 package org.inventory.views.objectview;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Properties;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ButtonGroup;
@@ -42,7 +38,6 @@ import org.inventory.core.visual.export.filters.ImageFilter;
 import org.inventory.core.visual.export.filters.SceneExportFilter;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.core.visual.scene.PhysicalConnectionProvider;
-import org.inventory.views.objectview.dialogs.FormatTextPanel;
 import org.inventory.views.objectview.scene.ChildrenViewBuilder;
 import org.inventory.views.objectview.scene.ChildrenViewScene;
 import org.inventory.views.objectview.scene.RackViewBuilder;
@@ -51,7 +46,6 @@ import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 import org.openide.util.ImageUtilities;
-import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.explorer.ExplorerManager.Provider;
@@ -60,8 +54,6 @@ import org.openide.explorer.ExplorerManager.Provider;
  * This component renders the views associated to an object
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-@ConvertAsProperties(dtd = "-//org.inventory.views.objectview//ObjectView//EN",
-autostore = false)
 public final class ObjectViewTopComponent extends TopComponent
         implements Provider, ActionListener, Refreshable {
 
@@ -76,9 +68,6 @@ public final class ObjectViewTopComponent extends TopComponent
     public static final int CONNECTION_WIRELESSLINK = 5;
     public static final int CONNECTION_POWERLINK = 6;
     
-
-    private Font currentFont = AbstractScene.defaultFont;
-    private Color currentColor = AbstractScene.defaultForegroundColor;
     private ButtonGroup buttonGroupUpperToolbar;
     private ButtonGroup buttonGroupRightToolbar;
     
@@ -122,18 +111,6 @@ public final class ObjectViewTopComponent extends TopComponent
         buttonGroupRightToolbar.add(btnWireContainer);
         buttonGroupRightToolbar.add(btnWirelessContainer);
         btnSelect.setSelected(true);
-        
-        FileInputStream input;
-        try {
-            input = new FileInputStream(System.getProperty("user.dir") + "/.viewproperties"); //NOI18N
-            Properties properties = new Properties();
-            properties.load(input);
-            currentColor = properties.getProperty("fontColor") == null ? 
-                Color.black : new Color(Integer.valueOf(properties.getProperty("fontColor")));
-            currentFont = currentFont.deriveFont(properties.getProperty("fontSize") == null ? 
-                currentFont.getSize() : Float.valueOf(properties.getProperty("fontSize")));
-            input.close();
-        } catch (IOException e) {}
         
         //Default connection settings
         service.getViewBuilder().getScene().setNewLineColor(Color.RED);
@@ -524,11 +501,8 @@ public final class ObjectViewTopComponent extends TopComponent
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
-        if (checkForUnsavedView(true)){
+        if (checkForUnsavedView(true))
             service.getViewBuilder().refresh();
-            service.getViewBuilder().getScene().setSceneFont(currentFont);
-            service.getViewBuilder().getScene().setSceneForegroundColor(currentColor);
-        }
     }//GEN-LAST:event_btnRefreshActionPerformed
 
     private void btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportActionPerformed
@@ -539,26 +513,7 @@ public final class ObjectViewTopComponent extends TopComponent
     }//GEN-LAST:event_btnExportActionPerformed
 
     private void btnFormatTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFormatTextActionPerformed
-        final FormatTextPanel pnlFormat = new FormatTextPanel();
-        DialogDescriptor dd = new DialogDescriptor(pnlFormat,"Text Settings",true,new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (e.getSource() == DialogDescriptor.OK_OPTION){
-
-                    if (pnlFormat.getNodesFontSize() != -1){
-                        currentFont = currentFont.deriveFont(Float.valueOf(pnlFormat.getNodesFontSize()+".0")); //NOI18N
-                        service.getViewBuilder().getScene().setSceneFont(currentFont);
-                    }
-
-                    if (pnlFormat.getNodesFontColor() != null){
-                        currentColor = pnlFormat.getNodesFontColor();
-                        service.getViewBuilder().getScene().setSceneForegroundColor(pnlFormat.getNodesFontColor());
-                    }
-                }
-            }
-        });
-        DialogDisplayer.getDefault().notify(dd);
+        
     }//GEN-LAST:event_btnFormatTextActionPerformed
 
     private void btnShowNodeLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowNodeLabelsActionPerformed
@@ -584,14 +539,18 @@ public final class ObjectViewTopComponent extends TopComponent
     }//GEN-LAST:event_cmbViewTypeItemStateChangedPerformed
 
     private void btnShowConnectionLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowConnectionLabelsActionPerformed
-        service.getViewBuilder().getScene().toggleConnectionLabels(!btnShowConnectionLabels.isSelected());
+        if (!service.getViewBuilder().getScene().supportsConnections())
+            JOptionPane.showMessageDialog(null, "This view does not support the selected action", 
+                    "Information", JOptionPane.INFORMATION_MESSAGE);
+        else 
+            service.getViewBuilder().getScene().toggleConnectionLabels(!btnShowConnectionLabels.isSelected());
     }//GEN-LAST:event_btnShowConnectionLabelsActionPerformed
 
     private void btnPowerLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPowerLinkActionPerformed
         if (!service.getViewBuilder().getScene().supportsConnections())
             JOptionPane.showMessageDialog(null, "This view does not support the selected action", 
                     "Information", JOptionPane.INFORMATION_MESSAGE);
-        else{
+        else {
             service.getViewBuilder().getScene().setNewLineColor(Color.yellow);
             ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setConnectionClass(Constants.CLASS_POWERLINK);
             ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setWizardType(PhysicalConnectionProvider.WIZARD_LINK);
@@ -668,26 +627,9 @@ public final class ObjectViewTopComponent extends TopComponent
     public void componentClosed() {
         service.terminateListeners();
         service.disableView();
-        FileOutputStream output;
-        try{
-            output = new FileOutputStream(System.getProperty("user.dir") + "/.viewproperties"); //NOI18N
-            Properties properties = new Properties();
-            properties.setProperty("fontSize", String.valueOf(currentFont.getSize()));
-            properties.setProperty("fontColor", String.valueOf(currentColor.getRGB()));
-            properties.store(output, null);
-            output.close();
-        }catch (IOException e) {}
     }
 
-    void writeProperties(java.util.Properties p) {}
-
-    Object readProperties(java.util.Properties p) {
-        if (instance == null) {
-            instance = this;
-        }
-        instance.readPropertiesImpl(p);
-        return instance;
-    }
+    
 
     private void readPropertiesImpl(java.util.Properties p) {}
 
@@ -708,14 +650,6 @@ public final class ObjectViewTopComponent extends TopComponent
 
     public NotificationUtil getNotifier(){
         return NotificationUtil.getInstance();
-    }
-
-    public Font getCurrentFont() {
-        return currentFont;
-    }
-
-    public Color getCurrentColor() {
-        return currentColor;
     }
 
     @Override
