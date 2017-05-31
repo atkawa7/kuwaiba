@@ -16,52 +16,59 @@
 package com.neotropic.inventory.modules.projects;
 
 import com.neotropic.inventory.modules.projects.nodes.ProjectRootNode;
+import javax.swing.JOptionPane;
+import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalPool;
+import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.behaviors.Refreshable;
+import org.netbeans.api.settings.ConvertAsProperties;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
 import org.openide.nodes.Node;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
-import org.openide.windows.Mode;
-import org.openide.windows.WindowManager;
 
 /**
  * Top component for the Projects Module
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
+@ConvertAsProperties(
+        dtd = "-//com.neotropic.inventory.modules.projects//ProjectsModule//EN",
+        autostore = false
+)
 @TopComponent.Description(
-        preferredID = "ProjectsModuleTopComponent", 
+        preferredID = "ProjectsModuleTopComponent",
+        iconBase="com/neotropic/inventory/modules/projects/res/icon.png", 
         persistenceType = TopComponent.PERSISTENCE_NEVER
 )
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
+@ActionID(category = "Window", id = "com.neotropic.inventory.modules.projects.ProjectsModuleTopComponent")
+@ActionReferences(value = {@ActionReference(path = "Menu/Tools/Advanced")})
+@TopComponent.OpenActionRegistration(
+        displayName = "#CTL_ProjectsModuleAction",
+        preferredID = "ProjectsModuleTopComponent"
+)
 @Messages({
+    "CTL_ProjectsModuleAction=Projects",
     "CTL_ProjectsModuleTopComponent=Projects",
     "HINT_ProjectsModuleTopComponent=Projects"
 })
 public final class ProjectsModuleTopComponent extends TopComponent implements ExplorerManager.Provider, Refreshable {
-    private static ProjectsModuleTopComponent instance;
-    
     private final ExplorerManager em = new ExplorerManager();
     private BeanTreeView treeView;
     private ProjectsModuleService service;
 
-    private ProjectsModuleTopComponent() {
+    public ProjectsModuleTopComponent() {
         initComponents();
         setName(Bundle.CTL_ProjectsModuleTopComponent());
         setToolTipText(Bundle.HINT_ProjectsModuleTopComponent());
         initCustomComponents();
     }
-    
-    public static ProjectsModuleTopComponent getInstance() {
-        if (instance == null) {
-            instance = new ProjectsModuleTopComponent();
-            Mode navigator = WindowManager.getDefault().findMode("explorer");
-            navigator.dockInto(instance);
-        }
-        return instance;
-    }
-    
+        
     public void initCustomComponents() {
         service = new ProjectsModuleService();
         treeView = new BeanTreeView();
@@ -84,6 +91,14 @@ public final class ProjectsModuleTopComponent extends TopComponent implements Ex
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
+        LocalPool projectsRootPool = CommunicationsStub.getInstance().getProjectsRootPool(Constants.CLASS_GENERICPROJECT);
+        
+        if (projectsRootPool == null) {
+            close();
+            JOptionPane.showMessageDialog(null, "This database seems outdated. Contact your administrator to apply the necessary patches to run the Projects module", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
         em.setRootContext(new ProjectRootNode(service.getProjectRootPool()));
         ExplorerUtils.activateActions(em, true);
     }

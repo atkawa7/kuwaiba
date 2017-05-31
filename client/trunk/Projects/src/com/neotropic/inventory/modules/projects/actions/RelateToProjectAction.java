@@ -19,10 +19,9 @@ import com.neotropic.inventory.modules.projects.windows.ProjectsFrame;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.ResourceBundle;
-import org.inventory.communications.CommunicationsStub;
+import javax.swing.JOptionPane;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
-import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -45,8 +44,7 @@ public class RelateToProjectAction extends GenericObjectNodeAction {
         
         List<LocalObjectLight> projects = ProjectsModuleService.getAllProjects();
         if (projects == null) {
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, 
-                CommunicationsStub.getInstance().getError());
+            JOptionPane.showMessageDialog(null, "This database seems outdated. Contact your administrator to apply the necessary patches to run the Projects module", "Error", JOptionPane.ERROR_MESSAGE);
         } else {
             ProjectsFrame projectsFrame = new ProjectsFrame(selectedObjects, projects);
             projectsFrame.setVisible(true);

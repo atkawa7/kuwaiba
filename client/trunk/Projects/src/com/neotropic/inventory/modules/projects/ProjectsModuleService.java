@@ -48,7 +48,9 @@ public class ProjectsModuleService {
     
     public static List<LocalObjectLight> getAllProjects() {
         LocalPool rootPool = CommunicationsStub.getInstance().getProjectsRootPool(Constants.CLASS_GENERICPROJECT);
-        
+        if (rootPool == null)
+            return null;
+                
         List<LocalObjectLight> mainProjects = CommunicationsStub.getInstance().getProjectsFromProjectsRootPool(rootPool.getOid(), -1);
             
         List<LocalObjectLight> result = new ArrayList();
