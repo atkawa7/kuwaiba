@@ -35,7 +35,7 @@ import org.openide.util.NbBundle.Messages;
         displayName = "#CTL_UpdateCenterOptionsAction"
 )
 @ActionReference(path = "Menu/Tools" /*, position = 3333*/)
-@Messages("CTL_UpdateCenterOptionsAction=Update Center Options")
+@Messages("CTL_UpdateCenterOptionsAction=Update Center")
 public final class UpdateCenterOptionsAction implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {

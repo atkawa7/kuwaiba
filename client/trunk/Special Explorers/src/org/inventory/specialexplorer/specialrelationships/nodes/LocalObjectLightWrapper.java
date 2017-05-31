@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.inventory.graphicalrepresentation.specialrelationships.wrappers;
+package org.inventory.specialexplorer.specialrelationships.nodes;
 
 import org.inventory.communications.core.LocalObjectLight;
 

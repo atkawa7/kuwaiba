@@ -24,7 +24,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.graphicalrepresentation.specialrelationships.scene.GraphicalRepSpecialRelationshipsScene;
-import org.inventory.graphicalrepresentation.specialrelationships.wrappers.LocalObjectLightWrapper;
+import org.inventory.specialexplorer.specialrelationships.nodes.LocalObjectLightWrapper;
 
 /**
  * Provides the business logic for the related TopComponent
@@ -44,28 +44,22 @@ public class GraphicalRepSpecialRelationshipService {
         return root;
     }
     
-//    public void addSpecialRelatedObject(LocalObjectLightWrapper node) {
-//        scene.addNode(node);
-//        scene.reorganizeNodes();
-//    }
-    
     private HashMap<String, LocalObjectLight[]> getSpecialRelationships(LocalObjectLight lol) {
         HashMap<String, LocalObjectLight[]> specialRelationships = CommunicationsStub.getInstance()
             .getSpecialAttributes(lol.getClassName(), lol.getOid());
         
-        if (specialRelationships == null) {
+        if (specialRelationships == null) 
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-        }
+        
         else {
             List<LocalObjectLight> listOfParents = CommunicationsStub.getInstance()
                 .getParents(lol.getClassName(), lol.getOid());
             
-            if (listOfParents == null) {
+            if (listOfParents == null) 
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-            } else {
+            else {
                 
-                if (!listOfParents.isEmpty() && listOfParents.get(0).getOid() != -1) { //Ignore the dummy root
-                    
+                if (!listOfParents.isEmpty() && listOfParents.get(0).getOid() != -1 && !listOfParents.get(0).getClassName().startsWith("Pool of")) { //Ignore the dummy root and the pools        
                     specialRelationships.put(Constants.PROPERTY_PARENT, new LocalObjectLight[] { listOfParents.get(0) });
                     return specialRelationships;
                 }

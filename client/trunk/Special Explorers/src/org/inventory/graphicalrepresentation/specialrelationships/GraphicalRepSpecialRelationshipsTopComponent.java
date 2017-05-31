@@ -26,7 +26,7 @@ import org.inventory.core.visual.export.filters.SceneExportFilter;
 import org.inventory.graphicalrepresentation.specialrelationships.actions.HideSpecialRelationshipChildrenAction;
 import org.inventory.graphicalrepresentation.specialrelationships.actions.ShowSpecialRelationshipChildrenAction;
 import org.inventory.graphicalrepresentation.specialrelationships.scene.GraphicalRepSpecialRelationshipsScene;
-import org.inventory.graphicalrepresentation.specialrelationships.wrappers.LocalObjectLightWrapper;
+import org.inventory.specialexplorer.specialrelationships.nodes.LocalObjectLightWrapper;
 import org.openide.*;
 import org.openide.explorer.ExplorerManager;
 import org.openide.windows.TopComponent;

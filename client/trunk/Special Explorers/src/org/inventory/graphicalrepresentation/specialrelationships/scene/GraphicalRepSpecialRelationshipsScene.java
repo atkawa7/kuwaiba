@@ -15,6 +15,7 @@
  */
 package org.inventory.graphicalrepresentation.specialrelationships.scene;
 
+import org.inventory.specialexplorer.specialrelationships.nodes.LocalObjectLightWrapper;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Point;
@@ -26,7 +27,6 @@ import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.graphicalrepresentation.specialrelationships.actions.GraphicalRepSpecialRelationshipsActionsFactory;
 import org.inventory.graphicalrepresentation.specialrelationships.actions.ShowSpecialRelationshipChildrenAction;
 import org.inventory.graphicalrepresentation.specialrelationships.widgets.SpecialRelatedObjectNodeWidget;
-import org.inventory.graphicalrepresentation.specialrelationships.wrappers.LocalObjectLightWrapper;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.WidgetAction;
