@@ -79,6 +79,8 @@
 				July 27th 2016 & Adapted to Kuwaiba version 1.0. LaTeX is now used instead of LibreOffice to create the documentation. \\
 				\midrule
 				December 19th 2016 & Added documentation for templates and reports.\\
+				\midrule
+				June 1th 2017 & Added documentation for Bookmarks, Update Center, Projects and new functions in the Relationship Explorer.\\
 				\bottomrule
 			\end{tabular}	
 				
@@ -192,9 +194,13 @@
 			\midrule
 			\includegraphics[width=0.5cm]{img/icon_topology_designer.png} & Freely design network topologies\\
 			\midrule
+			\includegraphics[width=0.5cm]{img/icon_bookmarks.png} & Create and manage Bookmark Folders and Bookmarks\\
+			\midrule
 			\includegraphics[width=0.5cm]{img/icon_navigation_tree.png} & Main tree used to explore physical assets\\
 			\midrule
 			\includegraphics[width=0.5cm]{img/icon_pools_manager.png} & Create and manage objects that don't fit in the navigation tree\\
+			\midrule
+			\includegraphics[width=0.5cm]{img/icon_reports.png} & Crate and manage reports\\
 			\midrule
 			\includegraphics[width=0.5cm]{img/icon_service_manager.png} & Manage client, services and resources associated to them\\
 		\end{tabular}	
@@ -340,21 +346,30 @@
 	Every node has a set of actions, some will be active for all objects, some depend on the type of element that is selected. In the figure~\ref{fig:navigation_tree_context_menu} you can see the actions enabled for a \textbf{Rack} object. \\
 	\begin{figure}[h!]
 		\centering
-		\includegraphics[width=0.5\linewidth]{img/navigation_tree_context_menu.png}
-		\caption{Properties of a selected \textbf{Rack} object}
+		\includegraphics[width=0.7\linewidth]{img/navigation_tree_context_menu.png}
+		\caption{Actions of selected \textbf{Rack} object}
 		\label{fig:navigation_tree_context_menu}
 	\end{figure}
 	\begin{itemize}
-		\item \textbf{New Object:} The list of object types that can be contained for the selected element type according to the configured Containment Hierarchy. In this case, a \textbf{Rack} can only contain \textbf{Routers}.
+		\item \textbf{New:} The list of object types that can be contained for the selected element type according to the configured Containment Hierarchy. In this case, a \textbf{Rack} can contain \textbf{DDFs}, \textbf{ODFs}, \textbf{Routers}, etc.
+		\item \textbf{New from template:} Crates a containment structure. See more details in the chapter \nameref{sec:template_manager}
 		\item \textbf{Copy:} A plain copy operation.
+		\item \textbf{Cut:} A plain cut operation.
 		\item \textbf{Paste:} A plain paste operation. You can only paste objects where it is allowed according to the configured Containment Hierarchy.
-		\item \textbf{Update:} Update the node information. Useful when a changed has made to the object from a external source (e.g. another user) or if you create a new list type affecting one of the attributes of the selected element. In this case, if you, for example, create an instance of \textbf{EquipmentVendor} (this will add a new entry to the \textbf{vendor} attribute list)
-		\item \textbf{Delete:} Deletes the object. Tis will fail if the object has an incoming relationship, for example, a \textbf{Port} connected to a cable.
+		\item \textbf{Update:} Updates the node information. Useful when a changed has made to the object from a external source (e.g. another user) or if you create a new list type affecting one of the attributes of the selected element. In this case, if you, for example, create an instance of \textbf{EquipmentVendor} (this will add a new entry to the \textbf{vendor} attribute list)
+		\item \textbf{Edit:} Opens a Property Sheet to edit the attributes values of the selected Inventory object node.
+		\item \textbf{Delete:} Deletes the object. This will fail if the object has an incoming relationship, for example, a \textbf{Port} connected to a cable.
 		\item \textbf{Reports:} The reports associated to the objects of this class. In this case, \textbf{Rack} has a report called \textbf{Rack Usage}. If no reports are associated, this entry will appear grayed out.
 		\item \textbf{Relate to service:} All inventory objects can be associated to an existing service. See more details in the chapter \nameref{sec:service_manager}.
 		\item \textbf{Release from Service:} Removes the association between an object(resource) and a service. If the object is not related to any service, this option will appear grayed out.
+		\item \textbf{Add to Bookmark Folder:} All inventory objects can be added to an existing Bookmark Folder. See more details in the chapter \nameref{sec:bookmarks}.
+		\item \textbf{Remove from Bookmark Folder:} Removes the association between an object (bookmark) and a Bookmark Folder. If the object is not related to any Bookmark Folder, this option appear grayed out.
 		\item \textbf{Audit Trail:} This will display all the audit trail entries for the selected object, that is, all the changes made to the it.
-		\item \textbf{Open an Explorer from this Node:} Opens a navigation tree whose root node will be the selected object. Useful when you want to explore an object with a many containment levels below.
+		\item \textbf{Relate to Project:} All inventory object can be a resource of an existing Project. See more details in the chapter \nameref{sec:projects}
+		\item \textbf{Release from Project:} Removes a selected object (resource) form a Project. If the object is not related to any Project, this option appear grayed out.
+		\item \textbf{Relate to Contract:} All inventory objects can be associated to an existing Contract. See more details in chapter \nameref{sec:contract_manager}
+		\item \textbf{Release from Contract:} Removes the association between an object a contract. If the object is not related to any contract, this option will appear grayed out.
+		\item \textbf{Open a Navigation tree from Here:} Opens a Navigation tree whose root node will be the selected object. Useful when you want to explore an object with a many containment levels below.
 		\item \textbf{Show More Information:} Shows the database id of the selected object. Useful for troubleshooting purposes. It will also show the object's complete containment structure.
 			\begin{figure}[h!]
 				\centering
@@ -371,22 +386,52 @@
 	\end{framed}
 	\subsection{Relationship and Special Children Explorer} \label{sec:extra_explorers}
 	Apart from the main navigation tree, there are also two explorers that are very useful to navigate through domain-specific models. Both explorers are located in the Tools $\rightarrow$ Navigation menu.
-	\begin{itemize}
-		\item \textbf{Relationship Explorer:} Allows to see the special relationships of the selected object. When an object makes part of a domain-specific model (SDH, Physical Connections, MPLS, Software Licensing, etc) there are special bounds to other objects called \textbf{relationships} they have names documented on model-basis, and they can be seen using this explorer. In the figure~\ref{fig:navigation_tree_relationship_explorer}, it is depicted an \textbf{OpticalPort} with two relationships, one called \textbf{endpointA} used in the Physical Connections model and it indicates that this port is the endpoint to a physical connection, probably a fiber optic. It also has a relationship called \textbf{uses}, which makes part of the Service management model. It indicates that the service called PDH Service-01 uses that port as a resource.
-			\begin{figure}[h!]
-				\centering
-				\includegraphics[width=0.4\linewidth]{img/navigation_tree_relationship_explorer.png}
-				\caption{Special relationships of the selected \textbf{OpticalPort} object}
-				\label{fig:navigation_tree_relationship_explorer}
-			\end{figure}
-		\item \textbf{Special Children Explorer:} The special children are children as in the containment hierarchy concept, but used in domain-specific models, which gives them particular behavior depending on the situation (that is, they can't be handled as simple objects in the navigation tree, because, for example, deleting them may require to perform other tasks but just removing the object from the database as they make part of a complex workflow). This is the case of the cables inside a conduit connecting two buildings. You can find more details about this scenario in the chapter \textbf{\nameref{sec:physical_connections}}.
-			\begin{figure}[h!]
-				\centering
-				\includegraphics[width=0.3\linewidth]{img/navigation_tree_special_children_explorer.png}
-				\caption{Fibers inside a container between two buildings}
-				\label{fig:navigation_tree_special_children_explorer}
-			\end{figure}
-	\end{itemize}
+
+	\subsubsection{Relationship Explorer} \label{sec:extra_explorers_relationship_explorer}
+		Allows to see the special relationships of the selected object. When an object makes part of a domain-specific model (SDH, Physical Connections, MPLS, Software Licensing, etc) there are special bounds to other objects called \textbf{relationships} they have names documented on model-basis, and they can be seen using this explorer. In the figure~\ref{fig:navigation_tree_relationship_explorer}, it is depicted an \textbf{OpticalPort} with three relationships, one called \textbf{parent}, which all inventory objects has and it is used to navigate in the containment structure, the \textbf{endpointA} used in the Physical Connections model and it indicates that this port is the endpoint to a physical connection, probably a fiber optic. It also has a relationship called \textbf{uses}, which makes part of the Service management model. It indicates that the service called PDH Service-01 uses that port as a resource.
+		
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.4\linewidth]{img/navigation_tree_relationship_explorer.png}
+			\caption{Special relationships of the selected \textbf{OpticalPort} object}
+			\label{fig:navigation_tree_relationship_explorer}
+		\end{figure}
+		
+		In the Relationship Explorer you have a toolbar with one button which allows you navigate through the special relationships by means of a graphical representation, you can open the canvas figure~\ref{fig:graphical_representation_relationships} just right click in the icon \includegraphics[width=0.5cm]{img/icon_graphical_representation_relationships.png}		
+						
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.4\linewidth]{img/graphical_representation_relationships.png}
+			\caption{Special relationships canvas}
+			\label{fig:graphical_representation_relationships}
+		\end{figure}
+			
+		In the canvas figure~\ref{fig:graphical_representation_relationships} you have a toolbar with a set of option listed in the Table~\ref{tab:graphical_representation_relationships_toolbar_icons}.
+			
+		\begin{table}[h!]
+			\centering
+			\begin{tabular}{cl}
+				\includegraphics[width=0.5cm]{img/icon_collapse_all.png} & Hide all special relationships\\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_export_as_image.png} & Export as image\\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_reorganize_nodes.png} & If the nodes are overlapped, you can organize them using this button\\
+				\midrule
+			\end{tabular}
+			\caption{Graphical representation of special relationships toolbar icons}
+			\label{tab:graphical_representation_relationships_toolbar_icons}
+		\end{table}
+			
+		\subsubsection{Special Children Explorer} \label{sec:extra_explorers_children_explorer}							
+		The special children are children as in the containment hierarchy concept, but used in domain-specific models, which gives them particular behavior depending on the situation (that is, they can't be handled as simple objects in the navigation tree, because, for example, deleting them may require to perform other tasks but just removing the object from the database as they make part of a complex workflow). This is the case of the cables inside a conduit connecting two buildings. You can find more details about this scenario in the chapter \textbf{\nameref{sec:physical_connections}}.
+						
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.3\linewidth]{img/navigation_tree_special_children_explorer.png}
+			\caption{Fibers inside a container between two buildings}
+			\label{fig:navigation_tree_special_children_explorer}
+		\end{figure}
+			
 	\newpage
 	\section{Template Manager} \label{sec:template_manager}
 	In many scenarios there are some containment structures that are created recurrently, like Building $\rightarrow$ Floor $\rightarrow$ Room $\rightarrow$ Rack, or ODF/DDFs with the same number of ports (12/24/36/48/72/96/144), or simply equipment with the same set of attributes, for example all the routers of certain model: The vendor, number of rack units, slots, etc will be always the same. Creating them from scratch every time is a tedious task. For this reason, Kuwaiba provides a module that allows you to create template of objects which actual inventory elements can be created from. Go to Tools $\rightarrow$ Template Manager to open it.
@@ -1738,7 +1783,7 @@
 			\label{fig:ipam_root_nodes_actions}
 		\end{figure}
 		
-		\subsubsection{Folders}
+		\subsection{Folders}
 		A folder is a way to store and arrange several subnets, you can create as many folders as you want, you can also create a folder inside other folder.
 		\begin{figure}[h!]
 			\centering
@@ -1749,7 +1794,7 @@
 		
 		Once you create a folder, you could edit its attributes, \textbf{name} and \textbf{description} in the property sheet just like any other element in kuwaiba
 
-		\subsubsection{Creating Subnets}
+		\subsection{Creating Subnets}
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.4\linewidth]{img/ipam_folder_actions.png}
@@ -1767,7 +1812,7 @@
 			\label{fig:ipam_add_subnet}
 		\end{figure}
 		
-		\subsubsection{Adding IPs}
+		\subsection{Adding IPs}
 		
 		Once you have created a subnet you can an add an IP address or a range of IP addresses, making right click in the subnet and then selecting \textit{add IP address} kuwaiba will show you a form to add IPs.
 		\begin{figure}[h!]
@@ -1785,7 +1830,7 @@
 			\label{fig:ipam_add_ip_address}
 		\end{figure}
 	
-	   	\subsubsection{Creating nested Subnets}
+	   	\subsection{Creating nested Subnets}
 	   	
 		Subnets can be nested inside other subnets as long as the limits of subnet you are trying to nest belongs  completely to the biger subnet, to nest a a subnet inside other subnet, make right click in the wished subnet and then select \textit{Create subnet}, Kuwaiba will show you the form to create a subnet, by default the subnet field will be filled with the bigger subent Network IP address, so you shall complete the CIDR format with the number of bits for the mask.
 		\begin{figure}[h!]
@@ -1997,7 +2042,7 @@
 		\end{figure}
 		
 		Currently is only possible to add/remove groups to/from a user (not vice versa)
-		
+				
 		\newpage
 		\section{Bulk import}\label{sec:bulk_import}
 			Kuwaiba  provides a  way  to  import  objects  and  list  types  from CVS text files with a define format.  This  module  can be  found at \textit{Tools} $\rightarrow$ \textit{Bulk Import}. Examples of these files are included in the client installer bundle under the directory \textit{Samples}.
@@ -2094,5 +2139,96 @@
 					\item If you perform changes infile after loading it (that is, after pressing \textit{Select file}), you will have to select it again so it can take the changes, otherwise, it will process the old file instead. To save the output messages, right-click the window.
 					\end{itemize}
 				\end{framed}
+		\newpage
+		\section{Bookmarks}\label{sec:bookmarks}
+		
+			The Bookmarks module let you manage bookmarks. In Kuwaiba a bookmark are an object of the inventory which are pooled in a bookmark folder. To open the Bookmarks module look in the menu for Tools $\rightarrow$ Bookmarks or just click in the icon
+			\includegraphics[width=0.5cm]{img/icon_bookmarks.png}
+			
+			\begin{figure}[h!]
+				\centering
+				\includegraphics[width=0.5\linewidth]{img/bookmarks.png}
+				\caption{Bookmarks sample}
+				\label{fig:bookmakrs}
+			\end{figure}
+			
+			To add a object from the Navigation Tree just right click and select the option of Add to bookmark folder \textbf{figure~\ref{fig:add_to_bookmark_folder}} or Remove from Bookmark Folder to remove it.
+						
+			\begin{figure}[h!]
+				\centering
+				\includegraphics[width=0.8\linewidth]{img/bm_add_to_bookmark_folder.png}
+				\caption{Add to Bookmark folder}
+				\label{fig:add_to_bookmark_folder}
+			\end{figure}
+							
+		\newpage
+		\section{Update Center}\label{sec:update_center}
+		The Update Center module is used to get the latest version of Kuwaiba. Your Administrator must provided to you a URL where was located the update center. To open the Update Center module look in the menu for Tools $\rightarrow$ Update Center
+		\newline
+		Once the Update Center URL was assigned, and doing just click in the OK button, must be begin the update right away. For the next Kuwaiba run if  there are updates, the update will be automatically, and if is necessary restart the application, it shows a notification to begin the restart.
+		\newline
+		For details see Appendix E in the administrator's manual
+		
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.7\linewidth]{img/update_center.png}
+			\caption{Update Center options}
+			\label{fig:update_center_options}
+		\end{figure}		
+		
+		\newpage		
+		\section{Projects}\label{sec:projects}
+		
+			The Project module allows you have all projects, activities and resources in a place. To open the Projects module look in the menu for Tools $\rightarrow$ Advanced $\rightarrow$ Projects
+			\newline
+			
+			\begin{figure}[h!]
+				\centering
+				\includegraphics[width=0.5\linewidth]{img/projects.png}
+				\caption{Projects sample}
+				\label{fig:projects}
+		    \end{figure}
+		    
+		    To start using the Projects module you must crate a Project, depending of the loaded data model you can create project of GeneralPurposeProject or NetworkProject or any subclass of GenericProject (see \textbf{\nameref{sec:data_model_manager}} if you need to create a different kind  of Projects).
+		    \newline
+		    
+		    \begin{figure}[h!]
+		    	\centering
+		    	\includegraphics[width=0.5\linewidth]{img/projects_actions.png}
+		    	\caption{Add Projects}	    
+		    	\label{fig:projects_actions}
+		    \end{figure}
+		    
+		    A Project can contain sub projects or activities, you can create an activity just making right click in a Project an selecting the kind of Activity you want to add, if you need to create a different kind of Activities (see \textbf{\nameref{sec:data_model_manager}})
+		    \newline
+		    
+		    \begin{figure}[h!]
+		    	\centering
+		    	\includegraphics[width=0.5\linewidth]{img/activity_actions.png}
+		    	\caption{Add Activity}
+		    	\label{fig:activity_actions}
+		    \end{figure}
+		    
+		    The Projects has relate resources that are inventory objects in the Navigation tree. you can relate or release objects just making right click in a Inventory object \textbf{figure~\ref{fig:pm_relate_to_project}}.
+		    \newline
+		    		    
+		    \begin{figure}[h!]
+		    	\centering
+		    	\includegraphics[width=0.9\linewidth]{img/pm_relate_to_project.png}
+		    	\caption{Relate to Project Action}
+		    	\label{fig:pm_relate_to_project}
+		    \end{figure}
+		    
+		    If you have an old data base, the data model for Projects module are not available, and when try open the Projects explorer or relate an object with a Project
+		    Kuwaiba show you the message like in the \textbf{figure~\ref{fig:patch_projects}}.
+		    \newline
+		    
+		    \begin{figure}[h!]
+		    	\centering
+		    	\includegraphics[width=0.8\linewidth]{img/patch_projects.png}
+		    	\caption{Projects data model error}
+		    	\label{fig:patch_projects}
+		    \end{figure}
+				
 				
 \end{document}

@@ -67,6 +67,9 @@
 				December 9th 2016 & Added notes about configuring Glassfish to start on boot. \\
 				\midrule
 				March 24th 2017 & Added notes about configuring Glassfish to support HTTP compression. \\
+				\midrule
+				June 1th 2017 & Added Appendix E Configuring Update Center
+				\midrule
 				\bottomrule
 			\end{tabular}	
 				
@@ -152,6 +155,8 @@
 						\item \textbf{03\_data\_kuwaiba.db.zip}: Contains the same as 02\_containment\_kuwaiba.db plus some objects, views and tasks 
 						
 					\end{itemize} \\
+					\midrule
+					updates.zip & This file contains a updates.xml file and the set of Netbeans module file (.NBM) for the current Kuwaiba version. See \textbf{\nameref{app:AppendixE}}\\
 					\midrule
 					KuwaibaServer.ear & The enterprise application to be deployed on the application server \\
 					\midrule
@@ -524,6 +529,21 @@
 						\label{fig:enabling-compression}
 					\end{figure}
 				\end{enumerate}
+			\newpage
+			\section{Appendix E. Configuring Update Center} \label{app:AppendixE}
+			Since version 1.5, the Kuwaiba client can be updated using an update center. An \textbf{Update Center} are a set of files which are putting in a server to be download by client application. The server can be anyone; e.g., GlassFish, Apache, Apache Tomcat. Once the server are selected, unzip the updates.zip and locate the files in the server, and find the URL for the \textbf{updates.xml} file, this URL are used to configure the Kuwiaba client to get the latest version \textbf{figure~\ref{fig:update_center_options}}.
+			
+			\begin{figure}[h!]
+				\centering
+				\includegraphics[width=0.7\linewidth]{img/update_center.png}
+				\caption{Update Center options}
+				\label{fig:update_center_options}
+			\end{figure}
+						
+			In the kuwaiba client you must configure the update center. To open the Update Center module look in the menu for Tools $\rightarrow$ Update Center. Once the Update Center URL was assigned, the update must begin right away. For the next Kuwaiba run if there are updates, the update will be automatically, and if is necessary restart the application, it shows a notification to begin the restart.
+			\newline
+			\newline
+			You can decide no configure a server for the update center, in this case in the Kuwaiba client there are an option to hide the warnings generated when not found the update.xml resource  \textbf{figure~\ref{fig:update_center_options}}.					
 			
 		\end{appendices}			
 \end{document}
