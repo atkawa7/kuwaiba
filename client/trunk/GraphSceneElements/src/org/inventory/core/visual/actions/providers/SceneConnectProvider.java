@@ -17,7 +17,7 @@
 package org.inventory.core.visual.actions.providers;
 
 import java.awt.Point;
-import org.inventory.core.visual.scene.AbstractNodeWidget;
+import org.inventory.core.visual.scene.ObjectNodeWidget;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.ConnectorState;
 import org.netbeans.api.visual.widget.Scene;
@@ -31,12 +31,12 @@ public abstract class SceneConnectProvider implements ConnectProvider {
 
     @Override
     public boolean isSourceWidget(Widget sourceWidget) {
-        return sourceWidget instanceof AbstractNodeWidget; 
+        return sourceWidget instanceof ObjectNodeWidget; 
     }
 
     @Override
     public ConnectorState isTargetWidget(Widget sourceWidget, Widget targetWidget) {
-        if (targetWidget instanceof AbstractNodeWidget) {
+        if (targetWidget instanceof ObjectNodeWidget) {
             if (sourceWidget.equals(targetWidget)) //A widget can not connect to itself
                 return ConnectorState.REJECT;
             return  ConnectorState.ACCEPT;

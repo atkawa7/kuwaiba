@@ -75,7 +75,7 @@ public class TagLabelWidget extends LabelWidget implements Widget.Dependency {
      */
     private int position;
     
-    public TagLabelWidget(AbstractScene<LocalObjectLight, LocalObjectLight> scene, AbstractNodeWidget widget) {
+    public TagLabelWidget(AbstractScene<LocalObjectLight, LocalObjectLight> scene, ObjectNodeWidget widget) {
         super(scene);
         this.widget = widget;
         setForeground(Color.BLACK);
@@ -85,7 +85,7 @@ public class TagLabelWidget extends LabelWidget implements Widget.Dependency {
         setLabel(scene.findObject(widget).toString());
     }
 
-    public TagLabelWidget(AbstractScene<LocalObjectLight, LocalObjectLight> scene, AbstractNodeWidget widget, 
+    public TagLabelWidget(AbstractScene<LocalObjectLight, LocalObjectLight> scene, ObjectNodeWidget widget, 
             String label, int position) {
         this(scene, widget);
         setLabel(label);

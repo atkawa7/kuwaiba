@@ -1,6 +1,6 @@
 0.1 Beta
 * Fixed the support for abstract classes
-* Internacionalization of server log messages
+* Internationalization of server log messages
 * Corrections to the initialization script
 * Container Manager now uses Children.Array
 
@@ -13,10 +13,10 @@
 * New icons in the test db
 
 0.1.1
-* Added preliminar User/Groups management (You can create users and groups and relate them, but there's no privileges scheme yet)
+* Added preliminary User/Groups management (You can create users and groups and relate them, but there's no privileges scheme yet)
 * The server and the client can reside in diferent computers. At login time you can choose a different WSDL location
 * Added tool bars and in general, the elements were rearranged
-* Inline edition for object nodes names
+* In-line edition for object nodes names
 * Built on top of NBP included in NetBeans IDE 6.9 (Build 201006101454)
 * Multiple bugfixes
 
@@ -44,7 +44,7 @@
 
 0.3 Alpha (17012011)
 * Export views to PNG/JPG formats
-* Preliminary support for graphiical query design
+* Preliminary support for graphical query design
 
 0.3. Beta (31012011)
 * Search results can be exported to CSV and XML formats
@@ -104,7 +104,7 @@
 * Data Model Manager has been improved, adding a graphical view and means to search for classes
 * Added modules to managing SDH networks, and IPAddress Manager, a Contract Manager and a Dashboard
 * Relationship explorer improved
-* Query results are selection-sensible
+* Query results are selection-aware
 * Topology designer was rewritten
 
 1.1 (01122016)
@@ -124,3 +124,6 @@
 * A graphical explorer was added to the Relationship Explorer
 * Added a module to manage favorites
 * Rack views now allow ascending and descending children positioning and also support children that don't need to be displayed.
+* A simple support for projects was added
+* Support for updates using an Update Center was added
+* Multiple bugfixes and improvements

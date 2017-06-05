@@ -44,8 +44,8 @@ import org.inventory.core.visual.actions.providers.CustomAcceptActionProvider;
 import org.inventory.core.visual.actions.providers.CustomMoveProvider;
 import org.inventory.core.visual.actions.providers.CustomSelectProvider;
 import org.inventory.core.visual.actions.providers.SceneConnectProvider;
-import org.inventory.core.visual.scene.AbstractConnectionWidget;
-import org.inventory.core.visual.scene.AbstractNodeWidget;
+import org.inventory.core.visual.scene.ObjectConnectionWidget;
+import org.inventory.core.visual.scene.ObjectNodeWidget;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
@@ -118,8 +118,14 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
     }
 
     @Override
-    protected Widget attachNodeWidget(LocalObjectLight node) {        
-        Widget newNode = new AbstractNodeWidget(this, node);
+    protected Widget attachNodeWidget(LocalObjectLight node) {     
+        LocalClassMetadata classMetadata = CommunicationsStub.getInstance().getMetaForClass(node.getClassName(), false);
+        ObjectNodeWidget newNode;
+        if (classMetadata == null || classMetadata.getIcon() == null) //Should not happen, but this check should always be done
+            newNode = new ObjectNodeWidget(this, node);
+        else
+            newNode = new ObjectNodeWidget(this, node, classMetadata.getIcon());
+        
         nodeLayer.addChild(newNode);
         newNode.getActions(ACTION_SELECT).addAction(selectAction);
         newNode.getActions(ACTION_SELECT).addAction(ActionFactory.createMoveAction(moveProvider, moveProvider));
@@ -131,7 +137,7 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
 
     @Override
     protected Widget attachEdgeWidget(LocalObjectLight edge) {
-        AbstractConnectionWidget newEdge = new AbstractConnectionWidget(this, edge);
+        ObjectConnectionWidget newEdge = new ObjectConnectionWidget(this, edge);
         newEdge.getActions().addAction(selectAction);
         newEdge.getActions().addAction(addRemoveControlPointAction);
         newEdge.getActions().addAction(moveControlPointAction);
@@ -147,14 +153,14 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
 
     @Override
     protected void attachEdgeSourceAnchor(LocalObjectLight edge, LocalObjectLight oldSourceNode, LocalObjectLight sourceNode) {
-        AbstractConnectionWidget connectionWidget = (AbstractConnectionWidget)findWidget(edge);
+        ObjectConnectionWidget connectionWidget = (ObjectConnectionWidget)findWidget(edge);
         Widget sourceWidget = findWidget(sourceNode);
         connectionWidget.setSourceAnchor(sourceWidget != null ? AnchorFactory.createCircularAnchor(sourceWidget, 3) : null);
     }
 
     @Override
     protected void attachEdgeTargetAnchor(LocalObjectLight edge, LocalObjectLight oldTargetNode, LocalObjectLight targetNode) {
-        AbstractConnectionWidget connectionWidget = (AbstractConnectionWidget)findWidget(edge);
+        ObjectConnectionWidget connectionWidget = (ObjectConnectionWidget)findWidget(edge);
         Widget targetWidget = findWidget(targetNode);
         connectionWidget.setTargetAnchor(targetWidget != null ? AnchorFactory.createCircularAnchor(targetWidget, 3) : null);
     }
@@ -207,7 +213,7 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
                 xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(getEdgeSource(edgeObject).getOid())));
                 xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(getEdgeTarget(edgeObject).getOid())));
                 
-                for (Point point : ((AbstractConnectionWidget)edgeWidget).getControlPoints()) {
+                for (Point point : ((ObjectConnectionWidget)edgeWidget).getControlPoints()) {
                     QName qnameControlpoint = new QName("controlpoint");
                     xmlew.add(xmlef.createStartElement(qnameControlpoint, null, null));
                     xmlew.add(xmlef.createAttribute(new QName("x"), Integer.toString(point.x)));
@@ -280,7 +286,7 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
                                     fireChangeEvent(new ActionEvent(this, SCENE_CHANGE, "connectionAutomaticallyRemoved")); //NOI18N
                                 }
                                 else {
-                                    ConnectionWidget newEdge = (AbstractConnectionWidget)addEdge(container);
+                                    ConnectionWidget newEdge = (ObjectConnectionWidget)addEdge(container);
                                     newEdge.setLineColor(getConnectionColor(container));
                                     setEdgeSource(container, aSideObject);
                                     setEdgeTarget(container, bSideObject);
@@ -359,7 +365,7 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
             if (newConnection != null) {
                 //Only create edges in the scene if the connection is a TransportLink
                 if (CommunicationsStub.getInstance().isSubclassOf(newConnection.getClassName(), "GenericSDHTransportLink")) {
-                    AbstractConnectionWidget newConnectionWidget = (AbstractConnectionWidget)addEdge(newConnection);
+                    ObjectConnectionWidget newConnectionWidget = (ObjectConnectionWidget)addEdge(newConnection);
                     setEdgeSource(newConnection, sourceObject);
                     setEdgeTarget(newConnection, targetObject);
                     newConnectionWidget.setLineColor(getConnectionColor(newConnection));

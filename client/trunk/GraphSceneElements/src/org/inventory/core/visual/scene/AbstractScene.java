@@ -110,7 +110,7 @@ public abstract class AbstractScene<N, E> extends GraphScene<N, E> {
             return;
         
         for (Widget node : nodeLayer.getChildren()) 
-            ((AbstractNodeWidget)node).getLabelWidget().setVisible(visible);
+            ((ObjectNodeWidget)node).getLabelWidget().setVisible(visible);
         
         validate();
     }

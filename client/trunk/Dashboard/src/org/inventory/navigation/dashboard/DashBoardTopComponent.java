@@ -51,7 +51,7 @@ import org.openide.windows.WindowManager;
 @TopComponent.Description(
         preferredID = "DashBoardTopComponent",
         //iconBase="SET/PATH/TO/ICON/HERE", 
-        persistenceType = TopComponent.PERSISTENCE_NEVER
+        persistenceType = TopComponent.PERSISTENCE_ONLY_OPENED
 )
 @TopComponent.Registration(mode = "editor", openAtStartup = true)
 @ActionID(category = "Window", id = "org.inventory.navigation.dashboard.DashBoardTopComponent")

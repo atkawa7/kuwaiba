@@ -78,7 +78,7 @@ public class PhysicalConnectionProvider implements ConnectProvider {
 
     @Override
     public ConnectorState isTargetWidget(Widget sourceWidget, Widget targetWidget) {
-        if (sourceWidget != targetWidget && targetWidget instanceof AbstractNodeWidget)
+        if (sourceWidget != targetWidget && targetWidget instanceof ObjectNodeWidget)
             return ConnectorState.ACCEPT;
 
         return ConnectorState.REJECT;
@@ -107,8 +107,8 @@ public class PhysicalConnectionProvider implements ConnectProvider {
 
             ConnectionWidget line = (ConnectionWidget)scene.addEdge(myWizard.getNewConnection());
 
-            line.setTargetAnchor(AnchorFactory.createCenterAnchor(((AbstractNodeWidget)targetWidget).getNodeWidget()));
-            line.setSourceAnchor(AnchorFactory.createCenterAnchor(((AbstractNodeWidget)sourceWidget).getNodeWidget()));
+            line.setTargetAnchor(AnchorFactory.createCenterAnchor(((ObjectNodeWidget)targetWidget).getNodeWidget()));
+            line.setSourceAnchor(AnchorFactory.createCenterAnchor(((ObjectNodeWidget)sourceWidget).getNodeWidget()));
             
             scene.validate();
             scene.fireChangeEvent(new ActionEvent(this, AbstractScene.SCENE_CHANGE, "New Connection"));

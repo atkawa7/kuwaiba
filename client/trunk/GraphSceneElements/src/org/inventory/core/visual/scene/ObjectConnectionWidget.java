@@ -23,8 +23,8 @@ import org.netbeans.api.visual.widget.Scene;
  * A connection widget representing a link or a container
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class AbstractConnectionWidget extends SelectableConnectionWidget {
-    public AbstractConnectionWidget(Scene scene, LocalObjectLight object) {
+public class ObjectConnectionWidget extends SelectableConnectionWidget {
+    public ObjectConnectionWidget(Scene scene, LocalObjectLight object) {
         super(scene, object);
         createActions(AbstractScene.ACTION_SELECT);
     }
