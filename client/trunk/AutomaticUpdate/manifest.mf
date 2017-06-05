@@ -1,8 +1,0 @@
-Manifest-Version: 1.0
-AutoUpdate-Show-In-Client: true
-OpenIDE-Module: org.inventory.updates/1
-OpenIDE-Module-Implementation-Version: 1
-OpenIDE-Module-Install: org/inventory/updates/Installer.class
-OpenIDE-Module-Layer: org/inventory/updates/layer.xml
-OpenIDE-Module-Localizing-Bundle: org/inventory/updates/Bundle.properties
-
