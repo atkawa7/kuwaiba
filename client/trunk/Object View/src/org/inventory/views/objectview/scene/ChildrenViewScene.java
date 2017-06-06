@@ -107,7 +107,7 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
     protected Widget attachNodeWidget(LocalObjectLight node) {
         LocalClassMetadata classMetadata = CommunicationsStub.getInstance().getMetaForClass(node.getClassName(), false);
         ObjectNodeWidget widget;
-        if (classMetadata == null || classMetadata.getIcon() == null) //Should not happen, but this check should always be done
+        if (classMetadata == null) //Should not happen, but this check should always be done
             widget = new ObjectNodeWidget(this, node);
         else
             widget = new ObjectNodeWidget(this, node, classMetadata.getIcon());

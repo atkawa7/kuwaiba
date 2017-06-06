@@ -126,4 +126,5 @@
 * Rack views now allow ascending and descending children positioning and also support children that don't need to be displayed.
 * A simple support for projects was added
 * Support for updates using an Update Center was added
+* Removed "Show/Hide Node Laels" button
 * Multiple bugfixes and improvements

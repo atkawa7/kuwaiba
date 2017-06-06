@@ -116,7 +116,6 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
         btnSave = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         btnExport = new javax.swing.JButton();
-        btnShowNodeLabels = new javax.swing.JToggleButton();
         btnShowConnectionLabels = new javax.swing.JToggleButton();
         btnSelect = new javax.swing.JToggleButton();
         btnConnect = new javax.swing.JToggleButton();
@@ -189,19 +188,6 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
             }
         });
         barTools.add(btnExport);
-
-        btnShowNodeLabels.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/neotropic/inventory/modules/sdh/res/hide_node_labels.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnShowNodeLabels, org.openide.util.NbBundle.getMessage(SDHModuleTopComponent.class, "SDHModuleTopComponent.btnShowNodeLabels.text")); // NOI18N
-        btnShowNodeLabels.setToolTipText(org.openide.util.NbBundle.getMessage(SDHModuleTopComponent.class, "SDHModuleTopComponent.btnShowNodeLabels.toolTipText")); // NOI18N
-        btnShowNodeLabels.setFocusable(false);
-        btnShowNodeLabels.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnShowNodeLabels.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnShowNodeLabels.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnShowNodeLabelsActionPerformed(evt);
-            }
-        });
-        barTools.add(btnShowNodeLabels);
 
         btnShowConnectionLabels.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/neotropic/inventory/modules/sdh/res/hide_conn_labels.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnShowConnectionLabels, org.openide.util.NbBundle.getMessage(SDHModuleTopComponent.class, "SDHModuleTopComponent.btnShowConnectionLabels.text")); // NOI18N
@@ -419,10 +405,6 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
         configObject.setProperty("connectionType", SDHConnectionWizard.Connections.CONNECTION_TRIBUTARYLINK);
     }//GEN-LAST:event_btnTributaryLinkActionPerformed
 
-    private void btnShowNodeLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowNodeLabelsActionPerformed
-        scene.toggleNodeLabels(!btnShowNodeLabels.isSelected());
-    }//GEN-LAST:event_btnShowNodeLabelsActionPerformed
-
     private void btnShowConnectionLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowConnectionLabelsActionPerformed
         scene.toggleConnectionLabels(!btnShowConnectionLabels.isSelected());
     }//GEN-LAST:event_btnShowConnectionLabelsActionPerformed
@@ -440,7 +422,6 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
     private javax.swing.JButton btnSave;
     private javax.swing.JToggleButton btnSelect;
     private javax.swing.JToggleButton btnShowConnectionLabels;
-    private javax.swing.JToggleButton btnShowNodeLabels;
     private javax.swing.JToggleButton btnTransportLink;
     private javax.swing.JToggleButton btnTributaryLink;
     private javax.swing.JScrollPane pnlMainScrollPane1;

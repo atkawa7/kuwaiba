@@ -130,7 +130,7 @@ public final class ObjectViewTopComponent extends TopComponent
         btnAddBackgroundImage = new javax.swing.JButton();
         btnRemoveBackground = new javax.swing.JButton();
         btnFormatText = new javax.swing.JButton();
-        btnShowConnectionLabels = new javax.swing.JButton();
+        btnShowConnectionLabels = new javax.swing.JToggleButton();
         btnSave = new javax.swing.JButton();
         btnSelect = new javax.swing.JToggleButton();
         btnConnect = new javax.swing.JToggleButton();
@@ -518,14 +518,6 @@ public final class ObjectViewTopComponent extends TopComponent
        }
     }//GEN-LAST:event_cmbViewTypeItemStateChangedPerformed
 
-    private void btnShowConnectionLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowConnectionLabelsActionPerformed
-        if (!service.getViewBuilder().getScene().supportsConnections())
-            JOptionPane.showMessageDialog(null, "This view does not support the selected action", 
-                    "Information", JOptionPane.INFORMATION_MESSAGE);
-        else 
-            service.getViewBuilder().getScene().toggleConnectionLabels(!btnShowConnectionLabels.isSelected());
-    }//GEN-LAST:event_btnShowConnectionLabelsActionPerformed
-
     private void btnPowerLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPowerLinkActionPerformed
         if (!service.getViewBuilder().getScene().supportsConnections())
             JOptionPane.showMessageDialog(null, "This view does not support the selected action", 
@@ -536,6 +528,14 @@ public final class ObjectViewTopComponent extends TopComponent
             ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setWizardType(PhysicalConnectionProvider.WIZARD_LINK);
         }
     }//GEN-LAST:event_btnPowerLinkActionPerformed
+
+    private void btnShowConnectionLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowConnectionLabelsActionPerformed
+        if (!service.getViewBuilder().getScene().supportsConnections())
+            JOptionPane.showMessageDialog(null, "This view does not support the selected action", 
+                    "Information", JOptionPane.INFORMATION_MESSAGE);
+        else 
+            service.getViewBuilder().getScene().toggleConnectionLabels(!btnShowConnectionLabels.isSelected());
+    }//GEN-LAST:event_btnShowConnectionLabelsActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barConnections;
@@ -552,7 +552,7 @@ public final class ObjectViewTopComponent extends TopComponent
     private javax.swing.JButton btnRemoveBackground;
     private javax.swing.JButton btnSave;
     private javax.swing.JToggleButton btnSelect;
-    private javax.swing.JButton btnShowConnectionLabels;
+    private javax.swing.JToggleButton btnShowConnectionLabels;
     private javax.swing.JToggleButton btnWireContainer;
     private javax.swing.JToggleButton btnWirelessContainer;
     private javax.swing.JToggleButton btnWirelessLink;

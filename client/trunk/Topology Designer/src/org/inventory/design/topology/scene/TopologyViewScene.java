@@ -459,7 +459,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
             
             LocalClassMetadata classMetadata = CommunicationsStub.getInstance().getMetaForClass(node.getClassName(), false);
             ObjectNodeWidget newNode;
-            if (classMetadata == null || classMetadata.getIcon() == null) //Should not happen, but this check should always be done
+            if (classMetadata == null) //Should not happen, but this check should always be done
                 newNode = new ObjectNodeWidget(this, node);
             else
                 newNode = new ObjectNodeWidget(this, node, classMetadata.getIcon());

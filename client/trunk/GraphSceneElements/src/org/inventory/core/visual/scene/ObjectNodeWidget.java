@@ -35,7 +35,7 @@ public class ObjectNodeWidget extends SelectableNodeWidget {
     /**
      * Default widget size
      */
-    public static final Dimension DEFAULT_DIMENSION = new Dimension(15, 15);
+    public static final Dimension DEFAULT_DIMENSION = new Dimension(24, 24);
     /**
      * The label
      */

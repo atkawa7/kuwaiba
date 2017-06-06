@@ -3,7 +3,7 @@
     <type>org.netbeans.modules.apisupport.project</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/nb-module-project/3">
-            <code-name-base>org.inventory.navigation.navigationtree</code-name-base>
+            <code-name-base>com.neotropic.inventory.modules.sdh</code-name-base>
             <suite-component/>
             <module-dependencies>
                 <dependency>
@@ -12,7 +12,7 @@
                     <compile-dependency/>
                     <run-dependency>
                         <release-version>1</release-version>
-                        <specification-version>1.5.0</specification-version>
+                        <specification-version>1.5</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -21,16 +21,33 @@
                     <compile-dependency/>
                     <run-dependency>
                         <release-version>1</release-version>
-                        <specification-version>1.5.0</specification-version>
+                        <specification-version>1.5</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
-                    <code-name-base>org.inventory.libs.datepicker</code-name-base>
+                    <code-name-base>org.inventory.core.visual</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
                         <release-version>1</release-version>
-                        <specification-version>1.5.0</specification-version>
+                        <specification-version>1.5</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>org.inventory.navigation.navigationtree</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <release-version>1</release-version>
+                        <specification-version>1.5</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>org.netbeans.api.visual</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>2.40.1</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -39,7 +56,7 @@
                     <compile-dependency/>
                     <run-dependency>
                         <release-version>1</release-version>
-                        <specification-version>1.22.1.1</specification-version>
+                        <specification-version>1.42.1</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -47,7 +64,7 @@
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
-                        <specification-version>6.12.1.1</specification-version>
+                        <specification-version>6.32.1</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -55,7 +72,15 @@
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
-                        <specification-version>7.19.1.1</specification-version>
+                        <specification-version>7.59.1</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>org.openide.dialogs</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>7.32.1</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -63,7 +88,7 @@
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
-                        <specification-version>6.22.2.1</specification-version>
+                        <specification-version>6.53.1</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -71,7 +96,7 @@
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
-                        <specification-version>7.12.1.1</specification-version>
+                        <specification-version>7.36.1</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -79,7 +104,7 @@
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
-                        <specification-version>7.31.2.1</specification-version>
+                        <specification-version>8.33.1</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -87,7 +112,7 @@
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
-                        <specification-version>8.3.1</specification-version>
+                        <specification-version>8.22.1</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -95,16 +120,11 @@
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
-                        <specification-version>6.30.1</specification-version>
+                        <specification-version>6.65.1</specification-version>
                     </run-dependency>
                 </dependency>
             </module-dependencies>
-            <public-packages>
-                <package>org.inventory.navigation.navigationtree.nodes</package>
-                <package>org.inventory.navigation.navigationtree.nodes.actions</package>
-                <package>org.inventory.navigation.navigationtree.nodes.properties</package>
-                <package>org.inventory.navigation.navigationtree.windows</package>
-            </public-packages>
+            <public-packages/>
         </data>
     </configuration>
 </project>

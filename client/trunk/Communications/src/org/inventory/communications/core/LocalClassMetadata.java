@@ -56,7 +56,7 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
         
         super(id, className, displayName, parentName, _abstract, viewable, listType, 
             custom, inDesign, smallIcon, color, validators);
-        this.icon = Utils.getIconFromByteArray(icon, new Color(color), 32, 32);
+        this.icon = Utils.getIconFromByteArray(icon, new Color(color), 24, 24);
         this.description = description;
         this.attributeIds = new long[attributeIds.size()];
         this.attributeMappings = new int[attributeIds.size()];
