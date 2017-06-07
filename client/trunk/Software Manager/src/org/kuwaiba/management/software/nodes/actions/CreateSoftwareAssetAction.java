@@ -22,7 +22,7 @@ import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
-import org.inventory.specialexplorer.specialchildren.SpecialChildrenTopComponent;
+import org.inventory.navigation.special.children.SpecialChildrenTopComponent;
 import org.openide.util.lookup.ServiceProvider;
 
 /**

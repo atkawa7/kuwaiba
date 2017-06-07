@@ -33,7 +33,6 @@ public abstract class SelectableNodeWidget extends Widget {
     public SelectableNodeWidget(Scene scene, LocalObjectLight businessObject) {
         super(scene);
         lookup = Lookups.singleton(new ObjectNode(businessObject));
-        setToolTipText(businessObject.toString());
     }
  
     @Override

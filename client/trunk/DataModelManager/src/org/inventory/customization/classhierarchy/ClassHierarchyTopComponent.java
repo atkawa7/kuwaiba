@@ -143,7 +143,7 @@ public final class ClassHierarchyTopComponent extends TopComponent implements Ex
         toolMain.add(btnExpand);
         btnExpand.getAccessibleContext().setAccessibleName(org.openide.util.NbBundle.getMessage(ClassHierarchyTopComponent.class, "ClassHierarchyTopComponent.btnExpand.AccessibleContext.accessibleName")); // NOI18N
 
-        btnCollapse.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/customization/classhierarchy/res/collase.png"))); // NOI18N
+        btnCollapse.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/customization/classhierarchy/res/collapse.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnCollapse, org.openide.util.NbBundle.getMessage(ClassHierarchyTopComponent.class, "ClassHierarchyTopComponent.btnCollapse.text_1")); // NOI18N
         btnCollapse.setToolTipText(org.openide.util.NbBundle.getMessage(ClassHierarchyTopComponent.class, "ClassHierarchyTopComponent.btnCollapse.toolTipText")); // NOI18N
         btnCollapse.setActionCommand(org.openide.util.NbBundle.getMessage(ClassHierarchyTopComponent.class, "ClassHierarchyTopComponent.btnCollapse.actionCommand")); // NOI18N

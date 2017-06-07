@@ -301,13 +301,11 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
 
                         LocalObjectLight lol = CommunicationsStub.getInstance().
                                 getObjectInfoLight(objectClass, objectId);
-                        if (lol != null){
-                            IconNodeWidget widget = (IconNodeWidget)this.addNode(lol);
-                            widget.setPreferredLocation(new Point(x, y));
-                        }
+                        if (lol != null)
+                            this.addNode(lol).setPreferredLocation(new Point(x, y));
                         else
                             NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.INFO_MESSAGE, String.format("ViewAbleObject of class %s and id %s could not be found and was removed from the topology view", objectClass, objectId));
-                    }else{
+                    } else {
                         if (reader.getName().equals(qIcon)){ // FREE CLOUDS
                                 if(Integer.valueOf(reader.getAttributeValue(null,"type"))==1){
                                     int x = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
@@ -315,8 +313,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
                                     
                                     long oid = Long.valueOf(reader.getAttributeValue(null,"id"));
                                     LocalObjectLight lol = new LocalObjectLight(oid, reader.getElementText(), null);
-                                    IconNodeWidget myCloud = (IconNodeWidget)this.addNode(lol);
-                                    myCloud.setPreferredLocation(new Point(x, y));
+                                    this.addNode(lol).setPreferredLocation(new Point(x, y));
                                 }
                             }
                         else{
@@ -328,10 +325,10 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
 
                                 if (edgeName != null){
                                     LocalObjectLight aSideObject = new LocalObjectLight(aSide, null, null);
-                                    IconNodeWidget aSideWidget = (IconNodeWidget)this.findWidget(aSideObject);
+                                    Widget aSideWidget = this.findWidget(aSideObject);
 
                                     LocalObjectLight bSideObject = new LocalObjectLight(bSide, null, null);
-                                    IconNodeWidget bSideWidget = (IconNodeWidget)this.findWidget(bSideObject);
+                                    Widget bSideWidget = this.findWidget(bSideObject);
 
                                     if (aSideWidget == null || bSideWidget == null)
                                         NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.INFO_MESSAGE, "One or both of the endpoints of connection could not be found, so the connection was removed from the topology view");
@@ -363,7 +360,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
                                 if (reader.getName().equals(qPolygon)) { // FREE FRAMES
                                     long oid = randomGenerator.nextInt(1000);
                                     LocalObjectLight lol = new LocalObjectLight(oid, oid + FREE_FRAME + reader.getAttributeValue(null, "title"), null);
-                                    IconNodeWidget myPolygon = (IconNodeWidget)addNode(lol);
+                                    Widget myPolygon = addNode(lol);
                                     Point p = new Point();
                                     p.setLocation(Double.valueOf(reader.getAttributeValue(null, "x")), Double.valueOf(reader.getAttributeValue(null, "y")));
                                     myPolygon.setPreferredLocation(p);

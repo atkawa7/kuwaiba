@@ -34,7 +34,7 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
-                    <code-name-base>org.inventory.specialexplorer</code-name-base>
+                    <code-name-base>org.inventory.navigation.special</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>

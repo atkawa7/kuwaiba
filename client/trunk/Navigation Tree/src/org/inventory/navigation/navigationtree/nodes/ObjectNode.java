@@ -22,7 +22,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import javax.swing.Action;
@@ -201,12 +200,15 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
         return sheet;
     }
 
-    public boolean refresh() {
+    public final boolean refresh() {
          LocalObjectLight object = getObject();
         //Force to get the attributes again, but only if there's a property sheet already asigned
         if (this.sheet != null) 
             setSheet(createSheet());
         else
+            //*****************
+            //TODO: When fixing the listeners, change this as well, or you will lose the references to those listeners
+            //*********
             object = com.getObjectInfoLight(object.getClassName(), object.getOid());
         
         if (object == null)
@@ -219,24 +221,9 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
         if (isLeaf())
             return true;
         
-        List<LocalObjectLight> children = com.getObjectChildren(object.getOid(), com.getMetaForClass(object.getClassName(), false).getOid());
-        List<Node> toBeDeleted = new ArrayList<>(Arrays.asList(getChildren().getNodes()));
-        List<LocalObjectLight> toBeAdded = new ArrayList<>(children);
-        for (Node child : getChildren().getNodes()) {
-            for (LocalObjectLight myChild : children) {
-                if (((ObjectNode) child).getObject().equals(myChild)) {
-                    ((ObjectNode) child).refresh();
-                    toBeDeleted.remove(child);
-                    toBeAdded.remove(myChild);
-                }
-            }
-        }
-        for (Node deadNode : toBeDeleted) {
-            ((ObjectChildren) getChildren()).remove(new Node[]{deadNode});
-        }
-        for (LocalObjectLight newChild : toBeAdded) {
-            ((ObjectChildren) getChildren()).add(new Node[]{new ObjectNode(newChild)});
-        }
+        //See if te children changed
+        ((AbstractChildren)getChildren()).addNotify();
+        
         return true;
     }
     
