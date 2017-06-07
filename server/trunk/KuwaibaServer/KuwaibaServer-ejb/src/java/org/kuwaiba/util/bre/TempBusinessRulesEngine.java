@@ -65,6 +65,7 @@ public class TempBusinessRulesEngine {
         subClassOfValidators.put("ELANService", "elanservice");
         subClassOfValidators.put("ELINEService", "elineservice");
         subClassOfValidators.put("ETREEService", "etreeservice");
+        subClassOfValidators.put("Rack", "rack");
         //TODO: These validators will be used to enable special actions for certain type of objects
         //Perhaps we should use some other type of solution for this in the future
         subClassOfValidators.put("GenericSDHTransportLink", "sdhTransportLink");
