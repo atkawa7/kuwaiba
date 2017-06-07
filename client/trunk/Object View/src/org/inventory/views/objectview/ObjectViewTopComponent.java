@@ -19,17 +19,16 @@ import java.awt.Color;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ButtonGroup;
-import javax.swing.ComboBoxModel;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -38,9 +37,7 @@ import org.inventory.core.visual.export.filters.ImageFilter;
 import org.inventory.core.visual.export.filters.SceneExportFilter;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.core.visual.scene.PhysicalConnectionProvider;
-import org.inventory.views.objectview.scene.ChildrenViewBuilder;
 import org.inventory.views.objectview.scene.ChildrenViewScene;
-import org.inventory.views.objectview.scene.RackViewBuilder;
 import org.openide.explorer.ExplorerManager;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
@@ -49,13 +46,17 @@ import org.openide.util.ImageUtilities;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.explorer.ExplorerManager.Provider;
+import org.openide.util.Lookup;
+import org.openide.util.LookupEvent;
+import org.openide.util.LookupListener;
+import org.openide.util.Utilities;
 
 /**
- * This component renders the views associated to an object
+ * This component renders the views associated to an currentObject
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public final class ObjectViewTopComponent extends TopComponent
-        implements Provider, ActionListener, Refreshable {
+        implements Provider, ActionListener, Refreshable, LookupListener {
 
     private static ObjectViewTopComponent instance;
     /** path to the icon used by the component and its open action */
@@ -71,30 +72,28 @@ public final class ObjectViewTopComponent extends TopComponent
     private ButtonGroup buttonGroupUpperToolbar;
     private ButtonGroup buttonGroupRightToolbar;
     
-    public static final ComboBoxModel defaultListModel = new DefaultComboBoxModel(new String[] {"Default View", "Rack View"});
-
-    private ExplorerManager em = new ExplorerManager();
+    private final ExplorerManager em = new ExplorerManager();
     private ObjectViewService service;
     
-    /**
-     * To warn the user if the view has not been saved yet
-     */
-    private boolean isSaved = true;
-
+    private ChildrenViewScene scene;
+    private ObjectViewConfigurationObject configObject;
+    private LocalObjectLight currentObject;
+    private Lookup.Result<LocalObjectLight> lookupResult;
+    
     public ObjectViewTopComponent() {
         initComponents();
         initCustomComponents();
         setName(NbBundle.getMessage(ObjectViewTopComponent.class, "CTL_ObjectViewTopComponent"));
         setToolTipText(NbBundle.getMessage(ObjectViewTopComponent.class, "HINT_ObjectViewTopComponent"));
         setIcon(ImageUtilities.loadImage(ICON_PATH, true));
-        associateLookup(service.getViewBuilder().getScene().getLookup());
     }
 
     public final void initCustomComponents(){
-        cmbViewType.setModel(defaultListModel);
-        service = new ObjectViewService(this);
-
-        pnlScrollMain.setViewportView(service.getViewBuilder().getScene().createView());
+        scene = new ChildrenViewScene();
+        service = new ObjectViewService(scene);
+        associateLookup(scene.getLookup());
+        
+        pnlScrollMain.setViewportView(scene.createView());
 
         btnWireContainer.setName(Constants.CLASS_WIRECONTAINER);
         btnWirelessContainer.setName(Constants.CLASS_WIRELESSCONTAINER);
@@ -113,9 +112,14 @@ public final class ObjectViewTopComponent extends TopComponent
         btnSelect.setSelected(true);
         
         //Default connection settings
-        service.getViewBuilder().getScene().setNewLineColor(Color.RED);
-        ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setConnectionClass(Constants.CLASS_WIRECONTAINER);
-        ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setWizardType(PhysicalConnectionProvider.WIZARD_CONTAINER);
+        scene.setNewLineColor(Color.RED);
+        ((PhysicalConnectionProvider) scene.getConnectProvider()).setConnectionClass(Constants.CLASS_WIRECONTAINER);
+        ((PhysicalConnectionProvider) scene.getConnectProvider()).setWizardType(PhysicalConnectionProvider.WIZARD_CONTAINER);
+                
+        configObject = Lookup.getDefault().lookup(ObjectViewConfigurationObject.class);
+        configObject.setProperty("saved", true);
+        configObject.setProperty("currentObject", null);
+        configObject.setProperty("currentView", null);
     }
 
     /** This method is called from within the constructor to
@@ -136,7 +140,6 @@ public final class ObjectViewTopComponent extends TopComponent
         btnConnect = new javax.swing.JToggleButton();
         btnExport = new javax.swing.JButton();
         btnRefresh = new javax.swing.JButton();
-        cmbViewType = new javax.swing.JComboBox();
         pnlScrollMain = new javax.swing.JScrollPane();
         pnlRight = new javax.swing.JPanel();
         barContainers = new  javax.swing.JToolBar("Physical Containers",javax.swing.JToolBar.VERTICAL);
@@ -195,7 +198,9 @@ public final class ObjectViewTopComponent extends TopComponent
         barMain.add(btnFormatText);
 
         btnShowConnectionLabels.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/objectview/res/hide_conn_labels.png"))); // NOI18N
+        btnShowConnectionLabels.setSelected(true);
         org.openide.awt.Mnemonics.setLocalizedText(btnShowConnectionLabels, org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnShowConnectionLabels.text")); // NOI18N
+        btnShowConnectionLabels.setToolTipText(org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnShowConnectionLabels.toolTipText")); // NOI18N
         btnShowConnectionLabels.setEnabled(false);
         btnShowConnectionLabels.setFocusable(false);
         btnShowConnectionLabels.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -277,14 +282,6 @@ public final class ObjectViewTopComponent extends TopComponent
             }
         });
         barMain.add(btnRefresh);
-
-        cmbViewType.setMaximumSize(new java.awt.Dimension(200, 20));
-        cmbViewType.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                cmbViewTypeItemStateChangedPerformed(evt);
-            }
-        });
-        barMain.add(cmbViewType);
 
         add(barMain, java.awt.BorderLayout.PAGE_START);
         add(pnlScrollMain, java.awt.BorderLayout.CENTER);
@@ -382,116 +379,80 @@ public final class ObjectViewTopComponent extends TopComponent
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelectActionPerformed
-        service.getViewBuilder().getScene().setActiveTool(ChildrenViewScene.ACTION_SELECT);
+        scene.setActiveTool(ChildrenViewScene.ACTION_SELECT);
         buttonGroupRightToolbar.clearSelection();
     }//GEN-LAST:event_btnSelectActionPerformed
 
     private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
-        if (service.getViewBuilder().getScene().getConnectProvider() == null)
-            JOptionPane.showMessageDialog(null, "This view does not support the selected action", 
-                    "Information", JOptionPane.INFORMATION_MESSAGE);
-        else
-            service.getViewBuilder().getScene().setActiveTool(ChildrenViewScene.ACTION_CONNECT);
+        scene.setActiveTool(ChildrenViewScene.ACTION_CONNECT);
     }//GEN-LAST:event_btnConnectActionPerformed
 
     private void btnAddBackgroundImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddBackgroundImageActionPerformed
-        if (!service.getViewBuilder().getScene().supportsBackgrounds())
-            JOptionPane.showMessageDialog(null, "This view does not support the selected action", 
-                    "Information", JOptionPane.INFORMATION_MESSAGE);
-        else{
-            JFileChooser fChooser = new JFileChooser();
-            fChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            fChooser.setFileFilter(new FileNameExtensionFilter("Image files", "gif","jpg", "png"));
-            if (fChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION){
-                try {
-                    Image myBackgroundImage = ImageIO.read(new File(fChooser.getSelectedFile().getAbsolutePath()));
-                    service.getViewBuilder().getScene().setBackgroundImage(myBackgroundImage);
-                    service.getViewBuilder().getScene().fireChangeEvent(new ActionEvent(this, ChildrenViewScene.SCENE_CHANGE, "Add Background"));
-                } catch (IOException ex) {
-                    getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());
-                }
+        JFileChooser fChooser = new JFileChooser();
+        fChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fChooser.setFileFilter(new FileNameExtensionFilter("Image files", "gif","jpg", "png"));
+        if (fChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+            try {
+                Image myBackgroundImage = ImageIO.read(new File(fChooser.getSelectedFile().getAbsolutePath()));
+                scene.setBackgroundImage(myBackgroundImage);
+                scene.fireChangeEvent(new ActionEvent(this, ChildrenViewScene.SCENE_CHANGE, "Add Background"));
+            } catch (IOException ex) {
+                getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());
             }
-        } 
+        }
     }//GEN-LAST:event_btnAddBackgroundImageActionPerformed
 
     private void btnRemoveBackgroundActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveBackgroundActionPerformed
-        if (!service.getViewBuilder().getScene().supportsBackgrounds())
-            JOptionPane.showMessageDialog(null, "This view does not support the selected action", 
-                    "Information", JOptionPane.INFORMATION_MESSAGE);
-        else{
-            service.getViewBuilder().getScene().setBackgroundImage(null);
-            service.getViewBuilder().getScene().fireChangeEvent(new ActionEvent(this, AbstractScene.SCENE_CHANGE, "Remove Background"));
-        }
+          scene.setBackgroundImage(null);
+          scene.fireChangeEvent(new ActionEvent(this, AbstractScene.SCENE_CHANGE, "Remove Background"));
     }//GEN-LAST:event_btnRemoveBackgroundActionPerformed
 
     private void btnElectricalLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnElectricalLinkActionPerformed
-        if (!service.getViewBuilder().getScene().supportsConnections())
-            JOptionPane.showMessageDialog(null, "This view does not support the selected action", 
-                    "Information", JOptionPane.INFORMATION_MESSAGE);
-        else{
-            service.getViewBuilder().getScene().setNewLineColor(Color.ORANGE);
-            ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setConnectionClass(Constants.CLASS_ELECTRICALLINK);
-            ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setWizardType(PhysicalConnectionProvider.WIZARD_LINK);
-        }
+          scene.setNewLineColor(Color.ORANGE);
+          ((PhysicalConnectionProvider) scene.getConnectProvider()).setConnectionClass(Constants.CLASS_ELECTRICALLINK);
+          ((PhysicalConnectionProvider) scene.getConnectProvider()).setWizardType(PhysicalConnectionProvider.WIZARD_LINK);
     }//GEN-LAST:event_btnElectricalLinkActionPerformed
 
     private void btnOpticalLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpticalLinkActionPerformed
-        if (!service.getViewBuilder().getScene().supportsConnections())
-            JOptionPane.showMessageDialog(null, "This view does not support the selected action", 
-                    "Information", JOptionPane.INFORMATION_MESSAGE);
-        else{
-            service.getViewBuilder().getScene().setNewLineColor(Color.GREEN);
-            ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setConnectionClass(Constants.CLASS_OPTICALLINK);
-            ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setWizardType(PhysicalConnectionProvider.WIZARD_LINK);
-        }
+        scene.setNewLineColor(Color.GREEN);
+        ((PhysicalConnectionProvider) scene.getConnectProvider()).setConnectionClass(Constants.CLASS_OPTICALLINK);
+        ((PhysicalConnectionProvider) scene.getConnectProvider()).setWizardType(PhysicalConnectionProvider.WIZARD_LINK);
     }//GEN-LAST:event_btnOpticalLinkActionPerformed
 
     private void btnWirelessLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWirelessLinkActionPerformed
-        if (!service.getViewBuilder().getScene().supportsConnections())
-            JOptionPane.showMessageDialog(null, "This view does not support the selected action", 
-                    "Information", JOptionPane.INFORMATION_MESSAGE);
-        else{
-            service.getViewBuilder().getScene().setNewLineColor(Color.MAGENTA);
-            ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setConnectionClass(Constants.CLASS_WIRELESSLINK);
-            ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setWizardType(PhysicalConnectionProvider.WIZARD_LINK);
-        }
+        scene.setNewLineColor(Color.MAGENTA);
+        ((PhysicalConnectionProvider) scene.getConnectProvider()).setConnectionClass(Constants.CLASS_WIRELESSLINK);
+        ((PhysicalConnectionProvider) scene.getConnectProvider()).setWizardType(PhysicalConnectionProvider.WIZARD_LINK);
     }//GEN-LAST:event_btnWirelessLinkActionPerformed
 
     private void btnWireContainerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWireContainerActionPerformed
-        if (!service.getViewBuilder().getScene().supportsConnections())
-            JOptionPane.showMessageDialog(null, "This view does not support the selected action", 
-                    "Information", JOptionPane.INFORMATION_MESSAGE);
-        else{
-            service.getViewBuilder().getScene().setNewLineColor(Color.RED);
-            ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setConnectionClass(Constants.CLASS_WIRECONTAINER);
-            ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setWizardType(PhysicalConnectionProvider.WIZARD_CONTAINER);
-        }
+        scene.setNewLineColor(Color.RED);
+        ((PhysicalConnectionProvider) scene.getConnectProvider()).setConnectionClass(Constants.CLASS_WIRECONTAINER);
+        ((PhysicalConnectionProvider) scene.getConnectProvider()).setWizardType(PhysicalConnectionProvider.WIZARD_CONTAINER);
     }//GEN-LAST:event_btnWireContainerActionPerformed
 
     private void btnWirelessContainerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWirelessContainerActionPerformed
-        if (!service.getViewBuilder().getScene().supportsConnections())
-            JOptionPane.showMessageDialog(null, "This view does not support the selected action", 
-                    "Information", JOptionPane.INFORMATION_MESSAGE);
-        else{
-            service.getViewBuilder().getScene().setNewLineColor(Color.BLUE);
-            ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setConnectionClass(Constants.CLASS_WIRELESSCONTAINER);
-            ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setWizardType(PhysicalConnectionProvider.WIZARD_CONTAINER);
-        }
+        scene.setNewLineColor(Color.BLUE);
+        ((PhysicalConnectionProvider) scene.getConnectProvider()).setConnectionClass(Constants.CLASS_WIRELESSCONTAINER);
+        ((PhysicalConnectionProvider) scene.getConnectProvider()).setWizardType(PhysicalConnectionProvider.WIZARD_CONTAINER);
     }//GEN-LAST:event_btnWirelessContainerActionPerformed
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-        service.getViewBuilder().saveView();
-        isSaved = true;
+        service.saveView();
+        setHtmlDisplayName(getDisplayName());
+        configObject.setProperty("saved", true);
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
-        if (checkForUnsavedView(true))
-            service.getViewBuilder().refresh();
+        if (checkForUnsavedView(true)) {
+            scene.clear();
+            service.renderView();
+        }
     }//GEN-LAST:event_btnRefreshActionPerformed
 
     private void btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportActionPerformed
         ExportScenePanel exportPanel = new ExportScenePanel(
-                new SceneExportFilter[]{ImageFilter.getInstance()}, service.getViewBuilder().getScene());
+            new SceneExportFilter[]{ImageFilter.getInstance()}, scene);
         DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export options",true, exportPanel);
         DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
     }//GEN-LAST:event_btnExportActionPerformed
@@ -500,41 +461,14 @@ public final class ObjectViewTopComponent extends TopComponent
         
     }//GEN-LAST:event_btnFormatTextActionPerformed
 
-    private void cmbViewTypeItemStateChangedPerformed(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmbViewTypeItemStateChangedPerformed
-        if (evt.getStateChange() == ItemEvent.SELECTED) {
-            checkForUnsavedView(false);
-            service.getViewBuilder().getScene().clear();
-            switch (cmbViewType.getSelectedIndex()) {
-                default:
-                case 0:
-                    service.setViewBuilder(new ChildrenViewBuilder(service));
-                    break;
-                case 1:
-                    service.setViewBuilder(new RackViewBuilder(service));
-                    
-            }
-            if (service.getViewBuilder().getScene().getView() == null)
-                pnlScrollMain.setViewportView(service.getViewBuilder().getScene().createView());
-       }
-    }//GEN-LAST:event_cmbViewTypeItemStateChangedPerformed
-
     private void btnPowerLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPowerLinkActionPerformed
-        if (!service.getViewBuilder().getScene().supportsConnections())
-            JOptionPane.showMessageDialog(null, "This view does not support the selected action", 
-                    "Information", JOptionPane.INFORMATION_MESSAGE);
-        else {
-            service.getViewBuilder().getScene().setNewLineColor(Color.yellow);
-            ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setConnectionClass(Constants.CLASS_POWERLINK);
-            ((PhysicalConnectionProvider)service.getViewBuilder().getScene().getConnectProvider()).setWizardType(PhysicalConnectionProvider.WIZARD_LINK);
-        }
+        scene.setNewLineColor(Color.yellow);
+        ((PhysicalConnectionProvider) scene.getConnectProvider()).setConnectionClass(Constants.CLASS_POWERLINK);
+        ((PhysicalConnectionProvider) scene.getConnectProvider()).setWizardType(PhysicalConnectionProvider.WIZARD_LINK);
     }//GEN-LAST:event_btnPowerLinkActionPerformed
 
     private void btnShowConnectionLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowConnectionLabelsActionPerformed
-        if (!service.getViewBuilder().getScene().supportsConnections())
-            JOptionPane.showMessageDialog(null, "This view does not support the selected action", 
-                    "Information", JOptionPane.INFORMATION_MESSAGE);
-        else 
-            service.getViewBuilder().getScene().toggleConnectionLabels(!btnShowConnectionLabels.isSelected());
+        scene.toggleConnectionLabels(!btnShowConnectionLabels.isSelected());
     }//GEN-LAST:event_btnShowConnectionLabelsActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -556,7 +490,6 @@ public final class ObjectViewTopComponent extends TopComponent
     private javax.swing.JToggleButton btnWireContainer;
     private javax.swing.JToggleButton btnWirelessContainer;
     private javax.swing.JToggleButton btnWirelessLink;
-    private javax.swing.JComboBox cmbViewType;
     private javax.swing.JPanel pnlRight;
     private javax.swing.JScrollPane pnlScrollMain;
     // End of variables declaration//GEN-END:variables
@@ -598,14 +531,19 @@ public final class ObjectViewTopComponent extends TopComponent
 
     @Override
     public void componentOpened() {
-        service.initializeListeners();
-        service.getViewBuilder().getScene().addChangeListener(this);
+        scene.addChangeListener(this);
+        
+        lookupResult = Utilities.actionsGlobalContext().lookupResult(LocalObjectLight.class);
+        lookupResult.addLookupListener(this);
+        
+        if (lookupResult.allInstances().size() == 1)
+            resultChanged(new LookupEvent(lookupResult));
     }
 
     @Override
     public void componentClosed() {
-        service.terminateListeners();
-        service.disableView();
+        lookupResult.removeLookupListener(this);
+        disableView();
     }
 
     @Override
@@ -633,13 +571,10 @@ public final class ObjectViewTopComponent extends TopComponent
             return "<No View>";
         return super.getDisplayName().trim().isEmpty() ? "<No view>" : super.getDisplayName();
     }
-
-    public boolean isSaved() {
-        return isSaved;
-    }
-
-    public void setSaved(boolean value){
-        this.isSaved = value;
+    
+    public void setSaved(boolean value) {
+        configObject.setProperty("saved", value);
+        
         if (value)
             this.setHtmlDisplayName(this.getDisplayName());
         else
@@ -659,17 +594,19 @@ public final class ObjectViewTopComponent extends TopComponent
     }
 
     public boolean checkForUnsavedView(boolean showCancel) {
-        if (!isSaved){
+        if (!((boolean) configObject.getProperty("saved"))){
             switch (JOptionPane.showConfirmDialog(null, "This view has not been saved, do you want to save it?",
                     "Confirmation", showCancel ? JOptionPane.YES_NO_CANCEL_OPTION : JOptionPane.YES_NO_OPTION)){
                 case JOptionPane.YES_OPTION:
+                    
                     btnSaveActionPerformed(null);
-                    break;
+                    configObject.setProperty("saved", true);
+                    return true;
                 case JOptionPane.CANCEL_OPTION:
                     return false;
             }
         }
-        return isSaved = true;
+        return true;
     }
 
     @Override
@@ -689,11 +626,44 @@ public final class ObjectViewTopComponent extends TopComponent
         btnShowConnectionLabels.setEnabled(enabled);
     }
     
-    public void setListModel (ComboBoxModel newModel) {
-        cmbViewType.setModel(newModel);
+    public void disableView() {
+        setDisplayName(null);
+        setHtmlDisplayName(null);
+        scene.clear();
+        toggleButtons(false);
+        currentObject = null;
     }
 
-    void selectView(int index) {
-        cmbViewType.setSelectedIndex(index);
+    @Override
+    public void resultChanged(LookupEvent ev) {
+        Lookup.Result lookupResult = (Lookup.Result) ev.getSource();
+        
+        if (lookupResult.allInstances().size() == 1) {
+            LocalObjectLight obj = (LocalObjectLight) lookupResult.allInstances().iterator().next();
+            
+            if (obj.equals(currentObject))
+                return;
+                            
+            checkForUnsavedView(false);
+            
+            currentObject = obj;
+            configObject.setProperty("currentObject", currentObject);
+            
+            setDisplayName(null);
+            scene.clear();
+            
+            if (!CommunicationsStub.getInstance().getMetaForClass(currentObject.getClassName(), false).isViewable()) {
+                NotificationUtil.getInstance().showStatusMessage("This currentObject doesn't have any view", false);
+                disableView();
+                return;
+            }
+            
+            service.renderView();
+            setDisplayName(currentObject.toString());
+            toggleButtons(true);
+            btnConnect.setSelected(false);
+            configObject.setProperty("saved", true);
+            setHtmlDisplayName(getDisplayName());
+        }
     }
 }

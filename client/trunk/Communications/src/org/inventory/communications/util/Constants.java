@@ -78,6 +78,10 @@ public class Constants {
      */
     public static final String VALIDATOR_VLAN = "vlanrule";
     /**
+     * The validator to indicate if a given class is a Rack
+     */
+    public static final String VALIDATOR_RACK = "rack";
+    /**
      * DummyRoot constant. It's a pseudo class
      */
     public static final String DUMMYROOT = "DummyRoot";

@@ -15,143 +15,70 @@
  */
 package org.inventory.views.objectview;
 
+import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.views.LocalObjectView;
+import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.core.visual.scene.PhysicalConnectionProvider;
-import org.inventory.views.objectview.scene.AbstractViewBuilder;
-import org.inventory.views.objectview.scene.ChildrenViewBuilder;
+import org.inventory.views.objectview.scene.ChildrenViewScene;
 import org.openide.util.Lookup;
-import org.openide.util.LookupEvent;
-import org.openide.util.LookupListener;
-import org.openide.util.Utilities;
 
 /**
  * Implements the logic necessary to control what's shown in the associated TC
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ObjectViewService implements LookupListener {
-    private ObjectViewTopComponent vrtc;
-    private Lookup.Result<LocalObjectLight> selectedNodes;
-    private CommunicationsStub com;
-    private AbstractViewBuilder viewBuilder;
-    private LocalObjectLight currentObject;
+public class ObjectViewService {
+    private final ChildrenViewScene scene;
+    private LocalObjectView currentView;
 
-    public ObjectViewService(ObjectViewTopComponent vrtc) {
-        this.vrtc = vrtc;
-        this.com = CommunicationsStub.getInstance();
-        viewBuilder = new ChildrenViewBuilder(this);
+    public ObjectViewService(ChildrenViewScene scene) {
+        this.scene = scene;
     }
-    
-    /**
-     * Add this instance as listener for the selected nodes in the NavigationTree.
-     * Should be called when the TopComponent is opened
-     */
-    public void initializeListeners(){
-        selectedNodes = Utilities.actionsGlobalContext().lookupResult(LocalObjectLight.class);
-        selectedNodes.addLookupListener(this);
-        if (selectedNodes.allInstances().size() == 1) //There's a node already selected
-            resultChanged(new LookupEvent(selectedNodes));
-    }
-
-    /**
-     * Removes this instance as listener for the selected nodes in the NavigationTree.
-     * Should be called when the TopComponent is closed
-     */
-    public void terminateListeners(){
-        selectedNodes.removeLookupListener(this);
-        viewBuilder.getScene().removeAllListeners();
-    }  
-
-    @Override
-    public void resultChanged(LookupEvent ev) {
-        Lookup.Result lookupResult = (Lookup.Result)ev.getSource();
-        if(lookupResult.allInstances().size() == 1){
-
-           //Don't update if the same object is selected
-           LocalObjectLight myObject = (LocalObjectLight)lookupResult.allInstances().iterator().next();
-           if (myObject.equals(currentObject))
-               return;
-           
-           //Check if the view is still unsaved
-           vrtc.checkForUnsavedView(false);
-           
-           setCurrentObject(myObject);
-
-           vrtc.setHtmlDisplayName(null); //Clear the displayname in case it was set to another value
-
-            //We clean the scene...
-           viewBuilder.getScene().clear();
-           
-           if(!com.getMetaForClass(myObject.getClassName(), false).isViewable()) {
-                vrtc.getNotifier().showStatusMessage("This object doesn't have any view", false);
-                disableView();
-                return;
-           }
-           
-           //If the current view type does not support the selected object, fallback to the default view
-           if (!viewBuilder.supportsClass(myObject.getClassName())){
-               vrtc.getNotifier().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, 
-                    String.format("Class %s does not support %s", currentObject.getClassName(), viewBuilder.getName()));
-               vrtc.selectView (0);
-           }
-           else{
-                try{
-                    viewBuilder.buildView(myObject);
-                }catch (IllegalArgumentException ex){
-                    vrtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());
-                    viewBuilder.getScene().clear();
-                    disableView();
-                    return;
-                }
-                vrtc.setDisplayName(myObject.toString());
-                viewBuilder.getScene().validate();
-                vrtc.toggleButtons(true);
-                
-           }
+        
+    public void renderView() {
+        ObjectViewConfigurationObject configObject = Lookup.getDefault().lookup(ObjectViewConfigurationObject.class);
+        LocalObjectLight object = (LocalObjectLight) configObject.getProperty("currentObject");
+        
+        List<LocalObjectViewLight> views = CommunicationsStub.getInstance().getObjectRelatedViews(object.getOid(), object.getClassName());
+        if (views.isEmpty()) {
+            currentView = null;
+            configObject.setProperty("currentView", currentView);
+            scene.render((byte[]) null);
+        } else {
+            currentView = CommunicationsStub.getInstance().getObjectRelatedView(object.getOid(), object.getClassName(), views.get(0).getId());
+            configObject.setProperty("currentView", currentView);
+            scene.render(currentView.getStructure());
         }
     }
     
-    public void disableView(){
-       vrtc.setDisplayName(null);
-       vrtc.setHtmlDisplayName(null);
-       viewBuilder.getScene().clear();
-       vrtc.toggleButtons(false);
-       setCurrentObject(null);
-    }
-
-    public LocalObjectLight getCurrentObject() {
-        return currentObject;
-    }
-    
-    private void setCurrentObject(LocalObjectLight currentObject) {
-        this.currentObject = currentObject;
-        if (viewBuilder.getScene().supportsConnections())
-            ((PhysicalConnectionProvider)viewBuilder.getScene().getConnectProvider()).setCurrentParentObject(currentObject);
-    }
-
-    public ObjectViewTopComponent getComponent(){
-        return vrtc;
-    }
-
-    public AbstractViewBuilder getViewBuilder() {
-        return viewBuilder;
-    }
-
-    public void setViewBuilder(AbstractViewBuilder viewBuilder) {
-        //If the current view type does not support the selected object, fallback to the default view
-        if (!viewBuilder.supportsClass(currentObject.getClassName())){
-            vrtc.getNotifier().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, 
-                    String.format("Class %s does not support %s", currentObject.getClassName(), viewBuilder.getName()));
-            vrtc.selectView(0);
-        }else{ 
-            this.viewBuilder = viewBuilder;
-            try{
-                viewBuilder.buildView(currentObject);
-            }catch (IllegalArgumentException ex){
-                vrtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());
-                viewBuilder.getScene().clear();
-                disableView();
+    public void saveView() {
+        ObjectViewConfigurationObject configObject = Lookup.getDefault().lookup(ObjectViewConfigurationObject.class);
+        LocalObjectLight currentObject = (LocalObjectLight) configObject.getProperty("currentObject");
+        
+        if (currentObject != null) {
+            
+            byte[] viewStructure = scene.getAsXML();
+            if (currentView == null) {
+                long viewId = CommunicationsStub.getInstance().createObjectRelatedView(currentObject.getOid(), currentObject.getClassName(), null, null, "PlainChildrenView", viewStructure, scene.getBackgroundImage()); //NOI18N
+                
+                if (viewId != -1) { //Success
+                    currentView = new LocalObjectView(viewId, "ObjectViewModule", null, null, viewStructure, scene.getBackgroundImage());
+                    NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "The view was saved successfully");
+                    configObject.setProperty("saved", true);
+                } else {
+                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                }
+            } else {
+                if (!CommunicationsStub.getInstance().updateObjectRelatedView(currentObject.getOid(),
+                         currentObject.getClassName(), currentView.getId(),
+                        null, null,viewStructure, scene.getBackgroundImage()))
+                    
+                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                else {
+                    NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "The view was saved successfully");
+                    configObject.setProperty("saved", true);
+                }
             }
         }
     }
