@@ -76,7 +76,7 @@ public class Installer extends ModuleInstall {
             
             for (UpdateUnitProvider provider : providers) {
                 
-                String displayName = ResourceBundle.getBundle("org/inventory/updates/Bundle")
+                String displayName = ResourceBundle.getBundle("org/inventory/core/updates/Bundle")
                     .getString("Services/AutoupdateType/org_inventory_updates_update_center.instance");
                 
                 if (provider.getDisplayName().equals(displayName)) {
@@ -118,9 +118,9 @@ public class Installer extends ModuleInstall {
                 if (updateUnit.getInstalled() == null) {
                     modulesForInstall.add(updateUnit.getAvailableUpdates().get(0)); // add module with highest version
                 } else {
-                    if (!updateUnit.getAvailableUpdates().isEmpty()) {
+                    if (!updateUnit.getAvailableUpdates().isEmpty()) 
                         modulesForUpdate.add(updateUnit.getAvailableUpdates().get(0)); // add module with highest version
-                    }
+                    
                 }
                     
             }
@@ -151,7 +151,7 @@ public class Installer extends ModuleInstall {
                     if (restarter != null) {
                         installSupport.doRestartLater(restarter);
                         if (!restart) {
-                            if (JOptionPane.showConfirmDialog(null, "Click Ok for restart or Cancel for restart later", "Restart", JOptionPane.OK_CANCEL_OPTION) 
+                            if (JOptionPane.showConfirmDialog(null, "Click OK to restart or Cancel to restart later", "Restart", JOptionPane.OK_CANCEL_OPTION) 
                                 == JOptionPane.OK_OPTION) {
                                 
                                 restart = true;

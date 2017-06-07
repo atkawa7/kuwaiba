@@ -29,7 +29,7 @@ import org.openide.util.NbBundle.Messages;
  */
 @ActionID(
         category = "Tools/Administrative",
-        id = "org.inventory.updates.actions.UpdateCenterOptionsAction"
+        id = "org.inventory.core.updates.actions.UpdateCenterOptionsAction"
 )
 @ActionRegistration(
         displayName = "#CTL_UpdateCenterOptionsAction"

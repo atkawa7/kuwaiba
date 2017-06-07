@@ -60,7 +60,7 @@ public class UpdateCenterOptionsDialog extends JDialog {
             if (provider.getDisplayName() == null)
                 continue;
             
-            String displayName = ResourceBundle.getBundle("org/inventory/updates/Bundle")
+            String displayName = ResourceBundle.getBundle("org/inventory/core/updates/Bundle")
                 .getString("Services/AutoupdateType/org_inventory_updates_update_center.instance");
             
             if (provider.getDisplayName().equals(displayName)) {
@@ -70,7 +70,7 @@ public class UpdateCenterOptionsDialog extends JDialog {
             }
         }
         lblError.setForeground(new java.awt.Color(255, 0, 0));
-        lblError.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/updates/res/error.png"))); // NOI18N
+        lblError.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/updates/res/error.png"))); // NOI18N
         lblError.setAutoscrolls(true);
         lblError.setVisible(false);
                 

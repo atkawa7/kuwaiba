@@ -4,11 +4,11 @@
     <folder name="Services">
         <folder name="AutoupdateType">
             <file name="org_inventory_updates_update_center.instance">
-                <attr name="displayName" bundlevalue="org.inventory.updates.Bundle#Services/AutoupdateType/org_inventory_updates_update_center.instance"/>
+                <attr name="displayName" bundlevalue="org.inventory.core.updates.Bundle#Services/AutoupdateType/org_inventory_updates_update_center.instance"/>
                 <attr name="enabled" boolvalue="true"/>
                 <attr name="instanceCreate" methodvalue="org.netbeans.modules.autoupdate.updateprovider.AutoupdateCatalogFactory.createUpdateProvider"/>
                 <attr name="instanceOf" stringvalue="org.netbeans.spi.autoupdate.UpdateProvider"/>
-                <attr name="url" bundlevalue="org.inventory.updates.Bundle#org_inventory_updates_update_center"/>
+                <attr name="url" bundlevalue="org.inventory.core.updates.Bundle#org_inventory_updates_update_center"/>
             </file>
         </folder>
     </folder>
