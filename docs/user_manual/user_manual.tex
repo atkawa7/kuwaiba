@@ -851,7 +851,7 @@
 		In the Physical View, you can move and connect the nodes, add a background and export the view. It is particularly useful at Room and City levels, because it will allow you to see how the children elements are located geographically (e.g. buildings) or in an enclosed space (racks in a data center as seen in figure~\ref{fig:room_plan}).	
 		\begin{figure}[h!]
 			\centering
-			\includegraphics[width=0.7\linewidth]{img/room_plan.png}
+			\includegraphics[width=0.8\linewidth]{img/room_plan.png}
 			\caption{Physical View of the selected \textbf{Room} object}
 			\label{fig:room_plan}
 		\end{figure}
@@ -873,15 +873,9 @@
 				\midrule
 				\includegraphics[width=0.5cm]{img/icon_format_text.png} & Format text\\
 				\midrule
-				\includegraphics[width=0.5cm]{img/icon_add_background.png} & Add background\\
-				\midrule
-				\includegraphics[width=0.5cm]{img/icon_toggle_node_labels.png} & Hide/show the labels under the nodes\\
-				\midrule
 				\includegraphics[width=0.5cm]{img/icon_toggle_conn_labels.png} & Hide/show the labels next to the connections\\
 				\midrule
 				\includegraphics[width=0.5cm]{img/icon_save.png} & Save view\\
-				\midrule
-				\includegraphics[width=0.5cm]{img/icon_add_background.png} & Add background\\
 				\midrule
 				\includegraphics[width=0.5cm]{img/icon_select_tool.png} & Select/Move tool (selected by default)\\
 				\midrule
@@ -890,8 +884,7 @@
 				\includegraphics[width=0.5cm]{img/icon_export.png} & Export to image file\\
 				\midrule
 				\includegraphics[width=0.5cm]{img/icon_refresh_view.png} & Refresh view\\
-				\midrule
-				\includegraphics[width=0.5cm]{img/icon_view_type.png} & View type. Currently, only the Physical (default) and Rack view are available (see \textbf{\nameref{sec:rack_view}} for more details on the latter)\\
+				
 			\end{tabular}
 		\end{table}
 		
@@ -899,12 +892,12 @@
 		This view works only with objects of class \textbf{Rack} or its subclasses. It shows how the elements contained within the selected object are organized, based on their positions and number of rack units used. 
 		\begin{figure}[h!]
 			\centering
-			\includegraphics[width=0.2\linewidth]{img/rack_view_combobox.png}
-			\caption{How to find the rack view in the toolbar}
+			\includegraphics[width=0.5\linewidth]{img/show_rack_view.png}
+			\caption{How to show the rack view}
 			\label{fig:rack_view_combobox}
 		\end{figure}
 		
-		For this view to be correctly built, two conditions must be met:
+		For this view to be correctly built, three conditions must be met:
 		\begin{itemize}
 			\item The rack must have its \textbf{rackUnits} attribute set to a valid integer value. This attribute stores the total number rack units supported by the rack. Typical values are 20, 28, 34, 40 or 45.
 			\begin{figure}[h!]
@@ -912,6 +905,13 @@
 				\includegraphics[width=0.6\linewidth]{img/error_rack_view_not_rackunits.png}
 				\caption{Error displayed when the rack does not have a valid value of rack units}
 				\label{fig:error_rack_view_not_rackunits}
+			\end{figure}
+			\item The attribute \textbf{rackUnitsNumberingDescending} must exist, if the rack unit sorting has not been set; numbering ascending is assumed
+			\begin{figure}
+				\centering
+				\includegraphics[width=0.4\linewidth]{img/rack_units_numbering_descending_attribute.png}
+				\caption{Attribute correctly set in a Rack}
+				\label{fig:rack_units_numbering_descending_attribute}
 			\end{figure}
 			\item The attributes \textbf{rackUnits} and \textbf{position} must exist and set to valid values in the elements contained inside the rack. \textbf{rackUnits} in this case, makes reference to the number of rack units occupied by the contained element, while \textbf{position} is the start position of the contained element, 1-based, numbered from top to bottom. Your equipment vendor usually provides this value.
 			\begin{figure}[h!]
@@ -923,17 +923,38 @@
 		\end{itemize}
 		\begin{framed} {\large \textbf{Important}}
 			\begin{itemize}
+				\item The attributes name \textbf{rackUnitsNumberingDescending} are case sensitive and must be Boolean.
 				\item The attribute names (\textbf{rackUnits}, \textbf{position}) are case sensitive and must be integers.
 				\item Some elements you want to create inside a rack \textbf{might not} have those attributes by default, so you will need to create them using the \nameref{sec:data_model_manager}.			
 			\end{itemize}
 		\end{framed}
+		\newpage		
 		If all values are correct, the view should look like this:
 		\begin{figure}[h!]
 			\centering
-			\includegraphics[width=0.9\linewidth]{img/rack_view_sample_view.png}
+			\includegraphics[width=0.7\linewidth]{img/rack_view_sample_view.png}
 			\caption{Sample rack view}
 			\label{fig:rack_view_sample_view}
 		\end{figure}
+
+		In the Rack View you have an toolbar to export the view or refresh the last change in the view.
+		
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.1\linewidth]{img/rack_view_toolbar.png}
+			\caption{Rack View Toolbar}
+			\label{fig:rack_view_toolbar}
+		\end{figure}
+		
+		\begin{table}[h!]
+			\centering
+			\begin{tabular}[h!]{lp{10cm}}
+				\includegraphics[width=0.5cm]{img/icon_export.png} & Export to image file\\
+				\midrule
+				\includegraphics[width=0.5cm]{img/icon_refresh_view.png} & Refresh Rack View\\
+				\midrule
+			\end{tabular}
+		\end{table}
 		
 	\newpage
 	\section{Physical Connections} \label{sec:physical_connections}
