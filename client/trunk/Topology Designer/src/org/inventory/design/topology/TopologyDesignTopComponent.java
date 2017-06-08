@@ -291,7 +291,7 @@ public final class TopologyDesignTopComponent extends TopComponent implements Ex
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnNewTopologyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewTopologyActionPerformed
-        if (!(boolean)configObject.getProperty("saved")) {
+        if (!(boolean)configObject.getProperty("saved")) { //NOI18N
             switch (JOptionPane.showConfirmDialog(this, 
                     "This topology has not been saved, do you want to save it?", 
                     "Confirmation", JOptionPane.YES_NO_CANCEL_OPTION)) {
@@ -334,23 +334,23 @@ public final class TopologyDesignTopComponent extends TopComponent implements Ex
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         if (scene.getNodes().isEmpty())
-            JOptionPane.showMessageDialog(this, "The view is empty, it won't be saved", "New View", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "The current topology is empty, it won't be saved", "New Topology", JOptionPane.INFORMATION_MESSAGE);
         else {
             JTextField txtViewName = new JTextField();
-            txtViewName.setName("txtViewName");
+            txtViewName.setName("txtViewName"); //NOI18N
             txtViewName.setColumns(10);
             
             JTextField txtViewDescription = new JTextField();
-            txtViewDescription.setName("txtViewDescription");
-            txtViewDescription.setColumns(10);
+            txtViewDescription.setName("txtViewDescription"); //NOI18N
+            txtViewDescription.setColumns(20);
             
             if(service.getView() != null) {
                 txtViewName.setText(service.getView().getName());
                 txtViewDescription.setText(service.getView().getDescription());
             }
             JComplexDialogPanel saveDialog = new JComplexDialogPanel(
-                    new String[] {"View name", "View Description"}, new JComponent[] {txtViewName, txtViewDescription});
-            if (JOptionPane.showConfirmDialog(null, saveDialog, "View details", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+                    new String[] {"Topology Name", "Topology Description"}, new JComponent[] {txtViewName, txtViewDescription});
+            if (JOptionPane.showConfirmDialog(null, saveDialog, "Topology Details", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
                 String name = ((JTextField)saveDialog.getComponent("txtViewName")).getText();
                 String description = ((JTextField)saveDialog.getComponent("txtViewDescription")).getText();
                 
@@ -361,7 +361,7 @@ public final class TopologyDesignTopComponent extends TopComponent implements Ex
                     service.getView().setDescription(description);
                 }
                 if (service.saveCurrentView()) {
-                    NotificationUtil.getInstance().showSimplePopup("Save view", NotificationUtil.INFO_MESSAGE, "Topology view saved successfully");
+                    NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Topology saved successfully");
                     setHtmlDisplayName(getDisplayName());
                 }
                 
@@ -375,7 +375,7 @@ public final class TopologyDesignTopComponent extends TopComponent implements Ex
 
     private void btnOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenActionPerformed
         if (!(boolean)configObject.getProperty("saved")) {
-            switch(JOptionPane.showConfirmDialog(this, "This topolology has not been saved, do you want to save it?", 
+            switch(JOptionPane.showConfirmDialog(this, "This topology has not been saved, do you want to save it?", 
                     "Confirmation", JOptionPane.YES_NO_CANCEL_OPTION)) {
                 case JOptionPane.YES_OPTION:
                     btnSaveActionPerformed(new ActionEvent(this, 0, "close"));
@@ -387,8 +387,8 @@ public final class TopologyDesignTopComponent extends TopComponent implements Ex
         List<LocalObjectViewLight> views = service.getViews();
         JComboBox<LocalObjectViewLight> lstViews = new JComboBox<>(views.toArray(new LocalObjectViewLight[0]));
         lstViews.setName("lstViews"); //NOI18N
-        JComplexDialogPanel viewsDialog = new JComplexDialogPanel(new String[] {"Available views"}, new JComponent[] {lstViews});
-        if (JOptionPane.showConfirmDialog(null, viewsDialog, "Choose a view", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+        JComplexDialogPanel viewsDialog = new JComplexDialogPanel(new String[] {"Available topologies"}, new JComponent[] {lstViews});
+        if (JOptionPane.showConfirmDialog(null, viewsDialog, "Choose a Topology", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             LocalObjectViewLight selectedView = (LocalObjectViewLight) ((JComboBox)viewsDialog.getComponent("lstViews")).getSelectedItem();
             if (selectedView != null) {
                 LocalObjectView actualView = service.loadView(selectedView.getId());
@@ -406,7 +406,7 @@ public final class TopologyDesignTopComponent extends TopComponent implements Ex
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         if (JOptionPane.showConfirmDialog(this, "Are you sure you want to delete the current topology?", 
-                "Delete saved view", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+                "Delete Topology", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             service.deleteView();
             scene.clear();
             toggleButtons(false);

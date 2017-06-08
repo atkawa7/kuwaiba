@@ -85,7 +85,7 @@ public class ReleaseFromContractAction extends GenericObjectNodeAction implement
         
         ObjectNode selectedNode = selectedNodes.next(); //Uses the last selected only
         
-        JMenu mnuServices = new JMenu("Release from contract");
+        JMenu mnuServices = new JMenu("Release from Contract");
         List<LocalObjectLight> contracts = CommunicationsStub.getInstance().getSpecialAttribute(selectedNode.getObject().getClassName(), 
                 selectedNode.getObject().getOid(), "contractHas");
         

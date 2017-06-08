@@ -62,6 +62,7 @@ import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.border.BorderFactory;
 import org.netbeans.api.visual.layout.LayoutFactory;
 import org.netbeans.api.visual.router.RouterFactory;
+import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
@@ -195,14 +196,14 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
                 xmlew.add(xmlef.createStartElement(qnameEdge, null, null));
                 xmlew.add(xmlef.createAttribute(new QName("id"), ""));
                 xmlew.add(xmlef.createAttribute(new QName("class"), ""));
-                xmlew.add(xmlef.createAttribute(new QName("name"), ((ObjectConnectionWidget)edgeWidget).getName()));
+                xmlew.add(xmlef.createAttribute(new QName("name"), ""));
                 
                 String edgeObject = (String)findObject(edgeWidget);
                 
                 xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(getEdgeSource(edgeObject).getOid())));
                 xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(getEdgeTarget(edgeObject).getOid())));
                 
-                for (Point point : ((ObjectConnectionWidget)edgeWidget).getControlPoints()) {
+                for (Point point : ((ConnectionWidget)edgeWidget).getControlPoints()) {
                     QName qnameControlpoint = new QName("controlpoint");
                     xmlew.add(xmlef.createStartElement(qnameControlpoint, null, null));
                     xmlew.add(xmlef.createAttribute(new QName("x"), Double.toString(point.getX())));
@@ -333,7 +334,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
                                     if (aSideWidget == null || bSideWidget == null)
                                         NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.INFO_MESSAGE, "One or both of the endpoints of connection could not be found, so the connection was removed from the topology view");
                                     else{
-                                        ObjectConnectionWidget newEdge = (ObjectConnectionWidget)this.addEdge(edgeName);
+                                        ConnectionWidget newEdge = (ConnectionWidget)this.addEdge(edgeName);
                                         this.setEdgeSource(edgeName, aSideObject);
                                         this.setEdgeTarget(edgeName, bSideObject);
                                         List<Point> localControlPoints = new ArrayList<>();
@@ -398,14 +399,15 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
 
             @Override
             public boolean isSourceWidget(Widget sourceWidget) {
-                return sourceWidget instanceof IconNodeWidget;
+                return sourceWidget instanceof IconNodeWidget || sourceWidget instanceof ObjectNodeWidget;
             }
 
             @Override
             public ConnectorState isTargetWidget(Widget sourceWidget, Widget targetWidget) {
-                if (targetWidget instanceof IconNodeWidget) {
+                if (targetWidget instanceof IconNodeWidget || targetWidget instanceof ObjectNodeWidget) {
                     if(sourceWidget.equals(targetWidget))
                         return ConnectorState.REJECT;
+                    
                     return ConnectorState.ACCEPT;
                 }
                 return ConnectorState.REJECT;
@@ -592,7 +594,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
 
     @Override
     protected Widget attachEdgeWidget(String edge) {
-        ObjectConnectionWidget newEdge = new ObjectConnectionWidget(this, edge);
+        ConnectionWidget newEdge = new ConnectionWidget(this);
         newEdge.getActions().addAction(selectAction);
         newEdge.getActions().addAction(addRemoveControlPointAction);
         newEdge.getActions().addAction(moveControlPointAction);
@@ -607,19 +609,18 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
 
     @Override
     protected void attachEdgeSourceAnchor(String edge, LocalObjectLight oldSourceNode, LocalObjectLight sourceNode) {
-        ObjectConnectionWidget connectionWidget = (ObjectConnectionWidget) findWidget(edge);
+        ConnectionWidget connectionWidget = (ConnectionWidget) findWidget(edge);
         Widget sourceWidget = findWidget(sourceNode);
         connectionWidget.setSourceAnchor(sourceWidget != null ? AnchorFactory.createCircularAnchor(sourceWidget, 3) : null);
     }
 
     @Override
     protected void attachEdgeTargetAnchor(String edge, LocalObjectLight oldTargetNode, LocalObjectLight targetNode) {
-        ObjectConnectionWidget connectionWidget = (ObjectConnectionWidget) findWidget(edge);
+        ConnectionWidget connectionWidget = (ConnectionWidget) findWidget(edge);
         Widget targetWidget = findWidget(targetNode);
         connectionWidget.setTargetAnchor(targetWidget != null ? AnchorFactory.createCircularAnchor(targetWidget, 3) : null);
     }
 
     @Override
-    public void render(LocalObjectLight root) {
-    }
+    public void render(LocalObjectLight root) { } //Not used for this kind of view
 }
