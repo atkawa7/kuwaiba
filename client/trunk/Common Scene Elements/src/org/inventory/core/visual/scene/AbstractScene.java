@@ -232,6 +232,7 @@ public abstract class AbstractScene<N, E> extends GraphScene<N, E> {
             backgroundLayer.addChild(new ImageWidget(this, im));
         
         validate();
+        repaint();
     }
     
     /**

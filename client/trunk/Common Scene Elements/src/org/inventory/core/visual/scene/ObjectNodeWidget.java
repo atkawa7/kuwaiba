@@ -78,6 +78,8 @@ public class ObjectNodeWidget extends SelectableNodeWidget {
         createActions(AbstractScene.ACTION_SELECT);
         createActions(AbstractScene.ACTION_CONNECT);
         
+        highContrast = false;
+        
         setState (ObjectState.createNormal());
     }
     
@@ -116,6 +118,7 @@ public class ObjectNodeWidget extends SelectableNodeWidget {
     public void setHighContrast(boolean highContrast) {
         this.highContrast = highContrast;
         this.labelWidget.setOpaque(highContrast);
+        notifyStateChanged(getState(), getState());
     }
     
     /**
@@ -126,12 +129,13 @@ public class ObjectNodeWidget extends SelectableNodeWidget {
     @Override
     public void notifyStateChanged (ObjectState previousState, ObjectState state) {
         if (!highContrast) {
-            labelWidget.setBorder (getScene().getLookFeel().getBorder (state));
             labelWidget.setForeground (getScene().getLookFeel().getForeground (state));
+            labelWidget.setBackground(getScene().getLookFeel().getBackground(state));
+            labelWidget.setBorder(getScene().getLookFeel().getBorder (state));
         } else {
-            LookFeel highContrasLookAndFeel = HighContrastLookAndFeel.createDefaultLookFeel();
-            labelWidget.setBorder (highContrasLookAndFeel.getBorder (state));
-            labelWidget.setForeground (highContrasLookAndFeel.getForeground (state));
+            labelWidget.setForeground (HighContrastLookAndFeel.getInstance().getForeground (state));
+            labelWidget.setBackground(HighContrastLookAndFeel.getInstance().getBackground(state));
+            labelWidget.setBorder(HighContrastLookAndFeel.getInstance().getBorder (state));
         }
     }   
 }

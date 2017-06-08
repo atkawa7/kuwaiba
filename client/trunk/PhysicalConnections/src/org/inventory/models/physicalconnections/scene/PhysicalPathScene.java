@@ -22,8 +22,8 @@ import java.awt.Rectangle;
 import java.util.Random;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.visual.scene.AbstractScene;
-import org.inventory.core.visual.scene.PhysicalConnectionProvider;
 import org.netbeans.api.visual.action.ActionFactory;
+import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.layout.LayoutFactory;
 import org.netbeans.api.visual.router.Router;
 import org.netbeans.api.visual.router.RouterFactory;
@@ -105,7 +105,7 @@ public class PhysicalPathScene  extends AbstractScene <LocalObjectLight, LocalOb
     }
 
     @Override
-    public PhysicalConnectionProvider getConnectProvider() {
+    public ConnectProvider getConnectProvider() {
         return null;
     }
     

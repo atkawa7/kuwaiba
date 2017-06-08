@@ -36,8 +36,8 @@ import org.inventory.core.visual.export.ExportScenePanel;
 import org.inventory.core.visual.export.filters.ImageFilter;
 import org.inventory.core.visual.export.filters.SceneExportFilter;
 import org.inventory.core.visual.scene.AbstractScene;
-import org.inventory.core.visual.scene.PhysicalConnectionProvider;
 import org.inventory.views.objectview.scene.ChildrenViewScene;
+import org.inventory.views.objectview.scene.PhysicalConnectionProvider;
 import org.openide.explorer.ExplorerManager;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
@@ -131,11 +131,11 @@ public final class ObjectViewTopComponent extends TopComponent
     private void initComponents() {
 
         barMain = new javax.swing.JToolBar();
+        btnSave = new javax.swing.JButton();
         btnAddBackgroundImage = new javax.swing.JButton();
         btnRemoveBackground = new javax.swing.JButton();
-        btnFormatText = new javax.swing.JButton();
         btnShowConnectionLabels = new javax.swing.JToggleButton();
-        btnSave = new javax.swing.JButton();
+        btnHighContrast = new javax.swing.JToggleButton();
         btnSelect = new javax.swing.JToggleButton();
         btnConnect = new javax.swing.JToggleButton();
         btnExport = new javax.swing.JButton();
@@ -154,6 +154,20 @@ public final class ObjectViewTopComponent extends TopComponent
         setLayout(new java.awt.BorderLayout());
 
         barMain.setRollover(true);
+
+        btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/objectview/res/save.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnSave, org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnSave.text")); // NOI18N
+        btnSave.setToolTipText(org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnSave.toolTipText")); // NOI18N
+        btnSave.setEnabled(false);
+        btnSave.setFocusable(false);
+        btnSave.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSave.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveActionPerformed(evt);
+            }
+        });
+        barMain.add(btnSave);
 
         btnAddBackgroundImage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/objectview/res/add-background.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnAddBackgroundImage, org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnAddBackgroundImage.text")); // NOI18N
@@ -183,24 +197,8 @@ public final class ObjectViewTopComponent extends TopComponent
         });
         barMain.add(btnRemoveBackground);
 
-        btnFormatText.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/objectview/res/format.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnFormatText, org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnFormatText.text")); // NOI18N
-        btnFormatText.setToolTipText(org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnFormatText.toolTipText")); // NOI18N
-        btnFormatText.setEnabled(false);
-        btnFormatText.setFocusable(false);
-        btnFormatText.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnFormatText.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnFormatText.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnFormatTextActionPerformed(evt);
-            }
-        });
-        barMain.add(btnFormatText);
-
         btnShowConnectionLabels.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/objectview/res/hide_conn_labels.png"))); // NOI18N
-        btnShowConnectionLabels.setSelected(true);
         org.openide.awt.Mnemonics.setLocalizedText(btnShowConnectionLabels, org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnShowConnectionLabels.text")); // NOI18N
-        btnShowConnectionLabels.setToolTipText(org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnShowConnectionLabels.toolTipText")); // NOI18N
         btnShowConnectionLabels.setEnabled(false);
         btnShowConnectionLabels.setFocusable(false);
         btnShowConnectionLabels.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -212,19 +210,19 @@ public final class ObjectViewTopComponent extends TopComponent
         });
         barMain.add(btnShowConnectionLabels);
 
-        btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/objectview/res/save.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnSave, org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnSave.text")); // NOI18N
-        btnSave.setToolTipText(org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnSave.toolTipText")); // NOI18N
-        btnSave.setEnabled(false);
-        btnSave.setFocusable(false);
-        btnSave.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnSave.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnSave.addActionListener(new java.awt.event.ActionListener() {
+        btnHighContrast.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/objectview/res/high_contrast.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnHighContrast, org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnHighContrast.text")); // NOI18N
+        btnHighContrast.setEnabled(false);
+        btnHighContrast.setFocusCycleRoot(true);
+        btnHighContrast.setFocusable(false);
+        btnHighContrast.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnHighContrast.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnHighContrast.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSaveActionPerformed(evt);
+                btnHighContrastActionPerformed(evt);
             }
         });
-        barMain.add(btnSave);
+        barMain.add(btnHighContrast);
 
         btnSelect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/objectview/res/select.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnSelect, org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnSelect.text")); // NOI18N
@@ -444,10 +442,7 @@ public final class ObjectViewTopComponent extends TopComponent
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
-        if (checkForUnsavedView(true)) {
-            scene.clear();
-            service.renderView();
-        }
+        refresh();
     }//GEN-LAST:event_btnRefreshActionPerformed
 
     private void btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportActionPerformed
@@ -456,10 +451,6 @@ public final class ObjectViewTopComponent extends TopComponent
         DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export options",true, exportPanel);
         DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
     }//GEN-LAST:event_btnExportActionPerformed
-
-    private void btnFormatTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFormatTextActionPerformed
-        
-    }//GEN-LAST:event_btnFormatTextActionPerformed
 
     private void btnPowerLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPowerLinkActionPerformed
         scene.setNewLineColor(Color.yellow);
@@ -471,6 +462,11 @@ public final class ObjectViewTopComponent extends TopComponent
         scene.toggleConnectionLabels(!btnShowConnectionLabels.isSelected());
     }//GEN-LAST:event_btnShowConnectionLabelsActionPerformed
 
+    private void btnHighContrastActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHighContrastActionPerformed
+        scene.enableHighContrastMode(btnHighContrast.isSelected());
+        scene.validate();
+    }//GEN-LAST:event_btnHighContrastActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barConnections;
     private javax.swing.JToolBar barContainers;
@@ -479,7 +475,7 @@ public final class ObjectViewTopComponent extends TopComponent
     private javax.swing.JToggleButton btnConnect;
     private javax.swing.JToggleButton btnElectricalLink;
     private javax.swing.JButton btnExport;
-    private javax.swing.JButton btnFormatText;
+    private javax.swing.JToggleButton btnHighContrast;
     private javax.swing.JToggleButton btnOpticalLink;
     private javax.swing.JToggleButton btnPowerLink;
     private javax.swing.JButton btnRefresh;
@@ -611,7 +607,10 @@ public final class ObjectViewTopComponent extends TopComponent
 
     @Override
     public void refresh() {
-        btnRefreshActionPerformed(null);
+        if (checkForUnsavedView(true)) {
+            scene.clear();
+            service.renderView();
+        }
     }
 
     public void toggleButtons(boolean enabled) {
@@ -621,9 +620,9 @@ public final class ObjectViewTopComponent extends TopComponent
         btnSelect.setEnabled(enabled);
         btnConnect.setEnabled(enabled);
         btnExport.setEnabled(enabled);
-        btnFormatText.setEnabled(enabled);
         btnRefresh.setEnabled(enabled);
         btnShowConnectionLabels.setEnabled(enabled);
+        btnHighContrast.setEnabled(enabled);
     }
     
     public void disableView() {

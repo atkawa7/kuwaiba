@@ -14,11 +14,13 @@
  *
  */
 
-package org.inventory.core.visual.scene;
+package org.inventory.views.objectview.scene;
 
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.core.visual.scene.AbstractScene;
+import org.inventory.core.visual.scene.ObjectNodeWidget;
 import org.inventory.core.wizards.physicalconnections.ConnectionWizard;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.ConnectorState;

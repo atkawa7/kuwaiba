@@ -16,7 +16,6 @@
 
 package org.inventory.views.objectview.scene;
 
-import org.inventory.core.visual.scene.PhysicalConnectionProvider;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -472,6 +471,13 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
     }
 
     @Override
-    public void render(LocalObjectLight root) {
+    public void render(LocalObjectLight root) {} //Not used in this view
+    
+    public void enableHighContrastMode(boolean enable) {
+        for (Widget aNode : nodeLayer.getChildren()) 
+            ((ObjectNodeWidget)aNode).setHighContrast(enable);
+        
+        for (Widget aConnection : edgeLayer.getChildren()) 
+            ((ObjectConnectionWidget)aConnection).setHighContrast(enable);
     }
 }

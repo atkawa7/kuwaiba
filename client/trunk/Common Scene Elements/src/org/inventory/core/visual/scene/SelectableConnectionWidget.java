@@ -20,6 +20,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.layout.LayoutFactory;
+import org.netbeans.api.visual.model.ObjectState;
 import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.LabelWidget;
 import org.netbeans.api.visual.widget.Scene;
@@ -31,20 +32,25 @@ import org.openide.util.lookup.Lookups;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public abstract class SelectableConnectionWidget extends ConnectionWidget {
+    
     private Lookup lookup;
-    private LabelWidget labelWidget;
+    protected LabelWidget labelWidget;
     
     public SelectableConnectionWidget(Scene scene, LocalObjectLight businessObject) {
         super(scene);
         setToolTipText(businessObject.toString());
-        
+
         labelWidget = new LabelWidget(scene, businessObject.toString());
         labelWidget.setOpaque(true);
+        labelWidget.setBorder(getScene().getLookFeel().getBorder(getState()));
         labelWidget.getActions().addAction(ActionFactory.createMoveAction());
+        
         addChild(labelWidget);
         
         setConstraint(labelWidget, LayoutFactory.ConnectionWidgetLayoutAlignment.CENTER, 0.5f);
         lookup = Lookups.singleton(new ObjectNode(businessObject));
+        
+        setState(ObjectState.createNormal());
     }
     
     public LabelWidget getLabelWidget() {
@@ -54,5 +60,5 @@ public abstract class SelectableConnectionWidget extends ConnectionWidget {
     @Override
     public Lookup getLookup() {
         return lookup;
-    }
+    }   
 }

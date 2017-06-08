@@ -56,6 +56,7 @@ import org.openide.nodes.NodeTransfer;
 import org.openide.nodes.PropertySupport;
 import org.openide.nodes.Sheet;
 import org.openide.nodes.Sheet.Set;
+import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.WeakListeners;
 import org.openide.util.actions.SystemAction;
@@ -198,6 +199,11 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
         generalPropertySet.setDisplayName("General Attributes");
         sheet.put(generalPropertySet);
         return sheet;
+    }
+    
+    @Override
+    public void destroy() {
+        getObject().removePropertyChangeListener(this);
     }
 
     public final boolean refresh() {

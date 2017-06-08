@@ -29,16 +29,16 @@ import org.netbeans.api.visual.model.ObjectState;
  */
 public class HighContrastLookAndFeel extends LookFeel {
 
-    private static final Color COLOR_BACKGROUND_NORMAL = new Color(55, 59, 91);
+    private static final Color COLOR_BACKGROUND_NORMAL = Color.WHITE;
     
-    private static final Color COLOR_SELECTED = Color.WHITE;
+    private static final Color COLOR_SELECTED = new Color(55, 59, 91);
     private static final Color COLOR_HIGHLIGHTED = COLOR_SELECTED.darker ();
     private static final Color COLOR_HOVERED = COLOR_SELECTED.brighter ();
     private static final int MARGIN = 3;
     private static final int ARC = 10;
     private static final int MINI_THICKNESS = 1;
 
-    private static final Border BORDER_NORMAL = BorderFactory.createEmptyBorder (MARGIN, MARGIN);
+    private static final Border BORDER_NORMAL = BorderFactory.createRoundedBorder (ARC, ARC, MARGIN, MARGIN, COLOR_BACKGROUND_NORMAL, COLOR_BACKGROUND_NORMAL.brighter());
     private static final Border BORDER_HOVERED = BorderFactory.createRoundedBorder (ARC, ARC, MARGIN, MARGIN, COLOR_HOVERED, COLOR_HOVERED.darker ());
     private static final Border BORDER_SELECTED = BorderFactory.createRoundedBorder (ARC, ARC, MARGIN, MARGIN, COLOR_SELECTED, COLOR_SELECTED.darker ());
 
@@ -49,7 +49,7 @@ public class HighContrastLookAndFeel extends LookFeel {
     
     private static HighContrastLookAndFeel instance;
     
-    public static LookFeel createDefaultHighContrastLookAndFeel () {
+    public static LookFeel getInstance () {
         return instance == null ? instance = new HighContrastLookAndFeel() : instance;
     }
     
@@ -87,7 +87,7 @@ public class HighContrastLookAndFeel extends LookFeel {
 
     @Override
     public Color getForeground (ObjectState state) {
-        return state.isSelected () ? Color.BLACK : Color.WHITE;
+        return state.isSelected () ? Color.WHITE : Color.BLACK;
     }
     
     @Override
