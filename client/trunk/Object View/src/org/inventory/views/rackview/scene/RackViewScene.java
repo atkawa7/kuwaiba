@@ -26,6 +26,7 @@ import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.border.BorderFactory;
 import org.netbeans.api.visual.layout.LayoutFactory;
+import org.netbeans.api.visual.model.ObjectState;
 import org.netbeans.api.visual.widget.LabelWidget;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Scene;
@@ -133,7 +134,7 @@ public class RackViewScene extends AbstractScene<LocalObject, LocalObject> {
         rackWidget.setLayout(LayoutFactory.createAbsoluteLayout());
         rackWidget.setBackground(boxColor);
         rackWidget.setOpaque(true);
-        
+                
         rackWidget.addChild(rackLayer);
         rackWidget.addChild(deviceLayer);
         
@@ -268,7 +269,7 @@ public class RackViewScene extends AbstractScene<LocalObject, LocalObject> {
             deviceWidget.setBackground(new Color(136, 170, 0));
             deviceWidget.setPreferredSize(new Dimension(width, height));
             deviceWidget.setOpaque(true);
-            deviceLayer.addChild(deviceWidget);
+            
             
             deviceWidget.setLayout(LayoutFactory.createVerticalFlowLayout(LayoutFactory.SerialAlignment.CENTER, 0));
             
@@ -285,16 +286,18 @@ public class RackViewScene extends AbstractScene<LocalObject, LocalObject> {
             lblDeviceInfo.setForeground(Color.WHITE);
             
             int drawPosition = position;
-            if (!ascending) {
-                drawPosition = rackUnits - position + 1;                 
-            }
+            if (ascending)
+                drawPosition -= 1;
+            else
+                drawPosition = rackUnits - position - (U - 1);
+            int y = RACK_UNIT_IN_PX * drawPosition + RACK_Y_OFFSET * drawPosition;
             
-            int y = RACK_UNIT_IN_PX * drawPosition + RACK_Y_OFFSET * (drawPosition - 1);                        
-            deviceWidget.setPreferredLocation(new Point(0, y - height));
+            deviceWidget.setPreferredLocation(new Point(0, y));
             
             deviceWidget.addChild(lblDeviceName);
             deviceWidget.addChild(lblDeviceInfo);
             
+            deviceLayer.addChild(deviceWidget);
             validate();
             return deviceWidget;
         }
@@ -316,10 +319,22 @@ public class RackViewScene extends AbstractScene<LocalObject, LocalObject> {
      * Class to wrap a Rack Object in a Widget. 
      */
     private class SelectableDeviceWidget extends SelectableNodeWidget {
+        private boolean selected = false;
 
         public SelectableDeviceWidget(Scene scene, LocalObjectLight businessObject) {
             super(scene, businessObject);
             setToolTipText(null);
+        }
+        
+        @Override
+        public void notifyStateChanged(ObjectState previousState, ObjectState state) {
+            if (!selected) {
+                selected = true;
+                setBackground(new Color(136, 170, 0));
+            } else {
+                selected = false;                
+                setBackground(Color.LIGHT_GRAY);
+            }
         }
     }
 }

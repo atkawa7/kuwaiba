@@ -90,10 +90,8 @@ public class RackViewService {
             if (deviceRackUnits < 1 || position < 1)
                 continue;
             
-            if ((!ascending && position == rackUnits.intValue() && deviceRackUnits > 1) ||
-                (ascending && position == 1 && deviceRackUnits > 1)) {
+            if (position == rackUnits.intValue() && deviceRackUnits > 1)
                 throw new Exception(String.format("The device %s in the position %s cannot have more than one rack unit", device.toString(), position));
-            }
             
             devices.add(device);
             rackUnitsCounter += deviceRackUnits;
@@ -119,48 +117,54 @@ public class RackViewService {
             scene.addNode(emptyModule);
         }
         int [] units = new int[rackUnits];        
-        for (int i = 1; i <= rackUnits; i += 1)
-            units[i - 1] = 0; // rack module free
+        for (int i = 0; i <= rackUnits; i += 1)
+            units[0] = 0; // rack module free
         
         for (LocalObject device : devices) {
-            Integer deviceRackUnits = (Integer) device.getAttribute(Constants.PROPERTY_RACK_UNITS);
+            Integer U = (Integer) device.getAttribute(Constants.PROPERTY_RACK_UNITS);
             Integer position = (Integer) device.getAttribute(Constants.PROPERTY_POSITION);
-            if (ascending) {
-                for (int i = position; i > position - deviceRackUnits; i -= 1) {
-                    if (units[i - 1] == 0)
-                        units[i - 1] = 1; // rack module used
+            
+            int drawPosition = position;
+            if (ascending)
+                drawPosition -= 1;
+            else
+                drawPosition = rackUnits - position - (U - 1);
+            
+            if (drawPosition + (U - 1) < rackUnits) {
+                for (int i = drawPosition; i <= drawPosition + (U - 1); i += 1) {
+                    if (units[i] == 0)
+                        units[i] = 1; // rack module used
                     else
                         throw new Exception(String.format("The device %s in the position %s cannot be located inside a unit in use", device.toString(), position));
                 }
-            } else {
-                for (int i = position; i < position - deviceRackUnits; i += 1) {
-                    if (units[i - 1] == 0)
-                        units[i - 1] = 1; // rack module used
-                    else
-                        throw new Exception(String.format("The device %s in the position %s cannot be located inside a unit in use", device.toString(), position));
-                }
-            }
+            } else
+                throw new Exception(String.format("The device %s in the position %s cannot have more than %s rack units", device.toString(), position, rackUnits - drawPosition));
+            
             if (scene.findWidget(device) != null)
                 scene.removeNode(device);
             
             scene.addNode(device);
         }
+        String lblName = ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_RACK_NAME"); //NOI18N
+        String lblSerialNumber = ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_RACK_SERIAL_NUMBER"); //NOI18N
+        String lblVendor = ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_RACK_VENDOR"); //NOI18N
+        String lblRackNumbering = ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_RACK_NUMBERING"); //NOI18N
         
-        for (String attributeName : rack.getAttributes().keySet()) {
-            
-            String attributeValue = rack.getAttribute(attributeName) == null ? "" : rack.getAttribute(attributeName).toString();
-            
-            if (Constants.PROPERTY_RACK_UNITS_NUMBERING.equals(attributeName)) {
-                String lblAscending = ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_RACK_NUMBERING_ASCENDING");
-                String lblDescending = ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_RACK_NUMBERING_DESCENDING");
-                
-                attributeValue = ascending ? lblAscending : lblDescending;
-            }
-            scene.addRackInfoLabel(String.format("%s: %s", attributeName, attributeValue), false);
-        }
-        String lblUsagePercentage = ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_RACK_USAGE_PERCENTAGE");
-        String msgUsagePercentage = "" + Math.round((float)rackUnitsCounter * 100/rackUnits) +"% (" + rackUnitsCounter + "U/" + rackUnits + "U)";
+        String lblAscending = ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_RACK_NUMBERING_ASCENDING"); //NOI18N
+        String lblDescending = ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_RACK_NUMBERING_DESCENDING"); //NOI18N
         
-        scene.addRackInfoLabel(String.format("%s: %s", lblUsagePercentage, msgUsagePercentage), true);
+        String lblUsagePercentage = ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_RACK_USAGE_PERCENTAGE"); //NOI18N
+        
+        String name = rack.getName();
+        String serialNumber = rack.getAttribute("serialNumber") == null ? "" : rack.getAttribute("serialNumber").toString(); //NOI18N
+        String vendor = rack.getAttribute("vendor") == null ? "" : rack.getAttribute("vendor").toString(); //NOI18N
+        String rackNumbering = ascending ? lblAscending : lblDescending;
+        String usagePercentage = "" + Math.round((float)rackUnitsCounter * 100/rackUnits) +"% (" + rackUnitsCounter + "U/" + rackUnits + "U)";
+        
+        scene.addRackInfoLabel(String.format("%s: %s", lblName, name), false);
+        scene.addRackInfoLabel(String.format("%s: %s", lblSerialNumber, serialNumber), false);
+        scene.addRackInfoLabel(String.format("%s: %s", lblVendor, vendor), false);
+        scene.addRackInfoLabel(String.format("%s: %s", lblRackNumbering, rackNumbering), false);
+        scene.addRackInfoLabel(String.format("%s: %s", lblUsagePercentage, usagePercentage), true);
     }
 }
