@@ -20,6 +20,7 @@ import org.inventory.core.usermanager.nodes.UserManagerRootNode;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
@@ -37,18 +38,19 @@ import org.openide.util.NbBundle.Messages;
 )
 @TopComponent.Description(
         preferredID = "UserManagerTopComponent",
-        //iconBase="SET/PATH/TO/ICON/HERE", 
+        iconBase="org/inventory/core/usermanager/res/icon.png", 
         persistenceType = TopComponent.PERSISTENCE_NEVER
 )
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
-@ActionID(category = "Window", id = "org.inventory.core.usermanager.UserManagerTopComponent")
-@ActionReference(path = "Menu/Window" /*, position = 333 */)
+@ActionID(category = "Tools", id = "org.inventory.core.usermanager.UserManagerTopComponent")
+@ActionReferences(value = {@ActionReference(path = "Menu/Tools"),
+    @ActionReference(path = "Toolbars/Tools")} /*, position = 333 */)
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_UserManagerAction",
         preferredID = "UserManagerTopComponent"
 )
 @Messages({
-    "CTL_UserManagerAction=UserManager",
+    "CTL_UserManagerAction=User Manager",
     "CTL_UserManagerTopComponent=User Manager",
     "HINT_UserManagerTopComponent=Manage users and groups"
 })

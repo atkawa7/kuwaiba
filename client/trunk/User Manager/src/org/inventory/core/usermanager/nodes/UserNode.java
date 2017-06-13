@@ -16,6 +16,10 @@
 
 package org.inventory.core.usermanager.nodes;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyVetoException;
+import java.beans.VetoableChangeListener;
+import java.io.IOException;
 import javax.swing.Action;
 import org.inventory.communications.core.LocalUserObject;
 import org.inventory.core.usermanager.nodes.actions.UserManagerActionFactory;
@@ -35,13 +39,21 @@ import org.openide.util.lookup.Lookups;
  * A node representing an application user
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class UserNode extends AbstractNode {
+public class UserNode extends AbstractNode implements VetoableChangeListener {
 
-    public static final String ICON_PATH="org/inventory/core/usermanager/res/user.png";
+    public static final String ICON_PATH="org/inventory/core/usermanager/res/user.png"; //NOI18N
     
     public UserNode(LocalUserObject user) {
         super(Children.LEAF, Lookups.singleton(user));
         setIconBaseWithExtension(ICON_PATH);
+        user.addPropertyChangeListener(this);
+    }
+    
+    @Override
+    public void setName(String name) {
+        String oldDisplayName = getDisplayName();
+        getLookup().lookup(LocalUserObject.class).setUserName(name);
+        fireDisplayNameChange(oldDisplayName, getDisplayName());
     }
     
     @Override
@@ -54,6 +66,22 @@ public class UserNode extends AbstractNode {
         return getLookup().lookup(LocalUserObject.class).toString();
     }
 
+    @Override
+    public boolean canDestroy() {
+        return true;
+    }
+
+    @Override
+    public boolean canRename() {
+        return true;
+    }
+    
+    @Override
+    public void destroy() throws IOException {
+        getLookup().lookup(LocalUserObject.class).removeAllPropertyChangeListeners();
+        super.destroy();
+    }
+    
     @Override
     protected Sheet createSheet() {
         Sheet sheet = Sheet.createDefault();
@@ -89,5 +117,13 @@ public class UserNode extends AbstractNode {
                               null, //Separator
                               UserManagerActionFactory.getDeleteUserAction()
                             };
+    }
+
+    @Override
+    public void vetoableChange(PropertyChangeEvent evt) throws PropertyVetoException {
+        if (evt.getPropertyName().equals("username")) {//NOI18N
+            fireDisplayNameChange((String)evt.getOldValue(), (String)evt.getNewValue());
+            firePropertyChange("username", evt.getOldValue(), evt.getNewValue());
+        }
     }
 }

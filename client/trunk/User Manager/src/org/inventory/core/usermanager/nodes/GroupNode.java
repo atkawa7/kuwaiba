@@ -16,8 +16,11 @@
 
 package org.inventory.core.usermanager.nodes;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyVetoException;
+import java.beans.VetoableChangeListener;
+import java.io.IOException;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
@@ -39,12 +42,13 @@ import org.openide.util.lookup.Lookups;
  * Represents a group
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class GroupNode extends AbstractNode {
+public class GroupNode extends AbstractNode implements VetoableChangeListener {
     public static final String ICON_PATH="org/inventory/core/usermanager/res/group.png";
     
     public GroupNode(LocalUserGroupObject group) {
         super(new UserChildren(group), Lookups.singleton(group));
         setIconBaseWithExtension(ICON_PATH);
+        group.addPropertyChangeListener(this);
     }
     
     @Override
@@ -53,8 +57,31 @@ public class GroupNode extends AbstractNode {
     }
     
     @Override
+    public void setName(String name) {
+        String oldDisplayName = getDisplayName();
+        getLookup().lookup(LocalUserGroupObject.class).setName(name);
+        fireDisplayNameChange(oldDisplayName, getDisplayName());
+    }
+    
+    @Override
     public String getDisplayName() {
         return getLookup().lookup(LocalUserGroupObject.class).toString();
+    }
+    
+    @Override
+    public boolean canDestroy() {
+        return true;
+    }
+
+    @Override
+    public boolean canRename() {
+        return true;
+    }
+    
+    @Override
+    public void destroy() throws IOException {
+        getLookup().lookup(LocalUserGroupObject.class).removeAllPropertyChangeListeners();
+        super.destroy();
     }
 
     @Override
@@ -86,6 +113,14 @@ public class GroupNode extends AbstractNode {
             UserManagerActionFactory.getRefreshUserListAction(),
             null,
             UserManagerActionFactory.getDeleteGroupAction() };
+    }
+
+    @Override
+    public void vetoableChange(PropertyChangeEvent evt) throws PropertyVetoException {
+        if (evt.getPropertyName().equals("name")) { //NOI18N
+            fireDisplayNameChange((String)evt.getOldValue(), (String)evt.getNewValue());
+            firePropertyChange("name", evt.getOldValue(), evt.getNewValue());
+        }
     }
     
     public static class UserChildren extends Children.Keys<LocalUserObject> {
