@@ -548,11 +548,9 @@ public class DefaultReports {
         }
         
         for (RemoteBusinessObjectLight ip : ips) {
-            if(ip.getClassName().equals(Constants.CLASS_IP_ADDRESS)){
-                List<RemoteBusinessObjectLight> ipDevices = bem.getSpecialAttribute(Constants.CLASS_IP_ADDRESS, ip.getId(), IPAMModule.RELATIONSHIP_IPAMHASADDRESS);
-                if(!ipDevices.isEmpty())
-                    usedIps++;
-            }
+            List<RemoteBusinessObjectLight> ipDevices = bem.getSpecialAttribute(Constants.CLASS_IP_ADDRESS, ip.getId(), IPAMModule.RELATIONSHIP_IPAMHASADDRESS);
+            if(!ipDevices.isEmpty())
+                usedIps++;
         }
 
         if(hosts == 0 && usedIps == 0){
@@ -613,10 +611,8 @@ public class DefaultReports {
             int i = 0;
             for (RemoteBusinessObjectLight nestedSubnet : subnets) {
                 service = "";
-                
-                String subSubnet = nestedSubnet.getName() + " [" + nestedSubnet.getClassName()+"]";
-                
-                List<RemoteBusinessObjectLight> subnetServices = bem.getSpecialAttribute(nestedSubnet.getClassName(), nestedSubnet.getId(), "uses");
+                                
+                List<RemoteBusinessObjectLight> subnetServices = bem.getSpecialAttribute(nestedSubnet.getClassName(), nestedSubnet.getId(), "uses"); //NOI18N
                 if(!subnetServices.isEmpty())
                     service = subnetServices.get(0).getName() + "[" +  subnetServices.get(0).getClassName() + "]";
                 

@@ -3319,6 +3319,26 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(ex.getMessage());
         }
     }
+    
+    @Override
+    public long createProjectPool(String name, String description, String instanceOfClass, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        
+        try {
+            aem.validateWebServiceCall("releaseObjectFromProject", ipAddress, sessionId);
+            
+            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N                        
+            long projectId = projectsModule.createProjectPool(name, description, instanceOfClass);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
+                String.format("Create Project Pool with id %s", projectId));
+            return projectId;
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
         // </editor-fold>
     
     // </editor-fold>

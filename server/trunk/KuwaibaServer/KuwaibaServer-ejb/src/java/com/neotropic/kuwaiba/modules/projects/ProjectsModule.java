@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.application.Pool;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
@@ -368,7 +367,19 @@ public class ProjectsModule implements GenericCommercialModule {
         
         bem.releaseSpecialRelationship(objectClass, objectId, projectId, RELATIONSHIP_PROJECTSPROJECTHAS);
     }
-                
+    
+    /**
+     * Creates a Project Pool
+     * @param name Project Pool name
+     * @param description Project Pool description
+     * @param instanceOfClass Project Pool class
+     * @return The new Project Pool id
+     * @throws MetadataObjectNotFoundException
+     */
+    public long createProjectPool(String name, String description, String instanceOfClass) throws MetadataObjectNotFoundException {
+        return aem.createRootPool(name, description, instanceOfClass, ApplicationEntityManager.POOL_TYPE_MODULE_COMPONENT);
+    }
+                    
     @Override
     public void configureModule(ApplicationEntityManager aem, MetadataEntityManager mem, BusinessEntityManager bem) {
         this.mem = mem;

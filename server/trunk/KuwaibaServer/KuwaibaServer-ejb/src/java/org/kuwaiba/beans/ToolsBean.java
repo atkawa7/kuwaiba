@@ -274,7 +274,7 @@ public class ToolsBean implements ToolsBeanRemote {
                         
                         attributeMetadata.setName("status");
                         attributeMetadata.setDisplayName("status");
-                        attributeMetadata.setType("String");
+                        attributeMetadata.setType("ProjectStatusType");
                         mem.createAttribute(genericProjectId, attributeMetadata);
                         
                         aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
@@ -293,6 +293,22 @@ public class ToolsBean implements ToolsBeanRemote {
                         mem.createClass(cm);
                         aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
                                 new ChangeDescriptor("DataBase", "", "", "Add ActivityType Class"));
+                        
+                        cm.setName("ProjectStatusType");
+                        cm.setParentClassName("GenericType");
+                        cm.setAbstract(false);
+                        mem.createClass(cm);
+                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
+                                new ChangeDescriptor("DataBase", "", "", "Add ProjectStatusType Class"));
+                        
+                        cm.setName("ActivityStatusType");
+                        cm.setParentClassName("GenericType");
+                        cm.setAbstract(false);
+                        mem.createClass(cm);
+                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
+                                new ChangeDescriptor("DataBase", "", "", "Add ActivityStatusType Class"));
+                        
+                        
                         
                         attributeMetadata.setName("notes");
                         attributeMetadata.setDisplayName("notes");
@@ -316,7 +332,7 @@ public class ToolsBean implements ToolsBeanRemote {
                         
                         attributeMetadata.setName("status");
                         attributeMetadata.setDisplayName("status");
-                        attributeMetadata.setType("Boolean");
+                        attributeMetadata.setType("ActivityStatusType");
                         mem.createAttribute(genericActivityId, attributeMetadata);
                         
                         attributeMetadata.setName("duration");

@@ -5402,6 +5402,34 @@ public class KuwaibaService {
             }
         }
     }
+    
+    /**
+     * Creates a Project Pool
+     * @param name Project Pool name
+     * @param description Project Pool description
+     * @param instanceOfClass Project Pool class
+     * @param sessionId Session id token
+     * @return The id of the new Project Pool
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "createProjectPool")
+    public long createProjectPool(
+        @WebParam(name = "name") String name, 
+        @WebParam(name = "description") String description, 
+        @WebParam(name = "instanceOfClass") String instanceOfClass, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            return wsBean.createProjectPool(name, description, instanceOfClass, getIPAddress(), sessionId);
+            
+        } catch (Exception ex) {
+            if (ex instanceof ServerSideException)
+                throw ex;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createProjectPool: " + ex.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
         // </editor-fold>
     // </editor-fold>
         
