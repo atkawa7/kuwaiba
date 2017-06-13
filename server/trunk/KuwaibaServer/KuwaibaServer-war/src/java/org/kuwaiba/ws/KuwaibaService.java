@@ -2237,6 +2237,54 @@ public class KuwaibaService {
             }
         }
     }
+    
+    /**
+     * 
+     * @param className
+     * @param objId
+     * @param sessionId
+     * @return
+     * @throws ServerSideException 
+     */
+    @WebMethod(operationName = "getMandatoryObjectAttributes")
+    public AttributeInfo [] getMandatoryObjectAttributes(
+            @WebParam(name = "className") String className,
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException{
+        try{
+            return wsBean.getMandatoryObjectAttributes(className, getIPAddress(), sessionId);
+        }catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getMandatoryObjectAttributes: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * 
+     * @param className
+     * @param objId
+     * @param sessionId
+     * @throws ServerSideException 
+     */
+    @WebMethod(operationName = "objectHasValuesInMandatoryAttributes")
+    public void objectHasValuesInMandatoryAttributes(
+            @WebParam(name = "className") String className,
+            @WebParam(name = "objId") long objId, 
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException{
+        try{
+            wsBean.objectHasValuesInMandatoryAttributes(className, objId,  getIPAddress(), sessionId);
+        }catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in objectHasValuesInMandatoryAttributes: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
     /**
      * Models
      */
@@ -2932,6 +2980,7 @@ public class KuwaibaService {
      * @param noCopy Marks an attribute as not to be copied during a copy operation.
      * @param isReadOnly is the attribute read only?
      * @param unique should this attribute be unique?
+     * @param mandatory is the attribute mandatory when an object is created
      * @param sessionId session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
@@ -2946,14 +2995,15 @@ public class KuwaibaService {
         boolean visible, @WebParam(name = "isReadOnly")
         boolean isReadOnly, @WebParam(name = "noCopy")
         boolean noCopy, @WebParam(name = "unique")
-        boolean unique, @WebParam(name = "sessionId")
+        boolean unique, @WebParam(name = "mandatory")
+        boolean mandatory, @WebParam(name = "sessionId")
         String sessionId) throws ServerSideException {
 
         try {
-            AttributeInfo ai = new AttributeInfo(name, displayName, type, administrative, 
-                    visible, isReadOnly, unique, description, noCopy);
+            AttributeInfo attrInfo = new AttributeInfo(name, displayName, type, administrative, 
+                    visible, isReadOnly, unique, mandatory, description, noCopy);
 
-            wsBean.createAttribute(className, ai, getIPAddress(), sessionId);
+            wsBean.createAttribute(className, attrInfo, getIPAddress(), sessionId);
 
         } catch(Exception e){
             if (e instanceof ServerSideException)
@@ -2974,9 +3024,10 @@ public class KuwaibaService {
      * @param description attribute description
      * @param administrative is the attribute administrative?
      * @param visible is the attribute visible?
-     * @param isReadOnly is the attribute read only?
+     * @param readOnly is the attribute read only?
      * @param noCopy Marks an attribute as not to be copied during a copy operation.
      * @param unique should this attribute be unique?
+     * @param mandatory is the attribute mandatory when an object is created
      * @param sessionId session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
@@ -2988,17 +3039,18 @@ public class KuwaibaService {
         String type, @WebParam(name = "description")
         String description, @WebParam(name = "administrative")
         boolean administrative, @WebParam(name = "visible")
-        boolean visible, @WebParam(name = "isReadOnly")
-        boolean isReadOnly, @WebParam(name = "noCopy")
+        boolean visible, @WebParam(name = "readOnly")
+        boolean readOnly, @WebParam(name = "noCopy")
         boolean noCopy, @WebParam(name = "unique")
-        boolean unique, @WebParam(name = "sessionId")
+        boolean unique, @WebParam(name = "mandatory")
+        boolean mandatory, @WebParam(name = "sessionId")
         String sessionId) throws ServerSideException {
 
         try {
-            AttributeInfo ai = new AttributeInfo(name, displayName, type, administrative, 
-                                   visible, isReadOnly, unique, description, noCopy);
+            AttributeInfo attrInfo = new AttributeInfo(name, displayName, type, administrative, 
+                                   visible, readOnly, unique, mandatory, description, noCopy);
 
-            wsBean.createAttribute(ClassId, ai, getIPAddress(), sessionId);
+            wsBean.createAttribute(ClassId, attrInfo, getIPAddress(), sessionId);
 
         } catch(Exception e){
             if (e instanceof ServerSideException)
@@ -3022,6 +3074,7 @@ public class KuwaibaService {
      * @param visible is the attribute visible?
      * @param readOnly is the attribute read only?
      * @param unique should this attribute be unique?
+     * @param mandatory is the attribute mandatory when an object is created
      * @param noCopy can this attribute be copy in copy/paste operation?
      * @param sessionId session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
@@ -3031,19 +3084,21 @@ public class KuwaibaService {
         String className, @WebParam(name = "attributeId")
         long attributeId, @WebParam(name = "name")
         String name, @WebParam(name = "displayName")
-        String displayName, @WebParam(name = "type")
-        String type, @WebParam(name = "description")
-        String description, @WebParam(name = "administrative")
-        Boolean administrative, @WebParam(name = "visible")
-        Boolean visible, @WebParam(name = "readOnly")
+        String displayName, @WebParam(name = "description")
+        String description, @WebParam(name = "type")
+        String type, @WebParam(name = "administrative")
+        Boolean administrative, @WebParam(name = "mandatory")
+        Boolean mandatory, @WebParam(name = "noCopy")
+        Boolean noCopy, @WebParam(name = "readOnly")
         Boolean readOnly, @WebParam(name = "unique")
-        Boolean unique, @WebParam(name = "noCopy")
-        Boolean noCopy, @WebParam(name = "sessionId")
+        Boolean unique, @WebParam(name = "visible")
+        Boolean visible, @WebParam(name = "sessionId")
         String sessionId) throws ServerSideException {
 
         try {
-            AttributeInfo ai = new AttributeInfo(attributeId, name, displayName, 
-                    type, administrative, visible, readOnly, unique, description, noCopy);
+            AttributeInfo ai = new AttributeInfo(attributeId, name, displayName,
+                    type, administrative, visible, readOnly, unique, mandatory, 
+                    description, noCopy);
             wsBean.setAttributeProperties(className, ai, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
@@ -3063,10 +3118,11 @@ public class KuwaibaService {
      * @param displayName attribute display name
      * @param type attribute type
      * @param description attribute description
-     * @param isAdministrative is the attribute administrative?
-     * @param isVisible is the attribute visible?
-     * @param isReadOnly is the attribute read only?
-     * @param isUnique should this attribute be unique?
+     * @param administrative is the attribute administrative?
+     * @param visible is the attribute visible?
+     * @param readOnly is the attribute read only?
+     * @param unique should this attribute be unique?
+     * @param mandatory is the attribute mandatory when an object is created
      * @param noCopy can this attribute be copy in copy/paste operation?
      * @param sessionId session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
@@ -3076,19 +3132,21 @@ public class KuwaibaService {
         long classId, @WebParam(name = "attributeId")
         long attributeId, @WebParam(name = "name")
         String name, @WebParam(name = "displayName")
-        String displayName, @WebParam(name = "type")
-        String type, @WebParam(name = "description")
-        String description, @WebParam(name = "isAdministrative")
-        Boolean isAdministrative, @WebParam(name = "isVisible")
-        Boolean isVisible, @WebParam(name = "isReadOnly")
-        Boolean isReadOnly, @WebParam(name = "noCopy")
-        Boolean noCopy, @WebParam(name = "isUnique")
-        Boolean isUnique, @WebParam(name = "sessionId")
+        String displayName, @WebParam(name = "description")
+        String description, @WebParam(name = "type")
+        String type, @WebParam(name = "administrative")
+        Boolean administrative, @WebParam(name = "mandatory")
+        Boolean mandatory, @WebParam(name = "noCopy")
+        Boolean noCopy, @WebParam(name = "readOnly")
+        Boolean readOnly, @WebParam(name = "unique")
+        Boolean unique, @WebParam(name = "visible")
+        Boolean visible, @WebParam(name = "sessionId")
         String sessionId) throws ServerSideException {
 
         try {
             AttributeInfo ai = new AttributeInfo(attributeId, name, displayName, 
-                    type, isAdministrative, isVisible, isReadOnly, isUnique, description, noCopy);
+                    type, administrative, visible, readOnly, unique, mandatory, 
+                    description, noCopy);
             wsBean.setAttributeProperties(classId, ai, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
