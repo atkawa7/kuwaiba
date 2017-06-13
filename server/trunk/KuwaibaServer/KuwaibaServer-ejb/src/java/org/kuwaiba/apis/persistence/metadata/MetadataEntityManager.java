@@ -21,6 +21,7 @@ import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundExceptio
 import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 
 /**
  * Manages the metadata entities
@@ -44,10 +45,14 @@ public interface MetadataEntityManager {
      * @param newClassDefinition the new class definition 
      * @throws ApplicationObjectNotFoundException
      * @throws MetadataObjectNotFoundException If the class could no be found
-     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If the name has invalid characters, the new name is empty or if that name already exists
+     * @throws InvalidArgumentException If the name has invalid characters, the 
+     * new name is empty or if that name already exists.
+     * @throws ObjectNotFoundException If there is any problem retrieving an 
+     * object, while checking if every created object of the class with an 
+     * attributes marked as mandatory has value.
      */
     public void setClassProperties(ClassMetadata newClassDefinition) 
-            throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
+            throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException;
 
     /**
      * Deletes a class metadata, its attributes and category relationships
@@ -185,8 +190,9 @@ public interface MetadataEntityManager {
      * @param newAttributeDefinition An object with the new attribute definition. Null values will be ignored.
      * @throws MetadataObjectNotFoundException If the class could not be found.
      * @throws InvalidArgumentException If any of the new attribute parameters has a wrong value.
+     * @throws ObjectNotFoundException If an object can't be find, while it is checking if every object of the class (or subclasses) has a value in an attribute marked as mandatory
      */
-    public void setAttributeProperties(long classId, AttributeMetadata newAttributeDefinition) throws MetadataObjectNotFoundException, InvalidArgumentException;
+    public void setAttributeProperties(long classId, AttributeMetadata newAttributeDefinition) throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException;
     
     /**
      * Changes an attribute definition belonging to a class metadata use the class name as id
@@ -194,8 +200,9 @@ public interface MetadataEntityManager {
      * @param newAttributeDefinition An object with the new attribute definition. Null values will be ignored.
      * @throws MetadataObjectNotFoundException If the class could not be found.
      * @throws InvalidArgumentException If any of the new attribute parameters has a wrong value.
+     * @throws ObjectNotFoundException  If an object can't be find, while it is checking if every object of the class (or subclasses) has a value in an attribute marked as mandatory
      */
-    public void setAttributeProperties(String className, AttributeMetadata newAttributeDefinition) throws MetadataObjectNotFoundException, InvalidArgumentException;
+    public void setAttributeProperties(String className, AttributeMetadata newAttributeDefinition) throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException;
 
     /**
      * Deletes an attribute from a class.

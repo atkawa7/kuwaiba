@@ -2387,24 +2387,33 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public HashMap<String, RemoteBusinessObjectList> executeCustomDbCode(String dbCode) throws NotAuthorizedException {
+    public HashMap<String, RemoteBusinessObjectList> executeCustomDbCode(String dbCode, boolean needReturn) throws NotAuthorizedException {
         try (Transaction tx = graphDb.beginTx()) {
         
-            Result theResult = graphDb.execute(dbCode);
-            HashMap<String, RemoteBusinessObjectList> thePaths = new HashMap<>();
+            Map<String, Object> params = new HashMap<>();
+            params.put("false", false);//NOI18N
+            params.put("true", true);//NOI18N
+            Result theResult = graphDb.execute(dbCode, params);
+            if(needReturn){
+                HashMap<String, RemoteBusinessObjectList> thePaths = new HashMap<>();
             
-            for (String column : theResult.columns())
-                thePaths.put(column, new RemoteBusinessObjectList());
-            
-            try {
-                while (theResult.hasNext()) {
-                    Map<String, Object> row = theResult.next();
-                    for (String column : row.keySet()) 
-                        thePaths.get(column).add(Util.createRemoteObjectFromNode((Node)row.get(column)));
-                }
-            } catch (InvalidArgumentException ex) {} //this should not happen
-            
-            return thePaths;
+                for (String column : theResult.columns())
+                    thePaths.put(column, new RemoteBusinessObjectList());
+
+                try {
+                    while (theResult.hasNext()) {
+                        Map<String, Object> row = theResult.next();
+                        for (String column : row.keySet()) 
+                            thePaths.get(column).add(Util.createRemoteObjectFromNode((Node)row.get(column)));
+                    }
+                } catch (InvalidArgumentException ex) {} //this should not happen
+
+                return thePaths;
+            }
+            else {
+                tx.success();
+                return null;
+            }
         }
     }
     

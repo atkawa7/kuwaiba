@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>
+/*
+ *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,6 +32,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
@@ -47,6 +50,7 @@ import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
+import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.services.persistence.cache.CacheManager;
 import org.kuwaiba.services.persistence.impl.neo4j.RelTypes;
@@ -64,7 +68,6 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
-import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.graphdb.traversal.TraversalDescription;
 import org.neo4j.helpers.collection.IteratorUtil;
 
@@ -1231,6 +1234,40 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             }
         }
         return paths;
+        
+    }
+    
+    @Override
+    public void objectHasValuesInMandatoryAttributes(String className, 
+            long objId) throws ObjectNotFoundException, 
+            MetadataObjectNotFoundException, InvalidArgumentException
+    {
+        RemoteBusinessObject obj = getObject(className, objId);
+        HashMap<String, List<String>> objectAttributes = obj.getAttributes();
+        
+        ClassMetadata aClass = mem.getClass(className);
+        Set<AttributeMetadata> classAttributes = aClass.getAttributes();
+        for (AttributeMetadata mandatoryAttribute : classAttributes) {
+            if(mandatoryAttribute.isMandatory()){
+                if(objectAttributes.get(mandatoryAttribute.getName()) == null)
+                    throw new InvalidArgumentException(String.format(
+                            "The object with oid %s has no value in the mandatory attribute %s",objId, mandatoryAttribute.getName()));
+            }
+        }
+    }
+    
+    @Override
+    public List<AttributeMetadata> getMandatoryObjectAttributes(String className) throws ObjectNotFoundException, 
+            MetadataObjectNotFoundException, InvalidArgumentException
+    {
+        List<AttributeMetadata> mandatoryAttributes = new ArrayList<>();
+        ClassMetadata aClass = mem.getClass(className);
+        Set<AttributeMetadata> classAttributes = aClass.getAttributes();
+        for (AttributeMetadata mandatoryAttribute : classAttributes) {
+            if(mandatoryAttribute.isMandatory())
+                 mandatoryAttributes.add(mandatoryAttribute);
+        }
+        return mandatoryAttributes;
     }
     
     //<editor-fold desc="Reporting API implementation" defaultstate="collapsed">
@@ -1727,4 +1764,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             this.attributes = attributes;
         }
     }
+    
+    public boolean isObjectAttributeUnique(String className, String attributeName, String attributeValue)
+            throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException
+    {
+        return false;
+    }
+    
+   
 }

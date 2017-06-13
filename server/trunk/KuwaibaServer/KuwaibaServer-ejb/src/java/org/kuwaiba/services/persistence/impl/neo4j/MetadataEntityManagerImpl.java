@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License
@@ -25,7 +25,8 @@ import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.ConnectionManager;
-import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
+import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
+import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
@@ -60,9 +61,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
      */
     private Index<Node> classIndex;
     /**
-     * Instance of application entity manager
+     * Instance of Business entity manager
      */
-    ApplicationEntityManager aem;
+     BusinessEntityManager bem;
     /**
      * Reference to the CacheManager
      */
@@ -80,11 +81,11 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
      * Constructor
      * Get the a database connection and indexes from the connection manager.
      * @param cmn
-     * @param aem
+     * @param bem
      */
-    public MetadataEntityManagerImpl(ConnectionManager cmn, ApplicationEntityManager aem) {
+    public MetadataEntityManagerImpl(ConnectionManager cmn) {
         this();
-        this.aem = aem;
+        //this.bem = bem;
         graphDb = (GraphDatabaseService) cmn.getConnectionHandler();
         this.relationshipDisplayNames = new HashMap<>();
         try(Transaction tx = graphDb.beginTx()) {
@@ -158,7 +159,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         Node parentAttrNode = rel.getEndNode();
                         
                         //We ignore the attributes already existing in the class definition
-                        //TODO: This block of code only exists because the class hierachy file used to reset the data model is redundant. Once its fixed, please remove it
+                        //TODO: This block of code only exists because the class hierachy 
+                        //file used to reset the data model is redundant. Once its fixed, please remove it
                         String attributeName = String.valueOf(parentAttrNode.getProperty(Constants.PROPERTY_NAME));
                         boolean skipThis = false;
                         for (AttributeMetadata anAttribute : classDefinition.getAttributes()) {
@@ -171,7 +173,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         if (skipThis)
                             continue;
                         
-                        Node newAttrNode = graphDb.createNode();
+                        label = DynamicLabel.label(Constants.LABEL_ATTRIBUTE);
+                        Node newAttrNode = graphDb.createNode(label);
                         newAttrNode.setProperty(Constants.PROPERTY_NAME, attributeName);
                         newAttrNode.setProperty(Constants.PROPERTY_DESCRIPTION, parentAttrNode.getProperty(Constants.PROPERTY_DESCRIPTION));
                         newAttrNode.setProperty(Constants.PROPERTY_DISPLAY_NAME, parentAttrNode.getProperty(Constants.PROPERTY_DISPLAY_NAME));
@@ -181,6 +184,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         newAttrNode.setProperty(Constants.PROPERTY_ADMINISTRATIVE, parentAttrNode.getProperty(Constants.PROPERTY_ADMINISTRATIVE));
                         newAttrNode.setProperty(Constants.PROPERTY_NO_COPY, parentAttrNode.getProperty(Constants.PROPERTY_NO_COPY));
                         newAttrNode.setProperty(Constants.PROPERTY_UNIQUE, parentAttrNode.getProperty(Constants.PROPERTY_UNIQUE));
+                        newAttrNode.setProperty(Constants.PROPERTY_MANDATORY, parentAttrNode.getProperty(Constants.PROPERTY_MANDATORY));
                         //newAttrNode.setProperty(PROPERTY_LOCKED, parentAttrNode.getProperty(PROPERTY_LOCKED));
                         classNode.createRelationshipTo(newAttrNode, RelTypes.HAS_ATTRIBUTE);
                     }
@@ -198,7 +202,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
 
     @Override
     public void setClassProperties (ClassMetadata newClassDefinition) 
-            throws MetadataObjectNotFoundException, InvalidArgumentException 
+            throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException 
     {
         try (Transaction tx = graphDb.beginTx()) {
             Node classMetadata = classIndex.get(Constants.PROPERTY_ID, newClassDefinition.getId()).getSingle();
@@ -656,7 +660,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     
     @Override
     public void setAttributeProperties(long classId, AttributeMetadata newAttributeDefinition) 
-            throws MetadataObjectNotFoundException, InvalidArgumentException {
+            throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx())
         {
             Node classNode = classIndex.get(Constants.PROPERTY_ID, classId).getSingle();
@@ -671,11 +675,11 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     String currentAttributeName = (String)attrNode.getProperty(Constants.PROPERTY_NAME);
 
                     if (currentAttributeName.equals(Constants.PROPERTY_CREATION_DATE))
-                        throw new InvalidArgumentException("Attribute \"creationDate\" can not be modified");
+                        throw new InvalidArgumentException(String.format("Attribute \"%s\" can not be modified", currentAttributeName));
 
                     if(newAttributeDefinition.getName() != null){
                         if (currentAttributeName.equals(Constants.PROPERTY_NAME))
-                            throw new InvalidArgumentException("Attribute \"name\" can not be renamed");
+                            throw new InvalidArgumentException(String.format("Attribute \"%s\" can not be renamed", currentAttributeName));
                         if (!newAttributeDefinition.getName().matches("^[a-zA-Z0-9_]*$"))
                             throw new InvalidArgumentException(String.format("Attribute %s contains invalid characters", newAttributeDefinition.getName()));
                         
@@ -687,7 +691,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_DISPLAY_NAME, newAttributeDefinition.getDisplayName());
                     if(newAttributeDefinition.getType() != null){
                         if (currentAttributeName.equals(Constants.PROPERTY_NAME))
-                            throw new InvalidArgumentException("Attribute \"name\" can only be a String");
+                            throw new InvalidArgumentException(String.format("Attribute \"%s\" can only be a String", currentAttributeName));
                         if (AttributeMetadata.isPrimitive((String)attrNode.getProperty(Constants.PROPERTY_TYPE)))
                             Util.changeAttributeTypeIfPrimitive(classNode, currentAttributeName, newAttributeDefinition.getType());
                         else
@@ -703,6 +707,18 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_NO_COPY, newAttributeDefinition.isNoCopy());
                     if(newAttributeDefinition.isUnique() != null)
                         Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
+                    if(newAttributeDefinition.isMandatory() != null){
+                        //this check if every object of the class and subclasses has a value in this attribute marked as mandatory
+                        if(newAttributeDefinition.isMandatory()){
+                            if(objectsOfClassHasValueInMandatoryAttribute((String)classNode.getProperty(Constants.PROPERTY_NAME), currentAttributeName))
+                                Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MANDATORY, newAttributeDefinition.isMandatory());
+                            else
+                                throw new InvalidArgumentException(
+                                    String.format("In order to mark Attribute \"%s\" as mandatory it is necessary to set a value in every created object(s) of this class and it's subclasses", currentAttributeName));
+                        }
+                        else
+                            Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MANDATORY, newAttributeDefinition.isMandatory());
+                    }
                     //Refresh cache for the affected classes
                     refreshCacheOn(classNode);
                     tx.success();                    
@@ -716,7 +732,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     
     @Override
     public void setAttributeProperties (String className, AttributeMetadata newAttributeDefinition) 
-            throws MetadataObjectNotFoundException, InvalidArgumentException {
+            throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx()) {
             Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
 
@@ -729,11 +745,11 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     String currentAttributeName = (String)attrNode.getProperty(Constants.PROPERTY_NAME);
 
                     if (currentAttributeName.equals(Constants.PROPERTY_CREATION_DATE))
-                        throw new InvalidArgumentException("Attribute \"creationDate\" can not be modified");
+                        throw new InvalidArgumentException(String.format("Attribute \"%s\" can not be modified", currentAttributeName));
 
                     if(newAttributeDefinition.getName() != null){
                         if (currentAttributeName.equals(Constants.PROPERTY_NAME))
-                            throw new InvalidArgumentException("Attribute \"name\" can not be renamed");
+                            throw new InvalidArgumentException(String.format("Attribute \"%s\" can not be renamed", currentAttributeName));
                         if (!newAttributeDefinition.getName().matches("^[a-zA-Z0-9_]*$"))
                             throw new InvalidArgumentException(String.format("Attribute %s contains invalid characters", newAttributeDefinition.getName()));
 
@@ -745,7 +761,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_DISPLAY_NAME, newAttributeDefinition.getDisplayName());
                     if(newAttributeDefinition.getType() != null){
                         if (currentAttributeName.equals(Constants.PROPERTY_NAME))
-                            throw new InvalidArgumentException("Attribute \"name\" can only be a String");
+                            throw new InvalidArgumentException(String.format("Attribute \"%s\" can only be a String", currentAttributeName));
                         if (AttributeMetadata.isPrimitive((String)attrNode.getProperty(Constants.PROPERTY_TYPE)))
                             Util.changeAttributeTypeIfPrimitive(classNode, currentAttributeName, newAttributeDefinition.getType());
                         else
@@ -761,6 +777,18 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_NO_COPY, newAttributeDefinition.isNoCopy());
                     if(newAttributeDefinition.isUnique() != null)
                         Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
+                    if(newAttributeDefinition.isMandatory() != null){
+                        if(newAttributeDefinition.isMandatory()){
+                            //this check if every object of the class and subclasses has a value in this attribute marked as mandatory
+                            if(objectsOfClassHasValueInMandatoryAttribute(className, currentAttributeName))
+                                Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MANDATORY, newAttributeDefinition.isMandatory());
+                            else
+                                throw new InvalidArgumentException(
+                                    String.format("In order to mark Attribute \"%s\" as mandatory, it is necessary to set a value in every created object(s) of this class and it's subclasses", currentAttributeName));
+                        }
+                        else
+                            Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MANDATORY, newAttributeDefinition.isMandatory());
+                    }
                     //Refresh cache for the affected classes
                     refreshCacheOn(classNode);
                     tx.success();
@@ -775,11 +803,11 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     @Override
     public void deleteAttribute(String className, String attributeName) 
             throws MetadataObjectNotFoundException, InvalidArgumentException {
-        if (attributeName.equals(Constants.PROPERTY_NAME))
-            throw new InvalidArgumentException("Attribute \"name\" can not be deleted");
+        if (attributeName.equals(Constants.PROPERTY_NAME) || attributeName.equals(Constants.PROPERTY_CREATION_DATE))
+            throw new InvalidArgumentException(String.format("Attribute \"%s\" can not be deleted", attributeName));
         
-        if (attributeName.equals(Constants.PROPERTY_CREATION_DATE))
-            throw new InvalidArgumentException("Attribute \"creationDate\" can not be deleted");
+//        if (attributeName.equals(Constants.PROPERTY_CREATION_DATE))
+//            throw new InvalidArgumentException(String.format("Attribute \"creationDate\" can not be deleted");
         
         try(Transaction tx = graphDb.beginTx()) {
             Node classNode = classIndex.get(Constants.PROPERTY_NAME, attributeName).getSingle();
@@ -806,11 +834,11 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     @Override
     public void deleteAttribute(long classId, String attributeName) 
             throws MetadataObjectNotFoundException, InvalidArgumentException {
-        if (attributeName.equals(Constants.PROPERTY_CREATION_DATE))
-            throw new InvalidArgumentException("Attribute \"creationDate\" can not be deleted");
+        if (attributeName.equals(Constants.PROPERTY_CREATION_DATE) || attributeName.equals(Constants.PROPERTY_NAME))
+            throw new InvalidArgumentException(String.format("Attribute \"%s\" can not be deleted", attributeName));
         
-        if (attributeName.equals(Constants.PROPERTY_NAME))
-            throw new InvalidArgumentException("Attribute \"name\" can not be deleted");
+//        if (attributeName.equals(Constants.PROPERTY_NAME))
+//            throw new InvalidArgumentException("Attribute \"name\" can not be deleted");
         
         try (Transaction tx = graphDb.beginTx()) {
             Node classNode = classIndex.get(Constants.PROPERTY_ID, classId).getSingle();
@@ -1150,4 +1178,76 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         }
         //Only the DummyRoot is not cached. It will be cached on demand later
    }
+   
+   /**
+    * Check if all the objects of a given class has a value in a given attribute marked as mandatory
+    * this method can also check all the objects from the subclases of the given class.
+    * @param className The object's class 
+    * @param attributeName The object's attribute marked as mandatory
+    * @param recursive false: if the method should evaluate all the objects of 
+    * the class, true if also should evaluate all the objects of the subclasses
+    * @return true if every object has a value in the attribute, false if at 
+    * least one object has no value in the attribute marked as mandatory
+    */
+    private boolean objectsOfClassHasValueInMandatoryAttribute(String className, 
+            String attributeName) 
+            throws MetadataObjectNotFoundException, InvalidArgumentException
+    {
+        List<ClassMetadataLight> cml = new ArrayList<>();
+        
+        Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
+        String attributeType = Util.createClassMetadataFromNode(classNode).getAttribute(attributeName).getType();
+        if (classNode == null)
+            throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %s", className));
+        
+        if (!objectsHasAttribute(classNode, attributeName, attributeType))// check every object for the given class
+            return false;
+        //then check every object of the subclasses of the given class
+        String cypherQuery = "START inventory = node:classes({className}) ".concat(
+                             "MATCH inventory <-[:").concat(RelTypes.EXTENDS.toString()).concat("*]-classmetadata ").concat(
+                             "RETURN classmetadata ").concat(
+                             "ORDER BY classmetadata.name ASC");
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("className", "name:"+ className);//NOI18N
+        
+        Result result = graphDb.execute(cypherQuery, params);
+        Iterator<Node> n_column = result.columnAs("classmetadata");
+        for (Node nodeClass : IteratorUtil.asIterable(n_column))
+            return objectsHasAttribute(nodeClass, attributeName, attributeType);
+        
+        return true;
+    }
+    
+    private boolean objectsHasAttribute(Node classNode, String attributeName, String attributeType) throws InvalidArgumentException{
+        
+        boolean everyObjectHasValue = true;
+        Iterable<Relationship> iterableInstances = classNode.getRelationships(RelTypes.INSTANCE_OF, Direction.INCOMING);
+        Iterator<Relationship> instances = iterableInstances.iterator();
+
+        while (instances.hasNext()){
+            Node objectNode = instances.next().getStartNode();
+            if(!objectNode.hasProperty(attributeName) && AttributeMetadata.isPrimitive(attributeType)){
+                everyObjectHasValue = false;
+                break;    
+            }
+            else{
+                //Iterates through relationships and transform the into "plain" attributes
+                everyObjectHasValue = false;
+                Iterable<Relationship> iterableRelationships = objectNode.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING);
+                Iterator<Relationship> relationships = iterableRelationships.iterator();
+                while(relationships.hasNext()){
+                    Relationship relationship = relationships.next();
+                    if (!relationship.hasProperty(Constants.PROPERTY_NAME))
+                        throw new InvalidArgumentException(String.format("The object with id %s is malformed", objectNode.getId()));
+                    
+                    if (attributeName.equals((String)relationship.getProperty(Constants.PROPERTY_NAME)))
+                        everyObjectHasValue = true;
+                }
+            }
+        }
+        return everyObjectHasValue;
+    }
 }
+
+    

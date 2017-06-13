@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,9 +23,8 @@ import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.ws.toserialize.application.Validator;
 
 /**
- * This is a wrapper class for ClassMetadata, containing the info required for the clients
- * to render the object attributes in the right way
- *
+ * This is a wrapper class for ClassMetadata, containing the info required for 
+ * the clients to render the object attributes in the right way
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -33,27 +32,35 @@ public class ClassInfo extends ClassInfoLight{
     /**
      * Attribute ids
      */
-    private long [] attributeIds;
+    private long [] attributesIds;
     /**
      * Attribute names
      */
-    private String [] attributeNames;
+    private String [] attributesNames;
     /**
      * Attribute types
      */
-    private String [] attributeTypes;
+    private String [] attributesTypes;
     /**
      * Attribute display names
      */
-    private String [] attributeDisplayNames;
+    private String [] attributesDisplayNames;
+    /**
+     * Attributes mandatory
+     */
+    private boolean [] attributesMandatories;
+    /**
+     * Attributes unique
+     */
+    private boolean [] attributesUniques;
     /**
      * Attributes visibility
      */
-    private boolean [] attributesIsVisible;
+    private boolean [] attributesVisibles;
     /**
      * Attributes descriptions
      */
-    private String [] attributesDescription;
+    private String [] attributesDescriptions;
     /**
      * 32x32 icon
      */
@@ -80,75 +87,98 @@ public class ClassInfo extends ClassInfoLight{
         this._abstract = myClass.isAbstract();
         this.icon = myClass.getIcon();
         Set<AttributeMetadata> ar = myClass.getAttributes();
-        this.attributeIds = new long[ar.size()];
-        this.attributeNames = new String[ar.size()];
-        this.attributeTypes = new String[this.attributeNames.length];
-        this.attributeDisplayNames = new String[this.attributeNames.length];
-        this.attributesIsVisible = new boolean[this.attributeNames.length];
-        this.attributesDescription = new String[this.attributeNames.length];
+        this.attributesIds = new long[ar.size()];
+        this.attributesNames = new String[ar.size()];
+        this.attributesTypes = new String[this.attributesNames.length];
+        this.attributesDisplayNames = new String[this.attributesNames.length];
+        this.attributesUniques = new boolean[this.attributesNames.length];
+        this.attributesMandatories = new boolean[this.attributesNames.length];
+        this.attributesVisibles = new boolean[this.attributesNames.length];
+        this.attributesDescriptions = new String[this.attributesNames.length];
         this.description = myClass.getDescription();
         this.countable = myClass.isCountable();
         int i = 0;
         for (AttributeMetadata myAtt : ar){
-            this.attributeIds[i] = myAtt.getId();
-            this.attributeNames[i] = myAtt.getName();
-            this.attributeTypes[i] = myAtt.getType();
-            this.attributeDisplayNames[i] = myAtt.getDisplayName() == null?
+            this.attributesIds[i] = myAtt.getId();
+            this.attributesNames[i] = myAtt.getName();
+            this.attributesTypes[i] = myAtt.getType();
+            this.attributesDisplayNames[i] = myAtt.getDisplayName() == null?
                 "":myAtt.getDisplayName();
-            this.attributesIsVisible[i] = myAtt.isVisible();
-
-            this.attributesDescription[i] = myAtt.getDescription()==null?
+            this.attributesMandatories[i] = myAtt.isMandatory();
+            this.attributesUniques[i] = myAtt.isUnique();
+            this.attributesVisibles[i] = myAtt.isVisible();
+            this.attributesDescriptions[i] = myAtt.getDescription()==null?
                 "":myAtt.getDescription();
             i++;
         }
     }
 
-    public String[] getAttributeDisplayNames() {
-        return attributeDisplayNames;
+    public String[] getAttributesDisplayNames() {
+        return attributesDisplayNames;
     }
 
-    public void setAttributeDisplayNames(String[] attributeDisplayNames) {
-        this.attributeDisplayNames = attributeDisplayNames;
+    public void setAttributeDisplayNames(String[] attributesDisplayNames) {
+        this.attributesDisplayNames = attributesDisplayNames;
     }
 
-    public String[] getAttributeNames() {
-        return attributeNames;
+    public String[] getAttributesNames() {
+        return attributesNames;
     }
 
-    public void setAttributeNames(String[] attributeNames) {
-        this.attributeNames = attributeNames;
+    public void setAttributesNames(String[] attributesNames) {
+        this.attributesNames = attributesNames;
     }
 
-    public String[] getAttributeTypes() {
-        return attributeTypes;
+    public String[] getAttributesTypes() {
+        return attributesTypes;
     }
 
-    public void setAttributeTypes(String[] attributeTypes) {
-        this.attributeTypes = attributeTypes;
+    public void setAttributesTypes(String[] attributesTypes) {
+        this.attributesTypes = attributesTypes;
     }
 
     public String[] getAttributesDescription() {
-        return attributesDescription;
+        return attributesDescriptions;
     }
 
     public void setAttributesDescription(String[] attributesDescription) {
-        this.attributesDescription = attributesDescription;
+        this.attributesDescriptions = attributesDescription;
     }
 
-    public boolean[] getAttributesIsVisible() {
-        return attributesIsVisible;
+     public boolean[] getAttributesMandatories() {
+        return attributesMandatories;
     }
 
-    public void setAttributesIsVisible(boolean[] attributesIsVisible) {
-        this.attributesIsVisible = attributesIsVisible;
+    public void setAttributesMandatories(boolean[] attributesMandatories) {
+        this.attributesMandatories = attributesMandatories;
     }
 
-    public long[] getAttributeIds() {
-        return attributeIds;
+    public boolean[] getAttributesUniques() {
+        return attributesUniques;
     }
 
-    public void setAttributeIds(long[] attributeIds) {
-        this.attributeIds = attributeIds;
+    public void setAttributesUniques(boolean[] attributesUniques) {
+        this.attributesUniques = attributesUniques;
+    }
+    
+    public boolean[] getAttributesVisibles() {
+        return attributesVisibles;
+    }
+
+    public void setAttributesVisibles(boolean[] attributesVisibles) {
+        this.attributesVisibles = attributesVisibles;
+    }
+
+    public String[] getAttributesDescriptions() {
+        return attributesDescriptions;
+    }
+
+    public long[] getAttributesIds() {
+        return attributesIds;
+    }
+
+    public void setAttributesIds(long[] attributesIds) {
+        this.attributesIds = attributesIds;
     }
 
     public String getDescription() {

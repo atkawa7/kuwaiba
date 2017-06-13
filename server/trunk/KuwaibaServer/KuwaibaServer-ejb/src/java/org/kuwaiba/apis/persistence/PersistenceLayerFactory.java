@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -49,7 +49,6 @@ public class PersistenceLayerFactory{
     /**
      * Dynamically creates a metadata entity manager
      * @param connectionManager
-     * @param aem Application Entity Manager reference
      * @return The manager
      * @throws InstantiationException
      * @throws IllegalAccessException
@@ -57,14 +56,14 @@ public class PersistenceLayerFactory{
      * @throws IllegalArgumentException
      * @throws InvocationTargetException 
      */
-    public MetadataEntityManager createMetadataEntityManager(ConnectionManager connectionManager, ApplicationEntityManager aem) 
+    public MetadataEntityManager createMetadataEntityManager(ConnectionManager connectionManager) 
             throws InstantiationException, IllegalAccessException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException {
         try {
             Class myClass = (Class) Class.forName(
                     "org.kuwaiba.services.persistence.impl.neo4j.MetadataEntityManagerImpl");
             
-            Constructor cmMem = myClass.getConstructor(ConnectionManager.class, ApplicationEntityManager.class);
-            return (MetadataEntityManager)cmMem.newInstance(connectionManager, aem);
+            Constructor cmMem = myClass.getConstructor(ConnectionManager.class);
+            return (MetadataEntityManager)cmMem.newInstance(connectionManager);
         }
         catch (ClassNotFoundException cnfe) {
             throw new IllegalArgumentException ("MetadataEntityManager implementation not found: " + cnfe.getMessage());

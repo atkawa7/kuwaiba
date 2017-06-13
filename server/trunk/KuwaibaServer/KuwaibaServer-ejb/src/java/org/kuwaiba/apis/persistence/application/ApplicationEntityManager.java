@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>
+ *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -706,7 +706,7 @@ public interface ApplicationEntityManager {
      * @throws NotAuthorizedException If the user is not allowed to run arbitrary code on the database
      * @deprecated Don't use it, instead, create a method in the corresponding entity manager instead of running code directly on the database
      */
-    public HashMap<String, RemoteBusinessObjectList> executeCustomDbCode(String dbCode) throws NotAuthorizedException;
+    public HashMap<String, RemoteBusinessObjectList> executeCustomDbCode(String dbCode, boolean needReturn) throws NotAuthorizedException;
     
     /**
      * Registers a commercial module. Replaces an existing one if the name of provided one is already registered

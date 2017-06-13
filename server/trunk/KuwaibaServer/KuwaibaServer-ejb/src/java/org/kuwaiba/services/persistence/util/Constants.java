@@ -184,6 +184,10 @@ public class Constants {
     public static final String PROPERTY_BACKGROUND = "background"; //NOI18N
     public static final String PROPERTY_PRIVILEGES = "privileges"; //NOI18N
     public static final String PROPERTY_NAME = "name"; //NOI18N
+    /** 
+     * Defines if the attribute of a class is mandatory or not
+     */
+    public static final String PROPERTY_MANDATORY = "mandatory"; //NOI18N
     public static final String PROPERTY_CREATION_DATE = "creationDate"; //NOI18N
     public static final String PROPERTY_DISPLAY_NAME = "displayName"; //NOI18N
     public static final String PROPERTY_TYPE = "type"; //NOI18N

@@ -23,6 +23,10 @@ import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
 import java.util.List;
 import javax.ejb.Remote;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
+import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
+import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
+import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.exceptions.NotAuthorizedException;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.ws.todeserialize.StringPair;
@@ -178,6 +182,8 @@ public interface WebserviceBeanRemote {
 
     public long[] copyObjects(String targetClass, long targetOid, String[] templateClasses, long[] templateOids, boolean recursive, String ipAddress, String sessionId) throws ServerSideException;
     
+    public AttributeInfo [] getMandatoryObjectAttributes(String className, String ipAddress, String sessionId)  throws ServerSideException;
+    public void objectHasValuesInMandatoryAttributes(String className, long objId, String ipAddress, String sessionId)  throws ServerSideException;
     //Physical connections
     public void connectMirrorPort(String aObjectClass, long aObjectId, String bObjectClass, long bObjectId, String ipAddress, String sessionId) throws ServerSideException;
     public void releaseMirrorPort(String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;
@@ -196,7 +202,7 @@ public interface WebserviceBeanRemote {
     public long createService(String serviceClass, String customerClass, long customerId, String[] attributes, String[] attributeValues, String ipAddress, String sessionId) throws ServerSideException;
     public long createCustomer(String serviceClass, String[] attributes, String[] attributeValues, String ipAddress, String sessionId) throws ServerSideException;
     public RemoteObjectLight[] getServices(String customerClass, long customerId, String ipAddress, String sessionId) throws ServerSideException;
-    // </editor-fold>
+// </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Application methods. Click on the + sign on the left to edit the code.">
     public void setUserProperties(long oid, String userName, String password, String firstName,

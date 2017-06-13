@@ -26,6 +26,7 @@ import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
+import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.util.ChangeDescriptor;
 import org.kuwaiba.ws.todeserialize.StringPair;
 
@@ -329,7 +330,7 @@ public interface BusinessEntityManager {
      * @return A list of children of parentid/parentClass instance that are instances of classToFilter.
      * @throws MetadataObjectNotFoundException If any of the classes can not be found
      * @throws ObjectNotFoundException If parent object can not be found
-     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If the database objects can not be correctly mapped into serializable Java objects.
+     * @throws InvalidArgumentException If the database objects can not be correctly mapped into serializable Java objects.
      */
     public List<RemoteBusinessObject> getChildrenOfClass(long parentOid, String parentClass, String classToFilter, int maxResults)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException;
@@ -470,7 +471,7 @@ public interface BusinessEntityManager {
      * @param numberOfRelationships Number of relationships
      * @return True if the object has numberOfRelationships relationships with another object
      * @throws ObjectNotFoundException If the object can not be found
-     * @throws MetadataObjectNotFoundException  if objectClass does not exist
+     * @throws MetadataObjectNotFoundException  If objectClass does not exist
      */
     public boolean hasRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships) 
             throws ObjectNotFoundException, MetadataObjectNotFoundException;
@@ -498,6 +499,30 @@ public interface BusinessEntityManager {
      * @return A list of the routes, including only the nodes as RemoteBusinessObjectLights
      */
     public List<RemoteBusinessObjectLightList> findRoutesThroughSpecialRelationships (String objectAClassName, long objectAId, String objectBClassName, long objectBId, String relationshipName);
+    
+    /**
+     * Retrieves the list of the attributes marked as mandatory
+     * @param className the class name
+     * @return a list of AttributeMetadata
+     * @throws ObjectNotFoundException if the object doesn't exist
+     * @throws MetadataObjectNotFoundException if the class doesn't exist
+     * @throws InvalidArgumentException if the attribute name does 
+     */
+    public List<AttributeMetadata> getMandatoryObjectAttributes(String className) throws ObjectNotFoundException, 
+            MetadataObjectNotFoundException, InvalidArgumentException;
+             
+    /**
+     * Retrieves 
+     * @param className
+     * @param objId
+     * @throws ObjectNotFoundException
+     * @throws MetadataObjectNotFoundException
+     * @throws InvalidArgumentException 
+     */         
+    public void objectHasValuesInMandatoryAttributes(String className, 
+            long objId) throws ObjectNotFoundException, 
+            MetadataObjectNotFoundException, InvalidArgumentException;
+    
     /**
      * Finds the physical path from one port to another
      * @param objectClass The source port class.

@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -82,7 +82,7 @@ public class PersistenceService {
             applicationConfiguration.put("backgroundsPath", configuration.getProperty("backgroundsPath"));
             applicationConfiguration.put("corporateLogo", configuration.getProperty("corporateLogo"));
             aem.setConfiguration(applicationConfiguration);
-            mem = plf.createMetadataEntityManager(connectionManager, aem);
+            mem = plf.createMetadataEntityManager(connectionManager);
             bem = plf.createBusinessEntityManager(connectionManager, aem, mem);
             dataModelLoader = new DataModelLoader(connectionManager, mem);
             //dataIntegrityService = new DataIntegrityService(connectionManager);

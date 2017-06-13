@@ -59,6 +59,10 @@ public class AttributeInfo implements Serializable {
      */
     private Boolean unique;
     /**
+     * Marks the attribute as mandatory
+     */
+    private Boolean mandatory;
+    /**
      * Attribute's short description
      */
     private String description;
@@ -75,18 +79,23 @@ public class AttributeInfo implements Serializable {
     }
 
     public AttributeInfo(String name, String displayName, String type, 
-            Boolean administrative, Boolean visible, String description) {
+            Boolean administrative, Boolean visible, Boolean unique, Boolean mandatory, String description) {
         this.name = name;
         this.displayName = displayName;
         this.type = type;
         this.administrative = administrative;
         this.visible = visible;
+        this.unique = unique;
+        this.mandatory = mandatory;
         this.description = description;
     }
 
-    public AttributeInfo(long id, String name, String displayName, String type, 
-            Boolean administrative, Boolean visible, Boolean readOnly, 
-            Boolean unique, String description, Boolean noCopy) {
+    public AttributeInfo(long id, String name, 
+            String displayName, String type, 
+            Boolean administrative,
+            Boolean visible, Boolean readOnly, 
+            Boolean unique, Boolean mandatory, 
+            String description, Boolean noCopy) {
         this.id = id;
         this.name = name;
         this.displayName = displayName;
@@ -95,14 +104,15 @@ public class AttributeInfo implements Serializable {
         this.visible = visible;
         this.readOnly = readOnly;
         this.unique = unique;
+        this.mandatory = mandatory;
         this.description = description;
         this.noCopy = noCopy;
     }
     
     public AttributeInfo(String name, String displayName, String type, 
                          Boolean administrative, Boolean visible, 
-                         Boolean readOnly, Boolean unique, String description, 
-                         Boolean noCopy) {
+                         Boolean readOnly, Boolean unique, Boolean mandatory, 
+                         String description, Boolean noCopy) {
         this.name = name;
         this.displayName = displayName;
         this.type = type;
@@ -110,6 +120,7 @@ public class AttributeInfo implements Serializable {
         this.visible = visible;
         this.readOnly = readOnly;
         this.unique = unique;
+        this.mandatory = mandatory;
         this.description = description;
         this.noCopy = noCopy;
     }
@@ -184,6 +195,14 @@ public class AttributeInfo implements Serializable {
 
     public void setUnique(Boolean unique) {
         this.unique = unique;
+    }
+
+    public Boolean isMandatory() {
+        return mandatory;
+    }
+
+    public void setMandatory(Boolean mandatory) {
+        this.mandatory = mandatory;
     }
 
     public Boolean isNoCopy() {

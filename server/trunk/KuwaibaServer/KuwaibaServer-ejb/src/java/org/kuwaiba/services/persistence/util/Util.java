@@ -363,6 +363,8 @@ public class Util {
         myClass.setAttributes(listAttributes);
 
         //Possible Children
+        Iterable<Relationship> x = classNode.getRelationships(Direction.OUTGOING, RelTypes.POSSIBLE_CHILD);
+        
         for (Relationship rel : classNode.getRelationships(Direction.OUTGOING, RelTypes.POSSIBLE_CHILD)) {
             if((Boolean)rel.getEndNode().getProperty(Constants.PROPERTY_ABSTRACT)){
                 Iterable<Node> allSubclasses = Util.getAllSubclasses(rel.getEndNode());
@@ -396,6 +398,7 @@ public class Util {
         attribute.setVisible((Boolean)attributeNode.getProperty(Constants.PROPERTY_VISIBLE));
         attribute.setAdministrative((Boolean)attributeNode.getProperty(Constants.PROPERTY_ADMINISTRATIVE));
         attribute.setNoCopy((Boolean)attributeNode.getProperty(Constants.PROPERTY_NO_COPY));
+        attribute.setMandatory((Boolean)attributeNode.getProperty(Constants.PROPERTY_MANDATORY));
         attribute.setUnique((Boolean)attributeNode.getProperty(Constants.PROPERTY_UNIQUE));
         attribute.setId(attributeNode.getId());
 
@@ -773,7 +776,6 @@ public class Util {
      * attribute of the node, if the property is a date it is formating into
      * yyyy-MM-DD, if does not exists it return an empty string.
      * @param objectNode
-     * @param className
      * @param attribute
      * @return
      */
@@ -812,7 +814,6 @@ public class Util {
     /**
      * Evaluates attribute type
      * @param attributeType
-     * @param attributeName
      * @param attributeValue
      * @return
      */
@@ -874,11 +875,11 @@ public class Util {
                 if (rel.getEndNode().getProperty(Constants.PROPERTY_NAME).equals(attributeDefinition.getName()))
                     throw new InvalidArgumentException(String.format("Class %s already has an attribute named %s", 
                             currentClassName, attributeDefinition.getName()));
-                
             }
             Label label = DynamicLabel.label(Constants.LABEL_ATTRIBUTE);
             Node attrNode = classNode.getGraphDatabase().createNode(label);
             attrNode.setProperty(Constants.PROPERTY_NAME, attributeDefinition.getName()); //This should not be null. That should be checked in the caller
+            attrNode.setProperty(Constants.PROPERTY_MANDATORY, attributeDefinition.isMandatory()== null ? false : attributeDefinition.isMandatory());
             attrNode.setProperty(Constants.PROPERTY_DESCRIPTION, attributeDefinition.getDescription() ==  null ? "" : attributeDefinition.getDescription());
             attrNode.setProperty(Constants.PROPERTY_DISPLAY_NAME, attributeDefinition.getDisplayName() == null ? "" : attributeDefinition.getDisplayName());
             attrNode.setProperty(Constants.PROPERTY_TYPE, attributeDefinition.getType() == null ? "String" : attributeDefinition.getType());
@@ -888,7 +889,7 @@ public class Util {
             attrNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
             attrNode.setProperty(Constants.PROPERTY_NO_COPY, attributeDefinition.isNoCopy() == null ? false : attributeDefinition.isNoCopy());
             attrNode.setProperty(Constants.PROPERTY_UNIQUE, attributeDefinition.isUnique() == null ? false : attributeDefinition.isUnique());
-
+            
             p.endNode().createRelationshipTo(attrNode, RelTypes.HAS_ATTRIBUTE);
         }
     }
@@ -897,7 +898,8 @@ public class Util {
      * Transactions are not handled here
      * @param classNode
      * @param attributeName
-     * @param attributeType 
+     * @param newAttributeType 
+     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException 
      */
     public static void changeAttributeTypeIfPrimitive (Node classNode, String attributeName, String newAttributeType) throws InvalidArgumentException {
         final TraversalDescription UPDATE_TRAVERSAL = classNode.getGraphDatabase().traversalDescription().

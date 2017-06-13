@@ -66,7 +66,7 @@ public class DefaultReports {
         String query = String.format("MATCH (rack)<-[:%s*1..2]-(rackable)-[:%s]->(childClass)-[:%s*]->(superClass) "
                 + "WHERE id(rack) = %s AND (superClass.name=\"%s\" OR superClass.name=\"%s\") "
                 + "RETURN rackable", RelTypes.CHILD_OF, RelTypes.INSTANCE_OF, RelTypes.EXTENDS, rackId, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, Constants.CLASS_GENERICBOX);
-        HashMap<String, RemoteBusinessObjectList> result = aem.executeCustomDbCode(query);
+        HashMap<String, RemoteBusinessObjectList> result = aem.executeCustomDbCode(query, true);
 
         String rackUsageReportBody = "<!DOCTYPE html>\n" +
                                 "<html lang=\"en\">\n" +
@@ -169,7 +169,7 @@ public class DefaultReports {
                                     RelTypes.INSTANCE_OF, RelTypes.EXTENDS, aPort.getId(), "endpointA", "endpointB", "endpointA", "endpointB", 
                                     Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, Constants.CLASS_GENERICBOX);
                 
-                HashMap<String, RemoteBusinessObjectList> nextEquipmentResult = aem.executeCustomDbCode(query);
+                HashMap<String, RemoteBusinessObjectList> nextEquipmentResult = aem.executeCustomDbCode(query, true);
                 
                 if (nextEquipmentResult.get("equipment").getList().isEmpty())
                     connectedEquipmentString  = "Free";
@@ -185,7 +185,7 @@ public class DefaultReports {
                                 RelTypes.CHILD_OF_SPECIAL, RelTypes.INSTANCE_OF, RelTypes.EXTENDS, 
                                 aPort.getId(), "uses", Constants.CLASS_GENERICCUSTOMER);
                 
-                HashMap<String, RemoteBusinessObjectList> serviceResult = aem.executeCustomDbCode(query);
+                HashMap<String, RemoteBusinessObjectList> serviceResult = aem.executeCustomDbCode(query, true);
                 
                 for (int j = 0; j < serviceResult.get("service").getList().size(); j++)
                     serviceString += "<b>" + serviceResult.get("service").getList().get(j) + "</b> - " + serviceResult.get("customer").getList().get(j) + "<br/>";
@@ -194,7 +194,7 @@ public class DefaultReports {
                 query = String.format("MATCH (framePort)-[relation:%s]->(listType) "
                         + "WHERE id(framePort) = %s AND relation.name=\"%s\" RETURN listType", RelTypes.RELATED_TO, aPort.getId(), "state");
                 
-                HashMap<String, RemoteBusinessObjectList> operationalStateResult = aem.executeCustomDbCode(query);
+                HashMap<String, RemoteBusinessObjectList> operationalStateResult = aem.executeCustomDbCode(query, true);
                 
                 String operationalStateString = "<span class=\"error\">Not Set</span>";
                 
@@ -236,7 +236,7 @@ public class DefaultReports {
                     + "RETURN transportLink, equipment, port",  RelTypes.RELATED_TO_SPECIAL, RelTypes.CHILD_OF, RelTypes.INSTANCE_OF, 
                             RelTypes.EXTENDS, transportLinkId, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, 
                             SDHModule.RELATIONSHIP_SDHTLENDPOINTA, SDHModule.RELATIONSHIP_SDHTLENDPOINTB);
-        HashMap<String, RemoteBusinessObjectList> theResult = aem.executeCustomDbCode(query);
+        HashMap<String, RemoteBusinessObjectList> theResult = aem.executeCustomDbCode(query, true);
         
         String title, transportLinkUsageReportText;
         RemoteBusinessObject theTransportLink;
@@ -301,7 +301,7 @@ public class DefaultReports {
                     RelTypes.EXTENDS, RelTypes.INSTANCE_OF, RelTypes.CHILD_OF_SPECIAL, RelTypes.RELATED_TO_SPECIAL, RelTypes.RELATED_TO_SPECIAL, 
                     RelTypes.CHILD_OF, RelTypes.INSTANCE_OF, RelTypes.EXTENDS, tributaryLinkId, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, "uses", 
                     SDHModule.RELATIONSHIP_SDHTTLENDPOINTA, SDHModule.RELATIONSHIP_SDHTTLENDPOINTB, Constants.CLASS_GENERICCUSTOMER);
-        HashMap<String, RemoteBusinessObjectList> theResult = aem.executeCustomDbCode(query);
+        HashMap<String, RemoteBusinessObjectList> theResult = aem.executeCustomDbCode(query, true);
         
         String title, tributaryLinkUsageReportText;
         RemoteBusinessObject theTributaryLink;
@@ -328,7 +328,7 @@ public class DefaultReports {
                                     tributaryLinkId, SDHModule.RELATIONSHIP_SDHTTLENDPOINTA, SDHModule.RELATIONSHIP_SDHTTLENDPOINTB,
                                     "endpointA", "endpointB", "endpointA", "endpointB", Constants.CLASS_GENERICDISTRIBUTIONFRAME);
             
-            HashMap<String, RemoteBusinessObjectList> demarcationPoints = aem.executeCustomDbCode(query);
+            HashMap<String, RemoteBusinessObjectList> demarcationPoints = aem.executeCustomDbCode(query,true);
             String demarcationPointsAsSring = "";
             for (int i = 0; i < demarcationPoints.get("nextEquipmentPort").getList().size(); i++)
                 demarcationPointsAsSring += "<b>" + demarcationPoints.get("nextEquipment").getList().get(i) + "</b>:" + demarcationPoints.get("nextEquipmentPort").getList().get(i) + "<br/>";
@@ -383,7 +383,7 @@ public class DefaultReports {
                     RelTypes.EXTENDS, RelTypes.INSTANCE_OF, RelTypes.CHILD_OF_SPECIAL, RelTypes.RELATED_TO_SPECIAL, RelTypes.RELATED_TO_SPECIAL, 
                     RelTypes.CHILD_OF, RelTypes.INSTANCE_OF, RelTypes.EXTENDS, tributaryLinkId, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, "uses", 
                     SDHModule.RELATIONSHIP_SDHTTLENDPOINTA, SDHModule.RELATIONSHIP_SDHTTLENDPOINTB, Constants.CLASS_GENERICCUSTOMER);
-        HashMap<String, RemoteBusinessObjectList> theResult = aem.executeCustomDbCode(query);
+        HashMap<String, RemoteBusinessObjectList> theResult = aem.executeCustomDbCode(query, true);
         
         String title, tributaryLinkUsageReportText;
         RemoteBusinessObject theTributaryLink;
@@ -410,7 +410,7 @@ public class DefaultReports {
                                     tributaryLinkId, SDHModule.RELATIONSHIP_SDHTTLENDPOINTA, SDHModule.RELATIONSHIP_SDHTTLENDPOINTB,
                                     "endpointA", "endpointB", "endpointA", "endpointB", Constants.CLASS_GENERICDISTRIBUTIONFRAME);
             
-            HashMap<String, RemoteBusinessObjectList> demarcationPoints = aem.executeCustomDbCode(query);
+            HashMap<String, RemoteBusinessObjectList> demarcationPoints = aem.executeCustomDbCode(query, true);
             String demarcationPointsAsSring = "";
             for (int i = 0; i < demarcationPoints.get("nextEquipmentPort").getList().size(); i++)
                 demarcationPointsAsSring += "<b>" + demarcationPoints.get("nextEquipment").getList().get(i) + "</b>:" + demarcationPoints.get("nextEquipmentPort").getList().get(i) + "<br/>";
@@ -455,7 +455,7 @@ public class DefaultReports {
                 + "WHERE id(location) = %s AND superclass.name = \"%s\" "
                 + "RETURN networkEquipment", RelTypes.CHILD_OF, RelTypes.INSTANCE_OF, RelTypes.EXTENDS, 
                                                             locationId, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
-        HashMap<String, RemoteBusinessObjectList> theResult = aem.executeCustomDbCode(query);
+        HashMap<String, RemoteBusinessObjectList> theResult = aem.executeCustomDbCode(query, true);
         
         String title, networkEquipmentInLocationReportText;
         

@@ -357,6 +357,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             attributeMetadata.setReadOnly(attributeDefinition.isReadOnly());
             attributeMetadata.setType(attributeDefinition.getType());
             attributeMetadata.setUnique(attributeDefinition.isUnique());
+            attributeMetadata.setMandatory(attributeDefinition.isMandatory());
             attributeMetadata.setVisible(attributeDefinition.isVisible());
             attributeMetadata.setNoCopy(attributeDefinition.isNoCopy());
 
@@ -381,6 +382,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             attributeMetadata.setReadOnly(attributeDefinition.isReadOnly());
             attributeMetadata.setType(attributeDefinition.getType());
             attributeMetadata.setUnique(attributeDefinition.isUnique());
+            attributeMetadata.setMandatory(attributeDefinition.isMandatory());
             attributeMetadata.setVisible(attributeDefinition.isVisible());
             attributeMetadata.setNoCopy(attributeDefinition.isNoCopy());
             
@@ -432,6 +434,8 @@ public class WebserviceBean implements WebserviceBeanRemote {
                                                        atrbMtdt.getType(),
                                                        atrbMtdt.isAdministrative(),
                                                        atrbMtdt.isVisible(),
+                                                       atrbMtdt.isUnique(),
+                                                       atrbMtdt.isMandatory(),
                                                        atrbMtdt.getDescription());
             return atrbInfo;
          } catch (InventoryException ex) {
@@ -448,13 +452,15 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateWebServiceCall("setClassProperties", ipAddress, sessionId);
             AttributeMetadata atrbMtdt = mem.getAttribute(classId, attributeId);
 
-            AttributeInfo atrbInfo = new AttributeInfo(atrbMtdt.getName(),
+            AttributeInfo attrInfo = new AttributeInfo(atrbMtdt.getName(),
                                                        atrbMtdt.getDisplayName(),
                                                        atrbMtdt.getType(),
                                                        atrbMtdt.isAdministrative(),
                                                        atrbMtdt.isVisible(),
+                                                       atrbMtdt.isUnique(),
+                                                       atrbMtdt.isMandatory(),
                                                        atrbMtdt.getDescription());
-            return atrbInfo;
+            return attrInfo;
 
          } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -476,6 +482,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             attrMtdt.setType(newAttributeDefinition.getType());
             attrMtdt.setAdministrative(newAttributeDefinition.isAdministrative());
             attrMtdt.setUnique(newAttributeDefinition.isUnique());
+            attrMtdt.setMandatory(newAttributeDefinition.isMandatory());
             attrMtdt.setVisible(newAttributeDefinition.isVisible());
             attrMtdt.setReadOnly(newAttributeDefinition.isReadOnly());
             attrMtdt.setNoCopy(newAttributeDefinition.isNoCopy());
@@ -502,6 +509,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             attrMtdt.setType(newAttributeDefinition.getType());
             attrMtdt.setAdministrative(newAttributeDefinition.isAdministrative());
             attrMtdt.setUnique(newAttributeDefinition.isUnique());
+            attrMtdt.setMandatory(newAttributeDefinition.isMandatory());
             attrMtdt.setVisible(newAttributeDefinition.isVisible());
             attrMtdt.setReadOnly(newAttributeDefinition.isReadOnly());
             attrMtdt.setNoCopy(newAttributeDefinition.isNoCopy());
@@ -1114,6 +1122,34 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), className,
                         oid, ActivityLogEntry.ACTIVITY_TYPE_UPDATE_INVENTORY_OBJECT, theChange);
         } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public AttributeInfo [] getMandatoryObjectAttributes(String className, String ipAddress, String sessionId)  throws ServerSideException{
+         if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        
+        try {
+                aem.validateWebServiceCall("getMandatoryObjectAttributes", ipAddress, sessionId);
+                List<AttributeMetadata> mandatoryObjectAttributes = bem.getMandatoryObjectAttributes(className);
+                AttributeInfo atrbInfo[] = AttributeMetadata.toAttributeInfoArray(mandatoryObjectAttributes);
+                return atrbInfo;
+            } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void objectHasValuesInMandatoryAttributes(String className, long objId, String ipAddress, String sessionId)  throws ServerSideException{
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        
+        try {
+                aem.validateWebServiceCall("objectHasValuesInMandatoryAttributes", ipAddress, sessionId);
+                bem.objectHasValuesInMandatoryAttributes(className, objId);
+            } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
