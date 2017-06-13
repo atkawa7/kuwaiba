@@ -51,26 +51,60 @@ public class AttributeMetadataNode extends AbstractNode  {
         
         Sheet.Set generalPropertySet = Sheet.createPropertiesSet();
 
-        generalPropertySet.put(new AttributeMetadataProperty(Constants.PROPERTY_NAME, "Name", 
-                attribute.getName(),this,classNode.getClassMetadata().getOid()));
+        generalPropertySet.put(new AttributeMetadataProperty(classNode.getClassMetadata(),
+                Constants.PROPERTY_NAME, 
+                Constants.PROPERTY_NAME, 
+                "Name", 
+                attribute.getName(),this));
         
-        generalPropertySet.put(new AttributeMetadataProperty(Constants.PROPERTY_DISPLAYNAME, "Displa name", 
-                attribute.getDisplayName(),this,classNode.getClassMetadata().getOid()));
+        generalPropertySet.put(new AttributeMetadataProperty(classNode.getClassMetadata(), 
+                Constants.PROPERTY_DISPLAYNAME, 
+                Constants.PROPERTY_DISPLAYNAME, 
+                "Display Name", 
+                attribute.getDisplayName(),this));
         
-        generalPropertySet.put(new AttributeMetadataProperty(Constants.PROPERTY_DESCRIPTION, "Description", 
-                attribute.getDescription(),this,classNode.getClassMetadata().getOid()));
+        generalPropertySet.put(new AttributeMetadataProperty(classNode.getClassMetadata(),
+                Constants.PROPERTY_DESCRIPTION, 
+                Constants.PROPERTY_DESCRIPTION, 
+                "Description", 
+                attribute.getDescription(),this));
         
-        generalPropertySet.put(new AttributeMetadataProperty(Constants.PROPERTY_TYPE, "Type", 
-               (attribute.getType() == LocalObjectLight.class) ? this.attribute.getListAttributeClassName() : attribute.getType().getSimpleName(),this, classNode.getClassMetadata().getOid()));
+        generalPropertySet.put(new AttributeMetadataProperty(classNode.getClassMetadata(), 
+                Constants.PROPERTY_TYPE, 
+                Constants.PROPERTY_TYPE, 
+                "Type", 
+               (attribute.getType() == LocalObjectLight.class) ? this.attribute.getListAttributeClassName() : attribute.getType().getSimpleName(),this));
         
-        generalPropertySet.put(new AttributeMetadataProperty(Constants.PROPERTY_VISIBLE, "Visible", 
-                attribute.isVisible(),this,classNode.getClassMetadata().getOid()));
+        generalPropertySet.put(new AttributeMetadataProperty(
+                classNode.getClassMetadata(), 
+                Constants.PROPERTY_MANDATORY, 
+                Constants.PROPERTY_MANDATORY, 
+                "When an object of this class is created, this attribute should be mandatory?", 
+                attribute.isMandatory(), this));
         
-        generalPropertySet.put(new AttributeMetadataProperty(Constants.PROPERTY_ADMINISTRATIVE, "Is this not an attribute use for operational purposes?", 
-                attribute.isAdministrative(),this,classNode.getClassMetadata().getOid()));
+        generalPropertySet.put(new AttributeMetadataProperty(classNode.getClassMetadata(), 
+                Constants.PROPERTY_UNIQUE,
+                Constants.PROPERTY_UNIQUE,
+                "Should this attribute unique every time you create an Object?",
+                attribute.isUnique(),this));
         
-        generalPropertySet.put(new AttributeMetadataProperty(Constants.PROPERTY_NOCOPY, "Can this attribute be transferred in copy operations?", 
-                attribute.isNoCopy(),this,classNode.getClassMetadata().getOid()));
+        generalPropertySet.put(new AttributeMetadataProperty(classNode.getClassMetadata(), 
+                Constants.PROPERTY_VISIBLE,
+                Constants.PROPERTY_VISIBLE,
+                "Visible", 
+                attribute.isVisible(),this));
+        
+        generalPropertySet.put(new AttributeMetadataProperty(classNode.getClassMetadata(), 
+                Constants.PROPERTY_ADMINISTRATIVE, 
+                Constants.PROPERTY_ADMINISTRATIVE, 
+                "Is this attribute for operational purposes use?", 
+                attribute.isAdministrative(),this));
+        
+        generalPropertySet.put(new AttributeMetadataProperty(classNode.getClassMetadata(), 
+                Constants.PROPERTY_NOCOPY,
+                Constants.PROPERTY_NOCOPY,
+                "Can this attribute be transferred in copy operations?",  
+                attribute.isNoCopy(),this));
                 
         generalPropertySet.setName("1");
 

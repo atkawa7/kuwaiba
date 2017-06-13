@@ -71,10 +71,10 @@ public class ClassHierarchyScene extends AbstractScene<LocalClassMetadata, Strin
                 VMDNodeWidget nodeWidget = (SelectableVMDNodeWidget) addNode(subclass);
                 nodeWidget.collapseWidget();
                 
-                int length = subclass.getAttributeNames().length;
+                int length = subclass.getAttributesNames().length;
                 for (int i = 0; i < length; i += 1) {
-                    String attributeName = subclass.getAttributeNames()[i];
-                    String attributeType = subclass.getAttributeTypes()[i];
+                    String attributeName = subclass.getAttributesNames()[i];
+                    String attributeType = subclass.getAttributesTypes()[i];
                     
                     String attributePin = String.format("%s [%s]", attributeName, attributeType);
                     
@@ -187,10 +187,10 @@ public class ClassHierarchyScene extends AbstractScene<LocalClassMetadata, Strin
         VMDPinWidget pinWidget = new VMDPinWidget(this);
         nodeWidget.attachPinWidget(pinWidget);
         
-        int length = root.getAttributeNames().length;
+        int length = root.getAttributesNames().length;
         for (int i = 0; i < length; i += 1) {
-            String attributeName = root.getAttributeNames()[i];
-            String attributeType = root.getAttributeTypes()[i];
+            String attributeName = root.getAttributesNames()[i];
+            String attributeType = root.getAttributesTypes()[i];
             
             String attributePin = String.format("%s [%s]", attributeName, attributeType);
             

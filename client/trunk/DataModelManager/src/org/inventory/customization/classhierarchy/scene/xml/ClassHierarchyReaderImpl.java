@@ -102,8 +102,8 @@ public class ClassHierarchyReaderImpl implements ClassHierarchyReader {
         String className = reader.getAttributeValue(null, "name"); //NOI18N
         int javaModifiers = Integer.valueOf(reader.getAttributeValue(null, "javaModifiers")); //NOI18N
         
-        List<String> attributeNames = new ArrayList();
-        List<String> attributeTypes = new ArrayList();
+        List<String> attributesNames = new ArrayList();
+        List<String> attributesTypes = new ArrayList();
         
         QName attributeTag = new QName("attribute"); //NOI18N
         QName classTag = new QName("class"); //NOI18N
@@ -116,8 +116,8 @@ public class ClassHierarchyReaderImpl implements ClassHierarchyReader {
                 }
                 else {
                     if (reader.getName().equals(attributeTag)) {
-                        attributeNames.add(reader.getAttributeValue(null, "name"));
-                        attributeTypes.add(reader.getAttributeValue(null, "type"));
+                        attributesNames.add(reader.getAttributeValue(null, "name"));
+                        attributesTypes.add(reader.getAttributeValue(null, "type"));
                     }
                 }
             }
@@ -132,8 +132,9 @@ public class ClassHierarchyReaderImpl implements ClassHierarchyReader {
                 id, className, "", parentName, 
                 Modifier.isAbstract(javaModifiers), false, false, false, false, 
                 new byte[0], 0, new HashMap(), new byte[0], "", new ArrayList(), 
-                attributeNames.toArray(new String[0]), attributeTypes.toArray(new String[0]), 
-                new String[0], new ArrayList(), new String[0]);
+                attributesNames.toArray(new String[0]), 
+                attributesTypes.toArray(new String[0]), new String[0], 
+                new ArrayList(),new ArrayList(), new ArrayList(), new String[0]);
         
         return lcm;
     }

@@ -86,7 +86,7 @@ public class CreateAttributeAction extends GenericInventoryAction {
                             ((JTextField)pnlMyDialog.getComponent("txtDisplayName")).getText(), 
                             ((JTextField)pnlMyDialog.getComponent("txtDescription")).getText(), 
                             (String)((JComboBox)pnlMyDialog.getComponent("lstType")).getSelectedItem(), 
-                            false, false, true, false, false)){
+                            false, false, true, false, false, false)){
                         NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Attribute added successfully");
                         Cache.getInstace().resetAll();
                         classNode.refresh();

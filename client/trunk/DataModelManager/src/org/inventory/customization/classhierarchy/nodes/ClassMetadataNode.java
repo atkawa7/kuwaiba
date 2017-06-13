@@ -131,7 +131,7 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
         Sheet.Set generalPropertySet = Sheet.createPropertiesSet(); //General class attributes
         Sheet.Set attributePropertySet = Sheet.createPropertiesSet(); // Class Attributes
         
-        LocalClassMetadata lcm = com.getMetaForClass(classMetadata.getClassName(),false);
+        LocalClassMetadata lcm = com.getMetaForClass(classMetadata.getClassName(), true);
         if (lcm == null){
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             return sheet;

@@ -59,7 +59,13 @@ public class AttributeEditorSupport extends PropertyEditorSupport
             @Override
             public void componentResized(ComponentEvent e) {
                 //setNodes can't be called until the component is added to the component containment hierarchy and fully resized
-                psv.setNodes(new AttributeMetadataNode[]{new AttributeMetadataNode(parentProperty.getAttributeMetadata(), parentProperty.getClassNode())});
+                psv.setNodes(
+                        new AttributeMetadataNode[]{
+                            new AttributeMetadataNode(
+                                    parentProperty.getAttributeMetadata(), 
+                                    parentProperty.getClassNode())
+                        }
+                );
             }
 
             @Override

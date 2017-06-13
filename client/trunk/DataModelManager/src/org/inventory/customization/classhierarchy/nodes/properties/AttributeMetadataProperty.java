@@ -18,6 +18,7 @@ package org.inventory.customization.classhierarchy.nodes.properties;
 import java.beans.PropertyEditor;
 import java.lang.reflect.InvocationTargetException;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.communications.core.caching.Cache;
 import org.inventory.communications.util.Constants;
@@ -32,15 +33,20 @@ public class AttributeMetadataProperty extends PropertySupport.ReadWrite {
 
     private Object value;
     private AttributeMetadataNode node;
-    private long classId;
+    private LocalClassMetadataLight _class;
 
-    public AttributeMetadataProperty(String name, String displayName, Object value, AttributeMetadataNode node, long classId) {
-        super(name,value.getClass(),displayName,name);
+    public AttributeMetadataProperty(LocalClassMetadataLight classMetadata, 
+            String attributeName, 
+            String attributeDisplayName,
+            String attributeDescription,
+            Object value, 
+            AttributeMetadataNode node) {
+        super(attributeName, value.getClass(), attributeDisplayName, attributeDescription);
         this.value = value;
         this.node = node;
-        this.classId = classId;
+        this._class = classMetadata;
     }
-    
+  
     @Override
     public Object getValue() throws IllegalAccessException, InvocationTargetException {
         return value;
@@ -50,15 +56,19 @@ public class AttributeMetadataProperty extends PropertySupport.ReadWrite {
     public void setValue(Object t) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         CommunicationsStub com = CommunicationsStub.getInstance();
 
-        if(com.setAttributeProperties(classId, node.getAttributeMetadata().getId(), getName().equals(Constants.PROPERTY_NAME) ? (String)t : null, 
+        if(com.setAttributeProperties(_class.getOid(), _class.getClassName(),
+                node.getAttributeMetadata().getId(), 
+                getName().equals(Constants.PROPERTY_NAME) ? (String)t : null, 
                 getName().equals(Constants.PROPERTY_DISPLAYNAME) ? (String)t : null, 
                 getName().equals(Constants.PROPERTY_TYPE) ? (String)t : null, 
                 getName().equals(Constants.PROPERTY_DESCRIPTION) ? (String)t : null, 
                 getName().equals(Constants.PROPERTY_ADMINISTRATIVE) ? (Boolean)t : null,
-                getName().equals(Constants.PROPERTY_VISIBLE) ? (Boolean)t : null,
-                getName().equals(Constants.PROPERTY_READONLY) ? (Boolean)t : null,
+                getName().equals(Constants.PROPERTY_MANDATORY) ? (Boolean)t : null,
                 getName().equals(Constants.PROPERTY_NOCOPY) ? (Boolean)t : null,
-                getName().equals(Constants.PROPERTY_UNIQUE) ? (Boolean)t : null)){
+                getName().equals(Constants.PROPERTY_READONLY) ? (Boolean)t : null,
+                getName().equals(Constants.PROPERTY_UNIQUE) ? (Boolean)t : null,
+                getName().equals(Constants.PROPERTY_VISIBLE) ? (Boolean)t : null))
+        {
             this.value = t;
 
             //Force a cache reload
