@@ -74,8 +74,8 @@ public class ClassNodeWidget extends QueryEditorNodeWidget{
 
         if (hasParentField){
             LocalAttributeMetadata attributeParent = new LocalAttributeMetadata(0, 
-                    Constants.PROPERTY_PARENT, LocalObjectLight.class, null, true, 
-                    false, false, Constants.MAPPING_MANYTOONE, null);
+                    Constants.PROPERTY_PARENT,LocalObjectLight.class, null, true, false, false, 
+                    Constants.MAPPING_MANYTOONE, null);
             ((QueryEditorScene)getScene()).addPin(myClass, attributeParent);
         }
 
