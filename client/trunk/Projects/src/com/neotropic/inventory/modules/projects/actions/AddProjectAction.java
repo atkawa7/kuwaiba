@@ -16,10 +16,8 @@
 package com.neotropic.inventory.modules.projects.actions;
 
 import com.neotropic.inventory.modules.projects.ProjectsModuleService;
-import com.neotropic.inventory.modules.projects.nodes.ProjectChildren;
-import com.neotropic.inventory.modules.projects.nodes.ProjectNode;
-import com.neotropic.inventory.modules.projects.nodes.ProjectRootChildren;
-import com.neotropic.inventory.modules.projects.nodes.ProjectRootNode;
+import com.neotropic.inventory.modules.projects.nodes.ProjectPoolChildren;
+import com.neotropic.inventory.modules.projects.nodes.ProjectPoolNode;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -29,7 +27,6 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
-import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.util.Utilities;
@@ -45,7 +42,6 @@ public class AddProjectAction extends GenericInventoryAction implements Presente
         
     private AddProjectAction() {
         bundle = ProjectsModuleService.bundle;
-        
         putValue(NAME, bundle.getString("ACTION_NAME_ADD_PROJECT"));
     }
     
@@ -60,25 +56,12 @@ public class AddProjectAction extends GenericInventoryAction implements Presente
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Object selectedNode = Utilities.actionsGlobalContext().lookup(ProjectRootNode.class);
+        ProjectPoolNode selectedNode = Utilities.actionsGlobalContext().lookup(ProjectPoolNode.class);
         
-        long id;
-        String className;
-        
-        if (selectedNode == null) {
-            selectedNode = Utilities.actionsGlobalContext().lookup(ProjectNode.class);
-            
-            if (selectedNode == null) {
-                return;
-            } else {
-                id = ((ProjectNode) selectedNode).getObject().getOid();
-                className = ((ProjectNode) selectedNode).getObject().getClassName();
-            }
-        } else {
-            id = ((ProjectRootNode) selectedNode).getProjectRootPool().getOid();
-            className = ((ProjectRootNode) selectedNode).getProjectRootPool().getClassName();
-        }
-        
+        if (selectedNode == null)
+            return;
+        long id = selectedNode.getPool().getOid();
+        String className = selectedNode.getPool().getClassName();
         
         LocalObjectLight newProject = CommunicationsStub.getInstance().addProject(id, className, ((JMenuItem)e.getSource()).getText());
         
@@ -86,11 +69,7 @@ public class AddProjectAction extends GenericInventoryAction implements Presente
             NotificationUtil.getInstance().showSimplePopup(bundle.getString("LBL_ERROR"), 
                 NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         } else {
-            if (selectedNode instanceof ProjectRootNode) {
-                ((ProjectRootChildren) ((ProjectRootNode) selectedNode).getChildren()).addNotify();
-            } else if (selectedNode instanceof ProjectNode) {
-                ((ProjectChildren) ((ProjectNode) selectedNode).getChildren()).addNotify();
-            }
+            ((ProjectPoolChildren) selectedNode.getChildren()).addNotify();
             NotificationUtil.getInstance().showSimplePopup(bundle.getString("LBL_INFORMATION"), 
                 NotificationUtil.INFO_MESSAGE, bundle.getString("LBL_PROJECT_CREATE_SUCCESSFULLY"));
         }
@@ -100,13 +79,11 @@ public class AddProjectAction extends GenericInventoryAction implements Presente
     public JMenuItem getPopupPresenter() {
         JMenu mnuPossibleProjects = new JMenu(this);
         
-        Object selectedNode = Utilities.actionsGlobalContext().lookup(ProjectRootNode.class);
-        
-        if (selectedNode == null)
-            selectedNode = Utilities.actionsGlobalContext().lookup(ProjectNode.class);
-            
+        ProjectPoolNode selectedNode = Utilities.actionsGlobalContext().lookup(ProjectPoolNode.class);
+                    
         if (selectedNode != null) {
-            List<LocalClassMetadataLight> possibleProjects = CommunicationsStub.getInstance().getLightSubclasses(Constants.CLASS_GENERICPROJECT, false, false);
+            List<LocalClassMetadataLight> possibleProjects = CommunicationsStub.getInstance()
+                .getLightSubclasses(selectedNode.getPool().getClassName(), false, true);
             
             if (possibleProjects == null) {
                 NotificationUtil.getInstance().showSimplePopup(bundle.getString("LBL_ERROR"), 

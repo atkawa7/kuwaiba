@@ -16,10 +16,8 @@
 package com.neotropic.inventory.modules.projects.actions;
 
 import com.neotropic.inventory.modules.projects.ProjectsModuleService;
-import com.neotropic.inventory.modules.projects.nodes.ProjectChildren;
 import com.neotropic.inventory.modules.projects.nodes.ProjectNode;
-import com.neotropic.inventory.modules.projects.nodes.ProjectRootChildren;
-import com.neotropic.inventory.modules.projects.nodes.ProjectRootNode;
+import com.neotropic.inventory.modules.projects.nodes.ProjectPoolChildren;
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
 import java.util.ResourceBundle;
@@ -67,13 +65,8 @@ public class DeleteProjectAction extends GenericInventoryAction {
                     
                     NotificationUtil.getInstance().showSimplePopup(bundle.getString("LBL_INFORMATION"), 
                         NotificationUtil.INFO_MESSAGE, bundle.getString("LBL_PROJECT_DELETE_SUCCESSFULLY"));
-                    
-                    if (selectedNode.getParentNode() instanceof ProjectRootNode)
-                        ((ProjectRootChildren) selectedNode.getParentNode().getChildren()).addNotify();
-                    
-                    if (selectedNode.getParentNode() instanceof ProjectNode) {
-                        ((ProjectChildren) selectedNode.getParentNode().getChildren()).addNotify();
-                    }
+                                        
+                    ((ProjectPoolChildren) selectedNode.getParentNode().getChildren()).addNotify();
                 } else {
                     NotificationUtil.getInstance().showSimplePopup(bundle.getString("LBL_ERROR"), 
                         NotificationUtil.INFO_MESSAGE, CommunicationsStub.getInstance().getError());

@@ -38,7 +38,6 @@ public class DeleteActivityAction extends GenericInventoryAction {
     
     private DeleteActivityAction() {
         bundle = ProjectsModuleService.bundle;
-        
         putValue(NAME, bundle.getString("ACTION_NAME_DELETE_ACTIVITY"));
     }
     

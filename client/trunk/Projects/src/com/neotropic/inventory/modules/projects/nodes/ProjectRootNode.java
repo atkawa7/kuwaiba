@@ -15,7 +15,7 @@
  */
 package com.neotropic.inventory.modules.projects.nodes;
 
-import com.neotropic.inventory.modules.projects.actions.AddProjectAction;
+import com.neotropic.inventory.modules.projects.actions.CreateProjectPoolAction;
 import java.awt.Image;
 import javax.swing.Action;
 import org.inventory.communications.core.LocalPool;
@@ -43,7 +43,7 @@ public class ProjectRootNode extends AbstractNode {
     @Override
     public Action[] getActions(boolean context) {
         return new Action[] {
-            AddProjectAction.getInstance()
+            CreateProjectPoolAction.getInstance()
         };
     }
     

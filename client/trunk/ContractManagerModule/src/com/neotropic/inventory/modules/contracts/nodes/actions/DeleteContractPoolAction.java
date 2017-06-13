@@ -39,7 +39,7 @@ public class DeleteContractPoolAction extends GenericInventoryAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         
-        if (JOptionPane.showConfirmDialog(null, "Are you sure you wan to delete this pool? All children will be removed as well", 
+        if (JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this pool? All children will be removed as well", 
                 "Warning", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
         
             Iterator<? extends ContractPoolNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ContractPoolNode.class).allInstances().iterator();

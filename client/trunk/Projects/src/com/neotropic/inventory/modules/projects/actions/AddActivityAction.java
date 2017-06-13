@@ -43,7 +43,6 @@ public class AddActivityAction extends GenericInventoryAction implements Present
     
     private AddActivityAction() {
         bundle = ProjectsModuleService.bundle;
-        
         putValue(NAME, bundle.getString("ACTION_NAME_ADD_ACTIVITY"));
     }
     
@@ -102,7 +101,6 @@ public class AddActivityAction extends GenericInventoryAction implements Present
                     }
                 }
             }
-                
         }
         return mnuPossibleActivities;
     }

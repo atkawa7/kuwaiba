@@ -16,12 +16,10 @@
 package com.neotropic.inventory.modules.projects.nodes;
 
 import com.neotropic.inventory.modules.projects.ProjectsModuleService;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
 import org.openide.nodes.Node;
@@ -41,22 +39,15 @@ public class ProjectChildren extends AbstractChildren {
         List<LocalObjectLight> activities = CommunicationsStub.getInstance()
             .getProjectActivities(projectClass, projectId);
         
-        List<LocalObjectLight> projects = CommunicationsStub.getInstance()
-            .getProjectsFromProject(projectClass, projectId);
-        
-        if (activities == null || projects == null) {
+        if (activities == null) {
             setKeys(Collections.EMPTY_LIST);
             NotificationUtil.getInstance().showSimplePopup(
                 ProjectsModuleService.bundle.getString("LBL_ERROR"), 
                 NotificationUtil.ERROR_MESSAGE, 
                 CommunicationsStub.getInstance().getError());
         } else {
-            List<LocalObjectLight> result = new ArrayList();
-            result.addAll(activities);
-            result.addAll(projects);
-            
-            Collections.sort(result);
-            setKeys(result);
+            Collections.sort(activities);
+            setKeys(activities);
         }
     }
         
@@ -67,13 +58,6 @@ public class ProjectChildren extends AbstractChildren {
 
     @Override
     protected Node[] createNodes(LocalObjectLight key) {
-        if (CommunicationsStub.getInstance().isSubclassOf(key.getClassName(), Constants.CLASS_GENERICACTIVITY)) {
-            
-            return new Node[] {new ActivityNode(key)};
-        } else if (CommunicationsStub.getInstance().isSubclassOf(key.getClassName(), Constants.CLASS_GENERICPROJECT)) {
-            
-            return new Node[] {new ProjectNode(key)};
-        }
-        return null;
+        return new Node[] {new ActivityNode(key)};
     }
 }

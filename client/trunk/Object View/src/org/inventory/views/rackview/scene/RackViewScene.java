@@ -53,7 +53,10 @@ public class RackViewScene extends AbstractScene<LocalObject, LocalObject> {
     private final Color boxColor = new Color(128, 128, 128);
     
     public RackViewScene() {
+        getActions().addAction(ActionFactory.createZoomAction());
+        getInputBindings ().setZoomActionModifiers(0); //No keystroke combinations
         getActions().addAction(ActionFactory.createPanAction());
+                
         setActiveTool(ACTION_SELECT);
         initSelectionListener();
     }

@@ -47,31 +47,23 @@ public class ProjectsModuleService {
     }
     
     public static List<LocalObjectLight> getAllProjects() {
-        LocalPool rootPool = CommunicationsStub.getInstance().getProjectsRootPool(Constants.CLASS_GENERICPROJECT);
-        if (rootPool == null)
+        List<LocalPool> projectPools = CommunicationsStub.getInstance()
+            .getRootPools(Constants.CLASS_GENERICPROJECT, LocalPool.POOL_TYPE_MODULE_COMPONENT, true);
+        
+        if (projectPools == null)
             return null;
-                
-        List<LocalObjectLight> mainProjects = CommunicationsStub.getInstance().getProjectsFromProjectsRootPool(rootPool.getOid(), -1);
-            
+        
         List<LocalObjectLight> result = new ArrayList();
         
-        for (LocalObjectLight mainProject : mainProjects) {
-            result.add(mainProject);
-            result.addAll(getProjectsInProjects(mainProject.getClassName(), mainProject.getOid()));
+        for (LocalPool projectPool : projectPools) {
+            List<LocalObjectLight> projects = CommunicationsStub.getInstance().getPoolItems(projectPool.getOid());
+            
+            if (projects == null)
+                continue;
+            
+            for (LocalObjectLight mainProject : projects)
+                result.add(mainProject);
         }
         return result;
-    }
-    
-    private static List<LocalObjectLight> getProjectsInProjects(String projectClass, long projectId) {
-        List<LocalObjectLight> subProjects = CommunicationsStub.getInstance().getProjectsFromProject(projectClass, projectId);
-        
-        List<LocalObjectLight> result = new ArrayList();
-        
-        for (LocalObjectLight subProject : subProjects) {
-            result.add(subProject);
-            result.addAll(getProjectsInProjects(subProject.getClassName(), subProject.getOid()));
-        }
-        
-        return result;        
     }
 }

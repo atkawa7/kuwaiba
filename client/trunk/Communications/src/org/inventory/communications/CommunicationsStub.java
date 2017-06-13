@@ -25,6 +25,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
 import javax.xml.ws.BindingProvider;
@@ -3810,6 +3812,23 @@ public class CommunicationsStub {
         } catch (Exception ex) {
             error = ex.getMessage();
             return false;
+        }
+    }
+    
+    /**
+     * Creates a Project Pool
+     * @param name Project name
+     * @param description Project description
+     * @param instanceOfClass Project class
+     * @return The new Project Pool
+     */
+    public LocalPool createProjectPool(String name, String description, String instanceOfClass) {
+        try {
+            long projId = service.createProjectPool(name, description, instanceOfClass, session.getSessionId());
+            return getPoolInfo(projId);
+        } catch (ServerSideException_Exception ex) {
+            error = ex.getMessage();
+            return null;
         }
     }
         // </editor-fold>
