@@ -20,13 +20,14 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="attributeId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="displayName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="administrative" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
- *         &lt;element name="visible" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
+ *         &lt;element name="mandatory" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
+ *         &lt;element name="noCopy" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
  *         &lt;element name="readOnly" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
  *         &lt;element name="unique" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
- *         &lt;element name="noCopy" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
+ *         &lt;element name="visible" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -42,13 +43,14 @@ import javax.xml.bind.annotation.XmlType;
     "attributeId",
     "name",
     "displayName",
-    "type",
     "description",
+    "type",
     "administrative",
-    "visible",
+    "mandatory",
+    "noCopy",
     "readOnly",
     "unique",
-    "noCopy",
+    "visible",
     "sessionId"
 })
 public class SetAttributeProperties {
@@ -57,13 +59,14 @@ public class SetAttributeProperties {
     protected long attributeId;
     protected String name;
     protected String displayName;
-    protected String type;
     protected String description;
+    protected String type;
     protected Boolean administrative;
-    protected Boolean visible;
+    protected Boolean mandatory;
+    protected Boolean noCopy;
     protected Boolean readOnly;
     protected Boolean unique;
-    protected Boolean noCopy;
+    protected Boolean visible;
     protected String sessionId;
 
     /**
@@ -155,30 +158,6 @@ public class SetAttributeProperties {
     }
 
     /**
-     * Gets the value of the type property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getType() {
-        return type;
-    }
-
-    /**
-     * Sets the value of the type property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setType(String value) {
-        this.type = value;
-    }
-
-    /**
      * Gets the value of the description property.
      * 
      * @return
@@ -200,6 +179,30 @@ public class SetAttributeProperties {
      */
     public void setDescription(String value) {
         this.description = value;
+    }
+
+    /**
+     * Gets the value of the type property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * Sets the value of the type property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setType(String value) {
+        this.type = value;
     }
 
     /**
@@ -227,27 +230,51 @@ public class SetAttributeProperties {
     }
 
     /**
-     * Gets the value of the visible property.
+     * Gets the value of the mandatory property.
      * 
      * @return
      *     possible object is
      *     {@link Boolean }
      *     
      */
-    public Boolean isVisible() {
-        return visible;
+    public Boolean isMandatory() {
+        return mandatory;
     }
 
     /**
-     * Sets the value of the visible property.
+     * Sets the value of the mandatory property.
      * 
      * @param value
      *     allowed object is
      *     {@link Boolean }
      *     
      */
-    public void setVisible(Boolean value) {
-        this.visible = value;
+    public void setMandatory(Boolean value) {
+        this.mandatory = value;
+    }
+
+    /**
+     * Gets the value of the noCopy property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
+     */
+    public Boolean isNoCopy() {
+        return noCopy;
+    }
+
+    /**
+     * Sets the value of the noCopy property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     */
+    public void setNoCopy(Boolean value) {
+        this.noCopy = value;
     }
 
     /**
@@ -299,27 +326,27 @@ public class SetAttributeProperties {
     }
 
     /**
-     * Gets the value of the noCopy property.
+     * Gets the value of the visible property.
      * 
      * @return
      *     possible object is
      *     {@link Boolean }
      *     
      */
-    public Boolean isNoCopy() {
-        return noCopy;
+    public Boolean isVisible() {
+        return visible;
     }
 
     /**
-     * Sets the value of the noCopy property.
+     * Sets the value of the visible property.
      * 
      * @param value
      *     allowed object is
      *     {@link Boolean }
      *     
      */
-    public void setNoCopy(Boolean value) {
-        this.noCopy = value;
+    public void setVisible(Boolean value) {
+        this.visible = value;
     }
 
     /**

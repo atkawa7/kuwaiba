@@ -31,13 +31,15 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
     private Image icon;
     private String description;
     private boolean countable;
-    private long [] attributeIds;
-    private String [] attributeNames; 
-    private String [] attributeTypes;
-    private String [] attributeDisplayNames;
-    private boolean [] attributeIsVisibles;
-    private int [] attributeMappings;
-    private String [] attributeDescriptions;
+    private long [] attributesIds;
+    private String [] attributesNames; 
+    private String [] attributesTypes;
+    private String [] attributesDisplayNames;
+    private boolean [] attributesMandatories;
+    private boolean [] attributesUniques;
+    private boolean [] attributesVisibles;
+    private int [] attributesMappings;
+    private String [] attributesDescriptions;
     /**
      * Creation Date
      */
@@ -50,93 +52,112 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
     public LocalClassMetadata (long id, String className, String displayName, 
             String parentName, boolean _abstract, boolean viewable, boolean listType, 
             boolean custom, boolean inDesign, byte[] smallIcon, int color, HashMap<String, Integer> validators,
-            byte[] icon, String description, List<Long> attributeIds, 
-            String[] attributeNames, String[] attributeTypes, String[] attributeDisplayNames,
-            List<Boolean> attributeIsVisibles, String[] attributeDescriptions) {
+            byte[] icon, 
+            String description, 
+            List<Long> attributesIds, 
+            String[] attributesNames, 
+            String[] attributesTypes, 
+            String[] attributesDisplayNames,
+            List<Boolean> attributesMandatories, 
+            List<Boolean> attributesUniques,
+            List<Boolean> attributesVisibles, 
+            String[] attributesDescriptions) {
         
         super(id, className, displayName, parentName, _abstract, viewable, listType, 
             custom, inDesign, smallIcon, color, validators);
         this.icon = Utils.getIconFromByteArray(icon, new Color(color), 24, 24);
         this.description = description;
-        this.attributeIds = new long[attributeIds.size()];
-        this.attributeMappings = new int[attributeIds.size()];
-        this.attributeIsVisibles = new boolean[attributeIsVisibles.size()];
+        this.attributesIds = new long[attributesIds.size()];
+        this.attributesMappings = new int[attributesIds.size()];
+        this.attributesMandatories = new boolean[attributesMandatories.size()];
+        this.attributesUniques = new boolean[attributesUniques.size()];
+        this.attributesVisibles = new boolean[attributesVisibles.size()];
         
-        for (int i = 0; i < attributeIds.size(); i++){
-            this.attributeIds[i] = attributeIds.get(i);
-            this.attributeMappings[i] = getMappingFromType(attributeTypes[i]);
-            this.attributeIsVisibles[i] = attributeIsVisibles.get(i);
+        for (int i = 0; i < attributesIds.size(); i++){
+            this.attributesIds[i] = attributesIds.get(i);
+            this.attributesMappings[i] = getMappingFromType(attributesTypes[i]);
+            this.attributesVisibles[i] = attributesVisibles.get(i);
+            this.attributesMandatories[i] = attributesMandatories.get(i);
+            this.attributesUniques[i] = attributesUniques.get(i);
         }
 
-        this.attributeNames = attributeNames;
-        this.attributeTypes = attributeTypes;
-        this.attributeDisplayNames = attributeDisplayNames;
-        this.attributeDescriptions = attributeDescriptions;
+        this.attributesNames = attributesNames;
+        this.attributesTypes = attributesTypes;
+        this.attributesDisplayNames = attributesDisplayNames;
+        this.attributesDescriptions = attributesDescriptions;
     }
 
-    public int[] getAttributeMappings() {
-        return attributeMappings;
+    public int[] getAttributesMappings() {
+        return attributesMappings;
     }
 
-    public String[] getAttributeDisplayNames() {
-        return attributeDisplayNames;
+    public String[] getAttributesDisplayNames() {
+        return attributesDisplayNames;
     }
 
-    public String[] getAttributeNames() {
-        return attributeNames;
+    public String[] getAttributesNames() {
+        return attributesNames;
     }
 
-    public String[] getAttributeTypes() {
-        return attributeTypes;
+    public String[] getAttributesTypes() {
+        return attributesTypes;
     }
 
     public String[] getAttributesDescription() {
-        return attributeDescriptions;
+        return attributesDescriptions;
     }
 
-    public boolean[] getAttributesIsVisible() {
-        return attributeIsVisibles;
+    public boolean[] getAttributesVisibles() {
+        return attributesVisibles;
+    }
+
+    public boolean[] getAttributesMandatories() {
+        return attributesMandatories;
+    }
+
+    public boolean[] getAttributesUniques() {
+        return attributesUniques;
     }
 
     public String getDisplayNameForAttribute(String att){
-        for (int i=0; i< this.attributeNames.length;i++){
-            if(this.attributeNames[i].equals(att)){
-                return this.attributeDisplayNames[i].equals("")?att:this.attributeDisplayNames[i];
+        for (int i=0; i< this.attributesNames.length;i++){
+            if(this.attributesNames[i].equals(att)){
+                return this.attributesDisplayNames[i].equals("")?att:this.attributesDisplayNames[i];
             }
         }
         return att;
     }
 
     public int getMappingForAttribute(String att){
-        for (int i = 0; i< this.attributeNames.length;i++){
-            if(this.attributeNames[i].equals(att))
-                return this.attributeMappings[i];
+        for (int i = 0; i< this.attributesNames.length;i++){
+            if(this.attributesNames[i].equals(att))
+                return this.attributesMappings[i];
         }
         return 0;
     }
 
     public boolean isVisible(String att){
-        for (int i=0; i< this.attributeNames.length;i++){
-            if(this.attributeNames[i].equals(att)){
-                return this.attributeIsVisibles[i];
+        for (int i=0; i< this.attributesNames.length;i++){
+            if(this.attributesNames[i].equals(att)){
+                return this.attributesVisibles[i];
             }
         }
         return false;
     }
 
     public String getDescriptionForAttribute(String att){
-        for (int i=0; i< this.attributeNames.length;i++){
-            if(this.attributeNames[i].equals(att)){
-                return this.attributeDescriptions[i];
+        for (int i=0; i< this.attributesNames.length;i++){
+            if(this.attributesNames[i].equals(att)){
+                return this.attributesDescriptions[i];
             }
         }
         return "";
     }
 
     public String getTypeForAttribute(String att){
-        for (int i=0; i< this.attributeNames.length;i++){
-            if(this.attributeNames[i].equals(att)){
-                return this.attributeTypes[i];
+        for (int i=0; i< this.attributesNames.length;i++){
+            if(this.attributesNames[i].equals(att)){
+                return this.attributesTypes[i];
             }
         }
         return String.class.getName();
@@ -145,16 +166,17 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
 
     public LocalAttributeMetadata[] getAttributes(){
         LocalAttributeMetadata[] res =
-                new LocalAttributeMetadata[attributeNames.length];
+                new LocalAttributeMetadata[attributesNames.length];
         for (int i = 0; i<res.length;i++){
             res[i] = new LocalAttributeMetadata(
-                                    attributeIds[i],
-                                    attributeNames[i],
-                                    attributeTypes[i],
-                                    attributeDisplayNames[i],
-                                    attributeIsVisibles[i],
-                                    attributeMappings[i],
-                                    attributeDescriptions[i]);
+                                    attributesIds[i],
+                                    attributesNames[i],
+                                    attributesTypes[i],
+                                    attributesDisplayNames[i],
+                                    attributesVisibles[i],
+                                    attributesMandatories[i],
+                                    attributesUniques[i],
+                                    attributesDescriptions[i]);
         }
         return res;
     }
@@ -164,7 +186,7 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
     }
     
     public long[] getAttributeIds() {
-        return attributeIds;
+        return attributesIds;
     }
 
     public long getId() {

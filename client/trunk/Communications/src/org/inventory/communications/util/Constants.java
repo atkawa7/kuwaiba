@@ -342,6 +342,10 @@ public class Constants {
      * Property unique
      */
     public static final String PROPERTY_UNIQUE = "unique";
+    /** 
+     * Defines if the attribute of a class is mandatory or not
+     */
+    public static final String PROPERTY_MANDATORY = "mandatory"; //NOI18N
     /**
      * Property visible
      */

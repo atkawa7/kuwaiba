@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="isReadOnly" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="noCopy" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="unique" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="mandatory" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -47,6 +48,7 @@ import javax.xml.bind.annotation.XmlType;
     "isReadOnly",
     "noCopy",
     "unique",
+    "mandatory",
     "sessionId"
 })
 public class CreateAttribute {
@@ -61,6 +63,7 @@ public class CreateAttribute {
     protected boolean isReadOnly;
     protected boolean noCopy;
     protected boolean unique;
+    protected boolean mandatory;
     protected String sessionId;
 
     /**
@@ -261,6 +264,22 @@ public class CreateAttribute {
      */
     public void setUnique(boolean value) {
         this.unique = value;
+    }
+
+    /**
+     * Gets the value of the mandatory property.
+     * 
+     */
+    public boolean isMandatory() {
+        return mandatory;
+    }
+
+    /**
+     * Sets the value of the mandatory property.
+     * 
+     */
+    public void setMandatory(boolean value) {
+        this.mandatory = value;
     }
 
     /**

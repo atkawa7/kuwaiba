@@ -20,13 +20,14 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="attributeId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="displayName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="isAdministrative" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
- *         &lt;element name="isVisible" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
- *         &lt;element name="isReadOnly" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
+ *         &lt;element name="type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="administrative" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
+ *         &lt;element name="mandatory" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
  *         &lt;element name="noCopy" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
- *         &lt;element name="isUnique" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
+ *         &lt;element name="readOnly" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
+ *         &lt;element name="unique" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
+ *         &lt;element name="visible" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -42,13 +43,14 @@ import javax.xml.bind.annotation.XmlType;
     "attributeId",
     "name",
     "displayName",
-    "type",
     "description",
-    "isAdministrative",
-    "isVisible",
-    "isReadOnly",
+    "type",
+    "administrative",
+    "mandatory",
     "noCopy",
-    "isUnique",
+    "readOnly",
+    "unique",
+    "visible",
     "sessionId"
 })
 public class SetAttributePropertiesForClassWithId {
@@ -57,13 +59,14 @@ public class SetAttributePropertiesForClassWithId {
     protected long attributeId;
     protected String name;
     protected String displayName;
-    protected String type;
     protected String description;
-    protected Boolean isAdministrative;
-    protected Boolean isVisible;
-    protected Boolean isReadOnly;
+    protected String type;
+    protected Boolean administrative;
+    protected Boolean mandatory;
     protected Boolean noCopy;
-    protected Boolean isUnique;
+    protected Boolean readOnly;
+    protected Boolean unique;
+    protected Boolean visible;
     protected String sessionId;
 
     /**
@@ -147,30 +150,6 @@ public class SetAttributePropertiesForClassWithId {
     }
 
     /**
-     * Gets the value of the type property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getType() {
-        return type;
-    }
-
-    /**
-     * Sets the value of the type property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setType(String value) {
-        this.type = value;
-    }
-
-    /**
      * Gets the value of the description property.
      * 
      * @return
@@ -195,75 +174,75 @@ public class SetAttributePropertiesForClassWithId {
     }
 
     /**
-     * Gets the value of the isAdministrative property.
+     * Gets the value of the type property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * Sets the value of the type property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setType(String value) {
+        this.type = value;
+    }
+
+    /**
+     * Gets the value of the administrative property.
      * 
      * @return
      *     possible object is
      *     {@link Boolean }
      *     
      */
-    public Boolean isIsAdministrative() {
-        return isAdministrative;
+    public Boolean isAdministrative() {
+        return administrative;
     }
 
     /**
-     * Sets the value of the isAdministrative property.
+     * Sets the value of the administrative property.
      * 
      * @param value
      *     allowed object is
      *     {@link Boolean }
      *     
      */
-    public void setIsAdministrative(Boolean value) {
-        this.isAdministrative = value;
+    public void setAdministrative(Boolean value) {
+        this.administrative = value;
     }
 
     /**
-     * Gets the value of the isVisible property.
+     * Gets the value of the mandatory property.
      * 
      * @return
      *     possible object is
      *     {@link Boolean }
      *     
      */
-    public Boolean isIsVisible() {
-        return isVisible;
+    public Boolean isMandatory() {
+        return mandatory;
     }
 
     /**
-     * Sets the value of the isVisible property.
+     * Sets the value of the mandatory property.
      * 
      * @param value
      *     allowed object is
      *     {@link Boolean }
      *     
      */
-    public void setIsVisible(Boolean value) {
-        this.isVisible = value;
-    }
-
-    /**
-     * Gets the value of the isReadOnly property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
-    public Boolean isIsReadOnly() {
-        return isReadOnly;
-    }
-
-    /**
-     * Sets the value of the isReadOnly property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
-    public void setIsReadOnly(Boolean value) {
-        this.isReadOnly = value;
+    public void setMandatory(Boolean value) {
+        this.mandatory = value;
     }
 
     /**
@@ -291,27 +270,75 @@ public class SetAttributePropertiesForClassWithId {
     }
 
     /**
-     * Gets the value of the isUnique property.
+     * Gets the value of the readOnly property.
      * 
      * @return
      *     possible object is
      *     {@link Boolean }
      *     
      */
-    public Boolean isIsUnique() {
-        return isUnique;
+    public Boolean isReadOnly() {
+        return readOnly;
     }
 
     /**
-     * Sets the value of the isUnique property.
+     * Sets the value of the readOnly property.
      * 
      * @param value
      *     allowed object is
      *     {@link Boolean }
      *     
      */
-    public void setIsUnique(Boolean value) {
-        this.isUnique = value;
+    public void setReadOnly(Boolean value) {
+        this.readOnly = value;
+    }
+
+    /**
+     * Gets the value of the unique property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
+     */
+    public Boolean isUnique() {
+        return unique;
+    }
+
+    /**
+     * Sets the value of the unique property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     */
+    public void setUnique(Boolean value) {
+        this.unique = value;
+    }
+
+    /**
+     * Gets the value of the visible property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
+     */
+    public Boolean isVisible() {
+        return visible;
+    }
+
+    /**
+     * Sets the value of the visible property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     */
+    public void setVisible(Boolean value) {
+        this.visible = value;
     }
 
     /**

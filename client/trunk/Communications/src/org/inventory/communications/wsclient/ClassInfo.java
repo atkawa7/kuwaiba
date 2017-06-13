@@ -19,12 +19,14 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;extension base="{http://ws.kuwaiba.org/}classInfoLight">
  *       &lt;sequence>
- *         &lt;element name="attributeIds" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="attributeNames" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="attributeTypes" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="attributeDisplayNames" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="attributesIsVisible" type="{http://www.w3.org/2001/XMLSchema}boolean" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="attributesDescription" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="attributesIds" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="attributesNames" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="attributesTypes" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="attributesDisplayNames" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="attributesMandatories" type="{http://www.w3.org/2001/XMLSchema}boolean" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="attributesUniques" type="{http://www.w3.org/2001/XMLSchema}boolean" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="attributesVisibles" type="{http://www.w3.org/2001/XMLSchema}boolean" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="attributesDescriptions" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="icon" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0"/>
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="creationDate" type="{http://www.w3.org/2001/XMLSchema}long"/>
@@ -39,12 +41,14 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "classInfo", propOrder = {
-    "attributeIds",
-    "attributeNames",
-    "attributeTypes",
-    "attributeDisplayNames",
-    "attributesIsVisible",
-    "attributesDescription",
+    "attributesIds",
+    "attributesNames",
+    "attributesTypes",
+    "attributesDisplayNames",
+    "attributesMandatories",
+    "attributesUniques",
+    "attributesVisibles",
+    "attributesDescriptions",
     "icon",
     "description",
     "creationDate",
@@ -55,35 +59,39 @@ public class ClassInfo
 {
 
     @XmlElement(nillable = true)
-    protected List<Long> attributeIds;
+    protected List<Long> attributesIds;
     @XmlElement(nillable = true)
-    protected List<String> attributeNames;
+    protected List<String> attributesNames;
     @XmlElement(nillable = true)
-    protected List<String> attributeTypes;
+    protected List<String> attributesTypes;
     @XmlElement(nillable = true)
-    protected List<String> attributeDisplayNames;
+    protected List<String> attributesDisplayNames;
     @XmlElement(nillable = true)
-    protected List<Boolean> attributesIsVisible;
+    protected List<Boolean> attributesMandatories;
     @XmlElement(nillable = true)
-    protected List<String> attributesDescription;
+    protected List<Boolean> attributesUniques;
+    @XmlElement(nillable = true)
+    protected List<Boolean> attributesVisibles;
+    @XmlElement(nillable = true)
+    protected List<String> attributesDescriptions;
     protected byte[] icon;
     protected String description;
     protected long creationDate;
     protected Boolean countable;
 
     /**
-     * Gets the value of the attributeIds property.
+     * Gets the value of the attributesIds property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the attributeIds property.
+     * This is why there is not a <CODE>set</CODE> method for the attributesIds property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getAttributeIds().add(newItem);
+     *    getAttributesIds().add(newItem);
      * </pre>
      * 
      * 
@@ -93,26 +101,26 @@ public class ClassInfo
      * 
      * 
      */
-    public List<Long> getAttributeIds() {
-        if (attributeIds == null) {
-            attributeIds = new ArrayList<Long>();
+    public List<Long> getAttributesIds() {
+        if (attributesIds == null) {
+            attributesIds = new ArrayList<Long>();
         }
-        return this.attributeIds;
+        return this.attributesIds;
     }
 
     /**
-     * Gets the value of the attributeNames property.
+     * Gets the value of the attributesNames property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the attributeNames property.
+     * This is why there is not a <CODE>set</CODE> method for the attributesNames property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getAttributeNames().add(newItem);
+     *    getAttributesNames().add(newItem);
      * </pre>
      * 
      * 
@@ -122,26 +130,26 @@ public class ClassInfo
      * 
      * 
      */
-    public List<String> getAttributeNames() {
-        if (attributeNames == null) {
-            attributeNames = new ArrayList<String>();
+    public List<String> getAttributesNames() {
+        if (attributesNames == null) {
+            attributesNames = new ArrayList<String>();
         }
-        return this.attributeNames;
+        return this.attributesNames;
     }
 
     /**
-     * Gets the value of the attributeTypes property.
+     * Gets the value of the attributesTypes property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the attributeTypes property.
+     * This is why there is not a <CODE>set</CODE> method for the attributesTypes property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getAttributeTypes().add(newItem);
+     *    getAttributesTypes().add(newItem);
      * </pre>
      * 
      * 
@@ -151,26 +159,26 @@ public class ClassInfo
      * 
      * 
      */
-    public List<String> getAttributeTypes() {
-        if (attributeTypes == null) {
-            attributeTypes = new ArrayList<String>();
+    public List<String> getAttributesTypes() {
+        if (attributesTypes == null) {
+            attributesTypes = new ArrayList<String>();
         }
-        return this.attributeTypes;
+        return this.attributesTypes;
     }
 
     /**
-     * Gets the value of the attributeDisplayNames property.
+     * Gets the value of the attributesDisplayNames property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the attributeDisplayNames property.
+     * This is why there is not a <CODE>set</CODE> method for the attributesDisplayNames property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getAttributeDisplayNames().add(newItem);
+     *    getAttributesDisplayNames().add(newItem);
      * </pre>
      * 
      * 
@@ -180,26 +188,26 @@ public class ClassInfo
      * 
      * 
      */
-    public List<String> getAttributeDisplayNames() {
-        if (attributeDisplayNames == null) {
-            attributeDisplayNames = new ArrayList<String>();
+    public List<String> getAttributesDisplayNames() {
+        if (attributesDisplayNames == null) {
+            attributesDisplayNames = new ArrayList<String>();
         }
-        return this.attributeDisplayNames;
+        return this.attributesDisplayNames;
     }
 
     /**
-     * Gets the value of the attributesIsVisible property.
+     * Gets the value of the attributesMandatories property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the attributesIsVisible property.
+     * This is why there is not a <CODE>set</CODE> method for the attributesMandatories property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getAttributesIsVisible().add(newItem);
+     *    getAttributesMandatories().add(newItem);
      * </pre>
      * 
      * 
@@ -209,26 +217,84 @@ public class ClassInfo
      * 
      * 
      */
-    public List<Boolean> getAttributesIsVisible() {
-        if (attributesIsVisible == null) {
-            attributesIsVisible = new ArrayList<Boolean>();
+    public List<Boolean> getAttributesMandatories() {
+        if (attributesMandatories == null) {
+            attributesMandatories = new ArrayList<Boolean>();
         }
-        return this.attributesIsVisible;
+        return this.attributesMandatories;
     }
 
     /**
-     * Gets the value of the attributesDescription property.
+     * Gets the value of the attributesUniques property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the attributesDescription property.
+     * This is why there is not a <CODE>set</CODE> method for the attributesUniques property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getAttributesDescription().add(newItem);
+     *    getAttributesUniques().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Boolean }
+     * 
+     * 
+     */
+    public List<Boolean> getAttributesUniques() {
+        if (attributesUniques == null) {
+            attributesUniques = new ArrayList<Boolean>();
+        }
+        return this.attributesUniques;
+    }
+
+    /**
+     * Gets the value of the attributesVisibles property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the attributesVisibles property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getAttributesVisibles().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Boolean }
+     * 
+     * 
+     */
+    public List<Boolean> getAttributesVisibles() {
+        if (attributesVisibles == null) {
+            attributesVisibles = new ArrayList<Boolean>();
+        }
+        return this.attributesVisibles;
+    }
+
+    /**
+     * Gets the value of the attributesDescriptions property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the attributesDescriptions property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getAttributesDescriptions().add(newItem);
      * </pre>
      * 
      * 
@@ -238,11 +304,11 @@ public class ClassInfo
      * 
      * 
      */
-    public List<String> getAttributesDescription() {
-        if (attributesDescription == null) {
-            attributesDescription = new ArrayList<String>();
+    public List<String> getAttributesDescriptions() {
+        if (attributesDescriptions == null) {
+            attributesDescriptions = new ArrayList<String>();
         }
-        return this.attributesDescription;
+        return this.attributesDescriptions;
     }
 
     /**

@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="displayName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="locked" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
+ *         &lt;element name="mandatory" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="noCopy" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
  *         &lt;element name="readOnly" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
@@ -42,6 +43,7 @@ import javax.xml.bind.annotation.XmlType;
     "displayName",
     "id",
     "locked",
+    "mandatory",
     "name",
     "noCopy",
     "readOnly",
@@ -56,6 +58,7 @@ public class AttributeInfo {
     protected String displayName;
     protected long id;
     protected Boolean locked;
+    protected Boolean mandatory;
     protected String name;
     protected Boolean noCopy;
     protected Boolean readOnly;
@@ -173,6 +176,30 @@ public class AttributeInfo {
      */
     public void setLocked(Boolean value) {
         this.locked = value;
+    }
+
+    /**
+     * Gets the value of the mandatory property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
+     */
+    public Boolean isMandatory() {
+        return mandatory;
+    }
+
+    /**
+     * Sets the value of the mandatory property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     */
+    public void setMandatory(Boolean value) {
+        this.mandatory = value;
     }
 
     /**

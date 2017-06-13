@@ -23,9 +23,10 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="administrative" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="visible" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
- *         &lt;element name="isReadOnly" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="readOnly" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="noCopy" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="unique" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="mandatory" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -44,9 +45,10 @@ import javax.xml.bind.annotation.XmlType;
     "description",
     "administrative",
     "visible",
-    "isReadOnly",
+    "readOnly",
     "noCopy",
     "unique",
+    "mandatory",
     "sessionId"
 })
 public class CreateAttributeForClassWithId {
@@ -58,9 +60,10 @@ public class CreateAttributeForClassWithId {
     protected String description;
     protected boolean administrative;
     protected boolean visible;
-    protected boolean isReadOnly;
+    protected boolean readOnly;
     protected boolean noCopy;
     protected boolean unique;
+    protected boolean mandatory;
     protected String sessionId;
 
     /**
@@ -208,19 +211,19 @@ public class CreateAttributeForClassWithId {
     }
 
     /**
-     * Gets the value of the isReadOnly property.
+     * Gets the value of the readOnly property.
      * 
      */
-    public boolean isIsReadOnly() {
-        return isReadOnly;
+    public boolean isReadOnly() {
+        return readOnly;
     }
 
     /**
-     * Sets the value of the isReadOnly property.
+     * Sets the value of the readOnly property.
      * 
      */
-    public void setIsReadOnly(boolean value) {
-        this.isReadOnly = value;
+    public void setReadOnly(boolean value) {
+        this.readOnly = value;
     }
 
     /**
@@ -253,6 +256,22 @@ public class CreateAttributeForClassWithId {
      */
     public void setUnique(boolean value) {
         this.unique = value;
+    }
+
+    /**
+     * Gets the value of the mandatory property.
+     * 
+     */
+    public boolean isMandatory() {
+        return mandatory;
+    }
+
+    /**
+     * Sets the value of the mandatory property.
+     * 
+     */
+    public void setMandatory(boolean value) {
+        this.mandatory = value;
     }
 
     /**

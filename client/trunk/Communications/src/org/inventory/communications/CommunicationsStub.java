@@ -31,6 +31,7 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.soap.SOAPFaultException;
 import org.inventory.communications.core.LocalApplicationLogEntry;
+import org.inventory.communications.core.LocalAttributeMetadata;
 import org.inventory.communications.core.LocalBookmarkFolder;
 import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalClassMetadataLight;
@@ -58,6 +59,7 @@ import org.inventory.communications.core.queries.LocalTransientQuery;
 import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.communications.wsclient.ApplicationLogEntry;
+import org.inventory.communications.wsclient.AttributeInfo;
 import org.inventory.communications.wsclient.ClassInfo;
 import org.inventory.communications.wsclient.ClassInfoLight;
 import org.inventory.communications.wsclient.GroupInfo;
@@ -111,7 +113,7 @@ public class CommunicationsStub {
                                                                     "STM1", "STM4", "STM16", "STM64", "STM256",
                                                                     "WireContainer", "WirelessContainer",
                                                                     "CorporateCustomer", "TelecomOperator", "Provider", "HomeCustomer",
-                                                                    "IPAddress", "Subnet", "Project", "Activity" };
+                                                                    "Subnet" };
     
     private CommunicationsStub() {
         cache = Cache.getInstace();
@@ -696,8 +698,7 @@ public class CommunicationsStub {
      */
     public LocalClassMetadata[] getAllMeta(boolean includeListTypes) {
         try{
-            List<ClassInfo> metas;
-            metas= service.getAllClasses(includeListTypes, this.session.getSessionId());
+            List<ClassInfo> metas = service.getAllClasses(includeListTypes, this.session.getSessionId());
             LocalClassMetadata[] lm = new LocalClassMetadata[metas.size()];
             int i = 0;
             for (ClassInfo ci : metas){
@@ -712,11 +713,12 @@ public class CommunicationsStub {
                                                 ci.isAbstract(),ci.isViewable(), ci.isListType(),
                                                 ci.isCustom(), ci.isInDesign(),
                                                 ci.getSmallIcon(), ci.getColor(), validators, ci.getIcon(),
-                                                ci.getDescription(), ci.getAttributeIds(), 
-                                                ci.getAttributeNames().toArray(new String[0]),
-                                                ci.getAttributeTypes().toArray(new String[0]),
-                                                ci.getAttributeDisplayNames().toArray(new String[0]),
-                                                ci.getAttributesIsVisible(), ci.getAttributesDescription().toArray(new String[0]));
+                                                ci.getDescription(), ci.getAttributesIds(), 
+                                                ci.getAttributesNames().toArray(new String[0]),
+                                                ci.getAttributesTypes().toArray(new String[0]),
+                                                ci.getAttributesDisplayNames().toArray(new String[0]),
+                                                ci.getAttributesMandatories(), ci.getAttributesUniques(),
+                                                ci.getAttributesVisibles(), ci.getAttributesDescriptions().toArray(new String[0]));
                 i++;
             }
             cache.addMeta(lm); //Refresh the cache
@@ -753,11 +755,15 @@ public class CommunicationsStub {
                                             cm.isAbstract(),cm.isViewable(), cm.isListType(),
                                             cm.isCustom(), cm.isInDesign(),
                                             cm.getSmallIcon(), cm.getColor(), validators, cm.getIcon(),
-                                            cm.getDescription(), cm.getAttributeIds(), 
-                                            cm.getAttributeNames().toArray(new String[0]),
-                                            cm.getAttributeTypes().toArray(new String[0]),
-                                            cm.getAttributeDisplayNames().toArray(new String[0]),
-                                            cm.getAttributesIsVisible(), cm.getAttributesDescription().toArray(new String[0]));
+                                            cm.getDescription(), 
+                    cm.getAttributesIds(),                         
+                    cm.getAttributesNames().toArray(new String[0]),
+                    cm.getAttributesTypes().toArray(new String[0]),
+                    cm.getAttributesDisplayNames().toArray(new String[0]),
+                    cm.getAttributesMandatories(),
+                    cm.getAttributesUniques(),
+                    cm.getAttributesVisibles(), 
+                    cm.getAttributesDescriptions().toArray(new String[0]));
             cache.addMeta(new LocalClassMetadata[]{res});
             return res;
         }catch(Exception ex){
@@ -793,11 +799,12 @@ public class CommunicationsStub {
                         cm.isAbstract(),cm.isViewable(), cm.isListType(),
                         cm.isCustom(), cm.isInDesign(),
                         cm.getSmallIcon(), cm.getColor(), validators, cm.getIcon(),
-                        cm.getDescription(), cm.getAttributeIds(), 
-                        cm.getAttributeNames().toArray(new String[0]),
-                        cm.getAttributeTypes().toArray(new String[0]),
-                        cm.getAttributeDisplayNames().toArray(new String[0]),
-                        cm.getAttributesIsVisible(), cm.getAttributesDescription().toArray(new String[0]));
+                        cm.getDescription(), cm.getAttributesIds(), 
+                        cm.getAttributesNames().toArray(new String[0]),
+                        cm.getAttributesTypes().toArray(new String[0]),
+                        cm.getAttributesDisplayNames().toArray(new String[0]),
+                        cm.getAttributesMandatories(), cm.getAttributesUniques(),
+                        cm.getAttributesVisibles(), cm.getAttributesDescriptions().toArray(new String[0]));
             cache.addMeta(new LocalClassMetadata[]{res});
             return res;
         }catch(Exception ex){
@@ -1243,9 +1250,31 @@ public class CommunicationsStub {
      * @param template
      * @return 
      */
-    public LocalObjectLight createObject(String objectClass, String parentClass, long parentOid, long template){
+    public LocalObjectLight createObject(String objectClass, String parentClass, 
+            long parentOid, HashMap<String, Object> attributes, long template)
+    {
         try {
-            long objectId  = service.createObject(objectClass,parentClass, parentOid, new ArrayList<String>(),new ArrayList<StringArray>(),template,this.session.getSessionId());
+            List<String> attributeNames = new ArrayList<>();
+            List<StringArray> attributeValues = new ArrayList<>();
+
+            for (String key : attributes.keySet()){
+                StringArray value = new StringArray();
+                attributeNames.add(key);
+                Object theValue = attributes.get(key);
+                if (theValue instanceof LocalObjectListItem)
+                    value.getItem().add(String.valueOf(((LocalObjectListItem)theValue).getId()));
+                else {
+                    if (theValue instanceof Date)
+                        value.getItem().add(String.valueOf(((Date)theValue).getTime()));
+                    else
+                        value.getItem().add(theValue.toString());
+                }
+                attributeValues.add(value);
+            }
+            long objectId  = service.createObject(objectClass, parentClass, 
+                    parentOid, attributeNames,
+                    attributeValues,
+                    template, this.session.getSessionId());
             return new LocalObjectLight(objectId, null, objectClass);
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -1395,6 +1424,34 @@ public class CommunicationsStub {
         }catch(Exception ex){
             this.error = ex.getMessage();
             return null;
+        }
+    }
+    
+    public LocalAttributeMetadata[] getMandatoryObjectAttributes(String className){
+        try {
+            List<AttributeInfo> mandatoryObjectAttributesInfo = service.getMandatoryObjectAttributes(className, session.getSessionId());
+            LocalAttributeMetadata[] mandatoryObjectAttributes = new LocalAttributeMetadata[mandatoryObjectAttributesInfo.size()];
+            int i = 0;
+            for (AttributeInfo mandatoryObjectAttributeInfo :  mandatoryObjectAttributesInfo) {
+                mandatoryObjectAttributes[i] = new LocalAttributeMetadata(mandatoryObjectAttributeInfo.getId(),
+                        mandatoryObjectAttributeInfo.getName(), mandatoryObjectAttributeInfo.getType(), 
+                        mandatoryObjectAttributeInfo.getDisplayName(), mandatoryObjectAttributeInfo.isVisible(), 
+                        mandatoryObjectAttributeInfo.isMandatory(), mandatoryObjectAttributeInfo.isUnique(), 
+                        mandatoryObjectAttributeInfo.getDescription());
+                i++;
+            }
+            return mandatoryObjectAttributes;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    public void objectHasValuesInMandatoryAttributes(String className, long objId){
+        try{
+            service.objectHasValuesInMandatoryAttributes(className, objId, session.getSessionId());
+        }catch(Exception ex){
+            this.error = ex.getMessage();
         }
     }
     
@@ -1761,6 +1818,10 @@ public class CommunicationsStub {
 
     /**
      * Refreshes all existing objects, according to the flags provided
+     * @param refreshMeta
+     * @param refreshLightMeta
+     * @param refreshList
+     * @param refreshPossibleChildren
      */
     public void refreshCache(boolean refreshMeta, boolean refreshLightMeta,
             boolean refreshList, boolean refreshPossibleChildren){
@@ -1779,11 +1840,12 @@ public class CommunicationsStub {
                             cm.isAbstract(),cm.isViewable(), cm.isListType(),
                             cm.isCustom(), cm.isInDesign(),
                             cm.getSmallIcon(), cm.getColor(), validators, cm.getIcon(),
-                            cm.getDescription(), cm.getAttributeIds(), 
-                            cm.getAttributeNames().toArray(new String[0]),
-                            cm.getAttributeTypes().toArray(new String[0]),
-                            cm.getAttributeDisplayNames().toArray(new String[0]),
-                            cm.getAttributesIsVisible(), cm.getAttributesDescription().toArray(new String[0]));
+                            cm.getDescription(), cm.getAttributesIds(), 
+                            cm.getAttributesNames().toArray(new String[0]),
+                            cm.getAttributesTypes().toArray(new String[0]),
+                            cm.getAttributesDisplayNames().toArray(new String[0]),
+                            cm.getAttributesMandatories(), cm.getAttributesUniques(),
+                            cm.getAttributesVisibles(), cm.getAttributesDescriptions().toArray(new String[0]));
                     
                     cache.addMeta(new LocalClassMetadata[]{myLocal});
                 }
@@ -1815,11 +1877,16 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean setAttributeProperties(long classId, long attributeId, String name, String displayName,
-            String type, String description, Boolean administrative, Boolean visible, Boolean readOnly, Boolean noCopy, Boolean unique)  {
+    public boolean setAttributeProperties(long classId, String className, 
+            long attributeId, String name, String displayName, String type,
+            String description, Boolean administrative, Boolean mandatory, 
+            Boolean noCopy, Boolean readOnly, Boolean unique,  Boolean visible)
+    {
         try{
-            service.setAttributePropertiesForClassWithId(classId, attributeId, name, displayName, type, description,
-                    administrative, visible, readOnly, unique, noCopy, this.session.getSessionId());
+            service.setAttributePropertiesForClassWithId(classId, attributeId, 
+                    name, displayName, description, type, administrative, 
+                    mandatory, noCopy, readOnly, unique, visible, 
+                    this.session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -1849,9 +1916,11 @@ public class CommunicationsStub {
     public boolean createAttribute(long classId, String name, String displayName, 
                                 String description, String type, boolean administrative, 
                                 boolean readOnly, boolean visible, boolean noCopy, 
-                                boolean unique){
+                                boolean unique, boolean mandatory){
         try{
-            service.createAttributeForClassWithId(classId, name, displayName, type, description, administrative, visible, readOnly, noCopy, unique, this.session.getSessionId());
+            service.createAttributeForClassWithId(classId, name, displayName, 
+                    type, description, administrative, visible, readOnly, 
+                    noCopy, unique, mandatory, this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
             return false;
@@ -1862,9 +1931,11 @@ public class CommunicationsStub {
     public boolean createAttribute(String className, String name, String displayName, 
                                 String description, String type, boolean administrative,
                                 boolean readOnly, boolean visible, boolean noCopy, 
-                                boolean unique){
+                                boolean unique, boolean mandatory){
         try{
-            service.createAttribute(className, name, displayName, type, description, administrative, visible, readOnly, noCopy, unique, this.session.getSessionId());
+            service.createAttribute(className, name, displayName, type, 
+                    description, administrative, visible, readOnly, noCopy, 
+                    unique, mandatory, this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
             return false;

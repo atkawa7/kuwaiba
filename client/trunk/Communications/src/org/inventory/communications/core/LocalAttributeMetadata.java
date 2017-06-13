@@ -15,11 +15,11 @@
  */
 package org.inventory.communications.core;
 
+import org.inventory.communications.util.Constants;
 import org.inventory.communications.util.Utils;
 
 /**
  * Represents the metadata associated to a single attribute
- *
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class LocalAttributeMetadata {
@@ -34,6 +34,7 @@ public class LocalAttributeMetadata {
     private boolean administrative;
     private boolean noCopy;
     private boolean unique;
+    private boolean mandatory;
     private boolean readOnly;
     private String listAttributeClassName = null;
 
@@ -42,24 +43,31 @@ public class LocalAttributeMetadata {
     }
 
     public LocalAttributeMetadata(long oid, String name, String type, String displayName,
-            boolean isVisible, Integer mapping, String description) {
+            boolean isVisible, boolean mandatory, boolean unique, String description) 
+    {
         this.id = oid;
         this.name = name;
         this.type = Utils.getRealType(type);
         this.displayName = displayName;
+        this.mandatory = mandatory;
+        this.unique = unique;
         this.isVisible = isVisible;
-        this.mapping = mapping;
+        this.mapping = getMappingFromType(type);
         this.description = description;
         if (this.type.equals(LocalObjectLight.class)) 
             listAttributeClassName = type;
     }
     
     public LocalAttributeMetadata(long oid, String name, Class type, String displayName,
-            boolean isVisible, Integer mapping, String description) {
+            boolean isVisible, boolean mandatory, boolean unique, 
+            Integer mapping, String description) 
+    {
         this.id = oid;
         this.name = name;
         this.type = type;
         this.displayName = displayName;
+        this.mandatory = mandatory;
+        this.unique = unique;
         this.isVisible = isVisible;
         this.mapping = mapping;
         this.description = description;
@@ -108,6 +116,22 @@ public class LocalAttributeMetadata {
     public boolean isNoCopy(){
         return noCopy;
     }
+
+    public boolean isIsVisible() {
+        return isVisible;
+    }
+
+    public void setIsVisible(boolean isVisible) {
+        this.isVisible = isVisible;
+    }
+
+    public boolean isMandatory() {
+        return mandatory;
+    }
+
+    public void setMandatory(boolean mandatory) {
+        this.mandatory = mandatory;
+    }
     
     public boolean isUnique(){
         return unique;
@@ -133,5 +157,17 @@ public class LocalAttributeMetadata {
         int hash = 3;
         hash = 83 * hash + (int) (this.id ^ (this.id >>> 32));
         return hash;
+    }
+    
+    public final int getMappingFromType(String type){
+        if (type.equals("String") || type.equals("Integer") || type.equals("Float") || type.equals("Long") || type.equals("Boolean"))
+            return Constants.MAPPING_PRIMITIVE;
+        if (type.equals("Timestamp"))
+            return Constants.MAPPING_TIMESTAMP;
+        if (type.equals("Date"))
+            return Constants.MAPPING_DATE;
+        if (type.equals("Binary"))
+            return Constants.MAPPING_BINARY;
+        return Constants.MAPPING_MANYTOONE;
     }
 }
