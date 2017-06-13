@@ -19,6 +19,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
 import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -99,7 +100,10 @@ public final class CreateBusinessObjectFromTemplateAction extends AbstractAction
     
     private class TemplateListFrame extends JFrame {
 
+        HashMap<String, Object> attributes = new HashMap<>();
+        
         public TemplateListFrame(String className, List<LocalObjectLight> availableTemplates) {
+        
             final JList<LocalObjectLight> lstAvailableTemplates = new JList<>(availableTemplates.toArray(new LocalObjectLight[0]));
             JScrollPane pnlScrollMain = new JScrollPane(lstAvailableTemplates);
             setTitle(String.format("Available Templates for %s", className));
@@ -122,7 +126,7 @@ public final class CreateBusinessObjectFromTemplateAction extends AbstractAction
                     else {
                         LocalObjectLight selectedObject = Utilities.actionsGlobalContext().lookup(LocalObjectLight.class);
                         LocalObjectLight newObject = CommunicationsStub.getInstance().createObject(selectedTemplate.getClassName(), 
-                                selectedObject.getClassName(), selectedObject.getOid(), selectedTemplate.getOid());
+                                selectedObject.getClassName(), selectedObject.getOid(), attributes, selectedTemplate.getOid());
                         if (newObject == null)
                             NotificationUtil.getInstance().showSimplePopup("Error", 
                                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());

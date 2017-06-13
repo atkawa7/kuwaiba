@@ -1,5 +1,5 @@
-/**
- * Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
+/*
+ * Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  * 
 * Licensed under the EPL License, Version 1.0 (the "License"); you may not use
  * this file except in compliance with the License. You may obtain a copy of the
@@ -120,6 +120,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
     @Override
     protected Sheet createSheet() {
         sheet = Sheet.createDefault();
+        String mandatory = " *";
         Set generalPropertySet = Sheet.createPropertiesSet(); //General attributes category
         
         LocalObjectLight object = getObject();
@@ -141,11 +142,12 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
             if (lam.isVisible()) {
                 PropertySupport.ReadWrite property = null;
                 int mapping = lam.getMapping();
+                String x = lam.isMandatory() ? "" : "*";
                 switch (mapping) {
                     case Constants.MAPPING_TIMESTAMP:
                     case Constants.MAPPING_DATE:
                         property = new DateTypeProperty((Date)lo.getAttribute(lam.getName()) , 
-                                lam.getName(), Date.class, lam.getDisplayName(), lam.getDescription(), this);
+                                lam.getName(), Date.class, (lam.isMandatory() ? "\u002A" : "")+lam.getDisplayName(), lam.getDescription(), this);
                         break;
                     case Constants.MAPPING_PRIMITIVE:
                     //Those attributes that are not multiple, but reference another object
@@ -154,7 +156,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
                             property = new NativeTypeProperty(
                                     lam.getName(),
                                     lam.getType(),
-                                    lam.getDisplayName().isEmpty() ? lam.getName() : lam.getDisplayName(),
+                                    (lam.isMandatory() ? "\u002A" : "")+(lam.getDisplayName().isEmpty() ? lam.getName() : lam.getDisplayName()),
                                     lam.getDescription(), this, lo.getAttribute(lam.getName()));
                         }
                         break;
@@ -178,7 +180,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
                         }
                         property = new ListTypeProperty(
                                 lam.getName(),
-                                lam.getDisplayName(),
+                                (lam.isMandatory() ? "*" : "")+lam.getDisplayName(),
                                 lam.getDescription(),
                                 list,
                                 this,
