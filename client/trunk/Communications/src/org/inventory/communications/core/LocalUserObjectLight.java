@@ -17,6 +17,7 @@
 package org.inventory.communications.core;
 
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeListener;
 import java.util.ArrayList;
@@ -43,7 +44,8 @@ public class LocalUserObjectLight implements Comparable<LocalUserObjectLight> {
     private int type;
     private boolean enabled;
     
-    protected List<VetoableChangeListener> changeListeners;
+    protected List<VetoableChangeListener> vetoableChangeListeners;
+    protected List<PropertyChangeListener> nonVetoableChangeListeners;
 
     public LocalUserObjectLight(long id, String userName, String firstName, 
             String lastName, boolean enabled, int type) {
@@ -53,7 +55,8 @@ public class LocalUserObjectLight implements Comparable<LocalUserObjectLight> {
         this.lastName = lastName;
         this.enabled = enabled;
         this.type = type;
-        this.changeListeners = new ArrayList<>();
+        this.vetoableChangeListeners = new ArrayList<>();
+        this.nonVetoableChangeListeners = new ArrayList<>();
     }
 
     public long getId() {
@@ -66,8 +69,10 @@ public class LocalUserObjectLight implements Comparable<LocalUserObjectLight> {
 
     public void setUserName(String userName) {
         try {
-            firePropertyChange(PROPERTY_USER_NAME, this.userName, userName);
+            String oldName = this.userName;
+            fireVetoablePropertyChange(PROPERTY_USER_NAME, oldName, userName);
             this.userName = userName;
+            firePropertyChange(PROPERTY_USER_NAME, oldName, userName);
         } catch (PropertyVetoException ex) { }
         
     }
@@ -78,8 +83,10 @@ public class LocalUserObjectLight implements Comparable<LocalUserObjectLight> {
 
     public void setFirstName(String firstName) {
         try {
-            firePropertyChange(PROPERTY_FIRST_NAME, this.firstName, firstName);
+            String oldFirstName = this.firstName; 
+            fireVetoablePropertyChange(PROPERTY_FIRST_NAME, oldFirstName, firstName);
             this.firstName = firstName;
+            firePropertyChange(PROPERTY_FIRST_NAME, oldFirstName, firstName);
         } catch (PropertyVetoException ex) { }
         
     }
@@ -90,8 +97,10 @@ public class LocalUserObjectLight implements Comparable<LocalUserObjectLight> {
 
     public void setLastName(String lastName) {
         try {
-            firePropertyChange(PROPERTY_LAST_NAME, this.lastName, lastName);
+            String oldLastName = this.lastName;
+            fireVetoablePropertyChange(PROPERTY_LAST_NAME, oldLastName, lastName);
             this.lastName = lastName;
+            firePropertyChange(PROPERTY_LAST_NAME, oldLastName, lastName);
         } catch (PropertyVetoException ex) { }
     }
 
@@ -101,8 +110,10 @@ public class LocalUserObjectLight implements Comparable<LocalUserObjectLight> {
 
     public void setType(int type) {
         try {
-            firePropertyChange(PROPERTY_TYPE, this.type, type);
+            int oldType = this.type;
+            fireVetoablePropertyChange(PROPERTY_TYPE, oldType, type);
             this.type = type;
+            firePropertyChange(PROPERTY_TYPE, oldType, type);
         } catch (PropertyVetoException ex) { }
     }
 
@@ -112,26 +123,42 @@ public class LocalUserObjectLight implements Comparable<LocalUserObjectLight> {
 
     public void setEnabled(boolean enabled) {
         try {
-            firePropertyChange(PROPERTY_ENABLED, this.enabled, enabled);
+            boolean oldEnabled = this.enabled;
+            fireVetoablePropertyChange(PROPERTY_ENABLED, oldEnabled, enabled);
             this.enabled = enabled;
+            firePropertyChange(PROPERTY_ENABLED, oldEnabled, enabled);
         } catch (PropertyVetoException ex) { }
     }
     
-    public void addPropertyChangeListener(VetoableChangeListener listener) {
-        changeListeners.add(listener);
+    public void addVetoablePropertyChangeListener(VetoableChangeListener listener) {
+        vetoableChangeListeners.add(listener);
     }
     
-    public void removePropertyChangeListener(VetoableChangeListener listener) {
-        changeListeners.remove(listener);
+    public void removeVetoablePropertyChangeListener(VetoableChangeListener listener) {
+        vetoableChangeListeners.remove(listener);
     }
     
-    public void removeAllPropertyChangeListeners() {
-        changeListeners.clear();
+    public void addNonVetoablePropertyChangeListener(PropertyChangeListener listener) {
+        nonVetoableChangeListeners.add(listener);
+    }
+    
+    public void removeNonVetoablePropertyChangeListener(PropertyChangeListener listener) {
+        nonVetoableChangeListeners.remove(listener);
+    }
+    
+    public void removeAllChangeListeners() {
+        vetoableChangeListeners.clear();
+        nonVetoableChangeListeners.clear();
+    }
+    
+    public void fireVetoablePropertyChange(String propertyName, Object oldValue, Object newValue) throws PropertyVetoException {
+        for (VetoableChangeListener listener : vetoableChangeListeners)
+            listener.vetoableChange(new PropertyChangeEvent(this, propertyName, oldValue, newValue));
     }
     
     public void firePropertyChange(String propertyName, Object oldValue, Object newValue) throws PropertyVetoException {
-        for (VetoableChangeListener listener : changeListeners)
-            listener.vetoableChange(new PropertyChangeEvent(this, propertyName, oldValue, newValue));
+        for (PropertyChangeListener listener : nonVetoableChangeListeners)
+            listener.propertyChange(new PropertyChangeEvent(this, propertyName, oldValue, newValue));
     }
     
     @Override

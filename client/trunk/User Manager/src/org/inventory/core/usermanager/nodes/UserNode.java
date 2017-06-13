@@ -17,8 +17,7 @@
 package org.inventory.core.usermanager.nodes;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyVetoException;
-import java.beans.VetoableChangeListener;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import javax.swing.Action;
 import org.inventory.communications.core.LocalUserObject;
@@ -39,14 +38,15 @@ import org.openide.util.lookup.Lookups;
  * A node representing an application user
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class UserNode extends AbstractNode implements VetoableChangeListener {
+public class UserNode extends AbstractNode implements PropertyChangeListener {
 
     public static final String ICON_PATH="org/inventory/core/usermanager/res/user.png"; //NOI18N
     
     public UserNode(LocalUserObject user) {
         super(Children.LEAF, Lookups.singleton(user));
         setIconBaseWithExtension(ICON_PATH);
-        user.addPropertyChangeListener(this);
+        user.addNonVetoablePropertyChangeListener(this);
+        user.addVetoablePropertyChangeListener(UserNodePropertyChangeListener.getInstance());
     }
     
     @Override
@@ -78,7 +78,7 @@ public class UserNode extends AbstractNode implements VetoableChangeListener {
     
     @Override
     public void destroy() throws IOException {
-        getLookup().lookup(LocalUserObject.class).removeAllPropertyChangeListeners();
+        getLookup().lookup(LocalUserObject.class).removeAllChangeListeners();
         super.destroy();
     }
     
@@ -87,8 +87,6 @@ public class UserNode extends AbstractNode implements VetoableChangeListener {
         Sheet sheet = Sheet.createDefault();
         Sheet.Set defaultSet = Sheet.createPropertiesSet();
         LocalUserObject user = getLookup().lookup(LocalUserObject.class);
-        
-        user.addPropertyChangeListener(UserNodePropertyChangeListener.getInstance());
         
         PropertyUserName prpName = new PropertyUserName(user);
         PropertyUserPassword prpPassword = new PropertyUserPassword(user);
@@ -120,10 +118,14 @@ public class UserNode extends AbstractNode implements VetoableChangeListener {
     }
 
     @Override
-    public void vetoableChange(PropertyChangeEvent evt) throws PropertyVetoException {
-        if (evt.getPropertyName().equals("username")) {//NOI18N
-            fireDisplayNameChange((String)evt.getOldValue(), (String)evt.getNewValue());
-            firePropertyChange("username", evt.getOldValue(), evt.getNewValue());
+    public void propertyChange(PropertyChangeEvent evt) {
+        switch (evt.getPropertyName()) {
+            case "username": //NOI18N
+                firePropertyChange("username", evt.getOldValue(), evt.getNewValue());  //NOI18N
+            case "firstName": //NOI18N
+            case "lastName": //NOI18N
+                fireDisplayNameChange((String)evt.getOldValue(), (String)evt.getNewValue());
+                break;
         }
     }
 }

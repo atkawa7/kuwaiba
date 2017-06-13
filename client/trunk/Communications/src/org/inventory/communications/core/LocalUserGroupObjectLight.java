@@ -17,6 +17,7 @@
 package org.inventory.communications.core;
 
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeListener;
 import java.util.ArrayList;
@@ -35,19 +36,21 @@ public class LocalUserGroupObjectLight implements Comparable<LocalUserGroupObjec
     public static final String PROPERTY_DESCRIPTION = "description";
     public static final String PROPERTY_CREATION_DATE = "creationDate";
     
-    protected  long id;
-    protected  String name;
+    protected long id;
+    protected String name;
     protected String description;
     protected Date creationDate;
     
-    protected List<VetoableChangeListener> changeListeners;
+    protected List<VetoableChangeListener> vetoableChangeListeners;
+    protected List<PropertyChangeListener> nonVetoableChangeListeners;
 
     public LocalUserGroupObjectLight(GroupInfoLight group){
         this.id = group.getId();
         this.name = group.getName();
         this.description = group.getDescription();
         this.creationDate = new Date(group.getCreationDate());
-        this.changeListeners = new ArrayList<>();
+        this.vetoableChangeListeners = new ArrayList<>();
+        this.nonVetoableChangeListeners = new ArrayList<>();
     }
 
     public long getId() {
@@ -60,8 +63,10 @@ public class LocalUserGroupObjectLight implements Comparable<LocalUserGroupObjec
     
     public void setName(String newName) {
         try {
-            firePropertyChange(PROPERTY_NAME, this.name, newName);
+            String oldName = this.name;
+            fireVetoablePropertyChange(PROPERTY_NAME, oldName, newName);
             this.name = newName;
+            firePropertyChange(PROPERTY_NAME, oldName, newName);
         } catch (PropertyVetoException e) { }
     }
     
@@ -75,26 +80,42 @@ public class LocalUserGroupObjectLight implements Comparable<LocalUserGroupObjec
 
     public void setDescription(String newDescription) {
         try {
-            firePropertyChange(PROPERTY_DESCRIPTION, this.description, newDescription);
+            String oldDescription = this.description;
+            fireVetoablePropertyChange(PROPERTY_DESCRIPTION, oldDescription, newDescription);
             this.description = newDescription;
+            firePropertyChange(PROPERTY_DESCRIPTION, oldDescription, newDescription);
         } catch (PropertyVetoException e) {}
     }
     
-    public void addPropertyChangeListener(VetoableChangeListener listener) {
-        changeListeners.add(listener);
+    public void addVetoablePropertyChangeListener(VetoableChangeListener listener) {
+        vetoableChangeListeners.add(listener);
     }
     
-    public void removePropertyChangeListener(VetoableChangeListener listener) {
-        changeListeners.remove(listener);
+    public void removeVetoablePropertyChangeListener(VetoableChangeListener listener) {
+        vetoableChangeListeners.remove(listener);
+    }
+    
+    public void addNonVetoablePropertyChangeListener(PropertyChangeListener listener) {
+        nonVetoableChangeListeners.add(listener);
+    }
+    
+    public void removeNonVetoablePropertyChangeListener(PropertyChangeListener listener) {
+        nonVetoableChangeListeners.remove(listener);
     }
     
     public void removeAllPropertyChangeListeners() {
-        changeListeners.clear();
+        vetoableChangeListeners.clear();
+        nonVetoableChangeListeners.clear();
+    }
+    
+    public void fireVetoablePropertyChange(String propertyName, Object oldValue, Object newValue) throws PropertyVetoException {
+        for (VetoableChangeListener listener : vetoableChangeListeners)
+            listener.vetoableChange(new PropertyChangeEvent(this, propertyName, oldValue, newValue));
     }
     
     public void firePropertyChange(String propertyName, Object oldValue, Object newValue) throws PropertyVetoException {
-        for (VetoableChangeListener listener : changeListeners)
-            listener.vetoableChange(new PropertyChangeEvent(this, propertyName, oldValue, newValue));
+        for (PropertyChangeListener listener : nonVetoableChangeListeners)
+            listener.propertyChange(new PropertyChangeEvent(this, propertyName, oldValue, newValue));
     }
     
     @Override
