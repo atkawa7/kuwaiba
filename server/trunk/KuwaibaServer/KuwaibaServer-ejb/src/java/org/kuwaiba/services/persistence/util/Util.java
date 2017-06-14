@@ -398,7 +398,7 @@ public class Util {
         attribute.setVisible((Boolean)attributeNode.getProperty(Constants.PROPERTY_VISIBLE));
         attribute.setAdministrative((Boolean)attributeNode.getProperty(Constants.PROPERTY_ADMINISTRATIVE));
         attribute.setNoCopy((Boolean)attributeNode.getProperty(Constants.PROPERTY_NO_COPY));
-        attribute.setMandatory((Boolean)attributeNode.getProperty(Constants.PROPERTY_MANDATORY));
+        attribute.setMandatory(attributeNode.hasProperty(Constants.PROPERTY_MANDATORY) ? (Boolean)attributeNode.getProperty(Constants.PROPERTY_MANDATORY) : false );
         attribute.setUnique((Boolean)attributeNode.getProperty(Constants.PROPERTY_UNIQUE));
         attribute.setId(attributeNode.getId());
 
@@ -968,8 +968,7 @@ public class Util {
      * 
      * @param classNode
      * @param oldAttributeName
-     * @param newAttributeName
-     * @throws InvalidArgumentException 
+     * @param newAttributeName 
      */
     public static void changeAttributeName(Node classNode, String oldAttributeName, String newAttributeName) {
         final TraversalDescription UPDATE_TRAVERSAL = classNode.getGraphDatabase().traversalDescription().
@@ -1039,13 +1038,21 @@ public class Util {
     /**
      * Creates a new log entry upon an action performed by an user. Transactions are not managed here
      * @param object The object that was affected by the action. Provide the db's root node if it's a general activity log entry (that is, it's not related to any specific object)
-     * @param user User that performed the action
-     * @param logEntry The information to be logged
+     * @param logRoot
+     * @param userName User that performed the action
+     * @param type
+     * @param timestamp
+     * @param notes
+     * @param oldValue
+     * @param newValue
+     * @param affectedProperty
+     * @return 
      * @throws ApplicationObjectNotFoundException If the user or the root of all log entries can't be found
      */
     public static Node createActivityLogEntry(Node object, Node logRoot, String userName, 
-            int type, long timestamp, String affectedProperty, String oldValue, String newValue, String notes) throws ApplicationObjectNotFoundException {
-        
+            int type, long timestamp, String affectedProperty, String oldValue, String newValue, String notes) 
+            throws ApplicationObjectNotFoundException
+    {
         Node userNode = logRoot.getGraphDatabase().index().forNodes(Constants.INDEX_USERS).get(Constants.PROPERTY_NAME, userName).getSingle();
         
         if (userNode == null)

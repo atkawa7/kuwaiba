@@ -81,7 +81,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
      * Constructor
      * Get the a database connection and indexes from the connection manager.
      * @param cmn
-     * @param bem
      */
     public MetadataEntityManagerImpl(ConnectionManager cmn) {
         this();
@@ -184,7 +183,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         newAttrNode.setProperty(Constants.PROPERTY_ADMINISTRATIVE, parentAttrNode.getProperty(Constants.PROPERTY_ADMINISTRATIVE));
                         newAttrNode.setProperty(Constants.PROPERTY_NO_COPY, parentAttrNode.getProperty(Constants.PROPERTY_NO_COPY));
                         newAttrNode.setProperty(Constants.PROPERTY_UNIQUE, parentAttrNode.getProperty(Constants.PROPERTY_UNIQUE));
-                        newAttrNode.setProperty(Constants.PROPERTY_MANDATORY, parentAttrNode.getProperty(Constants.PROPERTY_MANDATORY));
+                        newAttrNode.setProperty(Constants.PROPERTY_MANDATORY, parentNode.hasProperty(Constants.PROPERTY_MANDATORY) ?
+                                parentAttrNode.getProperty(Constants.PROPERTY_MANDATORY) : false);
                         //newAttrNode.setProperty(PROPERTY_LOCKED, parentAttrNode.getProperty(PROPERTY_LOCKED));
                         classNode.createRelationshipTo(newAttrNode, RelTypes.HAS_ATTRIBUTE);
                     }
@@ -714,7 +714,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                                 Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MANDATORY, newAttributeDefinition.isMandatory());
                             else
                                 throw new InvalidArgumentException(
-                                    String.format("In order to mark Attribute \"%s\" as mandatory it is necessary to set a value in every created object(s) of this class and it's subclasses", currentAttributeName));
+                                    String.format("In order to mark Attribute \"%s\" as mandatory it is necessary to set a value for this attribute in every created object(s) of this class and its subclasses", currentAttributeName));
                         }
                         else
                             Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MANDATORY, newAttributeDefinition.isMandatory());
@@ -784,7 +784,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                                 Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MANDATORY, newAttributeDefinition.isMandatory());
                             else
                                 throw new InvalidArgumentException(
-                                    String.format("In order to mark Attribute \"%s\" as mandatory, it is necessary to set a value in every created object(s) of this class and it's subclasses", currentAttributeName));
+                                    String.format("In order to mark Attribute \"%s\" as mandatory, it is necessary to set a value for this attribute in every created object(s) of this class and its subclasses", currentAttributeName));
                         }
                         else
                             Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MANDATORY, newAttributeDefinition.isMandatory());
@@ -1193,8 +1193,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             String attributeName) 
             throws MetadataObjectNotFoundException, InvalidArgumentException
     {
-        List<ClassMetadataLight> cml = new ArrayList<>();
-        
         Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
         String attributeType = Util.createClassMetadataFromNode(classNode).getAttribute(attributeName).getType();
         if (classNode == null)
@@ -1219,6 +1217,14 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         return true;
     }
     
+    /**
+     * Checks if an object has value in a given attribute
+     * @param classNode th class node
+     * @param attributeName name of the attribute
+     * @param attributeType type of the attribute
+     * @return true if the given attribute has a value
+     * @throws InvalidArgumentException 
+     */
     private boolean objectsHasAttribute(Node classNode, String attributeName, String attributeType) throws InvalidArgumentException{
         
         boolean everyObjectHasValue = true;
@@ -1239,7 +1245,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 while(relationships.hasNext()){
                     Relationship relationship = relationships.next();
                     if (!relationship.hasProperty(Constants.PROPERTY_NAME))
-                        throw new InvalidArgumentException(String.format("The object with id %s is malformed", objectNode.getId()));
+                        throw new InvalidArgumentException(String.format("(Mandatory Attribute Missing) The object with id %s is malformed", objectNode.getId()));
                     
                     if (attributeName.equals((String)relationship.getProperty(Constants.PROPERTY_NAME)))
                         everyObjectHasValue = true;
