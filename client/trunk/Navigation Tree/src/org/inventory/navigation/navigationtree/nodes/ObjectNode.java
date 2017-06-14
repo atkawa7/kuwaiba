@@ -56,7 +56,6 @@ import org.openide.nodes.NodeTransfer;
 import org.openide.nodes.PropertySupport;
 import org.openide.nodes.Sheet;
 import org.openide.nodes.Sheet.Set;
-import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.WeakListeners;
 import org.openide.util.actions.SystemAction;
@@ -120,7 +119,6 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
     @Override
     protected Sheet createSheet() {
         sheet = Sheet.createDefault();
-        String mandatory = " *";
         Set generalPropertySet = Sheet.createPropertiesSet(); //General attributes category
         
         LocalObjectLight object = getObject();
@@ -147,7 +145,8 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
                     case Constants.MAPPING_TIMESTAMP:
                     case Constants.MAPPING_DATE:
                         property = new DateTypeProperty((Date)lo.getAttribute(lam.getName()) , 
-                                lam.getName(), Date.class, (lam.isMandatory() ? "\u002A" : "")+lam.getDisplayName(), lam.getDescription(), this);
+                                lam.getName(), Date.class, (lam.isMandatory() ? "\u002A" : "")+lam.getDisplayName(), //this mark the mandatory attributes with a *
+                                lam.getDescription(), this);
                         break;
                     case Constants.MAPPING_PRIMITIVE:
                     //Those attributes that are not multiple, but reference another object
@@ -156,7 +155,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
                             property = new NativeTypeProperty(
                                     lam.getName(),
                                     lam.getType(),
-                                    (lam.isMandatory() ? "\u002A" : "")+(lam.getDisplayName().isEmpty() ? lam.getName() : lam.getDisplayName()),
+                                    (lam.isMandatory() ? "\u002A" : "")+(lam.getDisplayName().isEmpty() ? lam.getName() : lam.getDisplayName()), //this mark the mandatory attributes with a *
                                     lam.getDescription(), this, lo.getAttribute(lam.getName()));
                         }
                         break;
@@ -180,7 +179,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
                         }
                         property = new ListTypeProperty(
                                 lam.getName(),
-                                (lam.isMandatory() ? "*" : "")+lam.getDisplayName(),
+                                (lam.isMandatory() ? "\u002A" : "")+lam.getDisplayName(),//this mark the mandatory attributes with a *
                                 lam.getDescription(),
                                 list,
                                 this,
