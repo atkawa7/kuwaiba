@@ -36,7 +36,7 @@ public class ListAttributeMetadataProperty extends PropertyEditorSupport{
         com = CommunicationsStub.getInstance();
         List<LocalClassMetadataLight> instanceableListTypes = com.getInstanceableListTypes();
         
-        this.attributeTypeslist = new ArrayList<String>();
+        this.attributeTypeslist = new ArrayList<>();
         //Primitive types
         this.attributeTypeslist.addAll(Arrays.asList(Constants.ATTRIBUTE_TYPES));
         

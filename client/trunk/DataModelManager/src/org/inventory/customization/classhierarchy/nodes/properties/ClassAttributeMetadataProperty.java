@@ -31,7 +31,9 @@ public class ClassAttributeMetadataProperty extends PropertySupport.ReadWrite {
     private LocalAttributeMetadata attributeMetadata;
     
     public ClassAttributeMetadataProperty(LocalAttributeMetadata attributeMetadata, ClassMetadataNode classNode) {
-        super(attributeMetadata.getName(), String.class, attributeMetadata.getName(), "Click the button to edit");
+        super(attributeMetadata.getName(), String.class, 
+                (attributeMetadata.isMandatory() ? "\u002A" : "") + attributeMetadata.getName(), //this mark the mandatory attributes with a *
+                "Click the button to edit");
         this.attributeMetadata = attributeMetadata;
         this.classNode = classNode;
     }
