@@ -1,6 +1,6 @@
 /**
- * Show case how to create different types of charts
- * Neotropic SAS - version 1.1.1
+ * Showcase how to create different types of charts
+ * Neotropic SAS - version 1.0
  * Parameters: None
  */
 import org.neo4j.graphdb.Direction;
@@ -12,7 +12,7 @@ import com.neotropic.kuwaiba.modules.reporting.javascript.DataTable.DataType;
 import com.neotropic.kuwaiba.modules.reporting.javascript.wrappers.googlecharts.ChartsFactory;
 import com.neotropic.kuwaiba.modules.reporting.javascript.wrappers.googlecharts.ChartsFactory.ChartType;
 
-def report = new HTMLReport("Sample Pie Chart", "Neotropic SAS", "1.1");
+def report = new HTMLReport("Sample Report with Charts", "Neotropic SAS", "1.0");
 
 def dataTable = new DataTable([DataType.STRING, DataType.NUMBER] as DataType[], ["Column 1", "Column 2"] as String[]);
 dataTable.addRow(["Row 1", "20"] as String[]);

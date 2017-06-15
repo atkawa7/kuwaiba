@@ -140,7 +140,6 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
             if (lam.isVisible()) {
                 PropertySupport.ReadWrite property = null;
                 int mapping = lam.getMapping();
-                String x = lam.isMandatory() ? "" : "*";
                 switch (mapping) {
                     case Constants.MAPPING_TIMESTAMP:
                     case Constants.MAPPING_DATE:
@@ -184,10 +183,6 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
                                 list,
                                 this,
                                 val);
-                        break;
-                    case Constants.MAPPING_MANYTOMANY:
-                        property = new NativeTypeProperty(lam.getName(), String.class,
-                                lam.getDisplayName(), "", this, lo.getAttribute(lam.getName()));
                         break;
                     default:
                         NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, "Mapping not supported");
