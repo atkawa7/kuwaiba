@@ -30,8 +30,7 @@ import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 public interface MetadataEntityManager {
 
     /**
-     * Creates a class metadata with its:
-     * attributes(some new attributes and others extedended from the parent).
+     * Creates a class metadata with its attributes (some new and others inherited from the parent class).
      * @param classDefinition the class definition, name, display name, etc
      * @return the Id of the newClassMetadata
      * @throws MetadataObjectNotFoundException if the specified parent class doesn't exist
@@ -58,7 +57,7 @@ public interface MetadataEntityManager {
      * Deletes a class metadata, its attributes and category relationships
      * @param className the class name
      * @throws MetadataObjectNotFoundException if there is not a class with de ClassName
-     * @throws InvalidArgumentException If the class is a core class, has instances or has incoming relationships.
+     * @throws InvalidArgumentException If the class is a core class, has instances, has incoming relationships or is a list type that is used by another class.
      */
     public void deleteClass(String className) 
             throws MetadataObjectNotFoundException, InvalidArgumentException;
@@ -67,7 +66,7 @@ public interface MetadataEntityManager {
      * Deletes a class metadata, its attributes and category relationships
      * @param classId the class id
      * @throws MetadataObjectNotFoundException if there is not a class with de ClassName
-     * @throws InvalidArgumentException If the class is a core class, has instances or has incoming relationships.
+     * @throws InvalidArgumentException If the class is a core class, has instances, has incoming relationships or is a list type that is used by another class.
      */
     public void deleteClass(long classId) 
             throws MetadataObjectNotFoundException, InvalidArgumentException;
@@ -232,18 +231,36 @@ public interface MetadataEntityManager {
      * @throws MetadataObjectNotFoundException If the class can not be found.
      */
     public List<ClassMetadataLight> getPossibleChildren(String parentClassName) throws MetadataObjectNotFoundException;
+    
+    /**
+     * Gets all classes whose instances can be contained into the given parent class, but using a CHILD_OF_SPECIAL relationship instead of a CHILD_OF one. This is mostly used in complex models, such as the physical layer model. This method
+     * is recursive, so the result include the possible children in children classes
+     * @param parentClassName The name of the class.
+     * @return An array with the list of direct possible children classes in the containment hierarchy.
+     * @throws MetadataObjectNotFoundException If the class can not be found.
+     */
+    public List<ClassMetadataLight> getPossibleSpecialChildren(String parentClassName) throws MetadataObjectNotFoundException;
 
     /**
-     * Same as getPossibleChildren but this one only gets the possible children for the given class,
+     * Same as getPossibleChildren but this one only gets the direct possible children for the given class,
      * this is, subclasses are not included
      * @param parentClassName The name of the class.
      * @return An array with the list of possible children classes in the containment hierarchy, including the subclasses of the abstract classes.
      * @throws MetadataObjectNotFoundException If the class could not be found.
      */
     public List<ClassMetadataLight> getPossibleChildrenNoRecursive(String parentClassName) throws MetadataObjectNotFoundException;
+    
+    /**
+     * Same as getPossibleSpecialChildren but this one only gets the direct special possible children for the given class,
+     * this is, subclasses are not included
+     * @param parentClassName The name of the class.
+     * @return An array with the list of possible children classes in the containment hierarchy, including the subclasses of the abstract classes.
+     * @throws MetadataObjectNotFoundException If the class could not be found.
+     */
+    public List<ClassMetadataLight> getPossibleSpecialChildrenNoRecursive(String parentClassName) throws MetadataObjectNotFoundException;
 
     /**
-     * Adds to a given class a list of possible children classes whose instances can be contained
+     * Adds to a given class a list of possible children classes whose instances can be contained using the class id to find the parent class
      *
      * @param parentClassId Id of the class whose instances can contain the instances of the classes in possibleChildren. Use -1 to refer to the DummyRoot
      * @param possibleChildren ids of the candidates to be contained
@@ -251,6 +268,15 @@ public interface MetadataEntityManager {
      * @throws InvalidArgumentException If any of the possible children classes already are possible children.
      */
     public void addPossibleChildren(long parentClassId, long[] possibleChildren) throws MetadataObjectNotFoundException, InvalidArgumentException;
+    /**
+     * Adds to a given class a list of possible special children classes whose instances can be contained using the class id to find the parent class
+     *
+     * @param parentClassId Id of the class whose instances can contain the instances of the classes in possibleChildren. Use -1 to refer to the DummyRoot
+     * @param possibleSpecialChildren ids of the candidates to be contained
+     * @throws MetadataObjectNotFoundException if any of the possible children or the parent doesn't exist
+     * @throws InvalidArgumentException If any of the possible children classes already are possible special children.
+     */
+    public void addPossibleSpecialChildren(long parentClassId, long[] possibleSpecialChildren) throws MetadataObjectNotFoundException, InvalidArgumentException;
     /**
      * Adds to a given class a list of possible children classes whose instances can be contained using the class name to find the parent class
      * @param parentClassName parent class name. Use DummyRoot for the Navigation Tree root
@@ -260,6 +286,14 @@ public interface MetadataEntityManager {
      */
     public void addPossibleChildren(String parentClassName, String[] possibleChildren) throws MetadataObjectNotFoundException, InvalidArgumentException;
     /**
+     * Adds to a given class a list of possible special children classes whose instances can be contained, using the class name to find the parent class
+     * @param parentClassName parent class name. Use DummyRoot for the Navigation Tree root
+     * @param possibleSpecialChildren list of possible children
+     * @throws MetadataObjectNotFoundException if the parent class or any of the possible children can not be found
+     * @throws InvalidArgumentException if any of the given possible children can not be a possible children of parentClassName
+     */
+    public void addPossibleSpecialChildren(String parentClassName, String[] possibleSpecialChildren) throws MetadataObjectNotFoundException, InvalidArgumentException;
+    /**
      * The opposite of addPossibleChildren. It removes the given possible children
      * TODO: Make this method safe. This is, check if there's already intances of the given
      * "children to be deleted" with parentClass as their parent
@@ -268,7 +302,13 @@ public interface MetadataEntityManager {
      * @throws MetadataObjectNotFoundException If any of the ids provided can't be found
      */
     public void removePossibleChildren(long parentClassId, long[] childrenToBeRemoved) throws MetadataObjectNotFoundException;
-    
+    /**
+     * The opposite of addPossibleSpecialChildren. It removes the given possible special children
+     * @param parentClassId Id of the class whos instances can contain the instances of the next param
+     * @param childrenToBeRemoved ids of the candidates to be deleted
+     * @throws MetadataObjectNotFoundException If any of the ids provided can't be found
+     */
+    public void removePossibleSpecialChildren(long parentClassId, long[] childrenToBeRemoved) throws MetadataObjectNotFoundException;
     /**
      * Sets the display name of a special relationship used in a model
      * @param relationshipName The name of the relationship the display name is going to be set
@@ -291,10 +331,19 @@ public interface MetadataEntityManager {
     /**
      * Get the upstream containment hierarchy for a given class, unlike getPossibleChildren (which will give you the 
      * downstream hierarchy).
-     * @param className
+     * @param className Class name
      * @param recursive Get only the direct possible parents, or go up into the <strong>containment</strong> hierarchy. Beware: don't mistake the class hierarchy for the containment one
-     * @return An ordered list with the . Repeated elements are omitted
+     * @return An sorted list with the upstream containment hierarchy. Repeated elements are omitted
      * @throws MetadataObjectNotFoundException if className does not correspond to any existing class
      */
     public List<ClassMetadataLight> getUpstreamContainmentHierarchy(String className, boolean recursive) throws MetadataObjectNotFoundException;
+    /**
+     * Get the upstream special containment hierarchy for a given class, unlike getPossibleChildren (which will give you the 
+     * downstream hierarchy).
+     * @param className Class name
+     * @param recursive Get only the direct possible parents, or go up into the <strong>containment</strong> hierarchy. Beware: don't mistake the class hierarchy for the containment one
+     * @return An sorted list with the special upstream containment hierarchy. Repeated elements are omitted
+     * @throws MetadataObjectNotFoundException if className does not correspond to any existing class
+     */
+    public List<ClassMetadataLight> getUpstreamSpecialContainmentHierarchy(String className, boolean recursive) throws MetadataObjectNotFoundException;
 }

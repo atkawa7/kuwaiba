@@ -35,6 +35,7 @@ public enum RelTypes implements RelationshipType {
     BELONGS_TO_GROUP, //Used to associate a user to a group (group of user)
     OWNS_QUERY, //Used to asociate a user to a query
     POSSIBLE_CHILD, //Used to build the containment hierarchy
+    POSSIBLE_SPECIAL_CHILD, //Used to build the containment hierarchy for special models
     HAS_VIEW, //Used to link an object to a particular view
     HAS_HISTORY_ENTRY, //Used to link an object to a particular historic entry
     RELATED_TO_SPECIAL, //Used to implement relationships for domain specific models

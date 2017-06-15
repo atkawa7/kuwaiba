@@ -47,6 +47,10 @@ public class CacheManager {
      */
     private HashMap<String, List<String>> possibleChildrenIndex;
     /**
+     * Possible special children index. The key is the class, the value its possible special children. Note that a blank key ("") represents the navigation tree root. The only difference with the possibleChildrenIndex, is that the relationship used to link the parent object with its children is CHILD_OF_SPECIAL
+     */
+    private HashMap<String, List<String>> possibleSpecialChildrenIndex;
+    /**
      * Users index. It is used to ease the username uniqueness validation
      */
     private HashMap<String, UserProfile> userIndex;
@@ -61,6 +65,7 @@ public class CacheManager {
         userIndex = new HashMap<>();
         groupIndex = new HashMap<>();
         possibleChildrenIndex = new HashMap<>();
+        possibleSpecialChildrenIndex = new HashMap<>();
         listTypeIndex = new HashMap<>();
     }
 
@@ -103,6 +108,15 @@ public class CacheManager {
     public void putPossibleChildren(String parent, List<String>children){
         possibleChildrenIndex.put(parent, children);
     }
+    
+    /**
+     * Adds an entry to the possible special children index
+     * @param parent The parent class
+     * @param children the list of possible special children classes
+     */
+    public void putPossibleSpecialChildren(String parent, List<String>children){
+        possibleSpecialChildrenIndex.put(parent, children);
+    }
 
     /**
      * Adds an entry to the possible children index
@@ -114,9 +128,26 @@ public class CacheManager {
         if (myList != null)
             myList.add(child);
     }
+    
+    /**
+     * Adds a single entry to the possible special children index
+     * @param parent
+     * @param child
+     */
+    public void putPossibleSpecialChild(String parent, String child){
+        List<String> myList = possibleSpecialChildrenIndex.get(parent);
+        if (myList != null)
+            myList.add(child);
+    }
 
     public void removePossibleChild(String parent, String child){
         List<String> myList = possibleChildrenIndex.get(parent);
+        if (myList != null)
+            myList.remove(child);
+    }
+    
+    public void removePossibleSpecialChild(String parent, String child){
+        List<String> myList = possibleSpecialChildrenIndex.get(parent);
         if (myList != null)
             myList.remove(child);
     }
@@ -127,9 +158,16 @@ public class CacheManager {
         return possibleChildrenIndex.get(parent);
     }
     
+    public List<String> getPossibleSpecialChildren(String parent){
+        if (parent == null) //Should not happen
+            return possibleSpecialChildrenIndex.get(Constants.NODE_DUMMYROOT);
+        return possibleSpecialChildrenIndex.get(parent);
+    }
+    
     public void clearClassCache(){
         classIndex.clear();
         possibleChildrenIndex.clear();
+        possibleSpecialChildrenIndex.clear();
     }
 
     /**
@@ -209,11 +247,12 @@ public class CacheManager {
     /**
      * Clear the cache
      */
-    public void clear() {
+    public void clearAll() {
         classIndex.clear();
         userIndex.clear();
         groupIndex.clear();
         possibleChildrenIndex.clear();
+        possibleSpecialChildrenIndex.clear();
         listTypeIndex.clear();
     }
 
@@ -264,6 +303,23 @@ public class CacheManager {
 
         for (String possibleChild : possibleChildren){
             if (possibleChild.equals(childToBeEvaluated))
+                return true;
+        }
+        return false;
+    }
+    
+    public boolean canBeSpecialChild(String allegedParent, String childToBeEvaluated) throws MetadataObjectNotFoundException{
+        List<String> possibleSpecialChildren;
+        if (allegedParent == null) //The navigation tree root
+            possibleSpecialChildren = possibleSpecialChildrenIndex.get("");
+        else
+            possibleSpecialChildren = possibleSpecialChildrenIndex.get(allegedParent);
+
+        if (possibleSpecialChildren == null)
+           throw new MetadataObjectNotFoundException(allegedParent);
+
+        for (String possibleSpecialChild : possibleSpecialChildren){
+            if (possibleSpecialChild.equals(childToBeEvaluated))
                 return true;
         }
         return false;
