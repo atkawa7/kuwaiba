@@ -96,13 +96,13 @@ public class ProjectsModule implements GenericCommercialModule {
      * Gets the Project root pool
      * @param className Project root pool class name
      * @return The Project root node
-     * @throws ServerSideException
+     * @throws InvalidArgumentException if the class provided is not subclass of Constants.CLASS_GENERICPROJECT
      * @throws MetadataObjectNotFoundException If <code>Constants.CLASS_GENERICPROJECT</code> is not a valid subclass of InventoryObject
      */
-    public RemotePool getProjectsRootPool(String className) throws ServerSideException, MetadataObjectNotFoundException {
+    public RemotePool getProjectsRootPool(String className) throws MetadataObjectNotFoundException, InvalidArgumentException {
         
         if (!mem.isSubClass(Constants.CLASS_GENERICPROJECT, className))
-            throw new ServerSideException(String.format("Class %s is not a project", className));
+            throw new InvalidArgumentException(String.format("Class %s is not a project", className));
         
         List<Pool> projectRootPools = aem.getRootPools(Constants.CLASS_GENERICPROJECT, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
         
@@ -113,6 +113,7 @@ public class ProjectsModule implements GenericCommercialModule {
         }
         if (projectRootPools.size() == 1)
             return new RemotePool(projectRootPools.get(0));
+        
         return null;    
     }
     
@@ -386,7 +387,7 @@ public class ProjectsModule implements GenericCommercialModule {
         this.aem = aem;
         this.bem = bem;
         
-        this.mem.setSpecialRelationshipDisplayName(RELATIONSHIP_PROJECTSPROJECTHAS, "Project Has");
+        this.mem.setSpecialRelationshipDisplayName(RELATIONSHIP_PROJECTSPROJECTHAS, "Associated to this project");
     }
     
 }
