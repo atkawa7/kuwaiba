@@ -16,8 +16,13 @@
 package org.inventory.navigation.navigationtree.nodes.actions;
 
 import com.toedter.calendar.JDateChooser;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +35,9 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalAttributeMetadata;
 import org.inventory.communications.core.LocalClassMetadataLight;
@@ -53,6 +61,7 @@ public final class CreateBusinessObjectAction extends AbstractAction implements 
     
     private AbstractNode node;
     private CommunicationsStub com;
+    
 
     public CreateBusinessObjectAction(ObjectNode node) {
         putValue(NAME, "New");
@@ -68,50 +77,15 @@ public final class CreateBusinessObjectAction extends AbstractAction implements 
     
     @Override
     public void actionPerformed(ActionEvent ev) {
-        
-        LocalAttributeMetadata[] mandatoryObjectAttributes = com.getMandatoryObjectAttributes(((JMenuItem)ev.getSource()).getName());
-        HashMap<String, Object> attributes =  new HashMap<>();
-        
+        final LocalAttributeMetadata[] mandatoryObjectAttributes = com.getMandatoryObjectAttributes(((JMenuItem)ev.getSource()).getName());
+        HashMap<String, Object> attributes = new HashMap<>();
         if(mandatoryObjectAttributes.length > 0){
-            JComplexDialogPanel pnlMyDialog = createFields(mandatoryObjectAttributes);
-            
-            if(JOptionPane.showConfirmDialog(null,
-                pnlMyDialog,
-                "New Object",
-                JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION){
-                    
-                    for (LocalAttributeMetadata mandatoryObjectAttribute : mandatoryObjectAttributes) {
-                    
-                        if (pnlMyDialog.getComponent(mandatoryObjectAttribute.getName()) instanceof JComboBox)
-                            attributes.put(mandatoryObjectAttribute.getName(), String.valueOf(((LocalObjectListItem)((JComboBox)pnlMyDialog.getComponent(mandatoryObjectAttribute.getName())).getSelectedItem()).getId()));
-
-                        else {
-                                if (pnlMyDialog.getComponent(mandatoryObjectAttribute.getName())  instanceof JCheckBox)
-                                    attributes.put(mandatoryObjectAttribute.getName(), ((JCheckBox)pnlMyDialog.getComponent(mandatoryObjectAttribute.getName())).isSelected());
-                                else if (pnlMyDialog.getComponent(mandatoryObjectAttribute.getName()) instanceof JDateChooser)
-                                    attributes.put(mandatoryObjectAttribute.getName(), ((JDateChooser)pnlMyDialog.getComponent(mandatoryObjectAttribute.getName())).getDate());
-                                else
-                                    attributes.put(mandatoryObjectAttribute.getName(), ((JTextField)pnlMyDialog.getComponent(mandatoryObjectAttribute.getName())).getText());
-                            }
-                        }
-                    }
-        }
-        LocalObjectLight myLol = com.createObject(
-                    ((JMenuItem)ev.getSource()).getName(),
-                    node instanceof RootObjectNode ? null : ((ObjectNode)node).getObject().getClassName(),
-                    node instanceof RootObjectNode? -1 : ((ObjectNode)node).getObject().getOid(), attributes, 0);
-
-        if (myLol == null)
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
-        else {
-            if (node.getChildren() instanceof AbstractChildren) //Some nodes are 
-                //created on the fly and does not have children. For those cases, 
-                //let's avoid refreshing their children lists
-                ((AbstractChildren)node.getChildren()).addNotify();
-
-            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Element created successfully");
-        }
+            attributes = createNewObjectForm(mandatoryObjectAttributes);
+            if(!attributes.isEmpty()) //the createNewObject form is closed, and the ok button is never clicked 
+                createObject(((JMenuItem)ev.getSource()).getName(), attributes);
+        } 
+        else
+            createObject(((JMenuItem)ev.getSource()).getName(), attributes);
     }
 
     @Override
@@ -143,173 +117,231 @@ public final class CreateBusinessObjectAction extends AbstractAction implements 
         }
         return mnuPossibleChildren;
     }
+        
+    //helpers
+    /**
+     * Invokes the JOptionpane and also creates all the listeners for every field created
+     * @param mandatoryObjectAttributes the object's mandatory attributes
+     * @return the mandatory attributes with values, if the form is closed returns an empty HashMap
+     */
+    private HashMap<String, Object> createNewObjectForm(final LocalAttributeMetadata[] mandatoryObjectAttributes){
+        final HashMap<String, Object> attributes =  new HashMap<>();
+        final HashMap<String, Boolean> mandatoryAttrtsState =  new HashMap<>();
+        
+        for (LocalAttributeMetadata mandatoryObjectAttribute : mandatoryObjectAttributes){ 
+            //date and boolean has state non empty since the begining
+            if(mandatoryObjectAttribute.getType().equals(Boolean.class) || mandatoryObjectAttribute.getMapping() == Constants.MAPPING_DATE)
+                mandatoryAttrtsState.put(mandatoryObjectAttribute.getName(), true);
+            else
+                mandatoryAttrtsState.put(mandatoryObjectAttribute.getName(), false);
+        }
+        
+        if(mandatoryObjectAttributes.length > 0){
+            final JButton ok = new JButton("OK");
+            ok.setEnabled(false);
+            final JComplexDialogPanel pnlMyDialog = createFields(mandatoryObjectAttributes);
+            
+            ok.addActionListener(new ActionListener()
+            {
+                @Override
+                public void actionPerformed(ActionEvent e)
+                {   //Get the values from the form and asign values for every attribute
+                    for (LocalAttributeMetadata mandatoryObjectAttribute : mandatoryObjectAttributes) {
+                        if (pnlMyDialog.getComponent(mandatoryObjectAttribute.getName()) instanceof JComboBox)
+                            attributes.put(mandatoryObjectAttribute.getName(), String.valueOf(((LocalObjectListItem)((JComboBox)pnlMyDialog.getComponent(mandatoryObjectAttribute.getName())).getSelectedItem()).getId()));
+                        else {
+                                if (pnlMyDialog.getComponent(mandatoryObjectAttribute.getName())  instanceof JCheckBox)
+                                    attributes.put(mandatoryObjectAttribute.getName(), ((JCheckBox)pnlMyDialog.getComponent(mandatoryObjectAttribute.getName())).isSelected());
+                                else if (pnlMyDialog.getComponent(mandatoryObjectAttribute.getName()) instanceof JDateChooser)
+                                    attributes.put(mandatoryObjectAttribute.getName(), ((JDateChooser)pnlMyDialog.getComponent(mandatoryObjectAttribute.getName())).getDate());
+                                else
+                                    attributes.put(mandatoryObjectAttribute.getName(), ((JTextField)pnlMyDialog.getComponent(mandatoryObjectAttribute.getName())).getText());
+                            }
+                    }
+                    //close the dialog
+                    Window w = SwingUtilities.getWindowAncestor(ok);
+                    if(w != null) w.setVisible(false);
+                }
+            });
+            //creates a listener for every type of mandatory attribute in the form to check if they are not empty
+            for (LocalAttributeMetadata mandatoryObjectAttribute : mandatoryObjectAttributes){
+                JComponent component = pnlMyDialog.getComponent(mandatoryObjectAttribute.getName());
+                if(component instanceof JTextField){
+                    final JTextField field = (JTextField)component;
+                    //create listeners for numeric fields
+                    if(mandatoryObjectAttribute.getType().equals(Float.class) ||
+                                    mandatoryObjectAttribute.getType().equals(Integer.class) ||
+                                    mandatoryObjectAttribute.getType().equals(Long.class)){
+                        field.addKeyListener(new KeyListener() {
+                            protected void update() {
+                                boolean canSave = false;
+                                mandatoryAttrtsState.put(field.getName(), isNumeric(field.getText()));
+                                for (String name : mandatoryAttrtsState.keySet()){
+                                    if(!mandatoryAttrtsState.get(name)){
+                                        canSave = false;
+                                        break;
+                                    }
+                                    else
+                                        canSave = true;
+                                }
+                                ok.setEnabled(canSave);
+                            }
+                            String key = "";
+                            @Override
+                            public void keyTyped(KeyEvent e) {
+                                update();
+                            }
+
+                            @Override
+                            public void keyPressed(KeyEvent e) {
+                                update();
+                            }
+
+                            @Override
+                            public void keyReleased(KeyEvent e) {
+                                update();
+                            }
+                        });
+                    }
+                    //listeners for text fields
+                    field.getDocument().addDocumentListener(new DocumentListener() {
+                        protected void update() {
+                            boolean canSave = false;
+                            mandatoryAttrtsState.put(field.getName(), field.getText().length() > 0);
+                            for (String name : mandatoryAttrtsState.keySet()){
+                                if(!mandatoryAttrtsState.get(name)){
+                                    canSave = false;
+                                    break;
+                                }
+                                else
+                                    canSave = true;
+                            }
+                            ok.setEnabled(canSave);
+                        }
+                        @Override
+                        public void insertUpdate(DocumentEvent e) {
+                            update();
+                        }
+
+                        @Override
+                        public void removeUpdate(DocumentEvent e) {
+                            update();
+                        }
+
+                        @Override
+                        public void changedUpdate(DocumentEvent e) {
+                            update();
+                        }
+                    });
+                }
+                //create listeners for list fields
+                else if(component instanceof JComboBox){
+                    final JComboBox comboBox = (JComboBox)component;
+                    comboBox.addItemListener(new ItemListener() {
+
+                        @Override
+                        public void itemStateChanged(ItemEvent e) {
+                            boolean canSave = false;
+                            mandatoryAttrtsState.put(comboBox.getName(), ((LocalObjectListItem)e.getItem()).getId() != 0);
+                            for (String name : mandatoryAttrtsState.keySet()){
+                                if(!mandatoryAttrtsState.get(name)){
+                                    canSave = false;
+                                    break;
+                                }
+                                else
+                                    canSave = true;
+                            }
+                            ok.setEnabled(canSave);
+                        }
+                    });
+                }
+            }//end for
+            JOptionPane.showOptionDialog(null, pnlMyDialog, "New Object", JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, new JButton[]{ok}, ok);
+        }
+        return attributes;
+    }
     
-    private JComplexDialogPanel createFields(LocalAttributeMetadata[] mandatoryObjectAttributes) {
+    /**
+     * creates a field for every type of attribute
+     * @param mandatoryObjectAttributes the object's mandatory attributes
+     * @return the complex panel with all the mandatory fields
+     */
+    private JComplexDialogPanel createFields(LocalAttributeMetadata[] mandatoryObjectAttributes){
         String[]  labels = new String[mandatoryObjectAttributes.length];
         JComponent[] jComponents = new JComponent[mandatoryObjectAttributes.length];
         JComplexDialogPanel pnlMyDialog;
         
         for (int i = 0; i < mandatoryObjectAttributes.length; i++) {
-            if (mandatoryObjectAttributes[i].isMandatory()) {
-                labels[i] = mandatoryObjectAttributes[i].getName();
-                switch (mandatoryObjectAttributes[i].getMapping()) {
-                    case Constants.MAPPING_MANYTOONE:
-                        List<LocalObjectListItem> list = com.getList(mandatoryObjectAttributes[i].getListAttributeClassName(), true, false);
-                        if (list == null) {
-                            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
-                            return null;
-                        }
-                        LocalObjectListItem[] listType = list.toArray(new LocalObjectListItem[list.size()]);
-                        JComboBox<LocalObjectListItem> lstType = new JComboBox<>(listType);
-                        lstType.setName(labels[i]);
-                        jComponents[i] = lstType;
-                        break;
-                    case Constants.MAPPING_DATE:
-                        JDateChooser datePicker = new JDateChooser();
-                        datePicker.setDate(new Date());
-                        datePicker.setName(labels[i]);
-                        jComponents[i] = datePicker;
-                        break;
-                    case Constants.MAPPING_PRIMITIVE:
-                        if (mandatoryObjectAttributes[i].getType().equals(Boolean.class)){ //boolean fields
-                            JCheckBox checkBox = new JCheckBox();
-                            checkBox.setName(labels[i]);
-                            jComponents[i] = checkBox;
-                        }
-                        else {
-                            final JTextField attributeField = new JTextField();
-                            attributeField.setName(mandatoryObjectAttributes[i].getName());
+            labels[i] = mandatoryObjectAttributes[i].getName();
+            switch (mandatoryObjectAttributes[i].getMapping()) {
+                case Constants.MAPPING_MANYTOONE:
+                    List<LocalObjectListItem> list = com.getList(mandatoryObjectAttributes[i].getListAttributeClassName(), true, false);
+                    if (list == null) {
+                        NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+                        return null;
+                    }
+                    LocalObjectListItem[] listType = list.toArray(new LocalObjectListItem[list.size()]);
+                    JComboBox<LocalObjectListItem> lstType = new JComboBox<>(listType);
+                    lstType.setName(labels[i]);
+                    jComponents[i] = lstType;
+                    break;
+                case Constants.MAPPING_DATE:
+                    JDateChooser datePicker = new JDateChooser();
+                    datePicker.setDate(new Date());
+                    datePicker.setName(labels[i]);
+                    jComponents[i] = datePicker;
+                    break;
+                case Constants.MAPPING_PRIMITIVE:
+                    if (mandatoryObjectAttributes[i].getType().equals(Boolean.class)){ //boolean fields
+                        JCheckBox checkBox = new JCheckBox();
+                        checkBox.setName(labels[i]);
+                        jComponents[i] = checkBox;
+                    }
+                    else {
+                        final JTextField attributeField = new JTextField();
+                        attributeField.setName(mandatoryObjectAttributes[i].getName());
 
-                            if (mandatoryObjectAttributes[i].getType().equals(Float.class)
-                                    || mandatoryObjectAttributes[i].getType().equals(Integer.class)
-                                    || mandatoryObjectAttributes[i].getType().equals(Long.class)) {
-                                labels[i] = mandatoryObjectAttributes[i].getName() + "#";
-                            }
-                            jComponents[i] = attributeField;
+                        if (mandatoryObjectAttributes[i].getType().equals(Float.class)
+                                || mandatoryObjectAttributes[i].getType().equals(Integer.class)
+                                || mandatoryObjectAttributes[i].getType().equals(Long.class)) {
+                            labels[i] = mandatoryObjectAttributes[i].getName() + "#";
                         }
-                        break;
-                }//end switch
-            }//end for 
-        }
+                        jComponents[i] = attributeField;
+                    }
+                    break;
+            }//end switch
+        }//end for
         pnlMyDialog = new JComplexDialogPanel(labels, jComponents);
-        System.out.println("aaa");
         return pnlMyDialog;
     }
     
-    private class createObjectForm extends JOptionPane{
+    private boolean isNumeric(String str){  
+        try {  
+          double d = Double.parseDouble(str);  
+        }catch(NumberFormatException nfe) {  
+          return false;  
+        }  
+        return true;  
+    }
 
-        HashMap<String, Object> attributes =  new HashMap<>();
-        
-        protected JOptionPane getOptionPane(JComponent parent) {
-            JOptionPane pane = null;
-            if (!(parent instanceof JOptionPane))
-                pane = getOptionPane((JComponent)parent.getParent());
-            else 
-                pane = (JOptionPane) parent;
-            
-            return pane;
+    /**
+     * Call the communication stub and create the object 
+     * @param objectClass the object's class
+     * @param attributes the attribute list of the object
+     */
+    private void createObject(String objectClass, HashMap<String, Object> attributes) {
+        LocalObjectLight myLol = com.createObject(
+                        objectClass,
+                        node instanceof RootObjectNode ? null : ((ObjectNode)node).getObject().getClassName(),
+                        node instanceof RootObjectNode? -1 : ((ObjectNode)node).getObject().getOid(), attributes, 0);
+
+        if (myLol == null)
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+        else {
+            if (node.getChildren() instanceof AbstractChildren) //Some nodes are created on the fly and does not have children. For those cases, let's avoid refreshing their children lists
+                ((AbstractChildren)node.getChildren()).addNotify();
+
+            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Element created successfully");
         }
-    
-
-
-        public createObjectForm() {
-                final JButton okay = new JButton("Ok");
-                okay.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        JOptionPane pane = getOptionPane((JComponent)e.getSource());
-                        pane.setValue(okay);
-                    }
-                });
-                okay.setEnabled(false);
-                final JButton cancel = new JButton("Cancel");
-                cancel.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        JOptionPane pane = getOptionPane((JComponent)e.getSource());
-                        pane.setValue(cancel);
-                    }
-                });
-
-                
-                
-//                for (int i=0; i < jComponents.length; i++) {
-//                    if(jComponents[i] instanceof JTextField){
-//                        final JTextField field = ((JTextField)jComponents[i]);
-//                        if(mandatoryObjectAttributes[i].getType().equals(Float.class) ||
-//                                        mandatoryObjectAttributes[i].getType().equals(Integer.class) ||
-//                                        mandatoryObjectAttributes[i].getType().equals(Long.class)){
-//                            field.addKeyListener(new KeyListener() {
-//                            protected void update() {
-//                                okay.setEnabled(isNumeric(field.getText()));
-//                            }
-//                                String key = "";
-//                                @Override
-//                                public void keyTyped(KeyEvent e) {
-//                                    update();
-//                                }
-//
-//                                @Override
-//                                public void keyPressed(KeyEvent e) {
-//                                    update();
-//                                }
-//
-//                                @Override
-//                                public void keyReleased(KeyEvent e) {
-//                                    update();
-//                                }
-//                            });
-//                        }
-//                        
-//                        field.getDocument().addDocumentListener(new DocumentListener() {
-//                        protected void update() {
-//                            okay.setEnabled(field.getText().length() > 0);
-//                        }
-//                            @Override
-//                            public void insertUpdate(DocumentEvent e) {
-//                                update();
-//                            }
-//
-//                            @Override
-//                            public void removeUpdate(DocumentEvent e) {
-//                                update();
-//                            }
-//
-//                            @Override
-//                            public void changedUpdate(DocumentEvent e) {
-//                                update();
-//                            }
-//                        });
-//                    }
-//                    else if(jComponents[i] instanceof JComboBox){
-//                        final JComboBox comboBox = (JComboBox)jComponents[i];
-//                        comboBox.addItemListener(new ItemListener() {
-//
-//                            @Override
-//                            public void itemStateChanged(ItemEvent e) {
-//                                okay.setEnabled(((LocalObjectListItem)e.getItem()).getId() != 0);
-//                            }
-//                        });
-//                    }
-//                }
-
-                
-                
-            
-        }
-        
-        public HashMap<String, Object> getAttributes(){
-            return attributes;
-        }
-        
-        private boolean isNumeric(String str){  
-            try {  
-              double d = Double.parseDouble(str);  
-            }catch(NumberFormatException nfe) {  
-              return false;  
-            }  
-            return true;  
-        }
-    }//end private class
-    
+    }
 }
