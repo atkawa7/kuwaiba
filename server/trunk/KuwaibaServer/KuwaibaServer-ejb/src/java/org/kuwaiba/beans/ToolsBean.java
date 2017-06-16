@@ -20,9 +20,7 @@ import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
@@ -429,17 +427,7 @@ public class ToolsBean implements ToolsBeanRemote {
                 break;
                 default:
                     results[i] = String.format("Invalid patch id %s", i);
-                case "5": // Update data model: This action add the abstract classes GenericProject, GenericActivity and some project and activities subclasses for the Projects Module.
-                    try {
-                        aem.executeCustomDbCode("MATCH (clss)-[r:HAS_ATTRIBUTE]->(attr) SET attr :attribute RETURN attr", false);
-                        
-                        aem.executeCustomDbCode("MATCH (clss)-[r:HAS_ATTRIBUTE]->(attr) SET attr.mandatory={false} RETURN attr", false);
-                    } catch (NotAuthorizedException ex) {
-                        Logger.getLogger(ToolsBean.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    break;        
             }
-            
         }
         return results;
     }
