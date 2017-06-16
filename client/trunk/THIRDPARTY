@@ -2,6 +2,7 @@ This software makes use of the following third-party components and neither of t
 
 * Netbeans Platform (CDDL, http://opensource.org/licenses/CDDL-1.0) http://platform.netbeans.org/
 * JCalendar, which provides support to edit Date-like properties (LGPL, http://toedter.com/jcalendar/)
+* JTattoo, an extremely customizable look and feel (GPLv3/LGPL/APL, http://www.jtattoo.net/)
 
 We want to thank all people that made possible this software possible.
 

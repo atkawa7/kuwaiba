@@ -1,10 +1,8 @@
 /**
- * Showcase how to create different types of charts
+ * Showcases how to create different types of charts
  * Neotropic SAS - version 1.0
  * Parameters: None
  */
-import org.neo4j.graphdb.Direction;
-import org.kuwaiba.services.persistence.impl.neo4j.RelTypes;
 import com.neotropic.kuwaiba.modules.reporting.html.HTMLReport
 import com.neotropic.kuwaiba.modules.reporting.html.HTMLDiv;
 import com.neotropic.kuwaiba.modules.reporting.javascript.DataTable;

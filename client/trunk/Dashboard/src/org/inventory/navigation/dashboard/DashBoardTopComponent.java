@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>
+ *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ import org.openide.windows.WindowManager;
 @TopComponent.Description(
         preferredID = "DashBoardTopComponent",
         //iconBase="SET/PATH/TO/ICON/HERE", 
-        persistenceType = TopComponent.PERSISTENCE_ONLY_OPENED
+        persistenceType = TopComponent.PERSISTENCE_ALWAYS
 )
 @TopComponent.Registration(mode = "editor", openAtStartup = true)
 @ActionID(category = "Window", id = "org.inventory.navigation.dashboard.DashBoardTopComponent")

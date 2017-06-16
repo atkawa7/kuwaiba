@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -80,7 +80,7 @@ public class Installer extends ModuleInstall {
                         oldHost = connSettings.getServerAddress();
                         oldWSDLPath = connSettings.getWSDLPath();
                         oldPort = connSettings.getServerPort();
-                        oldProtocol = connSettings.getProtocol();
+                        oldProtocol = connSettings.isSecureConnection();
 
                         DialogDescriptor myDialog = new DialogDescriptor(connSettings, "Connection Settings");
                         myDialog.setModal(true);
@@ -88,7 +88,7 @@ public class Installer extends ModuleInstall {
                             @Override
                             public void propertyChange(PropertyChangeEvent evt) {
                                 if(evt.getNewValue() == DialogDescriptor.CANCEL_OPTION ||
-                                        evt.getNewValue()==DialogDescriptor.CLOSED_OPTION){
+                                        evt.getNewValue() == DialogDescriptor.CLOSED_OPTION){
                                     connSettings.setServerAddress(oldHost);
                                     connSettings.setWSDLPath(oldWSDLPath);
                                     connSettings.setProtocol(oldProtocol);
@@ -110,37 +110,38 @@ public class Installer extends ModuleInstall {
                     LifecycleManager.getDefault().exit();
             }
         });
-        dd.setClosingOptions(new Object[]{DialogDescriptor.CANCEL_OPTION});
+        dd.setClosingOptions(new Object[] { DialogDescriptor.CANCEL_OPTION });
         DialogDisplayer.getDefault().notifyLater(dd);
     }
 
     public boolean connect(){
         try {
             CommunicationsStub.setServerURL(
-                    new URL(connSettings.getProtocol() ? "https" : "http", connSettings.getServerAddress(), connSettings.getServerPort(),
+                    new URL(connSettings.isSecureConnection()? "https" : "http", connSettings.getServerAddress(), connSettings.getServerPort(),
                     connSettings.getWSDLPath()));
 
         } catch (MalformedURLException ex) {
             showExceptions("Malformed URL: " + ex.getMessage());
             return false;
         }
-        try{
+        try {
             if (!CommunicationsStub.getInstance().createSession(pnlAuthentication.getTxtUser().getText(), 
                     new String(pnlAuthentication.getTxtPassword().getPassword()), connSettings.getHostVerification())){
                showExceptions(CommunicationsStub.getInstance().getError());
                return false;
             }else{
                 writeProperties(pnlAuthentication.getTxtUser().getText(), connSettings.getServerAddress(), 
-                        connSettings.getServerPort(), connSettings.getWSDLPath(), connSettings.getProtocol());
+                        connSettings.getServerPort(), connSettings.getWSDLPath(), connSettings.isSecureConnection());
                 //The title can't be set directly since it's overwritten right after the startup. We have to wait till the window is open
                 WindowManager.getDefault().getMainWindow().addWindowListener(new WindowListener() {
 
                     @Override
                     public void windowOpened(WindowEvent e) {
-                            WindowManager.getDefault().getMainWindow().setTitle(String.format("%s - [%s - %s]",
+                            WindowManager.getDefault().getMainWindow().setTitle(String.format("%s - [%s - %s] - %s",
                                 WindowManager.getDefault().getMainWindow().getTitle(), 
                                 CommunicationsStub.getInstance().getSession().getUsername(), 
-                                CommunicationsStub.getServerURL().getHost()));
+                                CommunicationsStub.getServerURL().getHost(),
+                                connSettings.isSecureConnection() ? "Secure Connection" : "**Insecure Connection**"));
                     }
 
                     @Override

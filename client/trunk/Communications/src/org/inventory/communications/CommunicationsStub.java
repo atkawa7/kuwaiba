@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>
+ *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,8 +25,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
 import javax.xml.ws.BindingProvider;

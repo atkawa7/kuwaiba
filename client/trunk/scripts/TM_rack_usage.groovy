@@ -1,6 +1,6 @@
 /**
  * Finds the racks whose occupation level surpasses certain threholds
- * Neotropic SAS - version 1.0
+ * Neotropic SAS - version 1.1
  * Parameters: -thresholdHigh: The upper threshold (usage percentage). It will generate a red notification
  *             -thresholdMid: The lower threshold (usage percentage). It will generate a red notification
  */
@@ -46,7 +46,7 @@ else {
 		if (totalRackUnits == 0)
 			percentage = 100;
 		else
-			percentage = 100 * occupiedRackUnits / totalRackUnits; 
+			percentage = Math.round(100 * occupiedRackUnits / totalRackUnits); 
 		
 		def serialNumber = rackInstanceNode.hasProperty("serialNumber") && !((String)rackInstanceNode.getProperty("serialNumber")).isEmpty() ? rackInstanceNode.getProperty("serialNumber") : "<NOT SET>";
 		

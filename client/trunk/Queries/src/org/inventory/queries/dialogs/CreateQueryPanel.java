@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>
+ *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -13,17 +13,10 @@
  *   limitations under the License.
  * 
  */
-
-/*
- * CreateQueryPanel.java
- *
- * Created on Jan 31, 2011, 1:05:16 PM
- */
-
 package org.inventory.queries.dialogs;
 
 /**
- *
+ * A simple panel displayed when a query wants to be saved
  * @author Charles Edward Bedon Cortazar <charles.bedon@zkuwaiba.org>
  */
 public class CreateQueryPanel extends javax.swing.JPanel {
@@ -107,6 +100,6 @@ public class CreateQueryPanel extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     public Object[] getValues(){
-        return new Object[]{txtName.getText(), txtDescription.getText(), chkPublic.isSelected()};
+        return new Object[]{ txtName.getText(), txtDescription.getText(), chkPublic.isSelected() };
     }
 }

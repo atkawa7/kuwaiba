@@ -128,3 +128,6 @@
 * Support for updates using an Update Center was added
 * Removed "Show/Hide Node Laels" button
 * Multiple bugfixes and improvements
+* Changed license from GPLv2 to GPLv3
+* Added JTattoo's Fast as default look and feel
+* Added a warning in the window title if the connection is not secure
