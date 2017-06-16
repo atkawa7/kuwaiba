@@ -793,21 +793,25 @@ exists or setup the property manually. For example like this:
     </target>
     <target depends="compile,-library-inclusion-in-archive-weblogic,-library-inclusion-in-archive-by-user" name="library-inclusion-in-archive"/>
     <target if="is.jars.in.ejbjar" name="-library-inclusion-in-archive-by-user">
+        <copyfiles files="${libs.WAX.classpath}" todir="${build.classes.dir}"/>
+        <copyfiles files="${libs.Grooy_2.4.7.classpath}" todir="${build.classes.dir}"/>
         <copyfiles files="${libs.Groovy_2.4.7.classpath}" todir="${build.classes.dir}"/>
-        <copyfiles files="${libs.JBcrypt_0.4.classpath}" todir="${build.classes.dir}"/>
     </target>
     <target if="is.server.weblogic" name="-library-inclusion-in-archive-weblogic">
+        <basename file="${libs.WAX.classpath}" property="manifest.libs.WAX.classpath"/>
+        <basename file="${libs.Grooy_2.4.7.classpath}" property="manifest.libs.Grooy_2.4.7.classpath"/>
         <basename file="${libs.Groovy_2.4.7.classpath}" property="manifest.libs.Groovy_2.4.7.classpath"/>
-        <basename file="${libs.JBcrypt_0.4.classpath}" property="manifest.libs.JBcrypt_0.4.classpath"/>
         <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update">
-            <attribute name="Extension-List" value="jar-1 jar-2 "/>
-            <attribute name="jar-1-Extension-Name" value="${manifest.libs.Groovy_2.4.7.classpath}"/>
-            <attribute name="jar-2-Extension-Name" value="${manifest.libs.JBcrypt_0.4.classpath}"/>
+            <attribute name="Extension-List" value="jar-1 jar-2 jar-3 "/>
+            <attribute name="jar-1-Extension-Name" value="${manifest.libs.WAX.classpath}"/>
+            <attribute name="jar-2-Extension-Name" value="${manifest.libs.Grooy_2.4.7.classpath}"/>
+            <attribute name="jar-3-Extension-Name" value="${manifest.libs.Groovy_2.4.7.classpath}"/>
         </manifest>
     </target>
     <target depends="compile" name="library-inclusion-in-manifest">
+        <copyfiles files="${libs.WAX.classpath}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${libs.Grooy_2.4.7.classpath}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${libs.Groovy_2.4.7.classpath}" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${libs.JBcrypt_0.4.classpath}" todir="${dist.ear.dir}/lib"/>
         <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update"/>
     </target>
     <target name="-copy-meta-inf">

@@ -1,7 +1,7 @@
-Kuwaiba aims to be an enterprise grade network inventory system.
+Kuwaiba is an enterprise grade network inventory system.
 
 This software is provided “as is”, with no warranty at all. Install it and use it at your own risk.
 
-This software is dual-licensed EPLv1 and GPLv2, choose the one that fits your purposes, but keep in mind that we ship third-party libraries whose licenses are only compatible with GPL. See THIRDPARTY and LICENSE.EPL/LICENSE.GPLv2 files for details.
+This software is dual-licensed EPLv1 and GPLv3, choose the one that fits your purposes, but keep in mind that we ship third-party libraries whose licenses are only compatible with GPL. See THIRDPARTY and LICENSE.EPL/LICENSE.GPLv2 files for details.
 
-Visit http://www.kuwaiba.org
+Visit http://www.kuwaiba.org for more details.

@@ -1,7 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="2">
+        <file>
+            <url>src/java/org/kuwaiba/beans/WebserviceBean.java</url>
+            <bookmark id="1">
+                <name/>
+                <line>0</line>
+                <key/>
+            </bookmark>
+        </file>
+    </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/home/gir/workspace/java/KuwaibaServer/trunk/KuwaibaServer/KuwaibaServer-ejb/src/java/com/neotropic/kuwaiba/modules/reporting/javascript/wrappers/googlecharts/ChartsFactory.java</file>
+            <file>file:/home/gir/workspace/java/KuwaibaServer/trunk/KuwaibaServer/KuwaibaServer-ejb/src/java/com/neotropic/kuwaiba/modules/projects/ProjectsModule.java</file>
+            <file>file:/home/gir/workspace/java/KuwaibaServer/trunk/KuwaibaServer/KuwaibaServer-ejb/src/java/com/neotropic/kuwaiba/modules/reporting/javascript/DataTable.java</file>
+            <file>file:/home/gir/workspace/java/KuwaibaServer/trunk/KuwaibaServer/KuwaibaServer-ejb/src/java/com/neotropic/kuwaiba/modules/reporting/html/HTMLHx.java</file>
+            <file>file:/home/gir/workspace/java/KuwaibaServer/trunk/KuwaibaServer/KuwaibaServer-ejb/src/java/org/kuwaiba/services/persistence/impl/neo4j/telecom/BusinessEntityManagerImpl.java</file>
+        </group>
     </open-files>
 </project-private>

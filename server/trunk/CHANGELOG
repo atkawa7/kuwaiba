@@ -85,7 +85,7 @@
 * The bulk upload file format was improved
 * Added method to allow the creation of multiple objects at once in the API
 
-1.0
+1.0 (03112016)
 * The Persistence Service was merged to the web application
 * Service startup improved and logging level increased. 
 * Neo4J version changed to 2.3.2
@@ -100,8 +100,17 @@
 * Webservice API improved and extended
 * HTTPS support now documented
 
-1.1
+1.1 (01122016)
 * Added support for templates
 * Added support for user defined reports
 * Passwords are now stored using BCrypt instead of MD5 hashes
 * Hard-coded reports were partly migrated to work as dynamic ones
+* The general audit trail is returned from the newest to the oldest.
+
+1.1.1
+* When creating many connections at once, they're numbered 001, 002, 003,..., 095, 1000, 2000,... 
+
+1.5
+* The methods User Management was extended and some parts rewritten
+* Added a migration patch that moves all stand-alone users to a default group. Users can no loger not to belong to a group
+* Changed license from GPLv2 to GPLv3

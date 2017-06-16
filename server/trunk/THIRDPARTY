@@ -2,7 +2,7 @@ This software makes use of the following third-party components and neither of t
 
 * Neo4J (GPL) http://www.neo4j.org
 * Groovy (APL) http://www.groovy-lang.org/
-* JBcrypt  (ISC/BSD) http://www.mindrot.org/projects/jBCrypt/
+* JBcrypt (ISC/BSD) http://www.mindrot.org/projects/jBCrypt/
 
 We want to thank all people that made possible this software to be available.
 
