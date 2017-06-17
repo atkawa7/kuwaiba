@@ -1295,7 +1295,7 @@ public class KuwaibaService {
     }
     
     /**
-     * Update pool name and description
+     * Updates pool name and description
      * @param poolId Pool Id
      * @param name Pool name
      * @param description Pool description
@@ -1320,7 +1320,7 @@ public class KuwaibaService {
     }
     
     /**
-     * Get the objects contained into a pool
+     * Gets the objects contained into a pool
      * @param poolId Parent pool id
      * @param limit limit of results. -1 to return all
      * @param sessionId Session identifier
@@ -2104,7 +2104,7 @@ public class KuwaibaService {
     }
     
     /**
-     * Delete a set of objects. Note that this method must be used only for business objects (not metadata or application ones)
+     * Deletes a set of objects. Note that this method must be used only for business objects (not metadata or application ones)
      * @param className Objects class names
      * @param oid object id from the objects to be deleted
      * @param releaseRelationships Should the deletion be forced, deleting all the relationships?
@@ -2129,7 +2129,7 @@ public class KuwaibaService {
     }
 
     /**
-     * Delete a set of objects. Note that this method must be used only for business objects (not metadata or application ones)
+     * Deletes a set of objects. Note that this method must be used only for business objects (not metadata or application ones)
      * @param classNames Objects class names
      * @param oids object id from the objects to be deleted
      * @param releaseRelationships Should the deletion be forced, deleting all the relationships?
@@ -3410,7 +3410,7 @@ public class KuwaibaService {
     }
 
     /**
-     * Get the possible children of a class according to the containment hierarchy. This method is recursive, and if a possible child is an abstract class, it gets its non-abstract subclasses
+     * Gets the possible children of a class according to the containment hierarchy. This method is recursive, and if a possible child is an abstract class, it gets its non-abstract subclasses
      * @param parentClassName Class to retrieve its possible children
      * @param sessionId Session token
      * @return A list of possible children as ClassInfoLight instances
@@ -3433,9 +3433,35 @@ public class KuwaibaService {
             }
         }
     }
+    
+    /**
+     * Gets the possible special children of a class according to the containment hierarchy. 
+     * This method is recursive, and if a possible special child is an abstract class, 
+     * it gets its non-abstract subclasses
+     * @param parentClassName Class to retrieve its possible special children
+     * @param sessionId Session token
+     * @return A list of possible special children as ClassInfoLight instances
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "getPossibleSpecialChildren")
+    public List<ClassInfoLight> getPossibleSpecialChildren(
+        @WebParam(name = "parentClassName") String parentClassName, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        
+        try {
+            return wsBean.getPossibleSpecialChildren(parentClassName, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getPossibleChildren: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
 
     /**
-     * Get the possible children of a class according to the containment hierarchy.
+     * Gets the possible children of a class according to the containment hierarchy.
      * This method is not recursive, and only returns the direct possible children,
      * even if they're abstract
      * @param parentClassName Class to retrieve its possible children
@@ -3461,35 +3487,36 @@ public class KuwaibaService {
     }
     
     /**
-     * Gets the possible children of a given non-abstract class according to the business rules set for a 
-     * particular model
-     * @param parentClassName Class to retrieve its possible children
+     * Gets the possible special children of a class according to the containment hierarchy.
+     * This method is not recursive, and only returns the direct possible special children,
+     * even if they're abstract
+     * @param parentClassName Class to retrieve its possible special children
      * @param sessionId Session token
-     * @return The list of possible special children
+     * @return A List with the metadata for the entire class hierarchy as ClassInfoLight instances
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
-    @WebMethod(operationName = "getSpecialPossibleChildren")
-    public List<ClassInfoLight> getSpecialPossibleChildren(@WebParam(name = "parentClassName")
-    String parentClassName, @WebParam(name = "sessionId")
-    String sessionId) throws ServerSideException {
-
+    @WebMethod(operationName = "getPossibleSpecialChildrenNoRecursive")
+    public List<ClassInfoLight> getPossibleSpecialChildrenNoRecursive(
+        @WebParam(name = "parentClassName") String parentClassName, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        
         try {
-            return wsBean.getSpecialPossibleChildren(parentClassName, getIPAddress(), sessionId);
+            return wsBean.getPossibleSpecialChildrenNoRecursive(parentClassName, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in getSpecialPossibleChildren: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in getPossibleChildrenNoRecursive: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
     }
-    
+        
     /**
      * Adds possible children to a given class using its id as argument. If any of the arguments provided are already added,
      * it will abort the operation and rise an exception
      * @param parentClassId Class to attach the new possible children
-     * @param newPossibleChildren List of nre possible children. Abstract classes are de-aggregated
+     * @param newPossibleChildren List of new possible children. Abstract classes are de-aggregated
      * @param sessionId Session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
@@ -3510,13 +3537,38 @@ public class KuwaibaService {
             }
         }
     }
+    
+    /**
+     * Adds possible special children to a given class using its id as argument. If any of the arguments provided are already added,
+     * it will abort the operation and rise an exception
+     * @param parentClassId Class to attach the new possible special children
+     * @param possibleSpecialChildren List of new possible children. Abstract classes are de-aggregated
+     * @param sessionId Session token
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "addPossibleSpecialChildrenWithId")
+    public void addPossibleSpecialChildrenWithId(
+        @WebParam(name = "parentClassId") long parentClassId, 
+        @WebParam(name = "possibleSpecialChildren") long[] possibleSpecialChildren, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            wsBean.addPossibleSpecialChildren(parentClassId, possibleSpecialChildren, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in addPossibleChildrenForClassWithId: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
 
      /**
      * Adds possible children to a given class using its name as argument.
      * If any of the arguments provided are already added,
      * it will abort the operation and rise an exception
      * @param parentClassName Class to attach the new possible children
-     * @param childrenToBeAdded List of nre possible children. Abstract classes are de-aggregated
+     * @param childrenToBeAdded List of new possible children. Abstract classes are de-aggregated
      * @param sessionId Session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
@@ -3532,6 +3584,33 @@ public class KuwaibaService {
                 throw e;
             else {
                 System.out.println("[KUWAIBA] An unexpected error occurred in addPossibleChildren: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Adds special possible children to a given class using its name.
+     * If any of the arguments provided are already added,
+     * it will abort the operation and rise an exception
+     * @param parentClassName Class to attach the new possible special children
+     * @param possibleSpecialChildren List of new possible special children. Abstract classes are de-aggregated
+     * @param sessionId Session token
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "addPossibleSpecialChildren")
+    public void addPossibleSpecialChildren(
+        @WebParam(name = "parentClassName") String parentClassName, 
+        @WebParam(name = "possibleSpecialChildren") String[] possibleSpecialChildren, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        
+        try {
+            wsBean.addPossibleSpecialChildren(parentClassName, possibleSpecialChildren, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in addPossibleSpecialChildren: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
@@ -3560,9 +3639,33 @@ public class KuwaibaService {
             }
         }
     }
+    
+    /**
+     * Removes a set of possible special children for a given class.
+     * @param parentClassId Parent Class of the possible special children are going to be removed from
+     * @param specialChildrenToBeRemoved List of ids of classes to be remove as possible special children
+     * @param sessionId Session token
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "removePossibleSpecialChildren")
+    public void removePossibleSpecialChildren(
+        @WebParam(name = "parentClassId") long parentClassId, 
+        @WebParam(name = "specialChildrenToBeRemoved") long[] specialChildrenToBeRemoved, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try{
+            wsBean.removePossibleSpecialChildren(parentClassId, specialChildrenToBeRemoved, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in removePossibleSpecialChildren: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
 
     /**
-     * Get the containment hierarchy of a given class, but upwards (i.e. for Building, it could return 
+     * Gets the containment hierarchy of a given class, but upwards (i.e. for Building, it could return 
      * City, Country, Continent)
      * @param className Class to be evaluated
      * @param recursive do it recursively or not
@@ -3586,6 +3689,34 @@ public class KuwaibaService {
             }
         }
     }
+    
+    /**
+     * Gets the special containment hierarchy of a given class, but upwards (i.e. for Building, it could return 
+     * City, Country, Continent)
+     * @param className Class to be evaluated
+     * @param recursive Do it recursively or not
+     * @param sessionId Session id token
+     * @return List of classes in upstream special containment hierarchy
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * 
+     */
+    @WebMethod(operationName = "getUpstreamSpecialContainmentHierarchy")
+    public List<ClassInfoLight> getUpstreamSpecialContainmentHierarchy(
+        @WebParam(name="className") String className, 
+        @WebParam(name="recursive") boolean recursive, 
+        @WebParam(name="sessionId") String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getUpstreamSpecialContainmentHierarchy(className, recursive, getIPAddress(), sessionId);
+        } catch(Exception e) {
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getUpstreamSpecialContainmentHierarchy: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Utility methods. Click on the + sign on the left to edit the code.">/**
@@ -3694,8 +3825,8 @@ public class KuwaibaService {
     /**
      * Creates an object inside a template.
      * @param templateElementClass Class of the object you want to create.
-     * @param templateElementParentClassName Class of the parent to the obejct you want to create.
-     * @param templateElementParentId Id of the parent to the obejct you want to create.
+     * @param templateElementParentClassName Class of the parent to the object you want to create.
+     * @param templateElementParentId Id of the parent to the object you want to create.
      * @param templateElementName Name of the element.
      * @param sessionId Session token.
      * @return The id of the new object.
@@ -3715,6 +3846,36 @@ public class KuwaibaService {
                 throw e;
             else {
                 System.out.println("[KUWAIBA] An unexpected error occurred in createTemplateElement: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Creates an special object inside a template.
+     * @param tsElementClass Class of the special object you want to create.
+     * @param tsElementParentClassName Class of the parent to the special object you want to create.
+     * @param tsElementParentId Id of the parent to the special object you want to create.
+     * @param tsElementName Name of the element.
+     * @param sessionId Session token.
+     * @return The id of the new object.
+     * @throws ServerSideException If something goes wrong.
+     */
+    @WebMethod(operationName = "createTemplateSpecialElement")
+    public long createTemplateSpecialElement(
+            @WebParam(name = "templateElementClass")String tsElementClass, 
+            @WebParam(name = "tsElementParentClassName")String tsElementParentClassName,
+            @WebParam(name = "tsElementParentId")long tsElementParentId,
+            @WebParam(name = "tsElementName")String tsElementName,
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.createTemplateSpecialElement(tsElementClass, tsElementParentClassName, 
+                    tsElementParentId, tsElementName, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createTemplateSpecialElement: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
@@ -3779,7 +3940,8 @@ public class KuwaibaService {
      * @throws ServerSideException If somethings goes wrong
      */
     @WebMethod(operationName = "getTemplatesForClass")
-    public List<RemoteObjectLight> getTemplatesForClass(@WebParam(name = "className")String className, 
+    public List<RemoteObjectLight> getTemplatesForClass(
+            @WebParam(name = "className")String className, 
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             return wsBean.getTemplatesForClass(className, getIPAddress(), sessionId);
@@ -3829,9 +3991,11 @@ public class KuwaibaService {
      * @throws org.kuwaiba.exceptions.ServerSideException
      */
     @WebMethod(operationName = "getTemplateElementChildren")
-    public List<RemoteObjectLight> getTemplateElementChildren(@WebParam(name = "templateElementClass")String templateElementClass, 
-            @WebParam(name = "templateElementId")long templateElementId, 
-            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+    public List<RemoteObjectLight> getTemplateElementChildren(
+        @WebParam(name = "templateElementClass")String templateElementClass, 
+        @WebParam(name = "templateElementId")long templateElementId, 
+        @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        
         try {
             return wsBean.getTemplateElementChildren(templateElementClass, templateElementId, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -3843,6 +4007,33 @@ public class KuwaibaService {
             }
         }
     }
+    
+    /**
+     * Retrieves the children of a given template special element.
+     * @param tsElementClass Template special element class.
+     * @param tsElementId Template special element id.
+     * @param sessionId 
+     * @return The template element's children as a list of RemoteBusinessObjectLight instances.
+     * @throws org.kuwaiba.exceptions.ServerSideException
+     */
+    @WebMethod(operationName = "getTemplateSpecialElementChildren")
+    public List<RemoteObjectLight> getTemplateSpecialElementChildren(
+        @WebParam(name = "tsElementClass")String tsElementClass, 
+        @WebParam(name = "tsElementId")long tsElementId, 
+        @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        
+        try {
+            return wsBean.getTemplateSpecialElementChildren(tsElementClass, tsElementId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getTemplateElementChildren: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
     /**
      * Retrives all the information of a given template element.
      * @param templateElementClass Template element class.
@@ -4456,7 +4647,7 @@ public class KuwaibaService {
     }
     
     /**
-     * Create a pool of subnets
+     * Creates a pool of subnets
      * @param parentId subnet parent Id
      * @param subnetPoolName subnet pool name
      * @param subnetPoolDescription
@@ -4534,7 +4725,7 @@ public class KuwaibaService {
     }
     
      /**
-     * Delete a subnet. All subnets must be instances of the same class
+     * Deletes a subnet. All subnets must be instances of the same class
      * @param oids The ids of the subnets to be deleted
      * @param className The subnet class
      * @param releaseRelationships Should the deletion be forced, deleting all the relationships?
@@ -5067,28 +5258,24 @@ public class KuwaibaService {
     
         // <editor-fold defaultstate="collapsed" desc="Projects Module">
     /**
-     * Gets the projects root pool
-     * @param className Projects root pool class name
+     * Gets the project pools
      * @param sessionId Session id token
-     * @return The root pool for projects
-     * @throws ServerSideException 
+     * @return The list of project pools
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
-    @WebMethod(operationName = "getProjectsRootPool")
-    public RemotePool getProjectsRootPool(
-        @WebParam(name = "className") String className, 
-        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
-        
+    @WebMethod(operationName = "getProjectPools")
+    public List<RemotePool> getProjectPools(@WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try {
-            return wsBean.getProjectsRootPool(className, getIPAddress(), sessionId);
+            return wsBean.getProjectPools(getIPAddress(), sessionId);
         } catch (Exception ex) {
             if (ex instanceof ServerSideException)
                 throw ex;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in getProjectsRootPool: " + ex.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in getProjectPools: " + ex.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
-    }    
+    }
     
     /**
      * Adds a Project
@@ -5206,29 +5393,28 @@ public class KuwaibaService {
             }
         }
         
-    }
-    
+    }   
+
     /**
-     * Gets a set of projects from the projects root pool
-     * @param rootPoolId Project root pool id
+     * Gets the project in a Project pool
+     * @param poolId Project pool id
      * @param limit Max number of results, no limit with -1
      * @param sessionId Session id token
-     * @return The list of projects 
+     * @return An array of projects in a project pool
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
-    @WebMethod(operationName = "getProjectsFromProjectsRootPool")
-    public RemoteObjectLight[] getProjectsFromProjectsRootPool(
-        @WebParam(name = "rootPoolId") long rootPoolId, 
+    @WebMethod(operationName = "getProjectsInProjectPool")
+    public RemoteObjectLight[] getProjectsInProjectPool(
+        @WebParam(name = "poolId") long poolId, 
         @WebParam(name = "limit") int limit, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
-        
         try {
-            return wsBean.getProjectsFromProjectsRootPool(rootPoolId, limit, getIPAddress(), sessionId);
+            return wsBean.getProjectsInProjectPool(poolId, limit, getIPAddress(), sessionId);
         } catch(Exception ex) {
             if (ex instanceof ServerSideException)
                 throw ex;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in getProjectFromProjectsRootPool: " + ex.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in getProjectsInProjectPool: " + ex.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
@@ -5286,33 +5472,7 @@ public class KuwaibaService {
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }  
-    }
-    
-    /**
-     * Gets the project of a Project
-     * @param projectClass Project class
-     * @param projectId Project id
-     * @param sessionId Session id token
-     * @return List of projects
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
-     */
-    @WebMethod(operationName = "getProjectsFromProject")
-    public RemoteObjectLight[] getProjectsFromProject(
-        @WebParam(name = "projectClass") String projectClass, 
-        @WebParam(name = "projectId") long projectId, 
-        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
-        
-        try {
-            return wsBean.getProjectsFromProject(projectClass, projectId, getIPAddress(), sessionId);
-        } catch (Exception ex) {
-            if (ex instanceof ServerSideException)
-                throw ex;
-            else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in getProjectsFromProject: " + ex.getMessage());
-                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
-            }
-        }
-    }
+    }   
         
     /**
      * Associates a set of objects with a Project
@@ -5397,10 +5557,37 @@ public class KuwaibaService {
             if (ex instanceof ServerSideException)
                 throw ex;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in releaseObjectFromProject: " + ex.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in freeObjectFromProject: " + ex.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
+    }
+    
+    /**
+     * Gets the projects associate to an object
+     * @param objectClass Object class
+     * @param objectId Object id
+     * @param sessionId The session id token
+     * @return An array of projects
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "getProjectsAssociateToObject")
+    public RemoteObjectLight[] getProjectsAssociateToObject(
+        @WebParam(name = "objectClass") String objectClass, 
+        @WebParam(name = "ObjectId") long objectId, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        
+        try {
+            return wsBean.getProjectsAssociateToObject(objectClass, objectId, getIPAddress(), sessionId);
+           
+        } catch (Exception ex) {
+            if (ex instanceof ServerSideException)
+                throw ex;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getProjectsAssociateToObject: " + ex.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }      
     }
     
     /**

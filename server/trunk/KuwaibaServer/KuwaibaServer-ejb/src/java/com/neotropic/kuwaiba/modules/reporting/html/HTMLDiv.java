@@ -54,7 +54,7 @@ public class HTMLDiv extends HTMLComponent {
             .append(style == null ? "" : " style=\"" + style + "\"") //NOI18N
             .append(cssClass == null ? "" : " class=\"" + cssClass + "\"") //NOI18N
             .append(id == null ? "" : " id=\"" + id + "\"").append(">") //NOI18N
-            .append(content == null ? "" : "\"" + content + "\"")
+            .append(content == null ? "" : content)
             .append("</div>").toString(); //NOI18N
     }
 }

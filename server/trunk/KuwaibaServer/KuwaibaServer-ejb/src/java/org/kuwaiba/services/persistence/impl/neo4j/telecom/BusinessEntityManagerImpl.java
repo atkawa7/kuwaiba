@@ -334,7 +334,26 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     throw new ObjectNotFoundException(parentClassName, parentOid);
             }
         
-            Node newObject = createObject(classNode, myClass, attributes);
+            Node newObject;
+            
+            if (template <= 0) {
+                newObject = createObject(classNode, myClass, attributes);
+                
+            } else {
+                Node templateNode = null;
+                for (Relationship hasTemplateRelationship : classNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_TEMPLATE)) {
+                    Node endNode = hasTemplateRelationship.getEndNode();
+                    if (endNode.getId() == template){
+                        templateNode = endNode;
+                        break;
+                    }
+                }
+                
+                if (templateNode == null)
+                    throw new ApplicationObjectNotFoundException(String.format("No template with id %s was found for class %s", template, className));
+                
+                newObject = copyTemplateElement(templateNode, true);
+            }
             if (parentNode !=null)
                 newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF_SPECIAL);
 
@@ -1739,6 +1758,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             for (Relationship rel : templateObject.getRelationships(RelTypes.CHILD_OF, Direction.INCOMING)){
                 Node newChild = copyTemplateElement(rel.getStartNode(), true);
                 newChild.createRelationshipTo(newInstance, RelTypes.CHILD_OF);
+            }
+            for (Relationship rel : templateObject.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.INCOMING)){
+                Node newChild = copyTemplateElement(rel.getStartNode(), true);
+                newChild.createRelationshipTo(newInstance, RelTypes.CHILD_OF_SPECIAL);
             }
         }
         return newInstance;

@@ -846,7 +846,23 @@ public interface ApplicationEntityManager {
      * @throws org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException If the class provided to create the new element from is abstract.
      */
     public long createTemplateElement(String templateElementClass, String templateElementParentClassName, 
-            long templateElementParentId, String templateElementName) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, OperationNotPermittedException;
+        long templateElementParentId, String templateElementName) 
+        throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, OperationNotPermittedException;
+    
+    /**
+     * Create an special object inside an template
+     * @param tsElementClass Template special element class
+     * @param tsElementParentClassName Template special element parent class name
+     * @param tsElementParentId Template special element parent Id
+     * @param tsElementName Template special element name
+     * @return The id of the new object
+     * @throws OperationNotPermittedException If the element class are not a possible special child of the element parent class
+     *                                        Or if the element class given are abstract
+     * @throws MetadataObjectNotFoundException If the element class or element parent class can not be found
+     * @throws ApplicationObjectNotFoundException If the element parent can no be found
+     */
+    public long createTemplateSpecialElement(String tsElementClass, String tsElementParentClassName, long tsElementParentId, String tsElementName) 
+        throws OperationNotPermittedException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException;
     /**
      * Updates the value of an attribute of a template element.
      * @param templateElementClass Class of the element you want to update.
@@ -881,6 +897,13 @@ public interface ApplicationEntityManager {
      * @return The template element's children as a list of RemoteBusinessObjectLight instances.
      */
     public List<RemoteBusinessObjectLight> getTemplateElementChildren(String templateElementClass, long templateElementId);
+    /**
+     * Retrieves the children of a given template special element.
+     * @param tsElementClass Template special element class.
+     * @param tsElementId Template special element id.
+     * @return The template element's children as a list of RemoteBusinessObjectLight instances.
+     */
+    public List<RemoteBusinessObjectLight> getTemplateSpecialElementChildren(String tsElementClass, long tsElementId);
     /**
      * Retrives all the information of a given template element.
      * @param templateElementClass Template element class.

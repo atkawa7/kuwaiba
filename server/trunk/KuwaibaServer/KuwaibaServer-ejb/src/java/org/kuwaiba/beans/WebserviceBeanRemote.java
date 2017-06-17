@@ -23,10 +23,6 @@ import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
 import java.util.List;
 import javax.ejb.Remote;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
-import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
-import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
-import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
-import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.exceptions.NotAuthorizedException;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.ws.todeserialize.StringPair;
@@ -124,18 +120,28 @@ public interface WebserviceBeanRemote {
     public void deleteAttribute(long classId, String attributeName, String ipAddress, String sessionId) throws ServerSideException;
         
     public List<ClassInfoLight> getPossibleChildren(String parentClassName, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public List<ClassInfoLight> getPossibleSpecialChildren(String parentClassName, String ipAddress, String sessionId) throws ServerSideException;
 
     public List<ClassInfoLight> getPossibleChildrenNoRecursive(String parentClassName, String ipAddress, String sessionId) throws ServerSideException;
     
-    public List<ClassInfoLight> getSpecialPossibleChildren(String parentClassName, String ipAddress, String sessionId) throws ServerSideException;
+    public List<ClassInfoLight> getPossibleSpecialChildrenNoRecursive(String parentClassName, String ipAddress, String sessionId) throws ServerSideException;
 
     public List<ClassInfoLight> getUpstreamContainmentHierarchy(String className, boolean recursive, String ipAddress, String sessionId) throws ServerSideException;
     
+    public List<ClassInfoLight> getUpstreamSpecialContainmentHierarchy(String className, boolean recursive, String ipAddress, String sessionId) throws ServerSideException;
+    
     public void addPossibleChildren(long parentClassId, long[] possibleChildren, String ipAddress, String sessionId) throws ServerSideException;
     
+    public void addPossibleSpecialChildren(long parentClassId, long[] possibleSpecialChildren, String ipAddress, String sessionId) throws ServerSideException;
+    
     public void addPossibleChildren(String parentClassName, String[] newPossibleChildren, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public void addPossibleSpecialChildren(String parentClassName, String[] possibleChildren, String ipAddress, String sessionId) throws ServerSideException;
 
     public void removePossibleChildren(long parentClassId, long[] childrenToBeRemoved, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public void removePossibleSpecialChildren(long parentClassId, long[] specialChildrenToBeRemoved, String ipAddress, String sessionId) throws ServerSideException;
 
 
     // </editor-fold>
@@ -358,6 +364,8 @@ public interface WebserviceBeanRemote {
     public long createTemplate(String templateClass, String templateName, String ipAddress, String sessionId) throws ServerSideException;
 
     public long createTemplateElement(String templateElementClass, String templateElementParentClassName, long templateElementParentId, String templateElementName, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public long createTemplateSpecialElement(String tsElementClass, String tsElementParentClassName, long tsElementParentId, String tsElementName, String ipAddress, String sessionId) throws ServerSideException;
 
     public void updateTemplateElement(String templateElementClass, long templateElementId, String[] attributeNames, String[] attributeValues, String ipAddress, String sessionId) throws ServerSideException;
 
@@ -367,6 +375,9 @@ public interface WebserviceBeanRemote {
     
     public List<RemoteObjectLight> getTemplateElementChildren(String templateElementClass, 
             long templateElementId, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public List<RemoteObjectLight> getTemplateSpecialElementChildren(String tsElementClass, 
+            long tsElementId, String ipAddress, String sessionId) throws ServerSideException;
     
     public RemoteObject getTemplateElement(String templateElementClass, long templateElementId, 
             String ipAddress, String sessionId) throws ServerSideException;
@@ -479,18 +490,18 @@ public interface WebserviceBeanRemote {
     // </editor-fold>
          
         // <editor-fold defaultstate="collapsed" desc="Projects Module">
-        public RemotePool getProjectsRootPool(String className, String ipAddress, String sessionId) throws ServerSideException;
+        public List<RemotePool> getProjectPools(String ipAddress, String sessionId) throws ServerSideException;
         public long addProject(long parentId, String parentClassName, String className, String[] attributeNames, String[][] attributeValues, String ipAddress, String sessionId) throws ServerSideException;
         public void deleteProject(String className, long oid, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
         public long addActivity(long parentId, String parentClassName, String className, String attributeNames[], String attributeValues[][], String ipAddress, String sessionId) throws ServerSideException;
         public void deleteActivity(String className, long oid, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
-        public RemoteObjectLight[] getProjectsFromProjectsRootPool(long rootPoolId, int limit, String ipAddress, String sessionId) throws ServerSideException;
+        public RemoteObjectLight[] getProjectsInProjectPool(long poolId, int limit, String ipAddress, String sessionId) throws ServerSideException;
         public RemoteObjectLight[] getProjectResurces(String projectClass, long projectId, String ipAddress, String sessionId) throws ServerSideException;
         public RemoteObjectLight[] getProjectActivities(String projectClass, long projectId, String ipAddress, String sessionId) throws ServerSideException;
-        public RemoteObjectLight[] getProjectsFromProject(String projectClass, long projectId, String ipAddress, String sessionId) throws ServerSideException;
         public void associateObjectsToProject(String projectClass, long projectId, String[] objectClass, long[] objectId, String ipAddress, String sessionId) throws ServerSideException;
         public void associateObjectToProject(String projectClass, long projectId, String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;
         public void releaseObjectFromProject(String objectClass, long objectId, String projectClass, long projectId, String ipAddress, String sessionId) throws ServerSideException;
+        public RemoteObjectLight[] getProjectsAssociateToObject(String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;
         public long createProjectPool(String name, String description, String instanceOfClass, String ipAddress, String sessionId) throws ServerSideException;
         // </editor-fold>
     

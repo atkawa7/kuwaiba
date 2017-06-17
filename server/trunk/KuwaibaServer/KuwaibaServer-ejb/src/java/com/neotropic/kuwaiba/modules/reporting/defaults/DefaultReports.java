@@ -552,10 +552,12 @@ public class DefaultReports {
             if(!ipDevices.isEmpty())
                 usedIps++;
         }
-
-        if(hosts == 0 && usedIps == 0){
+        // There are not host but the
+        // gateway and the broadcast
+        // are in use
+        if (hosts == 0 && usedIps == 0){
             usedIps = ips.size();
-            if(usedIps>hosts);
+            if (usedIps>hosts)
                 hosts += 2;
         }
         int freeIps = hosts - usedIps;

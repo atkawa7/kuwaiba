@@ -2131,7 +2131,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     //Templates
-
     @Override
     public long createTemplate(String templateClass, String templateName) throws MetadataObjectNotFoundException, OperationNotPermittedException {  
         try (Transaction tx = graphDb.beginTx()) {
@@ -2144,10 +2143,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             Node templateNode = graphDb.createNode();
             templateNode.setProperty(Constants.PROPERTY_NAME, templateName == null ? "" : templateName);
-            
-            classNode.createRelationshipTo(templateNode,RelTypes.HAS_TEMPLATE);
+                        
+            classNode.createRelationshipTo(templateNode, RelTypes.HAS_TEMPLATE);
             Relationship specialInstanceRelationship = templateNode.createRelationshipTo(classNode, RelTypes.INSTANCE_OF_SPECIAL);
-            specialInstanceRelationship.setProperty(Constants.PROPERTY_NAME, "template");
+            specialInstanceRelationship.setProperty(Constants.PROPERTY_NAME, "template"); //NOI18N
+
             
             tx.success();
             return templateNode.getId();
@@ -2155,7 +2155,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public long createTemplateElement(String templateElementClass, String templateElementParentClassName, long templateElementParentId, String templateElementName) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, OperationNotPermittedException {
+    public long createTemplateElement(String templateElementClass, String templateElementParentClassName, long templateElementParentId, String templateElementName) throws 
+        MetadataObjectNotFoundException, ApplicationObjectNotFoundException, OperationNotPermittedException {
+        
         if (!cm.getPossibleChildren(templateElementParentClassName).contains(templateElementClass)) 
             throw new OperationNotPermittedException(String.format("An instance of class %s can't be created as child of %s", templateElementClass, templateElementParentClassName == null ? Constants.NODE_DUMMYROOT : templateElementParentClassName));
         
@@ -2164,13 +2166,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             Node classNode = classIndex.get(Constants.PROPERTY_NAME, templateElementClass).getSingle();
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", templateElementClass));
-
+            
             Node parentClassNode = classIndex.get(Constants.PROPERTY_NAME, templateElementParentClassName).getSingle();
             if (parentClassNode == null)
                 throw new MetadataObjectNotFoundException(String.format("Parent class %s can not be found", templateElementParentClassName));
             
-            ClassMetadata classMetadata = Util.createClassMetadataFromNode(classNode);
-
             if (classNode.hasProperty(Constants.PROPERTY_ABSTRACT) && (boolean)classNode.getProperty(Constants.PROPERTY_ABSTRACT))
                 throw new OperationNotPermittedException(String.format("Abstract class %s can not be instantiated", templateElementClass));
             
@@ -2190,14 +2190,59 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             templateObjectNode.setProperty(Constants.PROPERTY_NAME, templateElementName == null ? "" : templateElementName);
             
             templateObjectNode.createRelationshipTo(parentNode, RelTypes.CHILD_OF);
+            
             Relationship specialInstanceRelationship = templateObjectNode.createRelationshipTo(classNode, RelTypes.INSTANCE_OF_SPECIAL);
-            specialInstanceRelationship.setProperty(Constants.PROPERTY_NAME, "template");
+            specialInstanceRelationship.setProperty(Constants.PROPERTY_NAME, "template"); //NOI18N 
             
             tx.success();
             return templateObjectNode.getId();
         }
     }
-
+    
+    @Override    
+    public long createTemplateSpecialElement(String tsElementClass, String tsElementParentClassName, long tsElementParentId, String tsElementName) 
+        throws OperationNotPermittedException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException {
+        if (!cm.getPossibleSpecialChildren(tsElementParentClassName).contains(tsElementClass))
+            throw new OperationNotPermittedException(String.format("An instance of class %s can't be created as special child of %s", tsElementClass, tsElementParentClassName == null ? Constants.NODE_DUMMYROOT : tsElementParentClassName));
+            
+        try (Transaction tx = graphDb.beginTx()) {
+            
+            Node classNode = classIndex.get(Constants.PROPERTY_NAME, tsElementClass).getSingle();
+            if (classNode == null)
+                throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", tsElementClass));
+            
+            Node parentClassNode = classIndex.get(Constants.PROPERTY_NAME, tsElementParentClassName).getSingle();
+            if (parentClassNode == null)
+                throw new MetadataObjectNotFoundException(String.format("Parent class %s can not be found", tsElementParentClassName));
+            
+            if (classNode.hasProperty(Constants.PROPERTY_ABSTRACT) && (boolean)classNode.getProperty(Constants.PROPERTY_ABSTRACT))
+                throw new OperationNotPermittedException(String.format("Abstract class %s can not be instantiated", tsElementClass));
+            
+            Node parentNode = null;
+            
+            for(Relationship instanceOfSpecialRelationship : parentClassNode.getRelationships(Direction.INCOMING, RelTypes.INSTANCE_OF_SPECIAL)) {
+                if (instanceOfSpecialRelationship.getStartNode().getId() == tsElementParentId) {
+                    parentNode = instanceOfSpecialRelationship.getStartNode();
+                    break;
+                }
+            }
+            
+            if (parentNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Parent object %s of class %s not found", tsElementParentId, tsElementParentClassName));
+            
+            Node templateObjectNode = graphDb.createNode();
+            templateObjectNode.setProperty(Constants.PROPERTY_NAME, tsElementName == null ? "" : tsElementName);
+            
+            templateObjectNode.createRelationshipTo(parentNode, RelTypes.CHILD_OF_SPECIAL);
+            
+            Relationship specialInstanceRelationship = templateObjectNode.createRelationshipTo(classNode, RelTypes.INSTANCE_OF_SPECIAL);
+            specialInstanceRelationship.setProperty(Constants.PROPERTY_NAME, "template"); //NOI18N 
+            
+            tx.success();
+            return templateObjectNode.getId();
+        }
+    }
+    
     @Override
     public void updateTemplateElement(String templateElementClass, long templateElementId, String[] attributeNames, 
             String[] attributeValues) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException {
@@ -2292,12 +2337,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public List<RemoteBusinessObjectLight> getTemplatesForClass(String className) throws MetadataObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             List<RemoteBusinessObjectLight> templates = new ArrayList<>();
+                        
             String query = "MATCH (classNode)-[:" + RelTypes.HAS_TEMPLATE + "]->(templateObject) WHERE classNode.name={className} RETURN templateObject ORDER BY templateObject.name ASC"; //NOI18N
             HashMap<String, Object> parameters = new HashMap<>();
             parameters.put("className", className); //NOI18N
             ResourceIterator<Node> queryResult = graphDb.execute(query, parameters).columnAs("templateObject");
             
-            while (queryResult.hasNext()) 
+            while (queryResult.hasNext())
                 templates.add(Util.createTemplateElementLightFromNode(queryResult.next()));
             return templates;
         }
@@ -2306,6 +2352,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override
     public List<RemoteBusinessObjectLight> getTemplateElementChildren(String templateElementClass, long templateElementId)  {
         try (Transaction tx = graphDb.beginTx()) {
+            
             String query = "MATCH (classNode)<-[:" + RelTypes.INSTANCE_OF_SPECIAL + 
                     "]-(templateElement)<-[:" + RelTypes.CHILD_OF + "]-(templateElementChild) "
                     + "WHERE classNode.name={templateElementClass} AND id(templateElement) = {templateElementId} "
@@ -2318,7 +2365,30 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             List<RemoteBusinessObjectLight> templateElementChildren = new ArrayList<>();
             while (queryResult.hasNext()) 
                 templateElementChildren.add(Util.createTemplateElementLightFromNode(queryResult.next()));
+            
             return templateElementChildren; 
+        }
+    }
+    
+    @Override
+    public List<RemoteBusinessObjectLight> getTemplateSpecialElementChildren(String tsElementClass, long tsElementId) {
+        try (Transaction tx = graphDb.beginTx()) {
+            
+            
+            String query = "MATCH (classNode)<-[:" + RelTypes.INSTANCE_OF_SPECIAL + 
+                    "]-(templateElement)<-[:" + RelTypes.CHILD_OF_SPECIAL + "]-(templateElementChild) "
+                    + "WHERE classNode.name={templateElementClass} AND id(templateElement) = {templateElementId} "
+                    + "RETURN templateElementChild ORDER BY templateElementChild.name ASC"; //NOI18N
+            HashMap<String, Object> parameters = new HashMap<>();
+            parameters.put("templateElementClass", tsElementClass); //NOI18N
+            parameters.put("templateElementId", tsElementId); //NOI18N
+            ResourceIterator<Node> queryResult = graphDb.execute(query, parameters).columnAs("templateElementChild");
+            
+            List<RemoteBusinessObjectLight> templateElementChildren = new ArrayList<>();
+            while (queryResult.hasNext()) 
+                templateElementChildren.add(Util.createTemplateElementLightFromNode(queryResult.next()));
+            
+            return templateElementChildren;  
         }
     }
     

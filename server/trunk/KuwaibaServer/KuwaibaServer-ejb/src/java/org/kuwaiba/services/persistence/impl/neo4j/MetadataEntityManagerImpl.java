@@ -435,7 +435,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
 
         String cypherQuery = "START inventory = node:classes({className}) ".concat(
                              "MATCH inventory <-[:").concat(RelTypes.EXTENDS.toString()).concat("*]-classmetadata ").concat(
-                             includeAbstractClasses ? "" : "WHERE classmetadata.abstract <> true ").concat(
+                             includeAbstractClasses ? "WHERE classmetadata.abstract <> true " : "").concat(
                              "RETURN classmetadata ").concat(
                              "ORDER BY classmetadata.name ASC");
 
@@ -445,7 +445,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         try (Transaction tx = graphDb.beginTx()) {
             Result result = graphDb.execute(cypherQuery, params);
             Iterator<Node> n_column = result.columnAs("classmetadata");
-            if (includeSelf && !aClass.isAbstract())
+            if (includeSelf && (includeAbstractClasses ? true : !aClass.isAbstract()))
                 cml.add(aClass);
             for (Node node : IteratorUtil.asIterable(n_column))
                  cml.add(Util.createClassMetadataLightFromNode(node));
@@ -946,8 +946,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             throws MetadataObjectNotFoundException   {
         
         List<ClassMetadataLight> classMetadataResultList = new ArrayList<>();
-        List<String> cachedPossibleSpecialChildren = cm.getPossibleSpecialChildren(parentClassName);
         
+        List<String> cachedPossibleSpecialChildren = cm.getPossibleSpecialChildren(parentClassName);
+                
         if (cachedPossibleSpecialChildren != null) {
             for (String cachedPossibleChild : cachedPossibleSpecialChildren)
                 classMetadataResultList.add(cm.getClass(cachedPossibleChild));
@@ -958,23 +959,23 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         String cypherQuery;
         Map<String, Object> params = new HashMap<>();
         if (parentClassName == null || parentClassName.equals(Constants.NODE_DUMMYROOT)) {
-            cypherQuery = "MATCH (n:root {name:\"" + Constants.NODE_DUMMYROOT + "\"})-[:POSSIBLE_SPECIAL_CHILD]->directChild " +
+            cypherQuery = "MATCH (n:root {name:\"" + Constants.NODE_DUMMYROOT + "\"})-[:" + RelTypes.POSSIBLE_SPECIAL_CHILD + "]->directChild " +
                     "OPTIONAL MATCH directChild<-[:EXTENDS*]-subClass " +
                     "WHERE subClass.abstract = false OR subClass IS NULL " +
                     "RETURN directChild, subClass " +
-                    "ORDER BY directChild.name, subClass.name ASC ";
+                    "ORDER BY directChild.name,subClass.name ASC ";
         }
         else {
             cypherQuery = "START parentClassNode=node:classes(name = {className}) " +
-                        "MATCH (parentClassNode:class)-[:POSSIBLE_SPECIAL_CHILD]->(directChild) " +
+                        "MATCH (parentClassNode:class)-[:" + RelTypes.POSSIBLE_SPECIAL_CHILD + "]->(directChild) " +
                         "OPTIONAL MATCH (directChild)<-[:EXTENDS*]-(subClass) " +
                         "RETURN directChild, subClass "+
-                        "ORDER BY directChild.name, subClass.name ASC";
+                        "ORDER BY directChild.name,subClass.name ASC";
             params.put(Constants.PROPERTY_CLASS_NAME, "className:" + parentClassName);//NOI18N
         }
         try (Transaction tx = graphDb.beginTx()) {
-            Result result = graphDb.execute(cypherQuery, params);
-            while (result.hasNext()){
+            Result result = graphDb.execute(cypherQuery, params); //TODO: review the result are empty
+            while (result.hasNext()){ 
                 Map<String,Object> entry = result.next();
                 Node directChildNode =  (Node)entry.get("directChild");
                 Node indirectChildNode =  (Node)entry.get("subClass");

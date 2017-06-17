@@ -30,7 +30,6 @@ import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
-import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.ws.toserialize.application.RemotePool;
 
@@ -55,7 +54,7 @@ public class ProjectsModule implements GenericCommercialModule {
     /**
      * Relationship project to object
      */
-    public static String RELATIONSHIP_PROJECTSPROJECTHAS = "projectsProjectHas";
+    public static String RELATIONSHIP_PROJECTSPROJECTUSES = "projectsProjectUses";
     
     @Override
     public String getName() {
@@ -91,43 +90,29 @@ public class ProjectsModule implements GenericCommercialModule {
     public boolean isValid() {
         return true;
     }
-    
+        
     /**
-     * Gets the Project root pool
-     * @param className Project root pool class name
-     * @return The Project root node
-     * @throws InvalidArgumentException if the class provided is not subclass of Constants.CLASS_GENERICPROJECT
-     * @throws MetadataObjectNotFoundException If <code>Constants.CLASS_GENERICPROJECT</code> is not a valid subclass of InventoryObject
+     * Gets the project pools
+     * @return The list of project pools
      */
-    public RemotePool getProjectsRootPool(String className) throws MetadataObjectNotFoundException, InvalidArgumentException {
+    public List<RemotePool> getProjectPools() {
+        List<Pool> projectPools = aem.getRootPools(Constants.CLASS_GENERICPROJECT, ApplicationEntityManager.POOL_TYPE_MODULE_COMPONENT, true);
+        List<RemotePool> remoteProjPools = new ArrayList();
         
-        if (!mem.isSubClass(Constants.CLASS_GENERICPROJECT, className))
-            throw new InvalidArgumentException(String.format("Class %s is not a project", className));
+        for (Pool projectPool : projectPools)
+            remoteProjPools.add(new RemotePool(projectPool));
         
-        List<Pool> projectRootPools = aem.getRootPools(Constants.CLASS_GENERICPROJECT, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
-        
-        if (projectRootPools.isEmpty()) {
-            
-            aem.createRootPool(Constants.NODE_PROJECTROOT, Constants.NODE_PROJECTROOT, Constants.CLASS_GENERICPROJECT, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT);
-            projectRootPools = aem.getRootPools(Constants.CLASS_GENERICPROJECT, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
-        }
-        if (projectRootPools.size() == 1)
-            return new RemotePool(projectRootPools.get(0));
-        
-        return null;    
+        return remoteProjPools;
     }
     
-    /**
-     * Gets the projects associated to the projects root pool
-     * @param projectsRootPoolId Projects root pool id
-     * @param limit Max result number, -1 with out limit
+    /** Gets the project in a Project pool 
+     * @param poolId Project pool id
+     * @param limit Max result number, -1 without limit
      * @return The list of projects
-     * @throws ApplicationObjectNotFoundException If the project root pool is not founded
+     * @throws ApplicationObjectNotFoundException If the Project pool is not found
      */
-    public List<RemoteBusinessObjectLight> getProjectsFromProjectRootPool(long projectsRootPoolId, int limit) throws 
-        ApplicationObjectNotFoundException {
-        
-        return aem.getPoolItems(projectsRootPoolId, limit);
+    public List<RemoteBusinessObjectLight> getProjectsInProjectPool(long poolId, int limit) throws ApplicationObjectNotFoundException {
+        return aem.getPoolItems(poolId, limit);
     }
         
     /**
@@ -141,34 +126,13 @@ public class ProjectsModule implements GenericCommercialModule {
      * @throws InvalidArgumentException If any of the attributes or its type is invalid
      * @throws ArraySizeMismatchException If attributeNames and attributeValues have different sizes.
      * @throws MetadataObjectNotFoundException If the class name could not be found
-     * @throws ObjectNotFoundException If the parent id is not found
-     * @throws OperationNotPermittedException If the update can't be performed due to a format issue
      * @throws ApplicationObjectNotFoundException If the specified template could not be found.
      */
     public long addProject(long parentId, String parentClassName, String className, String[] attributeNames, String[][] attributeValues) throws 
-        InvalidArgumentException, ArraySizeMismatchException, MetadataObjectNotFoundException, 
-        ObjectNotFoundException, OperationNotPermittedException, ApplicationObjectNotFoundException {
-        
-        try {
-            aem.getPool(parentId);
-            // The new Project is child of the project root pool
-            return bem.createPoolItem(parentId, className, attributeNames, attributeValues, 0);
-            
-        } catch (ApplicationObjectNotFoundException ex) {
-            
-            HashMap<String, List<String>> attributes = new HashMap<>();
-            
-            if (attributeNames != null && attributeValues != null) {
-                
-                if (attributeNames.length != attributeValues.length)
-                    throw new ArraySizeMismatchException("attributeNames", "attributeValues");
-                
-                for (int i = 0; i < attributeNames.length; i += 1)
-                    attributes.put(attributeNames[i], Arrays.asList(attributeValues[i]));
-            }
-            // The new Project is child of and Activity or Project
-            return bem.createSpecialObject(className, parentClassName, parentId, attributes, 0);
-        }
+        ApplicationObjectNotFoundException, InvalidArgumentException, ArraySizeMismatchException, MetadataObjectNotFoundException  {
+
+        aem.getPool(parentId);
+        return bem.createPoolItem(parentId, className, attributeNames, attributeValues, 0);
     }
         
     /**
@@ -239,17 +203,17 @@ public class ProjectsModule implements GenericCommercialModule {
      * @param projectClass Project class
      * @param projectId Project Id
      * @return The list of project resources
-     * @throws ServerSideException  If the project is not subclass of GenericProject
+     * @throws InvalidArgumentException  If the project is not subclass of GenericProject
      * @throws ObjectNotFoundException
      * @throws MetadataObjectNotFoundException
      */
     public List<RemoteBusinessObjectLight> getProjectResurces(String projectClass, long projectId) throws 
-        ServerSideException, ObjectNotFoundException, MetadataObjectNotFoundException {
+        InvalidArgumentException, ObjectNotFoundException, MetadataObjectNotFoundException {
         
         if (!mem.isSubClass(Constants.CLASS_GENERICPROJECT, projectClass))
-            throw new ServerSideException(String.format("Class %s is not a project", projectClass));
+            throw new InvalidArgumentException(String.format("Class %s is not a project", projectClass));
         
-        return bem.getSpecialAttribute(projectClass, projectId, RELATIONSHIP_PROJECTSPROJECTHAS);
+        return bem.getSpecialAttribute(projectClass, projectId, RELATIONSHIP_PROJECTSPROJECTUSES);
     }
         
     /**
@@ -257,15 +221,15 @@ public class ProjectsModule implements GenericCommercialModule {
      * @param projectClass Project class
      * @param projectId Project Id
      * @return The list of Activities
-     * @throws ServerSideException
+     * @throws InvalidArgumentException
      * @throws MetadataObjectNotFoundException
      * @throws ObjectNotFoundException
      */
     public List<RemoteBusinessObjectLight> getProjectActivities(String projectClass, long projectId) 
-        throws ServerSideException, MetadataObjectNotFoundException, ObjectNotFoundException {
+        throws InvalidArgumentException, MetadataObjectNotFoundException, ObjectNotFoundException {
         
         if (!mem.isSubClass(Constants.CLASS_GENERICPROJECT, projectClass))
-            throw new ServerSideException(String.format("Class %s is not a project", projectClass));
+            throw new InvalidArgumentException(String.format("Class %s is not a project", projectClass));
         
         List<RemoteBusinessObjectLight> children = bem.getObjectSpecialChildren(projectClass, projectId);
         List<RemoteBusinessObjectLight> activities = new ArrayList();
@@ -276,56 +240,31 @@ public class ProjectsModule implements GenericCommercialModule {
         }
         return activities;
     }
-    
-    /**
-     * Gets the project associate to a give project
-     * @param projectClass Project class
-     * @param projectId Project id
-     * @return The list of projects 
-     * @throws ServerSideException If the projectClass are no a subclass of projectClass
-     * @throws MetadataObjectNotFoundException
-     * @throws ObjectNotFoundException
-     */
-    public List<RemoteBusinessObjectLight> getProjectsFromProject(String projectClass, long projectId) throws 
-        ServerSideException, MetadataObjectNotFoundException, ObjectNotFoundException {
-        
-        if (!mem.isSubClass(Constants.CLASS_GENERICPROJECT, projectClass))
-            throw new ServerSideException(String.format("Class %s is not a project", projectClass));
-        
-        List<RemoteBusinessObjectLight> children = bem.getObjectSpecialChildren(projectClass, projectId);
-        List<RemoteBusinessObjectLight> projects = new ArrayList();
-        
-        for (RemoteBusinessObjectLight child : children) {
-            if (mem.isSubClass(Constants.CLASS_GENERICPROJECT, child.getClassName()))
-                projects.add(child);
-        }
-        return projects;
-    }
-        
+            
     /**
      * Associates objects to a Project
      * @param projectClass Project class
      * @param projectId Project Id
      * @param objectClass Object class
      * @param objectId Object Id
-     * @throws ServerSideException If the project is not subclass of GenericProject
+     * @throws InvalidArgumentException If the project is not subclass of GenericProject
      * @throws ArraySizeMismatchException if array sizes of objectClass and objectId are not the same
      * @throws ObjectNotFoundException
      * @throws OperationNotPermittedException
      * @throws MetadataObjectNotFoundException
      */
     public void associateObjectsToProject(String projectClass, long projectId, String[] objectClass, long[] objectId) throws 
-        ServerSideException, ArraySizeMismatchException, ObjectNotFoundException, 
+        InvalidArgumentException, ArraySizeMismatchException, ObjectNotFoundException, 
         OperationNotPermittedException, MetadataObjectNotFoundException {
         
         if (!mem.isSubClass(Constants.CLASS_GENERICPROJECT, projectClass))
-            throw new ServerSideException(String.format("Class %s is not a project", projectClass));
+            throw new InvalidArgumentException(String.format("Class %s is not a project", projectClass));
         
         if (objectClass.length != objectId.length)
             throw new ArraySizeMismatchException("objectClass", "objectId");
         
         for (int i = 0; i < objectId.length; i += 1) {
-            bem.createSpecialRelationship(projectClass, projectId, objectClass[i], objectId[i], RELATIONSHIP_PROJECTSPROJECTHAS, true);
+            bem.createSpecialRelationship(projectClass, projectId, objectClass[i], objectId[i], RELATIONSHIP_PROJECTSPROJECTUSES, true);
         }
     }
         
@@ -335,19 +274,19 @@ public class ProjectsModule implements GenericCommercialModule {
      * @param projectId Project Id
      * @param objectClass Object class
      * @param objectId Object id
-     * @throws ServerSideException If the project is not subclass of GenericProject
+     * @throws InvalidArgumentException If the project is not subclass of GenericProject
      * @throws ObjectNotFoundException
      * @throws OperationNotPermittedException
      * @throws MetadataObjectNotFoundException
      */
     public void associateObjectToProject(String projectClass, long projectId, String objectClass, long objectId) throws 
-        ServerSideException, ObjectNotFoundException, OperationNotPermittedException, 
+        InvalidArgumentException, ObjectNotFoundException, OperationNotPermittedException, 
         MetadataObjectNotFoundException {
         
         if (!mem.isSubClass(Constants.CLASS_GENERICPROJECT, projectClass))
-            throw new ServerSideException(String.format("Class %s is not a project", projectClass));
+            throw new InvalidArgumentException(String.format("Class %s is not a project", projectClass));
         
-        bem.createSpecialRelationship(projectClass, projectId, objectClass, objectId, RELATIONSHIP_PROJECTSPROJECTHAS, true);
+        bem.createSpecialRelationship(projectClass, projectId, objectClass, objectId, RELATIONSHIP_PROJECTSPROJECTUSES, true);
     }
         
     /**
@@ -356,17 +295,29 @@ public class ProjectsModule implements GenericCommercialModule {
      * @param objectId Object id
      * @param projectClass Project class
      * @param projectId Project id
-     * @throws ServerSideException If the project is not subclass of GenericProject
+     * @throws InvalidArgumentException If the project is not subclass of GenericProject
      * @throws ObjectNotFoundException
      * @throws MetadataObjectNotFoundException
      */
     public void releaseObjectFromProject(String objectClass, long objectId, String projectClass, long projectId) throws 
-        ServerSideException, ObjectNotFoundException, MetadataObjectNotFoundException {
+        InvalidArgumentException, ObjectNotFoundException, MetadataObjectNotFoundException {
         
         if (!mem.isSubClass(Constants.CLASS_GENERICPROJECT, projectClass))
-            throw new ServerSideException(String.format("Class %s is not a project", projectClass));
+            throw new InvalidArgumentException(String.format("Class %s is not a project", projectClass));
         
-        bem.releaseSpecialRelationship(objectClass, objectId, projectId, RELATIONSHIP_PROJECTSPROJECTHAS);
+        bem.releaseSpecialRelationship(objectClass, objectId, projectId, RELATIONSHIP_PROJECTSPROJECTUSES);
+    }
+    
+    /**
+     * Gets the project associate to an object
+     * @param objectClass Object class
+     * @param objectId Object Id
+     * @return The list of projects
+     * @throws ObjectNotFoundException
+     * @throws MetadataObjectNotFoundException
+     */
+    public List<RemoteBusinessObjectLight> getProjectsAssociateToObject(String objectClass, long objectId) throws ObjectNotFoundException, MetadataObjectNotFoundException {
+        return bem.getSpecialAttribute(objectClass, objectId, RELATIONSHIP_PROJECTSPROJECTUSES);
     }
     
     /**
@@ -387,7 +338,7 @@ public class ProjectsModule implements GenericCommercialModule {
         this.aem = aem;
         this.bem = bem;
         
-        this.mem.setSpecialRelationshipDisplayName(RELATIONSHIP_PROJECTSPROJECTHAS, "Associated to this project");
+        this.mem.setSpecialRelationshipDisplayName(RELATIONSHIP_PROJECTSPROJECTUSES, "Associated to this project");
     }
     
 }

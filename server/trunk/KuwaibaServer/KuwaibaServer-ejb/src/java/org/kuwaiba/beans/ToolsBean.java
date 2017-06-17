@@ -260,9 +260,9 @@ public class ToolsBean implements ToolsBeanRemote {
                         attributeMetadata.setNoCopy(false);                        
                         mem.createAttribute(genericProjectId, attributeMetadata);
                         
-                        attributeMetadata.setName("manager");
-                        attributeMetadata.setDisplayName("manager");
-                        attributeMetadata.setType("String");
+                        attributeMetadata.setName("projectManager");
+                        attributeMetadata.setDisplayName("projectManager");
+                        attributeMetadata.setType("Employee");
                         mem.createAttribute(genericProjectId, attributeMetadata);
                         
                         attributeMetadata.setName("startDate");
@@ -305,9 +305,7 @@ public class ToolsBean implements ToolsBeanRemote {
                         mem.createClass(cm);
                         aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
                                 new ChangeDescriptor("DataBase", "", "", "Add ActivityStatusType Class"));
-                        
-                        
-                        
+                                                
                         attributeMetadata.setName("notes");
                         attributeMetadata.setDisplayName("notes");
                         attributeMetadata.setType("String");
@@ -335,7 +333,7 @@ public class ToolsBean implements ToolsBeanRemote {
                         
                         attributeMetadata.setName("duration");
                         attributeMetadata.setDisplayName("duration");
-                        attributeMetadata.setType("Integer");
+                        attributeMetadata.setType("Float");
                         mem.createAttribute(genericActivityId, attributeMetadata);
                         
                         attributeMetadata.setName("cost");
@@ -343,9 +341,9 @@ public class ToolsBean implements ToolsBeanRemote {
                         attributeMetadata.setType("Float");
                         mem.createAttribute(genericActivityId, attributeMetadata);
                         
-                        attributeMetadata.setName("manager");
-                        attributeMetadata.setDisplayName("manager");
-                        attributeMetadata.setType("String");
+                        attributeMetadata.setName("owner");
+                        attributeMetadata.setDisplayName("owner");
+                        attributeMetadata.setType("Employee");
                         mem.createAttribute(genericActivityId, attributeMetadata);
                         
                         attributeMetadata.setName("risk");
