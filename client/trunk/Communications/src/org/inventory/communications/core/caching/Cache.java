@@ -36,6 +36,7 @@ public class Cache{
     private HashMap<String,LocalClassMetadata> metadataIndex; //Cache for metadata (the complete metadata information)
     private HashMap<String,LocalClassMetadataLight> lightMetadataIndex; //Cache for lightmetadata (usually for administrative purposes)
     private HashMap<String,List<LocalClassMetadataLight>> possibleChildrenIndex; //Cache for possible children
+    private HashMap<String, List<LocalClassMetadataLight>> possibleSpecialChildrenIndex; //Cache for possible special children
     private HashMap<String,List<LocalObjectListItem>> listIndex; //Cache for list-type attributes
     private HashMap<String, List<LocalReportLight>> reportIndex; //Cache for class reports
     
@@ -53,6 +54,7 @@ public class Cache{
         this.metadataIndex = new HashMap<>();
         this.lightMetadataIndex = new HashMap<>();
         this.possibleChildrenIndex = new HashMap<>();
+        this.possibleSpecialChildrenIndex = new HashMap<>();
         this.listIndex = new HashMap<>();
         this.reportIndex = new HashMap<>();
     }
@@ -121,9 +123,32 @@ public class Cache{
             return null;
         return possibleChildrenIndex.get(className);
     }
-
+        
     public HashMap<String, List<LocalClassMetadataLight>> getAllPossibleChildren() {
         return possibleChildrenIndex;
+    }
+    
+    public void addPossibleSpecialChildrenCached(String className, List<LocalClassMetadataLight> specialChildren) {
+        List<LocalClassMetadataLight> toBeAdded = new ArrayList<>();
+        for (LocalClassMetadataLight lcml : specialChildren) {
+            LocalClassMetadataLight myLocal = lightMetadataIndex.get(lcml.getClassName());
+            if (myLocal == null) {
+                lightMetadataIndex.put(lcml.getClassName(), lcml);
+                toBeAdded.add(lcml);
+            } else
+                toBeAdded.add(myLocal); //We reuse the instance in the light metadata index
+        }
+        possibleSpecialChildrenIndex.put(className, toBeAdded);
+    }
+    
+    public List<LocalClassMetadataLight> getPossibleSpecialChildrenCached(String className) {
+        if (className == null)
+            return null;
+        return possibleSpecialChildrenIndex.get(className);
+    }
+    
+    public HashMap<String, List<LocalClassMetadataLight>> getAllPossibleSpecialChildren() {
+        return possibleSpecialChildrenIndex;
     }
 
     public List<LocalObjectListItem> getListCached(String className){

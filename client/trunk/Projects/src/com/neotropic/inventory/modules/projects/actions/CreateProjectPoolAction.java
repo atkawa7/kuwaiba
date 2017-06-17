@@ -63,7 +63,7 @@ public class CreateProjectPoolAction extends GenericInventoryAction {
             return;
         
         List<LocalClassMetadataLight> possibleProjectClasses = CommunicationsStub
-            .getInstance().getLightSubclasses(Constants.CLASS_GENERICPROJECT, false, true);
+            .getInstance().getLightSubclasses(Constants.CLASS_GENERICPROJECT, true, true);
         if (possibleProjectClasses == null) {
             NotificationUtil.getInstance().showSimplePopup(bundle.getString("LBL_ERROR"), 
                 NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());

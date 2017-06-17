@@ -21,10 +21,12 @@ import java.io.IOException;
 import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
+import org.inventory.core.containment.HierarchyCustomizerConfigurationObject;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.containment.nodes.actions.RemovePosibleChildAction;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
+import org.openide.util.Lookup;
 import org.openide.util.datatransfer.PasteType;
 import org.openide.util.lookup.Lookups;
 
@@ -102,18 +104,32 @@ public class ClassMetadataNode extends AbstractNode {
 //                                data)){
 //                            for (Object obj : data)
 //                                getChildren().add(new Node[]{new ClassMetadataNode((LocalClassMetadataLight)data)});
-                    if (CommunicationsStub.getInstance().addPossibleChildren(object.getOid(),
-                              tokens)){
-
-                        ((ClassMetadataChildren)getChildren()).add(new ClassMetadataNode[]{new ClassMetadataNode(data)});
+                    HierarchyCustomizerConfigurationObject configObj = Lookup.getDefault()
+                        .lookup(HierarchyCustomizerConfigurationObject.class);
+                    
+                    boolean addedChildrenSuccessfully;
+                    
+                    if ((boolean) configObj.getProperty(HierarchyCustomizerConfigurationObject.PROPERTY_ENABLE_SPECIAL)) {
+                        addedChildrenSuccessfully = CommunicationsStub.getInstance().addPossibleSpecialChildren(object.getOid(), tokens);
+                    } else {
+                        addedChildrenSuccessfully = CommunicationsStub.getInstance().addPossibleChildren(object.getOid(), tokens);
+                    }
+                    
+                    if (addedChildrenSuccessfully) {
+                        ((ClassMetadataChildren) getChildren()).add(new ClassMetadataNode[]{new ClassMetadataNode(data)});
                         CommunicationsStub.getInstance().refreshCache(false, false, false, true);
 
-                        NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE,java.util.ResourceBundle.getBundle("org/inventory/core/containment/Bundle").getString("LBL_HIERARCHY_UPDATE_TEXT"));
+                        NotificationUtil.getInstance().showSimplePopup("Success", 
+                            NotificationUtil.INFO_MESSAGE, 
+                            java.util.ResourceBundle.getBundle("org/inventory/core/containment/Bundle").getString("LBL_HIERARCHY_UPDATE_TEXT"));
                     }
-                    else
-                        NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE,CommunicationsStub.getInstance().getError());
-                }catch (Exception ex) {
-                        NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE,ex.getMessage());
+                    else {
+                        NotificationUtil.getInstance().showSimplePopup("Error", 
+                            NotificationUtil.ERROR_MESSAGE,CommunicationsStub.getInstance().getError());
+                    }
+                } catch (Exception ex) {
+                    NotificationUtil.getInstance().showSimplePopup("Error", 
+                        NotificationUtil.ERROR_MESSAGE,ex.getMessage());
                 }
                 return null;
             }

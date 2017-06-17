@@ -59,26 +59,27 @@ public class TemplatesModuleClassNode extends AbstractNode {
         return defaultIcon;
     }
     
-    
-    
     public static class ClassChildren extends AbstractChildren {
 
         @Override
         public void addNotify() {
             LocalClassMetadataLight classMetadata = getNode().getLookup().lookup(LocalClassMetadataLight.class);
-            List<LocalObjectLight> templatesForClass = CommunicationsStub.getInstance().
-                    getTemplatesForClass(classMetadata.getClassName());
-            
-            if (templatesForClass == null) {
+                        
+            List<LocalObjectLight> templates = CommunicationsStub.getInstance()
+                .getTemplatesForClass(classMetadata.getClassName());
+                        
+            if (templates == null) {
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 setKeys(Collections.EMPTY_SET);
-            } else
-                setKeys(templatesForClass);
+            } else {
+                Collections.sort(templates);
+                setKeys(templates);
+            }
         }
     
         @Override
         protected Node[] createNodes(LocalObjectLight t) {
-            return new Node[] {new TemplateElementNode(t)};
+            return new Node[] {new TemplateElementNode(t, false)};
         }
     }
 }

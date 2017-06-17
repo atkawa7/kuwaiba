@@ -24,6 +24,7 @@ public class TemplateActionsFactory {
     static CreateTemplateAction createTemplateAction;
     static CreateTemplateElementAction createTemplateElementAction;
     static DeleteTemplateElementAction deleteTemplateElementAction;
+    static CreateTemplateElementSpecialAction createTemplateElementSpecialAction;
     
     public static CreateTemplateAction getCreateTemplateAction() {
         if (createTemplateAction == null)
@@ -41,5 +42,11 @@ public class TemplateActionsFactory {
         if (deleteTemplateElementAction == null)
             deleteTemplateElementAction = new DeleteTemplateElementAction();
         return deleteTemplateElementAction;
+    }
+    
+    public static CreateTemplateElementSpecialAction getCreateTemplateElementSpecialAction() {
+        if (createTemplateElementSpecialAction == null) 
+            createTemplateElementSpecialAction = new CreateTemplateElementSpecialAction();
+        return createTemplateElementSpecialAction;
     }
 }

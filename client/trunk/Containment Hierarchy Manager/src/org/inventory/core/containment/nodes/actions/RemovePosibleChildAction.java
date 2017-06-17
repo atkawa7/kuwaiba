@@ -18,11 +18,13 @@ package org.inventory.core.containment.nodes.actions;
 import java.awt.event.ActionEvent;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.core.containment.HierarchyCustomizerConfigurationObject;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.containment.nodes.ClassMetadataChildren;
 import org.inventory.core.containment.nodes.ClassMetadataNode;
 import org.openide.nodes.Node;
+import org.openide.util.Lookup;
 
 /**
  * Implements the "remove a class from container hierarchy" action
@@ -41,8 +43,20 @@ public class RemovePosibleChildAction extends GenericInventoryAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         CommunicationsStub com = CommunicationsStub.getInstance();
-        if (com.removePossibleChildren(
-                ((ClassMetadataNode)node.getParentNode()).getObject().getOid(),new long[]{node.getObject().getOid()})){
+        
+        HierarchyCustomizerConfigurationObject configObj = Lookup.getDefault()
+            .lookup(HierarchyCustomizerConfigurationObject.class);
+        
+        boolean addedChildrenSuccessfully;
+
+        if ((boolean) configObj.getProperty(HierarchyCustomizerConfigurationObject.PROPERTY_ENABLE_SPECIAL)) {
+            addedChildrenSuccessfully = com.removePossibleSpecialChildren(((ClassMetadataNode)node.getParentNode()).getObject().getOid(),new long[]{node.getObject().getOid()});
+        } else {
+            
+            addedChildrenSuccessfully = com.removePossibleChildren(((ClassMetadataNode)node.getParentNode()).getObject().getOid(),new long[]{node.getObject().getOid()});
+        }
+        
+        if (addedChildrenSuccessfully){
 
             ((ClassMetadataChildren)node.getParentNode().getChildren()).remove(new Node[]{node});
             com.refreshCache(false, false, false, true);

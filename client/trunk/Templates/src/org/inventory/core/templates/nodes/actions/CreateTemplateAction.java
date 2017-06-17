@@ -16,13 +16,14 @@
 package org.inventory.core.templates.nodes.actions;
 
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.core.templates.nodes.TemplatesModuleClassNode;
@@ -33,9 +34,9 @@ import org.openide.util.Utilities;
  * Creates a template
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-class CreateTemplateAction extends AbstractAction {
+class CreateTemplateAction extends GenericInventoryAction {
     
-    private CommunicationsStub com = CommunicationsStub.getInstance();
+    private final CommunicationsStub com = CommunicationsStub.getInstance();
     
     CreateTemplateAction() {
         putValue(NAME, "New Template");
@@ -46,7 +47,7 @@ class CreateTemplateAction extends AbstractAction {
         
         JTextField txtTemplateName = new JTextField(20);
         txtTemplateName.setName("txtTemplateName"); //NOI18N
-        
+                
         JComplexDialogPanel pnlGeneralInfo = new JComplexDialogPanel(
                                     new String[] { "Name" }, new JComponent[] { txtTemplateName });
         
@@ -55,8 +56,9 @@ class CreateTemplateAction extends AbstractAction {
             
             TemplatesModuleClassNode selectedNode = Utilities.actionsGlobalContext().lookup(TemplatesModuleClassNode.class);
             LocalClassMetadataLight selectedObject = selectedNode.getLookup().lookup(LocalClassMetadataLight.class);
-            
-            LocalObjectLight newTemplate = com.createTemplate(selectedObject.getClassName(), ((JTextField)pnlGeneralInfo.getComponent("txtTemplateName")).getText());
+                        
+            LocalObjectLight newTemplate = com.createTemplate(selectedObject.getClassName(), 
+                ((JTextField)pnlGeneralInfo.getComponent("txtTemplateName")).getText());
             
             if (newTemplate == null)
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
@@ -65,5 +67,10 @@ class CreateTemplateAction extends AbstractAction {
                 NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Template created successfully");
             }
         }
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_TEMPLATES, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

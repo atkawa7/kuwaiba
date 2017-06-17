@@ -19,6 +19,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import javax.swing.AbstractAction;
@@ -55,10 +56,11 @@ public final class CreateBusinessObjectFromTemplateAction extends AbstractAction
         
         if (templates == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
-        else {
+        else {            
             if (templates.isEmpty())
                 JOptionPane.showMessageDialog(null, "No templates were defined for this class", "Error", JOptionPane.INFORMATION_MESSAGE);
             else {
+                Collections.sort(templates);
                 TemplateListFrame templatesFrame = new TemplateListFrame(className, templates);
                 templatesFrame.setVisible(true);
             }
@@ -125,18 +127,20 @@ public final class CreateBusinessObjectFromTemplateAction extends AbstractAction
                         JOptionPane.showMessageDialog(null, "Select a template", "Create Object", JOptionPane.INFORMATION_MESSAGE);
                     else {
                         LocalObjectLight selectedObject = Utilities.actionsGlobalContext().lookup(LocalObjectLight.class);
+                        
                         LocalObjectLight newObject = CommunicationsStub.getInstance().createObject(selectedTemplate.getClassName(), 
-                                selectedObject.getClassName(), selectedObject.getOid(), attributes, selectedTemplate.getOid());
-                        if (newObject == null)
+                            selectedObject.getClassName(), selectedObject.getOid(), attributes, selectedTemplate.getOid());
+                        
+                        if (newObject == null) {
                             NotificationUtil.getInstance().showSimplePopup("Error", 
-                                    NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-                        else {
+                                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                        } else {
                             AbstractNode selectedNode = Utilities.actionsGlobalContext().lookup(AbstractNode.class);
                             if (selectedNode.getChildren() instanceof AbstractChildren) //Some nodes are created on the fly and does not have children. For those cases, let's avoid refreshing their children lists
                                 ((AbstractChildren)selectedNode.getChildren()).addNotify();
 
                             NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE,
-                                "Element created successfully");
+                            "Element created successfully");
                         }
                     }
                 }

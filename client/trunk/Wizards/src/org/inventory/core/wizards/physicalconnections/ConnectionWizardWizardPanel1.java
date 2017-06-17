@@ -77,8 +77,9 @@ public class ConnectionWizardWizardPanel1 implements WizardDescriptor.Validating
                                         }else{
                                             switch(wizardType){
                                                 case ConnectionWizard.WIZARDTYPE_CONTAINERS:
-                                                    if (com.getMetaForClass(aSelection.getClassName(), false).getValidator(Constants.VALIDATOR_PHYSICAL_NODE) == 1){
-                                                        if(com.getMetaForClass(bSelection.getClassName(), false).getValidator(Constants.VALIDATOR_PHYSICAL_NODE) == 1)
+                                                    // Any node that is not a GenericPort can be connected using a container
+                                                    if (com.getMetaForClass(aSelection.getClassName(), false).getValidator(Constants.VALIDATOR_PHYSICAL_ENDPOINT) == 0){
+                                                        if(com.getMetaForClass(bSelection.getClassName(), false).getValidator(Constants.VALIDATOR_PHYSICAL_ENDPOINT) == 0)
                                                             isValid = true;
                                                         else{
                                                             errorStr = "The object selected in the right tree cannot be connected using a container";
@@ -138,8 +139,9 @@ public class ConnectionWizardWizardPanel1 implements WizardDescriptor.Validating
                                         }else{
                                             switch(wizardType){
                                                 case ConnectionWizard.WIZARDTYPE_CONTAINERS:
-                                                    if (com.getMetaForClass(aSelection.getClassName(), false).getValidator(Constants.VALIDATOR_PHYSICAL_NODE) == 1){
-                                                        if(com.getMetaForClass(bSelection.getClassName(), false).getValidator(Constants.VALIDATOR_PHYSICAL_NODE) == 1)
+                                                    // Any node that is not a GenericPort can be connected using a container
+                                                    if (com.getMetaForClass(aSelection.getClassName(), false).getValidator(Constants.VALIDATOR_PHYSICAL_ENDPOINT) == 0){
+                                                        if(com.getMetaForClass(bSelection.getClassName(), false).getValidator(Constants.VALIDATOR_PHYSICAL_ENDPOINT) == 0)
                                                             isValid = true;
                                                         else{
                                                             errorStr = "The object selected in the right tree cannot be connected using a container";

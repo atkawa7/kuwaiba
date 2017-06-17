@@ -213,10 +213,6 @@ public class Constants {
      */
     public static final int MAPPING_MANYTOMANY = 6;
     /**
-     * This relationship is used to relate an Object with a Project
-     */
-    public static final String RELATIONSHIP_PROJECTSPROJECTHAS = "projectsProjectHas";
-    /**
      * This relationship is used to relate a GenericPort with an IP address 
      */
     public static final String RELATIONSHIP_IPAMHASADDRESS = "ipamHasIpAddress";

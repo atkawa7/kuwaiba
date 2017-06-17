@@ -1,17 +1,16 @@
 /**
  *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
- *
- *  Licensed under the EPL License, Version 1.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *       http://www.eclipse.org/legal/epl-v10.html
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * 
+ *   Licensed under the EPL License, Version 1.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *        http://www.eclipse.org/legal/epl-v10.html
+ * 
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
  */
 package org.inventory.core.templates.nodes.actions;
 
@@ -36,40 +35,40 @@ import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter;
 
 /**
- * Creates a template element
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * Create template to child of special
+ * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-class CreateTemplateElementAction extends GenericInventoryAction implements Presenter.Popup {
+public class CreateTemplateElementSpecialAction extends GenericInventoryAction implements Presenter.Popup {
     
     private final CommunicationsStub com = CommunicationsStub.getInstance();
     
-    CreateTemplateElementAction() {
-        putValue(NAME, "New Object");
+    public CreateTemplateElementSpecialAction() {
+        putValue(NAME, "New Special");
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
         
-        JTextField txtTemplateElementName = new JTextField(20);
-        txtTemplateElementName.setName("txtTemplateElementName"); //NOI18N
+        JTextField txtTemplateSpecialElementName = new JTextField(20);
+        txtTemplateSpecialElementName.setName("txtTemplateSpecialElementName"); //NOI18N
         
         JComplexDialogPanel pnlGeneralInfo = new JComplexDialogPanel(
-                                    new String[] { "Name" }, new JComponent[] { txtTemplateElementName });
+                                    new String[] { "Name" }, new JComponent[] { txtTemplateSpecialElementName });
         
-        if (JOptionPane.showConfirmDialog(null, pnlGeneralInfo, "New Template Element", 
+        if (JOptionPane.showConfirmDialog(null, pnlGeneralInfo, "New Template Special Element", 
                 JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             
             TemplateElementNode selectedNode = Utilities.actionsGlobalContext().lookup(TemplateElementNode.class);
             LocalObjectLight selectedObject = selectedNode.getLookup().lookup(LocalObjectLight.class);
             
-            LocalObjectLight newTemplateElement = com.createTemplateElement(((JMenuItem)e.getSource()).getName(), selectedObject.getClassName(), 
-                    selectedObject.getOid(), ((JTextField)pnlGeneralInfo.getComponent("txtTemplateElementName")).getText());
+            LocalObjectLight newTemplateElement = com.createTemplateSpecialElement(((JMenuItem)e.getSource()).getName(), selectedObject.getClassName(), 
+                    selectedObject.getOid(), ((JTextField)pnlGeneralInfo.getComponent("txtTemplateSpecialElementName")).getText());
             
             if (newTemplateElement == null)
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             else {
                 ((AbstractChildren)selectedNode.getChildren()).addNotify();
-                NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Template element created successfully");
+                NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Template special element created successfully");
             }
         }
     }
@@ -80,7 +79,7 @@ class CreateTemplateElementAction extends GenericInventoryAction implements Pres
 
         LocalObjectLight selectedObject = Utilities.actionsGlobalContext().lookup(LocalObjectLight.class);
         
-        List<LocalClassMetadataLight> items = com.getPossibleChildren(selectedObject.getClassName(), true);
+        List<LocalClassMetadataLight> items = com.getPossibleSpecialChildren(selectedObject.getClassName(), true);
         
         if (items == null) {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE,

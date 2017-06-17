@@ -25,6 +25,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
 import javax.xml.ws.BindingProvider;
@@ -559,7 +561,7 @@ public class CommunicationsStub {
             return null;
         }
     }
-
+    
     /**
      * Same as above method, but this one doesn't go deeper into the container hierarchy
      * The result is not cached
@@ -591,32 +593,84 @@ public class CommunicationsStub {
             return null;
         }
     }
-   
-    public List<LocalClassMetadataLight> getSpecialPossibleChildren(String className) {
-        try{
-            List<ClassInfoLight> resAsRemote = service.getSpecialPossibleChildren(className,this.session.getSessionId());
-            List<LocalClassMetadataLight> resAsLocal = new ArrayList<>();
+    
+    /**
+     * Gets possible special children for a class. The result is cached
+     * @param className Class name
+     * @param ignoreCache Ignore local cache
+     * @return The list of possible special children
+     */
+    public List<LocalClassMetadataLight> getPossibleSpecialChildren(String className, boolean ignoreCache) {
+        try {
+        List<LocalClassMetadataLight> resAsLocal = null;
+        if (!ignoreCache) {
+            resAsLocal = cache.getPossibleSpecialChildrenCached(className);
+        }
+        if (resAsLocal == null) {
+                resAsLocal = new ArrayList();
+                List<ClassInfoLight> resAsRemote = service.getPossibleSpecialChildren(className, session.getSessionId());
 
-            for (ClassInfoLight cil : resAsRemote){
-               HashMap<String, Integer> validators = new HashMap<>();
+                for (ClassInfoLight cil : resAsRemote){
+                    HashMap<String, Integer> validators = new HashMap<>();
                     for (Validator validator : cil.getValidators())
                         validators.put(validator.getLabel(), validator.getValue());
-                    
+
                     resAsLocal.add(new LocalClassMetadataLight(cil.getId(),
-                                                cil.getClassName(),
-                                                cil.getDisplayName(),
-                                                cil.getParentClassName(),
-                                                cil.isAbstract(),cil.isViewable(), cil.isListType(),
-                                                cil.isCustom(), cil.isInDesign(),
-                                                cil.getSmallIcon(), cil.getColor(), validators));
+                        cil.getClassName(),
+                        cil.getDisplayName(),
+                        cil.getParentClassName(),
+                        cil.isAbstract(),cil.isViewable(), cil.isListType(),
+                        cil.isCustom(), cil.isInDesign(),
+                        cil.getSmallIcon(), 
+                        cil.getColor(), validators));
+                }
+                cache.addPossibleSpecialChildrenCached(className, resAsLocal);
             }
             return resAsLocal;
-        }catch(Exception ex){
+        } catch (Exception ex) {
+            error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Gets the possible children to the class. The result is not cached
+     * @param className Class name
+     * @return The list of possible special children for the class
+     */
+    public List<LocalClassMetadataLight> getPossibleSpecialChildrenNoRecursive(String className) {
+        try {
+            List<ClassInfoLight> resAsRemote = service.getPossibleSpecialChildrenNoRecursive(className, session.getSessionId());
+            List<LocalClassMetadataLight> resAsLocal = new ArrayList();
+            
+            for (ClassInfoLight cil : resAsRemote){
+                HashMap<String, Integer> validators = new HashMap<>();
+                for (Validator validator : cil.getValidators())
+                    validators.put(validator.getLabel(), validator.getValue());
+                    
+                resAsLocal.add(new LocalClassMetadataLight(cil.getId(),
+                    cil.getClassName(),
+                    cil.getDisplayName(),
+                    cil.getParentClassName(),
+                    cil.isAbstract(),cil.isViewable(), cil.isListType(),
+                    cil.isCustom(), cil.isInDesign(),
+                    cil.getSmallIcon(), 
+                    cil.getColor(), validators));
+            }
+            return resAsLocal;
+        } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
         }
     }
     
+    /**
+     * Gets the containment hierarchy of a given class, but upwards (i.e. for Building, it could return 
+     * City, Country, Continent)
+     * @param className Class name
+     * @param recursive Do it recursively or not
+     * @return The List of upstream containment hierarchy for a class
+     */
     public List<LocalClassMetadataLight> getUpstreamContainmentHierarchy(String className, boolean recursive){
         try{
             List<LocalClassMetadataLight> res = new ArrayList<>();
@@ -638,7 +692,39 @@ public class CommunicationsStub {
             this.error = ex.getMessage();
             return null;
         }
-   }
+    }
+    
+    /**
+     * Gets the special containment hierarchy of a given class, but upwards (i.e. for Building, it could return 
+     * City, Country, Continent)
+     * @param className Class name
+     * @param recursive Do it recursively or not
+     * @return The List of upstream special containment hierarchy for a class
+     */
+    public List<LocalClassMetadataLight> getUpstreamSpecialContainmentHierarchy(String className, boolean recursive) {
+        try {
+            List<LocalClassMetadataLight> res = new ArrayList();
+            for (ClassInfoLight cil : service.getUpstreamSpecialContainmentHierarchy(className, recursive, session.getSessionId())) {
+                HashMap<String, Integer> validators = new HashMap<>();
+                for (Validator validator : cil.getValidators())
+                    validators.put(validator.getLabel(), validator.getValue());
+                    
+                res.add(new LocalClassMetadataLight(cil.getId(),
+                    cil.getClassName(),
+                    cil.getDisplayName(),
+                    cil.getParentClassName(),
+                    cil.isAbstract(),cil.isViewable(), cil.isListType(),
+                    cil.isCustom(), cil.isInDesign(),
+                    cil.getSmallIcon(), cil.getColor(), validators));
+            }
+            return res;
+        } catch (Exception ex) {
+            error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    
     
    public boolean isSubclassOf (String className, String subclassOf) {
        try {
@@ -1295,10 +1381,10 @@ public class CommunicationsStub {
     }
 
     /**
-     * 
-     * @param parentClassId
-     * @param possibleChildren
-     * @return 
+     * Adds a set of possible children
+     * @param parentClassId Parent class id
+     * @param possibleChildren The ids of possible children
+     * @return True if the possible children was added
      */
     public boolean addPossibleChildren(long parentClassId, long[] possibleChildren){
         try{
@@ -1313,10 +1399,30 @@ public class CommunicationsStub {
             return false;
         }
     }
+    
+    /**
+     * Adds a set of possible special children
+     * @param parentClassId The parent class id
+     * @param possibleSpecialChildren The ids of possible special children
+     * @return True if the possible special children was added
+     */
+    public boolean addPossibleSpecialChildren(long parentClassId, long[] possibleSpecialChildren) {
+        try {
+            List<Long> psChildren = new ArrayList();
+            for (long psChild : possibleSpecialChildren) {
+                psChildren.add(psChild);
+            }
+            service.addPossibleSpecialChildrenWithId(parentClassId, psChildren, session.getSessionId());
+            return true;
+        } catch (Exception ex) {
+            error = ex.getMessage();
+            return false;
+        }
+    }
 
     /**
      * Removes possible children from the given class container hierarchy
-     * @param Id for the parent class
+     * @param parentClassId for the parent class
      * @param childrenToBeDeleted List if ids of the classes to be removed as possible children
      * @return Success or failure
      */
@@ -1330,6 +1436,25 @@ public class CommunicationsStub {
             return true;
         }catch(Exception ex){
             this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Removes a set of possible special children
+     * @param parentClassId Parent class id
+     * @param specialChildrenToBeDeleted 
+     * @return Success or failure
+     */
+    public boolean removePossibleSpecialChildren(long parentClassId, long [] specialChildrenToBeDeleted) {
+        try {
+            List<Long> psChildren = new ArrayList();
+            for (long psChild : specialChildrenToBeDeleted)
+                psChildren.add(psChild);
+            service.removePossibleSpecialChildren(parentClassId, psChildren, session.getSessionId());
+            return true;
+        } catch (Exception ex) {
+            error = ex.getMessage();
             return false;
         }
     }
@@ -2943,8 +3068,8 @@ public class CommunicationsStub {
     /**
      * Creates an object inside a template.
      * @param templateElementClass Class of the object you want to create.
-     * @param templateElementParentClassName Class of the parent to the obejct you want to create.
-     * @param templateElementParentId Id of the parent to the obejct you want to create.
+     * @param templateElementParentClassName Class of the parent to the object you want to create.
+     * @param templateElementParentId Id of the parent to the object you want to create.
      * @param templateElementName Name of the element.
      * @return The id of the new object.
      */
@@ -2952,6 +3077,23 @@ public class CommunicationsStub {
             try {
             return new LocalObjectLight(service.createTemplateElement(templateElementClass, templateElementParentClassName, 
                     templateElementParentId, templateElementName, session.getSessionId()), templateElementName, templateElementClass);
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    /**
+     * Creates an special object inside a template.
+     * @param tsElementClass Class of the special object you want to create.
+     * @param tsElementParentClassName Class of the parent to the special object you want to create.
+     * @param tsElementParentId Id of the parent to the special object you want to create.
+     * @param tsElementName Name of the element.
+     * @return The id of the new special object.
+     */
+    public LocalObjectLight createTemplateSpecialElement(String tsElementClass, String tsElementParentClassName, long tsElementParentId, String tsElementName) {
+            try {
+            return new LocalObjectLight(service.createTemplateSpecialElement(tsElementClass, tsElementParentClassName, 
+                    tsElementParentId, tsElementName, session.getSessionId()), tsElementName, tsElementClass);
         } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
@@ -3013,6 +3155,7 @@ public class CommunicationsStub {
      * Retrieves the children of a given template element.
      * @param templateElementClass Template element class.
      * @param templateElementId Template element id.
+     * @param specialChildren True to return the template special elements
      * @return The template element's children as a list of LocalObjectLight instances. It will return null if something went wrong.
      */
     public List<LocalObjectLight> getTemplateElementChildren(String templateElementClass, long templateElementId) {
@@ -3021,6 +3164,25 @@ public class CommunicationsStub {
             List<RemoteObjectLight> remoteTemplateElementChildren = service.getTemplateElementChildren(templateElementClass, templateElementId, session.getSessionId());
             for (RemoteObjectLight remoteTemplateElementChild : remoteTemplateElementChildren)
                 localTemplateElementChildren.add(new LocalObjectLight(remoteTemplateElementChild.getOid(), remoteTemplateElementChild.getName(), remoteTemplateElementChild.getClassName()));
+            return localTemplateElementChildren;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Retrieves the children of a given template special element.
+     * @param tsElementClass Template special element class.
+     * @param tsElementId Template special element id.
+     * @return The template element's children as a list of LocalObjectLight instances. It will return null if something went wrong.
+     */
+    public List<LocalObjectLight> getTemplateSpecialElementChildren(String tsElementClass, long tsElementId) {
+        try {
+            List<LocalObjectLight> localTemplateElementChildren = new ArrayList<>();
+            List<RemoteObjectLight> remoteTemplateSpecialElementChildren = service.getTemplateSpecialElementChildren(tsElementClass, tsElementId, session.getSessionId());
+            for (RemoteObjectLight remoteTemplateSpecialElementChild : remoteTemplateSpecialElementChildren)
+                localTemplateElementChildren.add(new LocalObjectLight(remoteTemplateSpecialElementChild.getOid(), remoteTemplateSpecialElementChild.getName(), remoteTemplateSpecialElementChild.getClassName()));
             return localTemplateElementChildren;
         } catch (Exception ex) {
             this.error = ex.getMessage();
@@ -3595,15 +3757,21 @@ public class CommunicationsStub {
     
         // <editor-fold defaultstate="collapsed" desc="Projects Module">
     /**
-     * Gets the projects root pool
-     * @param className Class name
-     * @return The Projects root pool
+     * Gets the project pools
+     * @return The list of project pools
      */
-    public LocalPool getProjectsRootPool(String className) {
+    public List<LocalPool> getProjectPools() {
         try {
-            RemotePool rootPool = service.getProjectsRootPool(className, session.getSessionId());
+            List<RemotePool> remotePools = service.getProjectPools(session.getSessionId());
+
+            List<LocalPool> localPools = new ArrayList();
             
-            return new LocalPool(rootPool.getId(), rootPool.getName(), rootPool.getClassName(), rootPool.getDescription(), rootPool.getType());
+            for (RemotePool remotePool : remotePools) {
+                localPools.add(new LocalPool(remotePool.getId(), remotePool.getName(), 
+                    remotePool.getClassName(), remotePool.getDescription(), remotePool.getType()));
+            }
+            
+            return localPools;
         } catch (Exception ex) {
             error = ex.getMessage();
             return null;
@@ -3678,20 +3846,21 @@ public class CommunicationsStub {
     }
     
     /**
-     * Gets the projects from projects root pool
-     * @param rootPoolId
-     * @param limit
+     * Gets the project in a Project pool
+     * @param poolId Project pool id
+     * @param limit Max number of results, -1 without limit
      * @return The list of projects
      */
-    public List<LocalObjectLight> getProjectsFromProjectsRootPool(long rootPoolId, int limit) {
+    public List<LocalObjectLight> getProjectInProjectPool(long poolId, int limit) {
         try {
+            List<RemoteObjectLight> remoteProjects = service.getProjectsInProjectPool(poolId, limit, session.getSessionId());
+            
             List<LocalObjectLight> projects = new ArrayList();
             
-            for (RemoteObjectLight remoteProject : service.getProjectsFromProjectsRootPool(rootPoolId, limit, session.getSessionId()))
+            for (RemoteObjectLight remoteProject : remoteProjects)
                 projects.add(new LocalObjectLight(remoteProject.getOid(), remoteProject.getName(), remoteProject.getClassName()));
             
-            return projects;
-            
+            return projects;                                    
         } catch (Exception ex) {
             error = ex.getMessage();
             return null;
@@ -3739,26 +3908,6 @@ public class CommunicationsStub {
         }
     }
     
-    /**
-     * Gets projects from a Project
-     * @param projectClass Project class
-     * @param projectId Project id
-     * @return The list of projects
-     */
-    public List<LocalObjectLight> getProjectsFromProject(String projectClass, long projectId) {
-        try {
-            List<LocalObjectLight> projects = new ArrayList();
-            
-            for (RemoteObjectLight remoteProject : service.getProjectsFromProject(projectClass, projectId, session.getSessionId()))
-                projects.add(new LocalObjectLight(remoteProject.getOid(), remoteProject.getName(), remoteProject.getClassName()));
-            
-            return projects;
-        } catch (Exception ex) {
-            error = ex.getMessage();
-            return null;
-        }
-    }
-        
     /**
      * Associates a set of object with a remoteProject
      * @param projectClass Project class
@@ -3810,6 +3959,28 @@ public class CommunicationsStub {
         } catch (Exception ex) {
             error = ex.getMessage();
             return false;
+        }
+    }
+    
+    /**
+     * Gets the projects associated to an object
+     * @param objectClass Object Class
+     * @param objectId Object id
+     * @return The list of projects
+     */
+    public List<LocalObjectLight> getProjectsAssociateToObject(String objectClass, long objectId) {
+        try {
+            List<RemoteObjectLight> remoteProjects = service.getProjectsAssociateToObject(objectClass, objectId, session.getSessionId());
+            
+            List<LocalObjectLight> projects = new ArrayList();
+            
+            for (RemoteObjectLight remoteProject : remoteProjects)
+                projects.add(new LocalObjectLight(remoteProject.getOid(), remoteProject.getName(), remoteProject.getClassName()));
+            
+            return projects;                                    
+        } catch (Exception ex) {
+            error = ex.getMessage();
+            return null;
         }
     }
     

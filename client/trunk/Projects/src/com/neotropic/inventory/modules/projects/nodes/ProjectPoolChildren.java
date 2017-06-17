@@ -32,7 +32,7 @@ public class ProjectPoolChildren extends Children.Keys<LocalObjectLight> {
     @Override
     public void addNotify() {
         ProjectPoolNode selectedNode = (ProjectPoolNode) getNode();
-        List<LocalObjectLight> projects = CommunicationsStub.getInstance().getPoolItems(selectedNode.getPool().getOid());
+        List<LocalObjectLight> projects = CommunicationsStub.getInstance().getProjectInProjectPool(selectedNode.getPool().getOid(), -1);
         
         if (projects == null) {
             setKeys(Collections.EMPTY_LIST);

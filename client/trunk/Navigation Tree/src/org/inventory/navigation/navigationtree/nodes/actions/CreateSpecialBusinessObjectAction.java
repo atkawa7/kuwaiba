@@ -62,9 +62,9 @@ public final class CreateSpecialBusinessObjectAction extends AbstractAction
     @Override
     public JMenuItem getPopupPresenter() {
         JMenu mnuPossibleChildren = new JMenu("New Special");
-
-        List<LocalClassMetadataLight> items = com.getSpecialPossibleChildren(node.getObject().getClassName());
         
+        List<LocalClassMetadataLight> items = com.getPossibleSpecialChildren(node.getObject().getClassName(), true);
+                
         if (items.isEmpty())
             mnuPossibleChildren.setEnabled(false);
         else

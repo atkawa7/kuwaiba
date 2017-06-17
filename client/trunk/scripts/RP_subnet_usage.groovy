@@ -57,6 +57,18 @@ ips.each {ip ->
     if (ipDevices.size() > isEmpty())
         usedIps++;
 }
+// There are not host but the
+// gateway and the broadcast
+// are in use
+if (hosts == 0 && usedIps == 0) {
+    usedIps = ips.size();
+    
+    if (usedIps > hosts) {
+        hosts += 2;
+    }
+}
+
+
 int freeIps = hosts - usedIps;
 
 def vrf = "";
@@ -121,6 +133,7 @@ subnetChildren.each { subnetChild ->
         subnets.add(subnetChild);
     }
 }
+// i is an index to define if a row are even or odd
 def i = 0;
 // Table for Subnets
 def tblSubnets= new HTMLTable(["Subnet", "Description", "Service"] as String[]);
@@ -155,6 +168,7 @@ def tblIPAddresses= new HTMLTable(["IP Address", "Description", "Port", "Locatio
 if (ips.isEmpty()) {
     report.getComponents().add(new HTMLDiv("", "error", "", "There are no IPs Addresses in use"));
 } else {
+    i = 0;
     ips.each { ip -> 
         service = "";
         def device = "";

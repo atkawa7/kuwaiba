@@ -15,6 +15,7 @@
  */
 package org.inventory.core.templates.nodes;
 
+import java.awt.Color;
 import org.inventory.core.templates.nodes.properties.DateTypeProperty;
 import java.awt.Image;
 import java.awt.datatransfer.Transferable;
@@ -58,19 +59,27 @@ import org.openide.util.lookup.Lookups;
  */
 public class TemplateElementNode extends AbstractNode implements PropertyChangeListener {
 
-    private static Image defaultIcon = Utils.createRectangleIcon(Utils.DEFAULT_ICON_COLOR, 
+    private static final Image defaultIcon = Utils.createRectangleIcon(Utils.DEFAULT_ICON_COLOR, 
             Utils.DEFAULT_ICON_WIDTH, Utils.DEFAULT_ICON_HEIGHT);
+    
+    public Image icon = defaultIcon;
     
     private CommunicationsStub com = CommunicationsStub.getInstance();
     
-    public TemplateElementNode(LocalObjectLight object) {
+    public TemplateElementNode(LocalObjectLight object, boolean isSpecial) {
         super(new TemplateElementChildren(), Lookups.singleton(object));
         setDisplayName(object.toString());
+        if (isSpecial) {
+            icon =  Utils.createRectangleIcon(new Color(11, 91, 111), 
+                Utils.DEFAULT_ICON_WIDTH, Utils.DEFAULT_ICON_HEIGHT);
+        }
     }
 
     @Override
     public Action[] getActions(boolean context) {
         return new Action[] {TemplateActionsFactory.getCreateTemplateElementAction(), 
+                             TemplateActionsFactory.getCreateTemplateElementSpecialAction(),
+                             null, 
                              TemplateActionsFactory.getDeleteTemplateElementAction(),
                              null,
                              CopyAction.get(CopyAction.class),
@@ -79,12 +88,12 @@ public class TemplateElementNode extends AbstractNode implements PropertyChangeL
     
     @Override
     public Image getOpenedIcon(int type) {
-        return defaultIcon;
+        return icon;
     }
 
     @Override
     public Image getIcon(int type) {
-        return defaultIcon;
+        return icon;
     }
 
     @Override
@@ -268,17 +277,27 @@ public class TemplateElementNode extends AbstractNode implements PropertyChangeL
     }
     
     public static class TemplateElementChildren extends AbstractChildren {
+        private List<LocalObjectLight> templateElementSpecialChildren;
+        
         @Override
         public void addNotify() {
             LocalObjectLight templateElement = getNode().getLookup().lookup(LocalObjectLight.class);
             List<LocalObjectLight> templateElementChildren = CommunicationsStub.getInstance().
                     getTemplateElementChildren(templateElement.getClassName(), templateElement.getOid());
             
-            if (templateElementChildren == null) {
+            templateElementSpecialChildren = CommunicationsStub.getInstance().
+                    getTemplateSpecialElementChildren(templateElement.getClassName(), templateElement.getOid());
+            
+            if (templateElementChildren == null && templateElementSpecialChildren == null) {
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 setKeys(Collections.EMPTY_SET);
-            } else
-                setKeys(templateElementChildren);
+            } else {                
+                List<LocalObjectLight> children = new ArrayList();
+                children.addAll(templateElementChildren);
+                children.addAll(templateElementSpecialChildren);
+                Collections.sort(children);
+                setKeys(children);
+            }
         }
         
         @Override
@@ -288,7 +307,10 @@ public class TemplateElementNode extends AbstractNode implements PropertyChangeL
         
         @Override
         protected Node[] createNodes(LocalObjectLight t) {
-            return new Node[] { new TemplateElementNode(t) };
+            if (templateElementSpecialChildren == null)
+                return new Node[0];
+            
+            return new Node[] { new TemplateElementNode(t, templateElementSpecialChildren.contains(t)) };
         }
     }
 }

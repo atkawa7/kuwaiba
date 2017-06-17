@@ -23,7 +23,6 @@ import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
-import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
@@ -87,10 +86,10 @@ public class ReleaseFromProject extends GenericObjectNodeAction implements Prese
         ObjectNode selectedNode = Utilities.actionsGlobalContext().lookup(ObjectNode.class);
         if (selectedNode != null) {
             
-            List<LocalObjectLight> projects = CommunicationsStub.getInstance().getSpecialAttribute(
+            List<LocalObjectLight> projects = CommunicationsStub.getInstance().getProjectsAssociateToObject(
                 selectedNode.getObject().getClassName(), 
-                selectedNode.getObject().getOid(), 
-                Constants.RELATIONSHIP_PROJECTSPROJECTHAS);
+                selectedNode.getObject().getOid()
+            );
             
             if (projects != null) {
                 if (!projects.isEmpty()) {

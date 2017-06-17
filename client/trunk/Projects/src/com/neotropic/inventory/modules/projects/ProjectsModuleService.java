@@ -22,7 +22,6 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPool;
 import org.inventory.communications.util.Constants;
-import org.inventory.core.services.api.notifications.NotificationUtil;
 
 /**
  * Service for Projects Module
@@ -32,23 +31,15 @@ public class ProjectsModuleService {
     public static ResourceBundle bundle = ResourceBundle.getBundle("com/neotropic/inventory/modules/projects/Bundle");
     
     public ProjectsModuleService() {
+    }
+    
+    public boolean isDataBaseUpdated() {
+        return CommunicationsStub.getInstance().getMetaForClass(Constants.CLASS_GENERICPROJECT, true) == null ||
+            CommunicationsStub.getInstance().getMetaForClass(Constants.CLASS_GENERICACTIVITY, true) == null;
+    }
         
-    }
-    
-    public LocalPool getProjectRootPool() {
-        LocalPool rootPool = CommunicationsStub.getInstance().getProjectsRootPool(Constants.CLASS_GENERICPROJECT);
-        if (rootPool != null)
-            return rootPool;
-        else {
-            NotificationUtil.getInstance().showSimplePopup("Error", 
-                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-            return null;
-        }
-    }
-    
     public static List<LocalObjectLight> getAllProjects() {
-        List<LocalPool> projectPools = CommunicationsStub.getInstance()
-            .getRootPools(Constants.CLASS_GENERICPROJECT, LocalPool.POOL_TYPE_MODULE_COMPONENT, true);
+        List<LocalPool> projectPools = CommunicationsStub.getInstance().getProjectPools();
         
         if (projectPools == null)
             return null;

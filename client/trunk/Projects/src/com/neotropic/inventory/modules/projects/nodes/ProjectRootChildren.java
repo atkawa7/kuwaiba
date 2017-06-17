@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalPool;
-import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
@@ -29,12 +28,11 @@ import org.openide.nodes.Node;
  * <code>ProjectRootNode</code> children
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ProjectRootChildren extends Children.Keys<LocalPool>/*extends AbstractChildren*/ {
+public class ProjectRootChildren extends Children.Keys<LocalPool> {
     
     @Override
     public void addNotify() {
-        List<LocalPool> projectPools = CommunicationsStub.getInstance().getRootPools(
-            Constants.CLASS_GENERICPROJECT, LocalPool.POOL_TYPE_MODULE_COMPONENT, true);
+        List<LocalPool> projectPools = CommunicationsStub.getInstance().getProjectPools();
         
         if (projectPools == null) {
             NotificationUtil.getInstance().showSimplePopup(

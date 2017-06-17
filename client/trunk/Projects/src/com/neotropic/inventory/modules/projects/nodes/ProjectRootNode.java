@@ -21,7 +21,6 @@ import javax.swing.Action;
 import org.inventory.communications.core.LocalPool;
 import org.openide.nodes.AbstractNode;
 import org.openide.util.ImageUtilities;
-import org.openide.util.lookup.Lookups;
 
 /**
  * Root node of Projects see: <code>ProjectNode</code>
@@ -31,8 +30,8 @@ public class ProjectRootNode extends AbstractNode {
     private static final String ICON_PATH = "com/neotropic/inventory/modules/projects/res/root.png";
     private static final Image icon = ImageUtilities.loadImage(ICON_PATH);
     
-    public ProjectRootNode(LocalPool projectsRootPool) {
-        super(new ProjectRootChildren(), Lookups.singleton(projectsRootPool));
+    public ProjectRootNode() {
+        super(new ProjectRootChildren());
         setDisplayName("Projects");
     }
     

@@ -38,7 +38,7 @@ import org.openide.nodes.AbstractNode;
 import org.openide.util.Lookup;
 
 
-/**
+/** 
  * Represents the GUI for customizing the container hierarchy
  * @author Charles Edward bedon Cortazar <charles.bedon@kuwaiba.org>
  */
@@ -51,11 +51,12 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
     static final String ICON_PATH = "org/inventory/core/containment/res/icon.png";
     private static final String PREFERRED_ID = "HierarchyCustomizerTopComponent";
     private final ExplorerManager em = new ExplorerManager();
-    private HierarchyCustomizerService hml;
+    private HierarchyCustomizerService service;
     private BeanTreeView bTreeView;
     private JList lstClasses;
     private NotificationUtil nu;
-
+    private HierarchyCustomizerConfigurationObject configurationObject;
+    
     public HierarchyCustomizerTopComponent() {
         initComponents();
         initComponentsCustom();
@@ -65,9 +66,12 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
     }
 
     private void initComponentsCustom() {
+        configurationObject = Lookup.getDefault().lookup(HierarchyCustomizerConfigurationObject.class);
+        configurationObject.setProperty(HierarchyCustomizerConfigurationObject.PROPERTY_ENABLE_SPECIAL, false);
+                
         associateLookup(ExplorerUtils.createLookup(em, new ActionMap()));
 
-        hml = new HierarchyCustomizerService(this);
+        service = new HierarchyCustomizerService(this);
 
         bTreeView = new BeanTreeView();
         lstClasses = new JList();
@@ -100,7 +104,9 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
         pnlRight = new javax.swing.JPanel();
         pnlHierarchyManagerScrollMain = new javax.swing.JScrollPane();
         lblInfo = new javax.swing.JLabel();
-        lblInfo2 = new javax.swing.JLabel();
+        toolBarMain = new javax.swing.JToolBar();
+        btnContainmentHierarchy = new javax.swing.JToggleButton();
+        btnSpecialContainmentHierarchy = new javax.swing.JToggleButton();
 
         setLayout(new java.awt.BorderLayout(10, 10));
 
@@ -117,19 +123,67 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
         add(pnlHierarchyManagerMain, java.awt.BorderLayout.CENTER);
 
         org.openide.awt.Mnemonics.setLocalizedText(lblInfo, org.openide.util.NbBundle.getMessage(HierarchyCustomizerTopComponent.class, "HierarchyCustomizerTopComponent.lblInfo.text")); // NOI18N
-        add(lblInfo, java.awt.BorderLayout.PAGE_START);
+        add(lblInfo, java.awt.BorderLayout.PAGE_END);
 
-        org.openide.awt.Mnemonics.setLocalizedText(lblInfo2, org.openide.util.NbBundle.getMessage(HierarchyCustomizerTopComponent.class, "HierarchyCustomizerTopComponent.lblInfo2.text")); // NOI18N
-        add(lblInfo2, java.awt.BorderLayout.NORTH);
+        toolBarMain.setRollover(true);
+
+        btnContainmentHierarchy.setSelected(true);
+        org.openide.awt.Mnemonics.setLocalizedText(btnContainmentHierarchy, org.openide.util.NbBundle.getMessage(HierarchyCustomizerTopComponent.class, "HierarchyCustomizerTopComponent.btnContainmentHierarchy.text")); // NOI18N
+        btnContainmentHierarchy.setToolTipText(org.openide.util.NbBundle.getMessage(HierarchyCustomizerTopComponent.class, "HierarchyCustomizerTopComponent.btnContainmentHierarchy.toolTipText")); // NOI18N
+        btnContainmentHierarchy.setFocusable(false);
+        btnContainmentHierarchy.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnContainmentHierarchy.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnContainmentHierarchy.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnContainmentHierarchyMouseClicked(evt);
+            }
+        });
+        toolBarMain.add(btnContainmentHierarchy);
+
+        org.openide.awt.Mnemonics.setLocalizedText(btnSpecialContainmentHierarchy, org.openide.util.NbBundle.getMessage(HierarchyCustomizerTopComponent.class, "HierarchyCustomizerTopComponent.btnSpecialContainmentHierarchy.text")); // NOI18N
+        btnSpecialContainmentHierarchy.setToolTipText(org.openide.util.NbBundle.getMessage(HierarchyCustomizerTopComponent.class, "HierarchyCustomizerTopComponent.btnSpecialContainmentHierarchy.toolTipText")); // NOI18N
+        btnSpecialContainmentHierarchy.setFocusable(false);
+        btnSpecialContainmentHierarchy.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSpecialContainmentHierarchy.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnSpecialContainmentHierarchy.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnSpecialContainmentHierarchyMouseClicked(evt);
+            }
+        });
+        toolBarMain.add(btnSpecialContainmentHierarchy);
+
+        add(toolBarMain, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnSpecialContainmentHierarchyMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSpecialContainmentHierarchyMouseClicked
+        btnSpecialContainmentHierarchy.setSelected(true);
+        if (!(boolean) configurationObject.getProperty(HierarchyCustomizerConfigurationObject.PROPERTY_ENABLE_SPECIAL)) {
+            btnContainmentHierarchy.setSelected(false);
+            configurationObject.setProperty(HierarchyCustomizerConfigurationObject.PROPERTY_ENABLE_SPECIAL, true);
+            componentClosed();
+            componentOpened();
+        }
+    }//GEN-LAST:event_btnSpecialContainmentHierarchyMouseClicked
+
+    private void btnContainmentHierarchyMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnContainmentHierarchyMouseClicked
+        btnContainmentHierarchy.setSelected(true);
+        if ((boolean) configurationObject.getProperty(HierarchyCustomizerConfigurationObject.PROPERTY_ENABLE_SPECIAL)) {
+            btnSpecialContainmentHierarchy.setSelected(false);
+            configurationObject.setProperty(HierarchyCustomizerConfigurationObject.PROPERTY_ENABLE_SPECIAL, false);
+            componentClosed();
+            componentOpened();
+        }
+    }//GEN-LAST:event_btnContainmentHierarchyMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JToggleButton btnContainmentHierarchy;
+    private javax.swing.JToggleButton btnSpecialContainmentHierarchy;
     private javax.swing.JLabel lblInfo;
-    private javax.swing.JLabel lblInfo2;
     private javax.swing.JSplitPane pnlHierarchyManagerMain;
     private javax.swing.JScrollPane pnlHierarchyManagerScrollMain;
     private javax.swing.JPanel pnlLeft;
     private javax.swing.JPanel pnlRight;
+    private javax.swing.JToolBar toolBarMain;
     // End of variables declaration//GEN-END:variables
     /**
      * Gets default instance. Do not use directly: reserved for *.settings files only,
@@ -177,9 +231,9 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
 
     @Override
     public void componentOpened() {
-        hml.updateModels();
-        em.setRootContext(new AbstractNode(new ClassMetadataChildren(hml.getTreeModel())));
-        lstClasses.setListData(hml.getListModel().toArray());
+        service.updateModels();
+        em.setRootContext(new AbstractNode(new ClassMetadataChildren(service.getTreeModel())));
+        lstClasses.setListData(service.getListModel().toArray());
     }
 
     @Override
@@ -212,7 +266,8 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
     protected String preferredID() {
         return PREFERRED_ID;
     }
-
+    
+    @Override
     public void refresh() {
         componentClosed();
         componentOpened();
@@ -223,7 +278,8 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
             nu = Lookup.getDefault().lookup(NotificationUtil.class);
         return nu;
     }
-
+    
+    @Override
     public ExplorerManager getExplorerManager() {
         return em;
     }
