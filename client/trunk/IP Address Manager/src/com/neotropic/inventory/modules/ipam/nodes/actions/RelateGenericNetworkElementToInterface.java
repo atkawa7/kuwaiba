@@ -28,14 +28,14 @@ import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAc
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- * Actions to relate a Service Instance to a BridgeDomain
+ * Actions to relate a Service Instance to a Bridge Domain Interface
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
 public class RelateGenericNetworkElementToInterface extends GenericObjectNodeAction {
 
-    public RelateGenericNetworkElementToInterface(){
-        putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/mpls/Bundle").getString("LBL_RELATE_TO"));
+    public RelateGenericNetworkElementToInterface() {
+        putValue(NAME, "Relate to BDI...");
     }
     
     @Override

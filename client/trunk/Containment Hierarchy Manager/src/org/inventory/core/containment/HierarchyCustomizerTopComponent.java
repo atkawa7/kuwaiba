@@ -130,8 +130,10 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
         btnContainmentHierarchy.setSelected(true);
         org.openide.awt.Mnemonics.setLocalizedText(btnContainmentHierarchy, org.openide.util.NbBundle.getMessage(HierarchyCustomizerTopComponent.class, "HierarchyCustomizerTopComponent.btnContainmentHierarchy.text")); // NOI18N
         btnContainmentHierarchy.setToolTipText(org.openide.util.NbBundle.getMessage(HierarchyCustomizerTopComponent.class, "HierarchyCustomizerTopComponent.btnContainmentHierarchy.toolTipText")); // NOI18N
+        btnContainmentHierarchy.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
         btnContainmentHierarchy.setFocusable(false);
         btnContainmentHierarchy.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnContainmentHierarchy.setMargin(new java.awt.Insets(20, 20, 20, 20));
         btnContainmentHierarchy.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnContainmentHierarchy.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -142,6 +144,7 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
 
         org.openide.awt.Mnemonics.setLocalizedText(btnSpecialContainmentHierarchy, org.openide.util.NbBundle.getMessage(HierarchyCustomizerTopComponent.class, "HierarchyCustomizerTopComponent.btnSpecialContainmentHierarchy.text")); // NOI18N
         btnSpecialContainmentHierarchy.setToolTipText(org.openide.util.NbBundle.getMessage(HierarchyCustomizerTopComponent.class, "HierarchyCustomizerTopComponent.btnSpecialContainmentHierarchy.toolTipText")); // NOI18N
+        btnSpecialContainmentHierarchy.setBorder(javax.swing.BorderFactory.createEmptyBorder(3, 3, 3, 3));
         btnSpecialContainmentHierarchy.setFocusable(false);
         btnSpecialContainmentHierarchy.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnSpecialContainmentHierarchy.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);

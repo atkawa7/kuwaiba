@@ -69,9 +69,9 @@ import org.openide.util.NbBundle.Messages;
         preferredID = "TopologyDesignTopComponent"
 )
 @Messages({
-    "CTL_TopologyDesignAction=Topology Design",
-    "CTL_TopologyDesignTopComponent=Topology View",
-    "HINT_TopologyDesignTopComponent=Upadate Topology Design"
+    "CTL_TopologyDesignAction=Topology Designer",
+    "CTL_TopologyDesignTopComponent=Topology Designer",
+    "HINT_TopologyDesignTopComponent=Create high-level topologies"
 })
 public final class TopologyDesignTopComponent extends TopComponent implements ExplorerManager.Provider, Refreshable, ActionListener {
     

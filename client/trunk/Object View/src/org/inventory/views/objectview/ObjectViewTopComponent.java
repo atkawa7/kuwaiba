@@ -635,10 +635,10 @@ public final class ObjectViewTopComponent extends TopComponent
 
     @Override
     public void resultChanged(LookupEvent ev) {
-        Lookup.Result lookupResult = (Lookup.Result) ev.getSource();
+        Lookup.Result aLookupResult = (Lookup.Result) ev.getSource();
         
-        if (lookupResult.allInstances().size() == 1) {
-            LocalObjectLight obj = (LocalObjectLight) lookupResult.allInstances().iterator().next();
+        if (aLookupResult.allInstances().size() == 1) {
+            LocalObjectLight obj = (LocalObjectLight) aLookupResult.allInstances().iterator().next();
             
             if (obj.equals(currentObject))
                 return;
@@ -649,9 +649,10 @@ public final class ObjectViewTopComponent extends TopComponent
             configObject.setProperty("currentObject", currentObject);
             
             setDisplayName(null);
+            btnHighContrast.setSelected(false);
             scene.clear();
             
-            if (!CommunicationsStub.getInstance().getMetaForClass(currentObject.getClassName(), false).isViewable()) {
+            if (currentObject.getClassName().equals(Constants.DUMMYROOT) || !CommunicationsStub.getInstance().getMetaForClass(currentObject.getClassName(), false).isViewable()) {
                 NotificationUtil.getInstance().showStatusMessage("This currentObject doesn't have any view", false);
                 disableView();
                 return;
