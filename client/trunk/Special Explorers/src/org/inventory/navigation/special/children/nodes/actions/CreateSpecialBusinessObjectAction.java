@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.inventory.navigation.navigationtree.nodes.actions;
+package org.inventory.navigation.special.children.nodes.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.List;
@@ -26,7 +26,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.MenuScroller;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
-import org.inventory.navigation.navigationtree.nodes.SpecialObjectNode;
+import org.inventory.navigation.special.children.nodes.SpecialObjectNode;
 import org.openide.util.actions.Presenter;
 
 /**
@@ -63,7 +63,7 @@ public final class CreateSpecialBusinessObjectAction extends AbstractAction
     public JMenuItem getPopupPresenter() {
         JMenu mnuPossibleChildren = new JMenu("New Special");
         
-        List<LocalClassMetadataLight> items = com.getPossibleSpecialChildren(node.getObject().getClassName(), true);
+        List<LocalClassMetadataLight> items = com.getPossibleSpecialChildren(node.getObject().getClassName(), false);
                 
         if (items.isEmpty())
             mnuPossibleChildren.setEnabled(false);

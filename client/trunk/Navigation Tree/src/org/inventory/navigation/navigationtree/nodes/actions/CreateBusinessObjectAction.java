@@ -95,7 +95,7 @@ public final class CreateBusinessObjectAction extends AbstractAction implements 
         if (node instanceof RootObjectNode) //For the root node
             items = com.getPossibleChildren(Constants.DUMMYROOT, false);
         else
-            items = com.getPossibleChildren(((ObjectNode)node).getObject().getClassName(),false);
+            items = com.getPossibleChildren(((ObjectNode)node).getObject().getClassName(), false);
 
         if (items == null) {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE,

@@ -13,13 +13,14 @@
  *   limitations under the License.
  * 
  */
-package org.inventory.navigation.navigationtree.nodes;
+package org.inventory.navigation.special.children.nodes;
 
 import java.util.ArrayList;
 import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
-import org.inventory.navigation.navigationtree.nodes.actions.CreateSpecialBusinessObjectAction;
+import org.inventory.navigation.special.children.nodes.actions.CreateSpecialBusinessObjectAction;
 import org.inventory.navigation.navigationtree.nodes.actions.EditObjectAction;
 import org.inventory.navigation.navigationtree.nodes.actions.RefreshObjectAction;
 import org.inventory.navigation.navigationtree.nodes.actions.ShowMoreInformationAction;

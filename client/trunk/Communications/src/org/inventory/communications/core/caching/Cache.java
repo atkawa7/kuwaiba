@@ -206,6 +206,13 @@ public class Cache{
     public void resetPossibleChildrenCached() {
         possibleChildrenIndex.clear();
     }
+    
+    /**
+     * Resets the cached possible children
+     */
+    public void resetPossibleSpecialChildrenCached() {
+        possibleSpecialChildrenIndex.clear();
+    }
 
     /**
      * Resets the cached light class metadata
@@ -231,6 +238,7 @@ public class Cache{
     public void resetAll(){
         listIndex.clear();
         possibleChildrenIndex.clear();
+        possibleSpecialChildrenIndex.clear();
         metadataIndex.clear();
         lightMetadataIndex.clear();
         reportIndex.clear();

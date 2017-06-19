@@ -25,8 +25,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
 import javax.xml.ws.BindingProvider;
@@ -603,9 +601,9 @@ public class CommunicationsStub {
     public List<LocalClassMetadataLight> getPossibleSpecialChildren(String className, boolean ignoreCache) {
         try {
         List<LocalClassMetadataLight> resAsLocal = null;
-        if (!ignoreCache) {
+        if (!ignoreCache) 
             resAsLocal = cache.getPossibleSpecialChildrenCached(className);
-        }
+        
         if (resAsLocal == null) {
                 resAsLocal = new ArrayList();
                 List<ClassInfoLight> resAsRemote = service.getPossibleSpecialChildren(className, session.getSessionId());
@@ -1938,6 +1936,7 @@ public class CommunicationsStub {
         cache.resetMetadataIndex();
         cache.resetLightMetadataIndex();
         cache.resetPossibleChildrenCached();
+        cache.resetPossibleSpecialChildrenCached();
         cache.resetLists();
     }
 
@@ -1950,7 +1949,7 @@ public class CommunicationsStub {
      */
     public void refreshCache(boolean refreshMeta, boolean refreshLightMeta,
             boolean refreshList, boolean refreshPossibleChildren){
-        try{
+        try {
             if (refreshMeta){
                 for (LocalClassMetadata lcm : cache.getMetadataIndex()){
                     ClassInfo cm = service.getClass(lcm.getClassName(),this.session.getSessionId());
@@ -1989,13 +1988,15 @@ public class CommunicationsStub {
                     getList(key,false,true);
                 }
             }
-            if (refreshPossibleChildren){
+            if (refreshPossibleChildren) {
                 HashMap<String, List<LocalClassMetadataLight>> myLocalPossibleChildren
                         = cache.getAllPossibleChildren();
                 for (String key : myLocalPossibleChildren.keySet()){
                     myLocalPossibleChildren.remove(key);
-                    getPossibleChildren(key,true);
+                    getPossibleChildren(key, true);
                 }
+                
+                cache.resetPossibleSpecialChildrenCached();
             }
         }catch(Exception ex){
             this.error = ex.getMessage();

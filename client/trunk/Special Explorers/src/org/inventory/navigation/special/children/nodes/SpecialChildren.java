@@ -13,25 +13,25 @@
  *   limitations under the License.
  * 
  */
-package org.inventory.navigation.navigationtree.nodes;
+package org.inventory.navigation.special.children.nodes;
 
 import java.util.Collections;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.navigationtree.nodes.ObjectChildren;
+import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
+import org.openide.nodes.Node;
 
 /**
  * Children to SpecialNodes
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class SpecialChildren extends ObjectChildren {  
+public class SpecialChildren extends AbstractChildren {  
 
     @Override
     public void addNotify(){
-        assert getNode() instanceof ObjectNode : "This node is not an instance of ObjectNode";
         LocalObjectLight parentObject = ((ObjectNode)getNode()).getObject();
 
         List<LocalObjectLight> specialChildren = CommunicationsStub.getInstance().
@@ -44,5 +44,10 @@ public class SpecialChildren extends ObjectChildren {
             Collections.sort(specialChildren);
             setKeys(specialChildren);
         }
+    }
+
+    @Override
+    protected Node[] createNodes(LocalObjectLight key) {
+        return new SpecialObjectNode[] { new SpecialObjectNode(key) };
     }
 }

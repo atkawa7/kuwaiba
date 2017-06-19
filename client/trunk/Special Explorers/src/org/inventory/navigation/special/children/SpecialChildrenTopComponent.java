@@ -17,8 +17,8 @@ package org.inventory.navigation.special.children;
 
 import java.awt.BorderLayout;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
-import org.inventory.navigation.navigationtree.nodes.SpecialChildren;
-import org.inventory.navigation.navigationtree.nodes.SpecialObjectNode;
+import org.inventory.navigation.special.children.nodes.SpecialChildren;
+import org.inventory.navigation.special.children.nodes.SpecialObjectNode;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;

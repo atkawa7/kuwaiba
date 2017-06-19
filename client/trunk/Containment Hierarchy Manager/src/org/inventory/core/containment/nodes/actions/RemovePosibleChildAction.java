@@ -49,16 +49,14 @@ public class RemovePosibleChildAction extends GenericInventoryAction {
         
         boolean addedChildrenSuccessfully;
 
-        if ((boolean) configObj.getProperty(HierarchyCustomizerConfigurationObject.PROPERTY_ENABLE_SPECIAL)) {
+        if ((boolean) configObj.getProperty(HierarchyCustomizerConfigurationObject.PROPERTY_ENABLE_SPECIAL)) 
             addedChildrenSuccessfully = com.removePossibleSpecialChildren(((ClassMetadataNode)node.getParentNode()).getObject().getOid(),new long[]{node.getObject().getOid()});
-        } else {
-            
+        else 
             addedChildrenSuccessfully = com.removePossibleChildren(((ClassMetadataNode)node.getParentNode()).getObject().getOid(),new long[]{node.getObject().getOid()});
-        }
         
         if (addedChildrenSuccessfully){
 
-            ((ClassMetadataChildren)node.getParentNode().getChildren()).remove(new Node[]{node});
+            ((ClassMetadataChildren)node.getParentNode().getChildren()).remove(new Node[]{ node });
             com.refreshCache(false, false, false, true);
 
             NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE,
