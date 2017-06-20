@@ -741,7 +741,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                                 Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MANDATORY, newAttributeDefinition.isMandatory());
                             else
                                 throw new InvalidArgumentException(
-                                    String.format("In order to mark Attribute \"%s\" as mandatory it is necessary to set a value for this attribute in every created object(s) of this class and its subclasses", currentAttributeName));
+                                    String.format("Before setting an attribute as mandatory, all instances of this class must have valid values for attribute %s", currentAttributeName));
                         }
                         else
                             Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MANDATORY, newAttributeDefinition.isMandatory());
@@ -811,7 +811,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                                 Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MANDATORY, newAttributeDefinition.isMandatory());
                             else
                                 throw new InvalidArgumentException(
-                                    String.format("In order to mark Attribute \"%s\" as mandatory, it is necessary to set a value for this attribute in every created object(s) of this class and its subclasses", currentAttributeName));
+                                    String.format("Before setting an attribute as mandatory, all instances of this class must have valid values for attribute %s", currentAttributeName));
                         }
                         else
                             Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MANDATORY, newAttributeDefinition.isMandatory());
@@ -1137,7 +1137,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                        }
                    }
                 }
-                else{
+                else {
                     for (ClassMetadataLight possibleSpecialChild : currentPossibleSpecialChildren){
                         if (possibleSpecialChild.getId() == childNode.getId())
                             throw new InvalidArgumentException(String.format("Class %s is already a possible special child for instances of %s", (String)childNode.getProperty(Constants.PROPERTY_NAME), (String)parentNode.getProperty(Constants.PROPERTY_NAME)));
@@ -1485,8 +1485,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
    }
    
    /**
-    * Check if all the objects of a given class has a value in a given attribute marked as mandatory
-    * this method can also check all the objects from the subclases of the given class.
+    * Checks if all the objects of a given class has a value in a given attribute marked as mandatory
+    * this method can also check all the objects from the subclasses of the given class.
     * @param className The object's class 
     * @param attributeName The object's attribute marked as mandatory
     * @param recursive false: if the method should evaluate all the objects of 
@@ -1550,7 +1550,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 while(relationships.hasNext()){
                     Relationship relationship = relationships.next();
                     if (!relationship.hasProperty(Constants.PROPERTY_NAME))
-                        throw new InvalidArgumentException(String.format("(Mandatory Attribute Missing) The object with id %s is malformed", objectNode.getId()));
+                        throw new InvalidArgumentException(String.format("Mandatory Attribute Missing: The object with id %s is malformed", objectNode.getId()));
                     
                     if (attributeName.equals((String)relationship.getProperty(Constants.PROPERTY_NAME)))
                         everyObjectHasValue = true;

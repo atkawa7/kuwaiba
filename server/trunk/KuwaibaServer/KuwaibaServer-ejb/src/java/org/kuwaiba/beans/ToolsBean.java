@@ -228,7 +228,7 @@ public class ToolsBean implements ToolsBeanRemote {
                         results[i] = ex.getMessage();
                     }
                 break;
-                case "4": // Update data model: This action add the abstract classes GenericProject, GenericActivity and some project and activities subclasses for the Projects Module.
+                case "4": //This action adds the abstract classes GenericProject, GenericActivity and some project and activities subclasses for the Projects Module.
                     try {
                         ClassMetadata cm = new ClassMetadata();
                         cm.setName("GenericProject");
