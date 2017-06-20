@@ -37,7 +37,7 @@ import org.openide.windows.WindowManager;
  */
 @TopComponent.Description(
     preferredID = "SpecialObjectExplorerTopComponent",
-persistenceType = TopComponent.PERSISTENCE_NEVER)
+persistenceType = TopComponent.PERSISTENCE_ALWAYS)
 @TopComponent.Registration(mode = "navigator", openAtStartup = false)
 public class SpecialChildrenTopComponent extends TopComponent 
         implements ExplorerManager.Provider, LookupListener {
@@ -57,7 +57,7 @@ public class SpecialChildrenTopComponent extends TopComponent
         setLayout(new BorderLayout());
         add(tree);
         em.setRootContext(Node.EMPTY);
-        em.getRootContext().setDisplayName("Select a node from the Navigation Tree");
+        em.getRootContext().setDisplayName("Select a node from a view or tree");
     }
     
     public static SpecialChildrenTopComponent getInstance() {

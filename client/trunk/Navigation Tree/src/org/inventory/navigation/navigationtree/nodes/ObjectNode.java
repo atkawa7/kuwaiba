@@ -90,7 +90,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
         if (lol.getClassName() != null) {
             lol.addPropertyChangeListener(WeakListeners.propertyChange(this, lol));
             icon = com.getMetaForClass(lol.getClassName(), false).getSmallIcon();
-            explorerAction.putValue(OpenLocalExplorerAction.NAME, "Open a Navigation Tree from Here");
+            explorerAction.putValue(OpenLocalExplorerAction.NAME, "Open a Explorer from Here");
         }
     }
 
@@ -99,7 +99,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
         lol.addPropertyChangeListener(WeakListeners.propertyChange(this, lol));
         com = CommunicationsStub.getInstance();
         icon = com.getMetaForClass(lol.getClassName(), false).getSmallIcon();
-        explorerAction.putValue(OpenLocalExplorerAction.NAME, "Open a Navigation Tree from Here");
+        explorerAction.putValue(OpenLocalExplorerAction.NAME, "Open a Explorer from Here");
     }
 
     /**
@@ -120,13 +120,16 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
     protected Sheet createSheet() {
         sheet = Sheet.createDefault();
         Set generalPropertySet = Sheet.createPropertiesSet(); //General attributes category
+        Set mandatoryPropertySet = Sheet.createPropertiesSet(); //Set with the mandatory attributes
         
         LocalObjectLight object = getObject();
+        
         LocalClassMetadata meta = com.getMetaForClass(object.getClassName(), false);
         if (meta == null) {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             return sheet;
         }
+        
         LocalObject lo = com.getObjectInfo(object.getClassName(), object.getOid());
         
         if (lo == null) {
@@ -154,7 +157,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
                             property = new NativeTypeProperty(
                                     lam.getName(),
                                     lam.getType(),
-                                    (lam.isMandatory() ? "\u002A" : "")+(lam.getDisplayName().isEmpty() ? lam.getName() : lam.getDisplayName()), //this mark the mandatory attributes with a *
+                                    lam.getDisplayName().isEmpty() ? lam.getName() : lam.getDisplayName(),
                                     lam.getDescription(), this, lo.getAttribute(lam.getName()));
                         }
                         break;
@@ -178,7 +181,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
                         }
                         property = new ListTypeProperty(
                                 lam.getName(),
-                                (lam.isMandatory() ? "\u002A" : "")+lam.getDisplayName(),//this mark the mandatory attributes with a *
+                                lam.getDisplayName(),
                                 lam.getDescription(),
                                 list,
                                 this,
@@ -188,11 +191,22 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
                         NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, "Mapping not supported");
                         return sheet;
                 }
-                generalPropertySet.put(property);
+                
+                if (lam.isMandatory())
+                    mandatoryPropertySet.put(property);
+                else
+                    generalPropertySet.put(property);
             }
         }
-        generalPropertySet.setName("General Info");
+        
+        mandatoryPropertySet.setDisplayName("Mandatory Attributes");
+        mandatoryPropertySet.setName("mandatory");  //NOI18N
         generalPropertySet.setDisplayName("General Attributes");
+        generalPropertySet.setName("general"); //NOI18N
+        
+        if (mandatoryPropertySet.getProperties().length != 0)
+            sheet.put(mandatoryPropertySet);
+        
         sheet.put(generalPropertySet);
         return sheet;
     }

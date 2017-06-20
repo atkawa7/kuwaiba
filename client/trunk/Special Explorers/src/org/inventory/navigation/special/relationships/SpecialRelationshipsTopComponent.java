@@ -43,7 +43,7 @@ import org.openide.util.Utilities;
 @TopComponent.Description(
         preferredID = "SpecialRelationshipsTopComponent",
         iconBase="org/inventory/navigation/special/res/special_relationships_explorer.png", 
-        persistenceType = TopComponent.PERSISTENCE_NEVER
+        persistenceType = TopComponent.PERSISTENCE_ALWAYS
 )
 @TopComponent.Registration(mode = "navigator", openAtStartup = false)
 @ActionID(category = "Tools", id = "org.inventory.navigation.special.relationships.SpecialRelationshipsTopComponent")
@@ -77,7 +77,7 @@ public final class SpecialRelationshipsTopComponent extends TopComponent impleme
         tree = new BeanTreeView();
         add(tree);
         em.setRootContext(Node.EMPTY);
-        em.getRootContext().setDisplayName("Select a node from the Navigation Tree");
+        em.getRootContext().setDisplayName("Select a node from a view or tree");
     }
 
     /**
@@ -123,7 +123,6 @@ public final class SpecialRelationshipsTopComponent extends TopComponent impleme
                 ((SpecialRelatedObjectNode) em.getRootContext()).getObject());
             
             tc.open();
-            tc.requestActive();
             tc.requestAttention(true);
         }
     }//GEN-LAST:event_btnSpecialRelationshipsGraphExplorerActionPerformed

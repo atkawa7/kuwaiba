@@ -36,7 +36,6 @@ public class NativeTypeProperty extends PropertySupport.ReadWrite {
     public NativeTypeProperty(String name, Class valueType, String displayName,
             String toolTextTip, ObjectNode node, Object value) {
         super(name, valueType, displayName, toolTextTip);
-        //this.setName(name);
         this.node = node;
         this.value = value;
     }
