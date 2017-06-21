@@ -103,7 +103,7 @@ public interface BusinessEntityManager {
      * @throws InvalidArgumentException If any of the attributes or its type is invalid
      * @return the id of the newly created object
      * @throws ArraySizeMismatchException If attributeNames and attributeValues have different sizes.
-     * @throws MetadataObjectNotFoundException If the class name could not be found
+     * @throws MetadataObjectNotFoundException If the class name could not be found 
      */
     public long createPoolItem(long poolId, String className, String[] attributeNames, String[][] attributeValues, long templateId) 
             throws ApplicationObjectNotFoundException, InvalidArgumentException, ArraySizeMismatchException, MetadataObjectNotFoundException;

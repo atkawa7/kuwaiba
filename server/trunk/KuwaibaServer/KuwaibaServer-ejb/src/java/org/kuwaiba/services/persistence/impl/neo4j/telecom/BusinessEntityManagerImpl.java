@@ -162,7 +162,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             if (myClass.isAbstract())
                 throw new OperationNotPermittedException(String.format("Abstract class %s can not be instantiated", className));
 
-            if (!cm.isSubClass("InventoryObject", className))
+            if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, className))
                 throw new OperationNotPermittedException("Can not create non-inventory objects");
 
             //The object should be created under an instance other than the dummy root
@@ -633,14 +633,31 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     if (AttributeMetadata.isPrimitive(myClass.getType(attributeName))) { // We are changing a primitive type, such as String, or int
                         oldValues += (instance.hasProperty(attributeName) ? String.valueOf(instance.getProperty(attributeName)) : null) + " ";
                         //If the array is empty or null, it means the attribute should be set to null
-                        if (attributes.get(attributeName) == null || attributes.get(attributeName).isEmpty())
-                            instance.removeProperty(attributeName);
+                        if (attributes.get(attributeName) == null || attributes.get(attributeName).isEmpty()){
+                            if(myClass.getAttribute(attributeName).isMandatory())//if attribute is mandatory can be set empty or null
+                                throw new InvalidArgumentException(String.format("The attribute %s is mandatory, can not be set null or empty", attributeName));
+                            else
+                                instance.removeProperty(attributeName);
+                            }
                         else {
                             newValues += attributes.get(attributeName).get(0) + " ";
+                            //if attribute is mandatory string attributes can't be empty or null
+                            if(myClass.getAttribute(attributeName).isMandatory()){
+                                if(attributes.get(attributeName).get(0).isEmpty() || attributes.get(attributeName).get(0) == null)
+                                    throw new InvalidArgumentException(String.format("The attribute %s is mandatory, can not be set null or empty", attributeName));
+                            }
                             if (attributes.get(attributeName).get(0) == null)
                                 instance.removeProperty(attributeName);
-                            else
-                                instance.setProperty(attributeName,Util.getRealValue(attributes.get(attributeName).get(0), myClass.getType(attributeName)));
+                            else{
+                                if(myClass.getAttribute(attributeName).isUnique()){
+                                    if(isObjectAttributeUnique(className, attributeName, attributes.get(attributeName).get(0)))
+                                        instance.setProperty(attributeName,Util.getRealValue(attributes.get(attributeName).get(0), myClass.getType(attributeName)));
+                                   else
+                                       throw new InvalidArgumentException(String.format("The attribute %s is unique in the objects created from this class and its subclasses, is in use in other object", attributeName));
+                                }
+                                else
+                                    instance.setProperty(attributeName,Util.getRealValue(attributes.get(attributeName).get(0), myClass.getType(attributeName)));
+                            }
                         }
                     } else { //If the attribute is not a primitive type, then it's a relationship
                         if (!cm.getClass(myClass.getType(attributeName)).isListType())
@@ -1671,12 +1688,28 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 //If the array is empty, it means the attribute should be set to null, that is, ignore it
                 if (!attributes.get(attributeName).isEmpty()){
                     if (attributes.get(attributeName).get(0) != null){
+                        if(classToMap.isMandatory(attributeName) && attributes.get(attributeName) == null)
+                            throw new InvalidArgumentException(String.format("The attribute %s is mandatory but has no value", attributeName));
+                        
                         String attributeType = classToMap.getType(attributeName);
-                        if (AttributeMetadata.isPrimitive(attributeType))
+                        if (AttributeMetadata.isPrimitive(attributeType)){
+                            if(classToMap.isUnique(attributeName) && classToMap.isMandatory(attributeName)){
+                                //if an attribute is unique and mandatory it should be checked before the object creation, here
+                                if(classToMap.getType(attributeName).equals("String") || 
+                                    classToMap.getType(attributeName).equals("Integer") || 
+                                    classToMap.getType(attributeName).equals("Float") || 
+                                    classToMap.getType(attributeName).equals("Long")){
+                                    if(isObjectAttributeUnique(classToMap.getName(), attributeName, String.valueOf(Util.getRealValue(attributes.get(attributeName).get(0), classToMap.getType(attributeName)))))
+                                        newObject.setProperty(attributeName, Util.getRealValue(attributes.get(attributeName).get(0), classToMap.getType(attributeName)));
+                                    else
+                                        throw new InvalidArgumentException(String.format("The attribute %s is unique, the given value its already in use", attributeName));
+                                }
+                            }
+                            else
                                 newObject.setProperty(attributeName, Util.getRealValue(attributes.get(attributeName).get(0), classToMap.getType(attributeName)));
+                        }
                         else {
                         //If it's not a primitive type, maybe it's a relationship
-
                             if (!cm.isSubClass(Constants.CLASS_GENERICOBJECTLIST, attributeType))
                                 throw new InvalidArgumentException(String.format("Type %s is not a primitive nor a list type", attributeName));
 
@@ -1785,11 +1818,21 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         }
     }
     
-    public boolean isObjectAttributeUnique(String className, String attributeName, String attributeValue)
-            throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException
-    {
-        return false;
+    /**
+     * Check if the value of the given attribute name is unique across other 
+     * objects in the class and its subclasses
+     * @param className the class name
+     * @param attributeName attribute name
+     * @param attributeValue attribute value
+     * @return true if the attribute value is unique
+     */
+    private boolean isObjectAttributeUnique(String className, String attributeName, String attributeValue){
+        List<String> uniqueAttributeValues = cm.getUniqueAttributeValues(className, attributeName);
+        for (String uniqueAttributeValue : uniqueAttributeValues) {
+            if(uniqueAttributeValue.equals(attributeValue))
+                return false;
+        }
+        cm.putUniqueAttributeValueIndex(className, attributeName, attributeValue);
+        return true;
     }
-    
-   
 }
