@@ -51,6 +51,10 @@ public class ClassMetadata extends ClassMetadataLight {
      */
     private List<String> possibleChildren;
     /**
+     * List of possible special children
+     */
+    private List<String> possibleSpecialChildren;
+    /**
      *  Classmetada's category
      */
     private String category;
@@ -66,6 +70,7 @@ public class ClassMetadata extends ClassMetadataLight {
     public ClassMetadata() {
         attributes = new HashSet<>();
         possibleChildren = new ArrayList<>();
+        possibleSpecialChildren = new ArrayList<>();
     }
     
    // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
@@ -131,7 +136,16 @@ public class ClassMetadata extends ClassMetadataLight {
 
     public void setPossibleChildren(List<String> possibleChildren) {
         this.possibleChildren = possibleChildren;
-    }// </editor-fold>
+    }
+    
+    public List<String> getPossibleSpecialChildren() {
+        return possibleSpecialChildren;
+    }
+    
+    public void setPossibleSpecialChildren(List<String> possibleSpecialChildren) {
+        this.possibleSpecialChildren = possibleSpecialChildren;
+    }
+    // </editor-fold>
 
     public AttributeMetadata getAttribute(String attributeName) {
         for (AttributeMetadata att : attributes) {

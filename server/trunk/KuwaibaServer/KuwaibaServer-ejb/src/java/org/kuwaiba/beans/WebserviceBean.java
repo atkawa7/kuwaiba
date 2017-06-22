@@ -2649,6 +2649,19 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(ex.getMessage());
         }
     }
+    
+    public long[] copyTemplateSpecialElements(String[] sourceObjectsClassNames, long[] sourceObjectsIds, 
+        String newParentClassName, long newParentId, String ipAddress, String sessionId) throws ServerSideException {
+        
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("copyTemplateSpecialElements", ipAddress, sessionId);
+            return aem.copyTemplateSpecialElement(sourceObjectsClassNames, sourceObjectsIds, newParentClassName, newParentId);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
 
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Reporting methods">

@@ -25,6 +25,7 @@ import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectList;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
@@ -925,11 +926,24 @@ public interface ApplicationEntityManager {
      * @return An array with the ids of the newly created elements in the same order they were provided.
      * @throws MetadataObjectNotFoundException If any of the classes could not be found.
      * @throws ApplicationObjectNotFoundException If any of the source template elements could not be found.
-     * @throws InvalidArgumentException If the arrays provided as arguments have different sizes.
+     * @throws ArraySizeMismatchException If the arrays provided as arguments have different sizes.
      */
     public long[] copyTemplateElements(String[] sourceObjectsClassNames, long[] sourceObjectsIds, 
-            String newParentClassName, long newParentId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException;
+            String newParentClassName, long newParentId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, ArraySizeMismatchException;
     
+    /**
+     * Copy template special elements within templates,
+     * @param sourceObjectsClassNames Array with the class names of the special elements to be copied.
+     * @param sourceObjectsIds Array with the ids of the special elements to be copied.
+     * @param newParentClassName Class of the parent of the copied objects.
+     * @param newParentId Id of the parent of the copied objects.
+     * @return An array with the ids of the newly created special elements in the same order they were provided.
+     * @throws ArraySizeMismatchException If the arrays provided as arguments have different sizes.
+     * @throws MetadataObjectNotFoundException If any of the classes could not be found.
+     * @throws ApplicationObjectNotFoundException If any of the source template elements could not be found.
+     */
+    public long [] copyTemplateSpecialElement(String[] sourceObjectsClassNames, long [] sourceObjectsIds, String newParentClassName, long newParentId) 
+        throws ArraySizeMismatchException, ApplicationObjectNotFoundException, MetadataObjectNotFoundException;
     // Bookmarks
     /**
      * Adds an object to the Bookmark folder

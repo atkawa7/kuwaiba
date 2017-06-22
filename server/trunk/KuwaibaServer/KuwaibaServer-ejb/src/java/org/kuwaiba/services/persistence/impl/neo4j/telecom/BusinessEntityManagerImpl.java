@@ -1788,11 +1788,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         newInstance.createRelationshipTo(templateObject.getRelationships(RelTypes.INSTANCE_OF_SPECIAL).iterator().next().getEndNode(), RelTypes.INSTANCE_OF);
 
         if (recursive){
-            for (Relationship rel : templateObject.getRelationships(RelTypes.CHILD_OF, Direction.INCOMING)){
+            for (Relationship rel : templateObject.getRelationships(RelTypes.CHILD_OF, Direction.INCOMING)) {
                 Node newChild = copyTemplateElement(rel.getStartNode(), true);
                 newChild.createRelationshipTo(newInstance, RelTypes.CHILD_OF);
             }
-            for (Relationship rel : templateObject.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.INCOMING)){
+            for (Relationship rel : templateObject.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.INCOMING)) {
                 Node newChild = copyTemplateElement(rel.getStartNode(), true);
                 newChild.createRelationshipTo(newInstance, RelTypes.CHILD_OF_SPECIAL);
             }

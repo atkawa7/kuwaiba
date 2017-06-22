@@ -384,6 +384,9 @@ public interface WebserviceBeanRemote {
     
     public long[] copyTemplateElements(String[] sourceObjectsClassNames, long[] sourceObjectsIds, 
             String newParentClassName,long newParentId, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public long[] copyTemplateSpecialElements(String[] sourceObjectsClassNames, long[] sourceObjectsIds, 
+        String newParentClassName, long newParentId, String ipAddress, String sessionId) throws ServerSideException;
     //</editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Reporting methods.">

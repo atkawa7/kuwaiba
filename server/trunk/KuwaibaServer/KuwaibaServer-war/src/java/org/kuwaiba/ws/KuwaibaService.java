@@ -3965,6 +3965,7 @@ public class KuwaibaService {
      * @return An array with the ids of the newly created elements in the same order they were provided.
      * @throws org.kuwaiba.exceptions.ServerSideException In case something goes wrong.
      */
+    @WebMethod(operationName = "copyTemplateElements")
     public long[] copyTemplateElements(@WebParam(name = "sourceObjectsClassNames")String[] sourceObjectsClassNames, 
                                        @WebParam(name = "sourceObjectsIds")long[] sourceObjectsIds, 
                                        @WebParam(name = "newParentClassName")String newParentClassName,
@@ -3977,6 +3978,37 @@ public class KuwaibaService {
                 throw e;
             else {
                 System.out.println("[KUWAIBA] An unexpected error occurred in copyTemplateElements: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    
+    /**
+     * Copy template special elements within templates. Should not be used to copy entire templates.
+     * @param sourceObjectsClassNames Array with the class names of the special elements to be copied.
+     * @param sourceObjectsIds  Array with the ids of the special elements to be copied.
+     * @param newParentClassName Class of the parent of the copied objects.
+     * @param newParentId Id of the parent of the copied objects.
+     * @param sessionId Session token.
+     * @return An array with the ids of the newly created special elements in the same order they were provided.
+     * @throws ServerSideException In case something goes wrong.
+     */
+    @WebMethod(operationName = "copyTemplateSpecialElements")
+    public long[] copyTemplateSpecialElements(
+        @WebParam(name = "sourceObjectsClassNames")String[] sourceObjectsClassNames, 
+        @WebParam(name = "sourceObjectsIds")long[] sourceObjectsIds, 
+        @WebParam(name = "newParentClassName")String newParentClassName,
+        @WebParam(name = "newParentId")long newParentId, 
+        @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        
+        try {
+            return wsBean.copyTemplateSpecialElements(sourceObjectsClassNames, sourceObjectsIds, newParentClassName, newParentId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in copyTemplateSpecialElements: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }

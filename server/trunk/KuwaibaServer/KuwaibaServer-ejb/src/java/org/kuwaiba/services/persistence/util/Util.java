@@ -363,8 +363,6 @@ public class Util {
         myClass.setAttributes(listAttributes);
 
         //Possible Children
-        Iterable<Relationship> x = classNode.getRelationships(Direction.OUTGOING, RelTypes.POSSIBLE_CHILD);
-        
         for (Relationship rel : classNode.getRelationships(Direction.OUTGOING, RelTypes.POSSIBLE_CHILD)) {
             if((Boolean)rel.getEndNode().getProperty(Constants.PROPERTY_ABSTRACT)){
                 Iterable<Node> allSubclasses = Util.getAllSubclasses(rel.getEndNode());
@@ -376,6 +374,18 @@ public class Util {
             }//end if
             else {
                 myClass.getPossibleChildren().add((String)rel.getEndNode().getProperty(Constants.PROPERTY_NAME));
+            }
+        }
+        // Possible Special Children
+        for (Relationship relationship : classNode.getRelationships(Direction.OUTGOING, RelTypes.POSSIBLE_SPECIAL_CHILD)) {
+            if ((Boolean) relationship.getEndNode().getProperty(Constants.PROPERTY_ABSTRACT)) {
+                Iterable<Node> allSubClasses = Util.getAllSubclasses(relationship.getEndNode());
+                for (Node childNode : allSubClasses) {
+                    if (!(Boolean) childNode.getProperty(Constants.PROPERTY_ABSTRACT))
+                        myClass.getPossibleSpecialChildren().add((String) childNode.getProperty(Constants.PROPERTY_NAME));
+                }
+            } else {
+                myClass.getPossibleSpecialChildren().add((String) relationship.getEndNode().getProperty(Constants.PROPERTY_NAME));
             }
         }
         return myClass;
@@ -756,7 +766,7 @@ public class Util {
         }
         return false;
     }
-
+    
     /**
      * Retrieves the subclasses of a given class metadata node within the class hierarchy
      * @param classMetadata The parent class metadata

@@ -66,6 +66,7 @@ import org.kuwaiba.apis.persistence.application.ViewObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectList;
+import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
@@ -2420,10 +2421,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
     @Override
     public long[] copyTemplateElements(String[] sourceObjectsClassNames, long[] sourceObjectsIds, String newParentClassName, 
-            long newParentId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException {
+            long newParentId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, ArraySizeMismatchException {
         
         if (sourceObjectsClassNames.length != sourceObjectsIds.length)
-            throw new InvalidArgumentException("The sourceObjectsClassNames and sourceObjectsIds arrays have different sizes");
+            throw new ArraySizeMismatchException("The sourceObjectsClassNames and sourceObjectsIds arrays have different sizes");
         try (Transaction tx = graphDb.beginTx()) {
             long[] newTemplateElements = new long[sourceObjectsClassNames.length];
             
@@ -2440,6 +2441,26 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         }
     }
     
+    @Override
+    public long [] copyTemplateSpecialElement(String[] sourceObjectsClassNames, long [] sourceObjectsIds, String newParentClassName, long newParentId) 
+     throws ArraySizeMismatchException, ApplicationObjectNotFoundException, MetadataObjectNotFoundException {
+        if(sourceObjectsClassNames.length != sourceObjectsIds.length)
+            throw new ArraySizeMismatchException("The sourceObjectsClassNames and sourceObjectsIds arrays have different sizes");
+        try (Transaction tx = graphDb.beginTx()) {
+            long [] newTemplateSpecialElements = new long[sourceObjectsClassNames.length];
+            
+            Node newParentNode = getTemplateElementInstance(newParentClassName, newParentId);
+            
+            for (int i = 0; i < sourceObjectsClassNames.length; i += 1) {
+                Node templateObjectNode = getTemplateElementInstance(sourceObjectsClassNames[i], sourceObjectsIds[i]);
+                Node newTemplateSpecialElementInstance = copyTemplateElement(templateObjectNode, true);
+                newTemplateSpecialElementInstance.createRelationshipTo(newParentNode, RelTypes.CHILD_OF_SPECIAL);
+                newTemplateSpecialElements[i] = newTemplateSpecialElementInstance.getId();
+            }
+            tx.success();
+            return newTemplateSpecialElements;
+        }
+    }
     
     @Override
     public void registerCommercialModule(GenericCommercialModule module) throws NotAuthorizedException {
@@ -2680,6 +2701,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             for (Relationship rel : templateObject.getRelationships(RelTypes.CHILD_OF, Direction.INCOMING)){
                 Node newChild = copyTemplateElement(rel.getStartNode(), true);
                 newChild.createRelationshipTo(newTemplateElementInstance, RelTypes.CHILD_OF);
+            }
+            for (Relationship rel : templateObject.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.INCOMING)){
+                Node newChild = copyTemplateElement(rel.getStartNode(), true);
+                newChild.createRelationshipTo(newTemplateElementInstance, RelTypes.CHILD_OF_SPECIAL);
             }
         }
         return newTemplateElementInstance;
