@@ -45,6 +45,6 @@ public class ListManagerService {
     }
 
     void refreshLists() {
-        com.refreshCache(false, false, true, false);
+        com.refreshCache(false, false, true, false, false);
     }
 }

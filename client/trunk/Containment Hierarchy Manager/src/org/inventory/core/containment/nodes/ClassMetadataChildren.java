@@ -21,21 +21,19 @@ import java.util.Collection;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
-import org.inventory.core.containment.HierarchyCustomizerConfigurationObject;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.nodes.Children.Array;
 import org.openide.nodes.Node;
-import org.openide.util.Lookup;
 /**
  * Represents a class node.
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ClassMetadataChildren extends Array{
+public class ClassMetadataChildren extends Array {
 
-    private boolean main;
-    List<LocalClassMetadataLight> keys;
+    protected boolean main;
+    protected List<LocalClassMetadataLight> keys;
 
-    public ClassMetadataChildren(List<LocalClassMetadataLight> lcm){
+    public ClassMetadataChildren(List<LocalClassMetadataLight> lcm) {
         this.main = true;
         this.keys= new ArrayList(lcm);
     }
@@ -46,7 +44,7 @@ public class ClassMetadataChildren extends Array{
     }
 
     @Override
-    protected Collection<Node> initCollection (){
+    protected Collection<Node> initCollection () {
         List<Node> myNodes = new ArrayList();
         for (LocalClassMetadataLight lcml : keys)
             if (main) // This is kinda weird, because
@@ -57,41 +55,19 @@ public class ClassMetadataChildren extends Array{
     }
 
     @Override
-    public void addNotify(){
+    public void addNotify() {
         if (this.getNode() instanceof ClassMetadataNode){ //Ignores the root node
             LocalClassMetadataLight lcm = ((ClassMetadataNode)this.getNode()).getObject();
             
-            List<LocalClassMetadataLight> children;
+            List<LocalClassMetadataLight> children = CommunicationsStub.getInstance().getPossibleChildrenNoRecursive(lcm.getClassName());
             
-            HierarchyCustomizerConfigurationObject configObj = Lookup.getDefault()
-                .lookup(HierarchyCustomizerConfigurationObject.class);
-            
-            if ((boolean) configObj.getProperty(HierarchyCustomizerConfigurationObject.PROPERTY_ENABLE_SPECIAL)) {
-                // The children are the possible special children
-                children = CommunicationsStub.getInstance().getPossibleSpecialChildrenNoRecursive(lcm.getClassName());
-            } else {
-                // The children are the possible children
-                children = CommunicationsStub.getInstance().getPossibleChildrenNoRecursive(lcm.getClassName());
-            }
             if (children == null) {
                 NotificationUtil.getInstance().showSimplePopup("Error", 
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-                return;
+            } else {
+                keys = new ArrayList();
+                keys.addAll(children);
             }
-            keys = new ArrayList();
-            keys.addAll(children);
         }
-    }
-
-    public LocalClassMetadataLight[] getKeys(){
-        LocalClassMetadataLight[] myKeys = new LocalClassMetadataLight[getNodes().length];
-
-        int i = 0;
-        for (Node n : getNodes()){
-            myKeys[i] = ((ClassMetadataNode)n).getObject();
-            i++;
-        }
-
-        return myKeys;
     }
 }

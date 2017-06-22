@@ -24,6 +24,7 @@ import org.inventory.navigation.special.children.nodes.actions.CreateSpecialBusi
 import org.inventory.navigation.navigationtree.nodes.actions.EditObjectAction;
 import org.inventory.navigation.navigationtree.nodes.actions.RefreshObjectAction;
 import org.inventory.navigation.navigationtree.nodes.actions.ShowMoreInformationAction;
+import org.inventory.navigation.special.children.nodes.actions.CreateSpecialBusinessObjectFromTemplateAction;
 import org.openide.util.Lookup;
 
 /**
@@ -43,6 +44,7 @@ public class SpecialObjectNode extends ObjectNode {
     public Action[] getActions(boolean context) {
         ArrayList<Action> actions = new ArrayList<>();
         actions.add(new CreateSpecialBusinessObjectAction(this)); //This changes from ObjectNode
+        actions.add(new CreateSpecialBusinessObjectFromTemplateAction()); //This changes from ObjectNode
         actions.add(refreshAction == null ? refreshAction = new RefreshObjectAction(this) : refreshAction);
         actions.add(editAction == null ? editAction = new EditObjectAction(this) : editAction);
         actions.add(explorerAction);

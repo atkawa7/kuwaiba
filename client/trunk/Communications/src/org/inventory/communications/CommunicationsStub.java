@@ -1937,9 +1937,10 @@ public class CommunicationsStub {
      * @param refreshLightMeta
      * @param refreshList
      * @param refreshPossibleChildren
+     * @param refreshPossibleSpecialChildren
      */
     public void refreshCache(boolean refreshMeta, boolean refreshLightMeta,
-            boolean refreshList, boolean refreshPossibleChildren){
+            boolean refreshList, boolean refreshPossibleChildren, boolean refreshPossibleSpecialChildren){
         try {
             if (refreshMeta){
                 for (LocalClassMetadata lcm : cache.getMetadataIndex()){
@@ -1986,7 +1987,15 @@ public class CommunicationsStub {
                     myLocalPossibleChildren.remove(key);
                     getPossibleChildren(key, true);
                 }
-                
+                cache.resetPossibleChildrenCached();
+            }
+            if (refreshPossibleSpecialChildren) {
+                HashMap<String, List<LocalClassMetadataLight>> myLocalPossibleSpecialChildren
+                        = cache.getAllPossibleSpecialChildren();
+                for (String key : myLocalPossibleSpecialChildren.keySet()){
+                    myLocalPossibleSpecialChildren.remove(key);
+                    getPossibleSpecialChildren(key, true);
+                }
                 cache.resetPossibleSpecialChildrenCached();
             }
         }catch(Exception ex){
@@ -3240,6 +3249,24 @@ public class CommunicationsStub {
             return localTemplateElements;
         } catch (Exception ex) {
             this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    public List<LocalObjectLight> copyTemplateSpecialElements(List<String> sourceObjectsClassNames, List<Long> sourceObjectsIds,
+        String newParentClassName, long newParentId) {
+        try {
+            service.copyTemplateSpecialElements(sourceObjectsClassNames, 
+                sourceObjectsIds, newParentClassName, newParentId, session.getSessionId());
+            
+            List<LocalObjectLight> localTemplateSpecialElements = new ArrayList();
+            
+            for (int i = 0; i < sourceObjectsClassNames.size(); i += 1)
+                localTemplateSpecialElements.add(new LocalObjectLight(sourceObjectsIds.get(i), "", sourceObjectsClassNames.get(i)));
+            
+            return localTemplateSpecialElements;
+        } catch (Exception ex) {
+            error = ex.getMessage();
             return null;
         }
     }

@@ -79,7 +79,7 @@ public class TemplatesModuleClassNode extends AbstractNode {
     
         @Override
         protected Node[] createNodes(LocalObjectLight t) {
-            return new Node[] { new TemplateElementNode(t, false) };
+            return new Node[] { new TemplateElementNode(t) };
         }
     }
 }

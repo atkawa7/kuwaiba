@@ -17,12 +17,13 @@ package org.inventory.navigation.special.children.nodes.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.List;
-import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.MenuScroller;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
@@ -33,11 +34,11 @@ import org.openide.util.actions.Presenter;
  * Creates a new special object
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public final class CreateSpecialBusinessObjectAction extends AbstractAction 
+public final class CreateSpecialBusinessObjectAction extends GenericInventoryAction 
             implements Presenter.Popup {
     private SpecialObjectNode node;
     private CommunicationsStub com;
-
+    
     public CreateSpecialBusinessObjectAction(SpecialObjectNode node) {
         putValue(NAME, "New Special");
         com = CommunicationsStub.getInstance();
@@ -78,5 +79,10 @@ public final class CreateSpecialBusinessObjectAction extends AbstractAction
         MenuScroller.setScrollerFor(mnuPossibleChildren, 20, 100);
 		
         return mnuPossibleChildren;
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_SPECIAL_EXPLORERS, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

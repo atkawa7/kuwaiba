@@ -25,6 +25,7 @@ import javax.swing.JList;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.containment.nodes.ClassMetadataChildren;
+import org.inventory.core.containment.nodes.ClassMetadataSpecialChildren;
 import org.inventory.core.containment.nodes.ClassMetadataTransferManager;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
@@ -55,7 +56,6 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
     private BeanTreeView bTreeView;
     private JList lstClasses;
     private NotificationUtil nu;
-    private HierarchyCustomizerConfigurationObject configurationObject;
     
     public HierarchyCustomizerTopComponent() {
         initComponents();
@@ -66,9 +66,6 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
     }
 
     private void initComponentsCustom() {
-        configurationObject = Lookup.getDefault().lookup(HierarchyCustomizerConfigurationObject.class);
-        configurationObject.setProperty(HierarchyCustomizerConfigurationObject.PROPERTY_ENABLE_SPECIAL, false);
-                
         associateLookup(ExplorerUtils.createLookup(em, new ActionMap()));
 
         service = new HierarchyCustomizerService(this);
@@ -105,7 +102,7 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
         pnlHierarchyManagerScrollMain = new javax.swing.JScrollPane();
         lblInfo = new javax.swing.JLabel();
         toolBarMain = new javax.swing.JToolBar();
-        btnContainmentHierarchy = new javax.swing.JToggleButton();
+        btnStandartContainmentHierarchy = new javax.swing.JToggleButton();
         btnSpecialContainmentHierarchy = new javax.swing.JToggleButton();
 
         setLayout(new java.awt.BorderLayout(10, 10));
@@ -126,21 +123,24 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
         add(lblInfo, java.awt.BorderLayout.PAGE_END);
 
         toolBarMain.setRollover(true);
+        toolBarMain.setMaximumSize(new java.awt.Dimension(392, 38));
+        toolBarMain.setMinimumSize(new java.awt.Dimension(392, 38));
+        toolBarMain.setPreferredSize(new java.awt.Dimension(326, 33));
 
-        btnContainmentHierarchy.setSelected(true);
-        org.openide.awt.Mnemonics.setLocalizedText(btnContainmentHierarchy, org.openide.util.NbBundle.getMessage(HierarchyCustomizerTopComponent.class, "HierarchyCustomizerTopComponent.btnContainmentHierarchy.text")); // NOI18N
-        btnContainmentHierarchy.setToolTipText(org.openide.util.NbBundle.getMessage(HierarchyCustomizerTopComponent.class, "HierarchyCustomizerTopComponent.btnContainmentHierarchy.toolTipText")); // NOI18N
-        btnContainmentHierarchy.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
-        btnContainmentHierarchy.setFocusable(false);
-        btnContainmentHierarchy.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnContainmentHierarchy.setMargin(new java.awt.Insets(20, 20, 20, 20));
-        btnContainmentHierarchy.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnContainmentHierarchy.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnStandartContainmentHierarchy.setSelected(true);
+        org.openide.awt.Mnemonics.setLocalizedText(btnStandartContainmentHierarchy, org.openide.util.NbBundle.getMessage(HierarchyCustomizerTopComponent.class, "HierarchyCustomizerTopComponent.btnStandartContainmentHierarchy.text")); // NOI18N
+        btnStandartContainmentHierarchy.setToolTipText(org.openide.util.NbBundle.getMessage(HierarchyCustomizerTopComponent.class, "HierarchyCustomizerTopComponent.btnStandartContainmentHierarchy.toolTipText")); // NOI18N
+        btnStandartContainmentHierarchy.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
+        btnStandartContainmentHierarchy.setFocusable(false);
+        btnStandartContainmentHierarchy.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnStandartContainmentHierarchy.setMargin(new java.awt.Insets(20, 20, 20, 20));
+        btnStandartContainmentHierarchy.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnStandartContainmentHierarchy.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnContainmentHierarchyMouseClicked(evt);
+                btnStandartContainmentHierarchyMouseClicked(evt);
             }
         });
-        toolBarMain.add(btnContainmentHierarchy);
+        toolBarMain.add(btnStandartContainmentHierarchy);
 
         org.openide.awt.Mnemonics.setLocalizedText(btnSpecialContainmentHierarchy, org.openide.util.NbBundle.getMessage(HierarchyCustomizerTopComponent.class, "HierarchyCustomizerTopComponent.btnSpecialContainmentHierarchy.text")); // NOI18N
         btnSpecialContainmentHierarchy.setToolTipText(org.openide.util.NbBundle.getMessage(HierarchyCustomizerTopComponent.class, "HierarchyCustomizerTopComponent.btnSpecialContainmentHierarchy.toolTipText")); // NOI18N
@@ -159,28 +159,22 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSpecialContainmentHierarchyMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSpecialContainmentHierarchyMouseClicked
-        btnSpecialContainmentHierarchy.setSelected(true);
-        if (!(boolean) configurationObject.getProperty(HierarchyCustomizerConfigurationObject.PROPERTY_ENABLE_SPECIAL)) {
-            btnContainmentHierarchy.setSelected(false);
-            configurationObject.setProperty(HierarchyCustomizerConfigurationObject.PROPERTY_ENABLE_SPECIAL, true);
-            componentClosed();
-            componentOpened();
-        }
+        if (!btnSpecialContainmentHierarchy.isSelected())
+            btnSpecialContainmentHierarchy.setSelected(true);
+        em.setRootContext(new AbstractNode(new ClassMetadataSpecialChildren(service.getTreeModel()))); 
+        btnStandartContainmentHierarchy.setSelected(false);
     }//GEN-LAST:event_btnSpecialContainmentHierarchyMouseClicked
 
-    private void btnContainmentHierarchyMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnContainmentHierarchyMouseClicked
-        btnContainmentHierarchy.setSelected(true);
-        if ((boolean) configurationObject.getProperty(HierarchyCustomizerConfigurationObject.PROPERTY_ENABLE_SPECIAL)) {
-            btnSpecialContainmentHierarchy.setSelected(false);
-            configurationObject.setProperty(HierarchyCustomizerConfigurationObject.PROPERTY_ENABLE_SPECIAL, false);
-            componentClosed();
-            componentOpened();
-        }
-    }//GEN-LAST:event_btnContainmentHierarchyMouseClicked
+    private void btnStandartContainmentHierarchyMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnStandartContainmentHierarchyMouseClicked
+        if (!btnStandartContainmentHierarchy.isSelected())
+            btnStandartContainmentHierarchy.setSelected(true);
+        em.setRootContext(new AbstractNode(new ClassMetadataChildren(service.getTreeModel())));
+        btnSpecialContainmentHierarchy.setSelected(false);
+    }//GEN-LAST:event_btnStandartContainmentHierarchyMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JToggleButton btnContainmentHierarchy;
     private javax.swing.JToggleButton btnSpecialContainmentHierarchy;
+    private javax.swing.JToggleButton btnStandartContainmentHierarchy;
     private javax.swing.JLabel lblInfo;
     private javax.swing.JSplitPane pnlHierarchyManagerMain;
     private javax.swing.JScrollPane pnlHierarchyManagerScrollMain;

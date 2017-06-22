@@ -18,52 +18,45 @@ package org.inventory.core.containment.nodes.actions;
 import java.awt.event.ActionEvent;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalPrivilege;
-import org.inventory.core.containment.HierarchyCustomizerConfigurationObject;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.containment.nodes.ClassMetadataChildren;
 import org.inventory.core.containment.nodes.ClassMetadataNode;
 import org.openide.nodes.Node;
-import org.openide.util.Lookup;
+import org.openide.util.Utilities;
 
 /**
  * Implements the "remove a class from container hierarchy" action
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class RemovePosibleChildAction extends GenericInventoryAction {
-
-    ClassMetadataNode node;
-
-    public RemovePosibleChildAction(){}
-    public RemovePosibleChildAction(ClassMetadataNode node){
+public class RemovePossibleChildAction extends GenericInventoryAction {
+    private static RemovePossibleChildAction instance;
+    
+    private RemovePossibleChildAction() {
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/core/containment/Bundle").getString("LBL_REMOVE"));
-        this.node = node;
     }
-
+    
+    public static RemovePossibleChildAction getInstance() {
+        return instance == null ? instance = new RemovePossibleChildAction() : instance;
+    }
+    
     @Override
     public void actionPerformed(ActionEvent e) {
-        CommunicationsStub com = CommunicationsStub.getInstance();
-        
-        HierarchyCustomizerConfigurationObject configObj = Lookup.getDefault()
-            .lookup(HierarchyCustomizerConfigurationObject.class);
-        
-        boolean addedChildrenSuccessfully;
-
-        if ((boolean) configObj.getProperty(HierarchyCustomizerConfigurationObject.PROPERTY_ENABLE_SPECIAL)) 
-            addedChildrenSuccessfully = com.removePossibleSpecialChildren(((ClassMetadataNode)node.getParentNode()).getObject().getOid(),new long[]{node.getObject().getOid()});
-        else 
-            addedChildrenSuccessfully = com.removePossibleChildren(((ClassMetadataNode)node.getParentNode()).getObject().getOid(),new long[]{node.getObject().getOid()});
-        
-        if (addedChildrenSuccessfully){
-
-            ((ClassMetadataChildren)node.getParentNode().getChildren()).remove(new Node[]{ node });
-            com.refreshCache(false, false, false, true);
-
-            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE,
+        ClassMetadataNode selectedNode = Utilities.actionsGlobalContext().lookup(ClassMetadataNode.class);
+        if (selectedNode != null) {
+            long childId = selectedNode.getObject().getOid();
+            long parentId = ((ClassMetadataNode) selectedNode.getParentNode()).getObject().getOid();
+            
+            if (CommunicationsStub.getInstance().removePossibleChildren(parentId, new long [] {childId})) {
+                ((ClassMetadataChildren) selectedNode.getParentNode().getChildren()).remove(new Node[] {selectedNode});
+                CommunicationsStub.getInstance().refreshCache(false, false, false, true, false);
+                
+                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE,
                     java.util.ResourceBundle.getBundle("org/inventory/core/containment/Bundle").getString("LBL_HIERARCHY_UPDATE_TEXT"));
+            } else {
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            }
         }
-        else
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE,com.getError());
     }
     
     @Override

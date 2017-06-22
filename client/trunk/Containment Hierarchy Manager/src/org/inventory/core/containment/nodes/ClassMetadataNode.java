@@ -17,16 +17,15 @@
 package org.inventory.core.containment.nodes;
 
 import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
-import org.inventory.core.containment.HierarchyCustomizerConfigurationObject;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.core.containment.nodes.actions.RemovePosibleChildAction;
+import org.inventory.core.containment.nodes.actions.RemovePossibleChildAction;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
-import org.openide.util.Lookup;
 import org.openide.util.datatransfer.PasteType;
 import org.openide.util.lookup.Lookups;
 
@@ -35,9 +34,9 @@ import org.openide.util.lookup.Lookups;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ClassMetadataNode extends AbstractNode {
-   static final String PARENT_ICON_PATH = "org/inventory/core/containment/res/flag-green.png";
-   static final String ROOT_PARENT_ICON_PATH = "org/inventory/core/containment/res/flag-red.png";
-   static final String CHILDREN_ICON_PATH = "org/inventory/core/containment/res/flag-black.png";
+   private static final String PARENT_ICON_PATH = "org/inventory/core/containment/res/flag-green.png";
+   private static final String ROOT_PARENT_ICON_PATH = "org/inventory/core/containment/res/flag-red.png";
+   private static final String CHILDREN_ICON_PATH = "org/inventory/core/containment/res/flag-black.png";
    private LocalClassMetadataLight object;
    
    
@@ -74,10 +73,9 @@ public class ClassMetadataNode extends AbstractNode {
 
     @Override
    public Action[] getActions(boolean context){
-        if(this.isLeaf()){ //return actions only for the nodes representing possible children
-            RemovePosibleChildAction deleteAction;
-            deleteAction = new RemovePosibleChildAction(this);
-            return new Action[]{deleteAction};
+        if (this.isLeaf()) {
+            //Return actions only for the nodes representing possible children
+            return new Action[]{RemovePossibleChildAction.getInstance()};
         }
         else
             return new Action[0];
@@ -104,20 +102,9 @@ public class ClassMetadataNode extends AbstractNode {
 //                                data)){
 //                            for (Object obj : data)
 //                                getChildren().add(new Node[]{new ClassMetadataNode((LocalClassMetadataLight)data)});
-                    HierarchyCustomizerConfigurationObject configObj = Lookup.getDefault()
-                        .lookup(HierarchyCustomizerConfigurationObject.class);
-                    
-                    boolean addedChildrenSuccessfully;
-                    
-                    if ((boolean) configObj.getProperty(HierarchyCustomizerConfigurationObject.PROPERTY_ENABLE_SPECIAL)) {
-                        addedChildrenSuccessfully = CommunicationsStub.getInstance().addPossibleSpecialChildren(object.getOid(), tokens);
-                    } else {
-                        addedChildrenSuccessfully = CommunicationsStub.getInstance().addPossibleChildren(object.getOid(), tokens);
-                    }
-                    
-                    if (addedChildrenSuccessfully) {
+                    if (CommunicationsStub.getInstance().addPossibleChildren(object.getOid(), tokens)) {
                         ((ClassMetadataChildren) getChildren()).add(new ClassMetadataNode[]{new ClassMetadataNode(data)});
-                        CommunicationsStub.getInstance().refreshCache(false, false, false, true);
+                        CommunicationsStub.getInstance().refreshCache(false, false, false, true, false);
 
                         NotificationUtil.getInstance().showSimplePopup("Success", 
                             NotificationUtil.INFO_MESSAGE, 
@@ -127,7 +114,7 @@ public class ClassMetadataNode extends AbstractNode {
                         NotificationUtil.getInstance().showSimplePopup("Error", 
                             NotificationUtil.ERROR_MESSAGE,CommunicationsStub.getInstance().getError());
                     }
-                } catch (Exception ex) {
+                } catch (UnsupportedFlavorException ex) {
                     NotificationUtil.getInstance().showSimplePopup("Error", 
                         NotificationUtil.ERROR_MESSAGE,ex.getMessage());
                 }

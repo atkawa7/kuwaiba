@@ -12,19 +12,23 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.inventory.core.containment;
+package org.inventory.core.templates.nodes;
 
-import org.inventory.core.services.api.behaviors.ConfigurationObject;
-import org.openide.util.lookup.ServiceProvider;
+import java.awt.Color;
+import java.awt.Image;
+import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.util.Utils;
 
 /**
- * Containment Hierarchy Configuration Object
+ * A node representing a template special element.
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-@ServiceProvider(service = ConfigurationObject.class)
-public class HierarchyCustomizerConfigurationObject extends ConfigurationObject {
-    /**
-     * Property name which its value is used to enable the special containment hierarchy.
-     */
-    public static String PROPERTY_ENABLE_SPECIAL = "enableSpecialContainmentHierarchy";
+public class TemplateSpecialElementNode extends TemplateElementNode {
+    private static final Image defaultSpecialIcon = Utils.createRectangleIcon(new Color(11, 91, 111), 
+            Utils.DEFAULT_ICON_WIDTH, Utils.DEFAULT_ICON_HEIGHT);
+
+    public TemplateSpecialElementNode(LocalObjectLight object) {
+        super(object);
+        icon =  defaultSpecialIcon;
+    }
 }

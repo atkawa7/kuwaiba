@@ -79,7 +79,7 @@ public class CreateTemplateElementSpecialAction extends GenericInventoryAction i
 
         LocalObjectLight selectedObject = Utilities.actionsGlobalContext().lookup(LocalObjectLight.class);
         
-        List<LocalClassMetadataLight> items = com.getPossibleSpecialChildren(selectedObject.getClassName(), true);
+        List<LocalClassMetadataLight> items = com.getPossibleSpecialChildren(selectedObject.getClassName(), false);
         
         if (items == null) {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE,

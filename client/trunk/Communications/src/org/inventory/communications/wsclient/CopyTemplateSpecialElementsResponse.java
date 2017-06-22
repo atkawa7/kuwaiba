@@ -10,16 +10,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for updateBookmarkFolderForUserResponse complex type.
+ * <p>Java class for copyTemplateSpecialElementsResponse complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="updateBookmarkFolderForUserResponse">
+ * &lt;complexType name="copyTemplateSpecialElementsResponse">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://ws.kuwaiba.org/}remoteBookmark" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="return" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,13 +29,13 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "updateBookmarkFolderForUserResponse", propOrder = {
+@XmlType(name = "copyTemplateSpecialElementsResponse", propOrder = {
     "_return"
 })
-public class UpdateBookmarkFolderForUserResponse {
+public class CopyTemplateSpecialElementsResponse {
 
-    @XmlElement(name = "return")
-    protected List<RemoteBookmark> _return;
+    @XmlElement(name = "return", nillable = true)
+    protected List<Long> _return;
 
     /**
      * Gets the value of the return property.
@@ -55,13 +55,13 @@ public class UpdateBookmarkFolderForUserResponse {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link RemoteBookmark }
+     * {@link Long }
      * 
      * 
      */
-    public List<RemoteBookmark> getReturn() {
+    public List<Long> getReturn() {
         if (_return == null) {
-            _return = new ArrayList<RemoteBookmark>();
+            _return = new ArrayList<Long>();
         }
         return this._return;
     }
