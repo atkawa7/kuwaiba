@@ -36,6 +36,7 @@ import org.inventory.core.visual.export.ExportScenePanel;
 import org.inventory.core.visual.export.filters.ImageFilter;
 import org.inventory.core.visual.export.filters.SceneExportFilter;
 import org.inventory.core.visual.scene.AbstractScene;
+import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.views.objectview.scene.ChildrenViewScene;
 import org.inventory.views.objectview.scene.PhysicalConnectionProvider;
 import org.openide.explorer.ExplorerManager;
@@ -78,7 +79,7 @@ public final class ObjectViewTopComponent extends TopComponent
     private ChildrenViewScene scene;
     private ObjectViewConfigurationObject configObject;
     private LocalObjectLight currentObject;
-    private Lookup.Result<LocalObjectLight> lookupResult;
+    private Lookup.Result<ObjectNode> lookupResult;
     
     public ObjectViewTopComponent() {
         initComponents();
@@ -529,7 +530,7 @@ public final class ObjectViewTopComponent extends TopComponent
     public void componentOpened() {
         scene.addChangeListener(this);
         
-        lookupResult = Utilities.actionsGlobalContext().lookupResult(LocalObjectLight.class);
+        lookupResult = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class);
         lookupResult.addLookupListener(this);
         
         if (lookupResult.allInstances().size() == 1)
@@ -638,14 +639,14 @@ public final class ObjectViewTopComponent extends TopComponent
         Lookup.Result aLookupResult = (Lookup.Result) ev.getSource();
         
         if (aLookupResult.allInstances().size() == 1) {
-            LocalObjectLight obj = (LocalObjectLight) aLookupResult.allInstances().iterator().next();
+            ObjectNode obj = (ObjectNode) aLookupResult.allInstances().iterator().next();
             
-            if (obj.equals(currentObject))
+            if (!obj.getClass().equals(ObjectNode.class) ||  obj.getObject().equals(currentObject))  //Only update the view if the selected object is different from the one already selected and if the selected node is an ObjectNode (not one of its subclasses). The latter to avoid that the special explorers trigger an update
                 return;
                             
             checkForUnsavedView(false);
             
-            currentObject = obj;
+            currentObject = obj.getObject();
             configObject.setProperty("currentObject", currentObject);
             
             setDisplayName(null);

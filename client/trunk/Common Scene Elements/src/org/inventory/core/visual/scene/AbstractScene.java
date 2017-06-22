@@ -274,7 +274,7 @@ public abstract class AbstractScene<N, E> extends GraphScene<N, E> {
     public abstract boolean supportsConnections();
     /**
      * Does this view support backgrounds?
-     * @return 
+     * @return true if backgrounds are supported, false otherwise
      */
     public abstract boolean supportsBackgrounds();
     

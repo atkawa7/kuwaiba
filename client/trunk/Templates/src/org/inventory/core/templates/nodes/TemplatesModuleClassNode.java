@@ -31,7 +31,7 @@ import org.openide.nodes.Node;
 import org.openide.util.lookup.Lookups;
 
 /**
- * A simple node representing an instanceable inventory class
+ * A simple node representing an instanceable inventory class for the Templates module
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class TemplatesModuleClassNode extends AbstractNode {
@@ -66,7 +66,7 @@ public class TemplatesModuleClassNode extends AbstractNode {
             LocalClassMetadataLight classMetadata = getNode().getLookup().lookup(LocalClassMetadataLight.class);
                         
             List<LocalObjectLight> templates = CommunicationsStub.getInstance()
-                .getTemplatesForClass(classMetadata.getClassName());
+                .getTemplatesForClass(classMetadata.getClassName(), true);
                         
             if (templates == null) {
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
@@ -79,7 +79,7 @@ public class TemplatesModuleClassNode extends AbstractNode {
     
         @Override
         protected Node[] createNodes(LocalObjectLight t) {
-            return new Node[] {new TemplateElementNode(t, false)};
+            return new Node[] { new TemplateElementNode(t, false) };
         }
     }
 }

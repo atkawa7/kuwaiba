@@ -114,6 +114,10 @@ public class Constants {
      */
     public static final String CLASS_GENERICPORT = "GenericPort";
     /**
+     * Root class to all physical containers (wire, wireless, etc)
+     */
+    public static final String CLASS_GENERICPHYSICALCONTAINER = "GenericPhysicalContainer";
+    /**
      * Root class to all physical links (cables, fibers, etc)
      */
     public static final String CLASS_GENERICPHYSICALLINK = "GenericPhysicalLink";

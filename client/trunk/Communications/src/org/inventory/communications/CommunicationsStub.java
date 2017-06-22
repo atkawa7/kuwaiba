@@ -524,15 +524,16 @@ public class CommunicationsStub {
      * to know what classes to show in the menu, but it's not used by the container manager,
      * which uses getPossibleChildrenNoRecursive
      * The result is cached
-     * @param className
+     * @param className The class you want to get the possible children from
+     * @param ignoreCache True to ignore the local cache, false otherwise
      * @return allPosible children
      */
     public List<LocalClassMetadataLight> getPossibleChildren(String className, boolean ignoreCache) {
         try{
             List<LocalClassMetadataLight> resAsLocal = null;
-            if (!ignoreCache){
-                    resAsLocal = cache.getPossibleChildrenCached(className);
-            }
+            if (!ignoreCache)
+                resAsLocal = cache.getPossibleChildrenCached(className);
+            
             if (resAsLocal == null){
                 resAsLocal = new ArrayList<>();
                 List<ClassInfoLight> resAsRemote = service.getPossibleChildren(className,this.session.getSessionId());
@@ -816,9 +817,10 @@ public class CommunicationsStub {
     /**
      * Retrieves the metadata for a given class
      * @param className the classmetadata name
+     * @param ignoreCache True if the local cache should be bypassed, false otherwise
      * @return the metadata information
      */
-    public LocalClassMetadata getMetaForClass(String className, boolean ignoreCache){
+    public LocalClassMetadata getMetaForClass(String className, boolean ignoreCache) {
         try{
             LocalClassMetadata res;
             if (!ignoreCache){
@@ -862,7 +864,7 @@ public class CommunicationsStub {
      * @param ignoreCache
      * @return the metadata information
      */
-    public LocalClassMetadata getMetaForClass(long classId, boolean ignoreCache){
+    public LocalClassMetadata getMetaForClass(long classId, boolean ignoreCache) {
         try{
             LocalClassMetadata res;
 //            if (!ignoreCache){
@@ -1928,17 +1930,6 @@ public class CommunicationsStub {
     }// </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Misc methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Reset the cache to the default cleaning all hashes:
-     */
-    public void resetCache(){
-        //Wipe out hashes
-        cache.resetMetadataIndex();
-        cache.resetLightMetadataIndex();
-        cache.resetPossibleChildrenCached();
-        cache.resetPossibleSpecialChildrenCached();
-        cache.resetLists();
-    }
 
     /**
      * Refreshes all existing objects, according to the flags provided
@@ -1982,7 +1973,7 @@ public class CommunicationsStub {
             }
 
             if (refreshList){
-                HashMap<String, List<LocalObjectListItem>> myLocalList = cache.getAllList();
+                HashMap<String, List<LocalObjectListItem>> myLocalList = cache.getAllListTypes();
                 for (String key : myLocalList.keySet()){
                     myLocalList.remove(key);
                     getList(key,false,true);
@@ -2818,7 +2809,7 @@ public class CommunicationsStub {
         try {
             long newPoolId  = service.createClassLevelReport(className, reportName, 
                     reportDescription, script, outputType, enabled,session.getSessionId());
-            cache.resetReportIndex();
+            cache.resetReportCache();
             return new LocalReportLight(newPoolId, reportName, reportDescription, enabled, outputType);
         }catch(Exception ex){
             this.error =  ex.getMessage();
@@ -2866,7 +2857,7 @@ public class CommunicationsStub {
     public boolean deleteReport(long reportId) {
         try {
             service.deleteReport(reportId, session.getSessionId());
-            cache.resetReportIndex();
+            cache.resetReportCache();
             return true;
         } catch(Exception ex){
             this.error =  ex.getMessage();
@@ -2889,7 +2880,7 @@ public class CommunicationsStub {
         try {
             service.updateReport(reportId, reportName, reportDescription, enabled,
                                     type, script, session.getSessionId());
-            cache.resetReportIndex();
+            cache.resetReportCache();
             return true;
         } catch(Exception ex){
             this.error =  ex.getMessage();
@@ -3060,7 +3051,10 @@ public class CommunicationsStub {
      */
     public LocalObjectLight createTemplate(String templateClass, String templateName) {
         try {
-            return new LocalObjectLight(service.createTemplate(templateClass, templateName, session.getSessionId()), templateName, templateClass);
+            LocalObjectLight newTemplate = new LocalObjectLight(service.createTemplate(templateClass, 
+                    templateName, session.getSessionId()), templateName, templateClass);
+            cache.removeTemplateForClass(templateName);
+            return newTemplate;
         } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
@@ -3137,14 +3131,26 @@ public class CommunicationsStub {
     /**
      * Gets the templates available for a given class
      * @param className Class whose templates we need
-     * @return A list of templates (actually, the top element) as a list of RemoteOObjects
+     * @param ignoreCache True to bypass the local cache, false otherwise
+     * @return A list of templates (actually, the top element) as a list of LocalObjects
      */
-    public List<LocalObjectLight> getTemplatesForClass(String className) {
+    public List<LocalObjectLight> getTemplatesForClass(String className, boolean ignoreCache) {
         try {
-            List<LocalObjectLight> localTemplates = new ArrayList<>();
-            List<RemoteObjectLight> remoteTemplates = service.getTemplatesForClass(className, session.getSessionId());
-            for (RemoteObjectLight remoteTemplate : remoteTemplates)
-                localTemplates.add(new LocalObjectLight(remoteTemplate.getOid(), remoteTemplate.getName(), remoteTemplate.getClassName()));
+            List<LocalObjectLight> localTemplates = null;
+            
+            if (!ignoreCache)
+                localTemplates = cache.getTemplatesForClass(className);
+            
+            if (localTemplates == null) {
+                localTemplates = new ArrayList<>();
+                List<RemoteObjectLight> remoteTemplates = service.getTemplatesForClass(className, session.getSessionId());
+                
+                for (RemoteObjectLight remoteTemplate : remoteTemplates)
+                    localTemplates.add(new LocalObjectLight(remoteTemplate.getOid(), remoteTemplate.getName(), remoteTemplate.getClassName()));
+                
+                cache.addTemplateForClass(className, localTemplates);
+            }
+            
             return localTemplates;
         } catch (Exception ex) {
             this.error = ex.getMessage();
@@ -3156,7 +3162,6 @@ public class CommunicationsStub {
      * Retrieves the children of a given template element.
      * @param templateElementClass Template element class.
      * @param templateElementId Template element id.
-     * @param specialChildren True to return the template special elements
      * @return The template element's children as a list of LocalObjectLight instances. It will return null if something went wrong.
      */
     public List<LocalObjectLight> getTemplateElementChildren(String templateElementClass, long templateElementId) {

@@ -52,7 +52,7 @@ public final class CreateBusinessObjectFromTemplateAction extends AbstractAction
     @Override
     public void actionPerformed(ActionEvent ev) {
         String className = ((JMenuItem)ev.getSource()).getName();
-        List<LocalObjectLight> templates = com.getTemplatesForClass(className);
+        List<LocalObjectLight> templates = com.getTemplatesForClass(className, false);
         
         if (templates == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());

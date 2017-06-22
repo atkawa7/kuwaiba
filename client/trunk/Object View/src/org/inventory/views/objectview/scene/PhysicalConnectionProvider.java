@@ -21,7 +21,9 @@ import java.awt.event.ActionEvent;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.core.visual.scene.ObjectNodeWidget;
-import org.inventory.core.wizards.physicalconnections.ConnectionWizard;
+import org.inventory.models.physicalconnections.wizards.ConnectionWizard;
+import org.inventory.models.physicalconnections.wizards.NewContainerWizard;
+import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.ConnectorState;
 import org.netbeans.api.visual.anchor.AnchorFactory;
@@ -98,22 +100,22 @@ public class PhysicalConnectionProvider implements ConnectProvider {
 
     @Override
     public void createConnection(Widget sourceWidget, Widget targetWidget) {
-        
+        new NewContainerWizard(sourceWidget.getLookup().lookup(ObjectNode.class), targetWidget.getLookup().lookup(ObjectNode.class)).show();
       
-        ConnectionWizard myWizard = new ConnectionWizard(wizardType, (LocalObjectLight)scene.findObject(sourceWidget),
-                (LocalObjectLight)scene.findObject(targetWidget), connectionClass, currentParentObject);
-        
-        myWizard.show();
-        
-        if (myWizard.getNewConnection() != null){
-
-            ConnectionWidget line = (ConnectionWidget)scene.addEdge(myWizard.getNewConnection());
-
-            line.setTargetAnchor(AnchorFactory.createCenterAnchor(((ObjectNodeWidget)targetWidget).getNodeWidget()));
-            line.setSourceAnchor(AnchorFactory.createCenterAnchor(((ObjectNodeWidget)sourceWidget).getNodeWidget()));
-            
-            scene.validate();
-            scene.fireChangeEvent(new ActionEvent(this, AbstractScene.SCENE_CHANGE, "New Connection"));
-        }
+//        ConnectionWizard myWizard = new ConnectionWizard(wizardType, (LocalObjectLight)scene.findObject(sourceWidget),
+//                (LocalObjectLight)scene.findObject(targetWidget), connectionClass, currentParentObject);
+//        
+//        myWizard.show();
+//        
+//        if (myWizard.getNewConnection() != null){
+//
+//            ConnectionWidget line = (ConnectionWidget)scene.addEdge(myWizard.getNewConnection());
+//
+//            line.setTargetAnchor(AnchorFactory.createCenterAnchor(((ObjectNodeWidget)targetWidget).getNodeWidget()));
+//            line.setSourceAnchor(AnchorFactory.createCenterAnchor(((ObjectNodeWidget)sourceWidget).getNodeWidget()));
+//            
+//            scene.validate();
+//            scene.fireChangeEvent(new ActionEvent(this, AbstractScene.SCENE_CHANGE, "New Connection"));
+//        }
     }
 }

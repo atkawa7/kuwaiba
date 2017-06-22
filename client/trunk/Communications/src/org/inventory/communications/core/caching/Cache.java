@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalClassMetadataLight;
+import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.core.LocalReportLight;
 import org.inventory.communications.core.LocalUserGroupObject;
@@ -39,6 +40,7 @@ public class Cache{
     private HashMap<String, List<LocalClassMetadataLight>> possibleSpecialChildrenIndex; //Cache for possible special children
     private HashMap<String,List<LocalObjectListItem>> listIndex; //Cache for list-type attributes
     private HashMap<String, List<LocalReportLight>> reportIndex; //Cache for class reports
+    private HashMap<String, List<LocalObjectLight>> templateIndex; //Cache for templates
     
     private Long rootClassId = null;
     /**
@@ -57,6 +59,7 @@ public class Cache{
         this.possibleSpecialChildrenIndex = new HashMap<>();
         this.listIndex = new HashMap<>();
         this.reportIndex = new HashMap<>();
+        this.templateIndex = new HashMap<>();
     }
 
     /**
@@ -150,6 +153,22 @@ public class Cache{
     public HashMap<String, List<LocalClassMetadataLight>> getAllPossibleSpecialChildren() {
         return possibleSpecialChildrenIndex;
     }
+    
+    public List<LocalObjectLight> getTemplatesForClass(String className) {
+        return templateIndex.get(className);
+    }
+    
+    public void addTemplateForClass(String className, List<LocalObjectLight> templates) {
+        templateIndex.put(className, templates);
+    }
+    
+    public void removeTemplateForClass(String className) {
+        templateIndex.remove(className);
+    }
+    
+    public void resetTemplateCache() {
+        templateIndex.clear();
+    }
 
     public List<LocalObjectListItem> getListCached(String className){
         if (className == null)
@@ -169,7 +188,7 @@ public class Cache{
         reportIndex.put(className, reports);
     }
 
-    public HashMap<String, List<LocalObjectListItem>> getAllList() {
+    public HashMap<String, List<LocalObjectListItem>> getAllListTypes() {
         return listIndex;
     }
     
@@ -196,7 +215,7 @@ public class Cache{
     /**
      * Resets de cached list types
      */
-    public void resetLists() {
+    public void resetListTypeCache() {
         listIndex.clear();
     }
 
@@ -217,21 +236,21 @@ public class Cache{
     /**
      * Resets the cached light class metadata
      */
-    public void resetLightMetadataIndex() {
+    public void resetLightMetadataCache() {
         lightMetadataIndex.clear();
     }
 
     /**
      * Resets the cached class metadata
      */
-    public void resetMetadataIndex(){
+    public void resetMetadataCache(){
         metadataIndex.clear();
     }
     
     /**
      * Resets cached class reports
      */
-    public void resetReportIndex(){
+    public void resetReportCache(){
         reportIndex.clear();
     }
     
@@ -242,5 +261,6 @@ public class Cache{
         metadataIndex.clear();
         lightMetadataIndex.clear();
         reportIndex.clear();
+        templateIndex.clear();
     }
 }

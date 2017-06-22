@@ -29,7 +29,7 @@ import org.netbeans.api.visual.model.ObjectState;
  */
 public class HighContrastLookAndFeel extends LookFeel {
 
-    private static final Color COLOR_BACKGROUND_NORMAL = Color.WHITE;
+    private static final Color COLOR_BACKGROUND_NORMAL = Color.GREEN;
     
     private static final Color COLOR_SELECTED = new Color(55, 59, 91);
     private static final Color COLOR_HIGHLIGHTED = COLOR_SELECTED.darker ();

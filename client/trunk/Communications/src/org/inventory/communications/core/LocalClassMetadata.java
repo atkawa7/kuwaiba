@@ -43,7 +43,7 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
     /**
      * Creation Date
      */
-    public long creationDate;
+    private long creationDate;
      
     public LocalClassMetadata(){
         super();
@@ -167,7 +167,7 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
     public LocalAttributeMetadata[] getAttributes(){
         LocalAttributeMetadata[] res =
                 new LocalAttributeMetadata[attributesNames.length];
-        for (int i = 0; i<res.length;i++){
+        for (int i = 0; i < res.length;i++){
             res[i] = new LocalAttributeMetadata(
                                     attributesIds[i],
                                     attributesNames[i],
@@ -203,6 +203,14 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
         
     public long getCreationDate() {
         return creationDate;
+    }
+    
+    public boolean hasAttribute(String attribute) {
+        for (String existingAttribute : attributesNames) {
+            if (existingAttribute.equals(attribute))
+                return true;
+        }
+        return false;
     }
 
     public final int getMappingFromType(String type){

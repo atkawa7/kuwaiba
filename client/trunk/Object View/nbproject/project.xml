@@ -34,7 +34,7 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
-                    <code-name-base>org.inventory.core.wizards</code-name-base>
+                    <code-name-base>org.inventory.models.physicalconnections</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>

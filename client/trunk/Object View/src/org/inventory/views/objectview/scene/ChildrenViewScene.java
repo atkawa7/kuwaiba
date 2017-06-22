@@ -448,8 +448,8 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
 
             ConnectionWidget newEdge = (ConnectionWidget) addEdge(container);
             newEdge.setLineColor(Utils.getConnectionColor(container.getClassName()));
-            //newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideWidget.getNodeWidget()));
-            //newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideWidget.getNodeWidget()));
+            newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideWidget.getNodeWidget()));
+            newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideWidget.getNodeWidget()));
             validate();
         }
     }

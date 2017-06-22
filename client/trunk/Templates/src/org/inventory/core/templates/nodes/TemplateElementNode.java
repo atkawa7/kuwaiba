@@ -62,6 +62,9 @@ public class TemplateElementNode extends AbstractNode implements PropertyChangeL
     private static final Image defaultIcon = Utils.createRectangleIcon(Utils.DEFAULT_ICON_COLOR, 
             Utils.DEFAULT_ICON_WIDTH, Utils.DEFAULT_ICON_HEIGHT);
     
+    private static final Image defaultSpecialIcon = Utils.createRectangleIcon(new Color(11, 91, 111), 
+            Utils.DEFAULT_ICON_WIDTH, Utils.DEFAULT_ICON_HEIGHT);
+    
     public Image icon = defaultIcon;
     
     private CommunicationsStub com = CommunicationsStub.getInstance();
@@ -69,10 +72,8 @@ public class TemplateElementNode extends AbstractNode implements PropertyChangeL
     public TemplateElementNode(LocalObjectLight object, boolean isSpecial) {
         super(new TemplateElementChildren(), Lookups.singleton(object));
         setDisplayName(object.toString());
-        if (isSpecial) {
-            icon =  Utils.createRectangleIcon(new Color(11, 91, 111), 
-                Utils.DEFAULT_ICON_WIDTH, Utils.DEFAULT_ICON_HEIGHT);
-        }
+        if (isSpecial)
+            icon =  defaultSpecialIcon;
     }
 
     @Override
