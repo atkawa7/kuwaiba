@@ -199,9 +199,10 @@ public interface BusinessEntityManager {
      * @throws ObjectNotFoundException If the requested object can't be found
      * @throws MetadataObjectNotFoundException If the requested object class can't be found
      * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked or it has relationships and releaseRelationships is false
+     * @throws InvalidArgumentException The is a problem with the object or its attributes
      */
     public void deleteObjects(HashMap<String, List<Long>> objects, boolean releaseRelationships)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException;
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException;
 
     /**
      * Deletes a single object

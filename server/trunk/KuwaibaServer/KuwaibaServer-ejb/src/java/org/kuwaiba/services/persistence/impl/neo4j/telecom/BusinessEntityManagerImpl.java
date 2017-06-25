@@ -582,16 +582,24 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     @Override
     public void deleteObjects(HashMap<String, List<Long>> objects, boolean releaseRelationships)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException {
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException {
 
         try(Transaction tx = graphDb.beginTx()) {
             //TODO: Optimize so it can find all objects of a single class in one query
             for (String className : objects.keySet()){
                 for (long oid : objects.get(className)){
+                    ClassMetadata classMetadata = Util.createClassMetadataFromNode(classIndex.get(Constants.PROPERTY_NAME, className).getSingle());
+                    
                     if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, className))
                         throw new OperationNotPermittedException(String.format("Class %s is not a business-related class", className));
 
                     Node instance = getInstanceOfClass(className, oid);
+                    //updates the cache
+                    RemoteBusinessObject remoteObject = Util.createRemoteObjectFromNode(instance);
+                    for(AttributeMetadata attribute : classMetadata.getAttributes()){
+                        if(attribute.isUnique())
+                            cm.removeUniqueAttributeValue(className, attribute.getName(), remoteObject.getAttributes().get(attribute.getName()).get(0));
+                    }
                     Util.deleteObject(instance, releaseRelationships);
                 }
             }
@@ -601,7 +609,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     @Override
     public void deleteObject(String className, long oid, boolean releaseRelationships) 
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException {
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException{
         try (Transaction tx = graphDb.beginTx()) {
             if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, className))
                         throw new OperationNotPermittedException(String.format("Class %s is not a business-related class", className));
@@ -1693,7 +1701,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                         
                         String attributeType = classToMap.getType(attributeName);
                         if (AttributeMetadata.isPrimitive(attributeType)){
-                            if(classToMap.isUnique(attributeName) && classToMap.isMandatory(attributeName)){
+                            if(classToMap.isUnique(attributeName) || classToMap.isMandatory(attributeName)){
                                 //if an attribute is unique and mandatory it should be checked before the object creation, here
                                 if(classToMap.getType(attributeName).equals("String") || 
                                     classToMap.getType(attributeName).equals("Integer") || 
@@ -1828,9 +1836,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      */
     private boolean isObjectAttributeUnique(String className, String attributeName, String attributeValue){
         List<String> uniqueAttributeValues = cm.getUniqueAttributeValues(className, attributeName);
-        for (String uniqueAttributeValue : uniqueAttributeValues) {
-            if(uniqueAttributeValue.equals(attributeValue))
-                return false;
+        if(uniqueAttributeValues != null){
+            for (String uniqueAttributeValue : uniqueAttributeValues) {
+                if(uniqueAttributeValue.equals(attributeValue))
+                    return false;
+            }
         }
         cm.putUniqueAttributeValueIndex(className, attributeName, attributeValue);
         return true;

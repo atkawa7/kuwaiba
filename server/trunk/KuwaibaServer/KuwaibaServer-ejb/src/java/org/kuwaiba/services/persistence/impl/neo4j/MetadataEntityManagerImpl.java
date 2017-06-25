@@ -703,10 +703,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     @Override
     public void setAttributeProperties(long classId, AttributeMetadata newAttributeDefinition) 
             throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException {
+        
         try(Transaction tx = graphDb.beginTx())
         {
             Node classNode = classIndex.get(Constants.PROPERTY_ID, classId).getSingle();
-
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("Can not find a class with id %s", classId));
 
@@ -752,11 +752,12 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                             if(canAttributeBeUnique((String)classNode.getProperty(Constants.PROPERTY_NAME), Util.getTypeOfAttribute(classNode, currentAttributeName), currentAttributeName))
                                 Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
                             else
-                                 throw new InvalidArgumentException(
-                                        String.format("In order to mark Attribute \"%s\" as unique it is necessary to set a unique value for every created object of this class and its subclasses", currentAttributeName));
+                                 throw new InvalidArgumentException(String.format("In order to mark Attribute \"%s\" as unique it is necessary to set a unique value for every created object of this class and its subclasses", currentAttributeName));
                         }
-                        else
+                        else{
                             Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
+                            cm.removeUniqueAtribute(currentAttributeName, currentAttributeName);
+                        }
                     }       
                     if(newAttributeDefinition.isMandatory() != null){
                         //this check if every object of the class and subclasses has a value in this attribute marked as mandatory
@@ -764,8 +765,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                             if(objectsOfClassHasValueInMandatoryAttribute((String)classNode.getProperty(Constants.PROPERTY_NAME), currentAttributeName))
                                 Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MANDATORY, newAttributeDefinition.isMandatory());
                             else
-                                throw new InvalidArgumentException(
-                                    String.format("Before setting an attribute as mandatory, all instances of this class must have valid values for attribute %s", currentAttributeName));
+                                throw new InvalidArgumentException(String.format("Before setting an attribute as mandatory, all instances of this class must have valid values for attribute %s", currentAttributeName));
                         }
                         else
                             Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MANDATORY, newAttributeDefinition.isMandatory());
@@ -784,9 +784,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     @Override
     public void setAttributeProperties (String className, AttributeMetadata newAttributeDefinition) 
             throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException {
-        try(Transaction tx = graphDb.beginTx()) {
+        
+        try(Transaction tx = graphDb.beginTx()) 
+        {
             Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
-
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %s", className));
 
@@ -831,11 +832,12 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                             if(canAttributeBeUnique((String)classNode.getProperty(Constants.PROPERTY_NAME), Util.getTypeOfAttribute(classNode, currentAttributeName), currentAttributeName))
                                 Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
                         else
-                             throw new InvalidArgumentException(
-                                    String.format("In order to mark Attribute \"%s\" as unique it is necessary to set a unique value for every created object with this attribute name", currentAttributeName));
+                             throw new InvalidArgumentException(String.format("In order to mark Attribute \"%s\" as unique it is necessary to set a unique value for every created object with this attribute name", currentAttributeName));
                         }
-                        else
+                        else{
                             Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
+                            cm.removeUniqueAtribute(currentAttributeName, currentAttributeName);
+                        }
                     }   
                     if(newAttributeDefinition.isMandatory() != null){
                         if(newAttributeDefinition.isMandatory()){//checks only if mandatory changed from false to true
@@ -843,8 +845,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                             if(objectsOfClassHasValueInMandatoryAttribute(className, currentAttributeName))
                                 Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MANDATORY, newAttributeDefinition.isMandatory());
                             else
-                                throw new InvalidArgumentException(
-                                    String.format("Before setting an attribute as mandatory, all instances of this class must have valid values for attribute %s", currentAttributeName));
+                                throw new InvalidArgumentException(String.format("Before setting an attribute as mandatory, all instances of this class must have valid values for attribute %s", currentAttributeName));
                         }
                         else
                             Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MANDATORY, newAttributeDefinition.isMandatory());
@@ -1598,10 +1599,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     /**
      * Check if the value of the given attribute name is unique across other 
      * objects of the classes and subclasses in the inventory
-     * @param className
-     * @param attributeType
-     * @param attributeName
-     * @return
+     * @param className class name
+     * @param attributeType attribute type
+     * @param attributeName attribute name
+     * @return true if every object of this class or its subclasses has a unique attribute value
      * @throws MetadataObjectNotFoundException
      * @throws InvalidArgumentException 
      */

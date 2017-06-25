@@ -255,7 +255,10 @@ public class CacheManager {
     }
     
     public List<String> getUniqueAttributeValues(String className, String attributeName){
-        return uniqueClassAttributesIndex.get(className).get(attributeName);
+        if (uniqueClassAttributesIndex.get(className) != null)
+            return uniqueClassAttributesIndex.get(className).get(attributeName);
+        else
+            return null;
     }
     
     public void clearClassCache(){
@@ -314,6 +317,18 @@ public class CacheManager {
         userIndex.remove(groupName);
     }
     
+    public void removeUniqueAtribute(String className, String attributeName){
+        HashMap<String, List<String>> uniqueClassAttributes = uniqueClassAttributesIndex.get(className);
+        uniqueClassAttributes.remove(attributeName);
+    }    
+    
+    public void removeUniqueAttributeValue(String className, String attributeName, String attributeValue){
+        HashMap<String, List<String>> uniqueClassAttributes = uniqueClassAttributesIndex.get(className);
+        List<String> uniqueValues = uniqueClassAttributes.get(attributeName);
+        uniqueValues.remove(attributeValue);
+        uniqueClassAttributes.put(attributeName, uniqueValues);
+        uniqueClassAttributesIndex.put(className, uniqueClassAttributes);
+    }
     /**
      * Tries to retrieve a cached list type
      * @param listTypeName the list type to be retrieved from the cache
@@ -420,5 +435,4 @@ public class CacheManager {
         }
         return false;
     }
-    
 }
