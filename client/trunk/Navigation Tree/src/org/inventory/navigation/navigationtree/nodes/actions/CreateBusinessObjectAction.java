@@ -256,7 +256,10 @@ public final class CreateBusinessObjectAction extends AbstractAction implements 
                     });
                 }
             }//end for
-            JOptionPane.showOptionDialog(null, pnlMyDialog, "New Object", JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, new JButton[]{ok}, ok);
+            JOptionPane.showOptionDialog(null, pnlMyDialog, 
+                    "Fill the Mandatory Attributes for the New Object", 
+                    JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, 
+                    new JButton[]{ok}, ok);
         }
         return attributes;
     }
