@@ -474,7 +474,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         if (aClass == null)
             throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %s", className));
 
-        classManagerResultList = cm.getSubclasses(className);
+        classManagerResultList = cm.getSubclassesNorecursive(className);
         if(classManagerResultList != null)
             return classManagerResultList;
         
@@ -497,7 +497,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             for (Node node : IteratorUtil.asIterable(n_column))
                  classManagerResultList.add(Util.createClassMetadataLightFromNode(node));
         }
-        cm.putSubclasses(className, classManagerResultList);
+        cm.putSubclassesNorecursive(className, classManagerResultList);
         return classManagerResultList;
     }
     

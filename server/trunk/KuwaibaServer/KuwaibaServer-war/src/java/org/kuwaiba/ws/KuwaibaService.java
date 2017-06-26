@@ -1130,7 +1130,7 @@ public class KuwaibaService {
      * @param className Class this object is going to be instance of
      * @param attributeNames Attributes to be set in the new object. Null or empty array for none
      * @param attributeValues Attributes to be set in the new object (values). Null for none. The size of this array must match attributeNames size
-     * @param templateId Template to be used
+     * @param templateId Template to be used. Use -1 to not use any template
      * @param sessionId Session identifier
      * @return The id of the newly created object
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
@@ -2044,7 +2044,7 @@ public class KuwaibaService {
      * @param parentOid New object parent's id
      * @param attributeNames Names of the attributes to be set at creation time
      * @param attributeValues Values for those attributes
-     * @param templateId Template id. Does nothing for now
+     * @param templateId Template id. Use -1 to not use any template
      * @param sessionId Session token
      * @return the id of the new object
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
@@ -2078,7 +2078,7 @@ public class KuwaibaService {
      * @param parentOid New object parent's id
      * @param attributeNames Names of the attributes to be set at creation time
      * @param attributeValues Values for those attributes
-     * @param templateId Template id. Does nothing for now
+     * @param templateId Template id. Use -1 to not use any template
      * @param sessionId Session token
      * @return the id of the new object
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
@@ -2245,8 +2245,8 @@ public class KuwaibaService {
      * @return The list of mandatory attributes in the given class
      * @throws ServerSideException 
      */
-    @WebMethod(operationName = "getMandatoryObjectAttributes")
-    public List<AttributeInfo> getMandatoryObjectAttributes(
+    @WebMethod(operationName = "getMandatoryAttributesInClass")
+    public List<AttributeInfo> getMandatoryAttributesInClass(
             @WebParam(name = "className") String className,
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException{
         try{

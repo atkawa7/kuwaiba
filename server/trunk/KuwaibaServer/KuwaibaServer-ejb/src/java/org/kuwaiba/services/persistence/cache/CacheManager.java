@@ -55,11 +55,11 @@ public class CacheManager {
     /**
      * List of subclasses of a class, the key is the name of the class, the value is the subclasses
      */
-    private HashMap<String, List<ClassMetadataLight>> subClasesIndex;
+    private HashMap<String, List<ClassMetadataLight>> subClassesIndex;
     /**
      * List of subclasses of a class, the key is the name of the class, the value is the subclasses
      */
-    private HashMap<String, List<ClassMetadataLight>> subClasesNoRecursiveIndex;
+    private HashMap<String, List<ClassMetadataLight>> subClassesNoRecursiveIndex;
     /**
      * Users index. It is used to ease the username uniqueness validation
      */
@@ -80,7 +80,8 @@ public class CacheManager {
         groupIndex = new HashMap<>();
         possibleChildrenIndex = new HashMap<>();
         possibleSpecialChildrenIndex = new HashMap<>();
-        subClasesIndex =  new HashMap<>();
+        subClassesIndex =  new HashMap<>();
+        subClassesNoRecursiveIndex = new HashMap<>();
         uniqueClassAttributesIndex = new HashMap<>();
         listTypeIndex = new HashMap<>();
     }
@@ -140,7 +141,7 @@ public class CacheManager {
      * @param subClasses  the subclasses of the given class
      */
     public void putSubclasses(String className, List<ClassMetadataLight> subClasses){
-        subClasesIndex.put(className, subClasses);
+        subClassesIndex.put(className, subClasses);
     }
     
     /**
@@ -149,7 +150,7 @@ public class CacheManager {
      * @param subClasses  the subclasses of the given class
      */
     public void putSubclassesNorecursive(String className, List<ClassMetadataLight> subClasses){
-        subClasesNoRecursiveIndex.put(className, subClasses);
+        subClassesNoRecursiveIndex.put(className, subClasses);
     }
     
     /**
@@ -243,11 +244,11 @@ public class CacheManager {
     }
     
     public List<ClassMetadataLight> getSubclasses(String className){
-        return subClasesIndex.get(className);
+        return subClassesIndex.get(className);
     }
     
     public List<ClassMetadataLight> getSubclassesNorecursive(String className){
-        return subClasesNoRecursiveIndex.get(className);
+        return subClassesNoRecursiveIndex.get(className);
     }
     
     public HashMap<String, List<String>> getUniqueClassAttributes(String className){
@@ -363,7 +364,7 @@ public class CacheManager {
         possibleChildrenIndex.clear();
         possibleSpecialChildrenIndex.clear();
         listTypeIndex.clear();
-        subClasesIndex.clear();
+        subClassesIndex.clear();
         uniqueClassAttributesIndex.clear();
     }
 
