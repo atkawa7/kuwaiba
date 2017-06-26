@@ -21,54 +21,33 @@ import java.awt.event.ActionEvent;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.core.visual.scene.ObjectNodeWidget;
-import org.inventory.models.physicalconnections.wizards.ConnectionWizard;
 import org.inventory.models.physicalconnections.wizards.NewContainerWizard;
+import org.inventory.models.physicalconnections.wizards.NewLinkWizard;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
+import org.inventory.views.objectview.ObjectViewConfigurationObject;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.ConnectorState;
 import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
+import org.openide.util.Lookup;
 
 /**
  * This class controls the physical connections behavior
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class PhysicalConnectionProvider implements ConnectProvider {
-    /**
-     * A wizard for container connections
-     */
-    public static int WIZARD_CONTAINER = 1;
-    /**
-     * A wizard for link connections
-     */
-    public static int WIZARD_LINK = 2;
-    /**
-     * The new object will be instance of this class
-     */
-    private String connectionClass;
-    /**
-     * What kind of wizard will be launched
-     */
-    private int wizardType;
+
     /**
      * Object to be used as parent to the new connections
      */
     private LocalObjectLight currentParentObject;
     
-    private AbstractScene<LocalObjectLight, LocalObjectLight> scene;
+    private ChildrenViewScene scene;
 
-    public PhysicalConnectionProvider(AbstractScene scene) {
+    public PhysicalConnectionProvider(ChildrenViewScene scene) {
         this.scene = scene;
-    }
-
-    public void setConnectionClass(String connectionClass) {
-        this.connectionClass = connectionClass;
-    }
-    
-    public void setWizardType (int wizardType){
-        this.wizardType = wizardType;
     }
 
     public void setCurrentParentObject(LocalObjectLight currentParentObject) {
@@ -100,22 +79,30 @@ public class PhysicalConnectionProvider implements ConnectProvider {
 
     @Override
     public void createConnection(Widget sourceWidget, Widget targetWidget) {
-        new NewContainerWizard(sourceWidget.getLookup().lookup(ObjectNode.class), targetWidget.getLookup().lookup(ObjectNode.class)).show();
-      
-//        ConnectionWizard myWizard = new ConnectionWizard(wizardType, (LocalObjectLight)scene.findObject(sourceWidget),
-//                (LocalObjectLight)scene.findObject(targetWidget), connectionClass, currentParentObject);
-//        
-//        myWizard.show();
-//        
-//        if (myWizard.getNewConnection() != null){
-//
-//            ConnectionWidget line = (ConnectionWidget)scene.addEdge(myWizard.getNewConnection());
-//
-//            line.setTargetAnchor(AnchorFactory.createCenterAnchor(((ObjectNodeWidget)targetWidget).getNodeWidget()));
-//            line.setSourceAnchor(AnchorFactory.createCenterAnchor(((ObjectNodeWidget)sourceWidget).getNodeWidget()));
-//            
-//            scene.validate();
-//            scene.fireChangeEvent(new ActionEvent(this, AbstractScene.SCENE_CHANGE, "New Connection"));
-//        }
+        ObjectViewConfigurationObject configObject = Lookup.getDefault().lookup(ObjectViewConfigurationObject.class);
+        LocalObjectLight newConnection;
+        
+        if ((boolean)configObject.getProperty("connectContainer")) {
+            NewContainerWizard newContainerWizard = new NewContainerWizard(sourceWidget.getLookup().lookup(ObjectNode.class), 
+                    targetWidget.getLookup().lookup(ObjectNode.class), (LocalObjectLight)configObject.getProperty("currentObject"));
+            newContainerWizard.show();
+            newConnection = newContainerWizard.getNewConnection();
+        } else {
+            NewLinkWizard newLinkWizard = new NewLinkWizard(sourceWidget.getLookup().lookup(ObjectNode.class), 
+                    targetWidget.getLookup().lookup(ObjectNode.class), (LocalObjectLight)configObject.getProperty("currentObject"));
+            newLinkWizard.show();
+            newConnection = newLinkWizard.getNewConnection();
+        }
+        
+        if (newConnection != null){
+
+            ConnectionWidget line = (ConnectionWidget)scene.addEdge(newConnection);
+
+            line.setTargetAnchor(AnchorFactory.createCenterAnchor(targetWidget));
+            line.setSourceAnchor(AnchorFactory.createCenterAnchor(sourceWidget));
+            
+            scene.validate();
+            scene.fireChangeEvent(new ActionEvent(this, AbstractScene.SCENE_CHANGE, "New Connection"));
+        }
     }
 }

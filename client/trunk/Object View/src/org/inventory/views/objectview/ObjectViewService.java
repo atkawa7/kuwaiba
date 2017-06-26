@@ -41,15 +41,20 @@ public class ObjectViewService {
         LocalObjectLight object = (LocalObjectLight) configObject.getProperty("currentObject");
         
         List<LocalObjectViewLight> views = CommunicationsStub.getInstance().getObjectRelatedViews(object.getOid(), object.getClassName());
-        if (views.isEmpty()) {
-            currentView = null;
-            configObject.setProperty("currentView", currentView);
-            scene.render((byte[]) null);
-        } else {
-            currentView = CommunicationsStub.getInstance().getObjectRelatedView(object.getOid(), object.getClassName(), views.get(0).getId());
-            configObject.setProperty("currentView", currentView);
-            scene.render(currentView.getStructure());
-        }
+        
+        if (views != null) {
+        
+            if (views.isEmpty()) {
+                currentView = null;
+                configObject.setProperty("currentView", currentView);
+                scene.render((byte[]) null);
+            } else {
+                currentView = CommunicationsStub.getInstance().getObjectRelatedView(object.getOid(), object.getClassName(), views.get(0).getId());
+                configObject.setProperty("currentView", currentView);
+                scene.render(currentView.getStructure());
+            }
+        } else
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
     }
     
     public void saveView() {

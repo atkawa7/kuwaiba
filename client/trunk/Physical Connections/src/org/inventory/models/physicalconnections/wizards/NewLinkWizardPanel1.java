@@ -15,34 +15,31 @@
  */
 package org.inventory.models.physicalconnections.wizards;
 
-import java.util.ArrayList;
 import javax.swing.event.ChangeListener;
 import org.openide.WizardDescriptor;
-import org.openide.WizardValidationException;
 import org.openide.util.HelpCtx;
 
 /**
- * Logic associated to the first step of the New Container wizard
+ * Logic of the first step of the New Link wizard
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class NewContainerWizardPanel1 implements WizardDescriptor.Panel<WizardDescriptor>,
-        WizardDescriptor.ValidatingPanel<WizardDescriptor> {
- 
+public class NewLinkWizardPanel1 implements WizardDescriptor.Panel<WizardDescriptor> {
+
     /**
      * The visual component that displays this panel. If you need to access the
      * component from this class, just use getComponent().
      */
-    private NewContainerVisualPanel1 component;
-    
+    private NewLinkVisualPanel1 component;
+
     // Get the visual component for the panel. In this template, the component
     // is kept separate. This can be more efficient: if the wizard is created
     // but never displayed, or not all panels are displayed, it is better to
     // create only those which really need to be visible.
     @Override
-    public NewContainerVisualPanel1 getComponent() {
-        if (component == null)
-            component = new NewContainerVisualPanel1();
-        
+    public NewLinkVisualPanel1 getComponent() {
+        if (component == null) {
+            component = new NewLinkVisualPanel1();
+        }
         return component;
     }
 
@@ -64,30 +61,22 @@ public class NewContainerWizardPanel1 implements WizardDescriptor.Panel<WizardDe
         // WizardDescriptor.ERROR/WARNING/INFORMATION_MESSAGE will also be useful.
     }
 
-    private final ArrayList<ChangeListener> listeners = new ArrayList<>();
-    
     @Override
     public void addChangeListener(ChangeListener l) {
-        synchronized(listeners) {
-            listeners.add(l);
-        }
     }
 
     @Override
     public void removeChangeListener(ChangeListener l) {
-        synchronized(listeners) {
-            listeners.remove(l);
-        }
     }
 
     @Override
-    public void readSettings(WizardDescriptor wiz) { }
+    public void readSettings(WizardDescriptor wiz) {
+        // use wiz.getProperty to retrieve previous panel state
+    }
 
     @Override
-    public void storeSettings(WizardDescriptor wiz) { }
+    public void storeSettings(WizardDescriptor wiz) {
+        // use wiz.putProperty to remember current panel state
+    }
 
-    @Override
-    public void validate() throws WizardValidationException {
-        System.out.println("Me validan!");
-    }    
 }

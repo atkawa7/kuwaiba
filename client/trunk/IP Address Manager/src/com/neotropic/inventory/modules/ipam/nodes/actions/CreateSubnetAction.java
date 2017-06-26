@@ -325,7 +325,7 @@ public class CreateSubnetAction extends GenericInventoryAction {
                 ipAttributeValues[0] = ip;
                 ipAttributeValues[1] = "";
                 addedIP = CommunicationsStub.getInstance().addIP(newSubnet.getOid(), className, 
-                new LocalObject(className, 0, ipAttributeNames, ipAttributeValues));
+                                new LocalObject(className, 0, ipAttributeNames, ipAttributeValues));
             }
         }
     }

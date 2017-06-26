@@ -1,11 +1,8 @@
 
 package org.inventory.communications.wsclient;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -25,9 +22,9 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="bObjectId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="parentClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="parentId" type="{http://www.w3.org/2001/XMLSchema}long"/>
- *         &lt;element name="attributeNames" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="attributeValues" type="{http://jaxb.dev.java.net/array}stringArray" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="connectionClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="templateId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -45,9 +42,9 @@ import javax.xml.bind.annotation.XmlType;
     "bObjectId",
     "parentClass",
     "parentId",
-    "attributeNames",
-    "attributeValues",
+    "name",
     "connectionClass",
+    "templateId",
     "sessionId"
 })
 public class CreatePhysicalConnection {
@@ -58,11 +55,9 @@ public class CreatePhysicalConnection {
     protected long bObjectId;
     protected String parentClass;
     protected long parentId;
-    @XmlElement(nillable = true)
-    protected List<String> attributeNames;
-    @XmlElement(nillable = true)
-    protected List<StringArray> attributeValues;
+    protected String name;
     protected String connectionClass;
+    protected long templateId;
     protected String sessionId;
 
     /**
@@ -186,61 +181,27 @@ public class CreatePhysicalConnection {
     }
 
     /**
-     * Gets the value of the attributeNames property.
+     * Gets the value of the name property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the attributeNames property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAttributeNames().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public List<String> getAttributeNames() {
-        if (attributeNames == null) {
-            attributeNames = new ArrayList<String>();
-        }
-        return this.attributeNames;
+    public String getName() {
+        return name;
     }
 
     /**
-     * Gets the value of the attributeValues property.
+     * Sets the value of the name property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the attributeValues property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAttributeValues().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link StringArray }
-     * 
-     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public List<StringArray> getAttributeValues() {
-        if (attributeValues == null) {
-            attributeValues = new ArrayList<StringArray>();
-        }
-        return this.attributeValues;
+    public void setName(String value) {
+        this.name = value;
     }
 
     /**
@@ -265,6 +226,22 @@ public class CreatePhysicalConnection {
      */
     public void setConnectionClass(String value) {
         this.connectionClass = value;
+    }
+
+    /**
+     * Gets the value of the templateId property.
+     * 
+     */
+    public long getTemplateId() {
+        return templateId;
+    }
+
+    /**
+     * Sets the value of the templateId property.
+     * 
+     */
+    public void setTemplateId(long value) {
+        this.templateId = value;
     }
 
     /**

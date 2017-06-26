@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="parentObjectClassName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="parentOid" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="attributeNames" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="attributeValues" type="{http://jaxb.dev.java.net/array}stringArray" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="attributeValues" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="templateId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
@@ -52,7 +52,7 @@ public class CreateSpecialObject {
     @XmlElement(nillable = true)
     protected List<String> attributeNames;
     @XmlElement(nillable = true)
-    protected List<StringArray> attributeValues;
+    protected List<String> attributeValues;
     protected long templateId;
     protected String sessionId;
 
@@ -167,13 +167,13 @@ public class CreateSpecialObject {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link StringArray }
+     * {@link String }
      * 
      * 
      */
-    public List<StringArray> getAttributeValues() {
+    public List<String> getAttributeValues() {
         if (attributeValues == null) {
-            attributeValues = new ArrayList<StringArray>();
+            attributeValues = new ArrayList<String>();
         }
         return this.attributeValues;
     }

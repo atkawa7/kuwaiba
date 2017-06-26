@@ -337,27 +337,6 @@ public class Utils {
     }
     
     /**
-     * Returns the color that should be used to render a connection
-     * @param connectionClass The class of the connection 
-     * @return The corresponding color
-     */
-    public static Color getConnectionColor(String connectionClass){
-        if (connectionClass.equals(Constants.CLASS_ELECTRICALLINK))
-            return Color.ORANGE;
-        if (connectionClass.equals(Constants.CLASS_OPTICALLINK))
-            return Color.GREEN;
-        if (connectionClass.equals(Constants.CLASS_WIRELESSLINK))
-            return Color.MAGENTA;
-        if (connectionClass.equals(Constants.CLASS_POWERLINK))
-            return Color.YELLOW;
-        if (connectionClass.equals(Constants.CLASS_WIRECONTAINER))
-            return Color.RED;
-        if (connectionClass.equals(Constants.CLASS_WIRELESSCONTAINER))
-            return Color.BLUE;
-        return Color.BLACK;
-    }
-    
-    /**
      * Manages the file chooser singleton
      * @return The instance of file chooser to be shared across modules. This way, the
      * last directory is preserved

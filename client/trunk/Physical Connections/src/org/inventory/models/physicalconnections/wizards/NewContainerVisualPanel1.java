@@ -18,7 +18,9 @@ package org.inventory.models.physicalconnections.wizards;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.List;
+import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.event.ListDataListener;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
@@ -39,40 +41,47 @@ public class NewContainerVisualPanel1 extends javax.swing.JPanel {
                 getLightSubclasses(Constants.CLASS_GENERICPHYSICALCONTAINER, false, false);
         
         cmbContainerClass.setModel(containerClasses == null ? new DefaultComboBoxModel() : new DefaultComboBoxModel(containerClasses.toArray()));
+        
+        if (cmbContainerClass.getItemCount() == 0)
+            cmbContainerTemplate.setModel(new ContainerTemplateComboBoxModel());
+        else
+            cmbContainerTemplate.setModel(new ContainerTemplateComboBoxModel((LocalClassMetadataLight)cmbContainerClass.getItemAt(0)));
+        
+        
         cmbContainerClass.addItemListener(new ItemListener() {
 
             @Override
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     LocalClassMetadataLight selectedClass = (LocalClassMetadataLight)cmbContainerClass.getSelectedItem();
-                    if (selectedClass != null) { //Should not happen, though
-                        List<LocalObjectLight> containerTemplates = CommunicationsStub.getInstance().getTemplatesForClass(selectedClass.getClassName(), false);
-                        if (containerTemplates != null) {
-                            cmbContainerTemplates.setModel(new DefaultComboBoxModel(containerTemplates.toArray(new LocalObjectLight[0])));
-                            cmbContainerTemplates.setEnabled(true);
-                            return;
-                        }
-                    } 
-                    cmbContainerTemplates.setModel(new DefaultComboBoxModel());
+                    List<LocalObjectLight> containerTemplates = CommunicationsStub.getInstance().getTemplatesForClass(selectedClass.getClassName(), false);
+                    if (containerTemplates != null)
+                        ((ContainerTemplateComboBoxModel)cmbContainerTemplate.getModel()).setTemplates(containerTemplates);
+                    else
+                        ((ContainerTemplateComboBoxModel)cmbContainerTemplate.getModel()).resetTemplates();
                 }
             }
-        });
-        if (cmbContainerClass.getItemCount() > 0) //So that the item selection svent is triggered
-            cmbContainerClass.setSelectedIndex(0);
+        });    
+    }
+    
+    public String getContainerName() {
+        return txtContainerName.getText();
     }
     
     public LocalClassMetadataLight getContainerClass() {
         return (LocalClassMetadataLight)cmbContainerClass.getSelectedItem();
     }
     
-    public LocalClassMetadataLight getContainerType() {
-        return (LocalClassMetadataLight)cmbContainerTemplates.getSelectedItem();
+    public LocalObjectLight getContainerTemplate() {
+        return (LocalObjectLight)cmbContainerTemplate.getSelectedItem();
     }
     
     @Override
     public String getName() {
         return "Container class and type";
     }
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -86,15 +95,13 @@ public class NewContainerVisualPanel1 extends javax.swing.JPanel {
         lblContainerClass = new javax.swing.JLabel();
         cmbContainerClass = new javax.swing.JComboBox();
         lblCOntainerTemplate = new javax.swing.JLabel();
-        cmbContainerTemplates = new javax.swing.JComboBox();
+        cmbContainerTemplate = new javax.swing.JComboBox();
         lblContainerName = new javax.swing.JLabel();
         txtContainerName = new javax.swing.JTextField();
 
         org.openide.awt.Mnemonics.setLocalizedText(lblContainerClass, org.openide.util.NbBundle.getMessage(NewContainerVisualPanel1.class, "NewContainerVisualPanel1.lblContainerClass.text")); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(lblCOntainerTemplate, org.openide.util.NbBundle.getMessage(NewContainerVisualPanel1.class, "NewContainerVisualPanel1.lblCOntainerTemplate.text")); // NOI18N
-
-        cmbContainerTemplates.setEnabled(false);
 
         org.openide.awt.Mnemonics.setLocalizedText(lblContainerName, org.openide.util.NbBundle.getMessage(NewContainerVisualPanel1.class, "NewContainerVisualPanel1.lblContainerName.text")); // NOI18N
 
@@ -114,7 +121,7 @@ public class NewContainerVisualPanel1 extends javax.swing.JPanel {
                         .addGap(23, 23, 23)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(cmbContainerClass, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(cmbContainerTemplates, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(cmbContainerTemplate, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblContainerName)
                         .addGap(44, 44, 44)
@@ -135,7 +142,7 @@ public class NewContainerVisualPanel1 extends javax.swing.JPanel {
                 .addGap(20, 20, 20)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblCOntainerTemplate)
-                    .addComponent(cmbContainerTemplates, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cmbContainerTemplate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(115, 115, 115))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -143,10 +150,55 @@ public class NewContainerVisualPanel1 extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox cmbContainerClass;
-    private javax.swing.JComboBox cmbContainerTemplates;
+    private javax.swing.JComboBox cmbContainerTemplate;
     private javax.swing.JLabel lblCOntainerTemplate;
     private javax.swing.JLabel lblContainerClass;
     private javax.swing.JLabel lblContainerName;
     private javax.swing.JTextField txtContainerName;
     // End of variables declaration//GEN-END:variables
+
+    private class ContainerTemplateComboBoxModel implements ComboBoxModel<LocalObjectLight> {
+        private List<LocalObjectLight> containerTemplates;
+        private int selectedTemplateIndex = -1;
+
+        public ContainerTemplateComboBoxModel() { }
+        
+        public ContainerTemplateComboBoxModel(LocalClassMetadataLight containerClass) {
+            containerTemplates = CommunicationsStub.getInstance().getTemplatesForClass(containerClass.getClassName(), false);
+        }
+
+        @Override
+        public void setSelectedItem(Object anItem) {
+            selectedTemplateIndex = containerTemplates == null ? -1 : containerTemplates.indexOf(anItem);
+        }
+
+        @Override
+        public Object getSelectedItem() {
+            return selectedTemplateIndex == -1 ? null : containerTemplates.get(selectedTemplateIndex);
+        }
+
+        @Override
+        public int getSize() {
+            return containerTemplates == null ? -1 : containerTemplates.size();
+        }
+
+        @Override
+        public LocalObjectLight getElementAt(int index) {
+            return containerTemplates == null ? null : containerTemplates.get(index);
+        }
+
+        @Override
+        public void addListDataListener(ListDataListener l) {}
+
+        @Override
+        public void removeListDataListener(ListDataListener l) {}
+        
+        public void setTemplates(List<LocalObjectLight> newTemplates) {
+            containerTemplates = newTemplates;
+        }
+        
+        public void resetTemplates() {
+            containerTemplates = null;
+        }
+    }
 }

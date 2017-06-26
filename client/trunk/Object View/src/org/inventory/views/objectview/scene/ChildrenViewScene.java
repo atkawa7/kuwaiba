@@ -37,7 +37,6 @@ import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.util.Constants;
-import org.inventory.communications.util.Utils;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.core.visual.actions.CustomMoveControlPointAction;
@@ -139,6 +138,7 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
 
     @Override
     protected Widget attachEdgeWidget(LocalObjectLight edge) {
+        LocalClassMetadata classMetadata = CommunicationsStub.getInstance().getMetaForClass(edge.getClassName(), false);
         ObjectConnectionWidget widget = new ObjectConnectionWidget(this, edge);
         widget.getActions().addAction(ActionFactory.createPopupMenuAction(defaultPopupMenuProvider));
         widget.getActions().addAction(createSelectAction());
@@ -148,8 +148,7 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
         widget.setEndPointShape(PointShape.SQUARE_FILLED_BIG);
         widget.setRouter(RouterFactory.createFreeRouter());
         widget.setToolTipText(edge.toString());
-        if (newLineColor != null)
-            widget.setLineColor(newLineColor);
+        widget.setLineColor(classMetadata.getColor());
         edgeLayer.addChild(widget);
         return widget;
     }
@@ -341,7 +340,6 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
                                         currentView.setDirty(true);
                                     else {
                                         ObjectConnectionWidget newEdge = (ObjectConnectionWidget) addEdge(container);
-                                        newEdge.setLineColor(Utils.getConnectionColor(container.getClassName()));
                                         newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideWidget.getNodeWidget()));
                                         newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideWidget.getNodeWidget()));
                                         List<Point> localControlPoints = new ArrayList<>();
@@ -447,7 +445,6 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
             ObjectNodeWidget bSideWidget = (ObjectNodeWidget) findWidget(parentsBSide.get(currentObjectIndexBSide == 0 ? 0 : currentObjectIndexBSide - 1));
 
             ConnectionWidget newEdge = (ConnectionWidget) addEdge(container);
-            newEdge.setLineColor(Utils.getConnectionColor(container.getClassName()));
             newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideWidget.getNodeWidget()));
             newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideWidget.getNodeWidget()));
             validate();
@@ -479,5 +476,7 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
         
         for (Widget aConnection : edgeLayer.getChildren()) 
             ((ObjectConnectionWidget)aConnection).setHighContrast(enable);
+        
+        validate();
     }
 }

@@ -314,19 +314,19 @@ public class CommunicationsStub {
 
         try{
             List<String> attributeNames = new ArrayList<>();
-            List<StringArray> attributeValues = new ArrayList<>();
+            List<String> attributeValues = new ArrayList<>();
 
             for (String key : obj.getAttributes().keySet()){
-                StringArray value = new StringArray();
+                String value;
                 attributeNames.add(key);
                 Object theValue = obj.getAttribute(key);
                 if (theValue instanceof LocalObjectListItem)
-                    value.getItem().add(String.valueOf(((LocalObjectListItem)theValue).getId()));
+                    value = String.valueOf(((LocalObjectListItem)theValue).getId());
                 else {
                     if (theValue instanceof Date)
-                        value.getItem().add(String.valueOf(((Date)theValue).getTime()));
+                        value = String.valueOf(((Date)theValue).getTime());
                     else
-                        value.getItem().add(theValue.toString());
+                        value = theValue.toString();
                 }
                 attributeValues.add(value);
             }
@@ -1341,19 +1341,20 @@ public class CommunicationsStub {
     {
         try {
             List<String> attributeNames = new ArrayList<>();
-            List<StringArray> attributeValues = new ArrayList<>();
+            List<String> attributeValues = new ArrayList<>();
 
             for (String key : attributes.keySet()){
-                StringArray value = new StringArray();
+                String value;
                 attributeNames.add(key);
+                
                 Object theValue = attributes.get(key);
                 if (theValue instanceof LocalObjectListItem)
-                    value.getItem().add(String.valueOf(((LocalObjectListItem)theValue).getId()));
+                    value = String.valueOf(((LocalObjectListItem)theValue).getId());
                 else {
                     if (theValue instanceof Date)
-                        value.getItem().add(String.valueOf(((Date)theValue).getTime()));
+                        value = String.valueOf(((Date)theValue).getTime());
                     else
-                        value.getItem().add(theValue.toString());
+                        value = theValue.toString();
                 }
                 attributeValues.add(value);
             }
@@ -1372,7 +1373,7 @@ public class CommunicationsStub {
             long parentOid, long templateId) {
         try{
             long objectId  = service.createSpecialObject(className,parentClassName, parentOid, 
-                    new ArrayList<String>(),new ArrayList<StringArray>(),templateId,this.session.getSessionId());
+                    new ArrayList<String>(), new ArrayList<String>(),templateId,this.session.getSessionId());
             return new LocalObjectLight(objectId, null, className);
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -1609,27 +1610,16 @@ public class CommunicationsStub {
      * @param endpointBId target object oid
      * @param parentClass connection's parent class
      * @param parentId connection's parent id
-     * @param name Initial connection name
-     * @param type This can be either the type name or its id
+     * @param name Name of the new connection. Leave empty if you want to use the name in the template
      * @param connectionClass Class for the corresponding connection to be created
+     * @param templateId Id of the template for the connectionClass. Use -1 to create a connection without template
      * @return A local object light representing the new connection
      */
     public LocalObjectLight createPhysicalConnection(String endpointAClass, long endpointAId,
-            String endpointBClass, long endpointBId, String parentClass, long parentId, String name, String type, String connectionClass) {
-        try{
-            List<StringArray> values = new ArrayList<>();
-            StringArray valueName = new StringArray();
-            valueName.getItem().add(name);
-
-            StringArray valueType = new StringArray();
-            if (type != null && !type.equals("0")) //0 is the dummy id of a null list type item
-                valueType.getItem().add(type);
-
-            values.add(valueName);
-            values.add(valueType);
-
+            String endpointBClass, long endpointBId, String parentClass, long parentId, String name, String connectionClass, long templateId) {
+        try {
             long myObjectId = service.createPhysicalConnection(endpointAClass, endpointAId,
-                    endpointBClass, endpointBId, parentClass, parentId, Arrays.asList(new String[]{ "name", "type" }), values, connectionClass, this.session.getSessionId());
+                    endpointBClass, endpointBId, parentClass, parentId, name, connectionClass, templateId, this.session.getSessionId());
             return new LocalObjectLight(myObjectId, name, connectionClass);
         }catch(Exception ex){
             this.error =  ex.getMessage();
@@ -3534,16 +3524,13 @@ public class CommunicationsStub {
     public LocalObjectLight createSubnet(long poolId, String parentClassName, LocalObject obj){
         try {
             List<String> attributeNames = new ArrayList<>();
-            List<StringArray> attributeValues = new ArrayList<>();
+            List<String> attributeValues = new ArrayList<>();
 
             for (String key : obj.getAttributes().keySet()){
-                StringArray value = new StringArray();
+                String value;
                 attributeNames.add(key);
-                if (obj.getAttribute(key) instanceof List){
-                    for (long itemId : (List<Long>)obj.getAttribute(key))
-                        value.getItem().add(String.valueOf(itemId));
-                }else
-                    value.getItem().add(obj.getAttribute(key).toString());
+                value = obj.getAttribute(key).toString();
+                
                 attributeValues.add(value);
             }
             
@@ -3588,17 +3575,11 @@ public class CommunicationsStub {
     public LocalObjectLight addIP(long id, String className, LocalObject obj){
         try {
             List<String> attributeNames = new ArrayList<>();
-            List<StringArray> attributeValues = new ArrayList<>();
+            List<String> attributeValues = new ArrayList<>();
 
             for (String key : obj.getAttributes().keySet()){
-                StringArray value = new StringArray();
                 attributeNames.add(key);
-                if (obj.getAttribute(key) instanceof List){
-                    for (long itemId : (List<Long>)obj.getAttribute(key))
-                        value.getItem().add(String.valueOf(itemId));
-                }else
-                    value.getItem().add(obj.getAttribute(key).toString());
-                attributeValues.add(value);
+                attributeValues.add(obj.getAttribute(key).toString());
             }
             
             long objectId  = service.addIP(id, className, attributeNames, attributeValues, this.session.getSessionId());
@@ -3820,7 +3801,7 @@ public class CommunicationsStub {
      */
     public LocalObjectLight addProject(long parentId, String parentClassName, String className) {
         try {
-            long objectId = service.addProject(parentId, parentClassName, className, new ArrayList<String>(),new ArrayList<StringArray>(), session.getSessionId());
+            long objectId = service.addProject(parentId, parentClassName, className, new ArrayList<String>(),new ArrayList<String>(), session.getSessionId());
             return new LocalObjectLight(objectId, null, className);
         } catch (Exception ex) { 
             error = ex.getMessage(); 
@@ -3853,7 +3834,7 @@ public class CommunicationsStub {
      */
     public LocalObjectLight addActivity(long projectId, String projectClass, String activityClass) {
         try {
-            long activityId = service.addActivity(projectId, projectClass, activityClass, new ArrayList<String>(), new ArrayList<StringArray>(), session.getSessionId());
+            long activityId = service.addActivity(projectId, projectClass, activityClass, new ArrayList<String>(), new ArrayList<String>(), session.getSessionId());
             return new LocalObjectLight(activityId, null, activityClass);
         } catch (Exception ex) {
             error = ex.getMessage();

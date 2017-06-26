@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="className" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="oid" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="attributeNames" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="attributeValues" type="{http://jaxb.dev.java.net/array}stringArray" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="attributeValues" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -47,7 +47,7 @@ public class UpdateObject {
     @XmlElement(nillable = true)
     protected List<String> attributeNames;
     @XmlElement(nillable = true)
-    protected List<StringArray> attributeValues;
+    protected List<String> attributeValues;
     protected String sessionId;
 
     /**
@@ -137,13 +137,13 @@ public class UpdateObject {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link StringArray }
+     * {@link String }
      * 
      * 
      */
-    public List<StringArray> getAttributeValues() {
+    public List<String> getAttributeValues() {
         if (attributeValues == null) {
-            attributeValues = new ArrayList<StringArray>();
+            attributeValues = new ArrayList<String>();
         }
         return this.attributeValues;
     }

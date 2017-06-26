@@ -131,3 +131,6 @@
 * Changed license from GPLv2 to GPLv3
 * Added JTattoo's Fast as default look and feel
 * Added a warning in the window title if the connection is not secure
+* The connections wizard was simplified and now it is possible to create other links apart from Electrical, Optical and Power ones
+* The color of the connections is no longer hardcoded. It is now taken from the class color (configured with the data model manager)
+
