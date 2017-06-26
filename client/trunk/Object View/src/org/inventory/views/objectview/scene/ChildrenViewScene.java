@@ -416,37 +416,37 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
         //TODO: This algorithm to find the endpoints for a connection could be improved in many ways
         for (LocalObject container : connections) {            
             List<LocalObjectLight> aSide = CommunicationsStub.getInstance()
-                .getSpecialAttribute(container.getClassName(), container.getOid(),"endpointA");
+                .getSpecialAttribute(container.getClassName(), container.getOid(), "endpointA");
             if (aSide == null)
-                return;
+                continue;
 
             List<LocalObjectLight> bSide = CommunicationsStub.getInstance()
-                .getSpecialAttribute(container.getClassName(), container.getOid(),"endpointB");
+                .getSpecialAttribute(container.getClassName(), container.getOid(), "endpointB");
             if (bSide == null)
-                return;
+                continue;
 
             //The nodes in the view correspond to equipment or infrastructure, not the actual ports
-            //so we have to find the equipment being dislay so we can find them in the scene            
+            //so we have to find the equipment being dislayed so we can find them in the scene            
             List<LocalObjectLight> parentsASide = CommunicationsStub.getInstance()
                 .getParents(aSide.get(0).getClassName(), aSide.get(0).getOid());
             if (parentsASide == null)
-                return;
+                continue;
                 
             List<LocalObjectLight> parentsBSide = CommunicationsStub.getInstance()
                 .getParents(bSide.get(0).getClassName(), bSide.get(0).getOid());
             
             if (parentsBSide == null)
-                return;
+                continue;
 
             int currentObjectIndexASide = parentsASide.indexOf(currentObject);
-            ObjectNodeWidget aSideWidget = (ObjectNodeWidget) findWidget(parentsASide.get(currentObjectIndexASide == 0 ? 0 : currentObjectIndexASide - 1));
+            ObjectNodeWidget aSideWidget = currentObjectIndexASide == 0 ? (ObjectNodeWidget) findWidget(aSide.get(0)) : (ObjectNodeWidget) findWidget(parentsASide.get(currentObjectIndexASide - 1));
                 
             int currentObjectIndexBSide = parentsBSide.indexOf(currentObject);
-            ObjectNodeWidget bSideWidget = (ObjectNodeWidget) findWidget(parentsBSide.get(currentObjectIndexBSide == 0 ? 0 : currentObjectIndexBSide - 1));
+            ObjectNodeWidget bSideWidget = currentObjectIndexBSide == 0 ? (ObjectNodeWidget) findWidget(bSide.get(0)) : (ObjectNodeWidget) findWidget(parentsBSide.get(currentObjectIndexBSide - 1));
 
             ConnectionWidget newEdge = (ConnectionWidget) addEdge(container);
-            newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideWidget.getNodeWidget()));
-            newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideWidget.getNodeWidget()));
+            newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideWidget));
+            newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideWidget));
             validate();
         }
     }

@@ -77,7 +77,7 @@ public final class CreateBusinessObjectAction extends AbstractAction implements 
     
     @Override
     public void actionPerformed(ActionEvent ev) {
-        final LocalAttributeMetadata[] mandatoryObjectAttributes = com.getMandatoryObjectAttributes(((JMenuItem)ev.getSource()).getName());
+        final LocalAttributeMetadata[] mandatoryObjectAttributes = com.getMandatoryAttributesInClass(((JMenuItem)ev.getSource()).getName());
         HashMap<String, Object> attributes = new HashMap<>();
         if(mandatoryObjectAttributes.length > 0){
             attributes = createNewObjectForm(mandatoryObjectAttributes);
@@ -336,7 +336,7 @@ public final class CreateBusinessObjectAction extends AbstractAction implements 
         LocalObjectLight myLol = com.createObject(
                         objectClass,
                         node instanceof RootObjectNode ? null : ((ObjectNode)node).getObject().getClassName(),
-                        node instanceof RootObjectNode? -1 : ((ObjectNode)node).getObject().getOid(), attributes, 0);
+                        node instanceof RootObjectNode? -1 : ((ObjectNode)node).getObject().getOid(), attributes, -1);
 
         if (myLol == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());

@@ -1553,9 +1553,9 @@ public class CommunicationsStub {
         }
     }
     
-    public LocalAttributeMetadata[] getMandatoryObjectAttributes(String className){
+    public LocalAttributeMetadata[] getMandatoryAttributesInClass(String className){
         try {
-            List<AttributeInfo> mandatoryObjectAttributesInfo = service.getMandatoryObjectAttributes(className, session.getSessionId());
+            List<AttributeInfo> mandatoryObjectAttributesInfo = service.getMandatoryAttributesInClass(className, session.getSessionId());
             LocalAttributeMetadata[] mandatoryObjectAttributes = new LocalAttributeMetadata[mandatoryObjectAttributesInfo.size()];
             int i = 0;
             for (AttributeInfo mandatoryObjectAttributeInfo :  mandatoryObjectAttributesInfo) {

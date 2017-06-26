@@ -147,7 +147,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
                     case Constants.MAPPING_TIMESTAMP:
                     case Constants.MAPPING_DATE:
                         property = new DateTypeProperty((Date)lo.getAttribute(lam.getName()) , 
-                                lam.getName(), Date.class, (lam.isMandatory() ? "\u002A" : "")+lam.getDisplayName(), //this mark the mandatory attributes with a *
+                                lam.getName(), Date.class, lam.getDisplayName(),
                                 lam.getDescription(), this);
                         break;
                     case Constants.MAPPING_PRIMITIVE:

@@ -50,7 +50,7 @@ public final class CreateSpecialBusinessObjectAction extends GenericInventoryAct
         LocalObjectLight myLol = com.createSpecialObject(
                 ((JMenuItem)ev.getSource()).getName(),
                 node.getObject().getClassName(),
-                node.getObject().getOid(), 0);
+                node.getObject().getOid(), -1);
         if (myLol == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else {
