@@ -1129,7 +1129,7 @@ public class KuwaibaService {
      * @param poolId Id of the pool under which the object will be created
      * @param className Class this object is going to be instance of
      * @param attributeNames Attributes to be set in the new object. Null or empty array for none
-     * @param attributeValues Attributes to be set in the new object (values). Null or empty array for none. The size of this array must match attributeNames size
+     * @param attributeValues Attributes to be set in the new object (values). Null for none. The size of this array must match attributeNames size
      * @param templateId Template to be used
      * @param sessionId Session identifier
      * @return The id of the newly created object
@@ -1139,7 +1139,7 @@ public class KuwaibaService {
     public long createPoolItem(@WebParam(name = "poolId")long poolId,
             @WebParam(name = "className")String className,
             @WebParam(name = "attributeNames")String[] attributeNames,
-            @WebParam(name = "attributeValues")String[][] attributeValues,
+            @WebParam(name = "attributeValues")String[] attributeValues,
             @WebParam(name = "templateId")long templateId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
@@ -2023,7 +2023,7 @@ public class KuwaibaService {
     public void updateObject(@WebParam(name = "className")String className,
             @WebParam(name = "oid")long oid,
             @WebParam(name = "attributeNames")String[] attributeNames,
-            @WebParam(name = "attributeValues")String[][] attributeValues,
+            @WebParam(name = "attributeValues")String[] attributeValues,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             wsBean.updateObject(className,oid,attributeNames, attributeValues, getIPAddress(), sessionId);
@@ -2054,11 +2054,11 @@ public class KuwaibaService {
             @WebParam(name = "parentObjectClassName")String parentObjectClassName,
             @WebParam(name = "parentOid")long parentOid,
             @WebParam(name = "attributeNames")String[] attributeNames,
-            @WebParam(name = "attributeValues")String[][] attributeValues,
+            @WebParam(name = "attributeValues")String[] attributeValues,
             @WebParam(name = "templateId")long templateId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
-            return wsBean.createObject(className,parentObjectClassName, parentOid,attributeNames,attributeValues, templateId, getIPAddress(), sessionId);
+            return wsBean.createObject(className,parentObjectClassName, parentOid,attributeNames, attributeValues, templateId, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -2088,11 +2088,11 @@ public class KuwaibaService {
             @WebParam(name = "parentObjectClassName")String parentObjectClassName,
             @WebParam(name = "parentOid")long parentOid,
             @WebParam(name = "attributeNames")String[] attributeNames,
-            @WebParam(name = "attributeValues")String[][] attributeValues,
+            @WebParam(name = "attributeValues")String[] attributeValues,
             @WebParam(name = "templateId")long templateId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
-            return wsBean.createSpecialObject(className,parentObjectClassName, parentOid,attributeNames,attributeValues, templateId, getIPAddress(), sessionId);
+            return wsBean.createSpecialObject(className,parentObjectClassName, parentOid,attributeNames, attributeValues, templateId, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -2239,24 +2239,23 @@ public class KuwaibaService {
     }
     
     /**
-     * 
-     * @param className
-     * @param objId
-     * @param sessionId
-     * @return
+     * Retrieves the mandatory attributes for a given class
+     * @param className The class name
+     * @param sessionId Session token
+     * @return The list of mandatory attributes in the given class
      * @throws ServerSideException 
      */
     @WebMethod(operationName = "getMandatoryObjectAttributes")
-    public AttributeInfo [] getMandatoryObjectAttributes(
+    public List<AttributeInfo> getMandatoryObjectAttributes(
             @WebParam(name = "className") String className,
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException{
         try{
-            return wsBean.getMandatoryObjectAttributes(className, getIPAddress(), sessionId);
+            return wsBean.getMandatoryAttributesInClass(className, getIPAddress(), sessionId);
         }catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in getMandatoryObjectAttributes: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in getMandatoryAttributesInClass: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
@@ -2351,9 +2350,9 @@ public class KuwaibaService {
      * @param bObjectId "b" endpoint object id
      * @param parentClass Parent object class
      * @param parentId Parent object id
-     * @param attributeNames Default attributes to be set
-     * @param attributeValues Default attributes to be set
+     * @param name COnnection name. Leave empty if you want to use the one in the template
      * @param connectionClass Class used to create the connection. See Constants class for supported values
+     * @param templateId Id of the template for class connectionClass. Use -1 if you want to create a connection without template
      * @param sessionId Session token
      * @return The new connection id
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
@@ -2366,13 +2365,13 @@ public class KuwaibaService {
             @WebParam(name = "bObjectId")long bObjectId,
             @WebParam(name = "parentClass")String parentClass,
             @WebParam(name = "parentId")long parentId,
-            @WebParam(name = "attributeNames")String[] attributeNames,
-            @WebParam(name = "attributeValues")String[][] attributeValues,
+            @WebParam(name = "name")String name,
             @WebParam(name = "connectionClass") String connectionClass,
+            @WebParam(name = "templateId") long templateId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.createPhysicalConnection(aObjectClass, aObjectId,bObjectClass, bObjectId,
-                   parentClass, parentId, attributeNames, attributeValues, connectionClass, getIPAddress(), sessionId);
+                   parentClass, parentId, name, connectionClass, templateId, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -4721,7 +4720,7 @@ public class KuwaibaService {
     public long createSubnet(@WebParam(name = "poolId")long poolId,
             @WebParam(name = "className")String className,
             @WebParam(name = "attributeNames")String[] attributeNames,
-            @WebParam(name = "attributeValues")String[][] attributeValues,
+            @WebParam(name = "attributeValues")String[] attributeValues,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.createSubnet(poolId, className, attributeNames, attributeValues, getIPAddress(), sessionId);
@@ -4844,7 +4843,7 @@ public class KuwaibaService {
     public long addIP(@WebParam(name = "id")long id,
             @WebParam(name = "parentClassName")String parentClassName,
             @WebParam(name = "attributeNames")String[] attributeNames,
-            @WebParam(name = "attributeValues")String[][] attributeValues,
+            @WebParam(name = "attributeValues")String[] attributeValues,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.addIP(id, parentClassName, attributeNames, attributeValues, getIPAddress(), sessionId);
@@ -5326,7 +5325,7 @@ public class KuwaibaService {
         @WebParam(name = "parentClassName") String parentClassName, 
         @WebParam(name = "className") String className, 
         @WebParam(name = "attributeNames") String[] attributeNames, 
-        @WebParam(name = "attributeValues") String[][] attributeValues, 
+        @WebParam(name = "attributeValues") String[] attributeValues, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try {
             return wsBean.addProject(parentId, parentClassName, className, attributeNames, attributeValues, getIPAddress(), sessionId);
@@ -5384,7 +5383,7 @@ public class KuwaibaService {
         @WebParam(name ="parentClassName") String parentClassName, 
         @WebParam(name ="className") String className, 
         @WebParam(name ="attributeNames") String[] attributeNames, 
-        @WebParam(name ="attributeValues") String[][] attributeValues, 
+        @WebParam(name ="attributeValues") String[] attributeValues, 
         @WebParam(name ="sessionId") String sessionId) throws ServerSideException {
         
         try {

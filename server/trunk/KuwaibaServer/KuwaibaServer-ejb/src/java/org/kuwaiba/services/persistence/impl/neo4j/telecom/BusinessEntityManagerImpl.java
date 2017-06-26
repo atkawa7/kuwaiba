@@ -25,7 +25,6 @@ import groovy.lang.GroovyShell;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
@@ -138,7 +137,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public long createObject(String className, String parentClassName, long parentOid, HashMap<String,List<String>> attributes, long template)
+    public long createObject(String className, String parentClassName, long parentOid, HashMap<String, String> attributes, long template)
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException {
         
         ClassMetadata myClass= cm.getClass(className);
@@ -182,7 +181,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 parentNode = specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
 
             Node newObject;
-            if (template <= 0)
+            if (template == -1)
                 newObject = createObject(classNode, myClass, attributes);
             else {
                 Node templateNode = null;
@@ -207,7 +206,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     //TODO: Rewrite this!
     @Override
-    public long createObject(String className, String parentClassName, String criteria, HashMap<String, List<String>> attributes, long template)
+    public long createObject(String className, String parentClassName, String criteria, HashMap<String, String> attributes, long template)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, ApplicationObjectNotFoundException {
         
         ClassMetadata objectClass = cm.getClass(className);
@@ -302,7 +301,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public long createSpecialObject(String className, String parentClassName, long parentOid, HashMap<String,List<String>> attributes, long template)
+    public long createSpecialObject(String className, String parentClassName, long parentOid, HashMap<String,String> attributes, long template)
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException {
 
         ClassMetadata myClass= cm.getClass(className);
@@ -336,10 +335,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         
             Node newObject;
             
-            if (template <= 0) {
+            if (template == -1) 
                 newObject = createObject(classNode, myClass, attributes);
                 
-            } else {
+            else {
                 Node templateNode = null;
                 for (Relationship hasTemplateRelationship : classNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_TEMPLATE)) {
                     Node endNode = hasTemplateRelationship.getEndNode();
@@ -366,7 +365,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     @Override
     public long createPoolItem(long poolId, String className, String[] attributeNames, 
-    String[][] attributeValues, long templateId) 
+    String[] attributeValues, long templateId) 
             throws ApplicationObjectNotFoundException, InvalidArgumentException, 
             ArraySizeMismatchException, MetadataObjectNotFoundException {
         
@@ -393,10 +392,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             if (!cm.isSubClass((String)pool.getProperty(Constants.PROPERTY_CLASS_NAME), className))
                 throw new InvalidArgumentException(String.format("Class %s is not subclass of %s", className, (String)pool.getProperty(Constants.PROPERTY_CLASS_NAME)));
             
-            HashMap<String, List<String>> attributes = new HashMap<>();
+            HashMap<String, String> attributes = new HashMap<>();
             if (attributeNames != null && attributeValues != null){
                 for (int i = 0; i < attributeNames.length; i++)
-                    attributes.put(attributeNames[i], Arrays.asList(attributeValues[i]));
+                    attributes.put(attributeNames[i], attributeValues[i]);
             }
             
             Node newObject = createObject(classNode, classMetadata, attributes);
@@ -621,7 +620,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public ChangeDescriptor updateObject(String className, long oid, HashMap<String,List<String>> attributes)
+    public ChangeDescriptor updateObject(String className, long oid, HashMap<String, String> attributes)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, 
                 InvalidArgumentException {
 
@@ -648,49 +647,52 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                                 instance.removeProperty(attributeName);
                             }
                         else {
-                            newValues += attributes.get(attributeName).get(0) + " ";
+                            newValues += attributes.get(attributeName) + " ";
                             //if attribute is mandatory string attributes can't be empty or null
                             if(myClass.getAttribute(attributeName).isMandatory()){
-                                if(attributes.get(attributeName).get(0).isEmpty() || attributes.get(attributeName).get(0) == null)
+                                if (attributes.get(attributeName) == null || attributes.get(attributeName).isEmpty() )
                                     throw new InvalidArgumentException(String.format("The attribute %s is mandatory, can not be set null or empty", attributeName));
                             }
-                            if (attributes.get(attributeName).get(0) == null)
+                            if (attributes.get(attributeName) == null)
                                 instance.removeProperty(attributeName);
                             else{
                                 if(myClass.getAttribute(attributeName).isUnique()){
-                                    if(isObjectAttributeUnique(className, attributeName, attributes.get(attributeName).get(0)))
-                                        instance.setProperty(attributeName,Util.getRealValue(attributes.get(attributeName).get(0), myClass.getType(attributeName)));
+                                    if(isObjectAttributeUnique(className, attributeName, attributes.get(attributeName)))
+                                        instance.setProperty(attributeName,Util.getRealValue(attributes.get(attributeName), myClass.getType(attributeName)));
                                    else
                                        throw new InvalidArgumentException(String.format("The attribute %s is unique in the objects created from this class and its subclasses, is in use in other object", attributeName));
                                 }
                                 else
-                                    instance.setProperty(attributeName,Util.getRealValue(attributes.get(attributeName).get(0), myClass.getType(attributeName)));
+                                    instance.setProperty(attributeName,Util.getRealValue(attributes.get(attributeName), myClass.getType(attributeName)));
                             }
                         }
-                    } else { //If the attribute is not a primitive type, then it's a relationship
+                    } else { //If the attribute is not a primitive type, then it's a list type
                         if (!cm.getClass(myClass.getType(attributeName)).isListType())
                             throw new InvalidArgumentException(String.format("Class %s is not a list type", myClass.getType(attributeName)));
 
-                        //Release all previous relationships
+                        //Release the previous relationship
                         oldValues += " "; //Two empty, separation spaces
                         for (Relationship rel : instance.getRelationships(Direction.OUTGOING, RelTypes.RELATED_TO)){
                             if (rel.getProperty(Constants.PROPERTY_NAME).equals(attributeName)){
-                                oldValues += rel.getEndNode().getProperty(Constants.PROPERTY_NAME) + "-";
+                                oldValues += rel.getEndNode().getProperty(Constants.PROPERTY_NAME) + " ";
                                 rel.delete();
+                                break;
                             }
                         }
                         if (attributes.get(attributeName) != null){ //If the new value is different than null, then create the new relationships
+                            try {
+                                long listTypeItemId = Long.valueOf(attributes.get(attributeName));
+                                Node listTypeNodeClass = classIndex.get(Constants.PROPERTY_NAME, myClass.getType(attributeName)).getSingle();
+                                Node listTypeNode = Util.getRealValue(listTypeItemId, listTypeNodeClass);
 
-                            Node listTypeNode = classIndex.get(Constants.PROPERTY_NAME, myClass.getType(attributeName)).getSingle();
-                            List<Node> listTypeNodes = Util.getRealValue(attributes.get(attributeName), listTypeNode);
-
-                            //Create the new relationships
-                            for (Node item : listTypeNodes){
-                                newValues += item.getProperty(Constants.PROPERTY_NAME) + "-";
-                                Relationship newRelationship = instance.createRelationshipTo(item, RelTypes.RELATED_TO);
+                                //Create the new relationships
+                                newValues += listTypeNode.getProperty(Constants.PROPERTY_NAME) + " ";
+                                Relationship newRelationship = instance.createRelationshipTo(listTypeNode, RelTypes.RELATED_TO);
                                 newRelationship.setProperty(Constants.PROPERTY_NAME, attributeName);
+                                
+                            } catch(NumberFormatException ex) {
+                                throw new InvalidArgumentException(String.format("The value %s is not a valid lis type item id", attributes.get(attributeName)));
                             }
-                            newValues += " ";
                         }
                     }
                 } else
@@ -1298,9 +1300,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public List<AttributeMetadata> getMandatoryObjectAttributes(String className) throws ObjectNotFoundException, 
-            MetadataObjectNotFoundException, InvalidArgumentException
-    {
+    public List<AttributeMetadata> getMandatoryAttributesInClass(String className) throws ObjectNotFoundException, 
+            MetadataObjectNotFoundException, InvalidArgumentException {
         List<AttributeMetadata> mandatoryAttributes = new ArrayList<>();
         ClassMetadata aClass = mem.getClass(className);
         Set<AttributeMetadata> classAttributes = aClass.getAttributes();
@@ -1680,7 +1681,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         throw new ObjectNotFoundException((String)classNode.getProperty(Constants.PROPERTY_NAME), oid);
     }
     
-    public Node createObject(Node classNode, ClassMetadata classToMap, HashMap<String,List<String>> attributes) 
+    public Node createObject(Node classNode, ClassMetadata classToMap, HashMap<String,String> attributes) 
             throws InvalidArgumentException, MetadataObjectNotFoundException {
  
         if (classToMap.isAbstract())
@@ -1695,7 +1696,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             for(String attributeName : attributes.keySet()) {
                 //If the array is empty, it means the attribute should be set to null, that is, ignore it
                 if (!attributes.get(attributeName).isEmpty()){
-                    if (attributes.get(attributeName).get(0) != null){
+                    if (attributes.get(attributeName) != null){
                         if(classToMap.isMandatory(attributeName) && attributes.get(attributeName) == null)
                             throw new InvalidArgumentException(String.format("The attribute %s is mandatory but has no value", attributeName));
                         
@@ -1707,34 +1708,37 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                                     classToMap.getType(attributeName).equals("Integer") || 
                                     classToMap.getType(attributeName).equals("Float") || 
                                     classToMap.getType(attributeName).equals("Long")){
-                                    if(isObjectAttributeUnique(classToMap.getName(), attributeName, String.valueOf(Util.getRealValue(attributes.get(attributeName).get(0), classToMap.getType(attributeName)))))
-                                        newObject.setProperty(attributeName, Util.getRealValue(attributes.get(attributeName).get(0), classToMap.getType(attributeName)));
+                                    if(isObjectAttributeUnique(classToMap.getName(), attributeName, String.valueOf(Util.getRealValue(attributes.get(attributeName), classToMap.getType(attributeName)))))
+                                        newObject.setProperty(attributeName, Util.getRealValue(attributes.get(attributeName), classToMap.getType(attributeName)));
                                     else
                                         throw new InvalidArgumentException(String.format("The attribute %s is unique, the given value its already in use", attributeName));
                                 }
                             }
                             else
-                                newObject.setProperty(attributeName, Util.getRealValue(attributes.get(attributeName).get(0), classToMap.getType(attributeName)));
+                                newObject.setProperty(attributeName, Util.getRealValue(attributes.get(attributeName), classToMap.getType(attributeName)));
                         }
                         else {
-                        //If it's not a primitive type, maybe it's a relationship
-                            if (!cm.isSubClass(Constants.CLASS_GENERICOBJECTLIST, attributeType))
+                            //If it's not a primitive type, maybe it's a relationship
+                            try {
+                                long listTypeId = Long.valueOf(attributes.get(attributeName));
+                                if (!cm.isSubClass(Constants.CLASS_GENERICOBJECTLIST, attributeType))
                                 throw new InvalidArgumentException(String.format("Type %s is not a primitive nor a list type", attributeName));
 
-                            Node listTypeNode = classIndex.get(Constants.PROPERTY_NAME, attributeType).getSingle();
+                            Node listTypeClassNode = classIndex.get(Constants.PROPERTY_NAME, attributeType).getSingle();
 
-                            if (listTypeNode == null)
+                            if (listTypeClassNode == null)
                                 throw new InvalidArgumentException(String.format("Class %s could not be found as list type", attributeType));
 
-                            List<Node> listTypeNodes = Util.getRealValue(attributes.get(attributeName), listTypeNode);
+                            
+                            Node listTypeNode = Util.getRealValue(listTypeId, listTypeClassNode);
 
-                            if (listTypeNodes.isEmpty())
+                            if (listTypeNode == null)
                                 throw new InvalidArgumentException(String.format("At least one of the list type items could not be found. Check attribute definition for \"%s\"", attributeName));
 
-                            //Create the new relationships
-                            for (Node item : listTypeNodes){
-                                Relationship newRelationship = newObject.createRelationshipTo(item, RelTypes.RELATED_TO);
-                                newRelationship.setProperty(Constants.PROPERTY_NAME, attributeName);
+                            Relationship newRelationship = newObject.createRelationshipTo(listTypeNode, RelTypes.RELATED_TO);
+                            newRelationship.setProperty(Constants.PROPERTY_NAME, attributeName);
+                            } catch (NumberFormatException ex) {
+                                throw new InvalidArgumentException(String.format("The value %s is not a valid lis type item id", attributes.get(attributeName)));
                             }
                         }
                     }

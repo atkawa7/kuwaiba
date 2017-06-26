@@ -112,35 +112,19 @@ public class Util {
 
     /**
      * Gets the requested nodes representing list type items
-     * @param values This list may contain the id of the associated objects or their names
+     * @param listTypeId The id of the list type
      * @param listType Node the list items are supposed to be instance of
-     * @return A list of nodes representing the list type items
+     * @return A node representing the list type item
      */
-    public static List<Node> getRealValue(List<String> values, Node listType) {
+    public static Node getRealValue(long listTypeId, Node listType) {
         Iterable<Relationship> listTypeItems = listType.getRelationships(RelTypes.INSTANCE_OF, Direction.INCOMING);
-        List<Node> res = new ArrayList<>();
         
-        for (String value : values) {
-            try { //If the value provided is a number, match the node id, if not, the name
-                long valueAsLong = Long.valueOf(value);
-                for (Relationship listTypeItem : listTypeItems){
-                    Node instance = listTypeItem.getStartNode();
-                    if (instance.getId() == valueAsLong) {
-                        res.add(instance);
-                        break;
-                    }
-                }
-            }catch(NumberFormatException ex) {
-                for (Relationship listTypeItem : listTypeItems){
-                    Node instance = listTypeItem.getStartNode();
-                    if (instance.getProperty(Constants.PROPERTY_NAME).equals(value)) {
-                        res.add(instance);
-                        break;
-                    }
-                }
-            }
+        for (Relationship listTypeRelationship : listTypeItems) {
+            if (listTypeRelationship.getStartNode().getId() == listTypeId)
+                return listTypeRelationship.getStartNode();
         }
-        return res;
+        
+        return null;
     }
 
     /**

@@ -167,10 +167,10 @@ public interface WebserviceBeanRemote {
     public RemoteObjectSpecialRelationships getSpecialAttributes(String objectClass, long oid, String ipAddress, String sessionId) throws ServerSideException;
     public RemoteObjectLight[] getObjectSpecialChildren(String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;
 
-    public void updateObject(String className, long oid, String[] attributeNames, String[][] attributeValues, String ipAddress, String sessionId) throws ServerSideException;
+    public void updateObject(String className, long oid, String[] attributeNames, String[] attributeValues, String ipAddress, String sessionId) throws ServerSideException;
 
-    public long createObject(String className, String parentClassName, long parentOid, String[] attributeNames, String[][] attributeValues, long templateId, String ipAddress, String sessionId) throws ServerSideException;
-    public long createSpecialObject(String className, String parentObjectClassName, long parentOid, String[] attributeNames, String[][] attributeValues, long templateId, String ipAddress, String sessionId) throws ServerSideException;
+    public long createObject(String className, String parentClassName, long parentOid, String[] attributeNames, String[] attributeValues, long templateId, String ipAddress, String sessionId) throws ServerSideException;
+    public long createSpecialObject(String className, String parentObjectClassName, long parentOid, String[] attributeNames, String[] attributeValues, long templateId, String ipAddress, String sessionId) throws ServerSideException;
     
     public long createListTypeItem(String className, String name, String displayName, String ipAddress, String sessionId) throws ServerSideException;
 
@@ -188,12 +188,12 @@ public interface WebserviceBeanRemote {
 
     public long[] copyObjects(String targetClass, long targetOid, String[] templateClasses, long[] templateOids, boolean recursive, String ipAddress, String sessionId) throws ServerSideException;
     
-    public AttributeInfo [] getMandatoryObjectAttributes(String className, String ipAddress, String sessionId)  throws ServerSideException;
+    public List<AttributeInfo> getMandatoryAttributesInClass(String className, String ipAddress, String sessionId)  throws ServerSideException;
     public void objectHasValuesInMandatoryAttributes(String className, long objId, String ipAddress, String sessionId)  throws ServerSideException;
     //Physical connections
     public void connectMirrorPort(String aObjectClass, long aObjectId, String bObjectClass, long bObjectId, String ipAddress, String sessionId) throws ServerSideException;
     public void releaseMirrorPort(String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;
-    public long createPhysicalConnection(String aObjectClass, long aObjectId, String bObjectClass, long bObjectId, String parentClass, long parentId, String[] attributeNames, String[][] attributeValues, String connectionClass, String ipAddress, String sessionId) throws ServerSideException;
+    public long createPhysicalConnection(String aObjectClass, long aObjectId, String bObjectClass, long bObjectId, String parentClass, long parentId, String name, String connectionClass, long templateId, String ipAddress, String sessionId) throws ServerSideException;
     public long[] createBulkPhysicalConnections(String connectionClass, int numberOfChildren, String parentClass, long parentId, String ipAddress, String sessionId) throws ServerSideException;
     public void deletePhysicalConnection(String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;
     public RemoteObjectLight[] getConnectionEndpoints(String connectionClass, long connectionId, String ipAddress, String sessionId) throws ServerSideException;
@@ -286,7 +286,7 @@ public interface WebserviceBeanRemote {
     public long createPoolInPool(long parentId, String name, String description, String instancesOfClass, int type, String ipAddress, String sessionId) 
             throws ServerSideException;
     
-    public long createPoolItem(long poolId, String className, String[] attributeNames, String[][] attributeValues, long templateId, String ipAddress, String sessionId) throws ServerSideException;
+    public long createPoolItem(long poolId, String className, String[] attributeNames, String[] attributeValues, long templateId, String ipAddress, String sessionId) throws ServerSideException;
 
     public void deletePool(long id, String ipAddress, String sessionId) throws ServerSideException;
     
@@ -458,11 +458,11 @@ public interface WebserviceBeanRemote {
                 String subnetPoolDescription, String className, String ipAddress, 
                 String sessionId) throws ServerSideException;
         public long createSubnet(long poolId, String className, String attributeNames[], 
-            String attributeValues[][], String ipAddress, String sessionId) throws ServerSideException;
+            String attributeValues[], String ipAddress, String sessionId) throws ServerSideException;
         public void deleteSubnets(String className, List<Long> ids, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
         public void deleteSubnetPools(long[] ids, String ipAddress, String sessionId) throws ServerSideException;
         public long addIP(long id, String parentClassName, String attributeNames[], 
-            String attributeValues[][], String ipAddress, String sessionId) throws ServerSideException;
+            String attributeValues[], String ipAddress, String sessionId) throws ServerSideException;
         public void removeIP(long[] ids, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
         public void relateIPtoPort(long id, String deviceClassName, long deviceId, String ipAddress, String sessionId) throws ServerSideException;
         public void relateSubnetToVlan(long id, String className, long vlanId, String ipAddress, String sessionId) throws ServerSideException;
@@ -494,9 +494,9 @@ public interface WebserviceBeanRemote {
          
         // <editor-fold defaultstate="collapsed" desc="Projects Module">
         public List<RemotePool> getProjectPools(String ipAddress, String sessionId) throws ServerSideException;
-        public long addProject(long parentId, String parentClassName, String className, String[] attributeNames, String[][] attributeValues, String ipAddress, String sessionId) throws ServerSideException;
+        public long addProject(long parentId, String parentClassName, String className, String[] attributeNames, String[] attributeValues, String ipAddress, String sessionId) throws ServerSideException;
         public void deleteProject(String className, long oid, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
-        public long addActivity(long parentId, String parentClassName, String className, String attributeNames[], String attributeValues[][], String ipAddress, String sessionId) throws ServerSideException;
+        public long addActivity(long parentId, String parentClassName, String className, String attributeNames[], String attributeValues[], String ipAddress, String sessionId) throws ServerSideException;
         public void deleteActivity(String className, long oid, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
         public RemoteObjectLight[] getProjectsInProjectPool(long poolId, int limit, String ipAddress, String sessionId) throws ServerSideException;
         public RemoteObjectLight[] getProjectResurces(String projectClass, long projectId, String ipAddress, String sessionId) throws ServerSideException;

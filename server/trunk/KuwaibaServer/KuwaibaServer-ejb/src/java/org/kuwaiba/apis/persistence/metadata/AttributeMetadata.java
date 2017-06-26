@@ -17,6 +17,7 @@
 package org.kuwaiba.apis.persistence.metadata;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import org.kuwaiba.ws.toserialize.metadata.AttributeInfo;
 
@@ -95,6 +96,7 @@ public class AttributeMetadata implements Serializable {
     private Boolean locked;
     /**
      * The attribute mapping, that is, how should it be interpreted by a parser. See MAPPING_XXXX  constants for possible values
+     * @return If this attribute is marked as administrative or not
      */
     //private int mapping;
     // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
@@ -241,21 +243,15 @@ public class AttributeMetadata implements Serializable {
                 || type.equals("Timestamp");
     }
     
-    public static AttributeInfo[] toAttributeInfoArray(List<AttributeMetadata> toBeWrapped){
+    public static List<AttributeInfo> toAttributeInfo(List<AttributeMetadata> toBeWrapped){
         if (toBeWrapped == null)
             return null;
-        AttributeInfo[] res = new AttributeInfo[toBeWrapped.size()];
-        for (int i = 0; i < toBeWrapped.size(); i++) {
-            res[i] = new AttributeInfo(toBeWrapped.get(i).getName(),
-                    toBeWrapped.get(i).getDisplayName(),
-                    toBeWrapped.get(i).getType(),
-                    toBeWrapped.get(i).isAdministrative(),
-                    toBeWrapped.get(i).isVisible(),
-                    toBeWrapped.get(i).isUnique(),
-                    toBeWrapped.get(i).isMandatory(),
-                    toBeWrapped.get(i).getDescription()
-            );
-        }
+        
+        List<AttributeInfo> res = new ArrayList<>();
+        
+        for (AttributeMetadata toBeWrapped1 : toBeWrapped) 
+            res.add(new AttributeInfo(toBeWrapped1.getName(), toBeWrapped1.getDisplayName(), toBeWrapped1.getType(), toBeWrapped1.isAdministrative(), toBeWrapped1.isVisible(), toBeWrapped1.isUnique(), toBeWrapped1.isMandatory(), toBeWrapped1.getDescription()));
+        
         return res;
     }
 }

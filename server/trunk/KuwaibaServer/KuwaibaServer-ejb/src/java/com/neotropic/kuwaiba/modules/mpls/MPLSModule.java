@@ -16,7 +16,6 @@
 package com.neotropic.kuwaiba.modules.mpls;
 
 import com.neotropic.kuwaiba.modules.GenericCommercialModule;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -113,8 +112,8 @@ public class MPLSModule implements GenericCommercialModule {
             if (!mem.isSubClass("GenericLogicalConnection", linkType)) //NOI18N
                 throw new ServerSideException(String.format("Class %s is not subclass of GenericLogicalConnection", linkType));
 
-            HashMap<String, List<String>> attributesToBeSet = new HashMap<>();
-            attributesToBeSet.put(Constants.PROPERTY_NAME, Arrays.asList(new String[] { defaultName == null ? "" : defaultName }));
+            HashMap<String, String> attributesToBeSet = new HashMap<>();
+            attributesToBeSet.put(Constants.PROPERTY_NAME, defaultName == null ? "" : defaultName );
             
             RemoteBusinessObject communicationsEquipmentA = bem.getParentOfClass(classNameEndpointA, idEndpointA, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
             if (communicationsEquipmentA == null)

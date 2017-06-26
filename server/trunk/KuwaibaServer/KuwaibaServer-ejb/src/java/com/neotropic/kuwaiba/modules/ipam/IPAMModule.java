@@ -17,7 +17,6 @@ package com.neotropic.kuwaiba.modules.ipam;
 
 import com.neotropic.kuwaiba.modules.GenericCommercialModule;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
@@ -273,7 +272,7 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws OperationNotPermittedException 
      */
     public long createSubnet(long parentId, String className, String[] attributeNames, 
-            String[][] attributeValues) throws 
+            String[] attributeValues) throws 
             InvalidArgumentException, ArraySizeMismatchException, NotAuthorizedException, 
             MetadataObjectNotFoundException, OperationNotPermittedException, ObjectNotFoundException, ApplicationObjectNotFoundException
     {
@@ -281,9 +280,11 @@ public class IPAMModule implements GenericCommercialModule{
             aem.getPool(parentId);
             return bem.createPoolItem(parentId, className, attributeNames, attributeValues, 0);
         } catch (ApplicationObjectNotFoundException ex) {
-            HashMap<String,List<String>> attributes = new HashMap<>();
+            
+            HashMap<String, String> attributes = new HashMap<>();
             for (int i = 0; i < attributeNames.length; i++)
-                attributes.put(attributeNames[i], Arrays.asList(attributeValues[i]));
+                attributes.put(attributeNames[i], attributeValues[i]);
+            
             return bem.createSpecialObject(className, className, parentId, attributes, 0);
         }
     }
@@ -297,11 +298,11 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws ObjectNotFoundException
      * @throws MetadataObjectNotFoundException
      * @throws OperationNotPermittedException
-     * @throws NotAuthorizedException 
+     * @throws InvalidArgumentException
      */
     public void deleteSubnets(String className, List<Long> ids, boolean releaseRelationships) 
             throws ObjectNotFoundException, MetadataObjectNotFoundException, 
-            OperationNotPermittedException, NotAuthorizedException {
+            OperationNotPermittedException, InvalidArgumentException {
         HashMap<String, List<Long>> objectsToBeDeleted = new HashMap<>();
         objectsToBeDeleted.put(className, ids);
         bem.deleteObjects(objectsToBeDeleted, releaseRelationships);
@@ -337,7 +338,7 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws OperationNotPermittedException
      * @throws DatabaseException 
      */
-    public long addIP(long parentId, String parentClassName, HashMap<String,List<String>> attributes) throws ApplicationObjectNotFoundException, 
+    public long addIP(long parentId, String parentClassName, HashMap<String, String> attributes) throws ApplicationObjectNotFoundException, 
             InvalidArgumentException, ArraySizeMismatchException, NotAuthorizedException, 
             MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, DatabaseException
     {

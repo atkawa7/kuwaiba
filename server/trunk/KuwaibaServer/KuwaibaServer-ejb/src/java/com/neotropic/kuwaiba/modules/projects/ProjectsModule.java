@@ -16,7 +16,6 @@ package com.neotropic.kuwaiba.modules.projects;
 
 import com.neotropic.kuwaiba.modules.GenericCommercialModule;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
@@ -128,7 +127,7 @@ public class ProjectsModule implements GenericCommercialModule {
      * @throws MetadataObjectNotFoundException If the class name could not be found
      * @throws ApplicationObjectNotFoundException If the specified template could not be found.
      */
-    public long addProject(long parentId, String parentClassName, String className, String[] attributeNames, String[][] attributeValues) throws 
+    public long addProject(long parentId, String parentClassName, String className, String[] attributeNames, String[] attributeValues) throws 
         ApplicationObjectNotFoundException, InvalidArgumentException, ArraySizeMismatchException, MetadataObjectNotFoundException  {
 
         aem.getPool(parentId);
@@ -165,12 +164,12 @@ public class ProjectsModule implements GenericCommercialModule {
      * @throws ApplicationObjectNotFoundException If the specified template could not be found
      * @throws ArraySizeMismatchException If attributeNames and attributeValues have different sizes.
      */
-    public long addActivity(long parentId, String parentClassName, String className, String[] attributeNames, String[][] attributeValues) throws 
+    public long addActivity(long parentId, String parentClassName, String className, String[] attributeNames, String[] attributeValues) throws 
         MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, 
         OperationNotPermittedException, ApplicationObjectNotFoundException, ArraySizeMismatchException {
         
         
-        HashMap<String, List<String>> attributes = new HashMap<>();
+        HashMap<String, String> attributes = new HashMap<>();
         
         if (attributeNames != null && attributeValues != null) {
             
@@ -178,7 +177,7 @@ public class ProjectsModule implements GenericCommercialModule {
                 throw new ArraySizeMismatchException("attributeNames", "attributeValues");
             
             for (int i = 0; i < attributeNames.length; i += 1)
-                attributes.put(attributeNames[i], Arrays.asList(attributeValues[i]));
+                attributes.put(attributeNames[i], attributeValues[i]);
         }
         return bem.createSpecialObject(className, parentClassName, parentId, attributes, 0);
     }

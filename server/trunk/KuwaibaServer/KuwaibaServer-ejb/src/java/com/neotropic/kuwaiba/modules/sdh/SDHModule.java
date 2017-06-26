@@ -17,7 +17,6 @@ package com.neotropic.kuwaiba.modules.sdh;
 
 import com.neotropic.kuwaiba.modules.GenericCommercialModule;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -178,8 +177,8 @@ public class SDHModule implements GenericCommercialModule {
             if (!mem.isSubClass("GenericSDHTransportLink", linkType)) //NOI18N
                 throw new ServerSideException(String.format("Class %s is not subclass of GenericSDHTransportLink", linkType));
 
-            HashMap<String, List<String>> attributesToBeSet = new HashMap<>();
-            attributesToBeSet.put(Constants.PROPERTY_NAME, Arrays.asList(new String[] { defaultName == null ? "" : defaultName }));
+            HashMap<String, String> attributesToBeSet = new HashMap<>();
+            attributesToBeSet.put(Constants.PROPERTY_NAME, defaultName == null ? "" : defaultName );
             
             RemoteBusinessObject communicationsEquipmentA = bem.getParentOfClass(classNameEndpointA, idEndpointA, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
             if (communicationsEquipmentA == null)
@@ -245,8 +244,8 @@ public class SDHModule implements GenericCommercialModule {
             if (!mem.isSubClass("GenericCommunicationsElement", classNameEndpointA) || !mem.isSubClass("GenericCommunicationsElement", classNameEndpointB))
                 throw new ServerSideException("The endpoints must be subclasses of GenericCommunicationsElement");
                 
-            HashMap<String, List<String>> attributesToBeSet = new HashMap<>();
-            attributesToBeSet.put(Constants.PROPERTY_NAME, Arrays.asList(new String[] { defaultName == null ? "" : defaultName }));
+            HashMap<String, String> attributesToBeSet = new HashMap<>();
+            attributesToBeSet.put(Constants.PROPERTY_NAME, defaultName == null ? "" : defaultName );
             
             
             newConnectionId = bem.createSpecialObject(linkType, null, -1, attributesToBeSet, 0);                      
@@ -308,8 +307,8 @@ public class SDHModule implements GenericCommercialModule {
             if (!mem.isSubClass("GenericSDHTributaryLink", linkType)) //NOI18N
                 throw new ServerSideException("Class %s is not subclass of GenericSDHTributaryLink");
 
-            HashMap<String, List<String>> attributesToBeSet = new HashMap<>();
-            attributesToBeSet.put(Constants.PROPERTY_NAME, Arrays.asList(new String[] { defaultName == null ? "" : defaultName }));
+            HashMap<String, String> attributesToBeSet = new HashMap<>();
+            attributesToBeSet.put(Constants.PROPERTY_NAME, defaultName == null ? "" : defaultName);
             
             //All tributary links must be delivered using a container link
             String containerLinkType = linkType.replace("TributaryLink", ""); //The name of the correponding container link is the same as the tributary link without the suffix "TributaryLink"

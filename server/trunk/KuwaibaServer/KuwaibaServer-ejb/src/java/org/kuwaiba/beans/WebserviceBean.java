@@ -1016,7 +1016,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     
     @Override
     public long createObject(String className, String parentClassName, long parentOid, String[] attributeNames,
-            String[][] attributeValues, long template, String ipAddress, String sessionId) throws ServerSideException{
+            String[] attributeValues, long template, String ipAddress, String sessionId) throws ServerSideException{
         if (bem == null || aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         if (attributeNames.length != attributeValues.length)
@@ -1024,10 +1024,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
 
         try {
             aem.validateWebServiceCall("createObject", ipAddress, sessionId);
-            HashMap<String,List<String>> attributes = new HashMap<>();
+            HashMap<String, String> attributes = new HashMap<>();
+            
             for (int i = 0; i < attributeNames.length; i++)
-                attributes.put(attributeNames[i], Arrays.asList(attributeValues[i]));
-            long newObjectId = bem.createObject(className, parentClassName, parentOid,attributes, template);
+                attributes.put(attributeNames[i], attributeValues[i]);
+            
+            long newObjectId = bem.createObject(className, parentClassName, parentOid, attributes, template);
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId),
                     ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.valueOf(newObjectId));
             return newObjectId;
@@ -1038,7 +1040,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
 
     @Override
     public long createSpecialObject(String className, String parentClassName, long parentOid, String[] attributeNames,
-            String[][] attributeValues, long template, String ipAddress, String sessionId) throws ServerSideException{
+            String[] attributeValues, long template, String ipAddress, String sessionId) throws ServerSideException{
         if (bem == null || aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         if (attributeNames.length != attributeValues.length)
@@ -1046,9 +1048,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
 
         try {
             aem.validateWebServiceCall("createSpecialObject", ipAddress, sessionId);
-            HashMap<String,List<String>> attributes = new HashMap<>();
+            HashMap<String, String> attributes = new HashMap<>();
+            
             for (int i = 0; i < attributeNames.length; i++)
-                attributes.put(attributeNames[i], Arrays.asList(attributeValues[i]));
+                attributes.put(attributeNames[i], attributeValues[i]);
 
             long newSpecialObjectId = bem.createSpecialObject(className, parentClassName, parentOid, attributes, template);
             
@@ -1173,7 +1176,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void updateObject(String className, long oid, String[] attributeNames, String[][] attributeValues, String ipAddress, String sessionId) throws ServerSideException{
+    public void updateObject(String className, long oid, String[] attributeNames, String[] attributeValues, String ipAddress, String sessionId) throws ServerSideException{
         if (bem == null || aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         if (attributeNames.length != attributeValues.length)
@@ -1181,9 +1184,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
 
         try {
             aem.validateWebServiceCall("updateObject", ipAddress, sessionId);
-            HashMap<String,List<String>> attributes = new HashMap<>();
+            HashMap<String, String> attributes = new HashMap<>();
+            
             for (int i = 0; i < attributeNames.length; i++)
-                attributes.put(attributeNames[i], Arrays.asList(attributeValues[i]));
+                attributes.put(attributeNames[i], attributeValues[i]);
 
             ChangeDescriptor theChange = bem.updateObject(className, oid, attributes);
             
@@ -1198,15 +1202,15 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
     
     @Override
-    public AttributeInfo [] getMandatoryObjectAttributes(String className, String ipAddress, String sessionId)  throws ServerSideException{
+    public List<AttributeInfo> getMandatoryAttributesInClass(String className, String ipAddress, String sessionId)  throws ServerSideException{
          if (bem == null || aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         
         try {
-                aem.validateWebServiceCall("getMandatoryObjectAttributes", ipAddress, sessionId);
-                List<AttributeMetadata> mandatoryObjectAttributes = bem.getMandatoryObjectAttributes(className);
-                AttributeInfo atrbInfo[] = AttributeMetadata.toAttributeInfoArray(mandatoryObjectAttributes);
-                return atrbInfo;
+                aem.validateWebServiceCall("getMandatoryAttributesInClass", ipAddress, sessionId);
+                List<AttributeMetadata> mandatoryObjectAttributes = bem.getMandatoryAttributesInClass(className);
+                return AttributeMetadata.toAttributeInfo(mandatoryObjectAttributes);
+
             } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -1275,7 +1279,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     @Override
     public long createPhysicalConnection(String aObjectClass, long aObjectId,
             String bObjectClass, long bObjectId, String parentClass, long parentId,
-            String[] attributeNames, String[][] attributeValues, String connectionClass, String ipAddress, String sessionId) throws ServerSideException {
+            String name, String connectionClass, long templateId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         
@@ -1283,14 +1287,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
         
         try {
             aem.validateWebServiceCall("createPhysicalConnection", ipAddress, sessionId);
-            if (attributeNames.length != attributeValues.length)
-                throw new ServerSideException("Attribute names and attribute values arrays sizes doesn't match");
-
-            HashMap<String, List<String>> attributes = new HashMap<>();
-            for (int i = 0; i < attributeValues.length; i++)
-                attributes.put(attributeNames[i], Arrays.asList(attributeValues[i]));
-
-            
             
             if (!mem.isSubClass("GenericPhysicalConnection", connectionClass))
                 throw new ServerSideException("Class %s is not subclass of GenericPhysicalConnection");
@@ -1304,12 +1300,17 @@ public class WebserviceBean implements WebserviceBeanRemote {
                     throw new ServerSideException(String.format("The selected endpoint %s [%s] is already connected", bObjectClass, bObjectId));
             }
 
-            newConnectionId = bem.createSpecialObject(connectionClass, parentClass, parentId, attributes, 0);
+            
+            HashMap<String, String> attributes = new HashMap<>();
+            if (name != null && !name.isEmpty())
+                attributes.put(Constants.PROPERTY_NAME, name);
+            
+            newConnectionId = bem.createSpecialObject(connectionClass, parentClass, parentId, attributes, templateId);
             bem.createSpecialRelationship(connectionClass, newConnectionId, aObjectClass, aObjectId, "endpointA", true);
             bem.createSpecialRelationship(connectionClass, newConnectionId, bObjectClass, bObjectId, "endpointB", true);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
-                    ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.format("New connection of class %s", connectionClass));
+                    ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.format("New connection (%s) of class %s", newConnectionId, connectionClass));
             return newConnectionId;
         } catch (InventoryException e) {
             //If the new connection was successfully created, but there's a problem creating the relationships,
@@ -2100,7 +2101,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
     
     @Override
-    public long createPoolItem(long poolId, String className, String attributeNames[], String attributeValues[][], long templateId, String ipAddress, String sessionId) throws ServerSideException{
+    public long createPoolItem(long poolId, String className, String attributeNames[], String attributeValues[], long templateId, String ipAddress, String sessionId) throws ServerSideException{
         if (aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
@@ -2976,7 +2977,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     
     @Override
     public long createSubnet(long id, String className, String attributeNames[], 
-            String attributeValues[][], String ipAddress, String sessionId) throws ServerSideException{
+            String attributeValues[], String ipAddress, String sessionId) throws ServerSideException{
         try {
             aem.validateWebServiceCall("createSubnet", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
@@ -3009,13 +3010,15 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public long addIP(long id, String parentClassName, String attributeNames[], String attributeValues[][], 
+    public long addIP(long id, String parentClassName, String attributeNames[], String attributeValues[], 
             String ipAddress, String sessionId) throws ServerSideException{
         try{
             aem.validateWebServiceCall("addIP", ipAddress, sessionId);
-            HashMap<String,List<String>> attributes = new HashMap<>();
+            HashMap<String, String> attributes = new HashMap<>();
+            
             for (int i = 0; i < attributeNames.length; i++)
-                attributes.put(attributeNames[i], Arrays.asList(attributeValues[i]));
+                attributes.put(attributeNames[i], attributeValues[i]);
+            
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
             return ipamModule.addIP(id, parentClassName, attributes);
         } catch (InventoryException ex) {
@@ -3243,7 +3246,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
     
     @Override
-    public long addProject(long parentId, String parentClassName, String className, String[] attributeNames, String[][] attributeValues, String ipAddress, String sessionId) throws ServerSideException {
+    public long addProject(long parentId, String parentClassName, String className, String[] attributeNames, String[] attributeValues, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         
@@ -3281,7 +3284,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
     
     @Override
-    public long addActivity(long parentId, String parentClassName, String className, String attributeNames[], String attributeValues[][], String ipAddress, String sessionId) throws ServerSideException {
+    public long addActivity(long parentId, String parentClassName, String className, String attributeNames[], String attributeValues[], String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         

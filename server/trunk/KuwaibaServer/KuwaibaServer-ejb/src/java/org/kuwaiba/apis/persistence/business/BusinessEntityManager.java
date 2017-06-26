@@ -52,7 +52,7 @@ public interface BusinessEntityManager {
      * @throws ApplicationObjectNotFoundException If the specified template could not be found
      */
     public long createObject(String className, String parentClassName, long parentOid,
-            HashMap<String,List<String>> attributes,long template)
+            HashMap<String, String> attributes,long template)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, 
                 OperationNotPermittedException, ApplicationObjectNotFoundException;
     
@@ -70,7 +70,7 @@ public interface BusinessEntityManager {
      * @throws OperationNotPermittedException If there's a business constraint that doesn't allow to create the object.
      * @throws ApplicationObjectNotFoundException If the specified template could not be found.
      */
-    public long createObject(String className, String parentClassName, String criteria, HashMap<String,List<String>> attributes, long template)
+    public long createObject(String className, String parentClassName, String criteria, HashMap<String,String> attributes, long template)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, ApplicationObjectNotFoundException;
     /**
      * Creates a new inventory object for a domain specific model (where the standard containment rules don't apply)
@@ -89,7 +89,7 @@ public interface BusinessEntityManager {
      * @throws ApplicationObjectNotFoundException If the specified template could not be found.
      */
     public long createSpecialObject(String className, String parentClassName, long parentOid,
-            HashMap<String,List<String>> attributes,long template)
+            HashMap<String,String> attributes,long template)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, ApplicationObjectNotFoundException;
     
     /**
@@ -105,7 +105,7 @@ public interface BusinessEntityManager {
      * @throws ArraySizeMismatchException If attributeNames and attributeValues have different sizes.
      * @throws MetadataObjectNotFoundException If the class name could not be found 
      */
-    public long createPoolItem(long poolId, String className, String[] attributeNames, String[][] attributeValues, long templateId) 
+    public long createPoolItem(long poolId, String className, String[] attributeNames, String[] attributeValues, long templateId) 
             throws ApplicationObjectNotFoundException, InvalidArgumentException, ArraySizeMismatchException, MetadataObjectNotFoundException;
     
     /**
@@ -199,7 +199,7 @@ public interface BusinessEntityManager {
      * @throws ObjectNotFoundException If the requested object can't be found
      * @throws MetadataObjectNotFoundException If the requested object class can't be found
      * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked or it has relationships and releaseRelationships is false
-     * @throws InvalidArgumentException The is a problem with the object or its attributes
+     * @throws InvalidArgumentException If it was not possible to release the possible unique attributes
      */
     public void deleteObjects(HashMap<String, List<Long>> objects, boolean releaseRelationships)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException;
@@ -229,7 +229,7 @@ public interface BusinessEntityManager {
      * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked
      * @throws InvalidArgumentException If any of the names provided does not exist or can't be set using this method or of the value of any of the attributes can not be mapped correctly.
      */
-    public ChangeDescriptor updateObject(String className, long oid, HashMap<String,List<String>> attributes)
+    public ChangeDescriptor updateObject(String className, long oid, HashMap<String, String> attributes)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException;
     /**
      * Updates an object binary attributes.
@@ -509,7 +509,7 @@ public interface BusinessEntityManager {
      * @throws MetadataObjectNotFoundException if the class doesn't exist
      * @throws InvalidArgumentException if the attribute name does 
      */
-    public List<AttributeMetadata> getMandatoryObjectAttributes(String className) throws ObjectNotFoundException, 
+    public List<AttributeMetadata> getMandatoryAttributesInClass(String className) throws ObjectNotFoundException, 
             MetadataObjectNotFoundException, InvalidArgumentException;
              
     /**

@@ -179,7 +179,7 @@ public final class LoadDataFromFile{
                         continue;
                     }
                     
-                    HashMap<String, List<String>> attributes = new HashMap<>();
+                    HashMap<String, String> attributes = new HashMap<>();
 
                     for(int i = 3; i < splitLine.length; i ++){
                         String[] attributeDefinition = splitLine[i].split("~c~");
@@ -189,11 +189,7 @@ public final class LoadDataFromFile{
                             continue;
                         }
 
-                        List<String> attributeValue = new ArrayList<>();
-
-                        for (int j = 1;j < attributeDefinition.length;j++)
-                            attributeValue.add(attributeDefinition[j]);
-                        attributes.put(attributeDefinition[0], attributeValue);
+                        attributes.put(attributeDefinition[0], attributeDefinition[1]);
                     }
 
                     long template = 0; //TODO Support for templates
@@ -260,7 +256,7 @@ public final class LoadDataFromFile{
                 String className = splitLine[0];
                 try{
                     
-                    HashMap<String, List<String>> attributes = new HashMap<>();
+                    HashMap<String, String> attributes = new HashMap<>();
                     for(int i = 1; i < splitLine.length; i++) {
                         String[] attributeDefinitionParts = splitLine[i].split("~c~");
                         if (attributeDefinitionParts.length < 2) {
@@ -268,10 +264,8 @@ public final class LoadDataFromFile{
                             hasErrors = true;
                             continue;
                         }
-                        List<String> attributeValues = new ArrayList<>();
-                        for (int j = 1; j < attributeDefinitionParts.length; j++)
-                            attributeValues.add(attributeDefinitionParts[j]);
-                        attributes.put(attributeDefinitionParts[0], attributeValues);
+                        
+                        attributes.put(attributeDefinitionParts[0], attributeDefinitionParts[1]);
                     }
                     
                     long oid = aem.createListTypeItem(className, "", "");
