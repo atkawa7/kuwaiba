@@ -596,8 +596,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     //updates the cache
                     RemoteBusinessObject remoteObject = Util.createRemoteObjectFromNode(instance);
                     for(AttributeMetadata attribute : classMetadata.getAttributes()){
-                        if(attribute.isUnique())
-                            cm.removeUniqueAttributeValue(className, attribute.getName(), remoteObject.getAttributes().get(attribute.getName()).get(0));
+                        if(attribute.isUnique()){
+                            List<String> attributeValues = remoteObject.getAttributes().get(attribute.getName());
+                            if(attributeValues != null)
+                                cm.removeUniqueAttributeValue(className, attribute.getName(), attributeValues.get(0));
+                        }
                     }
                     Util.deleteObject(instance, releaseRelationships);
                 }
@@ -1300,8 +1303,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public List<AttributeMetadata> getMandatoryAttributesInClass(String className) throws ObjectNotFoundException, 
-            MetadataObjectNotFoundException, InvalidArgumentException {
+    public List<AttributeMetadata> getMandatoryAttributesInClass(String className) 
+            throws MetadataObjectNotFoundException
+    {
         List<AttributeMetadata> mandatoryAttributes = new ArrayList<>();
         ClassMetadata aClass = mem.getClass(className);
         Set<AttributeMetadata> classAttributes = aClass.getAttributes();
@@ -1702,7 +1706,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                         
                         String attributeType = classToMap.getType(attributeName);
                         if (AttributeMetadata.isPrimitive(attributeType)){
-                            if(classToMap.isUnique(attributeName) || classToMap.isMandatory(attributeName)){
+                            if(classToMap.isUnique(attributeName)){
                                 //if an attribute is unique and mandatory it should be checked before the object creation, here
                                 if(classToMap.getType(attributeName).equals("String") || 
                                     classToMap.getType(attributeName).equals("Integer") || 

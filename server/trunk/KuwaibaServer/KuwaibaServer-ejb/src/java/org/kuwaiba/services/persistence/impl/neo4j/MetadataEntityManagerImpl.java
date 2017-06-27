@@ -199,8 +199,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             
             buildClassCache();
             tx.success();
-            return id;
         }
+        getSubClassesLight(classDefinition.getName(), true, false);
+        getSubClassesLightNoRecursive(classDefinition.getName(), true, false);
+        return id;
     }
 
     @Override
@@ -1647,7 +1649,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     
     /**
      * Loads into cache the unique attributes of every class and if there are 
-     * instances of that class also saves the values of the unique attributes
+     * instances of the classes also saves the values of the unique attributes
      * @throws InvalidArgumentException if the attribute name doesn't exists
      */
     private void loadUniqueAttirbutesCache() throws InvalidArgumentException{

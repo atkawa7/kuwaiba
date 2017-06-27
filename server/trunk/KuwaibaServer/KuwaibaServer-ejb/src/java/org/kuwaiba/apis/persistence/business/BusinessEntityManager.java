@@ -505,20 +505,18 @@ public interface BusinessEntityManager {
      * Retrieves the list of the attributes marked as mandatory
      * @param className the class name
      * @return a list of AttributeMetadata
-     * @throws ObjectNotFoundException if the object doesn't exist
      * @throws MetadataObjectNotFoundException if the class doesn't exist
-     * @throws InvalidArgumentException if the attribute name does 
      */
-    public List<AttributeMetadata> getMandatoryAttributesInClass(String className) throws ObjectNotFoundException, 
-            MetadataObjectNotFoundException, InvalidArgumentException;
+    public List<AttributeMetadata> getMandatoryAttributesInClass(String className) throws 
+            MetadataObjectNotFoundException;
              
     /**
-     * Retrieves 
-     * @param className
-     * @param objId
-     * @throws ObjectNotFoundException
-     * @throws MetadataObjectNotFoundException
-     * @throws InvalidArgumentException 
+     * Retrieves if an object has values in its attributes marked as mandatory
+     * @param className the object's class name
+     * @param objId object given id
+     * @throws ObjectNotFoundException if the object doesn't exist
+     * @throws MetadataObjectNotFoundException if the class doesn't exist
+     * @throws InvalidArgumentException if the mandatory attribute has no value
      */         
     public void objectHasValuesInMandatoryAttributes(String className, 
             long objId) throws ObjectNotFoundException, 

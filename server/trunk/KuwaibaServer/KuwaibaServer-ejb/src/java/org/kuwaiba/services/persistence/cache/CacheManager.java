@@ -135,6 +135,11 @@ public class CacheManager {
         possibleSpecialChildrenIndex.put(parent, children);
     }
 
+    public void putSubClassNoRecursive(String parent, ClassMetadataLight newSubClass){
+        List<ClassMetadataLight> children = subClassesNoRecursiveIndex.get(parent);
+        children.add(newSubClass);
+        subClassesNoRecursiveIndex.put(parent, children);
+    }
     /**
      * Adds an entry to the subclasses index
      * @param className the given class
@@ -266,6 +271,8 @@ public class CacheManager {
         classIndex.clear();
         possibleChildrenIndex.clear();
         possibleSpecialChildrenIndex.clear();
+        subClassesIndex.clear();
+        subClassesNoRecursiveIndex.clear();
     }
 
     /**
@@ -326,7 +333,8 @@ public class CacheManager {
     public void removeUniqueAttributeValue(String className, String attributeName, String attributeValue){
         HashMap<String, List<String>> uniqueClassAttributes = uniqueClassAttributesIndex.get(className);
         List<String> uniqueValues = uniqueClassAttributes.get(attributeName);
-        uniqueValues.remove(attributeValue);
+        if(uniqueValues != null)
+            uniqueValues.remove(attributeValue);
         uniqueClassAttributes.put(attributeName, uniqueValues);
         uniqueClassAttributesIndex.put(className, uniqueClassAttributes);
     }
