@@ -13,31 +13,31 @@
  *   limitations under the License.
  * 
  */
-package org.inventory.navigation.bookmarks.actions;
+package org.inventory.navigation.favorites.actions;
 
 /**
- * Action factory for the Bookmark Module
+ * Action factory for the Favorites Module
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class BookmarksActionFactory {
+public class FavoritesActionFactory {
     /**
      * Singleton for the create bookmark action
      */
-    private static NewBookmarkFolderAction newBookmarkFolderAction;
+    private static NewFavoritesFolderAction newFavoritesFolderAction;
     /**
      * Singleton for the delete bookmark action
      */
-    private static DeleteBookmarkFolderAction deleteBookmarkFolderAction;
+    private static DeleteFavoritesFolderAction deleteFavoritesFolderAction;
     
-    public static NewBookmarkFolderAction getNewBookmarkFolderAction() {
-        if (newBookmarkFolderAction == null)
-            newBookmarkFolderAction = NewBookmarkFolderAction.getInstance();
-        return newBookmarkFolderAction;
+    public static NewFavoritesFolderAction getNewFavoritesFolderAction() {
+        if (newFavoritesFolderAction == null)
+            newFavoritesFolderAction = NewFavoritesFolderAction.getInstance();
+        return newFavoritesFolderAction;
     }
     
-    public static DeleteBookmarkFolderAction getDeleteBookmarkFolderAction() {
-        if (deleteBookmarkFolderAction == null)
-            deleteBookmarkFolderAction = DeleteBookmarkFolderAction.getInstance();
-        return deleteBookmarkFolderAction;
+    public static DeleteFavoritesFolderAction getDeleteFavoritesFolderAction() {
+        if (deleteFavoritesFolderAction == null)
+            deleteFavoritesFolderAction = DeleteFavoritesFolderAction.getInstance();
+        return deleteFavoritesFolderAction;
     }
 }

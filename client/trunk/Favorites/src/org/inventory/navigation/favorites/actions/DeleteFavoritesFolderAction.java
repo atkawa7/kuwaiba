@@ -13,7 +13,7 @@
  *   limitations under the License.
  * 
  */
-package org.inventory.navigation.bookmarks.actions;
+package org.inventory.navigation.favorites.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -23,49 +23,49 @@ import java.util.ResourceBundle;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.bookmarks.nodes.BookmarkFolderNode;
-import org.inventory.navigation.bookmarks.nodes.BookmarkFolderRootNode.BookmarkFolderRootChildren;
+import org.inventory.navigation.favorites.nodes.FavoritesFolderNode;
+import org.inventory.navigation.favorites.nodes.FavoritesFolderRootNode.FavoritesFolderRootChildren;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.openide.util.Utilities;
 
 /**
- * Action to delete a Bookmark folder
+ * Action to delete a Favorites folder
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class DeleteBookmarkFolderAction extends GenericInventoryAction {
-    private static DeleteBookmarkFolderAction instance;
+public class DeleteFavoritesFolderAction extends GenericInventoryAction {
+    private static DeleteFavoritesFolderAction instance;
     
-    private DeleteBookmarkFolderAction() {
-        putValue(NAME, ResourceBundle.getBundle("org/inventory/navigation/bookmarks/Bundle")
-            .getString("ACTION_NAME_DELETE_BOOKMARK"));
+    private DeleteFavoritesFolderAction() {
+        putValue(NAME, ResourceBundle.getBundle("org/inventory/navigation/favorites/Bundle")
+            .getString("ACTION_NAME_DELETE_FAVORITE"));
     }
     
-    public static DeleteBookmarkFolderAction getInstance() {
-        return instance == null ? instance = new DeleteBookmarkFolderAction() : instance;        
+    public static DeleteFavoritesFolderAction getInstance() {
+        return instance == null ? instance = new DeleteFavoritesFolderAction() : instance;        
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this Bookmark folder?", 
+        if (JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this favorites folder?", 
             "Warning", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             
-            Iterator<? extends BookmarkFolderNode> selectedNodes = Utilities.actionsGlobalContext()
-                .lookupResult(BookmarkFolderNode.class).allInstances().iterator();
+            Iterator<? extends FavoritesFolderNode> selectedNodes = Utilities.actionsGlobalContext()
+                .lookupResult(FavoritesFolderNode.class).allInstances().iterator();
 
             if (!selectedNodes.hasNext())
                 return;
             
-            BookmarkFolderNode selectedNode = selectedNodes.next();
+            FavoritesFolderNode selectedNode = selectedNodes.next();
             
             List<Long> ids = new ArrayList();
-            ids.add(selectedNode.getLocalBookmark().getId());
+            ids.add(selectedNode.getFavoritesFolder().getId());
             
-            if (CommunicationsStub.getInstance().deleteBookmarkFolders(ids)) {
+            if (CommunicationsStub.getInstance().deleteFavoritesFolders(ids)) {
                 NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, 
-                    "The selected Bookmark folder was deleted successfully");
+                    "The selected favorites folder was deleted successfully");
                 
-                ((BookmarkFolderRootChildren) selectedNode.getParentNode().getChildren()).addNotify();
+                ((FavoritesFolderRootChildren) selectedNode.getParentNode().getChildren()).addNotify();
             } else {
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE, 
                     CommunicationsStub.getInstance().getError());
@@ -75,6 +75,6 @@ public class DeleteBookmarkFolderAction extends GenericInventoryAction {
 
     @Override
     public LocalPrivilege getPrivilege() {
-        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_BOOKMARKS, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_FAVORITES, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

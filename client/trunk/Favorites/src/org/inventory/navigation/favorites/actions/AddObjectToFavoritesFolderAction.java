@@ -13,14 +13,14 @@
  *   limitations under the License.
  * 
  */
-package org.inventory.navigation.bookmarks.actions;
+package org.inventory.navigation.favorites.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.bookmarks.windows.ChooseBookmarkFolderFrame;
-import org.inventory.communications.core.LocalBookmarkFolder;
+import org.inventory.navigation.favorites.windows.ChooseFavoritesFolderFrame;
+import org.inventory.communications.core.LocalFavoritesFolder;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.openide.util.lookup.ServiceProvider;
@@ -30,11 +30,11 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class AddObjectToBookmarkFolderAction extends GenericObjectNodeAction {
+public class AddObjectToFavoritesFolderAction extends GenericObjectNodeAction {
         
-    public AddObjectToBookmarkFolderAction() {
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/bookmarks/Bundle")
-            .getString("LBL_ADD_BOOKMARK"));
+    public AddObjectToFavoritesFolderAction() {
+        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/favorites/Bundle")
+            .getString("LBL_ADD_FAVORITE"));
     }
             
     @Override
@@ -45,19 +45,19 @@ public class AddObjectToBookmarkFolderAction extends GenericObjectNodeAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-        List<LocalBookmarkFolder> bookmarkFolders = CommunicationsStub.getInstance().getBookmarkFoldersForUser();
+        List<LocalFavoritesFolder> favoritesFolders = CommunicationsStub.getInstance().getFavoritesFoldersForUser();
                 
-        if (bookmarkFolders == null) {
+        if (favoritesFolders == null) {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, 
                 CommunicationsStub.getInstance().getError());
         } else {
-            ChooseBookmarkFolderFrame frame = new ChooseBookmarkFolderFrame(selectedObjects, bookmarkFolders);
+            ChooseFavoritesFolderFrame frame = new ChooseFavoritesFolderFrame(selectedObjects, favoritesFolders);
             frame.setVisible(true);
         }
     }
 
     @Override
     public LocalPrivilege getPrivilege() {
-        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_BOOKMARKS, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_FAVORITES, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

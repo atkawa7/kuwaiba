@@ -13,11 +13,11 @@
  *   limitations under the License.
  * 
  */
-package org.inventory.navigation.bookmarks.nodes;
+package org.inventory.navigation.favorites.nodes;
 
 import java.util.Collections;
-import org.inventory.communications.core.LocalBookmarkFolder;
-import org.inventory.navigation.bookmarks.actions.BookmarksActionFactory;
+import org.inventory.communications.core.LocalFavoritesFolder;
+import org.inventory.navigation.favorites.actions.FavoritesActionFactory;
 import org.openide.util.ImageUtilities;
 import java.awt.Image;
 import java.awt.datatransfer.Transferable;
@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.swing.Action;
-import org.inventory.navigation.bookmarks.nodes.properties.BookmarkFolderNativeTypeProperty;
+import org.inventory.navigation.favorites.nodes.properties.FavoritesFolderNativeTypeProperty;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
@@ -49,28 +49,28 @@ import org.openide.util.datatransfer.PasteType;
 import org.openide.util.lookup.Lookups;
 
 /**
- * Represents a Bookmark folder
+ * Represents a Favorites folder
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class BookmarkFolderNode extends AbstractNode implements PropertyChangeListener {
-    public static final String ICON_PATH = "org/inventory/navigation/bookmarks/res/icon.png";
+public class FavoritesFolderNode extends AbstractNode implements PropertyChangeListener {
+    public static final String ICON_PATH = "org/inventory/navigation/favorites/res/icon.png";
     private static final Image icon = ImageUtilities.loadImage(ICON_PATH);
     
-    private LocalBookmarkFolder localBookmark;
+    private LocalFavoritesFolder localFavoritesFolder;
     protected Sheet sheet;
     
-    public BookmarkFolderNode(LocalBookmarkFolder localBookmark) {
-        super(new BookmarkChildren(), Lookups.singleton(localBookmark));
-        this.localBookmark = localBookmark;
-        if (localBookmark.getName() != null)
-            localBookmark.addPropertyChangeListener(WeakListeners.propertyChange(this, localBookmark));
+    public FavoritesFolderNode(LocalFavoritesFolder localFavoritesFolder) {
+        super(new FavoritesFolderChildren(), Lookups.singleton(localFavoritesFolder));
+        this.localFavoritesFolder = localFavoritesFolder;
+        if (localFavoritesFolder.getName() != null)
+            localFavoritesFolder.addPropertyChangeListener(WeakListeners.propertyChange(this, localFavoritesFolder));
     }
     
     @Override
     public void setName(String newName) {
         if (newName != null) {
-            if (CommunicationsStub.getInstance().updateBookmarkFolder(localBookmark.getId(), newName)) {
-                localBookmark.setName(newName);
+            if (CommunicationsStub.getInstance().updateFavoritesFolder(localFavoritesFolder.getId(), newName)) {
+                localFavoritesFolder.setName(newName);
                 if (getSheet() != null)
                     setSheet(createSheet());
             } else {
@@ -85,21 +85,21 @@ public class BookmarkFolderNode extends AbstractNode implements PropertyChangeLi
     }
     
     public String getEditableText() {
-        return localBookmark.getName() == null ? "" : localBookmark.getName();
+        return localFavoritesFolder.getName() == null ? "" : localFavoritesFolder.getName();
     }
     
     @Override
     public String getDisplayName() {
-        return localBookmark.toString();
+        return localFavoritesFolder.toString();
     }
     
     @Override
     public Action[] getActions(boolean context) {
-        return new Action[] {SystemAction.get(PasteAction.class), BookmarksActionFactory.getDeleteBookmarkFolderAction() };
+        return new Action[] {SystemAction.get(PasteAction.class), FavoritesActionFactory.getDeleteFavoritesFolderAction() };
     }
     
-    public LocalBookmarkFolder getLocalBookmark() {
-        return localBookmark;
+    public LocalFavoritesFolder getFavoritesFolder() {
+        return localFavoritesFolder;
     }
         
     @Override
@@ -134,7 +134,7 @@ public class BookmarkFolderNode extends AbstractNode implements PropertyChangeLi
         if (dropNode == null) 
             return null;
         
-        //The clipboard does not contain an Bookmark Item Node
+        //The clipboard does not contain an Favorites Item Node
         if (!ObjectNode.class.isInstance(dropNode))
             return null;
         
@@ -147,18 +147,18 @@ public class BookmarkFolderNode extends AbstractNode implements PropertyChangeLi
             public Transferable paste() throws IOException {
                 if (action == DnDConstants.ACTION_COPY) {
                     if (dropNode instanceof ObjectNode) {
-                        ObjectNode bookmarkItem = (ObjectNode) dropNode;
+                        ObjectNode favoritesItem = (ObjectNode) dropNode;
                         
-                        if (bookmarkItem.getParentNode() instanceof BookmarkFolderNode) {
+                        if (favoritesItem.getParentNode() instanceof FavoritesFolderNode) {
                             List<String> objClass = new ArrayList();
-                            objClass.add(bookmarkItem.getObject().getClassName());
+                            objClass.add(favoritesItem.getObject().getClassName());
                             
                             List<Long> objId = new ArrayList();
-                            objId.add(bookmarkItem.getObject().getOid());
+                            objId.add(favoritesItem.getObject().getOid());
                                 
-                            if (CommunicationsStub.getInstance().addObjectsToBookmarkFolder(objClass, objId, localBookmark.getId())) {
+                            if (CommunicationsStub.getInstance().addObjectsToFavoritesFolder(objClass, objId, localFavoritesFolder.getId())) {
                                 
-                                ((BookmarkChildren) getChildren()).addNotify();
+                                ((FavoritesFolderChildren) getChildren()).addNotify();
                             } else {
                                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE, 
                                 CommunicationsStub.getInstance().getError());
@@ -168,26 +168,26 @@ public class BookmarkFolderNode extends AbstractNode implements PropertyChangeLi
                 }
                 if (action == DnDConstants.ACTION_MOVE) {
                     if (dropNode instanceof ObjectNode) {
-                        ObjectNode bookmarkItem = (ObjectNode) dropNode;
+                        ObjectNode favoritesItem = (ObjectNode) dropNode;
                         
-                        if (bookmarkItem.getParentNode() instanceof BookmarkFolderNode) {
-                            BookmarkFolderNode bookmark = (BookmarkFolderNode) bookmarkItem.getParentNode();
+                        if (favoritesItem.getParentNode() instanceof FavoritesFolderNode) {
+                            FavoritesFolderNode bookmark = (FavoritesFolderNode) favoritesItem.getParentNode();
                             
                             List<String> objClass = new ArrayList();
-                            objClass.add(bookmarkItem.getObject().getClassName());
+                            objClass.add(favoritesItem.getObject().getClassName());
                                 
                             List<Long> objId = new ArrayList();
-                            objId.add(bookmarkItem.getObject().getOid());
-                            if (CommunicationsStub.getInstance().removeObjectsFromBookmarkFolder(
+                            objId.add(favoritesItem.getObject().getOid());
+                            if (CommunicationsStub.getInstance().removeObjectsFromFavoritesFolder(
                                 objClass, 
                                 objId, 
-                                bookmark.getLocalBookmark().getId())) {
+                                bookmark.getFavoritesFolder().getId())) {
                                 
-                                ((BookmarkChildren) bookmark.getChildren()).addNotify();
+                                ((FavoritesFolderChildren) bookmark.getChildren()).addNotify();
                                     
-                                if (CommunicationsStub.getInstance().addObjectsToBookmarkFolder(objClass, objId, localBookmark.getId())) {
+                                if (CommunicationsStub.getInstance().addObjectsToFavoritesFolder(objClass, objId, localFavoritesFolder.getId())) {
                                     
-                                    ((BookmarkChildren) getChildren()).addNotify();
+                                    ((FavoritesFolderChildren) getChildren()).addNotify();
                                 } else {
                                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE, 
                                         CommunicationsStub.getInstance().getError());
@@ -208,14 +208,14 @@ public class BookmarkFolderNode extends AbstractNode implements PropertyChangeLi
     protected Sheet createSheet () {
         sheet = Sheet.createDefault();
         Set generalPropertySet = Sheet.createPropertiesSet(); // General attributes category
-        LocalBookmarkFolder lb = CommunicationsStub.getInstance().getBookmarkFolder(localBookmark.getId());
+        LocalFavoritesFolder lb = CommunicationsStub.getInstance().getFavoritesFolder(localFavoritesFolder.getId());
         if (lb == null) {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             return sheet;
         }
-        localBookmark.setName(lb.getName());
+        localFavoritesFolder.setName(lb.getName());
                 
-        PropertySupport.ReadWrite propertyName = new BookmarkFolderNativeTypeProperty(
+        PropertySupport.ReadWrite propertyName = new FavoritesFolderNativeTypeProperty(
                 Constants.PROPERTY_NAME, String.class, Constants.PROPERTY_NAME, 
                 Constants.PROPERTY_NAME, this, lb.getName());
         generalPropertySet.put(propertyName);
@@ -228,8 +228,8 @@ public class BookmarkFolderNode extends AbstractNode implements PropertyChangeLi
     
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof BookmarkFolderNode) {
-            return ((BookmarkFolderNode) obj).getLocalBookmark().equals(getLocalBookmark());
+        if (obj instanceof FavoritesFolderNode) {
+            return ((FavoritesFolderNode) obj).getFavoritesFolder().equals(getFavoritesFolder());
         } else {
             return false;
         }
@@ -238,7 +238,7 @@ public class BookmarkFolderNode extends AbstractNode implements PropertyChangeLi
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 79 * hash + Objects.hashCode(this.localBookmark);
+        hash = 79 * hash + Objects.hashCode(this.localFavoritesFolder);
         return hash;
     }
     
@@ -249,30 +249,30 @@ public class BookmarkFolderNode extends AbstractNode implements PropertyChangeLi
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getSource().equals(localBookmark)) {
-            localBookmark = (LocalBookmarkFolder) evt.getSource();
+        if (evt.getSource().equals(localFavoritesFolder)) {
+            localFavoritesFolder = (LocalFavoritesFolder) evt.getSource();
             if (evt.getPropertyName().equals(Constants.PROPERTY_NAME)) {                
                 setDisplayName(getDisplayName());
-                fireNameChange(null, localBookmark.getName());
+                fireNameChange(null, localFavoritesFolder.getName());
             }
         }
     }
     
-    public static class BookmarkChildren extends Children.Keys<LocalObjectLight> {
+    public static class FavoritesFolderChildren extends Children.Keys<LocalObjectLight> {
         
         @Override
         public void addNotify() {
-            BookmarkFolderNode selectedNode = (BookmarkFolderNode) getNode();
+            FavoritesFolderNode selectedNode = (FavoritesFolderNode) getNode();
             
-            List<LocalObjectLight> bookmarkItems = CommunicationsStub.getInstance().getObjectsInBookmarkFolder(selectedNode.getLocalBookmark().getId(), -1);
+            List<LocalObjectLight> favoritesItems = CommunicationsStub.getInstance().getObjectsInFavoritesFolder(selectedNode.getFavoritesFolder().getId(), -1);
             
-            if (bookmarkItems == null) {
+            if (favoritesItems == null) {
                 setKeys(Collections.EMPTY_LIST);
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, 
                     CommunicationsStub.getInstance().getError());
             } else {
-                Collections.sort(bookmarkItems);
-                setKeys(bookmarkItems);
+                Collections.sort(favoritesItems);
+                setKeys(favoritesItems);
             }
         }
         

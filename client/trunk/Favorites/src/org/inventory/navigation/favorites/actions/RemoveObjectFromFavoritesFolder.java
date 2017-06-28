@@ -13,7 +13,7 @@
  *   limitations under the License.
  * 
  */
-package org.inventory.navigation.bookmarks.actions;
+package org.inventory.navigation.favorites.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -22,10 +22,10 @@ import java.util.List;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import org.inventory.navigation.bookmarks.nodes.BookmarkFolderNode;
-import org.inventory.navigation.bookmarks.nodes.BookmarkFolderNode.BookmarkChildren;
+import org.inventory.navigation.favorites.nodes.FavoritesFolderNode;
+import org.inventory.navigation.favorites.nodes.FavoritesFolderNode.FavoritesFolderChildren;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalBookmarkFolder;
+import org.inventory.communications.core.LocalFavoritesFolder;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
@@ -35,11 +35,11 @@ import org.openide.util.actions.Presenter;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- * Action to remove an associated object to a bookmarkFolder
+ * Action to remove an associated object to a favoritesFolder
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class RemoveObjectFromBookmarkFolder extends GenericObjectNodeAction implements Presenter.Popup {
+public class RemoveObjectFromFavoritesFolder extends GenericObjectNodeAction implements Presenter.Popup {
     
     @Override
     public String getValidator() {
@@ -50,7 +50,7 @@ public class RemoveObjectFromBookmarkFolder extends GenericObjectNodeAction impl
     public void actionPerformed(ActionEvent e) {
         
         if (JOptionPane.showConfirmDialog(null, 
-                "Are you sure you want remove this bookmark?", "Warning", 
+                "Are you sure you want remove this object from the favorites folder?", "Warning", 
                 JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
         
             Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
@@ -65,13 +65,13 @@ public class RemoveObjectFromBookmarkFolder extends GenericObjectNodeAction impl
                 objClass.add(selectedNode.getObject().getClassName());
                 objId.add(selectedNode.getObject().getOid());
                 
-                if (CommunicationsStub.getInstance().removeObjectsFromBookmarkFolder(
+                if (CommunicationsStub.getInstance().removeObjectsFromFavoritesFolder(
                     objClass, 
                     objId, 
                     Long.valueOf(((JMenuItem)e.getSource()).getName()))) {
                     
-                    if (selectedNode.getParentNode() instanceof BookmarkFolderNode)
-                        ((BookmarkChildren) selectedNode.getParentNode().getChildren()).addNotify();
+                    if (selectedNode.getParentNode() instanceof FavoritesFolderNode)
+                        ((FavoritesFolderChildren) selectedNode.getParentNode().getChildren()).addNotify();
                     
 
                 } else {
@@ -81,13 +81,13 @@ public class RemoveObjectFromBookmarkFolder extends GenericObjectNodeAction impl
             }
 
             if (success)
-                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "The selected resources were released from the Bookmark folder");
+                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "The selected objects were removed from the favorites folder");
         }
     }
     
     @Override
     public JMenuItem getPopupPresenter() {
-        JMenu mnuServices = new JMenu(java.util.ResourceBundle.getBundle("org/inventory/navigation/bookmarks/Bundle").getString("LBL_REMOVE_BOOKMARK"));
+        JMenu mnuServices = new JMenu(java.util.ResourceBundle.getBundle("org/inventory/navigation/favorites/Bundle").getString("LBL_REMOVE_FAVORITE"));
         mnuServices.setEnabled(false);
         
         Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
@@ -96,16 +96,16 @@ public class RemoveObjectFromBookmarkFolder extends GenericObjectNodeAction impl
         
             ObjectNode selectedNode = selectedNodes.next(); //Uses the last selected only
             
-            List<LocalBookmarkFolder> bookmarkFolders = CommunicationsStub.getInstance().objectIsBookmarkItemIn(
+            List<LocalFavoritesFolder> favoritesFolders = CommunicationsStub.getInstance().objectIsBookmarkItemIn(
                 selectedNode.getObject().getClassName(), 
                 selectedNode.getObject().getOid());
             
-            if (bookmarkFolders != null) {
+            if (favoritesFolders != null) {
 
-                if (!bookmarkFolders.isEmpty()) {
-                    for (LocalBookmarkFolder bookmarkFolder : bookmarkFolders){
-                        JMenuItem smiServices = new JMenuItem(bookmarkFolder.toString());
-                        smiServices.setName(String.valueOf(bookmarkFolder.getId()));
+                if (!favoritesFolders.isEmpty()) {
+                    for (LocalFavoritesFolder favoritesFolder : favoritesFolders){
+                        JMenuItem smiServices = new JMenuItem(favoritesFolder.toString());
+                        smiServices.setName(String.valueOf(favoritesFolder.getId()));
                         smiServices.addActionListener(this);
                         mnuServices.add(smiServices);
                     }
@@ -120,6 +120,6 @@ public class RemoveObjectFromBookmarkFolder extends GenericObjectNodeAction impl
     
     @Override
     public LocalPrivilege getPrivilege() {
-        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_BOOKMARKS, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_FAVORITES, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

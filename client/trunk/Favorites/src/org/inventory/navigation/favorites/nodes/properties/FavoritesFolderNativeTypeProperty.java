@@ -13,27 +13,27 @@
  *   limitations under the License.
  * 
  */
-package org.inventory.navigation.bookmarks.nodes.properties;
+package org.inventory.navigation.favorites.nodes.properties;
 
 import java.beans.PropertyEditor;
 import java.lang.reflect.InvocationTargetException;
-import org.inventory.navigation.bookmarks.nodes.BookmarkFolderNode;
+import org.inventory.navigation.favorites.nodes.FavoritesFolderNode;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.nodes.PropertySupport;
 
 /**
- * Bookmark folder name property
+ * Favorites folder name property
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class BookmarkFolderNativeTypeProperty extends PropertySupport.ReadWrite {
+public class FavoritesFolderNativeTypeProperty extends PropertySupport.ReadWrite {
 
-    private final BookmarkFolderNode bookmarkFolderNode;
+    private final FavoritesFolderNode bookmarkFolderNode;
     private Object value;
     
-    public BookmarkFolderNativeTypeProperty(String name, Class type, String displayName, 
-            String shortDescription, BookmarkFolderNode bookmarkFolderNode, Object value) {
+    public FavoritesFolderNativeTypeProperty(String name, Class type, String displayName, 
+            String shortDescription, FavoritesFolderNode bookmarkFolderNode, Object value) {
         super(name, type, displayName, shortDescription);
         this.bookmarkFolderNode = bookmarkFolderNode;
         this.value = value;
@@ -50,12 +50,12 @@ public class BookmarkFolderNativeTypeProperty extends PropertySupport.ReadWrite 
     public void setValue(Object value)  {
         boolean flag = false;
         if (this.getName().equals(Constants.PROPERTY_NAME))
-            flag = CommunicationsStub.getInstance().updateBookmarkFolder(bookmarkFolderNode.getLocalBookmark().getId(), (String) value);
+            flag = CommunicationsStub.getInstance().updateFavoritesFolder(bookmarkFolderNode.getFavoritesFolder().getId(), (String) value);
 
         if (flag) {
             this.value = value;
             if (this.getName().equals(Constants.PROPERTY_NAME)) {
-                bookmarkFolderNode.getLocalBookmark().setName((String) value);
+                bookmarkFolderNode.getFavoritesFolder().setName((String) value);
             }
         }
         else {

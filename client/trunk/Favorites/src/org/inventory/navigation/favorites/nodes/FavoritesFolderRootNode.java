@@ -13,37 +13,37 @@
  *   limitations under the License.
  * 
  */
-package org.inventory.navigation.bookmarks.nodes;
+package org.inventory.navigation.favorites.nodes;
 
 import java.awt.Image;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalBookmarkFolder;
+import org.inventory.communications.core.LocalFavoritesFolder;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.bookmarks.actions.NewBookmarkFolderAction;
+import org.inventory.navigation.favorites.actions.NewFavoritesFolderAction;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.util.ImageUtilities;
 
 /**
- * The root node of the tree of bookmarks.
+ * The root node of the tree of favorites.
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class BookmarkFolderRootNode extends AbstractNode {
-    public static final String ICON_PATH = "org/inventory/navigation/bookmarks/res/root.png";
+public class FavoritesFolderRootNode extends AbstractNode {
+    public static final String ICON_PATH = "org/inventory/navigation/favorites/res/root.png";
     private static final Image icon = ImageUtilities.loadImage(ICON_PATH);
     
-    public BookmarkFolderRootNode() {
-        super(new BookmarkFolderRootChildren());
-        setDisplayName("Bookmark Folders");
+    public FavoritesFolderRootNode() {
+        super(new FavoritesFolderRootChildren());
+        setDisplayName("Favorites Folders");
     }
     
     @Override
     public Action[] getActions(boolean context){
-        return new Action[]{ NewBookmarkFolderAction.getInstance() };
+        return new Action[]{ NewFavoritesFolderAction.getInstance() };
     }
     
     @Override
@@ -56,11 +56,11 @@ public class BookmarkFolderRootNode extends AbstractNode {
         return getIcon(i);
     }
     
-    public static class BookmarkFolderRootChildren extends Children.Keys<LocalBookmarkFolder> {
+    public static class FavoritesFolderRootChildren extends Children.Keys<LocalFavoritesFolder> {
         
         @Override
         public void addNotify() {
-            List<LocalBookmarkFolder> bookmarks = CommunicationsStub.getInstance().getBookmarkFoldersForUser();
+            List<LocalFavoritesFolder> bookmarks = CommunicationsStub.getInstance().getFavoritesFoldersForUser();
             
             if (bookmarks == null) {
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, 
@@ -77,8 +77,8 @@ public class BookmarkFolderRootNode extends AbstractNode {
         }
 
         @Override
-        protected Node[] createNodes(LocalBookmarkFolder key) {
-            return new Node [] {new BookmarkFolderNode(key)};
+        protected Node[] createNodes(LocalFavoritesFolder key) {
+            return new Node [] {new FavoritesFolderNode(key)};
         }
     }
 }

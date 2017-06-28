@@ -13,9 +13,9 @@
  *   limitations under the License.
  * 
  */
-package org.inventory.navigation.bookmarks;
+package org.inventory.navigation.favorites;
 
-import org.inventory.navigation.bookmarks.nodes.BookmarkFolderRootNode;
+import org.inventory.navigation.favorites.nodes.FavoritesFolderRootNode;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
@@ -39,39 +39,39 @@ import org.openide.windows.TopComponent;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 @ConvertAsProperties(
-        dtd = "-//org.inventory.navigation.bookmarks//BookmarkModule//EN",
+        dtd = "-//org.inventory.navigation.favorites//FavoritesModule//EN",
         autostore = false
 )
 @TopComponent.Description(
-        preferredID = "BookmarkModuleTopComponent",
-        iconBase="org/inventory/navigation/bookmarks/res/icon.png", 
+        preferredID = "FavoritesModuleTopComponent",
+        iconBase="org/inventory/navigation/favorites/res/icon.png", 
         persistenceType = TopComponent.PERSISTENCE_ALWAYS
 )
 @TopComponent.Registration(mode = "leftSlidingSide", openAtStartup = false)
-@ActionID(category = "Window", id = "org.inventory.navigation.bookmarks.BookmarkModuleTopComponent")
+@ActionID(category = "Window", id = "org.inventory.navigation.favorites.FavoritesModuleTopComponent")
 @ActionReferences(value = {@ActionReference(path = "Menu/Tools"), 
     @ActionReference(path = "Toolbars/Tools")})
 @TopComponent.OpenActionRegistration(
-        displayName = "#CTL_BookmarkModuleAction",
-        preferredID = "BookmarkModuleTopComponent"
+        displayName = "#CTL_FavoritesModuleAction",
+        preferredID = "FavoritesModuleTopComponent"
 )
 @Messages({
-    "CTL_BookmarkModuleAction=Bookmarks",
-    "CTL_BookmarkModuleTopComponent=Bookmarks",
-    "HINT_BookmarkModuleTopComponent=Bookmarks"
+    "CTL_FavoritesModuleAction=Favorites",
+    "CTL_FavoritesModuleTopComponent=Favorites",
+    "HINT_FavoritesModuleTopComponent=Favorites"
 })
-public final class BookmarkModuleTopComponent extends TopComponent implements 
+public final class FavoritesModuleTopComponent extends TopComponent implements 
     ExplorerManager.Provider, Refreshable {
     
     private BeanTreeView treeMain;
     private final ExplorerManager em;
 
-    public BookmarkModuleTopComponent() {
+    public FavoritesModuleTopComponent() {
         em = new ExplorerManager();
         initComponents();
         initCustomComponents();
-        setName(Bundle.CTL_BookmarkModuleTopComponent());
-        setToolTipText(Bundle.HINT_BookmarkModuleTopComponent());
+        setName(Bundle.CTL_FavoritesModuleTopComponent());
+        setToolTipText(Bundle.HINT_FavoritesModuleTopComponent());
     }
     
     public void initCustomComponents() {
@@ -110,7 +110,7 @@ public final class BookmarkModuleTopComponent extends TopComponent implements
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
-        em.setRootContext(new BookmarkFolderRootNode());
+        em.setRootContext(new FavoritesFolderRootNode());
         ExplorerUtils.activateActions(em, true);
     }
 

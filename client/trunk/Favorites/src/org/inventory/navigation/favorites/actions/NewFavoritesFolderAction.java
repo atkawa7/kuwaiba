@@ -13,7 +13,7 @@
  *   limitations under the License.
  * 
  */
-package org.inventory.navigation.bookmarks.actions;
+package org.inventory.navigation.favorites.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
@@ -22,69 +22,69 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalBookmarkFolder;
+import org.inventory.communications.core.LocalFavoritesFolder;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
-import org.inventory.navigation.bookmarks.nodes.BookmarkFolderRootNode;
-import org.inventory.navigation.bookmarks.nodes.BookmarkFolderRootNode.BookmarkFolderRootChildren;
+import org.inventory.navigation.favorites.nodes.FavoritesFolderRootNode;
+import org.inventory.navigation.favorites.nodes.FavoritesFolderRootNode.FavoritesFolderRootChildren;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.openide.util.Utilities;
 
 /**
- * Action to create a new Bookmark folder
+ * Action to create a new Favorites folder
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class NewBookmarkFolderAction extends GenericInventoryAction {
-    private static NewBookmarkFolderAction instance;
+public class NewFavoritesFolderAction extends GenericInventoryAction {
+    private static NewFavoritesFolderAction instance;
     
-    private NewBookmarkFolderAction() {
-        putValue(NAME, ResourceBundle.getBundle("org/inventory/navigation/bookmarks/Bundle")
-            .getString("ACTION_NAME_NEW_BOOKMARK"));
+    private NewFavoritesFolderAction() {
+        putValue(NAME, ResourceBundle.getBundle("org/inventory/navigation/favorites/Bundle")
+            .getString("ACTION_NAME_NEW_FAVORITE"));
     }
     
-    public static NewBookmarkFolderAction getInstance() {
-        return instance == null ? instance = new NewBookmarkFolderAction() : instance;
+    public static NewFavoritesFolderAction getInstance() {
+        return instance == null ? instance = new NewFavoritesFolderAction() : instance;
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        Iterator<? extends BookmarkFolderRootNode> selectedNodes = Utilities.actionsGlobalContext()
-            .lookupResult(BookmarkFolderRootNode.class).allInstances().iterator();
+        Iterator<? extends FavoritesFolderRootNode> selectedNodes = Utilities.actionsGlobalContext()
+            .lookupResult(FavoritesFolderRootNode.class).allInstances().iterator();
         
         if (!selectedNodes.hasNext())
             return;
         
-        BookmarkFolderRootNode selectedNode = selectedNodes.next();
+        FavoritesFolderRootNode selectedNode = selectedNodes.next();
         
         JTextField txtPoolName = new JTextField();
-        txtPoolName.setName("txtBookmarkFolderName");
+        txtPoolName.setName("txtFavoritesFolderName");
         txtPoolName.setColumns(10);
         
         JComplexDialogPanel pnlPoolProperties = new JComplexDialogPanel(
             new String[] {"Folder Name"}, 
             new JComponent[] {txtPoolName});
         
-        if (JOptionPane.showConfirmDialog(null, pnlPoolProperties, "New Bookmark Folder", 
+        if (JOptionPane.showConfirmDialog(null, pnlPoolProperties, "New Favorites Folder", 
             JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             
-            LocalBookmarkFolder newBookmark = CommunicationsStub.getInstance().createBookmarkFolderForUser(
-                ((JTextField) pnlPoolProperties.getComponent("txtBookmarkFolderName")).getText());
+            LocalFavoritesFolder newFavorites = CommunicationsStub.getInstance().createFavoritesFolderForUser(
+                ((JTextField) pnlPoolProperties.getComponent("txtFavoritesFolderName")).getText());
             
-            if (newBookmark == null) {
+            if (newFavorites == null) {
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, 
                     CommunicationsStub.getInstance().getError());
             } else {
-                ((BookmarkFolderRootChildren) selectedNode.getChildren()).addNotify();
+                ((FavoritesFolderRootChildren) selectedNode.getChildren()).addNotify();
                 
                 NotificationUtil.getInstance().showSimplePopup("Information", 
-                    NotificationUtil.INFO_MESSAGE, "Bookmark folder created sucessfully");
+                    NotificationUtil.INFO_MESSAGE, "Favorites folder created sucessfully");
             }
         }
     }
 
     @Override
     public LocalPrivilege getPrivilege() {
-        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_BOOKMARKS, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_FAVORITES, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }
