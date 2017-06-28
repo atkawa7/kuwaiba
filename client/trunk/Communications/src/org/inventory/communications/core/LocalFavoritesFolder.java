@@ -25,17 +25,17 @@ import org.inventory.communications.util.Constants;
  * This class represent a Bookmark
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class LocalBookmarkFolder implements Comparable<LocalBookmarkFolder> {
+public class LocalFavoritesFolder implements Comparable<LocalFavoritesFolder> {
     private long id;
     private String name;
     protected List<PropertyChangeListener> propertyChangeListeners;
     
-    public LocalBookmarkFolder() {
+    public LocalFavoritesFolder() {
         id = -1;
         this.propertyChangeListeners = new ArrayList<>();
     }
     
-    public LocalBookmarkFolder(long id, String name) {
+    public LocalFavoritesFolder(long id, String name) {
         this();
         this.id = id;
         this.name = name;
@@ -79,7 +79,7 @@ public class LocalBookmarkFolder implements Comparable<LocalBookmarkFolder> {
     }
     
     @Override
-    public int compareTo(LocalBookmarkFolder lb) {
+    public int compareTo(LocalFavoritesFolder lb) {
         return getName().compareTo(lb.getName());
     }
     
@@ -93,10 +93,10 @@ public class LocalBookmarkFolder implements Comparable<LocalBookmarkFolder> {
         if (obj == null)
             return false;
         
-        if (!(obj instanceof LocalBookmarkFolder))
+        if (!(obj instanceof LocalFavoritesFolder))
             return false;
         
-        return this.getId() == ((LocalBookmarkFolder) obj).getId();
+        return this.getId() == ((LocalFavoritesFolder) obj).getId();
     }
 
     @Override

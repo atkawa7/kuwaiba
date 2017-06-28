@@ -7,12 +7,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for remoteBookmarkFolder complex type.
+ * <p>Java class for remoteFavoritesFolder complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="remoteBookmarkFolder">
+ * &lt;complexType name="remoteFavoritesFolder">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
@@ -27,11 +27,11 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "remoteBookmarkFolder", propOrder = {
+@XmlType(name = "remoteFavoritesFolder", propOrder = {
     "id",
     "name"
 })
-public class RemoteBookmarkFolder {
+public class RemoteFavoritesFolder {
 
     protected long id;
     protected String name;

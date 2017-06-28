@@ -10,16 +10,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for getBookmarkFoldersForObjectResponse complex type.
+ * <p>Java class for getFavoritesFoldersForObjectResponse complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="getBookmarkFoldersForObjectResponse">
+ * &lt;complexType name="getFavoritesFoldersForObjectResponse">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://ws.kuwaiba.org/}remoteBookmarkFolder" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="return" type="{http://ws.kuwaiba.org/}remoteFavoritesFolder" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,13 +29,13 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getBookmarkFoldersForObjectResponse", propOrder = {
+@XmlType(name = "getFavoritesFoldersForObjectResponse", propOrder = {
     "_return"
 })
-public class GetBookmarkFoldersForObjectResponse {
+public class GetFavoritesFoldersForObjectResponse {
 
     @XmlElement(name = "return")
-    protected List<RemoteBookmarkFolder> _return;
+    protected List<RemoteFavoritesFolder> _return;
 
     /**
      * Gets the value of the return property.
@@ -55,13 +55,13 @@ public class GetBookmarkFoldersForObjectResponse {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link RemoteBookmarkFolder }
+     * {@link RemoteFavoritesFolder }
      * 
      * 
      */
-    public List<RemoteBookmarkFolder> getReturn() {
+    public List<RemoteFavoritesFolder> getReturn() {
         if (_return == null) {
-            _return = new ArrayList<RemoteBookmarkFolder>();
+            _return = new ArrayList<RemoteFavoritesFolder>();
         }
         return this._return;
     }

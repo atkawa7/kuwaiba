@@ -38,7 +38,7 @@ import org.openide.util.NbBundle.Messages;
  */
 @TopComponent.Description(
         preferredID = "GraphicalRepSpecialRelationshipsTopComponent",
-        persistenceType = TopComponent.PERSISTENCE_NEVER
+        persistenceType = TopComponent.PERSISTENCE_ALWAYS
 )
 @TopComponent.Registration(mode = "editor", openAtStartup = false)
 @Messages({

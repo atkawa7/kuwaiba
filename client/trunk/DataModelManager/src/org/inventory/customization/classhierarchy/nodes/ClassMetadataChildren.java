@@ -68,8 +68,7 @@ public class ClassMetadataChildren extends Children.Keys<LocalClassMetadataLight
 
         if (subClasses == null) {
             setKeys(Collections.EMPTY_LIST);
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, 
-                    "An error has occurred retrieving the subclasses of this class: " + com.getError());
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         }
         else {
             Collections.sort(subClasses);

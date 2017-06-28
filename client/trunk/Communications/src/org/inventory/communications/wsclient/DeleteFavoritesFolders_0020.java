@@ -10,16 +10,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for deleteBookmarkFolders complex type.
+ * <p>Java class for deleteFavoritesFolders  complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="deleteBookmarkFolders">
+ * &lt;complexType name="deleteFavoritesFolders ">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="bookmarkFolderId" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="favoritesFolderId" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="userId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
@@ -31,31 +31,31 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "deleteBookmarkFolders", propOrder = {
-    "bookmarkFolderId",
+@XmlType(name = "deleteFavoritesFolders ", propOrder = {
+    "favoritesFolderId",
     "userId",
     "sessionId"
 })
-public class DeleteBookmarkFolders {
+public class DeleteFavoritesFolders_0020 {
 
     @XmlElement(nillable = true)
-    protected List<Long> bookmarkFolderId;
+    protected List<Long> favoritesFolderId;
     protected long userId;
     protected String sessionId;
 
     /**
-     * Gets the value of the bookmarkFolderId property.
+     * Gets the value of the favoritesFolderId property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the bookmarkFolderId property.
+     * This is why there is not a <CODE>set</CODE> method for the favoritesFolderId property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getBookmarkFolderId().add(newItem);
+     *    getFavoritesFolderId().add(newItem);
      * </pre>
      * 
      * 
@@ -65,11 +65,11 @@ public class DeleteBookmarkFolders {
      * 
      * 
      */
-    public List<Long> getBookmarkFolderId() {
-        if (bookmarkFolderId == null) {
-            bookmarkFolderId = new ArrayList<Long>();
+    public List<Long> getFavoritesFolderId() {
+        if (favoritesFolderId == null) {
+            favoritesFolderId = new ArrayList<Long>();
         }
-        return this.bookmarkFolderId;
+        return this.favoritesFolderId;
     }
 
     /**

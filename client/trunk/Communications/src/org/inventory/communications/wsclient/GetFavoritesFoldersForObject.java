@@ -7,16 +7,18 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for getBookmarkFoldersForUser complex type.
+ * <p>Java class for getFavoritesFoldersForObject complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="getBookmarkFoldersForUser">
+ * &lt;complexType name="getFavoritesFoldersForObject">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="userId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="objectClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="objectId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -27,13 +29,17 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getBookmarkFoldersForUser", propOrder = {
+@XmlType(name = "getFavoritesFoldersForObject", propOrder = {
     "userId",
+    "objectClass",
+    "objectId",
     "sessionId"
 })
-public class GetBookmarkFoldersForUser {
+public class GetFavoritesFoldersForObject {
 
     protected long userId;
+    protected String objectClass;
+    protected long objectId;
     protected String sessionId;
 
     /**
@@ -50,6 +56,46 @@ public class GetBookmarkFoldersForUser {
      */
     public void setUserId(long value) {
         this.userId = value;
+    }
+
+    /**
+     * Gets the value of the objectClass property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getObjectClass() {
+        return objectClass;
+    }
+
+    /**
+     * Sets the value of the objectClass property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setObjectClass(String value) {
+        this.objectClass = value;
+    }
+
+    /**
+     * Gets the value of the objectId property.
+     * 
+     */
+    public long getObjectId() {
+        return objectId;
+    }
+
+    /**
+     * Sets the value of the objectId property.
+     * 
+     */
+    public void setObjectId(long value) {
+        this.objectId = value;
     }
 
     /**

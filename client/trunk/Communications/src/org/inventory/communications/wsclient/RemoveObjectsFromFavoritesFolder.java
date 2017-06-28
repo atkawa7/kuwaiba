@@ -10,18 +10,18 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for addObjectsToBookmarkFolder complex type.
+ * <p>Java class for removeObjectsFromFavoritesFolder complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="addObjectsToBookmarkFolder">
+ * &lt;complexType name="removeObjectsFromFavoritesFolder">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="objectClass" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="objectId" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="bookmarkFolderId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="favoritesFolderId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="userId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
@@ -33,20 +33,20 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "addObjectsToBookmarkFolder", propOrder = {
+@XmlType(name = "removeObjectsFromFavoritesFolder", propOrder = {
     "objectClass",
     "objectId",
-    "bookmarkFolderId",
+    "favoritesFolderId",
     "userId",
     "sessionId"
 })
-public class AddObjectsToBookmarkFolder {
+public class RemoveObjectsFromFavoritesFolder {
 
     @XmlElement(nillable = true)
     protected List<String> objectClass;
     @XmlElement(nillable = true)
     protected List<Long> objectId;
-    protected long bookmarkFolderId;
+    protected long favoritesFolderId;
     protected long userId;
     protected String sessionId;
 
@@ -109,19 +109,19 @@ public class AddObjectsToBookmarkFolder {
     }
 
     /**
-     * Gets the value of the bookmarkFolderId property.
+     * Gets the value of the favoritesFolderId property.
      * 
      */
-    public long getBookmarkFolderId() {
-        return bookmarkFolderId;
+    public long getFavoritesFolderId() {
+        return favoritesFolderId;
     }
 
     /**
-     * Sets the value of the bookmarkFolderId property.
+     * Sets the value of the favoritesFolderId property.
      * 
      */
-    public void setBookmarkFolderId(long value) {
-        this.bookmarkFolderId = value;
+    public void setFavoritesFolderId(long value) {
+        this.favoritesFolderId = value;
     }
 
     /**

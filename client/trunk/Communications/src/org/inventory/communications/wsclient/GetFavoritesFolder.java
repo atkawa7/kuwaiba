@@ -7,18 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for getObjectsInBookmarkFolder complex type.
+ * <p>Java class for getFavoritesFolder complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="getObjectsInBookmarkFolder">
+ * &lt;complexType name="getFavoritesFolder">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="bookmarkFolderId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="favoritesFolderId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="userId" type="{http://www.w3.org/2001/XMLSchema}long"/>
- *         &lt;element name="limit" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -29,33 +28,31 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getObjectsInBookmarkFolder", propOrder = {
-    "bookmarkFolderId",
+@XmlType(name = "getFavoritesFolder", propOrder = {
+    "favoritesFolderId",
     "userId",
-    "limit",
     "sessionId"
 })
-public class GetObjectsInBookmarkFolder {
+public class GetFavoritesFolder {
 
-    protected long bookmarkFolderId;
+    protected long favoritesFolderId;
     protected long userId;
-    protected int limit;
     protected String sessionId;
 
     /**
-     * Gets the value of the bookmarkFolderId property.
+     * Gets the value of the favoritesFolderId property.
      * 
      */
-    public long getBookmarkFolderId() {
-        return bookmarkFolderId;
+    public long getFavoritesFolderId() {
+        return favoritesFolderId;
     }
 
     /**
-     * Sets the value of the bookmarkFolderId property.
+     * Sets the value of the favoritesFolderId property.
      * 
      */
-    public void setBookmarkFolderId(long value) {
-        this.bookmarkFolderId = value;
+    public void setFavoritesFolderId(long value) {
+        this.favoritesFolderId = value;
     }
 
     /**
@@ -72,22 +69,6 @@ public class GetObjectsInBookmarkFolder {
      */
     public void setUserId(long value) {
         this.userId = value;
-    }
-
-    /**
-     * Gets the value of the limit property.
-     * 
-     */
-    public int getLimit() {
-        return limit;
-    }
-
-    /**
-     * Sets the value of the limit property.
-     * 
-     */
-    public void setLimit(int value) {
-        this.limit = value;
     }
 
     /**

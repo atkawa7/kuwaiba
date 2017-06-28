@@ -7,12 +7,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for deleteBookmarkFoldersResponse complex type.
+ * <p>Java class for addObjectsToFavoritesFolderResponse complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="deleteBookmarkFoldersResponse">
+ * &lt;complexType name="addObjectsToFavoritesFolderResponse">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
@@ -25,8 +25,8 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "deleteBookmarkFoldersResponse")
-public class DeleteBookmarkFoldersResponse {
+@XmlType(name = "addObjectsToFavoritesFolderResponse")
+public class AddObjectsToFavoritesFolderResponse {
 
 
 }
