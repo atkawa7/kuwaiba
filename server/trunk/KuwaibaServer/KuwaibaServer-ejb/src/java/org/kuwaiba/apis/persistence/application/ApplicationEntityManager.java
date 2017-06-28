@@ -78,6 +78,7 @@ public interface ApplicationEntityManager {
      * @param firstName New user's first name
      * @param lastName New user's last name
      * @param enabled Shall the new user be enabled by default
+     * @param type User type. See UserProfileLight.USER_TYPE_* for possible values
      * @param privileges New user's privileges. Use null for none
      * @param defaultGroupId Default group this user will be associated to
      * @return The id of the newly created user
@@ -703,6 +704,7 @@ public interface ApplicationEntityManager {
     /**
      * Allows to execute custom database queries. This method should not be used as it's only a temporary solution
      * @param dbCode A string with the query
+     * @param needReturn
      * @return A table with results, that could also be interpreted as a multidimensional array with numerous paths
      * @throws NotAuthorizedException If the user is not allowed to run arbitrary code on the database
      * @deprecated Don't use it, instead, create a method in the corresponding entity manager instead of running code directly on the database
@@ -944,71 +946,71 @@ public interface ApplicationEntityManager {
      */
     public long [] copyTemplateSpecialElement(String[] sourceObjectsClassNames, long [] sourceObjectsIds, String newParentClassName, long newParentId) 
         throws ArraySizeMismatchException, ApplicationObjectNotFoundException, MetadataObjectNotFoundException;
-    // Bookmarks
+    // Favorites
     /**
-     * Adds an object to the Bookmark folder
+     * Adds an object to the favorites folder
      * @param objectClass Object class
      * @param objectId Object id
-     * @param bookmarkFolderId Bookmark folder id
+     * @param favoritesFolderId favorites folder id
      * @param userId User Id
-     * @throws ApplicationObjectNotFoundException If the Bookmark folder can not be found
+     * @throws ApplicationObjectNotFoundException If the favorites folder can not be found
      * @throws MetadataObjectNotFoundException If the object can not be found
      * @throws ObjectNotFoundException If the object can not be found
      * @throws OperationNotPermittedException If the object have a relationship with the bookmark
      */
-    public void addObjectToBookmarkFolder(String objectClass, long objectId, long bookmarkFolderId, long userId) 
+    public void addObjectTofavoritesFolder(String objectClass, long objectId, long favoritesFolderId, long userId) 
         throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException;
     
     /**
-     * Removes an object associated to a Bookmark folder
+     * Removes an object associated to a favorites folder
      * @param objectClass Object class
      * @param objectId Object id
-     * @param bookmarkFolderId Bookmark folder id
+     * @param favoritesFolderId favorites folder id
      * @param userId User Id
-     * @throws ApplicationObjectNotFoundException If the Bookmark folder can not be found
+     * @throws ApplicationObjectNotFoundException If the favorites folder can not be found
      * @throws MetadataObjectNotFoundException If the object can not be found
      * @throws ObjectNotFoundException If the object can not be found
      */
-    public void removeObjectFromBookmarkFolder(String objectClass, long objectId, long bookmarkFolderId, long userId) 
+    public void removeObjectFromfavoritesFolder(String objectClass, long objectId, long favoritesFolderId, long userId) 
         throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, ObjectNotFoundException;
         
     /**
-     * Create a relationship between an user and a new Bookmark folder
-     * @param name Bookmark folder name
+     * Create a relationship between an user and a new favorites folder
+     * @param name favorites folder name
      * @param userId User id
-     * @return The new Bookmark folder Id
+     * @return The new favorites folder Id
      * @throws ApplicationObjectNotFoundException If the user can not be found
      */
-    public long createBookmarkFolderForUser(String name, long userId) 
+    public long createFavoritesFolderForUser(String name, long userId) 
         throws ApplicationObjectNotFoundException;
     
     /**
      * Delete a Bookmark Folder of an User
-     * @param bookmarkFolderId Bookmark folder id
+     * @param favoritesFolderId favorites folder id
      * @param userId User Id
-     * @throws ApplicationObjectNotFoundException If any Bookmark folder in the array can not be found
+     * @throws ApplicationObjectNotFoundException If any favorites folder in the array can not be found
      */
-    public void deleteBookmarkFolders(long[] bookmarkFolderId, long userId)
+    public void deleteFavoritesFolders (long[] favoritesFolderId, long userId)
         throws ApplicationObjectNotFoundException;
     
     /**
-     * Get the Bookmark folders create by an user.
+     * Get the favorites folders create by an user.
      * @param userId user id
      * @return List of Bookmarks folders for an User
      * @throws ApplicationObjectNotFoundException If the user can not be found
      */
-    public List<BookmarkFolder> getBookmarkFoldersForUser(long userId) 
+    public List<FavoritesFolder> getFavoritesFoldersForUser(long userId) 
         throws ApplicationObjectNotFoundException;
     
     /**
      * Get the object assigned to the bookmark
-     * @param bookmarkFolderId Bookmark folder id
+     * @param favoritesFolderId favorites folder id
      * @param limit Max number of results
      * @param userId User Id
-     * @throws ApplicationObjectNotFoundException If the Bookmark folder can not be found
+     * @throws ApplicationObjectNotFoundException If the favorites folder can not be found
      * @return List of objects related to bookmark
      */
-    public List<RemoteBusinessObjectLight> getObjectsInBookmarkFolder(long bookmarkFolderId, long userId, int limit) 
+    public List<RemoteBusinessObjectLight> getObjectsInFavoritesFolder(long favoritesFolderId, long userId, int limit) 
         throws ApplicationObjectNotFoundException;
     /**
      * Get the bookmarks where an object is associated
@@ -1019,28 +1021,28 @@ public interface ApplicationEntityManager {
      * @throws ObjectNotFoundException If the object can not be found
      * @return list of bookmarks where an object are an item
      * @throws ApplicationObjectNotFoundException If the object is associated to a bookmark folder but 
-     *                                            The Bookmark folder is not associated to the current user
+     *                                            The favorites folder is not associated to the current user
      */
-    public List<BookmarkFolder> getBookmarkFoldersForObject(long userId, String objectClass, long objectId) 
+    public List<FavoritesFolder> getFavoritesFoldersForObject(long userId, String objectClass, long objectId) 
         throws MetadataObjectNotFoundException, ObjectNotFoundException, ApplicationObjectNotFoundException;
     
     /**
-     * Gets a Bookmark folder
-     * @param bookmarkFolderId Bookmark folder id
+     * Gets a favorites folder
+     * @param favoritesFolderId favorites folder id
      * @param userId User id
-     * @throws ApplicationObjectNotFoundException If the Bookmark folder can not be found
+     * @throws ApplicationObjectNotFoundException If the favorites folder can not be found
      * @return The bookmark with id
      */
-    public BookmarkFolder getBookmarkFolder(long bookmarkFolderId, long userId) 
+    public FavoritesFolder getFavoritesFolder(long favoritesFolderId, long userId) 
         throws ApplicationObjectNotFoundException;
     
     /**
-     * Updates a Bookmark folder
-     * @param bookmarkFolderId Bookmark folder id
+     * Updates a favorites folder
+     * @param favoritesFolderId favorites folder id
      * @param userId User Id
-     * @param bookmarkFolderName Bookmark folder name
-     * @throws ApplicationObjectNotFoundException If the Bookmark folder can not be found
+     * @param favoritesFolderName favorites folder name
+     * @throws ApplicationObjectNotFoundException If the favorites folder can not be found
      */
-    public void updateBookmarkFolder(long bookmarkFolderId, long userId, String bookmarkFolderName) 
+    public void updateFavoritesFolder(long favoritesFolderId, long userId, String favoritesFolderName) 
         throws ApplicationObjectNotFoundException;
 }

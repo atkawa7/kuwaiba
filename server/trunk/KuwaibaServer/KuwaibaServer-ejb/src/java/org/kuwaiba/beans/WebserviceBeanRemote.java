@@ -31,7 +31,7 @@ import org.kuwaiba.ws.toserialize.application.ApplicationLogEntry;
 import org.kuwaiba.ws.toserialize.application.GroupInfo;
 import org.kuwaiba.ws.toserialize.application.GroupInfoLight;
 import org.kuwaiba.ws.toserialize.application.PrivilegeInfo;
-import org.kuwaiba.ws.toserialize.application.RemoteBookmarkFolder;
+import org.kuwaiba.ws.toserialize.application.RemoteFavoritesFolder;
 import org.kuwaiba.ws.toserialize.application.RemotePool;
 import org.kuwaiba.ws.toserialize.application.RemoteQuery;
 import org.kuwaiba.ws.toserialize.application.RemoteQueryLight;
@@ -513,13 +513,13 @@ public interface WebserviceBeanRemote {
     // </editor-fold>
     
     // Bookmarks
-    public long createBookmarkFolderForUser(String bookmarkFolderName, long userId, String ipAddress, String sessionId) throws ServerSideException;
-    public void deleteBookmarkFolders(long[] bookmarkFolderId, long userId, String ipAddress, String sessionId) throws ServerSideException;
-    public List<RemoteBookmarkFolder> getBookmarkFoldersForUser(long userId, String ipAddress, String sessionId) throws ServerSideException;
-    public void addObjectsToBookmarkFolder(String[] objectClass, long[] objectId, long bookmarkFolderId, long userId, String ipAddress, String sessionId) throws ServerSideException;
-    public void removeObjectsFromBookmarkFolder(String[] objectClass, long[] objectId, long bookmarkFolderId, long userId, String ipAddress, String sessionId) throws ServerSideException;
-    public RemoteObjectLight[] getObjectsInBookmarkFolder(long bookmarkFolderId, long userId, int limit, String ipAddress, String sessionId) throws ServerSideException;
-    public List<RemoteBookmarkFolder> getBookmarkFoldersForObject(long userId ,String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;
-    public RemoteBookmarkFolder getBookmarkFolder(long bookmarkFolderId, long userId, String ipAddress, String sessionId) throws ServerSideException;
-    public void updateBookmarkFolder(long bookmarkFolderId, long userId, String bookmarkFolderName, String ipAddress, String sessionId) throws ServerSideException;
+    public long createFavoritesFolderForUser(String favoritesFolderName, long userId, String ipAddress, String sessionId) throws ServerSideException;
+    public void deleteFavoritesFolders (long[] favoritesFolderId, long userId, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteFavoritesFolder> getFavoritesFoldersForUser(long userId, String ipAddress, String sessionId) throws ServerSideException;
+    public void addObjectsToFavoritesFolder(String[] objectClass, long[] objectId, long favoritesFolderId, long userId, String ipAddress, String sessionId) throws ServerSideException;
+    public void removeObjectsFromFavoritesFolder(String[] objectClass, long[] objectId, long favoritesFolderId, long userId, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteObjectLight[] getObjectsInFavoritesFolder(long favoritesFolderId, long userId, int limit, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteFavoritesFolder> getFavoritesFoldersForObject(long userId ,String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteFavoritesFolder getFavoritesFolder(long favoritesFolderId, long userId, String ipAddress, String sessionId) throws ServerSideException;
+    public void updateFavoritesFolder(long favoritesFolderId, long userId, String favoritesFolderName, String ipAddress, String sessionId) throws ServerSideException;
 }
