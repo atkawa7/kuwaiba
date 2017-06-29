@@ -107,22 +107,41 @@ public interface BusinessEntityManager {
      */
     public long createPoolItem(long poolId, String className, String[] attributeNames, String[] attributeValues, long templateId) 
             throws ApplicationObjectNotFoundException, InvalidArgumentException, ArraySizeMismatchException, MetadataObjectNotFoundException;
-    
     /**
-     * Create massively objects related to their parent using a child_of_special relationship.
-     * The name of the objects is automatically set numerically from1 to numberOfChildren
-     * @param objectClass Object class
-     * @param numberOfChildren
-     * @param parentClass Parent class
-     * @param parentId parent id
-     * @return A list of ids of the newly created objects 
-     * @throws MetadataObjectNotFoundException If any of the classes provided can't be found
-     * @throws ObjectNotFoundException if the parent can not be found
-     * @throws OperationNotPermittedException If due to business rules, the operation can't be performed
-     * @throws InvalidArgumentException If any of the attributes or its type is invalid.
+     * Creates multiple objects using a given name pattern
+     * @param className The class name for the new objects
+     * @param parentClassName The parent class name for the new objects
+     * @param parentOid The object id of the parent
+     * @param numberOfObjects Number of objects to be created
+     * @param namePattern A pattern to create the names for the new objects
+     * @return An arrays of ids for the new objects
+     * @throws MetadataObjectNotFoundException If the className or the parentClassName can not be found.
+     * @throws ObjectNotFoundException If the parent node can not be found.
+     * @throws InvalidArgumentException If the given name pattern not match with the regular expression to build the new object name.
+     * @throws OperationNotPermittedException If the className is not a possible children of parentClassName.
+     *                                        If the className is not in design or are abstract.
+     *                                        If the className is not an InventoryObject.
      */
-    public long[] createBulkSpecialObjects(String objectClass, int numberOfChildren, String parentClass, long parentId)
-           throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException;
+    public long [] createBulkObjects(String className, String parentClassName, long parentOid, int numberOfObjects, String namePattern) 
+        throws MetadataObjectNotFoundException, OperationNotPermittedException, ObjectNotFoundException, InvalidArgumentException;
+    /**
+     * Creates multiple special objects using a given name pattern
+     * @param className The class name for the new special objects
+     * @param parentClassName The parent class name for the new special objects
+     * @param parentId The object id of the parent
+     * @param numberOfSpecialObjects Number of special objects to be created
+     * @param namePattern A pattern to create the names for the new special objects
+     * @return An array of ids for the new special objects
+     * @throws MetadataObjectNotFoundException If the className or the parentClassName can not be found.
+     * @throws ObjectNotFoundException If the parent node can not be found.
+     * @throws InvalidArgumentException If the given name pattern not match with the regular expression to build the new object name.
+     * @throws OperationNotPermittedException If the className is not a possible special children of parentClassName.
+     *                                        If the className is not in design or are abstract.
+     *                                        If the className is not an InventoryObject.
+     */
+    public long[] createBulkSpecialObjects(String className, String parentClassName, long parentId, int numberOfSpecialObjects, String namePattern) 
+        throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException;
+        
     /**
      * Gets the detailed information about an object
      * @param className Object class name
@@ -130,10 +149,21 @@ public interface BusinessEntityManager {
      * @return A detailed representation of the requested object
      * @throws MetadataObjectNotFoundException If the className class can't be found
      * @throws ObjectNotFoundException If the requested object can't be found
-     * @throws InvalidArgumentException If the database object could not be properly mapped into a serializable java object.
+     * @throws InvalidArgumentException If the object id can not be found.
      */
     public RemoteBusinessObject getObject(String className, long oid)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException;
+    
+    /**
+     * Gets the detailed information about an object using the id
+     * @param oid Object's oid
+     * @return A detailed representation of the requested object
+     * @throws MetadataObjectNotFoundException If the className class can't be found
+     * @throws ObjectNotFoundException If the requested object can't be found
+     * @throws InvalidArgumentException If the database object could not be properly mapped into a serializable java object.
+     */
+    public RemoteBusinessObject getObject(long oid) 
+        throws InvalidArgumentException, ObjectNotFoundException, MetadataObjectNotFoundException;
 
     /**
      * Gets the special children of a given object

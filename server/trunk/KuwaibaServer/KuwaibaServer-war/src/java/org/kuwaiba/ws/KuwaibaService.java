@@ -2284,6 +2284,78 @@ public class KuwaibaService {
             }
         }
     }
+    
+    /**
+     * Creates multiple objects using a given name pattern
+     * @param className The class name for the new objects
+     * @param parentClassName The parent class name for the new objects
+     * @param parentOid The object id of the parent
+     * @param numberOfObjects Number of objects to be created
+     * @param namePattern A pattern to create the names for the new objects
+     * @param sessionId Session id token
+     * @return A list of ids for the new objects
+     * @throws ServerSideException If the className or the parentClassName can not be found.
+     *                             If the className is not a possible children of parentClassName.
+     *                             If the className is not in design or are abstract.
+     *                             If the className is not an InventoryObject.
+     *                             If the parent node can not be found.
+     *                             If the given name pattern not match with the regular expression to build the new object name.
+     */
+    @WebMethod(operationName = "createBulkObjects")
+    public long [] createBulkObjects(
+        @WebParam(name = "className") String className, 
+        @WebParam(name = "parentClassName") String parentClassName, 
+        @WebParam(name = "parentOid") long parentOid, 
+        @WebParam(name = "numberOfObjects") int numberOfObjects, 
+        @WebParam(name = "namePattern") String namePattern, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try{
+            return wsBean.createBulkObjects(className, parentClassName, parentOid, numberOfObjects, namePattern, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createBulkObjects: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Creates multiple special objects using a given name pattern
+     * @param className The class name for the new special objects
+     * @param parentClassName The parent class name for the new special objects
+     * @param parentId The object id of the parent
+     * @param numberOfSpecialObjects Number of special objects to be created
+     * @param namePattern A pattern to create the names for the new special objects
+     * @param sessionId Session id token
+     * @return A list of ids for the new special objects
+     * @throws ServerSideException If the className or the parentClassName can not be found.
+     *                             If the parent node can not be found.
+     *                             If the given name pattern not match with the regular expression to build the new object name.
+     *                             If the className is not a possible special children of parentClassName.
+     *                             If the className is not in design or are abstract.
+     *                             If the className is not an InventoryObject.
+     */
+    @WebMethod(operationName = "createBulkSpecialObjects")
+    public long[] createBulkSpecialObjects(
+        @WebParam(name = "className") String className, 
+        @WebParam(name = "parentClassName") String parentClassName, 
+        @WebParam(name = "parentId") long parentId, 
+        @WebParam(name = "numberOfSpecialObjects") int numberOfSpecialObjects, 
+        @WebParam(name = "namePattern") String namePattern, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try{
+            return wsBean.createBulkSpecialObjects(className, parentClassName, parentId, numberOfSpecialObjects, namePattern, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createBulkSpecialObjects: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
     /**
      * Models
      */
@@ -2391,7 +2463,9 @@ public class KuwaibaService {
      * @param sessionId Session token
      * @return The ids of the new objects
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
+     * @deprecated Use createBulkSpecialObjects to create special objects like the physical connections
      */
+    @WebMethod(operationName = "createBulkPhysicalConnections")
     public long[] createBulkPhysicalConnections(@WebParam(name = "connectionClass")String connectionClass, 
             @WebParam(name = "numberOfChildren")int numberOfChildren, 
             @WebParam(name = "parentClass")String parentClass, 

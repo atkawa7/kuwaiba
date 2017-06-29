@@ -53,6 +53,7 @@ import org.kuwaiba.services.persistence.impl.neo4j.RelTypes;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.services.persistence.util.Util;
 import org.kuwaiba.util.ChangeDescriptor;
+import org.kuwaiba.util.dynamicname.DynamicName;
 import org.kuwaiba.ws.todeserialize.StringPair;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.DynamicLabel;
@@ -61,6 +62,7 @@ import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Path;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
@@ -406,14 +408,83 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             return newObject.getId();
         }
     }
-
+    
     @Override
-    public long[] createBulkSpecialObjects(String className, int numberOfObjects, String parentClassName, long parentId) 
+    public long [] createBulkObjects(String className, String parentClassName, long parentOid, int numberOfObjects, String namePattern) 
+        throws MetadataObjectNotFoundException, OperationNotPermittedException, ObjectNotFoundException, InvalidArgumentException {
+        
+        ClassMetadata myClass = cm.getClass(className);
+        
+        if (!mem.getPossibleChildren(parentClassName).contains(myClass))
+            throw new OperationNotPermittedException(String.format("An instance of class %s can't be created as child of %s", className, parentClassName == null ? Constants.NODE_DUMMYROOT : parentClassName));
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
+            if (classNode == null)
+                throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
+            
+            if (myClass == null) {
+                myClass = Util.createClassMetadataFromNode(classNode);
+                cm.putClass(myClass);
+            }
+            
+            if (myClass.isInDesign())
+                throw new OperationNotPermittedException("Can not create instances of classes marked as isDesign");
+            
+            if (myClass.isAbstract())
+                throw new OperationNotPermittedException(String.format("Abstract class %s can not be instantiated", className));
+            
+            if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, className))
+                throw new OperationNotPermittedException("Can not create non-inventory objects");
+            //The object should be created under an instance other than the dummy root
+            if (parentClassName != null && parentOid != -1) {
+                ClassMetadata myParentObjectClass = cm.getClass(parentClassName);
+                if (myParentObjectClass == null)
+                    throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", parentClassName));
+            }
+            Node parentNode;
+            if (parentOid != -1) {
+                parentNode = getInstanceOfClass(parentClassName, parentOid);
+                if (parentNode == null)
+                    throw new ObjectNotFoundException(parentClassName, parentOid);
+                
+            }
+            else
+                parentNode = specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
+            
+            if (parentNode == null)
+                throw new ObjectNotFoundException(parentClassName, parentOid);
+            
+            DynamicName dynamicName = new DynamicName(namePattern);
+            if (dynamicName.getNumberOfDynamicNames() < numberOfObjects) {
+                throw new InvalidArgumentException("The given pattern name have "
+                        + "less possibilities that the given number of object to create");
+            }
+            long res[] = new long[numberOfObjects];
+            for (int i = 0; i < numberOfObjects; i += 1) {
+                Node newObject = createObject(classNode, myClass, null);
+                newObject.setProperty(Constants.PROPERTY_NAME, dynamicName.getDynamicNames().get(i));
+                
+                newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF);
+                
+                objectIndex.putIfAbsent(newObject, Constants.PROPERTY_ID, newObject.getId());
+                res[i] = newObject.getId();
+            }
+            tx.success();
+            return res;
+        }
+    }
+    
+    @Override
+    public long[] createBulkSpecialObjects(String className, String parentClassName, long parentId, int numberOfSpecialObjects, String namePattern) 
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException {
         
         ClassMetadata myClass= cm.getClass(className);
         if (myClass == null)
             throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
+        
+        if (!mem.getPossibleSpecialChildren(parentClassName).contains(myClass))
+            throw new OperationNotPermittedException(String.format("An instance of class %s can't be created as child of %s", className, parentClassName == null ? Constants.NODE_DUMMYROOT : parentClassName));
 
         if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, className))
             throw new OperationNotPermittedException(String.format("Class %s is not an business class", className));
@@ -446,22 +517,28 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             }
             else
                 parentNode = specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
-
-            long res[] = new long[numberOfObjects];
-            for (int i = 0; i < numberOfObjects; i++){
+            
+            DynamicName dynamicName = new DynamicName(namePattern);
+            if (dynamicName.getNumberOfDynamicNames() < numberOfSpecialObjects) {
+                throw new InvalidArgumentException("The given pattern to the name have "
+                        + "less possibilities that the given number of object to create");
+            }
+            long res[] = new long[numberOfSpecialObjects];
+            for (int i = 0; i < numberOfSpecialObjects; i++) {
                 Node newObject = createObject(classNode, myClass, null);
-                newObject.setProperty(Constants.PROPERTY_NAME, String.format("%03d", i + 1));
+                newObject.setProperty(Constants.PROPERTY_NAME, dynamicName.getDynamicNames().get(i));
                 if (parentNode != null)
                     newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF_SPECIAL);
                 
                 objectIndex.putIfAbsent(newObject, Constants.PROPERTY_ID, newObject.getId());
+                res[i] = newObject.getId();
             }
             
             tx.success();
             return res;
         }
     }
-
+    
     @Override
     public RemoteBusinessObject getObject(String className, long oid)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
@@ -470,11 +547,38 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             ClassMetadata myClass = cm.getClass(className);
             Node instance = getInstanceOfClass(className, oid);
             RemoteBusinessObject res = Util.createRemoteObjectFromNode(instance, myClass);
+            tx.success();
             return res;
         }
     }
     
-    
+    @Override
+    public RemoteBusinessObject getObject(long oid) throws InvalidArgumentException, ObjectNotFoundException, MetadataObjectNotFoundException {
+        String className = null;
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            Node objectNode = objectIndex.get(Constants.PROPERTY_ID, oid).getSingle();
+            
+            if (objectNode == null)
+                throw new InvalidArgumentException(String.format("The object with id %s can not be found", oid));
+            
+            
+            if (objectNode.hasRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING)) {
+                for (Relationship relationship : objectNode.getRelationships(RelTypes.INSTANCE_OF, Direction.OUTGOING)) {
+                    Node classNode = relationship.getEndNode();
+                    if (classNode.hasProperty(Constants.PROPERTY_NAME)) {
+                        className = (String) classNode.getProperty(Constants.PROPERTY_NAME);
+                        break;
+                    }
+                }
+            }
+            tx.success();
+        }
+        if (className == null)
+            throw new InvalidArgumentException("The class for the object with id %s can not be found");
+        
+        return getObject(className, oid);
+    }
 
     @Override
     public RemoteBusinessObjectLight getObjectLight(String className, long oid)

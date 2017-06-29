@@ -1229,6 +1229,44 @@ public class WebserviceBean implements WebserviceBeanRemote {
         }
     }
     
+    @Override
+    public long [] createBulkObjects(String className, String parentClassName, long parentOid, int numberOfObjects, String namePattern, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("createBulkObjects", ipAddress, sessionId);
+            
+            long[] newObjects = bem.createBulkObjects(className, parentClassName, parentOid, numberOfObjects, namePattern);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
+                    String.format("%s new objects of class %s", numberOfObjects, className));
+            
+            return newObjects;
+
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public long[] createBulkSpecialObjects(String className, String parentClassName, long parentId, int numberOfSpecialObjects, String namePattern, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("createBulkSpecialObjects", ipAddress, sessionId);
+            
+            long[] newSpecialObjects = bem.createBulkSpecialObjects(className, parentClassName, parentId, numberOfSpecialObjects, namePattern);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
+                    String.format("%s new special objects  of class %s", numberOfSpecialObjects, className));
+            
+            return newSpecialObjects;
+
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
     //Physical connections
     @Override
     public void connectMirrorPort(String aObjectClass, long aObjectId, String bObjectClass, long bObjectId, String ipAddress, String sessionId) throws ServerSideException {
@@ -1332,7 +1370,9 @@ public class WebserviceBean implements WebserviceBeanRemote {
             if (!mem.isSubClass("GenericPhysicalConnection", connectionClass))
                 throw new ServerSideException(String.format("Class %s is not a physical connection", connectionClass));
             
-            long[] newConnections = bem.createBulkSpecialObjects(connectionClass, numberOfChildren, parentClass, parentId);
+            //long[] newConnections = bem.createBulkSpecialObjects(connectionClass, numberOfChildren, parentClass, parentId);
+            String namePattern = "[sequence(1,"+ numberOfChildren + ")]";
+            long [] newConnections = bem.createBulkSpecialObjects(connectionClass, parentClass, parentId, numberOfChildren, namePattern);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
                     String.format("%s new connections  of class %s", numberOfChildren, connectionClass));
