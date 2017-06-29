@@ -18,7 +18,6 @@ package org.inventory.navigation.navigationtree;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.KeyStroke;
@@ -30,15 +29,16 @@ import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.navigation.navigationtree.nodes.RootObjectNode;
 import org.inventory.navigation.navigationtree.nodes.actions.DeleteBusinessObjectAction;
 import org.netbeans.api.settings.ConvertAsProperties;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
 import org.openide.nodes.Node;
-import org.openide.util.ImageUtilities;
 import org.openide.util.NbBundle;
 import org.openide.util.actions.SystemAction;
 import org.openide.windows.TopComponent;
-import org.openide.windows.WindowManager;
 
 /**
  * Navigation Tree Top Component
@@ -46,13 +46,22 @@ import org.openide.windows.WindowManager;
  */
 @ConvertAsProperties(dtd = "-//org.inventory.navigation.navigationtree//NavigationTree//EN",
 autostore = false)
+@TopComponent.Description(
+        preferredID = "NavigationTreeTopComponent",
+        iconBase="org/inventory/navigation/navigationtree/res/icon.png", 
+        persistenceType = TopComponent.PERSISTENCE_ALWAYS
+)
+@TopComponent.Registration(mode = "explorer", openAtStartup = false)
+@ActionID(category = "Tools", id = "org.inventory.navigation.navigationtree.NavigationTreeTopComponent")
+@ActionReferences(value = { @ActionReference(path = "Menu/Tools/Navigation"),
+    @ActionReference(path = "Toolbars/Navigation", position = 100, separatorBefore = 99)})
+@TopComponent.OpenActionRegistration(
+        displayName = "Navigation Tree",
+        preferredID = "NavigationTreeTopComponent"
+)
 public final class NavigationTreeTopComponent extends TopComponent
             implements ExplorerManager.Provider, Refreshable{
 
-    /** path to the icon used by the component and its open action */
-    static final String ICON_PATH = "org/inventory/navigation/navigationtree/res/icon.png";
-    private static NavigationTreeTopComponent instance;
-    private static final String PREFERRED_ID = "NavigationTreeTopComponent";
     private final ExplorerManager em = new ExplorerManager();
     private NavigationTreeService nts;
     private BeanTreeView treeView;
@@ -62,7 +71,6 @@ public final class NavigationTreeTopComponent extends TopComponent
         initComponentsCustom();
         setName(NbBundle.getMessage(NavigationTreeTopComponent.class, "CTL_NavigationTreeTopComponent"));
         setToolTipText(NbBundle.getMessage(NavigationTreeTopComponent.class, "HINT_NavigationTreeTopComponent"));
-        setIcon(ImageUtilities.loadImage(ICON_PATH, true));
     }
 
         /*
@@ -105,41 +113,7 @@ public final class NavigationTreeTopComponent extends TopComponent
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
-    /**
-     * Gets default instance. Do not use directly: reserved for *.settings files only,
-     * i.e. deserialization routines; otherwise you could get a non-deserialized instance.
-     * To obtain the singleton instance, use {@link #findInstance}.
-     */
-    public static synchronized NavigationTreeTopComponent getDefault() {
-        if (instance == null) {
-            instance = new NavigationTreeTopComponent();
-        }
-        return instance;
-    }
-
-    /**
-     * Obtain the NavigationTreeTopComponent instance. Never call {@link #getDefault} directly!
-     */
-    public static synchronized NavigationTreeTopComponent findInstance() {
-        TopComponent win = WindowManager.getDefault().findTopComponent(PREFERRED_ID);
-        if (win == null) {
-            Logger.getLogger(NavigationTreeTopComponent.class.getName()).warning(
-                    "Cannot find " + PREFERRED_ID + " component. It will not be located properly in the window system.");
-            return getDefault();
-        }
-        if (win instanceof NavigationTreeTopComponent) {
-            return (NavigationTreeTopComponent) win;
-        }
-        Logger.getLogger(NavigationTreeTopComponent.class.getName()).warning(
-                "There seem to be multiple components with the '" + PREFERRED_ID
-                + "' ID. That is a potential source of errors and unexpected behavior.");
-        return getDefault();
-    }
-
-    @Override
-    public int getPersistenceType() {
-        return TopComponent.PERSISTENCE_ALWAYS;
-    }
+    
 
     @Override
     public void componentOpened() {
@@ -153,24 +127,20 @@ public final class NavigationTreeTopComponent extends TopComponent
         em.setRootContext(Node.EMPTY);
     }
 
-    void writeProperties(java.util.Properties p) {
+    void writeProperties(java.util.Properties p) { 
+        // better to version settings since initial version as advocated at
+        // http://wiki.apidesign.org/wiki/PropertyFiles
+        p.setProperty("version", "1.0");
+        // TODO store your settings
     }
 
-    Object readProperties(java.util.Properties p) {
-        if (instance == null) {
-            instance = this;
-        }
-        instance.readPropertiesImpl(p);
-        return instance;
+    void readProperties(java.util.Properties p) {
+        String version = p.getProperty("version");
+        // TODO read your settings according to their version
     }
 
     private void readPropertiesImpl(java.util.Properties p) {
         
-    }
-
-    @Override
-    protected String preferredID() {
-        return PREFERRED_ID;
     }
 
     @Override

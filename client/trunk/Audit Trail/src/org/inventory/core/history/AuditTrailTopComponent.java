@@ -28,7 +28,6 @@ import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
-import org.openide.awt.ActionReferences;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 
@@ -42,13 +41,12 @@ iconBase = "org/inventory/core/history/res/icon.png",
 persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "editor", openAtStartup = false)
 @ActionID(category = "Window", id = "org.inventory.core.history.AuditTrailTopComponent")
-@ActionReferences(value = {@ActionReference(path = "Menu/Tools"),
-    @ActionReference(path = "Toolbars/Tools")})
+@ActionReference(path = "Menu/Tools")
 @TopComponent.OpenActionRegistration(
     displayName = "#CTL_AuditTrailAction",
 preferredID = "AuditTrailTopComponent")
 @Messages({
-    "CTL_AuditTrailAction=AuditTrail",
+    "CTL_AuditTrailAction=Audit Trail",
     "CTL_AuditTrailTopComponent=Activity Log",
     "HINT_AuditTrailTopComponent=Activity Log"
 })

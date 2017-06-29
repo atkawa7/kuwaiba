@@ -63,6 +63,11 @@ public class SpecialRelatedObjectNode extends ObjectNode {
                 } else {
                 
                     List<String> relationshipNames = new ArrayList(specialRelationships.keySet());
+                    
+                    //We now avoid loops by ignoring the relationship that caused the parent node to be displayed
+                    if (getNode().getParentNode() != null) /*The grandpa node is a relationship node, except for the first level of relationships*/
+                        relationshipNames.remove(getNode().getParentNode().getDisplayName());
+                    
                     Collections.sort(relationshipNames);
                     
                     if (!listOfParents.isEmpty() && listOfParents.get(0).getOid() != -1 && !listOfParents.get(0).getClassName().startsWith("Pool of")) { //Ignore the dummy root and the pools

@@ -1,4 +1,4 @@
-/*
+/* 
  *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
@@ -16,6 +16,7 @@
 package org.inventory.views.objectview;
 
 import org.openide.modules.ModuleInstall;
+import org.openide.windows.WindowManager;
 
 /**
  * Manages a module's life cycle. Remember that an installer is optional and
@@ -24,7 +25,10 @@ import org.openide.modules.ModuleInstall;
  */
 public class Installer extends ModuleInstall {
     @Override
-    public boolean closing(){
-        return ObjectViewTopComponent.findInstance().checkForUnsavedView(true);
+    public boolean closing() {
+        ObjectViewTopComponent objectViewTC = ((ObjectViewTopComponent)WindowManager.getDefault().
+                findTopComponent("ObjectViewTopComponent"));
+        
+        return objectViewTC == null ? true : objectViewTC.checkForUnsavedView(true);
     }
 }

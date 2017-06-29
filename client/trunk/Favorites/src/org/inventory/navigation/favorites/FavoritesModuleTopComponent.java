@@ -49,8 +49,8 @@ import org.openide.windows.TopComponent;
 )
 @TopComponent.Registration(mode = "leftSlidingSide", openAtStartup = false)
 @ActionID(category = "Window", id = "org.inventory.navigation.favorites.FavoritesModuleTopComponent")
-@ActionReferences(value = {@ActionReference(path = "Menu/Tools"), 
-    @ActionReference(path = "Toolbars/Tools")})
+@ActionReferences(value = {@ActionReference(path = "Menu/Tools/Navigation"), 
+    @ActionReference(path = "Toolbars/Navigation", position = 103)})
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_FavoritesModuleAction",
         preferredID = "FavoritesModuleTopComponent"

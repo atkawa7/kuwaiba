@@ -19,6 +19,10 @@ import java.awt.BorderLayout;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.navigation.special.children.nodes.SpecialChildren;
 import org.inventory.navigation.special.children.nodes.SpecialObjectNode;
+import org.netbeans.api.settings.ConvertAsProperties;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
@@ -32,13 +36,25 @@ import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 
 /**
- * Used to explore a link or a container 
+ * Used to explore  a link or a container 
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
+@ConvertAsProperties(
+        dtd = "-//org.inventory.navigation.special.children//SpecialChildren//EN",
+        autostore = false
+)
 @TopComponent.Description(
-    preferredID = "SpecialObjectExplorerTopComponent",
-persistenceType = TopComponent.PERSISTENCE_ALWAYS)
+        preferredID = "SpecialChildrenTopComponent",
+        iconBase="org/inventory/navigation/special/res/special_children_explorer.png", 
+        persistenceType = TopComponent.PERSISTENCE_ALWAYS)
 @TopComponent.Registration(mode = "navigator", openAtStartup = false)
+@ActionID(category = "Tools", id = "org.inventory.navigation.special.relationships.SpecialChildrenTopComponent")
+@ActionReferences(value = { @ActionReference(path = "Menu/Tools/Navigation"),
+    @ActionReference(path = "Toolbars/Navigation", position = 102 )})
+@TopComponent.OpenActionRegistration(
+        displayName = "Special Children Explorer",
+        preferredID = "SpecialChildrenTopComponent"
+)
 public class SpecialChildrenTopComponent extends TopComponent 
         implements ExplorerManager.Provider, LookupListener {
     
@@ -79,7 +95,6 @@ public class SpecialChildrenTopComponent extends TopComponent
     
     @Override
     public void componentClosed() {
-        //em.getRootContext().getChildren().remove(em.getRootContext().getChildren().getNodes());
         em.setRootContext(Node.EMPTY);
         lookupResult.removeLookupListener(this);
         open = false;
@@ -89,6 +104,10 @@ public class SpecialChildrenTopComponent extends TopComponent
     public ExplorerManager getExplorerManager() {
         return em;
     }
+    
+    void writeProperties(java.util.Properties p) { }
+
+    void readProperties(java.util.Properties p) { }
 
     @Override
     public void resultChanged(LookupEvent ev) {

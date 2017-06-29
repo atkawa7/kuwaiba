@@ -20,6 +20,7 @@ import org.inventory.navigation.special.relationships.nodes.SpecialRelatedObject
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
@@ -47,13 +48,14 @@ import org.openide.util.Utilities;
 )
 @TopComponent.Registration(mode = "navigator", openAtStartup = false)
 @ActionID(category = "Tools", id = "org.inventory.navigation.special.relationships.SpecialRelationshipsTopComponent")
-@ActionReference(path = "Menu/Tools/Navigation")
+@ActionReferences(value = { @ActionReference(path = "Menu/Tools/Navigation"),
+    @ActionReference(path = "Toolbars/Navigation", position = 101)})
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_SpecialRelationshipsAction",
         preferredID = "SpecialRelationshipsTopComponent"
 )
 @Messages({
-    "CTL_SpecialRelationshipsAction=Show Special Relationships",
+    "CTL_SpecialRelationshipsAction=Relationships Explorer",
     "CTL_SpecialRelationshipsTopComponent=Relationships",
     "HINT_SpecialRelationshipsTopComponent=Relationships"
 })

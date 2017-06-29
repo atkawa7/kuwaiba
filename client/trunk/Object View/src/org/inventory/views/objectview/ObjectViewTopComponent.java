@@ -20,7 +20,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ButtonGroup;
 import javax.swing.JFileChooser;
@@ -36,30 +35,43 @@ import org.inventory.core.visual.export.filters.ImageFilter;
 import org.inventory.core.visual.export.filters.SceneExportFilter;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.views.objectview.scene.ChildrenViewScene;
+import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.explorer.ExplorerManager;
-import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
-import org.openide.windows.WindowManager;
-import org.openide.util.ImageUtilities;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
 import org.openide.explorer.ExplorerManager.Provider;
 import org.openide.util.Lookup;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
 import org.openide.util.Utilities;
+import org.openide.windows.WindowManager;
 
 /**
  * This component renders the views associated to an currentObject
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
+@ConvertAsProperties(dtd = "-//org.inventory.views.objectview//ObjectView//EN",
+autostore = false)
+@TopComponent.Description(
+        preferredID = "ObjectViewTopComponent",
+        iconBase="org/inventory/views/objectview/res/icon.png", 
+        persistenceType = TopComponent.PERSISTENCE_ALWAYS
+)
+@TopComponent.Registration(mode = "editor", openAtStartup = false)
+@ActionID(category = "Tools", id = "org.inventory.views.objectview.ObjectViewTopComponent")
+@ActionReferences(value = { @ActionReference(path = "Menu/Tools/Views"),
+    @ActionReference(path = "Toolbars/Views", position = 200, separatorBefore = 199)})
+@TopComponent.OpenActionRegistration(
+        displayName = "Object View",
+        preferredID = "ObjectViewTopComponent"
+)
 public final class ObjectViewTopComponent extends TopComponent
         implements Provider, ActionListener, Refreshable, LookupListener {
 
-    private static ObjectViewTopComponent instance;
-    /** path to the icon used by the component and its open action */
-    static final String ICON_PATH = "org/inventory/views/objectview/res/icon.png";
-    private static final String PREFERRED_ID = "ObjectViewTopComponent";
     public static final int CONNECTION_WIRECONTAINER = 1;
     public static final int CONNECTION_WIRELESSCONTAINER = 2;
     public static final int CONNECTION_ELECTRICALLINK = 3;
@@ -81,9 +93,6 @@ public final class ObjectViewTopComponent extends TopComponent
     public ObjectViewTopComponent() {
         initComponents();
         initCustomComponents();
-        setName(NbBundle.getMessage(ObjectViewTopComponent.class, "CTL_ObjectViewTopComponent"));
-        setToolTipText(NbBundle.getMessage(ObjectViewTopComponent.class, "HINT_ObjectViewTopComponent"));
-        setIcon(ImageUtilities.loadImage(ICON_PATH, true));
     }
 
     public final void initCustomComponents(){
@@ -377,40 +386,18 @@ public final class ObjectViewTopComponent extends TopComponent
     private javax.swing.JPanel pnlRight;
     private javax.swing.JScrollPane pnlScrollMain;
     // End of variables declaration//GEN-END:variables
-    /**
-     * Gets default instance. Do not use directly: reserved for *.settings files only,
-     * i.e. deserialization routines; otherwise you could get a non-deserialized instance.
-     * To obtain the singleton instance, use {@link #findInstance}.
-     */
-    public static synchronized ObjectViewTopComponent getDefault() {
-        if (instance == null) {
-            instance = new ObjectViewTopComponent();
-        }
-        return instance;
+    
+
+    void writeProperties(java.util.Properties p) {
+        // better to version settings since initial version as advocated at
+        // http://wiki.apidesign.org/wiki/PropertyFiles
+        p.setProperty("version", "1.0");
+        // TODO store your settings
     }
 
-    /**
-     * Obtain the ObjectViewTopComponent instance. Never call {@link #getDefault} directly!
-     */
-    public static synchronized ObjectViewTopComponent findInstance() {
-        TopComponent win = WindowManager.getDefault().findTopComponent(PREFERRED_ID);
-        if (win == null) {
-            Logger.getLogger(ObjectViewTopComponent.class.getName()).warning(
-                    "Cannot find " + PREFERRED_ID + " component. It will not be located properly in the window system.");
-            return getDefault();
-        }
-        if (win instanceof ObjectViewTopComponent) {
-            return (ObjectViewTopComponent) win;
-        }
-        Logger.getLogger(ObjectViewTopComponent.class.getName()).warning(
-                "There seem to be multiple components with the '" + PREFERRED_ID
-                + "' ID. That is a potential source of errors and unexpected behavior.");
-        return getDefault();
-    }
-
-    @Override
-    public int getPersistenceType() {
-        return TopComponent.PERSISTENCE_ALWAYS;
+    void readProperties(java.util.Properties p) {
+        String version = p.getProperty("version");
+        // TODO read your settings according to their version
     }
 
     @Override
@@ -428,11 +415,6 @@ public final class ObjectViewTopComponent extends TopComponent
     public void componentClosed() {
         lookupResult.removeLookupListener(this);
         disableView();
-    }
-
-    @Override
-    protected String preferredID() {
-        return PREFERRED_ID;
     }
     
     @Override
