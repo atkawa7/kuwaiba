@@ -318,44 +318,40 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
                                 }
                             }
                         else{
-                            if (reader.getName().equals(qEdge)){
-                                String edgeName = reader.getAttributeValue(null,"name");
-
+                            if (reader.getName().equals(qEdge)) {
                                 Long aSide = Long.valueOf(reader.getAttributeValue(null,"aside"));
                                 Long bSide = Long.valueOf(reader.getAttributeValue(null,"bside"));
 
-                                if (edgeName != null){
-                                    LocalObjectLight aSideObject = new LocalObjectLight(aSide, null, null);
-                                    Widget aSideWidget = this.findWidget(aSideObject);
+                                LocalObjectLight aSideObject = new LocalObjectLight(aSide, null, null);
+                                Widget aSideWidget = this.findWidget(aSideObject);
 
-                                    LocalObjectLight bSideObject = new LocalObjectLight(bSide, null, null);
-                                    Widget bSideWidget = this.findWidget(bSideObject);
+                                LocalObjectLight bSideObject = new LocalObjectLight(bSide, null, null);
+                                Widget bSideWidget = this.findWidget(bSideObject);
 
-                                    if (aSideWidget == null || bSideWidget == null)
-                                        NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.INFO_MESSAGE, "One or both of the endpoints of connection could not be found, so the connection was removed from the topology view");
-                                    else{
-                                        ConnectionWidget newEdge = (ConnectionWidget)this.addEdge(edgeName);
-                                        this.setEdgeSource(edgeName, aSideObject);
-                                        this.setEdgeTarget(edgeName, bSideObject);
-                                        List<Point> localControlPoints = new ArrayList<>();
-                                        while(true){
-                                            reader.nextTag();
-                                            if (reader.getName().equals(qControlPoint)){
-                                                if (reader.getEventType() == XMLStreamConstants.START_ELEMENT){
-                                                    String cpx = reader.getAttributeValue(null, "x");
-                                                    String cpy = reader.getAttributeValue(null, "y");
-                                                    Point point = new Point();
-                                                    point.setLocation(Double.valueOf(cpx), Double.valueOf(cpy));
-                                                    localControlPoints.add(point);
-                                                }
-                                            }else{
-                                                newEdge.setControlPoints(localControlPoints, false);
-                                                break;
+                                if (aSideWidget == null || bSideWidget == null)
+                                    NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.INFO_MESSAGE, "One or both of the endpoints of connection could not be found, so the connection was removed from the topology view");
+                                else {
+                                    String edgeName = "topologyEdge" + aSideObject.getName() + bSideObject.getName() + randomGenerator.nextInt(1000);
+                                    ConnectionWidget newEdge = (ConnectionWidget)this.addEdge(edgeName);
+                                    this.setEdgeSource(edgeName, aSideObject);
+                                    this.setEdgeTarget(edgeName, bSideObject);
+                                    List<Point> localControlPoints = new ArrayList<>();
+                                    while (true) {
+                                        reader.nextTag();
+                                        if (reader.getName().equals(qControlPoint)) {
+                                            if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
+                                                String cpx = reader.getAttributeValue(null, "x");
+                                                String cpy = reader.getAttributeValue(null, "y");
+                                                Point point = new Point();
+                                                point.setLocation(Double.valueOf(cpx), Double.valueOf(cpy));
+                                                localControlPoints.add(point);
                                             }
+                                        } else {
+                                            newEdge.setControlPoints(localControlPoints, false);
+                                            break;
                                         }
                                     }
-                                }else
-                                    NotificationUtil.getInstance().showSimplePopup("Load view", NotificationUtil.INFO_MESSAGE, "Connection could not be found and was removed from the topology view");
+                                }
                             }// edges endign 
                             else{
                                 if (reader.getName().equals(qPolygon)) { // FREE FRAMES

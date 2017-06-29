@@ -37,6 +37,7 @@ import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAc
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.navigationtree.nodes.actions.CreateBusinessObjectAction;
 import org.inventory.navigation.navigationtree.nodes.actions.CreateBusinessObjectFromTemplateAction;
+import org.inventory.navigation.navigationtree.nodes.actions.CreateMultipleBusinessObjectAction;
 import org.inventory.navigation.navigationtree.nodes.actions.DeleteBusinessObjectAction;
 import org.inventory.navigation.navigationtree.nodes.actions.EditObjectAction;
 import org.inventory.navigation.navigationtree.nodes.actions.ExecuteClassLevelReportAction;
@@ -73,6 +74,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
     protected static OpenLocalExplorerAction explorerAction = new OpenLocalExplorerAction();
     protected CommunicationsStub com;
     protected CreateBusinessObjectAction createAction;
+    protected CreateMultipleBusinessObjectAction createMultipleAction;
     protected CreateBusinessObjectFromTemplateAction createFromTemplateAction;
     protected RefreshObjectAction refreshAction;
     protected EditObjectAction editAction;
@@ -251,6 +253,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
         LocalObjectLight object = getObject();
         
         actions.add(createAction == null ? createAction = new CreateBusinessObjectAction(this) : createAction);
+        actions.add(createMultipleAction == null ? createMultipleAction = new CreateMultipleBusinessObjectAction() : createMultipleAction);
         actions.add(createFromTemplateAction == null ? createFromTemplateAction = new CreateBusinessObjectFromTemplateAction() : createFromTemplateAction);
         if (getParentNode() != null) {
             actions.add(SystemAction.get(CopyAction.class));

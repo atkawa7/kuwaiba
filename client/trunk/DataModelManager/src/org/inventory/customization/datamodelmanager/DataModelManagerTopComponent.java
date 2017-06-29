@@ -51,7 +51,7 @@ persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
 @ActionID(category = "Tools", id = "org.inventory.customization.datamodelmanager.DataModelManagerTopComponent")
 @ActionReferences(value = {@ActionReference(path = "Menu/Tools/Administrative/Class Management"),
-    @ActionReference(path = "Toolbars/Tools")} /*, position = 333 */)
+    @ActionReference(path = "Toolbars/Customization", position = 500, separatorBefore = 199)})
 @TopComponent.OpenActionRegistration(
     displayName = "#CTL_DataModelManagerAction",
 preferredID = "DataModelManagerTopComponent")
@@ -133,6 +133,14 @@ public final class DataModelManagerTopComponent extends TopComponent
         lblSearch.setPreferredSize(new java.awt.Dimension(70, 15));
         toolBarMain.add(lblSearch);
 
+        cmbClassList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                cmbClassListMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                cmbClassListMouseEntered(evt);
+            }
+        });
         toolBarMain.add(cmbClassList);
 
         add(toolBarMain, java.awt.BorderLayout.PAGE_START);
@@ -148,6 +156,17 @@ public final class DataModelManagerTopComponent extends TopComponent
     private void btndefaultDataModelManagetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btndefaultDataModelManagetActionPerformed
         cmbClassList.setSelectedItem(null);
     }//GEN-LAST:event_btndefaultDataModelManagetActionPerformed
+
+    private void cmbClassListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cmbClassListMouseClicked
+            
+    }//GEN-LAST:event_cmbClassListMouseClicked
+
+    private void cmbClassListMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cmbClassListMouseEntered
+        cmbClassList.removeAllItems();
+        cmbClassList.addItem(null);
+        for (LocalClassMetadataLight node : dmms.getRoots())
+            cmbClassList.addItem(node);
+    }//GEN-LAST:event_cmbClassListMouseEntered
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btndefaultDataModelManaget;

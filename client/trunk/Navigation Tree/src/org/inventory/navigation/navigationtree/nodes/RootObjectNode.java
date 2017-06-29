@@ -21,6 +21,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.navigation.navigationtree.nodes.actions.CreateBusinessObjectAction;
 import org.inventory.navigation.navigationtree.nodes.actions.CreateBusinessObjectFromTemplateAction;
+import org.inventory.navigation.navigationtree.nodes.actions.CreateMultipleBusinessObjectAction;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 
@@ -42,6 +43,9 @@ public class RootObjectNode extends AbstractNode {
 
     @Override
     public Action[] getActions(boolean context){
-        return new Action[]{new CreateBusinessObjectAction(this), new CreateBusinessObjectFromTemplateAction()/*, null, SystemAction.get(PasteAction.class)*/};
+        return new Action[]{
+            new CreateBusinessObjectAction(this), 
+            new CreateMultipleBusinessObjectAction(),
+            new CreateBusinessObjectFromTemplateAction()/*, null, SystemAction.get(PasteAction.class)*/};
     }
 }

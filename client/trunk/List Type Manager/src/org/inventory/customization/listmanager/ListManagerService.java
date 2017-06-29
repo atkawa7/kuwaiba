@@ -28,9 +28,9 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
  */
 public class ListManagerService {
     private CommunicationsStub com;
-    private ListManagerTopComponent lmtc;
+    private ListTypeManagerTopComponent lmtc;
 
-    public ListManagerService(ListManagerTopComponent _lmtc) {
+    public ListManagerService(ListTypeManagerTopComponent _lmtc) {
         this.com = CommunicationsStub.getInstance();
         this.lmtc = _lmtc;
     }

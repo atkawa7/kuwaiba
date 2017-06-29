@@ -1581,7 +1581,58 @@ public class CommunicationsStub {
         }
     }
     
+    /**
+     * Creates multiple objects using a given name pattern
+     * @param className The class name for the new objects
+     * @param parentClassName The parent class name for the new objects
+     * @param parentOid The object id of the parent
+     * @param numberOfObjects Number of objects to be created
+     * @param namePattern A pattern to create the names for the new objects
+     * @return A list of new objects or null if occur an error
+     */
+    public List<LocalObjectLight> createBulkObjects(String className, String parentClassName, long parentOid, int numberOfObjects, String namePattern) {
+        try {
+            List<Long> ids = service.createBulkObjects(className, parentClassName, parentOid, numberOfObjects, namePattern, session.getSessionId());
+            
+            List<LocalObjectLight> newObjects = new ArrayList();
+            
+            for (Long id : ids) {
+                newObjects.add(getObjectInfoLight(className, id));
+            }
+            
+            return newObjects;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
     
+    /**
+     * Creates multiple special objects using a given name pattern
+     * @param className The class name for the new special objects
+     * @param parentClassName The parent class name for the new special objects
+     * @param parentId The object id of the parent
+     * @param numberOfSpecialObjects Number of special objects to be created
+     * @param namePattern A pattern to create the names for the new special objects
+     * @return A list of new special objects or null if occur an error
+     */
+    public List<LocalObjectLight> createBulkSpecialObjects(String className, String parentClassName, long parentId, int numberOfSpecialObjects, String namePattern) {
+        try {
+            List<Long> ids = service.createBulkSpecialObjects(className, parentClassName, parentId, numberOfSpecialObjects, namePattern, session.getSessionId());
+            
+            List<LocalObjectLight> newSpecialObjects = new ArrayList();
+            
+            for (Long id : ids) {
+                newSpecialObjects.add(getObjectInfoLight(className, id));
+            }
+            
+            return newSpecialObjects;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+        
     public boolean connectMirrorPort (String aObjectClass, long aObjectId, String bObjectClass, long bObjectId) {
         try{
             service.connectMirrorPort(aObjectClass, aObjectId, bObjectClass, bObjectId, session.getSessionId());
@@ -1627,10 +1678,19 @@ public class CommunicationsStub {
         }
     }
     
-    public List<Long> createBulkPhysicalConnections(String connectionClass, int integer, String parentClass, long parentId) {
+    /**
+     * Create multiple physical connections at once
+     * @param connectionClass Class name to the new physical connections
+     * @param numberOfChildren Number of new physical connections
+     * @param parentClass Parent of the physical connections
+     * @param parentId Id of Parent of the physical connections
+     * @return A list of ids for the new physical connections
+     * @deprecated Use createBulkSpecialObjects to create special objects like the physical connections
+     */
+    public List<Long> createBulkPhysicalConnections(String connectionClass, int numberOfChildren, String parentClass, long parentId) {
         try{
             return service.createBulkPhysicalConnections(connectionClass, 
-                        integer, parentClass, parentId, session.getSessionId());
+                        numberOfChildren, parentClass, parentId, session.getSessionId());
         }catch(Exception ex){
             this.error =  ex.getMessage();
             return null;
@@ -4023,7 +4083,7 @@ public class CommunicationsStub {
      * Tells if the instances of a class have a custom delete method or if the generic delete action should be used instead
      * @param className Class to be evaluated
      * @return True if the instances of the class provided as argument have a custom delete method or false if the generic delete method should be used instead
-     * @deprecated This functionality should be integrated with the data model manager in future versions
+     * @depreca@depreted This functionality should be integrated with the data model manager in future versions
      */
     public boolean hasCustomDeleteAction(String className) {
         for (String classWihCustomDeleteAction : classesWithCustomDeleteActions) {

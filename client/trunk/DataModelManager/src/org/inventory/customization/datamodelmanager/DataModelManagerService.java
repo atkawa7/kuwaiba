@@ -37,8 +37,7 @@ public class DataModelManagerService {
     }
     
     public LocalClassMetadataLight[] getRoots() {
-        if (roots == null)
-            roots = com.getAllLightMeta(true);
+        roots = com.getAllLightMeta(true);
         return roots;
     }
     

@@ -62,8 +62,8 @@ import org.openide.util.NbBundle.Messages;
 )
 @TopComponent.Registration(mode = "editor", openAtStartup = false)
 @ActionID(category = "Tools", id = "org.inventory.design.topology.TopologyDesignTopComponent")
-@ActionReferences(value = {@ActionReference(path = "Menu/Tools"),
-    @ActionReference(path = "Toolbars/Tools")} /*, position = 333 */)
+@ActionReferences(value = {@ActionReference(path = "Menu/Tools/Views"),
+    @ActionReference(path = "Toolbars/Views", position = 200, separatorBefore = 199)} /*, position = 333 */)
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_TopologyDesignAction",
         preferredID = "TopologyDesignTopComponent"
