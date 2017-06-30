@@ -81,6 +81,8 @@
 				December 19th 2016 & Added documentation for templates and reports.\\
 				\midrule
 				June 1th 2017 & Added documentation for Bookmarks, Update Center, Projects and new functions in the Relationship Explorer.\\
+				\midrule
+				June 30th 2017 & Added documentation for New (Multiple), New Special, New Special (Multiple) and New Special from Template actions. Updated documentation for Containment Hierarchy and Template Manager.\\
 				\bottomrule
 			\end{tabular}	
 				
@@ -310,13 +312,26 @@
 	\section{Containment Manager} \label{sec:containment_manager}
 	Another key concept in Kuwaiba is containment. It consists of the ability to define what kind of objects can be created within others. For example, a \textbf{Country} can be inside a \textbf{Continent}, but can't be inside a \textbf{Rack}. A \textbf{Port} is usually within a \textbf{Board}, and not inside a \textbf{City}. These business rules can be defined using the Containment Manager.
 	
+	\subsection{Standard Containment Hierarchy} \label{sec:standard_containment_hierarchy}
+	The main window is divided in two panels (see figure~\ref{fig:standard_containment_manager}, zoom in the image to see the details). The one on the left is a tree that holds all the classes plus the \textbf{Navigation Tree Root}. The children of the left-side tree node are the possible classes that can be contained. In the figure~\ref{fig:standard_containment_manager} there are five nodes expanded: \textbf{City}, that has one node inside: \textbf{Building}. That means that below a given city, you will only be able to add \textbf{Building} objects. Likewise, inside a \textbf{Continent} you can only create instances of \textbf{Country}, and inside those instances, only objects of class \textbf{City}. Under the root of the Navigation Tree, only instances of \textbf{Continent} are to be created. Finally, only \textbf{OpticalPorts} are supported under \textbf{DWDMBoards}. If for your operation Continents are not relevant, or if your routers do not have boards, but only ports, simplify the hierarchy as much as you want to meet your needs. To remove a possible children class, just right-click on it and select “Remove”, and instances from that class will no longer be available to be added under the parent class, though the objects created already will remain linked to the respective parent objects.
+	
 	\begin{figure}[h!]
 		\centering
-		\includegraphics[width=0.6\linewidth]{img/containment_manager.png}
-		\caption{Containment Manager main window. Zoom in the image to see the details}
-		\label{fig:containment_manager}
+		\includegraphics[width=0.6\linewidth]{img/standard_containment_manager.png}
+		\caption{Standard Containment Manager main window. Zoom in the image to see the details}
+		\label{fig:standard_containment_manager}
 	\end{figure}
-	The main window is divided in two panels (see figure~\ref{fig:containment_manager}, zoom in the image to see the details). The one on the left is a tree that holds all the classes plus the \textbf{Navigation Tree Root}. The children of the left-side tree node are the possible classes that can be contained. In the figure~\ref{fig:containment_manager} there are five nodes expanded: \textbf{City}, that has one node inside: \textbf{Building}. That means that below a given city, you will only be able to add \textbf{Building} objects. Likewise, inside a \textbf{Continent} you can only create instances of \textbf{Country}, and inside those instances, only objects of class \textbf{City}. Under the root of the Navigation Tree, only instances of \textbf{Continent} are to be created. Finally, only \textbf{OpticalPorts} are supported under \textbf{DWDMBoards}. If for your operation Continents are not relevant, or if your routers do not have boards, but only ports, simplify the hierarchy as much as you want to meet your needs. To remove a possible children class, just right-click on it and select “Remove”, and instances from that class will no longer be available to be added under the parent class, though the objects created already will remain linked to the respective parent objects.
+	
+	\subsection{Special Containment Hierarchy} \label{sec:special_containment_hierarchy}
+	The special containment hierarchy (see figure~\ref{fig:special_containment_manager}) is used to define the business rules for special children see \textbf{\nameref{sec:extra_explorers_children_explorer}}. For example a cables inside a conduit connecting two buildings in this scenario to configure the hierarchy for a wire container drag links like (ElectricalLink, OpticalLink, PowerLink, RadioLink or for simply used the GenericPhysicalLink) from the right panel to the WireContainer class in the left panel, and in this way using the \textbf{\nameref{sec:extra_explorers_children_explorer}} you can create special children for a conduit.
+	
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width=0.6\linewidth]{img/special_containment_manager.png}
+		\caption{Special Containment Manager main window. Zoom in the image to see the details}
+		\label{fig:special_containment_manager}
+	\end{figure}
+	
 	\begin{framed} {\large \textbf{Important}}
 		\begin{itemize}
 			\item To avoid adding one by one many classes to a parent, you can use the flexibility of the data model as a hierarchical structure. For example, a \textbf{Rack} may contain within many types of equipment (routers, DDFs, switches, battery banks, etc). Instead of adding one by one each of these classes, you can add a common super class and all of them will be added automatically. For this example a common super class for most of those classes could be \textbf{GenericCommunicationsElement}.
@@ -324,6 +339,8 @@
 			\item The changes are applied immediately, however, if you happen to not see them reflected, press the Refresh Cache button \includegraphics[width=0.5cm]{img/icon_refresh_cache.png} in the main toolbar (see table~\ref{tab:toolbar_icons}).
 		\end{itemize}
 	\end{framed}
+	
+
 	
 	\newpage
 	\section{Navigation Tree} \label{sec:navigation_tree}
@@ -352,6 +369,13 @@
 	\end{figure}
 	\begin{itemize}
 		\item \textbf{New:} The list of object types that can be contained for the selected element type according to the configured Containment Hierarchy. In this case, a \textbf{Rack} can contain \textbf{DDFs}, \textbf{ODFs}, \textbf{Routers}, etc.
+		\item \textbf{New (Multiple):} Crates a defined number of objects at once using a given name pattern see \textbf{\nameref{app:AppendixA}} figure~\ref{fig:new_multiple}.
+			\begin{figure}[h!]
+				\centering
+				\includegraphics[width=0.5\linewidth]{img/new_multiple.png}
+				\caption{Creation of a \textbf{Router} set}
+				\label{fig:new_multiple}
+			\end{figure}
 		\item \textbf{New from template:} Crates a containment structure. See more details in the chapter \nameref{sec:template_manager}
 		\item \textbf{Copy:} A plain copy operation.
 		\item \textbf{Cut:} A plain cut operation.
@@ -427,10 +451,26 @@
 						
 		\begin{figure}[h!]
 			\centering
-			\includegraphics[width=0.3\linewidth]{img/navigation_tree_special_children_explorer.png}
+			\includegraphics[width=0.7\linewidth]{img/navigation_tree_special_children_explorer.png}
 			\caption{Fibers inside a container between two buildings}
 			\label{fig:navigation_tree_special_children_explorer}
 		\end{figure}
+		
+		Every node in the special children explorer has a set of actions, some will be active for all objects, some depend on the type of element that is selected. In the figure~\ref{fig:navigation_tree_special_children_explorer} you can see the actions enabled for a WireContainer object. The actions are the same that in the Navigation Tree with the next exceptions:
+		
+		\begin{itemize}
+			\item \textbf{New Special:} The list of special object types that can be contained for the selected element type according to the configured Special Containment Hierarchy.
+			\item \textbf{New Special (Multiple):} Creates a given number of special objects at once using a defined name pattern see \textbf{\nameref{app:AppendixA}}
+			\begin{figure}[h!]
+				\centering
+				\includegraphics[width=0.5\linewidth]{img/new_special_multiple.png}
+				\caption{Creation of a \textbf{OpticalLink} set}
+				\label{fig:new_special_multiple}
+			\end{figure}			
+			\item \textbf{New Special from template:} Crates a containment structure. See more details in the chapter \nameref{sec:template_manager}
+		\end{itemize}
+		
+		
 			
 	\newpage
 	\section{Template Manager} \label{sec:template_manager}
@@ -470,6 +510,15 @@
 		\label{fig:template_manager_template_properties}
 	\end{figure}
 	
+	Also is available create template using special objects see \textbf{\nameref{sec:extra_explorers_children_explorer}}, in the \ref{fig:template_with_special_objects} show the template for a Non-Armored Loose Tube Cable. 
+	
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width=0.5\linewidth]{img/template_with_special_objects.png}
+		\caption{Template using special object}
+		\label{fig:template_with_special_objects}
+	\end{figure}
+	
 	Now you can create a containment structure as complex as you want.\\
 	
 	\begin{figure}[h!]
@@ -478,7 +527,7 @@
 		\caption{Template with a complex containment structure}
 		\label{fig:template_manager_template_containment}
 	\end{figure}
-	Copy, paste and rename operations work as they do with normal inventory objects and you can use them to construct your templates. Remember that you have to configure correctly the containment hierarchy (see \ref{fig:containment_manager}) before creating templates.\\
+	Copy, paste and rename operations work as they do with normal inventory objects and you can use them to construct your templates. Remember that you have to configure correctly the standard (see \ref{fig:standard_containment_manager}) and special (see \ref{fig:special_containment_manager}) containment hierarchy  before creating templates.\\
 	Now you can create objects from templates. Just right-click on the parent object and select the \textbf{New from Template...} action.\\
 	\begin{figure}[h!]
 		\centering
@@ -2250,6 +2299,25 @@
 		    	\caption{Projects data model error}
 		    	\label{fig:patch_projects}
 		    \end{figure}
-				
-				
+		\newpage
+		\begin{appendices}
+			\appendix
+			\section{Appendix A. Name Pattern} \label{app:AppendixA}
+			A name pattern is used to create dynamically the names of new objects or new special objects using the actions New (Multiple) and New Special (Multiple) respectively.			
+			
+			The name pattern is a set of static and dynamic sections, in the static section can be place any string of characters with the exception of the special characters "[" and "]", and in the dynamic section only can be placed pre-defined functions listed below.
+			
+			\begin{itemize}
+				\item \textbf{[sequence(a,z)]:} Function that generate an alphabetic ascending lowercase inclusive sequence that begin in the parameter a (a-z) to the parameter z (a-z)
+				\item \textbf{[sequence(A,Z)]:} Function that generate an alphabetic ascending uppercase inclusive sequence that begin in the parameter A (A-Z) to the parameter Z (A-Z)
+				\item \textbf{[sequence(n,m)]:} Function that generate an numeric ascending inclusive sequence that begin in the parameter n (0...) to the parameter m (0...)
+				\item \textbf{[value(object id,attribute name)]:} Function to get the value of an attribute value given the object id and attribute name. For example if there are an object with id 1000, attribute name "name" and attribute value "Colombia" the function would remain [value(1000,name)] and return Colombia.
+			\end{itemize}
+			
+			Examples of name pattern are: router-[sequence(1,3)]-[sequence(a,c)], [value(1111,name)]-[sequence(A,Z)], the first pattern generate six different names, and the second twenty six different names.
+			
+			When name pattern are define this only can generate a limited number of names. If in the dialog see figure~\ref{fig:new_multiple} and see figure~\ref{fig:new_special_multiple}, is assigned a number greather than the possible names, the objects or special objects are not created.
+
+						
+		\end{appendices}				
 \end{document}
