@@ -317,7 +317,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
                                     this.addNode(lol).setPreferredLocation(new Point(x, y));
                                 }
                             }
-                        else{
+                        else {
                             if (reader.getName().equals(qEdge)) {
                                 Long aSide = Long.valueOf(reader.getAttributeValue(null,"aside"));
                                 Long bSide = Long.valueOf(reader.getAttributeValue(null,"bside"));
@@ -331,7 +331,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
                                 if (aSideWidget == null || bSideWidget == null)
                                     NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.INFO_MESSAGE, "One or both of the endpoints of connection could not be found, so the connection was removed from the topology view");
                                 else {
-                                    String edgeName = "topologyEdge" + aSideObject.getName() + bSideObject.getName() + randomGenerator.nextInt(1000);
+                                    String edgeName = "topologyEdge" + aSideObject.getOid() + bSideObject.getOid() + randomGenerator.nextInt(1000);
                                     ConnectionWidget newEdge = (ConnectionWidget)this.addEdge(edgeName);
                                     this.setEdgeSource(edgeName, aSideObject);
                                     this.setEdgeTarget(edgeName, bSideObject);
@@ -424,7 +424,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
                 LocalObjectLight lolSource = (LocalObjectLight)findObject(sourceWidget);
                 LocalObjectLight lolTarget = (LocalObjectLight)findObject(targetWidget);
                 if(!lolSource.getName().contains(FREE_FRAME) && !lolTarget.getName().contains(FREE_FRAME)) {
-                    String edge = "topologyEdge" + lolSource.getName() + lolTarget.getName() + randomGenerator.nextInt(1000);
+                    String edge = "topologyEdge" + lolSource.getOid() + lolTarget.getOid() + randomGenerator.nextInt(1000);
                     addEdge(edge);
                     setEdgeSource(edge, lolSource);
                     setEdgeTarget(edge, lolTarget);

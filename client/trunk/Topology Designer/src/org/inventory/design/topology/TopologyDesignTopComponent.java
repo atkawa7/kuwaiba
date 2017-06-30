@@ -399,6 +399,9 @@ public final class TopologyDesignTopComponent extends TopComponent implements Ex
                     scene.setBackgroundImage(actualView.getBackground());
                     configObject.setProperty("saved", true);
                     setHtmlDisplayName(getDisplayName());
+                    
+                    if (actualView.getBackground() != null)
+                        btnRemoveBackground.setEnabled(true);
                 }
             }
         }
