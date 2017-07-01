@@ -53,10 +53,10 @@ public class DynamicName {
         
         for (int i = 0; i < expressionForTheName.length(); i += 1) {
             if (expressionForTheName.charAt(i) == '[' && squareBracketOpen)
-                throw new InvalidArgumentException("A left square bracket \"[\" was open but never was close");
+                throw new InvalidArgumentException("A left square bracket \"[\" was open but never closed");
 
             if (expressionForTheName.charAt(i) == ']' && !squareBracketOpen)
-                throw new InvalidArgumentException("A right square bracket \"]\" was close but never was open");
+                throw new InvalidArgumentException("A right square bracket \"]\" was closed but never open");
             
             if (expressionForTheName.charAt(i) == '[') {
                 staticSections.add(section);
@@ -101,9 +101,8 @@ public class DynamicName {
                 for (String value : functions.get(dynamicSections.get(0)).getPossibleValues())
                     recursiveName(value + ",", 1 < dynamicSections.size() ? 1 : -1);
 
-            } else {
+            } else 
                 recursiveName(",", -1);
-            }
         }
         return dynamicNames;
     }
