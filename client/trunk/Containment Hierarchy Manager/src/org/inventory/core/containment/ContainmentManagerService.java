@@ -26,16 +26,16 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
  * Contains the business logic for the related TopComponent
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class HierarchyCustomizerService {
+public class ContainmentManagerService {
 
-    private HierarchyCustomizerTopComponent hctc;
+    private ContainmentManagerTopComponent hctc;
 
     private final List<LocalClassMetadataLight> treeModel;
     private final List<LocalClassMetadataLight> listModel;
     private final CommunicationsStub com = CommunicationsStub.getInstance();
     
 
-    public HierarchyCustomizerService(HierarchyCustomizerTopComponent hctc){
+    public ContainmentManagerService(ContainmentManagerTopComponent hctc){
         this.hctc = hctc;
         listModel = new ArrayList();
         treeModel = new ArrayList();

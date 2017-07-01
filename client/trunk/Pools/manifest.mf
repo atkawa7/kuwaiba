@@ -1,7 +1,6 @@
 Manifest-Version: 1.0
 OpenIDE-Module: org.inventory.navigation.pools/1
 OpenIDE-Module-Implementation-Version: 1
-OpenIDE-Module-Layer: org/inventory/navigation/pools/layer.xml
 OpenIDE-Module-Localizing-Bundle: org/inventory/navigation/pools/Bundle.properties
 OpenIDE-Module-Requires: org.openide.windows.WindowManager
 

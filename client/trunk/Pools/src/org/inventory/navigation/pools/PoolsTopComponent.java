@@ -16,7 +16,6 @@
 package org.inventory.navigation.pools;
 
 import java.util.List;
-import java.util.logging.Logger;
 import javax.swing.ActionMap;
 import javax.swing.text.DefaultEditorKit;
 import org.inventory.communications.core.LocalPool;
@@ -26,14 +25,13 @@ import org.inventory.navigation.pools.nodes.PoolRootNode;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
 import org.openide.nodes.Node;
 import org.openide.util.NbBundle;
-import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
-import org.openide.windows.WindowManager;
 
 /**
  * Main top component for the Pools module
@@ -48,15 +46,12 @@ autostore = false)
 persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
 @ActionID(category = "Window", id = "org.inventory.navigation.pools.PoolsTopComponent")
-@ActionReference(path = "Menu/Tools" /*, position = 333 */)
-//@ActionReference(path = "Toolbars/Tools" /*, position = 333 */)
+@ActionReferences(value = { @ActionReference(path = "Menu/Tools/Navigation"),
+    @ActionReference(path = "Toolbars/01_Navigation", position = 3)})
 @TopComponent.OpenActionRegistration(
     displayName = "#CTL_PoolsAction",
 preferredID = "PoolsTopComponent")
 public final class PoolsTopComponent extends TopComponent implements ExplorerManager.Provider, Refreshable {
-    
-    private static final String PREFERRED_ID = "PoolsTopComponent";
-    private static PoolsTopComponent instance;
     private final ExplorerManager em = new ExplorerManager();
     private PoolsService ps;
     private BeanTreeView treeView;
@@ -94,36 +89,7 @@ public final class PoolsTopComponent extends TopComponent implements ExplorerMan
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
-    /**
-     * Gets default instance. Do not use directly: reserved for *.settings files only,
-     * i.e. deserialization routines; otherwise you could get a non-deserialized instance.
-     * To obtain the singleton instance, use {@link #findInstance}.
-     */
-    public static synchronized PoolsTopComponent getDefault() {
-        if (instance == null) {
-            instance = new PoolsTopComponent();
-        }
-        return instance;
-    }
-
-    /**
-     * Obtain the NavigationTreeTopComponent instance. Never call {@link #getDefault} directly!
-     */
-    public static synchronized PoolsTopComponent findInstance() {
-        TopComponent win = WindowManager.getDefault().findTopComponent(PREFERRED_ID);
-        if (win == null) {
-            Logger.getLogger(PoolsTopComponent.class.getName()).warning(
-                    "Cannot find " + PREFERRED_ID + " component. It will not be located properly in the window system.");
-            return getDefault();
-        }
-        if (win instanceof PoolsTopComponent) {
-            return (PoolsTopComponent) win;
-        }
-        Logger.getLogger(PoolsTopComponent.class.getName()).warning(
-                "There seem to be multiple components with the '" + PREFERRED_ID
-                + "' ID. That is a potential source of errors and unexpected behavior.");
-        return getDefault();
-    }
+    
     
     @Override
     public void componentOpened() {
@@ -133,10 +99,6 @@ public final class PoolsTopComponent extends TopComponent implements ExplorerMan
     @Override
     public void componentClosed() {
         em.getRootContext().getChildren().remove(em.getRootContext().getChildren().getNodes());
-        //Workaround, because when you close a TC whose mode is "explorer" and open it again,
-        //it docks as "explorer". This forces the TC to be always docked "explorer"
-        Mode myMode = WindowManager.getDefault().findMode("explorer"); //NOI18N
-        myMode.dockInto(this);
     }
 
     void writeProperties(java.util.Properties p) {

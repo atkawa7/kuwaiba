@@ -24,6 +24,7 @@ import org.inventory.core.services.api.behaviors.Refreshable;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
@@ -33,6 +34,7 @@ import org.openide.util.NbBundle.Messages;
 
 /**
  * Template Manager Top component.
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @ConvertAsProperties(
         dtd = "-//org.inventory.core.templates//Templates//EN",
@@ -45,7 +47,8 @@ import org.openide.util.NbBundle.Messages;
 )
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
 @ActionID(category = "Window", id = "org.inventory.core.templates.TemplatesTopComponent")
-@ActionReference(path = "Menu/Tools" /*, position = 333 */)
+@ActionReferences(value = {@ActionReference(path = "Menu/Tools"),
+    @ActionReference(path = "Toolbars/04_Customization", position = 4)})
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_TemplatesAction",
         preferredID = "TemplatesTopComponent"

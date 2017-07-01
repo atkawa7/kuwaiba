@@ -55,7 +55,7 @@ import org.openide.explorer.ExplorerManager;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 /**
- * Top component which displays Class Hierarchy View.
+ * Top component to display the Class Hierarchy in a scene.
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 @ConvertAsProperties(

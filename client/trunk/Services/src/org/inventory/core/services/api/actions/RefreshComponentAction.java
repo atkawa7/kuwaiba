@@ -19,6 +19,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.AbstractAction;
 import org.inventory.core.services.api.behaviors.Refreshable;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
+import org.openide.awt.ActionRegistration;
 import org.openide.windows.WindowManager;
 
 
@@ -26,6 +30,12 @@ import org.openide.windows.WindowManager;
  * Refreshes the focused component
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
+@ActionID(id = "org.inventory.core.services.api.actions.RefreshComponentAction", category = "View")
+@ActionRegistration(iconBase = "org/inventory/core/services/res/view-refresh.png", displayName = "org.inventory.core.services.Bundle#CTL_Refresh", iconInMenu = true)
+@ActionReferences(value = {
+    @ActionReference(path = "Shortcuts", name = "F5"),
+    @ActionReference(path = "Menu/View", name = "org-inventory-core-services-api-actions-RefreshAction", position = 100),
+    @ActionReference(path = "Toolbars/00_General", name = "org-inventory-core-services-api-actions-Refresh", position = 2)})
 public final class RefreshComponentAction extends AbstractAction implements ActionListener {
 
     @Override

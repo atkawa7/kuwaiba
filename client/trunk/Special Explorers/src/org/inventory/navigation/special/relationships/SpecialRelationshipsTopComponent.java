@@ -49,7 +49,7 @@ import org.openide.util.Utilities;
 @TopComponent.Registration(mode = "navigator", openAtStartup = false)
 @ActionID(category = "Tools", id = "org.inventory.navigation.special.relationships.SpecialRelationshipsTopComponent")
 @ActionReferences(value = { @ActionReference(path = "Menu/Tools/Navigation"),
-    @ActionReference(path = "Toolbars/Navigation", position = 101)})
+    @ActionReference(path = "Toolbars/01_Navigation", position = 4 )})
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_SpecialRelationshipsAction",
         preferredID = "SpecialRelationshipsTopComponent"

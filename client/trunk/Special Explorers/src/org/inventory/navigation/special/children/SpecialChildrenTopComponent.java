@@ -50,7 +50,7 @@ import org.openide.windows.WindowManager;
 @TopComponent.Registration(mode = "navigator", openAtStartup = false)
 @ActionID(category = "Tools", id = "org.inventory.navigation.special.relationships.SpecialChildrenTopComponent")
 @ActionReferences(value = { @ActionReference(path = "Menu/Tools/Navigation"),
-    @ActionReference(path = "Toolbars/Navigation", position = 102 )})
+    @ActionReference(path = "Toolbars/01_Navigation", position = 5 )})
 @TopComponent.OpenActionRegistration(
         displayName = "Special Children Explorer",
         preferredID = "SpecialChildrenTopComponent"

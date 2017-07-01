@@ -54,7 +54,7 @@ autostore = false)
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
 @ActionID(category = "Tools", id = "org.inventory.navigation.navigationtree.NavigationTreeTopComponent")
 @ActionReferences(value = { @ActionReference(path = "Menu/Tools/Navigation"),
-    @ActionReference(path = "Toolbars/Navigation", position = 100, separatorBefore = 99)})
+    @ActionReference(path = "Toolbars/01_Navigation", position = 1)})
 @TopComponent.OpenActionRegistration(
         displayName = "Navigation Tree",
         preferredID = "NavigationTreeTopComponent"

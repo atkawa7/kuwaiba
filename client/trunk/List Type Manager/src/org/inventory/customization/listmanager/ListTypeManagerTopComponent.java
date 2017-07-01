@@ -33,7 +33,7 @@ import org.openide.windows.WindowManager;
 
 /**
  * List Type Manager Top component.
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @ConvertAsProperties(
         dtd = "-//org.inventory.customization.listmanager//ListTypeManager//EN",
@@ -47,7 +47,7 @@ import org.openide.windows.WindowManager;
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
 @ActionID(category = "Window", id = "org.inventory.customization.listmanager.ListTypeManagerTopComponent")
 @ActionReferences(value = {@ActionReference(path = "Menu/Tools/Administrative"),
-    @ActionReference(path = "Toolbars/Customization", position = 500, separatorBefore = 199)})
+    @ActionReference(path = "Toolbars/04_Customization", position = 3)})
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_ListTypeManagerAction",
         preferredID = "ListTypeManagerTopComponent"
@@ -91,18 +91,14 @@ public final class ListTypeManagerTopComponent extends TopComponent implements E
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
-    
-    @Override
-    public int getPersistenceType() {
-        return TopComponent.PERSISTENCE_NEVER;
-    }
+
 
     @Override
     public void componentOpened() {
         AbstractNode root = new AbstractNode(new ListTypeChildren(lms.getInstanceableListTypes()));
         root.setIconBaseWithExtension(ROOT_ICON_PATH);
         em.setRootContext(root);
-        em.getRootContext().setDisplayName("Available List Types");
+        em.getRootContext().setDisplayName("List Types");
     }
 
     @Override

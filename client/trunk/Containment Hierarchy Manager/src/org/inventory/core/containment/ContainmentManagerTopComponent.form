@@ -65,7 +65,7 @@
     <Component class="javax.swing.JLabel" name="lblInfo">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/inventory/core/containment/Bundle.properties" key="HierarchyCustomizerTopComponent.lblInfo.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/inventory/core/containment/Bundle.properties" key="ContainmentManagerTopComponent.lblInfo.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <Constraints>
@@ -99,10 +99,10 @@
           <Properties>
             <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/inventory/core/containment/Bundle.properties" key="HierarchyCustomizerTopComponent.btnStandartContainmentHierarchy.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+              <ResourceString bundle="org/inventory/core/containment/Bundle.properties" key="ContainmentManagerTopComponent.btnStandartContainmentHierarchy.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/inventory/core/containment/Bundle.properties" key="HierarchyCustomizerTopComponent.btnStandartContainmentHierarchy.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+              <ResourceString bundle="org/inventory/core/containment/Bundle.properties" key="ContainmentManagerTopComponent.btnStandartContainmentHierarchy.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
             </Property>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
@@ -123,10 +123,10 @@
         <Component class="javax.swing.JToggleButton" name="btnSpecialContainmentHierarchy">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/inventory/core/containment/Bundle.properties" key="HierarchyCustomizerTopComponent.btnSpecialContainmentHierarchy.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+              <ResourceString bundle="org/inventory/core/containment/Bundle.properties" key="ContainmentManagerTopComponent.btnSpecialContainmentHierarchy.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/inventory/core/containment/Bundle.properties" key="HierarchyCustomizerTopComponent.btnSpecialContainmentHierarchy.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+              <ResourceString bundle="org/inventory/core/containment/Bundle.properties" key="ContainmentManagerTopComponent.btnSpecialContainmentHierarchy.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
             </Property>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">

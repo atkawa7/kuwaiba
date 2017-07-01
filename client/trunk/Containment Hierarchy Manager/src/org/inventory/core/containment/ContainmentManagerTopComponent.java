@@ -19,7 +19,6 @@ package org.inventory.core.containment;
 import java.awt.BorderLayout;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragSource;
-import java.util.logging.Logger;
 import javax.swing.ActionMap;
 import javax.swing.JList;
 import org.inventory.core.services.api.behaviors.Refreshable;
@@ -27,48 +26,54 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.containment.nodes.ClassMetadataChildren;
 import org.inventory.core.containment.nodes.ClassMetadataSpecialChildren;
 import org.inventory.core.containment.nodes.ClassMetadataTransferManager;
-import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
-import org.openide.windows.WindowManager;
-import org.openide.util.ImageUtilities;
 import org.netbeans.api.settings.ConvertAsProperties;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
 import org.openide.nodes.AbstractNode;
 import org.openide.util.Lookup;
 
-
 /** 
- * Represents the GUI for customizing the container hierarchy
- * @author Charles Edward bedon Cortazar <charles.bedon@kuwaiba.org>
+ * The main GUI component for customizing the standard and special container hierarchy
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-@ConvertAsProperties(dtd = "-//org.inventory.core.containment//HierarchyCustomizer//EN",
+@ConvertAsProperties(dtd = "-//org.inventory.core.containment//ContainmentManager//EN",
 autostore = false)
-public final class HierarchyCustomizerTopComponent extends TopComponent
+@TopComponent.Description(
+    preferredID = "ContainmentManagerTopComponent",
+iconBase = "org/inventory/core/containment/res/icon.png",
+persistenceType = TopComponent.PERSISTENCE_NEVER)
+@TopComponent.Registration(mode = "explorer", openAtStartup = false)
+@ActionID(category = "Tools", id = "org.inventory.core.containment.ContainmentManagerTopComponent")
+@ActionReferences(value = {@ActionReference(path = "Menu/Tools/Administrative/Containment Management"),
+    @ActionReference(path = "Toolbars/04_Customization", position = 2)})
+@TopComponent.OpenActionRegistration(
+    displayName = "Containment Manager",
+preferredID = "ContainmentManagerTopComponent")
+public final class ContainmentManagerTopComponent extends TopComponent
     implements Refreshable, ExplorerManager.Provider{
 
-    private static HierarchyCustomizerTopComponent instance;
-    static final String ICON_PATH = "org/inventory/core/containment/res/icon.png";
-    private static final String PREFERRED_ID = "HierarchyCustomizerTopComponent";
     private final ExplorerManager em = new ExplorerManager();
-    private HierarchyCustomizerService service;
+    private ContainmentManagerService service;
     private BeanTreeView bTreeView;
     private JList lstClasses;
     private NotificationUtil nu;
     
-    public HierarchyCustomizerTopComponent() {
+    public ContainmentManagerTopComponent() {
         initComponents();
         initComponentsCustom();
-        setName(NbBundle.getMessage(HierarchyCustomizerTopComponent.class, "CTL_HierarchyCustomizerTopComponent"));
-        setToolTipText(NbBundle.getMessage(HierarchyCustomizerTopComponent.class, "HINT_HierarchyCustomizerTopComponent"));
-        setIcon(ImageUtilities.loadImage(ICON_PATH, true));
+        setName("Containment Manager");
+        setToolTipText("Manage the Standard and Special Containment Hierarchies");
     }
 
     private void initComponentsCustom() {
         associateLookup(ExplorerUtils.createLookup(em, new ActionMap()));
 
-        service = new HierarchyCustomizerService(this);
+        service = new ContainmentManagerService(this);
 
         bTreeView = new BeanTreeView();
         lstClasses = new JList();
@@ -119,7 +124,7 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
 
         add(pnlHierarchyManagerMain, java.awt.BorderLayout.CENTER);
 
-        org.openide.awt.Mnemonics.setLocalizedText(lblInfo, org.openide.util.NbBundle.getMessage(HierarchyCustomizerTopComponent.class, "HierarchyCustomizerTopComponent.lblInfo.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(lblInfo, org.openide.util.NbBundle.getMessage(ContainmentManagerTopComponent.class, "ContainmentManagerTopComponent.lblInfo.text")); // NOI18N
         add(lblInfo, java.awt.BorderLayout.PAGE_END);
 
         toolBarMain.setRollover(true);
@@ -128,8 +133,8 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
         toolBarMain.setPreferredSize(new java.awt.Dimension(326, 33));
 
         btnStandartContainmentHierarchy.setSelected(true);
-        org.openide.awt.Mnemonics.setLocalizedText(btnStandartContainmentHierarchy, org.openide.util.NbBundle.getMessage(HierarchyCustomizerTopComponent.class, "HierarchyCustomizerTopComponent.btnStandartContainmentHierarchy.text")); // NOI18N
-        btnStandartContainmentHierarchy.setToolTipText(org.openide.util.NbBundle.getMessage(HierarchyCustomizerTopComponent.class, "HierarchyCustomizerTopComponent.btnStandartContainmentHierarchy.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnStandartContainmentHierarchy, org.openide.util.NbBundle.getMessage(ContainmentManagerTopComponent.class, "ContainmentManagerTopComponent.btnStandartContainmentHierarchy.text")); // NOI18N
+        btnStandartContainmentHierarchy.setToolTipText(org.openide.util.NbBundle.getMessage(ContainmentManagerTopComponent.class, "ContainmentManagerTopComponent.btnStandartContainmentHierarchy.toolTipText")); // NOI18N
         btnStandartContainmentHierarchy.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
         btnStandartContainmentHierarchy.setFocusable(false);
         btnStandartContainmentHierarchy.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -142,8 +147,8 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
         });
         toolBarMain.add(btnStandartContainmentHierarchy);
 
-        org.openide.awt.Mnemonics.setLocalizedText(btnSpecialContainmentHierarchy, org.openide.util.NbBundle.getMessage(HierarchyCustomizerTopComponent.class, "HierarchyCustomizerTopComponent.btnSpecialContainmentHierarchy.text")); // NOI18N
-        btnSpecialContainmentHierarchy.setToolTipText(org.openide.util.NbBundle.getMessage(HierarchyCustomizerTopComponent.class, "HierarchyCustomizerTopComponent.btnSpecialContainmentHierarchy.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnSpecialContainmentHierarchy, org.openide.util.NbBundle.getMessage(ContainmentManagerTopComponent.class, "ContainmentManagerTopComponent.btnSpecialContainmentHierarchy.text")); // NOI18N
+        btnSpecialContainmentHierarchy.setToolTipText(org.openide.util.NbBundle.getMessage(ContainmentManagerTopComponent.class, "ContainmentManagerTopComponent.btnSpecialContainmentHierarchy.toolTipText")); // NOI18N
         btnSpecialContainmentHierarchy.setBorder(javax.swing.BorderFactory.createEmptyBorder(3, 3, 3, 3));
         btnSpecialContainmentHierarchy.setFocusable(false);
         btnSpecialContainmentHierarchy.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -182,36 +187,7 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
     private javax.swing.JPanel pnlRight;
     private javax.swing.JToolBar toolBarMain;
     // End of variables declaration//GEN-END:variables
-    /**
-     * Gets default instance. Do not use directly: reserved for *.settings files only,
-     * i.e. deserialization routines; otherwise you could get a non-deserialized instance.
-     * To obtain the singleton instance, use {@link #findInstance}.
-     */
-    public static synchronized HierarchyCustomizerTopComponent getDefault() {
-        if (instance == null) {
-            instance = new HierarchyCustomizerTopComponent();
-        }
-        return instance;
-    }
 
-    /**
-     * Obtain the HierarchyCustomizerTopComponent instance. Never call {@link #getDefault} directly!
-     */
-    public static synchronized HierarchyCustomizerTopComponent findInstance() {
-        TopComponent win = WindowManager.getDefault().findTopComponent(PREFERRED_ID);
-        if (win == null) {
-            Logger.getLogger(HierarchyCustomizerTopComponent.class.getName()).warning(
-                    "Cannot find " + PREFERRED_ID + " component. It will not be located properly in the window system.");
-            return getDefault();
-        }
-        if (win instanceof HierarchyCustomizerTopComponent) {
-            return (HierarchyCustomizerTopComponent) win;
-        }
-        Logger.getLogger(HierarchyCustomizerTopComponent.class.getName()).warning(
-                "There seem to be multiple components with the '" + PREFERRED_ID
-                + "' ID. That is a potential source of errors and unexpected behavior.");
-        return getDefault();
-    }
 
     public BeanTreeView getbTreeView() {
         return bTreeView;
@@ -219,11 +195,6 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
 
     public JList getLstClasses() {
         return lstClasses;
-    }
-
-    @Override
-    public int getPersistenceType() {
-        return TopComponent.PERSISTENCE_NEVER;
     }
 
     @Override
@@ -246,22 +217,11 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
         // TODO store your settings
     }
 
-    Object readProperties(java.util.Properties p) {
-        if (instance == null) {
-            instance = this;
-        }
-        instance.readPropertiesImpl(p);
-        return instance;
-    }
+    void readProperties(java.util.Properties p) { }
 
     private void readPropertiesImpl(java.util.Properties p) {
         String version = p.getProperty("version");
         // TODO read your settings according to their version
-    }
-
-    @Override
-    protected String preferredID() {
-        return PREFERRED_ID;
     }
     
     @Override

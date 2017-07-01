@@ -18,7 +18,6 @@ package org.inventory.queries;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JComboBox;
@@ -35,22 +34,30 @@ import org.inventory.queries.scene.QueryEditorScene;
 import org.inventory.queries.dialogs.CreateQueryPanel;
 import org.inventory.queries.dialogs.QueryListPanel;
 import org.inventory.queries.scene.ClassNodeWidget;
-import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
-import org.openide.windows.WindowManager;
-import org.openide.util.ImageUtilities;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
 
+@TopComponent.Description(
+        preferredID = "QueryManagerTopComponent",
+        iconBase="org/inventory/queries/res/icon2.png", 
+        persistenceType = TopComponent.PERSISTENCE_ALWAYS)
+@TopComponent.Registration(mode = "editor", openAtStartup = false)
+@ActionID(category = "Tools", id = "org.inventory.queries.QueryManagerTopComponent")
+@ActionReferences(value = { @ActionReference(path = "Menu/Tools"),
+    @ActionReference(path = "Toolbars/00_General", position = 1)})
+@TopComponent.OpenActionRegistration(
+        displayName = "Queries",
+        preferredID = "QueryManagerTopComponent"
+)
 /**
  * Query manager Top component 
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public final class QueryManagerTopComponent extends TopComponent implements ActionListener{
-
-    private static QueryManagerTopComponent instance;
-    /** path to the icon used by the component and its open action */
-    static final String ICON_PATH = "org/inventory/queries/res/icon2.png";
-    private static final String PREFERRED_ID = "QueryManagerTopComponent";
     private QueryEditorScene queryScene;
     private QueryManagerService qbs;
     private ButtonGroup grpLogicalConnector;
@@ -59,9 +66,8 @@ public final class QueryManagerTopComponent extends TopComponent implements Acti
     public QueryManagerTopComponent() {
         initComponents();
         initCustomComponents();
-        setName(NbBundle.getMessage(QueryManagerTopComponent.class, "CTL_QueryManagerTopComponent"));
-        setToolTipText(NbBundle.getMessage(QueryManagerTopComponent.class, "HINT_QueryManagerTopComponent"));
-        setIcon(ImageUtilities.loadImage(ICON_PATH, true));
+        setName("Queries");
+        setToolTipText("Create and Manage Queries");
     }
 
     private void initCustomComponents(){
@@ -293,13 +299,11 @@ public final class QueryManagerTopComponent extends TopComponent implements Acti
         if (!checkForUnsavedQuery(true))
             return;
         
-        boolean showAll;
-        if (JOptionPane.showConfirmDialog(this,
-                "Show only your saved queries? (Press Cancel to show public saved queries too)",
+        boolean showAll = JOptionPane.showConfirmDialog(this,
+                "Show only your saved queries?",
                 "Query List",
-                JOptionPane.OK_CANCEL_OPTION) == JOptionPane.CANCEL_OPTION)
-            showAll = true;
-        else showAll = false;
+                JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION;
+        
         LocalQueryLight[] queries  = qbs.getQueries(showAll);
         if (queries != null){
             final QueryListPanel qlp = new QueryListPanel(queries);
@@ -400,41 +404,6 @@ public final class QueryManagerTopComponent extends TopComponent implements Acti
     private javax.swing.JToolBar.Separator sptTwo;
     private javax.swing.JTextField txtResultLimit;
     // End of variables declaration//GEN-END:variables
-    /**
-     * Gets default instance. Do not use directly: reserved for *.settings files only,
-     * i.e. deserialization routines; otherwise you could get a non-deserialized instance.
-     * To obtain the singleton instance, use {@link #findInstance}.
-     */
-    public static synchronized QueryManagerTopComponent getDefault() {
-        if (instance == null) {
-            instance = new QueryManagerTopComponent();
-        }
-        return instance;
-    }
-
-    /**
-     * Obtain the QueryManagerTopComponent instance. Never call {@link #getDefault} directly!
-     */
-    public static synchronized QueryManagerTopComponent findInstance() {
-        TopComponent win = WindowManager.getDefault().findTopComponent(PREFERRED_ID);
-        if (win == null) {
-            Logger.getLogger(QueryManagerTopComponent.class.getName()).warning(
-                    "Cannot find " + PREFERRED_ID + " component. It will not be located properly in the window system.");
-            return getDefault();
-        }
-        if (win instanceof QueryManagerTopComponent) {
-            return (QueryManagerTopComponent) win;
-        }
-        Logger.getLogger(QueryManagerTopComponent.class.getName()).warning(
-                "There seem to be multiple components with the '" + PREFERRED_ID
-                + "' ID. That is a potential source of errors and unexpected behavior.");
-        return getDefault();
-    }
-
-    @Override
-    public int getPersistenceType() {
-        return TopComponent.PERSISTENCE_NEVER;
-    }
 
     @Override
     public void componentOpened() {
@@ -459,22 +428,11 @@ public final class QueryManagerTopComponent extends TopComponent implements Acti
         // TODO store your settings
     }
 
-    Object readProperties(java.util.Properties p) {
-        if (instance == null) {
-            instance = this;
-        }
-        instance.readPropertiesImpl(p);
-        return instance;
-    }
+    void readProperties(java.util.Properties p) { }
 
     private void readPropertiesImpl(java.util.Properties p) {
         String version = p.getProperty("version"); //NOI18N
         // TODO read your settings according to their version
-    }
-
-    @Override
-    protected String preferredID() {
-        return PREFERRED_ID;
     }
 
     public NotificationUtil getNotifier(){
@@ -497,7 +455,6 @@ public final class QueryManagerTopComponent extends TopComponent implements Acti
         return txtResultLimit;
     }
     
-
     /**
      * Called when a different item within the class list is selected
      * @param e

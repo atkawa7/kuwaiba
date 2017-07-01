@@ -51,14 +51,14 @@ persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
 @ActionID(category = "Tools", id = "org.inventory.customization.datamodelmanager.DataModelManagerTopComponent")
 @ActionReferences(value = {@ActionReference(path = "Menu/Tools/Administrative/Class Management"),
-    @ActionReference(path = "Toolbars/Customization", position = 500, separatorBefore = 199)})
+    @ActionReference(path = "Toolbars/04_Customization", position = 1)})
 @TopComponent.OpenActionRegistration(
     displayName = "#CTL_DataModelManagerAction",
 preferredID = "DataModelManagerTopComponent")
 @Messages({
     "CTL_DataModelManagerAction=Data Model Manager",
-    "CTL_DataModelManagerTopComponent=DataModel Manager",
-    "HINT_DataModelManagerTopComponent=Update the data model"
+    "CTL_DataModelManagerTopComponent=Data Model Manager",
+    "HINT_DataModelManagerTopComponent=Manage the inventory's data model"
 })
 public final class DataModelManagerTopComponent extends TopComponent 
         implements ExplorerManager.Provider, Refreshable, ActionListener {

@@ -48,7 +48,6 @@ import org.openide.util.Lookup;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
 import org.openide.util.Utilities;
-import org.openide.windows.WindowManager;
 
 /**
  * This component renders the views associated to an currentObject
@@ -64,7 +63,7 @@ autostore = false)
 @TopComponent.Registration(mode = "editor", openAtStartup = false)
 @ActionID(category = "Tools", id = "org.inventory.views.objectview.ObjectViewTopComponent")
 @ActionReferences(value = { @ActionReference(path = "Menu/Tools/Views"),
-    @ActionReference(path = "Toolbars/Views", position = 200, separatorBefore = 199)})
+    @ActionReference(path = "Toolbars/02_Views", position = 1 )})
 @TopComponent.OpenActionRegistration(
         displayName = "Object View",
         preferredID = "ObjectViewTopComponent"
