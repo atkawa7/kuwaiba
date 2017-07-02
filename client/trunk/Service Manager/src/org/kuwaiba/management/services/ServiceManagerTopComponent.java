@@ -40,11 +40,11 @@ autostore = false)
 @TopComponent.Description(
     preferredID = "ServiceManagerTopComponent",
 iconBase = "org/kuwaiba/management/services/res/icon.png",
-persistenceType = TopComponent.PERSISTENCE_NEVER)
+persistenceType = TopComponent.PERSISTENCE_ALWAYS)
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
 @ActionID(category = "Window", id = "org.kuwaiba.management.services.ServiceManagerTopComponent")
-@ActionReferences(value = {@ActionReference(path = "Menu/Tools"),
-    @ActionReference(path = "Toolbars/Tools")})
+@ActionReferences(value = {@ActionReference(path = "Menu/Tools/Advanced"),
+    @ActionReference(path = "Toolbars/10_Advanced", position = 1)})
 @TopComponent.OpenActionRegistration(
     displayName = "#CTL_ServiceManagerAction",
 preferredID = "ServiceManagerTopComponent")

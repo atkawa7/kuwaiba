@@ -40,11 +40,12 @@ import org.openide.util.NbBundle.Messages;
 @TopComponent.Description(
         preferredID = "ProjectsModuleTopComponent",
         iconBase="com/neotropic/inventory/modules/projects/res/icon.png", 
-        persistenceType = TopComponent.PERSISTENCE_NEVER
+        persistenceType = TopComponent.PERSISTENCE_ALWAYS
 )
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
 @ActionID(category = "Window", id = "com.neotropic.inventory.modules.projects.ProjectsModuleTopComponent")
-@ActionReferences(value = {@ActionReference(path = "Menu/Tools/Advanced")})
+@ActionReferences(value = {@ActionReference(path = "Menu/Tools/Advanced"),
+    @ActionReference(path = "Toolbars/10_Advanced", position = 6)})
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_ProjectsModuleAction",
         preferredID = "ProjectsModuleTopComponent"

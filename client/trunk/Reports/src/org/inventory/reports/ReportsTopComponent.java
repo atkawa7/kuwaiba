@@ -43,7 +43,7 @@ import org.openide.util.NbBundle.Messages;
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
 @ActionID(category = "Window", id = "org.inventory.reports.ReportsTopComponent")
 @ActionReferences(value = {@ActionReference(path = "Menu/Tools"),
-    @ActionReference(path = "Toolbars/Tools")})
+    @ActionReference(path = "Toolbars/05_Tools", position = 2)})
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_ReportsAction",
         preferredID = "ReportsTopComponent"

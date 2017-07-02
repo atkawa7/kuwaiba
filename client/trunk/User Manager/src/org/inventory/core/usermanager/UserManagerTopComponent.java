@@ -43,8 +43,8 @@ import org.openide.util.NbBundle.Messages;
 )
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
 @ActionID(category = "Tools", id = "org.inventory.core.usermanager.UserManagerTopComponent")
-@ActionReferences(value = {@ActionReference(path = "Menu/Tools"),
-    @ActionReference(path = "Toolbars/Tools")} /*, position = 333 */)
+@ActionReferences(value = {@ActionReference(path = "Menu/Tools/Administration"),
+    @ActionReference(path = "Toolbars/04_Customization", position = 5)})
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_UserManagerAction",
         preferredID = "UserManagerTopComponent"

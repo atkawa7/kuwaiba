@@ -37,6 +37,7 @@ import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
 import org.openide.explorer.ExplorerManager;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
@@ -58,7 +59,8 @@ import org.openide.util.NbBundle.Messages;
 )
 @TopComponent.Registration(mode = "editor", openAtStartup = false)
 @ActionID(category = "Window", id = "com.neotropic.inventory.modules.sdh.SDHModuleTopComponent")
-@ActionReference(path = "Menu/Tools/Advanced" /*, position = 333 */)
+@ActionReferences(value = {@ActionReference(path = "Menu/Tools/Advanced"),
+    @ActionReference(path = "Toolbars/10_Advanced", position = 4)})
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_SDHModuleAction",
         preferredID = "SDHModuleTopComponent"
@@ -97,7 +99,7 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
         
         scene.setActiveTool(SDHModuleScene.ACTION_SELECT);
         
-        add(scene.createView());
+        pnlScrollMain.setViewportView(scene.createView());
     }
 
     /**
@@ -123,7 +125,7 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
         btnTransportLink = new javax.swing.JToggleButton();
         btnContainerLink = new javax.swing.JToggleButton();
         btnTributaryLink = new javax.swing.JToggleButton();
-        pnlMainScrollPane1 = new javax.swing.JScrollPane();
+        pnlScrollMain = new javax.swing.JScrollPane();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -271,7 +273,7 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
         barTools.add(btnTributaryLink);
 
         add(barTools, java.awt.BorderLayout.PAGE_START);
-        add(pnlMainScrollPane1, java.awt.BorderLayout.CENTER);
+        add(pnlScrollMain, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
@@ -318,11 +320,10 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
                     scene.clear();
                     service.setView(actualView);
                     setHtmlDisplayName(getDisplayName());
+                    configObject.setProperty("saved", true);
                     scene.render(actualView.getStructure());
                     enableButtons(true);
                     btnConnect.setSelected(false);
-                    configObject.setProperty("saved", true);
-                    
                 }
             }
         }        
@@ -424,7 +425,7 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
     private javax.swing.JToggleButton btnShowConnectionLabels;
     private javax.swing.JToggleButton btnTransportLink;
     private javax.swing.JToggleButton btnTributaryLink;
-    private javax.swing.JScrollPane pnlMainScrollPane1;
+    private javax.swing.JScrollPane pnlScrollMain;
     private javax.swing.JToolBar.Separator sepConnections;
     // End of variables declaration//GEN-END:variables
     @Override

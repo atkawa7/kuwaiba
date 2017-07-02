@@ -166,12 +166,12 @@ public class SDHModuleService {
                 if (!positionsToBeOccupied.isEmpty())
                     return Math.abs(Integer.valueOf(positionsToBeOccupied));
                 return 1;
-            default: //Should not happened
+            default: //Should not happen
                 throw new IllegalArgumentException("Invalid link type");
         }
     }
     
-    public enum LinkType{
+    public enum LinkType {
         TYPE_TRANSPORTLINK,
         TYPE_CONTAINERLINK
     }

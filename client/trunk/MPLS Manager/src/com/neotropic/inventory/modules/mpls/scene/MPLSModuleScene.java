@@ -205,8 +205,10 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
                             Widget widget = addNode(lol);
                             widget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
                         }
-                        else
+                        else {
+                            fireChangeEvent(new ActionEvent(this, SCENE_CHANGE, "equipmentAutomaticallyRemoved")); //NOI18N
                             NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.INFO_MESSAGE, String.format("Equipment of class %s and id %s could not be found and was removed from the view", objectClass, objectId));
+                        }
                     }else {
                         if (reader.getName().equals(qEdge)){
                             long objectId = Long.valueOf(reader.getAttributeValue(null, "id"));
@@ -222,8 +224,10 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
                                 LocalObjectLight bSideObject = new LocalObjectLight(bSide, null, null);
                                 Widget bSideWidget = findWidget(bSideObject);
 
-                                if (aSideWidget == null || bSideWidget == null)
+                                if (aSideWidget == null || bSideWidget == null) {
+                                    fireChangeEvent(new ActionEvent(this, SCENE_CHANGE, "connectionAutomaticallyRemoved")); //NOI18N
                                     NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.INFO_MESSAGE, String.format("One or both of the endpoints of connection of class %s and id %s could not be found, so the connection was removed from the view", className, objectId));
+                                }
                                 else {
                                     ConnectionWidget newEdge = (ObjectConnectionWidget)addEdge(container);
                                     newEdge.setLineColor(getConnectionColor(container));
@@ -242,8 +246,10 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
                                         }
                                     }
                                 }
-                            } else
+                            } else {
+                                fireChangeEvent(new ActionEvent(this, SCENE_CHANGE, "connectionAutomaticallyRemoved")); //NOI18N
                                 NotificationUtil.getInstance().showSimplePopup("Load view", NotificationUtil.INFO_MESSAGE, String.format("Connection of class %s and id %s could not be found and was removed from the view", className, objectId));
+                            }
                         }
                     }
                 }

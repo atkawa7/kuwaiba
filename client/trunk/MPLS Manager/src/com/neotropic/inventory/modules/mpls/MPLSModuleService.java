@@ -70,6 +70,10 @@ public class MPLSModuleService {
         this.view = view;
     }
     
+    public void clearView() {
+        this.view = null;
+    }
+    
     public List<LocalObjectViewLight> getViews() {
         List<LocalObjectViewLight> views = com.getGeneralViews(CLASS_VIEW);
         if (views == null) {

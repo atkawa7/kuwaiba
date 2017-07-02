@@ -36,6 +36,7 @@ import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.*;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
 import org.openide.explorer.ExplorerManager;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
@@ -57,7 +58,8 @@ import org.openide.util.NbBundle.Messages;
 )
 @TopComponent.Registration(mode = "editor", openAtStartup = false)
 @ActionID(category = "Window", id = "com.neotropic.inventory.modules.mpls.MPLSModuleTopComponent")
-@ActionReference(path = "Menu/Tools/Advanced" /*, position = 333 */)
+@ActionReferences(value = {@ActionReference(path = "Menu/Tools/Advanced"),
+    @ActionReference(path = "Toolbars/10_Advanced", position = 5)})
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_MPLSModuleAction",
         preferredID = "MPLSModuleTopComponent"
@@ -255,11 +257,11 @@ public final class MPLSModuleTopComponent extends TopComponent implements Explor
                 if (actualView != null) {
                     scene.clear();
                     service.setView(actualView);
+                    configObject.setProperty("saved", true);
+                    setHtmlDisplayName(getDisplayName());
                     scene.render(actualView.getStructure());
                     enableButtons(true);
                     btnConnect.setSelected(false);
-                    configObject.setProperty("saved", true);
-                    setHtmlDisplayName(getDisplayName());
                 }
             }
         } 
@@ -350,15 +352,13 @@ public final class MPLSModuleTopComponent extends TopComponent implements Explor
     @Override
     public void componentClosed() {
         scene.removeAllListeners();
-        if (!(boolean)configObject.getProperty("saved")) {
-            switch (JOptionPane.showConfirmDialog(this, "This topology has not been saved, do you want to save it?",
-                "Confirmation", JOptionPane.YES_NO_OPTION)){
-                case JOptionPane.YES_OPTION:
-                    btnSaveActionPerformed(new ActionEvent(this, 0, "close"));
-            }
-        }
+        if (!(boolean)configObject.getProperty("saved") && 
+                JOptionPane.showConfirmDialog(this, "This topology has not been saved, do you want to save it?",
+                    "Confirmation", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
+                btnSaveActionPerformed(new ActionEvent(this, 0, "close"));
+        
         scene.clear();
-        service.setView(null);
+        service.clearView();
     }
 
     @Override

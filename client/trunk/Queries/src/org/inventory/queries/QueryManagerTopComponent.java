@@ -44,7 +44,7 @@ import org.openide.awt.ActionReferences;
 @TopComponent.Description(
         preferredID = "QueryManagerTopComponent",
         iconBase="org/inventory/queries/res/icon2.png", 
-        persistenceType = TopComponent.PERSISTENCE_ALWAYS)
+        persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "editor", openAtStartup = false)
 @ActionID(category = "Tools", id = "org.inventory.queries.QueryManagerTopComponent")
 @ActionReferences(value = { @ActionReference(path = "Menu/Tools"),

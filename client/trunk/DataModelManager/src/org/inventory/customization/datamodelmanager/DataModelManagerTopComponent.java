@@ -50,7 +50,7 @@ iconBase = "org/inventory/customization/datamodelmanager/res/icon.png",
 persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
 @ActionID(category = "Tools", id = "org.inventory.customization.datamodelmanager.DataModelManagerTopComponent")
-@ActionReferences(value = {@ActionReference(path = "Menu/Tools/Administrative/Class Management"),
+@ActionReferences(value = {@ActionReference(path = "Menu/Tools/Administration"),
     @ActionReference(path = "Toolbars/04_Customization", position = 1)})
 @TopComponent.OpenActionRegistration(
     displayName = "#CTL_DataModelManagerAction",

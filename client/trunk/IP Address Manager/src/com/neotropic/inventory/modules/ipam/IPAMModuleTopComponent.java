@@ -21,6 +21,7 @@ import com.neotropic.inventory.modules.ipam.nodes.IPAMRootNode;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
@@ -39,11 +40,12 @@ import org.openide.util.NbBundle.Messages;
 @TopComponent.Description(
         preferredID = "IPAMModuleTopComponent",
         iconBase="com/neotropic/inventory/modules/res/icon.png", 
-        persistenceType = TopComponent.PERSISTENCE_NEVER
+        persistenceType = TopComponent.PERSISTENCE_ALWAYS
 )
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
 @ActionID(category = "Window", id = "com.neotropic.inventory.modules.ipam.IPAMModuleTopComponent")
-@ActionReference(path = "Menu/Tools/Advanced" /*, position = 333 */)
+@ActionReferences(value = {@ActionReference(path = "Menu/Tools/Advanced"),
+    @ActionReference(path = "Toolbars/10_Advanced", position = 3)})
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_IPAMModuleTopComponentAction",
         preferredID = "IPAMModuleTopComponent"

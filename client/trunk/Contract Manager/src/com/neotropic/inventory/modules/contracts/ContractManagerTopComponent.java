@@ -20,6 +20,7 @@ import org.inventory.core.services.api.behaviors.Refreshable;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
@@ -37,11 +38,12 @@ import org.openide.util.NbBundle.Messages;
 @TopComponent.Description(
         preferredID = "ContractManagerTopComponent",
         iconBase = "com/neotropic/inventory/modules/contracts/res/icon.png",
-        persistenceType = TopComponent.PERSISTENCE_NEVER
+        persistenceType = TopComponent.PERSISTENCE_ALWAYS
 )
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
 @ActionID(category = "Window", id = "com.neotropic.inventory.modules.contracts.ContractManagerTopComponent")
-@ActionReference(path = "Menu/Tools/Advanced" /*, position = 333 */)
+@ActionReferences(value = {@ActionReference(path = "Menu/Tools/Advanced"),
+    @ActionReference(path = "Toolbars/10_Advanced", position = 2)})
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_ContractManagerAction",
         preferredID = "ContractManagerTopComponent"

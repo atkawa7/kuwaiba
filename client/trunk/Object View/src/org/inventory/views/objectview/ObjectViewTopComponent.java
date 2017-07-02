@@ -70,13 +70,6 @@ autostore = false)
 )
 public final class ObjectViewTopComponent extends TopComponent
         implements Provider, ActionListener, Refreshable, LookupListener {
-
-    public static final int CONNECTION_WIRECONTAINER = 1;
-    public static final int CONNECTION_WIRELESSCONTAINER = 2;
-    public static final int CONNECTION_ELECTRICALLINK = 3;
-    public static final int CONNECTION_OPTICALLINK = 4;
-    public static final int CONNECTION_WIRELESSLINK = 5;
-    public static final int CONNECTION_POWERLINK = 6;
     
     private ButtonGroup buttonGroupTools;
     private ButtonGroup buttonGroupConnections;
