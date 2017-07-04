@@ -444,8 +444,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         
         classManagerResultList = new ArrayList<>();
         String cypherQuery = "START inventory = node:classes({className}) ".concat(
-                             "MATCH inventory <-[:").concat(RelTypes.EXTENDS.toString()).concat("*]-classmetadata ").concat(
-                             includeAbstractClasses ? "WHERE classmetadata.abstract <> true " : "").concat(
+                             "MATCH (inventory)<-[:").concat(RelTypes.EXTENDS.toString()).concat("*]-(classmetadata) ").concat(
+                             includeAbstractClasses ? " " : "WHERE classmetadata.abstract <> TRUE ").concat(
                              "RETURN classmetadata ").concat(
                              "ORDER BY classmetadata.name ASC");
 
@@ -482,8 +482,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         
         classManagerResultList = new ArrayList<>();
         String cypherQuery = "START inventory = node:classes({className}) ".concat(
-                             "MATCH inventory <-[:").concat(RelTypes.EXTENDS.toString()).concat("]-classmetadata ").concat(
-                             includeAbstractClasses ? "" : "WHERE classmetadata.abstract <> true ").concat(
+                             "MATCH (inventory)<-[:").concat(RelTypes.EXTENDS.toString()).concat("]-(classmetadata) ").concat(
+                             includeAbstractClasses ? " " : "WHERE classmetadata.abstract <> TRUE ").concat(
                              "RETURN classmetadata ").concat(
                              "ORDER BY classmetadata.name ASC");
 
