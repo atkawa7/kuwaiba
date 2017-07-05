@@ -45,10 +45,6 @@ public class TempBusinessRulesEngine {
         List<String[]> links = new ArrayList<>();
         links.add(new String[]{"GenericPort", "GenericPort"});
         relationshipMappings.put("GenericPhysicalLink", links);
-
-        possibleChildrenAccordingToModels.put("WireContainer", new String[]{"OpticalLink", "ElectricalLink", "PowerLink"});
-        possibleChildrenAccordingToModels.put("WirelessContainer", new String[]{"RadioLink"});
-        possibleChildrenAccordingToModels.put("OpticalLink", new String[]{"Wavelength"});
         
         subClassOfValidators = new HashMap<>();
         subClassOfValidators.put("GenericPhysicalNode", "physicalNode");
