@@ -400,57 +400,11 @@ public class Constants {
      */
     public static final String CLASS_GENERICCONNECTION="GenericConnection";
 
-    //TODO: Gotta send this to a config file
-    public static final String CLASS_WIRECONTAINER="WireContainer";
-    public static final String CLASS_WIRELESSCONTAINER="WirelessContainer";
-
-    /**
-     * Physical connection classes
-     */
-    public static final String CLASS_ELECTRICALLINK = "ElectricalLink";
-    public static final String CLASS_OPTICALLINK = "OpticalLink";
-    public static final String CLASS_WIRELESSLINK = "RadioLink";
-    public static final String CLASS_POWERLINK = "PowerLink";
-
-    /**
-     * Physical connection type classes
-     */
-    public static final String CLASS_ELECTRICALLINKTYPE = "ElectricalLinkType";
-    public static final String CLASS_OPTICALLINKTYPE = "OpticalLinkType";
-    public static final String CLASS_WIRELESSLINKTYPE = "WirelessLinkType";
-    public static final String CLASS_POWERLINKTYPE = "PowerLinkType";
-
-    /**
-     * Physical container type classes
-     */
-    public static final String CLASS_WIRECONTAINERTYPE = "WireContainerType";
-    public static final String CLASS_WIRELESSCONTAINERTYPE = "WirelessContainerType";
 
     //Misc versions
     /**
      * Version for the XML document to save views (see http://neotropic.co/kuwaiba/wiki/index.php?title=XML_Documents#To_Save_Object_Views for details)
      */
      public static final String VIEW_FORMAT_VERSION = "1.1";
-
-    /**
-     * Returns the connection type class for a given connection class
-     * @param connectionClass The connection to be used
-     * @return The type of connection corresponding to that connection class
-     */
-    public static String getConnectionType(String connectionClass){
-        if (connectionClass.equals(CLASS_ELECTRICALLINK))
-            return CLASS_ELECTRICALLINKTYPE;
-        if (connectionClass.equals(CLASS_OPTICALLINK))
-            return CLASS_OPTICALLINKTYPE;
-        if (connectionClass.equals(CLASS_WIRELESSLINK))
-            return CLASS_WIRELESSLINKTYPE;
-        if (connectionClass.equals(CLASS_POWERLINK))
-            return CLASS_POWERLINKTYPE;
-        if (connectionClass.equals(CLASS_WIRECONTAINER))
-            return CLASS_WIRECONTAINERTYPE;
-        if (connectionClass.equals(CLASS_WIRELESSCONTAINER))
-            return CLASS_WIRELESSCONTAINERTYPE;
-        return null;
-    }
     
 }

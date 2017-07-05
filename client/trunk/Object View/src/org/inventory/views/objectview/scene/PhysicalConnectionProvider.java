@@ -38,20 +38,11 @@ import org.openide.util.Lookup;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class PhysicalConnectionProvider implements ConnectProvider {
-
-    /**
-     * Object to be used as parent to the new connections
-     */
-    private LocalObjectLight currentParentObject;
     
     private ChildrenViewScene scene;
 
     public PhysicalConnectionProvider(ChildrenViewScene scene) {
         this.scene = scene;
-    }
-
-    public void setCurrentParentObject(LocalObjectLight currentParentObject) {
-        this.currentParentObject = currentParentObject;
     }
 
     @Override
@@ -95,7 +86,6 @@ public class PhysicalConnectionProvider implements ConnectProvider {
         }
         
         if (newConnection != null){
-
             ConnectionWidget line = (ConnectionWidget)scene.addEdge(newConnection);
 
             line.setTargetAnchor(AnchorFactory.createCenterAnchor(targetWidget));

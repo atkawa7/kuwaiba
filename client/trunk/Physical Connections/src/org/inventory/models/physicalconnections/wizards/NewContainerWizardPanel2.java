@@ -17,6 +17,8 @@ package org.inventory.models.physicalconnections.wizards;
 
 import java.util.ArrayList;
 import javax.swing.event.ChangeListener;
+import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.util.Constants;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.openide.WizardDescriptor;
 import org.openide.WizardValidationException;
@@ -43,9 +45,6 @@ public class NewContainerWizardPanel2 implements WizardDescriptor.Panel<WizardDe
         this.bSide = bSide;
     }
     
-    
-    
-
     // Get the visual component for the panel. In this template, the component
     // is kept separate. This can be more efficient: if the wizard is created
     // but never displayed, or not all panels are displayed, it is better to
@@ -96,15 +95,15 @@ public class NewContainerWizardPanel2 implements WizardDescriptor.Panel<WizardDe
     public void readSettings(WizardDescriptor wiz) { }
 
     @Override
-    public void storeSettings(WizardDescriptor wiz) {
-        if (component != null) {
-            wiz.putProperty("aSide", component.getSelectedAEndpoint());
-            wiz.putProperty("bSide", component.getSelectedBEndpoint());
-        }
-    }
+    public void storeSettings(WizardDescriptor wiz) {  }
 
     @Override
     public void validate() throws WizardValidationException {
-        System.out.println("Me validan!");
+        if (component.getSelectedAEndpoint() == null || component.getSelectedBEndpoint() == null)
+            throw new WizardValidationException(component, "The container needs two endpoints. Make sure you selected them in the trees", 
+                    "The container needs two endpoints. Make sure you selected them in the trees");
+          if (CommunicationsStub.getInstance().isSubclassOf(component.getSelectedAEndpoint().getClassName(), Constants.CLASS_GENERICPORT) || 
+                CommunicationsStub.getInstance().isSubclassOf(component.getSelectedBEndpoint().getClassName(), Constants.CLASS_GENERICPORT))
+            throw new WizardValidationException(component, "Ports can not be connected using containers", "Ports can not be connected using containers");
     }
 }

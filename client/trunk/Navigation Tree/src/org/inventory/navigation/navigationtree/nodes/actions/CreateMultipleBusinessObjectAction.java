@@ -26,7 +26,6 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
-import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
@@ -48,7 +47,7 @@ public final class CreateMultipleBusinessObjectAction extends GenericInventoryAc
     private final CommunicationsStub com = CommunicationsStub.getInstance();
     
     public CreateMultipleBusinessObjectAction() {
-        putValue(NAME, "New (Multiple)");
+        putValue(NAME, "New Multiple");
     }
     
     @Override
@@ -88,7 +87,7 @@ public final class CreateMultipleBusinessObjectAction extends GenericInventoryAc
             if (newObjects == null)
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             else {
-                if (node.getChildren() instanceof AbstractChildren) //Some nodes are created on the fly and does not have children. For those cases, let's avoid refreshing their children lists
+                if (node.getChildren() instanceof AbstractChildren) //Some nodes are created on the fly and do not have children. For those cases, let's avoid refreshing their children lists
                     ((AbstractChildren) node.getChildren()).addNotify();
                 
                 NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Elements created successfully");
@@ -98,17 +97,11 @@ public final class CreateMultipleBusinessObjectAction extends GenericInventoryAc
 
     @Override
     public JMenuItem getPopupPresenter() {
-        JMenu mnuPossibleChildren = new JMenu("New (Multiple)");
+        JMenu mnuPossibleChildren = new JMenu("New Multiple");
         
-        AbstractNode node = Utilities.actionsGlobalContext().lookup(RootObjectNode.class);
-        if (node == null)
-            node = Utilities.actionsGlobalContext().lookup(ObjectNode.class);
+        AbstractNode selectedNode = Utilities.actionsGlobalContext().lookup(AbstractNode.class);
                 
-        List<LocalClassMetadataLight> items;
-        if (node instanceof RootObjectNode) //For the root node
-            items = com.getPossibleChildren(Constants.DUMMYROOT, false);
-        else
-            items = com.getPossibleChildren(((ObjectNode)node).getObject().getClassName(), false);
+        List<LocalClassMetadataLight> items = com.getPossibleChildren(((ObjectNode)selectedNode).getObject().getClassName(), false);
 
         if (items == null) {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE,
