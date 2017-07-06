@@ -50,6 +50,7 @@ public class ExportScenePanel extends JPanel implements ActionListener{
     }
 
     private void initCustomComponents() {
+        txtOutputFile.setText(System.getProperty("user.home"));
         for (SceneExportFilter filter : filters)
             cmbExportTo.addItem(filter);
         cmbExportTo.addItemListener(new ItemListener() {

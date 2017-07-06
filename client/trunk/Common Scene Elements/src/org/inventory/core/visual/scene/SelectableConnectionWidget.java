@@ -48,7 +48,8 @@ public abstract class SelectableConnectionWidget extends ConnectionWidget {
         addChild(labelWidget);
         
         setConstraint(labelWidget, LayoutFactory.ConnectionWidgetLayoutAlignment.CENTER, 0.5f);
-        lookup = Lookups.singleton(new ObjectNode(businessObject));
+        //It's strange, but having in the lookup just the node won't work for classes expecting the enclosed business object to also be in the lookup (unlike BeanTreeViews)
+        lookup = Lookups.fixed(new ObjectNode(businessObject), businessObject);
         
         setState(ObjectState.createNormal());
     }

@@ -32,7 +32,8 @@ public abstract class SelectableNodeWidget extends Widget {
     
     public SelectableNodeWidget(Scene scene, LocalObjectLight businessObject) {
         super(scene);
-        lookup = Lookups.singleton(new ObjectNode(businessObject));
+        //It's strange, but having in the lookup just the node won't work for classes expecting the enclosed business object to also be in the lookup (unlike BeanTreeViews)
+        lookup = Lookups.fixed(new ObjectNode(businessObject), businessObject);
     }
  
     @Override

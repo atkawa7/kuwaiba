@@ -124,6 +124,7 @@
 * A graphical explorer was added to the Relationship Explorer
 * Added a module to manage favorites
 * Rack views now allow ascending and descending children positioning and also support children that don't need to be displayed.
+* Rack views are now accessed via object's context menu
 * A simple support for projects was added
 * Support for updates using an Update Center was added
 * Removed "Show/Hide Node Laels" button
@@ -133,4 +134,5 @@
 * Added a warning in the window title if the connection is not secure
 * The connections wizard was simplified and now it is possible to create other links apart from Electrical, Optical and Power ones
 * The color of the connections is no longer hardcoded. It is now taken from the class color (configured with the data model manager)
+* Object View is no longer selection-sensitive. You can access it via context menu
 

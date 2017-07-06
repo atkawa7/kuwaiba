@@ -126,12 +126,20 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
         else
             widget = new ObjectNodeWidget(this, node, classMetadata.getIcon());
         
-        widget.getActions().addAction(ActionFactory.createPopupMenuAction(defaultPopupMenuProvider));
+        
         //The order the actions are added to a widget matters, if Select goes
         //after Move, you will need a double click to select the widget
+        //Also, it is necessary to associate a PopupMenuAction AFTER the selection, otherwise
+        //the actions will fail, as they mostly depend on detecting what node is selected, 
+        //therefore the widget has to be selected before launching the menu
         widget.getActions(ACTION_SELECT).addAction(createSelectAction());
         widget.getActions(ACTION_SELECT).addAction(moveAction);
+        widget.getActions(ACTION_SELECT).addAction(ActionFactory.createPopupMenuAction(defaultPopupMenuProvider));
+        
         widget.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(interactionLayer, myConnectionProvider));
+        widget.getActions(ACTION_CONNECT).addAction(createSelectAction());
+        widget.getActions(ACTION_CONNECT).addAction(ActionFactory.createPopupMenuAction(defaultPopupMenuProvider));
+        
         nodeLayer.addChild(widget);
         return widget;
     }
@@ -140,8 +148,8 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
     protected Widget attachEdgeWidget(LocalObjectLight edge) {
         LocalClassMetadata classMetadata = CommunicationsStub.getInstance().getMetaForClass(edge.getClassName(), false);
         ObjectConnectionWidget widget = new ObjectConnectionWidget(this, edge);
-        widget.getActions().addAction(ActionFactory.createPopupMenuAction(defaultPopupMenuProvider));
         widget.getActions().addAction(createSelectAction());
+        widget.getActions().addAction(ActionFactory.createPopupMenuAction(defaultPopupMenuProvider));
         widget.getActions().addAction(addRemoveControlPointAction);
         widget.getActions().addAction(moveControlPointAction);
         widget.setControlPointShape(PointShape.SQUARE_FILLED_BIG);

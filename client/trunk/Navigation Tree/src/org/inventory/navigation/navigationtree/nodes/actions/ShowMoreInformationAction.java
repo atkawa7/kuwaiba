@@ -27,7 +27,7 @@ import org.inventory.communications.core.LocalObjectLight;
  * Shows the database id of the selected object. Useful for troubleshooting purposes. It will also show the object's complete containment structure.
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public final class ShowMoreInformationAction extends AbstractAction{
+public final class ShowMoreInformationAction extends AbstractAction {
     private long id;
     private String className;
 

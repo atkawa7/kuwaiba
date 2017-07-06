@@ -129,9 +129,10 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
         nodeLayer.addChild(newNode);
         newNode.getActions(ACTION_SELECT).addAction(selectAction);
         newNode.getActions(ACTION_SELECT).addAction(ActionFactory.createMoveAction(moveProvider, moveProvider));
+        newNode.getActions(ACTION_SELECT).addAction(ActionFactory.createPopupMenuAction(moduleActions.createMenuForNode()));
         newNode.getActions(ACTION_CONNECT).addAction(selectAction);
         newNode.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(interactionLayer, connectProvider));
-        newNode.getActions().addAction(ActionFactory.createPopupMenuAction(moduleActions.createMenuForNode()));
+        newNode.getActions(ACTION_CONNECT).addAction(ActionFactory.createPopupMenuAction(moduleActions.createMenuForNode()));
         return newNode;
     }
 
@@ -141,11 +142,11 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
         newEdge.getActions().addAction(selectAction);
         newEdge.getActions().addAction(addRemoveControlPointAction);
         newEdge.getActions().addAction(moveControlPointAction);
+        newEdge.getActions().addAction(ActionFactory.createPopupMenuAction(moduleActions.createMenuForConnection()));
         newEdge.setStroke(new BasicStroke(1));
         newEdge.setControlPointShape(PointShape.SQUARE_FILLED_BIG);
         newEdge.setEndPointShape(PointShape.SQUARE_FILLED_BIG);
         newEdge.setRouter(RouterFactory.createFreeRouter());
-        newEdge.getActions().addAction(ActionFactory.createPopupMenuAction(moduleActions.createMenuForConnection()));
         newEdge.setToolTipText(edge.toString());
         edgeLayer.addChild(newEdge);
         return newEdge;

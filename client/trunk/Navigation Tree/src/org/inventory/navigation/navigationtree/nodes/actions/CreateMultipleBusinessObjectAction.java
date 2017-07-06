@@ -99,9 +99,9 @@ public final class CreateMultipleBusinessObjectAction extends GenericInventoryAc
     public JMenuItem getPopupPresenter() {
         JMenu mnuPossibleChildren = new JMenu("New Multiple");
         
-        AbstractNode selectedNode = Utilities.actionsGlobalContext().lookup(AbstractNode.class);
+        LocalObjectLight selectedObject = Utilities.actionsGlobalContext().lookup(LocalObjectLight.class);
                 
-        List<LocalClassMetadataLight> items = com.getPossibleChildren(((ObjectNode)selectedNode).getObject().getClassName(), false);
+        List<LocalClassMetadataLight> items = com.getPossibleChildren(selectedObject.getClassName(), false);
 
         if (items == null) {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE,

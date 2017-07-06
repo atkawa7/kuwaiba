@@ -18,10 +18,8 @@ import org.inventory.core.services.api.behaviors.ConfigurationObject;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- * 
+ * The configuration object for this module. See class ConfigurationObject for details
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 @ServiceProvider(service = ConfigurationObject.class)
-public class ObjectViewConfigurationObject extends ConfigurationObject {
-    
-}
+public class ObjectViewConfigurationObject extends ConfigurationObject { }

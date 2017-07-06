@@ -35,41 +35,26 @@ import org.inventory.core.visual.export.filters.ImageFilter;
 import org.inventory.core.visual.export.filters.SceneExportFilter;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.views.objectview.scene.ChildrenViewScene;
-import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.explorer.ExplorerManager;
 import org.openide.windows.TopComponent;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
-import org.openide.awt.ActionID;
-import org.openide.awt.ActionReference;
-import org.openide.awt.ActionReferences;
 import org.openide.explorer.ExplorerManager.Provider;
 import org.openide.util.Lookup;
-import org.openide.util.LookupEvent;
-import org.openide.util.LookupListener;
-import org.openide.util.Utilities;
 
 /**
  * This component renders the views associated to an currentObject
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-@ConvertAsProperties(dtd = "-//org.inventory.views.objectview//ObjectView//EN",
-autostore = false)
+
 @TopComponent.Description(
         preferredID = "ObjectViewTopComponent",
         iconBase="org/inventory/views/objectview/res/icon.png", 
-        persistenceType = TopComponent.PERSISTENCE_ALWAYS
+        persistenceType = TopComponent.PERSISTENCE_NEVER
 )
 @TopComponent.Registration(mode = "editor", openAtStartup = false)
-@ActionID(category = "Tools", id = "org.inventory.views.objectview.ObjectViewTopComponent")
-@ActionReferences(value = { @ActionReference(path = "Menu/Tools/Views"),
-    @ActionReference(path = "Toolbars/02_Views", position = 1 )})
-@TopComponent.OpenActionRegistration(
-        displayName = "Object View",
-        preferredID = "ObjectViewTopComponent"
-)
 public final class ObjectViewTopComponent extends TopComponent
-        implements Provider, ActionListener, Refreshable, LookupListener {
+        implements Provider, ActionListener, Refreshable {
     
     private ButtonGroup buttonGroupTools;
     private ButtonGroup buttonGroupConnections;
@@ -80,13 +65,24 @@ public final class ObjectViewTopComponent extends TopComponent
     private ChildrenViewScene scene;
     private ObjectViewConfigurationObject configObject;
     private LocalObjectLight currentObject;
-    private Lookup.Result<LocalObjectLight> lookupResult;
     
-    public ObjectViewTopComponent() {
+    /**
+     * Default constructor
+     * @param aBusinessObject The business object whose view will be rendered 
+     */
+    public ObjectViewTopComponent(LocalObjectLight aBusinessObject) {
+        this.currentObject = aBusinessObject;
         initComponents();
         initCustomComponents();
     }
 
+    @Override
+    protected String preferredID() {
+        return "ObjectViewTopComponent_" + currentObject.getOid(); //NOI18N
+    }
+
+    
+    
     public final void initCustomComponents(){
         scene = new ChildrenViewScene();
         service = new ObjectViewService(scene);
@@ -109,6 +105,23 @@ public final class ObjectViewTopComponent extends TopComponent
         configObject.setProperty("currentObject", null);
         configObject.setProperty("currentView", null);
         configObject.setProperty("connectContainer", true);
+        
+        checkForUnsavedView(false);
+            
+        configObject.setProperty("currentObject", currentObject);
+
+        if (currentObject.getClassName().equals(Constants.DUMMYROOT) || 
+                !CommunicationsStub.getInstance().getMetaForClass(currentObject.getClassName(), false).isViewable()) {
+            NotificationUtil.getInstance().showStatusMessage("This object does not have a view", false);
+            disableView();
+            return;
+        }
+
+        service.renderView();
+        setDisplayName(currentObject.toString());
+        toggleButtons(true);
+        configObject.setProperty("saved", true);
+        setHtmlDisplayName(getDisplayName());
     }
 
     /** This method is called from within the constructor to
@@ -379,33 +392,13 @@ public final class ObjectViewTopComponent extends TopComponent
     private javax.swing.JScrollPane pnlScrollMain;
     // End of variables declaration//GEN-END:variables
     
-
-    void writeProperties(java.util.Properties p) {
-        // better to version settings since initial version as advocated at
-        // http://wiki.apidesign.org/wiki/PropertyFiles
-        p.setProperty("version", "1.0");
-        // TODO store your settings
-    }
-
-    void readProperties(java.util.Properties p) {
-        String version = p.getProperty("version");
-        // TODO read your settings according to their version
-    }
-
     @Override
     public void componentOpened() {
         scene.addChangeListener(this);
-        
-        lookupResult = Utilities.actionsGlobalContext().lookupResult(LocalObjectLight.class);
-        lookupResult.addLookupListener(this);
-        
-        if (lookupResult.allInstances().size() == 1)
-            resultChanged(new LookupEvent(lookupResult));
     }
 
     @Override
     public void componentClosed() {
-        lookupResult.removeLookupListener(this);
         disableView();
     }
     
@@ -495,39 +488,5 @@ public final class ObjectViewTopComponent extends TopComponent
         scene.clear();
         toggleButtons(false);
         currentObject = null;
-    }
-
-    @Override
-    public void resultChanged(LookupEvent ev) {
-        Lookup.Result aLookupResult = (Lookup.Result) ev.getSource();
-        
-        if (aLookupResult.allInstances().size() == 1) {
-            LocalObjectLight obj = (LocalObjectLight) aLookupResult.allInstances().iterator().next();
-            
-            if (obj.equals(currentObject))  //Only update the view if the selected object is different from the one already selected and if the selected node is an ObjectNode (not one of its subclasses). The latter to avoid that the special explorers trigger an update
-                return;
-                            
-            checkForUnsavedView(false);
-            
-            currentObject = obj;
-            configObject.setProperty("currentObject", currentObject);
-            
-            setDisplayName(null);
-            btnHighContrast.setSelected(false);
-            scene.clear();
-            
-            if (currentObject.getClassName().equals(Constants.DUMMYROOT) || !CommunicationsStub.getInstance().getMetaForClass(currentObject.getClassName(), false).isViewable()) {
-                NotificationUtil.getInstance().showStatusMessage("This currentObject doesn't have any view", false);
-                disableView();
-                return;
-            }
-            
-            service.renderView();
-            setDisplayName(currentObject.toString());
-            toggleButtons(true);
-            btnConnect.setSelected(false);
-            configObject.setProperty("saved", true);
-            setHtmlDisplayName(getDisplayName());
-        }
     }
 }

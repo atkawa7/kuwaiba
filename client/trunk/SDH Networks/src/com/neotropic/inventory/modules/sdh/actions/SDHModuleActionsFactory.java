@@ -31,7 +31,6 @@ import javax.swing.JPopupMenu;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.core.visual.scene.ObjectConnectionWidget;
 import org.inventory.core.visual.scene.ObjectNodeWidget;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
@@ -69,21 +68,16 @@ public class SDHModuleActionsFactory {
 
                 @Override
                 public JPopupMenu getPopupMenu(Widget widget, Point localLocation) {
+                    List<Action> actions = new ArrayList<>();
+                    actions.add(removeSDHBusinessObjectFromViewAction);
+                    actions.add(SystemAction.get(DeleteBusinessObjectAction.class));
+                    actions.add(null);
+
+                    ObjectNodeWidget nodeWidget = (ObjectNodeWidget)widget;
+                    actions.addAll(Arrays.asList(nodeWidget.getLookup().lookup(ObjectNode.class).getActions(true)));
+
+                    return Utilities.actionsToPopup(actions.toArray(new Action[0]), scene.getView()); 
                     
-                    if (ObjectConnectionWidget.class.isInstance(widget)) //For some reason right-click selects automatically edges , but not nodes, so we have to fake selection in those cases
-                        return null;
-                    else {
-                        List<Action> actions = new ArrayList<>();
-                        actions.add(removeSDHBusinessObjectFromViewAction);
-                        actions.add(SystemAction.get(DeleteBusinessObjectAction.class));
-                        actions.add(null);
-
-                        ObjectNodeWidget nodeWidget = (ObjectNodeWidget)widget;
-                        actions.addAll(Arrays.asList(nodeWidget.getLookup().lookup(ObjectNode.class).getActions(true)));
-
-                        return Utilities.actionsToPopup(actions.toArray(new Action[0]), scene.getView()); 
-                        
-                    }
                 }
             };
         return nodeMenu;
