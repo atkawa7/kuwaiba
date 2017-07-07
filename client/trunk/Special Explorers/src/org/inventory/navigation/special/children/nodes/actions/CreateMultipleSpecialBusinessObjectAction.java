@@ -21,6 +21,7 @@ import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
@@ -32,6 +33,7 @@ import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.core.services.utils.MenuScroller;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
 import org.inventory.navigation.special.children.nodes.SpecialObjectNode;
+import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter;
 
 /**
@@ -40,13 +42,11 @@ import org.openide.util.actions.Presenter;
  */
 public class CreateMultipleSpecialBusinessObjectAction extends GenericInventoryAction 
     implements Presenter.Popup {
-    private SpecialObjectNode node;
     private CommunicationsStub com;
     
-    public CreateMultipleSpecialBusinessObjectAction(SpecialObjectNode node) {
+    public CreateMultipleSpecialBusinessObjectAction() {
         putValue(NAME, "New Special (Multiple)");
         com = CommunicationsStub.getInstance();
-        this.node = node;
     }
 
     @Override
@@ -56,21 +56,31 @@ public class CreateMultipleSpecialBusinessObjectAction extends GenericInventoryA
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        SpecialObjectNode node = Utilities.actionsGlobalContext().lookup(SpecialObjectNode.class);
+        
         JTextField txtNamePattern = new JTextField();
         txtNamePattern.setName("txtNamePattern"); //NOI18N
         txtNamePattern.setColumns(10);
         
-        JTextField txtNumberOfSpecialObjects = new JTextField();
-        txtNumberOfSpecialObjects.setName("txtNumberOfSpecialObjects"); //NOI18N
-        txtNumberOfSpecialObjects.setColumns(20);
+        JSpinner spinnerNumberOfObjects = new JSpinner();
+        spinnerNumberOfObjects.setName("spinnerNumberOfObjects"); //NOI18N
+        spinnerNumberOfObjects.setValue(0);
         
         JComplexDialogPanel saveDialog = new JComplexDialogPanel(
-            new String[] {"Name Pattern", "Number of Special Objects"}, new JComponent[] {txtNamePattern, txtNumberOfSpecialObjects});
+            new String[] {"Name Pattern", "Number of Special Objects"}, new JComponent[] {txtNamePattern, spinnerNumberOfObjects});
         
         if (JOptionPane.showConfirmDialog(null, saveDialog, "New Special (Multiple)", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             String namePattern = ((JTextField)saveDialog.getComponent("txtNamePattern")).getText();
-            String strNumberOfSpecialObjects = ((JTextField)saveDialog.getComponent("txtNumberOfSpecialObjects")).getText();
-            int numberOfSpecialObjects = Integer.parseInt(!strNumberOfSpecialObjects.equals("") ? strNumberOfSpecialObjects : "0");
+            int numberOfSpecialObjects = 0;
+            Object spinnerValue= ((JSpinner)saveDialog.getComponent("spinnerNumberOfObjects")).getValue();
+            if (spinnerValue instanceof Integer) {
+                numberOfSpecialObjects = (Integer) spinnerValue;
+                if (numberOfSpecialObjects <= 0) {
+                    NotificationUtil.getInstance().showSimplePopup("Error", 
+                        NotificationUtil.ERROR_MESSAGE, "The number of special objects must be greater than 0");
+                    return;
+                }
+            }
             
             List<LocalObjectLight> newSpecialObjects = com.createBulkSpecialObjects(((JMenuItem)e.getSource()).getName(), node.getObject().getClassName(), node.getObject().getOid(), numberOfSpecialObjects, namePattern);
                 
@@ -87,6 +97,7 @@ public class CreateMultipleSpecialBusinessObjectAction extends GenericInventoryA
     @Override
     public JMenuItem getPopupPresenter() {
         JMenu mnuPossibleChildren = new JMenu("New Special (Multiple)");
+        SpecialObjectNode node = Utilities.actionsGlobalContext().lookup(SpecialObjectNode.class);
         
         List<LocalClassMetadataLight> items = com.getPossibleSpecialChildren(node.getObject().getClassName(), false);
                 
@@ -101,7 +112,6 @@ public class CreateMultipleSpecialBusinessObjectAction extends GenericInventoryA
             }
 		
         MenuScroller.setScrollerFor(mnuPossibleChildren, 20, 100);
-		
         return mnuPossibleChildren;
     }
 }

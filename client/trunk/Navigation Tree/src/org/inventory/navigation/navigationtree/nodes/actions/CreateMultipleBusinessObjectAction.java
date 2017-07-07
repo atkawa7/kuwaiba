@@ -21,12 +21,12 @@ import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
-import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.core.services.utils.MenuScroller;
@@ -41,13 +41,18 @@ import org.openide.util.actions.Presenter;
  * Action that requests multiple business objects creation
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public final class CreateMultipleBusinessObjectAction extends GenericInventoryAction 
+public final class CreateMultipleBusinessObjectAction extends GenericObjectNodeAction 
     implements Presenter.Popup {
     
     private final CommunicationsStub com = CommunicationsStub.getInstance();
+    private static CreateMultipleBusinessObjectAction instance;
     
-    public CreateMultipleBusinessObjectAction() {
+    private CreateMultipleBusinessObjectAction() {
         putValue(NAME, "New Multiple");
+    }
+    
+    public static CreateMultipleBusinessObjectAction getInstance() {
+        return instance == null ? instance = new CreateMultipleBusinessObjectAction() : instance;
     }
     
     @Override
@@ -61,18 +66,26 @@ public final class CreateMultipleBusinessObjectAction extends GenericInventoryAc
         txtNamePattern.setName("txtNamePattern"); //NOI18N
         txtNamePattern.setColumns(10);
         
-        JTextField txtNumberOfObjects = new JTextField();
-        txtNumberOfObjects.setName("txtNumberOfObjects"); //NOI18N
-        txtNumberOfObjects.setColumns(20);
+        JSpinner spinnerNumberOfObjects = new JSpinner();
+        spinnerNumberOfObjects.setName("spinnerNumberOfObjects"); //NOI18N
+        spinnerNumberOfObjects.setValue(0);
         
         JComplexDialogPanel saveDialog = new JComplexDialogPanel(
-            new String[] {"Name Pattern", "Number of Objects"}, new JComponent[] {txtNamePattern, txtNumberOfObjects});
+            new String[] {"Name Pattern", "Number of Objects"}, new JComponent[] {txtNamePattern, spinnerNumberOfObjects});
         
         if (JOptionPane.showConfirmDialog(null, saveDialog, "New (Multiple)", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             String namePattern = ((JTextField)saveDialog.getComponent("txtNamePattern")).getText();
-            String strNumberOfObjects = ((JTextField)saveDialog.getComponent("txtNumberOfObjects")).getText();
-            int numberOfObjects = Integer.parseInt(!strNumberOfObjects.equals("") ? strNumberOfObjects : "0");
-                        
+            int numberOfObjects = 0;
+            Object spinnerValue= ((JSpinner)saveDialog.getComponent("spinnerNumberOfObjects")).getValue();
+            if (spinnerValue instanceof Integer) {
+                numberOfObjects = (Integer) spinnerValue;
+                if (numberOfObjects <= 0) {
+                    NotificationUtil.getInstance().showSimplePopup("Error", 
+                        NotificationUtil.ERROR_MESSAGE, "The number of objects must be greater than 0");
+                    return;
+                }
+            }
+            
             AbstractNode node = Utilities.actionsGlobalContext().lookup(RootObjectNode.class);
             if (node == null)
                 node = Utilities.actionsGlobalContext().lookup(ObjectNode.class);
@@ -123,5 +136,9 @@ public final class CreateMultipleBusinessObjectAction extends GenericInventoryAc
         }
         return mnuPossibleChildren;
     }
-    
+
+    @Override
+    public String getValidator() {
+        return null;
+    }
 }

@@ -45,7 +45,7 @@ public class RootObjectNode extends AbstractNode {
     public Action[] getActions(boolean context){
         return new Action[]{
             new CreateBusinessObjectAction(this), 
-            new CreateMultipleBusinessObjectAction(),
+            CreateMultipleBusinessObjectAction.getInstance(),
             new CreateBusinessObjectFromTemplateAction()/*, null, SystemAction.get(PasteAction.class)*/};
     }
 }

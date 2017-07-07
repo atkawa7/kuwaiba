@@ -74,7 +74,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
     protected static OpenLocalExplorerAction explorerAction = new OpenLocalExplorerAction();
     protected CommunicationsStub com;
     protected CreateBusinessObjectAction createAction;
-    protected CreateMultipleBusinessObjectAction createMultipleAction;
+//    protected CreateMultipleBusinessObjectAction createMultipleAction;
     protected CreateBusinessObjectFromTemplateAction createFromTemplateAction;
     protected RefreshObjectAction refreshAction;
     protected EditObjectAction editAction;
@@ -253,7 +253,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
         LocalObjectLight object = getObject();
         
         actions.add(createAction == null ? createAction = new CreateBusinessObjectAction(this) : createAction);
-        actions.add(createMultipleAction == null ? createMultipleAction = new CreateMultipleBusinessObjectAction() : createMultipleAction);
+        actions.add(CreateMultipleBusinessObjectAction.getInstance());
         actions.add(createFromTemplateAction == null ? createFromTemplateAction = new CreateBusinessObjectFromTemplateAction() : createFromTemplateAction);
         if (getParentNode() != null) {
             actions.add(SystemAction.get(CopyAction.class));

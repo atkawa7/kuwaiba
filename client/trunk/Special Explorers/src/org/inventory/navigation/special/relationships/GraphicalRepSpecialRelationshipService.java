@@ -88,14 +88,31 @@ public class GraphicalRepSpecialRelationshipService {
                     for (LocalObjectLight specialRelatedObjNode : specialRelationships.get(relationshipName)) {
 
                         LocalObjectLightWrapper specialRelateObjWrapper = new LocalObjectLightWrapper(specialRelatedObjNode);
+                        
+                        boolean relationshipExist = false;
+                        
+                        for (String inputEdge : scene.findNodeEdges(lolWrapper, false, true)) {
+                            // Search if the current relationship not exist in the canvas
+                            String inputRelationshipName = inputEdge.substring(inputEdge.indexOf(" ") + 1);
+                            
+                            if (inputRelationshipName.equals(relationshipName)) {
+                                LocalObjectLight sourceLol =  scene.getEdgeSource(inputEdge).getLocalObjectLightWrapped();
+                                if (sourceLol.getOid() == specialRelatedObjNode.getOid()) {
+                                    relationshipExist = true;
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        if (!relationshipExist) {
+                            scene.addNode(specialRelateObjWrapper);
 
-                        scene.addNode(specialRelateObjWrapper);
+                            String edge = scene.getEdgeCounter() + " " + relationshipName;
 
-                        String edge = scene.getEdgeCounter() + " " + relationshipName;
-
-                        scene.addEdge(edge);
-                        scene.setEdgeSource(edge, lolWrapper);
-                        scene.setEdgeTarget(edge, specialRelateObjWrapper);
+                            scene.addEdge(edge);
+                            scene.setEdgeSource(edge, lolWrapper);
+                            scene.setEdgeTarget(edge, specialRelateObjWrapper);
+                        }
                     }
                 }
             }
