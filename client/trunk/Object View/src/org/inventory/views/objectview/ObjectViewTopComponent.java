@@ -39,7 +39,6 @@ import org.openide.explorer.ExplorerManager;
 import org.openide.windows.TopComponent;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
-import org.openide.explorer.ExplorerManager.Provider;
 import org.openide.util.Lookup;
 
 /**
@@ -47,14 +46,8 @@ import org.openide.util.Lookup;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 
-@TopComponent.Description(
-        preferredID = "ObjectViewTopComponent",
-        iconBase="org/inventory/views/objectview/res/icon.png", 
-        persistenceType = TopComponent.PERSISTENCE_NEVER
-)
-@TopComponent.Registration(mode = "editor", openAtStartup = false)
 public final class ObjectViewTopComponent extends TopComponent
-        implements Provider, ActionListener, Refreshable {
+        implements ExplorerManager.Provider, ActionListener, Refreshable {
     
     private ButtonGroup buttonGroupTools;
     private ButtonGroup buttonGroupConnections;
@@ -81,7 +74,10 @@ public final class ObjectViewTopComponent extends TopComponent
         return "ObjectViewTopComponent_" + currentObject.getOid(); //NOI18N
     }
 
-    
+    @Override
+    public int getPersistenceType() {
+        return TopComponent.PERSISTENCE_NEVER;
+    }
     
     public final void initCustomComponents(){
         scene = new ChildrenViewScene();
@@ -102,17 +98,13 @@ public final class ObjectViewTopComponent extends TopComponent
         
         configObject = Lookup.getDefault().lookup(ObjectViewConfigurationObject.class);
         configObject.setProperty("saved", true);
-        configObject.setProperty("currentObject", null);
+        configObject.setProperty("currentObject", currentObject);
         configObject.setProperty("currentView", null);
         configObject.setProperty("connectContainer", true);
         
-        checkForUnsavedView(false);
-            
-        configObject.setProperty("currentObject", currentObject);
-
         if (currentObject.getClassName().equals(Constants.DUMMYROOT) || 
                 !CommunicationsStub.getInstance().getMetaForClass(currentObject.getClassName(), false).isViewable()) {
-            NotificationUtil.getInstance().showStatusMessage("This object does not have a view", false);
+            NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "This object does not have a view");
             disableView();
             return;
         }
@@ -399,7 +391,7 @@ public final class ObjectViewTopComponent extends TopComponent
 
     @Override
     public void componentClosed() {
-        disableView();
+        scene.removeAllListeners();
     }
     
     @Override
@@ -483,10 +475,7 @@ public final class ObjectViewTopComponent extends TopComponent
     }
     
     public void disableView() {
-        setDisplayName(null);
-        setHtmlDisplayName(null);
         scene.clear();
-        toggleButtons(false);
-        currentObject = null;
+        setEnabled(false);
     }
 }

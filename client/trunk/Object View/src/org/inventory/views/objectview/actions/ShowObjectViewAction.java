@@ -50,10 +50,16 @@ public class ShowObjectViewAction extends GenericObjectNodeAction {
             if (objectViewTC == null) {
                 objectViewTC = new ObjectViewTopComponent(selectedObjects.get(0));
                 objectViewTC.open();
-            } else 
-                objectViewTC.requestAttention(true);
-            
-            
+            } else {
+                if (objectViewTC.isOpened()) 
+                    objectViewTC.requestAttention(true);
+                
+                else { //Even after closed, the TCs (even the no-singletons) continue to exist in the NBP's PersistenceManager registry, 
+                       //so we will reuse the instance, refreshing the vierw first
+                    objectViewTC.refresh();
+                    objectViewTC.open();
+                }
+            }
             objectViewTC.requestActive();
         }
     }

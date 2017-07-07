@@ -68,7 +68,7 @@ public final class CreateMultipleBusinessObjectAction extends GenericObjectNodeA
         
         JSpinner spinnerNumberOfObjects = new JSpinner();
         spinnerNumberOfObjects.setName("spinnerNumberOfObjects"); //NOI18N
-        spinnerNumberOfObjects.setValue(0);
+        spinnerNumberOfObjects.setValue(1);
         
         JComplexDialogPanel saveDialog = new JComplexDialogPanel(
             new String[] {"Name Pattern", "Number of Objects"}, new JComponent[] {txtNamePattern, spinnerNumberOfObjects});
