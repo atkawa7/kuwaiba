@@ -367,6 +367,29 @@ public interface BusinessEntityManager {
             throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException;
     
     /**
+     * @param parentOid
+     * @param parentClass
+     * @param classToFilter
+     * @param maxResults Maximum number of results, -1 no limit
+     * @return 
+     * @throws MetadataObjectNotFoundException
+     * @throws ObjectNotFoundException
+     */
+    public List<RemoteBusinessObjectLight> getChildrenInstanceOfClassLightRecursive(long parentOid, String parentClass, String classToFilter, int maxResults) 
+        throws MetadataObjectNotFoundException, ObjectNotFoundException;
+    /**
+     * @param parentOid
+     * @param parentClass
+     * @param classToFilter
+     * @param maxResults Maximum number of results, -1 no limit
+     * @return 
+     * @throws MetadataObjectNotFoundException
+     * @throws ObjectNotFoundException
+     */
+    public List<RemoteBusinessObjectLight> getSpecialChildrenInstanceOfClassLightRecursive(long parentOid, String parentClass, String classToFilter, int maxResults) 
+        throws MetadataObjectNotFoundException, ObjectNotFoundException;
+            
+    /**
      * Same as getChildrenOfClass, but returns only the light version of the objects
      * @param parentOid parent id
      * @param parentClass Parent class

@@ -115,6 +115,8 @@ public class HTMLReport extends InventoryReport {
     }
 
     public List<String> getLinkedStyleSheets() {
+        if (linkedStyleSheets == null)
+            linkedStyleSheets = new ArrayList();
         return linkedStyleSheets;
     }
 

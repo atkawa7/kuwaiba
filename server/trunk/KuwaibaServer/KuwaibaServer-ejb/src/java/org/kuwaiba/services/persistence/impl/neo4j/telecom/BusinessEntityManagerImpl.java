@@ -906,7 +906,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 for (long oid : objects.get(myClass)){
                     Node instance = getInstanceOfClass(instanceClassNode, oid);
                     String oldValue = null;
-                    //If the object was child of a pool
+                    //If the object was specialChild of a pool
                     if (instance.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).iterator().hasNext()){
                         Relationship rel = instance.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).iterator().next();
                         oldValue = String.valueOf(rel.getEndNode().getId());
@@ -947,7 +947,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                         oldValue = String.valueOf(rel.getEndNode().getId());
                         rel.delete();
                     }
-                    //If the object was child of a pool
+                    //If the object was specialChild of a pool
                     if (instance.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).iterator().hasNext()){
                         Relationship rel = instance.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).iterator().next();
                         oldValue = String.valueOf(rel.getEndNode().getId());
@@ -1174,7 +1174,106 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             return res;
         }
     }
-
+    
+    private void getChildrenInstanceOfClassRecursive(long parentOid, String parentClass, String classToFilter, int maxResults, List<RemoteBusinessObjectLight> res) 
+        throws MetadataObjectNotFoundException, ObjectNotFoundException {
+        
+        if (maxResults > 0 && res.size() == maxResults)
+            return;
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            Node parentNode = getInstanceOfClass(parentClass, parentOid);
+            Iterable<Relationship> relationshipsChildOf = parentNode.getRelationships(RelTypes.CHILD_OF, Direction.INCOMING);
+            
+            for (Relationship relatioshipChildOf : relationshipsChildOf) {
+                Node child = relatioshipChildOf.getStartNode();
+                String childClassName = Util.getClassName(child);
+                
+                if (childClassName == null)
+                    throw new MetadataObjectNotFoundException(String.format("Class for object with oid %s could not be found", child.getId()));
+                
+                if (cm.isSubClass(classToFilter, childClassName)) {
+                    res.add(new RemoteBusinessObjectLight(child.getId(), (String) child.getProperty(Constants.PROPERTY_NAME), childClassName));
+                    
+                    if (maxResults > 0 && res.size() == maxResults)
+                        break;
+                }
+                getChildrenInstanceOfClassRecursive(child.getId(), childClassName, classToFilter, maxResults, res);
+            }
+            tx.success();
+        }
+    }
+    
+    @Override
+    public List<RemoteBusinessObjectLight> getChildrenInstanceOfClassLightRecursive(long parentOid, String parentClass, String classToFilter, int maxResults) 
+        throws MetadataObjectNotFoundException, ObjectNotFoundException {
+        
+        List<RemoteBusinessObjectLight> res = new ArrayList<>();
+        
+        getChildrenInstanceOfClassRecursive(parentOid, parentClass, classToFilter, maxResults, res);
+        
+        return res;
+    }
+    
+    private void getSpecialChildrenInstanceOfClassRecursive(long parentOid, String parentClass, String classToFilter, int maxResults, List<RemoteBusinessObjectLight> res) 
+        throws MetadataObjectNotFoundException, ObjectNotFoundException {
+        
+        if (maxResults > 0 && res.size() == maxResults)
+            return;
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            Node parentNode = getInstanceOfClass(parentClass, parentOid);
+            Iterable<Relationship> relationshipsChildOfSpecial = parentNode.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.INCOMING);
+            
+            for (Relationship relatioshipChildOfSpecial : relationshipsChildOfSpecial) {
+                Node specialChild = relatioshipChildOfSpecial.getStartNode();
+                String specialChildClassName = Util.getClassName(specialChild);
+                
+                if (specialChildClassName == null)
+                    throw new MetadataObjectNotFoundException(String.format("Class for object with oid %s could not be found", specialChild.getId()));
+                
+                if (cm.isSubClass(classToFilter, specialChildClassName)) {
+                    res.add(new RemoteBusinessObjectLight(specialChild.getId(), (String) specialChild.getProperty(Constants.PROPERTY_NAME), specialChildClassName));
+                    
+                    if (maxResults > 0 && res.size() == maxResults)
+                        break;
+                }
+                getSpecialChildrenInstanceOfClassRecursive(specialChild.getId(), specialChildClassName, classToFilter, maxResults, res);
+            }
+            Iterable<Relationship> relationshipsChildOf = parentNode.getRelationships(RelTypes.CHILD_OF, Direction.INCOMING);
+            for (Relationship relationshipChildOf : relationshipsChildOf) {
+                
+                if (maxResults > 0 && res.size() == maxResults)
+                    break;
+                                
+                Node child = relationshipChildOf.getStartNode();
+                String childClassName = Util.getClassName(child);
+                
+                if (childClassName == null)
+                    throw new MetadataObjectNotFoundException(String.format("Class for object with oid %s could not be found", child.getId()));
+                
+                getSpecialChildrenInstanceOfClassRecursive(child.getId(), childClassName, classToFilter, maxResults, res);
+            }
+            
+            tx.success();
+        }
+        
+//        if (maxResults > 0 && res.size() == maxResults)
+//            return;
+        
+//        getChildrenInstanceOfClassRecursive(parentOid, parentClass, classToFilter, maxResults, res);
+    }
+    
+    @Override
+    public List<RemoteBusinessObjectLight> getSpecialChildrenInstanceOfClassLightRecursive(long parentOid, String parentClass, String classToFilter, int maxResults) 
+        throws MetadataObjectNotFoundException, ObjectNotFoundException {
+        List<RemoteBusinessObjectLight> res = new ArrayList<>();
+        
+        getSpecialChildrenInstanceOfClassRecursive(parentOid, parentClass, classToFilter, maxResults, res);
+        
+        return res;
+    }
+    
     @Override
     public List<RemoteBusinessObjectLight> getChildrenOfClassLight(long parentOid, String parentClass, String classToFilter, int maxResults)
             throws MetadataObjectNotFoundException, ObjectNotFoundException  {

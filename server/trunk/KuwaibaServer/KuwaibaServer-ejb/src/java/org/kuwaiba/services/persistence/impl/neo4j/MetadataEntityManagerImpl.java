@@ -448,7 +448,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                              includeAbstractClasses ? " " : "WHERE classmetadata.abstract <> TRUE ").concat(
                              "RETURN classmetadata ").concat(
                              "ORDER BY classmetadata.name ASC");
-
+                
         Map<String, Object> params = new HashMap<>();
         params.put("className", "name:"+ className);//NOI18N
             

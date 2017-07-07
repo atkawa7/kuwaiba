@@ -22,6 +22,7 @@ package com.neotropic.kuwaiba.modules.reporting.html;
 public class HTMLColumn extends HTMLComponent {
     private Object content;
     private String rowspan;
+    private String colspan;
 
     public HTMLColumn(Object content) {
         this.content = content;
@@ -43,9 +44,17 @@ public class HTMLColumn extends HTMLComponent {
     public String getRowspan() {
         return rowspan;
     }
-    
+        
     public void setRowspan(String rowspan) {
         this.rowspan = rowspan;
+    }
+    
+    public String getColspan() {
+        return colspan;
+    }
+    
+    public void setColspan(String colspan) {
+        this.colspan = colspan;
     }
 
     @Override
@@ -58,6 +67,7 @@ public class HTMLColumn extends HTMLComponent {
         return new StringBuilder().append("<td").append(style == null ? "" : " style=\"" + style + "\"")   //NOI18N
             .append(cssClass == null ? "" : " class=\"" + cssClass + "\"") //NOI18N
             .append(rowspan == null ? "" : " rowspan=\"" + rowspan + "\"") //NOI18N
+            .append(colspan == null ? "" : " colspan=\"" + colspan + "\"") //NOI18N
             .append(">")  //NOI18N
             .append(theContent).append("</td>").toString(); //NOI18N
     }

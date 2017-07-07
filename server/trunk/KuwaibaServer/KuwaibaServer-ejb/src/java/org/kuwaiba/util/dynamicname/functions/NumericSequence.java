@@ -51,7 +51,21 @@ public class NumericSequence extends DynamicSectionFunction {
     public List<String> getPossibleValues() {
         List<String> dynamicSections = new ArrayList();
         for (int i = parameter1; i <= parameter2; i++)
-            dynamicSections.add("" + i);
+            dynamicSections.add(dynamicSectionFormat(parameter2, i));
         return dynamicSections;
+    }
+    
+    private String dynamicSectionFormat(int maxValue, int value) {
+        int zeros = 1; // Used to define the number of left zeros
+        int ones = 1; // start with: ones
+
+        while (true) {
+          if (maxValue/ones == 1 || maxValue/(ones * 10) < 1) {
+            break;
+          }
+          ones *= 10; // follow with tens, hundreds ...
+          zeros += 1;
+        }
+        return String.format("%0" + zeros + "d", value);
     }
 }
