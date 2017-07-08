@@ -66,6 +66,9 @@ public class NumericSequence extends DynamicSectionFunction {
           ones *= 10; // follow with tens, hundreds ...
           zeros += 1;
         }
+        if (zeros < 3) {
+            zeros = 3; // The number of left zeros must be minimum three
+        }
         return String.format("%0" + zeros + "d", value);
     }
 }

@@ -367,26 +367,28 @@ public interface BusinessEntityManager {
             throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException;
     
     /**
-     * @param parentOid
-     * @param parentClass
-     * @param classToFilter
+     * Gets all children of a given class to filter in a hierarchy with root in the given parent
+     * @param parentOid Object id of the root parent of the hierarchy
+     * @param parentClass Class name of the root parent of the hierarchy
+     * @param classToFilter Class name of the expected children
      * @param maxResults Maximum number of results, -1 no limit
-     * @return 
-     * @throws MetadataObjectNotFoundException
-     * @throws ObjectNotFoundException
+     * @return The list of object instance of the given class to filter
+     * @throws MetadataObjectNotFoundException If the parent class is not found
+     * @throws ObjectNotFoundException If the parent is not found
      */
-    public List<RemoteBusinessObjectLight> getChildrenInstanceOfClassLightRecursive(long parentOid, String parentClass, String classToFilter, int maxResults) 
+    public List<RemoteBusinessObjectLight> getChildrenOfClassLightRecursive(long parentOid, String parentClass, String classToFilter, int maxResults) 
         throws MetadataObjectNotFoundException, ObjectNotFoundException;
     /**
-     * @param parentOid
-     * @param parentClass
-     * @param classToFilter
+     * Gets all special children of a given class to filter in a hierarchy with root in the given parent
+     * @param parentOid Object id of the root parent of the hierarchy
+     * @param parentClass Class name of the root parent of the hierarchy
+     * @param classToFilter Class name of the expected children
      * @param maxResults Maximum number of results, -1 no limit
-     * @return 
-     * @throws MetadataObjectNotFoundException
-     * @throws ObjectNotFoundException
+     * @return The list of object instance of the given class to filter
+     * @throws MetadataObjectNotFoundException If the parent class is not found
+     * @throws ObjectNotFoundException If the parent is not found
      */
-    public List<RemoteBusinessObjectLight> getSpecialChildrenInstanceOfClassLightRecursive(long parentOid, String parentClass, String classToFilter, int maxResults) 
+    public List<RemoteBusinessObjectLight> getSpecialChildrenOfClassLightRecursive(long parentOid, String parentClass, String classToFilter, int maxResults) 
         throws MetadataObjectNotFoundException, ObjectNotFoundException;
             
     /**

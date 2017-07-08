@@ -50,11 +50,16 @@ public class HTMLDiv extends HTMLComponent {
 
     @Override
     public String asHTML() {
+        Object theContent = content;
+        
+        if (theContent instanceof HTMLComponent)
+            theContent = ((HTMLComponent) content).asHTML();
+        
         return new StringBuilder().append("<div ") //NOI18N
             .append(style == null ? "" : " style=\"" + style + "\"") //NOI18N
             .append(cssClass == null ? "" : " class=\"" + cssClass + "\"") //NOI18N
             .append(id == null ? "" : " id=\"" + id + "\"").append(">") //NOI18N
-            .append(content == null ? "" : content)
+            .append(theContent == null ? "" : theContent)
             .append("</div>").toString(); //NOI18N
     }
 }
