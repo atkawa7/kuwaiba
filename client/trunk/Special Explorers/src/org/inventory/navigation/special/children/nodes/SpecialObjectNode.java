@@ -44,9 +44,9 @@ public class SpecialObjectNode extends ObjectNode {
     @Override
     public Action[] getActions(boolean context) {
         ArrayList<Action> actions = new ArrayList<>();
-        actions.add(new CreateSpecialBusinessObjectAction(this)); //This changes from ObjectNode
-//        actions.add(new CreateMultipleSpecialBusinessObjectAction(this)); //This changes from ObjectNode
-        actions.add(new CreateSpecialBusinessObjectFromTemplateAction()); //This changes from ObjectNode
+        actions.add(CreateSpecialBusinessObjectAction.getInstance()); //This changes from ObjectNode
+        actions.add(CreateMultipleSpecialBusinessObjectAction.getInstance()); //This changes from ObjectNode
+        actions.add(CreateSpecialBusinessObjectFromTemplateAction.getInstance()); //This changes from ObjectNode
         actions.add(refreshAction == null ? refreshAction = new RefreshObjectAction(this) : refreshAction);
         actions.add(editAction == null ? editAction = new EditObjectAction(this) : editAction);
         actions.add(explorerAction);

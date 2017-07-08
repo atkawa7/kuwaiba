@@ -34,10 +34,10 @@ import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
-import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.MenuScroller;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.openide.nodes.AbstractNode;
 import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter.Popup;
@@ -46,9 +46,16 @@ import org.openide.util.actions.Presenter.Popup;
  * Creates an special object from a template
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class CreateSpecialBusinessObjectFromTemplateAction  extends GenericInventoryAction implements Popup {
+public class CreateSpecialBusinessObjectFromTemplateAction extends GenericObjectNodeAction 
+    implements Popup {
     
-    public CreateSpecialBusinessObjectFromTemplateAction() {
+    private static CreateSpecialBusinessObjectFromTemplateAction instance;
+    
+    private CreateSpecialBusinessObjectFromTemplateAction() {
+    }
+    
+    public static CreateSpecialBusinessObjectFromTemplateAction getInstance() {
+        return instance == null ? instance = new CreateSpecialBusinessObjectFromTemplateAction() : instance;
     }
     
     @Override
@@ -106,6 +113,11 @@ public class CreateSpecialBusinessObjectFromTemplateAction  extends GenericInven
             MenuScroller.setScrollerFor(mnuPossibleSpecialChildren, 20, 100);
         }
         return mnuPossibleSpecialChildren;
+    }
+
+    @Override
+    public String getValidator() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     private class TemplateListFrame extends JFrame {

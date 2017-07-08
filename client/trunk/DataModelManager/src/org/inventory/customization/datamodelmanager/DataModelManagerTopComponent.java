@@ -158,14 +158,14 @@ public final class DataModelManagerTopComponent extends TopComponent
     }//GEN-LAST:event_btndefaultDataModelManagetActionPerformed
 
     private void cmbClassListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cmbClassListMouseClicked
-            
-    }//GEN-LAST:event_cmbClassListMouseClicked
-
-    private void cmbClassListMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cmbClassListMouseEntered
         cmbClassList.removeAllItems();
         cmbClassList.addItem(null);
         for (LocalClassMetadataLight node : dmms.getRoots())
             cmbClassList.addItem(node);
+    }//GEN-LAST:event_cmbClassListMouseClicked
+
+    private void cmbClassListMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cmbClassListMouseEntered
+        
     }//GEN-LAST:event_cmbClassListMouseEntered
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

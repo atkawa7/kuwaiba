@@ -27,11 +27,11 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
-import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.core.services.utils.MenuScroller;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.inventory.navigation.special.children.nodes.SpecialObjectNode;
 import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter;
@@ -40,13 +40,18 @@ import org.openide.util.actions.Presenter;
  * Action that requests multiple business special objects creation
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class CreateMultipleSpecialBusinessObjectAction extends GenericInventoryAction 
+public class CreateMultipleSpecialBusinessObjectAction extends GenericObjectNodeAction 
     implements Presenter.Popup {
     private CommunicationsStub com;
+    private static CreateMultipleSpecialBusinessObjectAction instance;
     
-    public CreateMultipleSpecialBusinessObjectAction() {
+    private CreateMultipleSpecialBusinessObjectAction() {
         putValue(NAME, "New Special (Multiple)");
         com = CommunicationsStub.getInstance();
+    }
+        
+    public static CreateMultipleSpecialBusinessObjectAction getInstance() {
+        return instance == null ? instance = new CreateMultipleSpecialBusinessObjectAction() : instance;
     }
 
     @Override
@@ -113,5 +118,10 @@ public class CreateMultipleSpecialBusinessObjectAction extends GenericInventoryA
 		
         MenuScroller.setScrollerFor(mnuPossibleChildren, 20, 100);
         return mnuPossibleChildren;
+    }
+
+    @Override
+    public String getValidator() {
+        return null;
     }
 }

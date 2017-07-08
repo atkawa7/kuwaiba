@@ -23,30 +23,36 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
-import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.MenuScroller;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.inventory.navigation.special.children.nodes.SpecialObjectNode;
+import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter;
 
 /**
  * Creates a new special object
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public final class CreateSpecialBusinessObjectAction extends GenericInventoryAction 
+public final class CreateSpecialBusinessObjectAction extends GenericObjectNodeAction 
             implements Presenter.Popup {
-    private SpecialObjectNode node;
     private CommunicationsStub com;
+    private static CreateSpecialBusinessObjectAction instance;
     
-    public CreateSpecialBusinessObjectAction(SpecialObjectNode node) {
+    public CreateSpecialBusinessObjectAction() {
         putValue(NAME, "New Special");
         com = CommunicationsStub.getInstance();
-        this.node = node;
+    }
+    
+    public static CreateSpecialBusinessObjectAction getInstance() {
+        return instance == null ? instance = new CreateSpecialBusinessObjectAction() : instance;
     }
     
     @Override
     public void actionPerformed(ActionEvent ev) {
+        SpecialObjectNode node = Utilities.actionsGlobalContext().lookup(SpecialObjectNode.class);
+        
         LocalObjectLight myLol = com.createSpecialObject(
                 ((JMenuItem)ev.getSource()).getName(),
                 node.getObject().getClassName(),
@@ -62,6 +68,8 @@ public final class CreateSpecialBusinessObjectAction extends GenericInventoryAct
 
     @Override
     public JMenuItem getPopupPresenter() {
+        SpecialObjectNode node = Utilities.actionsGlobalContext().lookup(SpecialObjectNode.class);
+                  
         JMenu mnuPossibleChildren = new JMenu("New Special");
         
         List<LocalClassMetadataLight> items = com.getPossibleSpecialChildren(node.getObject().getClassName(), false);
@@ -84,5 +92,10 @@ public final class CreateSpecialBusinessObjectAction extends GenericInventoryAct
     @Override
     public LocalPrivilege getPrivilege() {
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_SPECIAL_EXPLORERS, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+    }
+
+    @Override
+    public String getValidator() {
+        return null;
     }
 }
