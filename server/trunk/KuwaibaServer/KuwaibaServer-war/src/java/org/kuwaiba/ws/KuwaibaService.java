@@ -2532,7 +2532,7 @@ public class KuwaibaService {
     } 
     
     /**
-     * Connect pairs of ports (if they are not connected already) using physical link (cable, fibers, all subclasses of GenericPhysicalConnection)
+     * Connects pairs of ports (if they are not connected already) using physical link (cable, fibers, any subclass of GenericPhysicalLink)
      * @param sideAClassNames The list of classes of one of the sides of the connection
      * @param sideAIds The list of ids the objects on one side of the connection
      * @param linksClassNames the classes of the links that will connect the two sides
@@ -2542,6 +2542,7 @@ public class KuwaibaService {
      * @param sessionId Session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
      */
+    @WebMethod(operationName = "connectPhysicalLinks")
     public void connectPhysicalLinks (@WebParam(name = "sideAClassNames")String[] sideAClassNames, @WebParam(name = "sideAIds")Long[] sideAIds,
                                       @WebParam(name = "linksClassNames")String[] linksClassNames, @WebParam(name = "linksIds")Long[] linksIds,
                                       @WebParam(name = "sideBClassNames")String[] sideBClassNames, @WebParam(name = "sideBIds")Long[] sideBIds,
@@ -2556,6 +2557,62 @@ public class KuwaibaService {
                 throw e;
             else {
                 System.out.println("[KUWAIBA] An unexpected error occurred in connectPhysicalLinks: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Connects pairs of elements (of any class except subclasses of GenericPort) using containers (subclasses of GenericPhysicalContainer) 
+     * @param sideAClassNames The list of classes of one of the sides of the connection
+     * @param sideAIds The list of ids the objects on one side of the connection
+     * @param containersClassNames the classes of the containers that will connect the two sides
+     * @param containersIds The ids of these containers
+     * @param sideBClassNames The list of classes of the other side of the connection
+     * @param sideBIds The list of ids the objects on the other side of the connection
+     * @param sessionId Session token
+     * @throws ServerSideException If any of the provided objects can not be found, if the endpoints are already connected, or if one of the endpoints is a port
+     */
+    @WebMethod(operationName = "connectPhysicalContainers")
+    public void connectPhysicalContainers (@WebParam(name = "sideAClassNames")String[] sideAClassNames, @WebParam(name = "sideAIds")Long[] sideAIds,
+                                      @WebParam(name = "containersClassNames")String[] containersClassNames, @WebParam(name = "containersIds")Long[] containersIds,
+                                      @WebParam(name = "sideBClassNames")String[] sideBClassNames, @WebParam(name = "sideBIds")Long[] sideBIds,
+                                      @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            if ((sideAClassNames.length + sideAIds.length + containersClassNames.length + containersIds.length + sideBClassNames.length + sideBIds.length) / 4 != sideAClassNames.length)
+                throw new ServerSideException("The array sizes do not match");
+            
+            wsBean.connectPhysicalContainers(sideAClassNames, sideAIds, containersClassNames, containersIds, sideBClassNames, sideBIds, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in connectPhysicalContainers: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Disconnects a side or both sides of a physical connection (a link or a container)
+     * @param connectionClass Class of the connection to be edited
+     * @param connectionId Id of the connection to be edited
+     * @param sideToDisconnect Side to disconnect. Use 1 to disconnect only the side a, 2 to disconnect only side b and 3 to disconnect both sides at once
+     * @param sessionId Session token
+     * @throws ServerSideException If the connection could not be found, if the class provided is not subclass of GenericPhysicalConnection or if the sideToConnect has an unexpected value
+     */
+    @WebMethod(operationName = "disconnectPhysicalConnection")
+    public void disconnectPhysicalConnection(@WebParam(name = "connectionClass")String connectionClass,
+                                      @WebParam(name = "connectionId")long connectionId, 
+                                      @WebParam(name = "sideToDisconnect")int sideToDisconnect,
+                                      @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            wsBean.disconnectPhysicalConnection(connectionClass, connectionId, sideToDisconnect, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in disconnectPhysicalConnection: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
@@ -3082,7 +3139,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in getAttributeForClassWithId: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in createAttribute: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
@@ -3870,6 +3927,10 @@ public class KuwaibaService {
     }
     // </editor-fold>
     
+    // <editor-fold defaultstate="collapsed" desc="Services">
+    //public 
+    // </editor-fold>
+    
     //<editor-fold desc="Templates" defaultstate="collapsed">
     /**
      * Creates a template.
@@ -4414,6 +4475,250 @@ public class KuwaibaService {
         }
     }
     // </editor-fold>
+
+    //<editor-fold desc="Favorites" defaultstate="collapsed">
+    /**
+     * Creates a favorites folder for User.
+     * @param favoritesFolderName Bookmark folder name
+     * @param userId User id
+     * @param sessionId The session token
+     * @return The id of the new Bookmark folder
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "createFavoritesFolderForUser")
+    public long createFavoritesFolderForUser(
+        @WebParam(name = "favoritesFolderName") String favoritesFolderName, 
+        @WebParam(name = "userId") long userId, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        
+        try {
+            return wsBean.createFavoritesFolderForUser(favoritesFolderName, userId, getIPAddress(), sessionId);
+        } catch (Exception ex) {
+            if (ex instanceof ServerSideException)
+                throw ex;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createFavoritesFolderForUser: " + ex.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Deletes a set of favorites folders
+     * @param favoritesFolderId Bookmark folder id
+     * @param userId The User id
+     * @param sessionId The session token
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "deleteFavoritesFolders")
+    public void deleteFavoritesFolders (
+        @WebParam(name = "favoritesFolderId") long[] favoritesFolderId, 
+        @WebParam(name = "userId") long userId,
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        
+        try {
+            wsBean.deleteFavoritesFolders (favoritesFolderId, userId, getIPAddress(), sessionId);
+        } catch (Exception ex) {
+            if (ex instanceof ServerSideException)
+                throw ex;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteFavoritesFolders: " + ex.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+        
+    /**
+     * Gets the list of favorites folders of a given User.
+     * @param userId User id
+     * @param sessionId The session token
+     * @return The list of Bookmarks for user
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "getFavoritesFoldersForUser")
+    public List<RemoteFavoritesFolder> getFavoritesFoldersForUser(
+        @WebParam(name = "userId") long userId, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+                
+        try {
+            return wsBean.getFavoritesFoldersForUser(userId, getIPAddress(), sessionId);
+        } catch (Exception ex) {
+            if (ex instanceof ServerSideException)
+                throw ex;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getFavoritesFoldersForUser: " + ex.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Associates a list of objects to an existing favorites folder
+     * @param objectClass Object class name
+     * @param objectId Object id
+     * @param favoritesFolderId Bookmark folder id
+     * @param userId The User id
+     * @param sessionId Session token
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "addObjectsToFavoritesFolder")    
+    public void addObjectsToFavoritesFolder(
+        @WebParam(name = "objectClass") String[] objectClass, 
+        @WebParam(name = "objectId") long[] objectId, 
+        @WebParam(name = "favoritesFolderId") long favoritesFolderId, 
+        @WebParam(name = "userId") long userId, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        
+        try {
+            wsBean.addObjectsToFavoritesFolder(objectClass, objectId, favoritesFolderId, userId, getIPAddress(), sessionId);
+        } catch(Exception ex) {
+            if (ex instanceof ServerSideException)
+                throw ex;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in addObjectsToFavoritesFolder: " + ex.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Removes a list of objects from a given favorites folder
+     * @param objectClass Object class name
+     * @param objectId Object id
+     * @param favoritesFolderId Bookmark folder id
+     * @param userId User id the favorites folder belongs to
+     * @param sessionId Session token
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "removeObjectsFromFavoritesFolder")
+    public void removeObjectsFromFavoritesFolder(
+        @WebParam(name = "objectClass") String[] objectClass, 
+        @WebParam(name = "objectId") long[] objectId, 
+        @WebParam(name = "favoritesFolderId") long favoritesFolderId, 
+        @WebParam(name = "userId") long userId,
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        
+        try {
+            wsBean.removeObjectsFromFavoritesFolder(objectClass, objectId, favoritesFolderId, userId, getIPAddress(), sessionId);
+        } catch(Exception ex) {
+            if (ex instanceof ServerSideException)
+                throw ex;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in removeObjectsFromFavoritesFolder: " + ex.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Gets the objects in a to favorites folder
+     * @param favoritesFolderId Bookmark folder id
+     * @param userId User Id
+     * @param limit Max number of results. Use -1 to retrieve all.
+     * @param sessionId Session token
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @return The list of objects
+     */
+    @WebMethod(operationName = "getObjectsInFavoritesFolder")
+    public RemoteObjectLight[] getObjectsInFavoritesFolder(
+        @WebParam(name = "favoritesFolderId") long favoritesFolderId, 
+        @WebParam(name = "userId") long userId,
+        @WebParam(name = "limit") int limit,
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getObjectsInFavoritesFolder(favoritesFolderId, userId, limit, getIPAddress(), sessionId);
+        } catch(Exception ex) {
+            if (ex instanceof ServerSideException)
+                throw ex;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getFavoritesFolderItems: " + ex.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Gets the favorites folders an object is included into.
+     * @param userId User Id
+     * @param objectClass Object Class name
+     * @param objectId Object id
+     * @param sessionId Session token
+     * @return The list of bookmarks where an object is associated
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "getFavoritesFoldersForObject")
+    public List<RemoteFavoritesFolder> getFavoritesFoldersForObject(
+        @WebParam(name = "userId") long userId,
+        @WebParam(name = "objectClass") String objectClass, 
+        @WebParam(name = "objectId") long objectId, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        
+        try {
+            return wsBean.getFavoritesFoldersForObject(userId, objectClass, objectId, getIPAddress(), sessionId);
+        } catch(Exception ex) {
+            if (ex instanceof ServerSideException)
+                throw ex;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getFavoritesFoldersForObject: " + ex.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+        
+    /**
+     * Gets a favorites folder
+     * @param favoritesFolderId Bookmark folder id
+     * @param userId User id
+     * @param sessionId Session token
+     * @return The Bookmark folder
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "getFavoritesFolder")
+    public RemoteFavoritesFolder getFavoritesFolder(
+        @WebParam(name = "favoritesFolderId") long favoritesFolderId, 
+        @WebParam(name = "userId") long userId,
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        
+        try {
+            return wsBean.getFavoritesFolder(favoritesFolderId, userId, getIPAddress(), sessionId);
+        } catch(Exception ex) {
+            if (ex instanceof ServerSideException)
+                throw ex;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getFavoritesFolder: " + ex.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Updates a favorites folder
+     * @param favoritesFolderId Favorites folder id
+     * @param favoritesFolderName Favorites folder name
+     * @param userId User id
+     * @param sessionId Session token
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "updateFavoritesFolder")
+    public void updateFavoritesFolder(
+        @WebParam(name = "favoritesFolderId") long favoritesFolderId, 
+        @WebParam(name = "favoritesFolderName") String favoritesFolderName, 
+        @WebParam(name = "userId") long userId,
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        
+        try {
+            wsBean.updateFavoritesFolder(favoritesFolderId, userId, favoritesFolderName, getIPAddress(), sessionId);
+        } catch(Exception ex) {
+            if (ex instanceof ServerSideException)
+                throw ex;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in updateFavoritesFolder: " + ex.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    //</editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Commercial modules data methods">
         // <editor-fold defaultstate="collapsed" desc="SDH Networks Module">
@@ -5734,246 +6039,4 @@ public class KuwaibaService {
         return ((HttpServletRequest)context.getMessageContext().
                     get("javax.xml.ws.servlet.request")).getRemoteAddr(); //NOI18N
     }// </editor-fold>
-
-    
-    /**
-     * Creates a favorites folder for User.
-     * @param favoritesFolderName Bookmark folder name
-     * @param userId User id
-     * @param sessionId The session token
-     * @return The id of the new Bookmark folder
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
-     */
-    @WebMethod(operationName = "createFavoritesFolderForUser")
-    public long createFavoritesFolderForUser(
-        @WebParam(name = "favoritesFolderName") String favoritesFolderName, 
-        @WebParam(name = "userId") long userId, 
-        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
-        
-        try {
-            return wsBean.createFavoritesFolderForUser(favoritesFolderName, userId, getIPAddress(), sessionId);
-        } catch (Exception ex) {
-            if (ex instanceof ServerSideException)
-                throw ex;
-            else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in createFavoritesFolderForUser: " + ex.getMessage());
-                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
-            }
-        }
-    }
-    
-    /**
-     * Deletes a set of favorites folders
-     * @param favoritesFolderId Bookmark folder id
-     * @param userId The User id
-     * @param sessionId The session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
-     */
-    @WebMethod(operationName = "deleteFavoritesFolders")
-    public void deleteFavoritesFolders (
-        @WebParam(name = "favoritesFolderId") long[] favoritesFolderId, 
-        @WebParam(name = "userId") long userId,
-        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
-        
-        try {
-            wsBean.deleteFavoritesFolders (favoritesFolderId, userId, getIPAddress(), sessionId);
-        } catch (Exception ex) {
-            if (ex instanceof ServerSideException)
-                throw ex;
-            else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in deleteFavoritesFolders: " + ex.getMessage());
-                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
-            }
-        }
-    }
-        
-    /**
-     * Gets the list of favorites folders of a given User.
-     * @param userId User id
-     * @param sessionId The session token
-     * @return The list of Bookmarks for user
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
-     */
-    @WebMethod(operationName = "getFavoritesFoldersForUser")
-    public List<RemoteFavoritesFolder> getFavoritesFoldersForUser(
-        @WebParam(name = "userId") long userId, 
-        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
-                
-        try {
-            return wsBean.getFavoritesFoldersForUser(userId, getIPAddress(), sessionId);
-        } catch (Exception ex) {
-            if (ex instanceof ServerSideException)
-                throw ex;
-            else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in getFavoritesFoldersForUser: " + ex.getMessage());
-                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
-            }
-        }
-    }
-    
-    /**
-     * Associates a list of objects to an existing favorites folder
-     * @param objectClass Object class name
-     * @param objectId Object id
-     * @param favoritesFolderId Bookmark folder id
-     * @param userId The User id
-     * @param sessionId Session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
-     */
-    @WebMethod(operationName = "addObjectsToFavoritesFolder")    
-    public void addObjectsToFavoritesFolder(
-        @WebParam(name = "objectClass") String[] objectClass, 
-        @WebParam(name = "objectId") long[] objectId, 
-        @WebParam(name = "favoritesFolderId") long favoritesFolderId, 
-        @WebParam(name = "userId") long userId, 
-        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
-        
-        try {
-            wsBean.addObjectsToFavoritesFolder(objectClass, objectId, favoritesFolderId, userId, getIPAddress(), sessionId);
-        } catch(Exception ex) {
-            if (ex instanceof ServerSideException)
-                throw ex;
-            else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in addObjectsToFavoritesFolder: " + ex.getMessage());
-                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
-            }
-        }
-    }
-    
-    /**
-     * Removes a list of objects from a given favorites folder
-     * @param objectClass Object class name
-     * @param objectId Object id
-     * @param favoritesFolderId Bookmark folder id
-     * @param userId User id the favorites folder belongs to
-     * @param sessionId Session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
-     */
-    @WebMethod(operationName = "removeObjectsFromFavoritesFolder")
-    public void removeObjectsFromFavoritesFolder(
-        @WebParam(name = "objectClass") String[] objectClass, 
-        @WebParam(name = "objectId") long[] objectId, 
-        @WebParam(name = "favoritesFolderId") long favoritesFolderId, 
-        @WebParam(name = "userId") long userId,
-        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
-        
-        try {
-            wsBean.removeObjectsFromFavoritesFolder(objectClass, objectId, favoritesFolderId, userId, getIPAddress(), sessionId);
-        } catch(Exception ex) {
-            if (ex instanceof ServerSideException)
-                throw ex;
-            else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in removeObjectsFromFavoritesFolder: " + ex.getMessage());
-                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
-            }
-        }
-    }
-    
-    /**
-     * Gets the objects in a to favorites folder
-     * @param favoritesFolderId Bookmark folder id
-     * @param userId User Id
-     * @param limit Max number of results. Use -1 to retrieve all.
-     * @param sessionId Session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
-     * @return The list of objects
-     */
-    @WebMethod(operationName = "getObjectsInFavoritesFolder")
-    public RemoteObjectLight[] getObjectsInFavoritesFolder(
-        @WebParam(name = "favoritesFolderId") long favoritesFolderId, 
-        @WebParam(name = "userId") long userId,
-        @WebParam(name = "limit") int limit,
-        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
-        try {
-            return wsBean.getObjectsInFavoritesFolder(favoritesFolderId, userId, limit, getIPAddress(), sessionId);
-        } catch(Exception ex) {
-            if (ex instanceof ServerSideException)
-                throw ex;
-            else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in getFavoritesFolderItems: " + ex.getMessage());
-                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
-            }
-        }
-    }
-    
-    /**
-     * Gets the favorites folders an object is included into.
-     * @param userId User Id
-     * @param objectClass Object Class name
-     * @param objectId Object id
-     * @param sessionId Session token
-     * @return The list of bookmarks where an object is associated
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
-     */
-    @WebMethod(operationName = "getFavoritesFoldersForObject")
-    public List<RemoteFavoritesFolder> getFavoritesFoldersForObject(
-        @WebParam(name = "userId") long userId,
-        @WebParam(name = "objectClass") String objectClass, 
-        @WebParam(name = "objectId") long objectId, 
-        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
-        
-        try {
-            return wsBean.getFavoritesFoldersForObject(userId, objectClass, objectId, getIPAddress(), sessionId);
-        } catch(Exception ex) {
-            if (ex instanceof ServerSideException)
-                throw ex;
-            else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in getFavoritesFoldersForObject: " + ex.getMessage());
-                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
-            }
-        }
-    }
-        
-    /**
-     * Gets a favorites folder
-     * @param favoritesFolderId Bookmark folder id
-     * @param userId User id
-     * @param sessionId Session token
-     * @return The Bookmark folder
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
-     */
-    @WebMethod(operationName = "getFavoritesFolder")
-    public RemoteFavoritesFolder getFavoritesFolder(
-        @WebParam(name = "favoritesFolderId") long favoritesFolderId, 
-        @WebParam(name = "userId") long userId,
-        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
-        
-        try {
-            return wsBean.getFavoritesFolder(favoritesFolderId, userId, getIPAddress(), sessionId);
-        } catch(Exception ex) {
-            if (ex instanceof ServerSideException)
-                throw ex;
-            else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in getFavoritesFolder: " + ex.getMessage());
-                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
-            }
-        }
-    }
-    
-    /**
-     * Updates a favorites folder
-     * @param favoritesFolderId Favorites folder id
-     * @param favoritesFolderName Favorites folder name
-     * @param userId User id
-     * @param sessionId Session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
-     */
-    @WebMethod(operationName = "updateFavoritesFolder")
-    public void updateFavoritesFolder(
-        @WebParam(name = "favoritesFolderId") long favoritesFolderId, 
-        @WebParam(name = "favoritesFolderName") String favoritesFolderName, 
-        @WebParam(name = "userId") long userId,
-        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
-        
-        try {
-            wsBean.updateFavoritesFolder(favoritesFolderId, userId, favoritesFolderName, getIPAddress(), sessionId);
-        } catch(Exception ex) {
-            if (ex instanceof ServerSideException)
-                throw ex;
-            else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in updateFavoritesFolder: " + ex.getMessage());
-                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
-            }
-        }
-    }
 }

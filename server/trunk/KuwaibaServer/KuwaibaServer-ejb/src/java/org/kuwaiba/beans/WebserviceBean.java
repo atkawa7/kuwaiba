@@ -1429,35 +1429,107 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 
                 if (!aEndpointList.isEmpty()){
                     if (Objects.equals(aEndpointList.get(0).getId(), sideAIds[i]) || Objects.equals(aEndpointList.get(0).getId(), sideBIds[i]))
-                        throw new ServerSideException("The link is already related to at lest one of the endpoints");
+                        throw new ServerSideException("The link is already related to at least one of the endpoints");
                 }
                 
                 if (!bEndpointList.isEmpty()){
                     if (Objects.equals(bEndpointList.get(0).getId(), sideAIds[i]) || Objects.equals(bEndpointList.get(0).getId(), sideBIds[i]))
-                        throw new ServerSideException("The link is already related to at lest one of the endpoints");
+                        throw new ServerSideException("The link is already related to at least one of the endpoints");
                 }
                 
-                if (sideAIds[i] != null && sideAClassNames[i] != null){
+                if (sideAIds[i] != null && sideAClassNames[i] != null) {
                     if (!bem.getSpecialAttribute(sideAClassNames[i], sideAIds[i], "endpointA").isEmpty() || 
                         !bem.getSpecialAttribute(sideAClassNames[i], sideAIds[i], "endpointB").isEmpty())
-                        throw new ServerSideException(String.format("The selected endpoint %s [%s] is already connected", sideAClassNames[i], sideAIds[i]));
+                        throw new ServerSideException(String.format("The selected endpoint with id %s [%s] is already connected", sideAIds[i], sideAClassNames[i]));
                     
                     if (aEndpointList.isEmpty())
                         bem.createSpecialRelationship(linksClassNames[i], linksIds[i], sideAClassNames[i], sideAIds[i], "endpointA", true);
                     else
-                        throw new ServerSideException(String.format("Link %s [%s] already has an aEndpoint", linksIds[i], linksClassNames[i]));
+                        throw new ServerSideException(String.format("Link %s [%s] already has an endpoint A", linksIds[i], linksClassNames[i]));
                 }
-                if (sideBIds[i] != null && sideBClassNames[i] != null){
+                if (sideBIds[i] != null && sideBClassNames[i] != null) {
                     if (!bem.getSpecialAttribute(sideBClassNames[i], sideBIds[i], "endpointB").isEmpty() || 
                         !bem.getSpecialAttribute(sideBClassNames[i], sideBIds[i], "endpointA").isEmpty())
-                        throw new ServerSideException(String.format("The selected endpoint %s [%s] is already connected", sideBClassNames[i], sideBIds[i]));
+                        throw new ServerSideException(String.format("The selected endpoint with id %s [%s] is already connected", sideBIds[i], sideBClassNames[i]));
                     
                     if (bEndpointList.isEmpty())
                         bem.createSpecialRelationship(linksClassNames[i], linksIds[i], sideBClassNames[i], sideBIds[i], "endpointB", true);
                     else
-                        throw new ServerSideException(String.format("Link %s [%s] already has a bEndpoint", linksIds[i], linksClassNames[i]));
+                        throw new ServerSideException(String.format("Link with id %s [%s] already has an endpoint B", linksIds[i], linksClassNames[i]));
                 }
             }
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void connectPhysicalContainers(String[] sideAClassNames, Long[] sideAIds, 
+                String[] containersClassNames, Long[] containersIds, String[] sideBClassNames, 
+                Long[] sideBIds, String ipAddress, String sessionId) throws ServerSideException{
+
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("connectPhysicalContainers", ipAddress, sessionId);
+            for (int i = 0; i < sideAClassNames.length; i++){
+                
+                if (containersClassNames[i] != null && !mem.isSubClass("GenericPhysicalContainer", containersClassNames[i]))
+                    throw new ServerSideException(String.format("Class %s is not a physical container", containersClassNames[i]));
+                if (sideAClassNames[i] != null && mem.isSubClass("GenericPort", sideAClassNames[i]))
+                    throw new ServerSideException(String.format("Can not connect an instance of %s to a port", containersClassNames[i]));
+                if (sideBClassNames[i] != null && mem.isSubClass("GenericPort", sideBClassNames[i]))
+                    throw new ServerSideException(String.format("Can not connect an instance of %s to a port", containersClassNames[i]));
+                
+                if (Objects.equals(sideAIds[i], sideBIds[i]))
+                    throw new ServerSideException(String.format("Both sides of the specified connections are the same (%s - %s)", sideAIds[i], sideBIds[i]));
+                
+                if (sideAIds[i] != null && sideAClassNames[i] != null) {
+                    List<RemoteBusinessObjectLight> aEndpointList = bem.getSpecialAttribute(containersClassNames[i], containersIds[i], "endpointA");
+                    if (aEndpointList.isEmpty())
+                        bem.createSpecialRelationship(containersClassNames[i], containersIds[i], sideAClassNames[i], sideAIds[i], "endpointA", true);
+                    else
+                        throw new ServerSideException(String.format("Container with id %s [%s] already has an endpoint A", containersIds[i], containersClassNames[i]));
+                }
+                
+                if (sideBIds[i] != null && sideBClassNames[i] != null) {
+                    List<RemoteBusinessObjectLight> bEndpointList = bem.getSpecialAttribute(containersClassNames[i], containersIds[i], "endpointB");
+                    if (bEndpointList.isEmpty())
+                        bem.createSpecialRelationship(containersClassNames[i], containersIds[i], sideBClassNames[i], sideBIds[i], "endpointB", true);
+                    else
+                        throw new ServerSideException(String.format("Container with id %s [%s] already has a endpoint B", containersIds[i], containersClassNames[i]));
+                }
+            }
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void disconnectPhysicalConnection(String connectionClass, long connectionId, 
+            int sideToDisconnect, String ipAddress, String sessionId) throws ServerSideException{
+
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("disconnectPhysicalConnection", ipAddress, sessionId);
+            if (!mem.isSubClass("GenericPhysicalConnection", connectionClass))
+                throw new ServerSideException(String.format("Class %s is not a physical connection", connectionClass));
+            
+            switch (sideToDisconnect) {
+                case 1: //A side
+                    bem.releaseRelationships(connectionClass, connectionId, Arrays.asList("endpointA")); //NOI18N
+                    break;
+                case 2: //B side
+                    bem.releaseRelationships(connectionClass, connectionId, Arrays.asList("endpointB")); //NOI18N
+                    break;
+                case 3: //Both sides
+                    bem.releaseRelationships(connectionClass, connectionId, Arrays.asList("endpointA", "endpointB")); //NOI18N
+                    break;
+                default:
+                    throw new ServerSideException(String.format("Wrong side to disconnect option"));
+            }
+            
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -1579,7 +1651,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             if (!mem.isSubClass("GenericService", serviceClass))
                 throw new ServerSideException(String.format("Class %s is not a customer", serviceClass));
             
-            return bem.createSpecialObject(serviceClass, customerClass, customerId, null, 0);
+            return bem.createSpecialObject(serviceClass, customerClass, customerId, null, -1);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -1595,7 +1667,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             if (!mem.isSubClass("GenericCustomer", customerClass))
                 throw new ServerSideException(String.format("Class %s is not a customer", customerClass));
             
-            return bem.createSpecialObject(customerClass, null, -1, null, 0);
+            return bem.createSpecialObject(customerClass, null, -1, null, -1);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }

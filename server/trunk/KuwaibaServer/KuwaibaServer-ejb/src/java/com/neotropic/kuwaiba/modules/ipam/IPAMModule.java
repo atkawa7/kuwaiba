@@ -285,7 +285,7 @@ public class IPAMModule implements GenericCommercialModule{
             for (int i = 0; i < attributeNames.length; i++)
                 attributes.put(attributeNames[i], attributeValues[i]);
             
-            return bem.createSpecialObject(className, className, parentId, attributes, 0);
+            return bem.createSpecialObject(className, className, parentId, attributes, -1);
         }
     }
     
@@ -342,7 +342,7 @@ public class IPAMModule implements GenericCommercialModule{
             InvalidArgumentException, ArraySizeMismatchException, NotAuthorizedException, 
             MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, DatabaseException
     {
-        return bem.createSpecialObject(Constants.CLASS_IP_ADDRESS, parentClassName, parentId, attributes, 0);
+        return bem.createSpecialObject(Constants.CLASS_IP_ADDRESS, parentClassName, parentId, attributes, -1);
     }
 
     /**

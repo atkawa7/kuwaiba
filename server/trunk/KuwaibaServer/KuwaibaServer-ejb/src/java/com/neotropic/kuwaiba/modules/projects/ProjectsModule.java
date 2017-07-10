@@ -179,7 +179,7 @@ public class ProjectsModule implements GenericCommercialModule {
             for (int i = 0; i < attributeNames.length; i += 1)
                 attributes.put(attributeNames[i], attributeValues[i]);
         }
-        return bem.createSpecialObject(className, parentClassName, parentId, attributes, 0);
+        return bem.createSpecialObject(className, parentClassName, parentId, attributes, -1);
     }
     
     /**

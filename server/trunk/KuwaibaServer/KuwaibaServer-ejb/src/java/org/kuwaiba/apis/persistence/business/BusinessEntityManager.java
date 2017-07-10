@@ -533,6 +533,18 @@ public interface BusinessEntityManager {
             throws ObjectNotFoundException, MetadataObjectNotFoundException;
 
     /**
+     * Releases all the relationships with the given names associated to the object provided. If no relationships with such names exist, the method 
+     * will do nothing. <b>Use this method with extreme care, you can seriously affect the relational integrity of the system</b>
+     * @param objectClass The class of the target object
+     * @param objectId The id of the target object
+     * @param relationshipsToRelease An array with the relationships to be released
+     * @throws MetadataObjectNotFoundException If the class provided does not exist
+     * @throws ObjectNotFoundException If the object could not be found
+     * @throws InvalidArgumentException If any of the relationships is now allowed according to the defined data model
+     */
+    public void releaseRelationships(String objectClass, long objectId, List<String> relationshipsToRelease) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException;
+    
+    /**
      * Checks if an object has a given number of special relationships with another object
      * @param objectClass Object class
      * @param objectId Object id

@@ -62,7 +62,6 @@ import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Path;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
@@ -306,14 +305,14 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     public long createSpecialObject(String className, String parentClassName, long parentOid, HashMap<String,String> attributes, long template)
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException {
 
-        ClassMetadata myClass= cm.getClass(className);
-        if (myClass == null)
+        ClassMetadata classMetadata= cm.getClass(className);
+        if (classMetadata == null)
             throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
 
-        if (myClass.isInDesign())
+        if (classMetadata.isInDesign())
             throw new OperationNotPermittedException("Can not create instances of classes marked as isDesign");
         
-        if (myClass.isAbstract())
+        if (classMetadata.isAbstract())
             throw new OperationNotPermittedException("Can not create objects of abstract classes");
         
         try(Transaction tx = graphDb.beginTx()) {
@@ -338,7 +337,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             Node newObject;
             
             if (template == -1) 
-                newObject = createObject(classNode, myClass, attributes);
+                newObject = createObject(classNode, classMetadata, attributes);
                 
             else {
                 Node templateNode = null;
@@ -354,6 +353,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     throw new ApplicationObjectNotFoundException(String.format("No template with id %s was found for class %s", template, className));
                 
                 newObject = copyTemplateElement(templateNode, true);
+                updateObject(newObject, classMetadata, attributes); //Override the template values with those provided, if any
             }
             if (parentNode !=null)
                 newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF_SPECIAL);
@@ -731,83 +731,18 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, 
                 InvalidArgumentException {
 
-        ClassMetadata myClass= cm.getClass(className);
+        ClassMetadata classMetadata= cm.getClass(className);
         
-        if (myClass == null)
+        if (classMetadata == null)
             throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
         
         try(Transaction tx = graphDb.beginTx()) {
             Node instance = getInstanceOfClass(className, oid);
 
-            String oldValues = "", newValues = "", affectedProperties = "";
-
-            for (String attributeName : attributes.keySet()){
-                if(myClass.hasAttribute(attributeName)) {
-                    affectedProperties = attributeName + " ";
-                    if (AttributeMetadata.isPrimitive(myClass.getType(attributeName))) { // We are changing a primitive type, such as String, or int
-                        oldValues += (instance.hasProperty(attributeName) ? String.valueOf(instance.getProperty(attributeName)) : null) + " ";
-                        //If the array is empty or null, it means the attribute should be set to null
-                        if (attributes.get(attributeName) == null || attributes.get(attributeName).isEmpty()){
-                            if(myClass.getAttribute(attributeName).isMandatory())//if attribute is mandatory can be set empty or null
-                                throw new InvalidArgumentException(String.format("The attribute %s is mandatory, can not be set null or empty", attributeName));
-                            else
-                                instance.removeProperty(attributeName);
-                            }
-                        else {
-                            newValues += attributes.get(attributeName) + " ";
-                            //if attribute is mandatory string attributes can't be empty or null
-                            if(myClass.getAttribute(attributeName).isMandatory()){
-                                if (attributes.get(attributeName) == null || attributes.get(attributeName).isEmpty() )
-                                    throw new InvalidArgumentException(String.format("The attribute %s is mandatory, can not be set null or empty", attributeName));
-                            }
-                            if (attributes.get(attributeName) == null)
-                                instance.removeProperty(attributeName);
-                            else{
-                                if(myClass.getAttribute(attributeName).isUnique()){
-                                    if(isObjectAttributeUnique(className, attributeName, attributes.get(attributeName)))
-                                        instance.setProperty(attributeName,Util.getRealValue(attributes.get(attributeName), myClass.getType(attributeName)));
-                                   else
-                                       throw new InvalidArgumentException(String.format("The attribute %s is unique in the objects created from this class and its subclasses, is in use in other object", attributeName));
-                                }
-                                else
-                                    instance.setProperty(attributeName,Util.getRealValue(attributes.get(attributeName), myClass.getType(attributeName)));
-                            }
-                        }
-                    } else { //If the attribute is not a primitive type, then it's a list type
-                        if (!cm.getClass(myClass.getType(attributeName)).isListType())
-                            throw new InvalidArgumentException(String.format("Class %s is not a list type", myClass.getType(attributeName)));
-
-                        //Release the previous relationship
-                        oldValues += " "; //Two empty, separation spaces
-                        for (Relationship rel : instance.getRelationships(Direction.OUTGOING, RelTypes.RELATED_TO)){
-                            if (rel.getProperty(Constants.PROPERTY_NAME).equals(attributeName)){
-                                oldValues += rel.getEndNode().getProperty(Constants.PROPERTY_NAME) + " ";
-                                rel.delete();
-                                break;
-                            }
-                        }
-                        if (attributes.get(attributeName) != null){ //If the new value is different than null, then create the new relationships
-                            try {
-                                long listTypeItemId = Long.valueOf(attributes.get(attributeName));
-                                Node listTypeNodeClass = classIndex.get(Constants.PROPERTY_NAME, myClass.getType(attributeName)).getSingle();
-                                Node listTypeNode = Util.getRealValue(listTypeItemId, listTypeNodeClass);
-
-                                //Create the new relationships
-                                newValues += listTypeNode.getProperty(Constants.PROPERTY_NAME) + " ";
-                                Relationship newRelationship = instance.createRelationshipTo(listTypeNode, RelTypes.RELATED_TO);
-                                newRelationship.setProperty(Constants.PROPERTY_NAME, attributeName);
-                                
-                            } catch(NumberFormatException ex) {
-                                throw new InvalidArgumentException(String.format("The value %s is not a valid lis type item id", attributes.get(attributeName)));
-                            }
-                        }
-                    }
-                } else
-                    throw new InvalidArgumentException(
-                            String.format("The attribute %s does not exist in class %s", attributeName, className));
-            }
+            ChangeDescriptor changes = updateObject(instance, classMetadata, attributes);
             tx.success();
-            return new ChangeDescriptor(affectedProperties.trim(), oldValues.trim(), newValues.trim(), String.valueOf(oid));
+            
+            return changes;
         }
     }
 
@@ -1405,13 +1340,26 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         try(Transaction tx = graphDb.beginTx()) {
             Node object = getInstanceOfClass(objectClass, objectId);
             int relationshipsCounter = 0;
-            for (Relationship rel : object.getRelationships(RelTypes.RELATED_TO)){
+            for (Relationship rel : object.getRelationships(RelTypes.RELATED_TO_SPECIAL)){
                 if (rel.getProperty(Constants.PROPERTY_NAME).equals(relationshipName))
                     relationshipsCounter++;
                 if (relationshipsCounter == numberOfRelationships)
                     return true;
             }
             return false;
+        }
+    }
+    
+    @Override
+    public void releaseRelationships(String objectClass, long objectId, List<String> relationshipsToRelease) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException {
+        try(Transaction tx = graphDb.beginTx()) {
+            Node object = getInstanceOfClass(objectClass, objectId);
+            
+            for (Relationship rel : object.getRelationships(RelTypes.RELATED_TO_SPECIAL)){
+                if (relationshipsToRelease.contains((String)rel.getProperty(Constants.PROPERTY_NAME)))
+                    rel.delete();
+            }
+            tx.success();
         }
     }
     
@@ -1953,6 +1901,78 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         return newObject;       
 
     }
+    
+    private ChangeDescriptor updateObject(Node instance, ClassMetadata classMetadata, HashMap<String, String> attributes) throws InvalidArgumentException {
+        String oldValues = "", newValues = "", affectedProperties = "";
+
+        for (String attributeName : attributes.keySet()){
+            if(classMetadata.hasAttribute(attributeName)) {
+                affectedProperties = attributeName + " ";
+                if (AttributeMetadata.isPrimitive(classMetadata.getType(attributeName))) { // We are changing a primitive type, such as String, or int
+                    oldValues += (instance.hasProperty(attributeName) ? String.valueOf(instance.getProperty(attributeName)) : null) + " ";
+                    //If the array is empty or null, it means the attribute should be set to null
+                    if (attributes.get(attributeName) == null || attributes.get(attributeName).isEmpty()){
+                        if(classMetadata.getAttribute(attributeName).isMandatory())//if attribute is mandatory can be set empty or null
+                            throw new InvalidArgumentException(String.format("The attribute %s is mandatory, can not be set null or empty", attributeName));
+                        else
+                            instance.removeProperty(attributeName);
+                        }
+                    else {
+                        newValues += attributes.get(attributeName) + " ";
+                        //if attribute is mandatory string attributes can't be empty or null
+                        if(classMetadata.getAttribute(attributeName).isMandatory()){
+                            if (attributes.get(attributeName) == null || attributes.get(attributeName).isEmpty() )
+                                throw new InvalidArgumentException(String.format("The attribute %s is mandatory, can not be set null or empty", attributeName));
+                        }
+                        if (attributes.get(attributeName) == null)
+                            instance.removeProperty(attributeName);
+                        else{
+                            if(classMetadata.getAttribute(attributeName).isUnique()){
+                                if(isObjectAttributeUnique(classMetadata.getName(), attributeName, attributes.get(attributeName)))
+                                    instance.setProperty(attributeName,Util.getRealValue(attributes.get(attributeName), classMetadata.getType(attributeName)));
+                               else
+                                   throw new InvalidArgumentException(String.format("The attribute %s is unique in the objects created from this class and its subclasses, is in use in other object", attributeName));
+                            }
+                            else
+                                instance.setProperty(attributeName,Util.getRealValue(attributes.get(attributeName), classMetadata.getType(attributeName)));
+                        }
+                    }
+                } else { //If the attribute is not a primitive type, then it's a list type
+                    if (!cm.getClass(classMetadata.getType(attributeName)).isListType())
+                        throw new InvalidArgumentException(String.format("Class %s is not a list type", classMetadata.getType(attributeName)));
+
+                    //Release the previous relationship
+                    oldValues += " "; //Two empty, separation spaces
+                    for (Relationship rel : instance.getRelationships(Direction.OUTGOING, RelTypes.RELATED_TO)){
+                        if (rel.getProperty(Constants.PROPERTY_NAME).equals(attributeName)){
+                            oldValues += rel.getEndNode().getProperty(Constants.PROPERTY_NAME) + " ";
+                            rel.delete();
+                            break;
+                        }
+                    }
+                    if (attributes.get(attributeName) != null){ //If the new value is different than null, then create the new relationships
+                        try {
+                            long listTypeItemId = Long.valueOf(attributes.get(attributeName));
+                            Node listTypeNodeClass = classIndex.get(Constants.PROPERTY_NAME, classMetadata.getType(attributeName)).getSingle();
+                            Node listTypeNode = Util.getRealValue(listTypeItemId, listTypeNodeClass);
+
+                            //Create the new relationships
+                            newValues += listTypeNode.getProperty(Constants.PROPERTY_NAME) + " ";
+                            Relationship newRelationship = instance.createRelationshipTo(listTypeNode, RelTypes.RELATED_TO);
+                            newRelationship.setProperty(Constants.PROPERTY_NAME, attributeName);
+
+                        } catch(NumberFormatException ex) {
+                            throw new InvalidArgumentException(String.format("The value %s is not a valid lis type item id", attributes.get(attributeName)));
+                        }
+                    }
+                }
+            } else
+                throw new InvalidArgumentException(
+                        String.format("The attribute %s does not exist in class %s", attributeName, classMetadata.getName()));
+        }
+        return new ChangeDescriptor(affectedProperties.trim(), oldValues.trim(), newValues.trim(), String.valueOf(instance.getId()));
+    }
+    
     /**
      * Copies and object and optionally its children objects. This method does not manage transactions
      * @param templateObject The object to be cloned
