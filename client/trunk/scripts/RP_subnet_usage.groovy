@@ -1,6 +1,6 @@
 /**
  * Subnet Usage report that shows information about related ip addresses and subnets
- * Neotropic SAS - version 1.1.1
+ * Neotropic SAS - version 1.2
  * Parameters: None
  */
 import org.kuwaiba.apis.persistence.PersistenceService;
@@ -14,25 +14,25 @@ import com.neotropic.kuwaiba.modules.reporting.html.HTMLColumn;
 import com.neotropic.kuwaiba.modules.reporting.html.HTMLImage;
 import com.neotropic.kuwaiba.modules.reporting.javascript.DataTable;
 import com.neotropic.kuwaiba.modules.reporting.javascript.DataTable.DataType;
-import com.neotropic.kuwaiba.modules.reporting.javascript.wrappers.googlecharts.ChartsFactory;
-import com.neotropic.kuwaiba.modules.reporting.javascript.wrappers.googlecharts.ChartsFactory.ChartType;
+import com.neotropic.kuwaiba.modules.reporting.plugins.gcharts.GChartsFactory;
+import com.neotropic.kuwaiba.modules.reporting.plugins.gcharts.GChartsFactory.ChartType;
 import com.neotropic.kuwaiba.modules.reporting.defaults.Util;
 import org.kuwaiba.services.persistence.util.Constants;
 import com.neotropic.kuwaiba.modules.ipam.IPAMModule;
 
-def report = new HTMLReport("Subnet Usage", "Neotropic SAS", "1.1.1");
+def report = new HTMLReport("Subnet Usage", "Neotropic SAS", "1.2");
 
 report.setEmbeddedStyleSheet(HTMLReport.getDefaultStyleSheet());
 
-def chartsFactory = new ChartsFactory(report);
+def chartsFactory = new GChartsFactory(report);
 
-// Get Application Entity Manager
+// Get Application Entity Manager reference
 def aem = PersistenceService.getInstance().getApplicationEntityManager();
 
-// Get Business Entity Manager
+// Get Business Entity Manager reference
 def bem = PersistenceService.getInstance().getBusinessEntityManager();
 
-// Fix log company
+// Place the company logo
 def corporateLogo = aem.getConfiguration().getProperty("corporateLogo");
 if (corporateLogo == null) {
     corporateLogo = "logo.jpg"
@@ -195,7 +195,7 @@ if (ips.isEmpty()) {
         def row = new HTMLRow(i % 2 == 0 ? "even" :"odd", [ipAddress, ipDescription, ipPort, ipLocation, ipService] as HTMLColumn[]);
         tblIPAddresses.getRows().add(row);
 
-        i += 1;
+        i++;
     }
     //Assemble the components
     report.getComponents().add(new HTMLBR());

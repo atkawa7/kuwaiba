@@ -39,8 +39,7 @@ public abstract class GenericObjectNodeAction extends GenericInventoryAction {
         
         while(selectedNodes.hasNext()) {
             LocalObjectLight selectedObject  = selectedNodes.next().getLookup().lookup(LocalObjectLight.class);
-            if (selectedObject != null)
-                selectedObjects.add(selectedObject);
+            selectedObjects.add(selectedObject);
         }
     }
     

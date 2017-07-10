@@ -41,7 +41,7 @@ public class CreateSoftwareAssetAction extends GenericObjectNodeAction {
         super.actionPerformed(e);
         
         LocalObjectLight newLicense = CommunicationsStub.getInstance().createSpecialObject("SoftwareLicense", selectedObjects.get(0).getClassName(), 
-                selectedObjects.get(0).getOid(), 0);
+                selectedObjects.get(0).getOid(), -1);
         if (newLicense == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else{

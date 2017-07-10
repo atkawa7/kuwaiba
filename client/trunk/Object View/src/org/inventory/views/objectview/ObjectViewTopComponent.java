@@ -101,19 +101,6 @@ public final class ObjectViewTopComponent extends TopComponent
         configObject.setProperty("currentObject", currentObject);
         configObject.setProperty("currentView", null);
         configObject.setProperty("connectContainer", true);
-        
-        if (currentObject.getClassName().equals(Constants.DUMMYROOT) || 
-                !CommunicationsStub.getInstance().getMetaForClass(currentObject.getClassName(), false).isViewable()) {
-            NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "This object does not have a view");
-            disableView();
-            return;
-        }
-
-        service.renderView();
-        setDisplayName(currentObject.toString());
-        toggleButtons(true);
-        configObject.setProperty("saved", true);
-        setHtmlDisplayName(getDisplayName());
     }
 
     /** This method is called from within the constructor to
@@ -386,12 +373,25 @@ public final class ObjectViewTopComponent extends TopComponent
     
     @Override
     public void componentOpened() {
+        if (currentObject.getClassName().equals(Constants.DUMMYROOT) || 
+                !CommunicationsStub.getInstance().getMetaForClass(currentObject.getClassName(), false).isViewable()) {
+            NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "This object does not have a view");
+            disableView();
+            return;
+        }
+
+        service.renderView();
+        setDisplayName(currentObject.toString());
+        toggleButtons(true);
+        configObject.setProperty("saved", true);
+        setHtmlDisplayName(getDisplayName());
         scene.addChangeListener(this);
     }
 
     @Override
     public void componentClosed() {
         scene.removeAllListeners();
+        scene.clear();
     }
     
     @Override

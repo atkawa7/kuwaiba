@@ -16,36 +16,30 @@
 package org.inventory.models.physicalconnections.actions;
 
 import java.awt.event.ActionEvent;
-import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.models.physicalconnections.windows.ConnectLinksFrame;
+import org.inventory.models.physicalconnections.windows.EditConnectionsFrame;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- * This action allows to connect the links (cables, fibers) inside a container
+ * This action allows to modify the connections inside a container
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @ServiceProvider(service = GenericObjectNodeAction.class)
-public class ConnectLinksAction extends GenericObjectNodeAction {
+public class EditConnectionsAction extends GenericObjectNodeAction {
 
-    public ConnectLinksAction() {
+    public EditConnectionsAction() {
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/models/physicalconnections/Bundle").getString("LBL_CONNECT_LINKS"));
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-
-        List<LocalObjectLight> links = CommunicationsStub.getInstance().getObjectSpecialChildren(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getOid());
-        if (links == null){
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-            return;
-        }
+        
         LocalObjectLight[] containerEndpoints = CommunicationsStub.getInstance().getConnectionEndpoints(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getOid());
         if (containerEndpoints == null){
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
@@ -57,7 +51,7 @@ public class ConnectLinksAction extends GenericObjectNodeAction {
                     "Container %s is missing one of its endpoints", selectedObjects.get(0)));
             return;
         }
-        ConnectLinksFrame frame = new ConnectLinksFrame(containerEndpoints[0],containerEndpoints[1], links);
+        EditConnectionsFrame frame = new EditConnectionsFrame(selectedObjects.get(0), containerEndpoints[0],containerEndpoints[1]);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }

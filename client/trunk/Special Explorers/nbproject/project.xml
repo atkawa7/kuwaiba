@@ -126,6 +126,7 @@
             </module-dependencies>
             <public-packages>
                 <package>org.inventory.navigation.special.children</package>
+                <package>org.inventory.navigation.special.children.nodes</package>
             </public-packages>
         </data>
     </configuration>

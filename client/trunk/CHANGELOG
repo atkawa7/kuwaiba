@@ -128,11 +128,13 @@
 * A simple support for projects was added
 * Support for updates using an Update Center was added
 * Removed "Show/Hide Node Laels" button
-* Multiple bugfixes and improvements
 * Changed license from GPLv2 to GPLv3
 * Added JTattoo's Fast as default look and feel
 * Added a warning in the window title if the connection is not secure
-* The connections wizard was simplified and now it is possible to create other links apart from Electrical, Optical and Power ones
+* The connections wizard was improved and now it is possible to create other links apart from Electrical, Optical and Power ones
 * The color of the connections is no longer hardcoded. It is now taken from the class color (configured with the data model manager)
 * Object View is no longer selection-sensitive. You can access it via context menu
-
+* It is possible to create multiple normal and special objects at once
+* It is possible to edit the connections inside a container (changing or disconnecting endpoints)
+* The icons were rearranged to make easier to open modules
+* Multiple bugfixes and improvements

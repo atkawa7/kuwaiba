@@ -42,7 +42,7 @@ import org.openide.windows.WindowManager;
 @TopComponent.Description(
         preferredID = "ListTypeManagerTopComponent",
         iconBase = "org/inventory/customization/listmanager/res/icon.png",
-        persistenceType = TopComponent.PERSISTENCE_ALWAYS
+        persistenceType = TopComponent.PERSISTENCE_NEVER
 )
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
 @ActionID(category = "Window", id = "org.inventory.customization.listmanager.ListTypeManagerTopComponent")

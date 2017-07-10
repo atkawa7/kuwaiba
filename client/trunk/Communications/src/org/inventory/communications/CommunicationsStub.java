@@ -208,7 +208,7 @@ public class CommunicationsStub {
      */
     public List<LocalObjectLight> getObjectChildren(long oid, long objectClassId){
         try{
-            List <RemoteObjectLight> children = service.getObjectChildrenForClassWithId(oid, objectClassId, 0,this.session.getSessionId());
+            List <RemoteObjectLight> children = service.getObjectChildrenForClassWithId(oid, objectClassId, 0, this.session.getSessionId());
             List <LocalObjectLight> res = new ArrayList<>();
 
             for (RemoteObjectLight rol : children){
@@ -1738,24 +1738,40 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean connectPhysicalLinks(String[] sideAClassNames, Long[] sideAIds, 
-                String[] linksClassNames, Long[] linksIds, String[] sideBClassNames, 
-                Long[] sideBIds) {
-        try{
-            List<String> sideAClassNamesList = new ArrayList<>();
-            List<String> linksClassNamesList = new ArrayList<>();
-            List<String> sideBClassNamesList = new ArrayList<>();
-            List<Long> sideAIdsList = new ArrayList<>();
-            List<Long> linksIdsList = new ArrayList<>();
-            List<Long> sideBIdsList = new ArrayList<>();
-            sideAClassNamesList.addAll(Arrays.asList(sideAClassNames));
-            linksClassNamesList.addAll(Arrays.asList(linksClassNames));
-            sideBClassNamesList.addAll(Arrays.asList(sideBClassNames));
-            sideAIdsList.addAll(Arrays.asList(sideAIds));
-            linksIdsList.addAll(Arrays.asList(linksIds));
-            sideBIdsList.addAll(Arrays.asList(sideBIds));
-            
-            service.connectPhysicalLinks(sideAClassNamesList, sideAIdsList, linksClassNamesList, linksIdsList, sideBClassNamesList, sideBIdsList, session.getSessionId());
+    public boolean connectPhysicalLinks(List<String> sideAClassNames, List<Long> sideAIds, 
+                List<String> linksClassNames, List<Long> linksIds, List<String> sideBClassNames, 
+                List<Long> sideBIds) {
+        try {            
+            service.connectPhysicalLinks(sideAClassNames, sideAIds, linksClassNames, linksIds, sideBClassNames, sideBIds, session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return false;
+        }
+    }
+    
+    public boolean connectPhysicalContainers(List<String> sideAClassNames, List<Long> sideAIds, 
+                List<String> containersClassNames, List<Long> containersIds, List<String> sideBClassNames, 
+                List<Long> sideBIds) {
+        try {
+            service.connectPhysicalContainers(sideAClassNames, sideAIds, containersClassNames, containersIds, sideBClassNames, sideBIds, session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Disconnects a side or both sides of a physical connection (a link or a container)
+     * @param connectionClass Class of the connection to be edited
+     * @param connectionId Id of the connection to be edited
+     * @param sideToDisconnect Side to disconnect. Use 1 to disconnect only the side a, 2 to disconnect only side b and 3 to disconnect both sides at once
+     * @return True if the operation was successful, false otherwise. Retrieve the details of the error using the getError method
+     */
+    public boolean disconnectPhysicalConnection(String connectionClass, long connectionId, int sideToDisconnect) {
+        try {
+            service.disconnectPhysicalConnection(connectionClass, connectionId, sideToDisconnect, session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error =  ex.getMessage();

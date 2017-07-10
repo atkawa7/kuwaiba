@@ -47,7 +47,7 @@ autostore = false)
     preferredID = "ContainmentManagerTopComponent",
 iconBase = "org/inventory/core/containment/res/icon.png",
 persistenceType = TopComponent.PERSISTENCE_NEVER)
-@TopComponent.Registration(mode = "explorer", openAtStartup = false)
+@TopComponent.Registration(mode = "editor", openAtStartup = false)
 @ActionID(category = "Tools", id = "org.inventory.core.containment.ContainmentManagerTopComponent")
 @ActionReferences(value = {@ActionReference(path = "Menu/Tools/Administration"),
     @ActionReference(path = "Toolbars/04_Customization", position = 2)})

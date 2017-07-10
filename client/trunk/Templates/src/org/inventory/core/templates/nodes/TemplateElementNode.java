@@ -15,7 +15,6 @@
  */
 package org.inventory.core.templates.nodes;
 
-import java.awt.Color;
 import org.inventory.core.templates.nodes.properties.DateTypeProperty;
 import java.awt.Image;
 import java.awt.datatransfer.Transferable;
@@ -132,8 +131,8 @@ public class TemplateElementNode extends AbstractNode implements PropertyChangeL
                                 break;
                             default:
                                 NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.WARNING_MESSAGE, "Unique and binary attributes are ignored to avoid redundancies");
-                        } //Do note that binary
-                        if (property != null)
+                        } 
+                        if (property != null) //Should not happen
                             generalSet.put(property);
                     }
                 }
@@ -165,6 +164,11 @@ public class TemplateElementNode extends AbstractNode implements PropertyChangeL
 
         if (getSheet() != null)
             setSheet(createSheet());
+    }
+    
+    @Override
+    public String getName() {
+        return getLookup().lookup(LocalObjectLight.class).getName();
     }
     
     @Override

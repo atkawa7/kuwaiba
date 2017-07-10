@@ -73,7 +73,12 @@ public class ReportNode extends AbstractNode implements PropertyChangeListener {
     public boolean canRename() {
         return true;
     }
-       
+    
+    @Override
+    public String getName() {
+        return getLookup().lookup(LocalReportLight.class).getName();
+    }
+    
     @Override
     public void setName(String s) {
         propertyChange(new PropertyChangeEvent(new LocalReport(getLookup().lookup(LocalReportLight.class).getId(), 
