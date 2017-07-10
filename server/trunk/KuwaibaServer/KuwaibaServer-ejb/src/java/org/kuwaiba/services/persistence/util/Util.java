@@ -28,6 +28,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1098,5 +1099,27 @@ public class Util {
         }catch (NumberFormatException ex){} //Does nothing
         
         return null;
+    }
+    
+    /**
+     * Outputs as a string a list of inventory objects (usually a list of parents in the containment hierarchy)
+     * @param objectList The list of objects
+     * @param startFromTheLast The output string should start from the first or the last object?
+     * @param howManyToShow How many elements should be displayed? used -1 to show all
+     * @return A string with the names of the objects concatenated with a "/" as separator
+     */
+    public static String formatObjectList(List<RemoteBusinessObjectLight> objectList, boolean startFromTheLast, int howManyToShow) {
+        if (startFromTheLast)
+            Collections.reverse(objectList);
+        
+        String outputString = "";
+        int i;
+        
+        for (i = 0;  i <  ((howManyToShow == -1 || howManyToShow >= objectList.size()) ? objectList.size() - 1 : howManyToShow - 1); i++) 
+            outputString += objectList.get(i) + " / ";
+        
+        
+        outputString += objectList.get(i);
+        return outputString;
     }
 }

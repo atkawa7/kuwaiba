@@ -244,7 +244,18 @@ public interface ApplicationEntityManager {
      */
     public List<RemoteBusinessObjectLight> getListTypeItems(String className)
             throws MetadataObjectNotFoundException, InvalidArgumentException;
-
+    
+    /**
+     * Retrieves the item related to a given list type
+     * @param listTypeClassName The class name of list type item
+     * @param listTypeItemId The id of list type item
+     * @return A RemoteBusinessObjectLight instance representing the item
+     * @throws MetadataObjectNotFoundException If the list type class Name is not an existing class
+     * @throws InvalidArgumentException if the list type class name provided is not a list type
+     * @throws ObjectNotFoundException If the the item id can not be found
+     */
+    public RemoteBusinessObjectLight getListTypeItem(String listTypeClassName, long listTypeItemId) throws 
+        MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException;
     
     /**
      * Deletes a list type item

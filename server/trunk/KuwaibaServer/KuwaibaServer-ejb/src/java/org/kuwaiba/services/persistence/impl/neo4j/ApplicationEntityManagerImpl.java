@@ -760,6 +760,27 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         }
         return children;
     }
+    
+    @Override
+    public RemoteBusinessObjectLight getListTypeItem(String listTypeClassName, long listTypeItemId) throws 
+        MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException {
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            Node classNode = classIndex.get(Constants.PROPERTY_NAME, listTypeClassName).getSingle();
+            if (classNode == null)
+                throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %s", listTypeClassName));
+            
+            if (!Util.isSubClass(Constants.CLASS_GENERICOBJECTLIST, classNode))
+                throw new InvalidArgumentException(String.format("Class %s is not a list type", listTypeClassName));
+            
+            for (Relationship childRel : classNode.getRelationships(RelTypes.INSTANCE_OF)) {
+                Node child = childRel.getStartNode();
+                if (child.getId() == listTypeItemId)
+                    return new RemoteBusinessObjectLight(child.getId(), (String) child.getProperty(Constants.PROPERTY_NAME), listTypeClassName);
+            }
+            throw new ObjectNotFoundException(listTypeClassName, listTypeItemId);
+        }
+    }
 
     @Override
     public List<ClassMetadataLight> getInstanceableListTypes()
