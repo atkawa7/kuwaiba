@@ -929,26 +929,6 @@ public class CommunicationsStub {
      * @param className the object class
      * @return the metadata information
      */
-    /*public LocalClassMetadataLight getLightMetaForClass(long classId, boolean ignoreCache){
-        try{
-            LocalClassMetadataLight res;
-//            if (!ignoreCache){
-//                res = cache.getLightMetaForClass(className);
-//                if (res != null)
-//                    return res;
-//            }
-
-            ClassInfo cm = service.getClassWithId(classId,this.session.getSessionId());
-
-            res = new LocalClassMetadataLight(cm);
-            cache.addLightMeta(new LocalClassMetadataLight[]{res});
-            return res;
-        }catch(Exception ex){
-            this.error = ex.getMessage();
-            return null;
-        }
-    }*/
-
     public byte[] getClassHierarchy(boolean showAll) {
         try{
             return service.getClassHierarchy(showAll, session.getSessionId());
@@ -1699,7 +1679,7 @@ public class CommunicationsStub {
     
     public LocalObjectLight[] getConnectionEndpoints(String connectionClass, long connectionId) {
         try{
-            List<RemoteObjectLight> endpoints = service.getConnectionEndpoints(connectionClass, connectionId, session.getSessionId());
+            List<RemoteObjectLight> endpoints = service.getPhysicalConnectionEndpoints(connectionClass, connectionId, session.getSessionId());
             LocalObjectLight[] res = new LocalObjectLight[]{endpoints.get(0) == null ? 
                     null : new LocalObjectLight(endpoints.get(0).getOid(), endpoints.get(0).getName(), endpoints.get(0).getClassName()),
                     endpoints.get(1) == null ? 
