@@ -68,24 +68,26 @@ public final class CreateSpecialBusinessObjectAction extends GenericObjectNodeAc
 
     @Override
     public JMenuItem getPopupPresenter() {
-        SpecialObjectNode node = Utilities.actionsGlobalContext().lookup(SpecialObjectNode.class);
-                  
         JMenu mnuPossibleChildren = new JMenu("New Special");
-        
-        List<LocalClassMetadataLight> items = com.getPossibleSpecialChildren(node.getObject().getClassName(), false);
-                
-        if (items.isEmpty())
+        SpecialObjectNode node = Utilities.actionsGlobalContext().lookup(SpecialObjectNode.class);
+        if (node != null) {
+            List<LocalClassMetadataLight> items = com.getPossibleSpecialChildren(node.getObject().getClassName(), false);
+
+            if (items.isEmpty())
+                mnuPossibleChildren.setEnabled(false);
+            else
+                for(LocalClassMetadataLight item: items) {
+                        JMenuItem smiChildren = new JMenuItem(item.getClassName());
+                        smiChildren.setName(item.getClassName());
+                        smiChildren.addActionListener(this);
+                        mnuPossibleChildren.add(smiChildren);
+                }
+
+            MenuScroller.setScrollerFor(mnuPossibleChildren, 20, 100);
+        } else {
             mnuPossibleChildren.setEnabled(false);
-        else
-            for(LocalClassMetadataLight item: items) {
-                    JMenuItem smiChildren = new JMenuItem(item.getClassName());
-                    smiChildren.setName(item.getClassName());
-                    smiChildren.addActionListener(this);
-                    mnuPossibleChildren.add(smiChildren);
-            }
-		
-        MenuScroller.setScrollerFor(mnuPossibleChildren, 20, 100);
-		
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, "This action can not be executed here");
+        }
         return mnuPossibleChildren;
     }
 

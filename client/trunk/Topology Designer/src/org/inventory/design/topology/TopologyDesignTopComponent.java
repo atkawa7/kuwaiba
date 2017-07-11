@@ -309,6 +309,7 @@ public final class TopologyDesignTopComponent extends TopComponent implements Ex
         service.setView(null);
         scene.setBackgroundImage(null);
         configObject.setProperty("saved", true);
+        btnRemoveBackground.setEnabled(false);
         setHtmlDisplayName(getDisplayName());
     }//GEN-LAST:event_btnNewTopologyActionPerformed
 
@@ -333,8 +334,9 @@ public final class TopologyDesignTopComponent extends TopComponent implements Ex
     }//GEN-LAST:event_btnExportActionPerformed
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-        if (scene.getNodes().isEmpty())
+        if (scene.getNodes().isEmpty() && scene.getBackgroundImage() == null) {
             JOptionPane.showMessageDialog(this, "The current topology is empty, it won't be saved", "New Topology", JOptionPane.INFORMATION_MESSAGE);
+        }
         else {
             JTextField txtViewName = new JTextField();
             txtViewName.setName("txtViewName"); //NOI18N
@@ -533,6 +535,5 @@ public final class TopologyDesignTopComponent extends TopComponent implements Ex
         btnExport.setEnabled(enabled);
         btnSelect.setEnabled(enabled);
         btnConnect.setEnabled(enabled);
-        btnRemoveBackground.setEnabled(false);
     }
 }
