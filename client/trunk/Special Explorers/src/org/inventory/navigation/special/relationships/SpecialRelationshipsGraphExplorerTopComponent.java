@@ -36,11 +36,6 @@ import org.openide.util.NbBundle.Messages;
  * Top component which displays a graphical representation of special relationships.
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-@TopComponent.Description(
-        preferredID = "GraphicalRepSpecialRelationshipsTopComponent",
-        persistenceType = TopComponent.PERSISTENCE_ALWAYS
-)
-@TopComponent.Registration(mode = "editor", openAtStartup = false)
 @Messages({
     "CTL_GraphicalRepSpecialRelationshipsTopComponent=Graphical Representation",
     "HINT_GraphicalRepSpecialRelationshipsTopComponent=Show a Graphical Representation of Special Relationships"
@@ -57,6 +52,17 @@ public final class SpecialRelationshipsGraphExplorerTopComponent extends TopComp
         initComponentsCustom(rootObject);
         setName("Special Relationships Graphical Explorer");
         setToolTipText("Explore the relationships of an object in a simple way");
+    }
+    
+    @Override
+    protected String preferredID() {
+        return "SpecialRelationshipsGraphExplorerTopComponent_" + service.getRoot().
+            getLocalObjectLightWrapped().getOid(); //NOI18N
+    }
+
+    @Override
+    public int getPersistenceType() {
+        return TopComponent.PERSISTENCE_NEVER;
     }
     
     private void initComponentsCustom(LocalObjectLight rootObject) {

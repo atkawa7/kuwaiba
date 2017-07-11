@@ -175,7 +175,7 @@ public class ClassHierarchyScene extends AbstractScene<LocalClassMetadata, Strin
     @Override
     public void render(LocalClassMetadata root) {
         // Fix Scene Layout
-        int originX = 50; ///TODO: to improve the value of orginX
+        int originX = 150; ///TODO: to improve the value of orginX
         int originY = 50; ///TODO: to improve the value of orginX
         GraphLayout<LocalClassMetadata, String> layout = GraphLayoutFactory.createTreeGraphLayout(originX, originY, 100, 50, true, true);
         GraphLayoutSupport.setTreeGraphLayoutRootNode(layout, root);

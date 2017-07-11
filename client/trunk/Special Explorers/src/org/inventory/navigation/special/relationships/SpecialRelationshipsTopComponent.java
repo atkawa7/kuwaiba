@@ -15,7 +15,10 @@
  */
 package org.inventory.navigation.special.relationships;
 
+import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
+import org.inventory.navigation.special.relationships.nodes.RelationshipNode;
 import org.inventory.navigation.special.relationships.nodes.SpecialRelatedObjectNode;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -31,6 +34,7 @@ import org.openide.util.LookupListener;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.Utilities;
+import org.openide.windows.WindowManager;
 
 /**
  * Shows a tree with the special relationships of an object
@@ -60,7 +64,7 @@ import org.openide.util.Utilities;
     "HINT_SpecialRelationshipsTopComponent=Relationships"
 })
 public final class SpecialRelationshipsTopComponent extends TopComponent implements 
-    ExplorerManager.Provider, LookupListener {
+    ExplorerManager.Provider, LookupListener, Refreshable {
     
     private BeanTreeView tree;
     private ExplorerManager em;
@@ -121,11 +125,24 @@ public final class SpecialRelationshipsTopComponent extends TopComponent impleme
     private void btnSpecialRelationshipsGraphExplorerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSpecialRelationshipsGraphExplorerActionPerformed
         if (em.getRootContext() instanceof SpecialRelatedObjectNode) {
             
-            TopComponent tc = new SpecialRelationshipsGraphExplorerTopComponent(
-                ((SpecialRelatedObjectNode) em.getRootContext()).getObject());
+            LocalObjectLight rootObject = ((SpecialRelatedObjectNode) em.getRootContext()).getObject();
             
-            tc.open();
-            tc.requestAttention(true);
+            SpecialRelationshipsGraphExplorerTopComponent tc = (SpecialRelationshipsGraphExplorerTopComponent) WindowManager
+                .getDefault().findTopComponent("SpecialRelationshipsGraphExplorerTopComponent_" + rootObject.getOid());
+            
+            if (tc == null) {
+                tc = new SpecialRelationshipsGraphExplorerTopComponent(rootObject);
+                tc.open();
+            } else { 
+                if (tc.isOpened())
+                    tc.requestAttention(true);
+                else { //Even after closed, the TCs (even the no-singletons) continue to exist in the NBP's PersistenceManager registry, 
+                       //so we will reuse the instance, refreshing the vierw first
+                    tc.refresh();
+                    tc.open();
+                }
+            }
+            tc.requestActive();
         }
     }//GEN-LAST:event_btnSpecialRelationshipsGraphExplorerActionPerformed
 
@@ -180,5 +197,11 @@ public final class SpecialRelationshipsTopComponent extends TopComponent impleme
             SpecialRelatedObjectNode rootNode = new SpecialRelatedObjectNode(node.getObject());
             em.setRootContext(rootNode);
         }
+    }
+
+    @Override
+    public void refresh() {
+        if (em.getRootContext() instanceof SpecialRelatedObjectNode)
+            ((SpecialRelatedObjectNode) em.getRootContext()).refresh();
     }
 }

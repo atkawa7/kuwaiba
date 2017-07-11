@@ -42,7 +42,7 @@ public class RelationshipNode extends AbstractNode {
         setDisplayName(relationshipName);
         icon = Utils.createRectangleIcon(iconColor, 10, 10);
     }
-
+    
     @Override
     public Image getIcon(int type) {
         return icon;

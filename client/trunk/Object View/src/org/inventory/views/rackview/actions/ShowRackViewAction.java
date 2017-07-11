@@ -22,6 +22,7 @@ import org.inventory.communications.util.Constants;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.inventory.views.rackview.RackViewTopComponent;
 import org.openide.util.lookup.ServiceProvider;
+import org.openide.windows.WindowManager;
 
 /**
  * Action to show the rack view of a rack
@@ -39,8 +40,22 @@ public class ShowRackViewAction extends GenericObjectNodeAction {
         super.actionPerformed(e);
         
         for (LocalObjectLight rack : selectedObjects) {
-            RackViewTopComponent rackView = new RackViewTopComponent(rack);
-            rackView.open();
+            RackViewTopComponent rackView = ((RackViewTopComponent) WindowManager.
+                getDefault().findTopComponent("RackViewTopComponent_" + rack.getOid()));
+            
+            if (rackView == null) {
+                rackView = new RackViewTopComponent(rack);
+                rackView.open();
+            } else {
+                if (rackView.isOpened())
+                    rackView.requestAttention(true);
+                else { //Even after closed, the TCs (even the no-singletons) continue to exist in the NBP's PersistenceManager registry, 
+                       //so we will reuse the instance, refreshing the vierw first
+                    rackView.refresh();
+                    rackView.open();
+                }
+            }
+            rackView.requestActive();
         }
     }
     

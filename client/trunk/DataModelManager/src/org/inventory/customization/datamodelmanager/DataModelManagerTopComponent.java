@@ -154,7 +154,8 @@ public final class DataModelManagerTopComponent extends TopComponent
     }//GEN-LAST:event_btnshowClassHierarchyViewActionPerformed
 
     private void btndefaultDataModelManagetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btndefaultDataModelManagetActionPerformed
-        cmbClassList.setSelectedItem(null);
+        LocalClassMetadataLight[] allMeta = dmms.getRootChildren();
+        em.setRootContext(new AbstractNode(new ClassMetadataChildren(allMeta)));
     }//GEN-LAST:event_btndefaultDataModelManagetActionPerformed
 
     private void cmbClassListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cmbClassListMouseClicked
@@ -239,12 +240,7 @@ public final class DataModelManagerTopComponent extends TopComponent
     
     public void comboBoxChanged(ActionEvent e) {
         LocalClassMetadataLight selectedItem = (LocalClassMetadataLight) ((JComboBox)e.getSource()).getSelectedItem();
-        if (selectedItem != null) 
+        if (selectedItem != null)
             em.setRootContext(new AbstractNode(new ClassMetadataChildren(new LocalClassMetadataLight []{selectedItem})));
-        else {
-            LocalClassMetadataLight[] allMeta = dmms.getRootChildren();
-            em.setRootContext(new AbstractNode(new ClassMetadataChildren(allMeta)));
-        }
-            
     }
 }

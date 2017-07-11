@@ -218,7 +218,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
         getObject().removePropertyChangeListener(this);
     }
 
-    public final boolean refresh() {
+    public boolean refresh() {
          LocalObjectLight object = getObject();
         //Force to get the attributes again, but only if there's a property sheet already asigned
         if (this.sheet != null) 
@@ -240,8 +240,9 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
             return true;
         
         //See if te children changed
-        ((AbstractChildren)getChildren()).addNotify();
-        
+        if (getChildren() instanceof AbstractChildren)
+            ((AbstractChildren) getChildren()).addNotify();
+                
         return true;
     }
     

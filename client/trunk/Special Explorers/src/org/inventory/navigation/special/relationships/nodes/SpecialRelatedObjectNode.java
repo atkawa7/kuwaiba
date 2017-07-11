@@ -41,12 +41,18 @@ public class SpecialRelatedObjectNode extends ObjectNode {
         setChildren(new SpecialRelationshipChildren());
     }
     
+    @Override
+    public boolean refresh() {
+        ((SpecialRelationshipChildren) getChildren()).addNotify();
+        return super.refresh();
+    }
+    
     public static class SpecialRelationshipChildren extends Children.Keys<String> {
         private HashMap<String, LocalObjectLight[]> specialRelationships;
 
         @Override
         public void addNotify() {
-            LocalObjectLight object = ((SpecialRelatedObjectNode)getNode()).getLookup().lookup(LocalObjectLight.class);
+            LocalObjectLight object = ((SpecialRelatedObjectNode) getNode()).getLookup().lookup(LocalObjectLight.class);
             specialRelationships = CommunicationsStub.getInstance().getSpecialAttributes(object.getClassName(), object.getOid());
             
             if (specialRelationships == null) {
@@ -61,7 +67,6 @@ public class SpecialRelatedObjectNode extends ObjectNode {
                      NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                      setKeys(Collections.EMPTY_LIST);
                 } else {
-                
                     List<String> relationshipNames = new ArrayList(specialRelationships.keySet());
                     
                     //We now avoid loops by ignoring the relationship that caused the parent node to be displayed

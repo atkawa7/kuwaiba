@@ -29,11 +29,6 @@ import org.openide.util.NbBundle.Messages;
  * Top component for Rack view
  * Top component which displays something.
  */
-@TopComponent.Description(
-        preferredID = "RackViewTopComponent",
-        persistenceType = TopComponent.PERSISTENCE_NEVER
-)
-@TopComponent.Registration(mode = "editor", openAtStartup = false)
 @Messages({
     "CTL_RackViewTopComponent=Rack View",
     "HINT_RackViewTopComponent=Rack View"
@@ -48,6 +43,16 @@ public final class RackViewTopComponent extends TopComponent implements Explorer
         initCustomComponents(rack);
         setName(Bundle.CTL_RackViewTopComponent());
         setToolTipText(Bundle.HINT_RackViewTopComponent());
+    }
+    
+    @Override
+    protected String preferredID() {
+        return "RackViewTopComponent_" + service.getRack().getOid(); //NOI18N
+    }
+
+    @Override
+    public int getPersistenceType() {
+        return TopComponent.PERSISTENCE_NEVER;
     }
     
     private void initCustomComponents(LocalObjectLight rack) {
