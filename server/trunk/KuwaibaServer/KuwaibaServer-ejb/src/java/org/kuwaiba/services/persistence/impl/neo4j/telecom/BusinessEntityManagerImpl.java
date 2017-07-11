@@ -654,6 +654,33 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         }
         return parents;
     }
+
+    
+    @Override
+    public List<RemoteBusinessObjectLight> getParentsUntilFirstOfClass(String objectClass, 
+            long oid, String objectToMatchClassName) throws ObjectNotFoundException, MetadataObjectNotFoundException {
+        /**
+         * TODO: Replace this for a proper implementation using cypher
+         */
+        try(Transaction tx = graphDb.beginTx()) {
+            Node objectNode = getInstanceOfClass(objectClass, oid);
+            List<RemoteBusinessObjectLight> parents = new ArrayList<>();
+            while (true) {
+                Node parentNode = objectNode.getSingleRelationship(RelTypes.CHILD_OF, Direction.OUTGOING).getEndNode();
+                Label label = DynamicLabel.label(Constants.LABEL_ROOT); //If the parent node is the dummy root, just return null
+                if (parentNode.hasLabel(label))
+                    return parents;
+                else { 
+                    String parentNodeClass = Util.getClassName(parentNode);
+                    parents.add(Util.createRemoteObjectLightFromNode(parentNode));
+                    if (cm.isSubClass(objectToMatchClassName, objectClass))
+                        return parents;
+                    
+                    objectNode = parentNode;
+                }
+            }
+        }
+    }
     
     @Override
     public RemoteBusinessObject getParentOfClass(String objectClass, long oid, String parentClass) 
@@ -926,12 +953,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             tx.success();
             return res;
         }        
-    }
-
-    @Override
-    public boolean setObjectLockState(String className, long oid, Boolean value)
-            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -1950,6 +1971,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                             break;
                         }
                     }
+                    
                     if (attributes.get(attributeName) != null){ //If the new value is different than null, then create the new relationships
                         try {
                             long listTypeItemId = Long.valueOf(attributes.get(attributeName));
@@ -1962,7 +1984,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                             newRelationship.setProperty(Constants.PROPERTY_NAME, attributeName);
 
                         } catch(NumberFormatException ex) {
-                            throw new InvalidArgumentException(String.format("The value %s is not a valid lis type item id", attributes.get(attributeName)));
+                            throw new InvalidArgumentException(String.format("The value %s is not a valid list type item id", attributes.get(attributeName)));
                         }
                     }
                 }

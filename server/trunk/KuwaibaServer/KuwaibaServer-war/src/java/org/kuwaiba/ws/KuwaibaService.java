@@ -52,6 +52,7 @@ import org.kuwaiba.ws.toserialize.application.UserInfo;
 import org.kuwaiba.ws.toserialize.application.UserInfoLight;
 import org.kuwaiba.ws.toserialize.application.ViewInfo;
 import org.kuwaiba.ws.toserialize.application.ViewInfoLight;
+import org.kuwaiba.ws.toserialize.business.RemoteLogicalConnectionDetails;
 import org.kuwaiba.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.ws.toserialize.business.RemoteObjectSpecialRelationships;
@@ -1934,6 +1935,31 @@ public class KuwaibaService {
     }
     
     /**
+     * Gets the list of parents (according to the special and standard containment hierarchy) until it finds an instance of class 
+     * objectToMatchClassName (for example "give me the parents of this port until you find the nearest rack")
+     * @param objectClass Class of the object to get the parents from
+     * @param oid Id of the object to get the parents from
+     * @param objectToMatchClassName Class of the object that will limit the search. It can be a superclass, if you want to match many classes at once
+     * @param sessionId Session token
+     * @return The list of parents until an instance of objectToMatchClassName is found. If no instance of that class is found, all parents until the Dummy Root will be returned
+     * @throws ServerSideException If the object to evaluate can not be found or if any of the classes provided could not be found.
+     */
+    @WebMethod(operationName = "getParentsUntilFirstOfClass")
+    public List<RemoteObjectLight> getParentsUntilFirstOfClass(String objectClass, 
+            long oid, String objectToMatchClassName, String sessionId) throws ServerSideException {
+        try{
+            return wsBean.getParentsUntilFirstOfClass(objectClass, oid, objectToMatchClassName, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getParentsUntilFirstOfClass: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
      * Gets the first parent of an object which matches the given class in the containment hierarchy
      * @param objectClass Object class
      * @param oid Object oid
@@ -1943,7 +1969,7 @@ public class KuwaibaService {
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getParentOfClass")
-    public RemoteObject getParentOfClass(@WebParam(name = "objectclass") String objectClass,
+    public RemoteObject getParentOfClass(@WebParam(name = "objectClass") String objectClass,
             @WebParam(name = "oid") long oid,
             @WebParam(name = "parentClass") String parentClass,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
@@ -2492,16 +2518,42 @@ public class KuwaibaService {
      * @return An array of two positions: the first is the A endpoint and the second is the B endpoint
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
      */
-    public RemoteObjectLight[] getConnectionEndpoints(@WebParam(name = "connectionClass")String connectionClass, 
+    @WebMethod(operationName = "getPhysicalConnectionEndpoints")
+    public RemoteObjectLight[] getPhysicalConnectionEndpoints(@WebParam(name = "connectionClass")String connectionClass, 
             @WebParam(name = "connectionId")long connectionId, 
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
-            return wsBean.getConnectionEndpoints(connectionClass, connectionId, getIPAddress(), sessionId);
+            return wsBean.getPhysicalConnectionEndpoints(connectionClass, connectionId, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in getConnectionEndpoints: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in getPhysicalConnectionEndpoints: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Returns the structure of a logical connection. The current implementation is quite simple and the return object 
+     * simply provides the endpoints and the next ports connected to such endpoints using a physical connection
+     * @param linkClass The class of the connection to be evaluated
+     * @param linkId The id of the connection to be evaluated
+     * @param sessionId Session token
+     * @return An object with the details of the connection and the physical resources associated to it
+     * @throws ServerSideException If the provided connection could not be found
+     */
+    @WebMethod(operationName = "getLogicalLinkDetails")
+    public RemoteLogicalConnectionDetails getLogicalLinkDetails(@WebParam(name = "linkClass")String linkClass, 
+                                        @WebParam(name = "linkId")long linkId,
+                                        @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getLogicalLinkDetails(linkClass, linkId, getIPAddress(), sessionId);
+        } catch(Exception e) {
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getLogicalLinkDetails: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
@@ -2518,10 +2570,10 @@ public class KuwaibaService {
     @WebMethod(operationName = "getPhysicalPath")
     public RemoteObjectLight[] getPhysicalPath (@WebParam(name = "objectClass")String objectClass,
             @WebParam(name = "objectId")long objectId,
-            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
-        try{
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
             return wsBean.getPhysicalPath(objectClass, objectId, getIPAddress(), sessionId);
-        } catch(Exception e){
+        } catch(Exception e) {
             if (e instanceof ServerSideException)
                 throw e;
             else {

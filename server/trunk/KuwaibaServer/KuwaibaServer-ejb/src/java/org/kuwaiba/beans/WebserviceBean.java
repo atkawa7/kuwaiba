@@ -51,6 +51,7 @@ import org.kuwaiba.apis.persistence.application.UserProfileLight;
 import org.kuwaiba.apis.persistence.application.ViewObject;
 import org.kuwaiba.apis.persistence.application.ViewObjectLight;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
@@ -87,6 +88,7 @@ import org.kuwaiba.ws.toserialize.application.UserInfoLight;
 import org.kuwaiba.ws.toserialize.application.Validator;
 import org.kuwaiba.ws.toserialize.application.ViewInfo;
 import org.kuwaiba.ws.toserialize.application.ViewInfoLight;
+import org.kuwaiba.ws.toserialize.business.RemoteLogicalConnectionDetails;
 import org.kuwaiba.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.ws.toserialize.business.RemoteObjectSpecialRelationships;
@@ -962,8 +964,24 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
     
     @Override
-    public RemoteObject getParentOfClass(String objectClass, long oid, String parentClass, String ipAddress, String sessionId) throws ServerSideException{
-        if (bem == null || aem == null)
+    public List<RemoteObjectLight> getParentsUntilFirstOfClass(String objectClassName, 
+            long oid, String objectToMatchClassName, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("getParentsUntilFirstOfClass", ipAddress, sessionId);
+            List<RemoteObjectLight> remoteObjects = new ArrayList<>();
+            for (RemoteBusinessObjectLight remoteObject : bem.getParentsUntilFirstOfClass(objectClassName, oid, objectToMatchClassName))
+                remoteObjects.add(new RemoteObjectLight(remoteObject));
+            return remoteObjects;
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public RemoteObject getParentOfClass(String objectClass, long oid, String parentClass, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("getParentOfClass", ipAddress, sessionId);
@@ -1385,7 +1403,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public RemoteObjectLight[] getConnectionEndpoints(String connectionClass, long connectionId, String ipAddress, String sessionId) throws ServerSideException {
+    public RemoteObjectLight[] getPhysicalConnectionEndpoints(String connectionClass, long connectionId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
@@ -1555,6 +1573,51 @@ public class WebserviceBean implements WebserviceBeanRemote {
             
             return res;
 
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public RemoteLogicalConnectionDetails getLogicalLinkDetails(String linkClass, 
+            long linkId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator"); //NOI18N
+        try {
+            aem.validateWebServiceCall("getLogicalLinkDetails", ipAddress, sessionId); //NOI18N
+            
+            RemoteBusinessObject linkObject = bem.getObject(linkId);
+            
+            RemoteBusinessObjectLight endpointA = null, endpointB = null;
+            List<RemoteBusinessObjectLight> physicalPathA = null, physicalPathB = null;
+            String endpointARelationshipName, endpointBRelationshipName;
+            
+            if (mem.isSubClass("GenericSDHTributaryLink", linkClass)) {
+                endpointARelationshipName = "sdhTTLEndpointA";
+                endpointBRelationshipName = "sdhTTLEndpointB";
+                
+            } else {
+                if ("MPLSLink".equals(linkClass)) { 
+                    endpointARelationshipName = "mplsEndpointA";
+                    endpointBRelationshipName = "mplsEndpointB";
+                }
+                else
+                    throw new ServerSideException(String.format("Class %s is not a supported logical link", linkClass)); //NOI18N
+            }
+            
+            List<RemoteBusinessObjectLight> endpointARelationship = bem.getSpecialAttribute(linkClass, linkId, endpointARelationshipName); //NOI18N
+            if (!endpointARelationship.isEmpty()) {
+                endpointA = endpointARelationship.get(0);
+                physicalPathA = bem.getPhysicalPath(endpointA.getClassName(), endpointA.getId());
+            }
+
+            List<RemoteBusinessObjectLight> endpointBRelationship = bem.getSpecialAttribute(linkClass, linkId, endpointBRelationshipName); //NOI18N
+            if (!endpointBRelationship.isEmpty()) {
+                endpointB = endpointBRelationship.get(0);
+                physicalPathB = bem.getPhysicalPath(endpointB.getClassName(), endpointB.getId());
+            }
+
+            return new RemoteLogicalConnectionDetails(linkObject, endpointA, endpointB, physicalPathA, physicalPathB);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }

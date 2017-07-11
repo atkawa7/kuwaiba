@@ -209,6 +209,19 @@ public interface BusinessEntityManager {
      */
     public List<RemoteBusinessObjectLight> getParents(String objectClassName, long oid)
         throws ObjectNotFoundException, MetadataObjectNotFoundException;
+    
+    /**
+     * Gets the list of parents (according to the special and standard containment hierarchy) until it finds an instance of class 
+     * objectToMatchClassName (for example "give me the parents of this port until you find the nearest rack")
+     * @param objectClassName Class of the object to get the parents from
+     * @param oid Id of the object to get the parents from
+     * @param objectToMatchClassName Class of the object that will limit the search. It can be a superclass, if you want to match many classes at once
+     * @return The list of parents until an instance of objectToMatchClassName is found. If no instance of that class is found, all parents until the Dummy Root will be returned
+     * @throws ObjectNotFoundException If the object to evaluate can not be found
+     * @throws MetadataObjectNotFoundException If any of the classes provided could not be found
+     */
+    public List<RemoteBusinessObjectLight> getParentsUntilFirstOfClass(String objectClassName, long oid, String objectToMatchClassName)
+        throws ObjectNotFoundException, MetadataObjectNotFoundException;
 
     /**
      * Gets the first parent of an object which matches the given class in the containment hierarchy
@@ -313,19 +326,6 @@ public interface BusinessEntityManager {
      * @throws OperationNotPermittedException If the target parent can't contain any of the new instances
      */
     public long[] copyObjects(String targetClassName, long targetOid, HashMap<String, long[]> objects, boolean recursive)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException;
-
-    /**
-     * Locks and object read-only or release the block. Not implemented yet.
-     * @param className object's class name
-     * @param oid object's oid
-     * @param value true to set the block, false to release it
-     * @return Success or failure
-     * @throws MetadataObjectNotFoundException If the object's can't be found
-     * @throws ObjectNotFoundException If the object or its new parent can't be found
-     * @throws OperationNotPermittedException If the update can't be performed due to a business rule
-     */
-    public boolean setObjectLockState(String className, long oid, Boolean value)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException;
 
     /**

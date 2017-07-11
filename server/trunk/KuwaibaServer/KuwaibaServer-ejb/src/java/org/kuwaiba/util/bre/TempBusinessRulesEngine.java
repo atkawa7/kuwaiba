@@ -61,6 +61,10 @@ public class TempBusinessRulesEngine {
         subClassOfValidators.put("ELANService", "elanservice");
         subClassOfValidators.put("ELINEService", "elineservice");
         subClassOfValidators.put("ETREEService", "etreeservice");
+        //Beware! The line below may potentially be creating conflicts with the three lines above, however 
+        //the one below seems to cover the most important the use cases, so we will leave it like this while we
+        //fine a suitable solution for this temporal rule engine
+        subClassOfValidators.put("GenericService", "service");
         subClassOfValidators.put("Rack", "rack");
         //TODO: These validators will be used to enable special actions for certain type of objects
         //Perhaps we should use some other type of solution for this in the future

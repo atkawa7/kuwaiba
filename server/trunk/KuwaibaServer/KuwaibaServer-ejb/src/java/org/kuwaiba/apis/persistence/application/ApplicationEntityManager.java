@@ -591,7 +591,7 @@ public interface ApplicationEntityManager {
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
     
     /**
-     * Retrieves the list of activity log entries
+     * Retrieves the list of general activity log entries
      * @param page current page
      * @param limit limit of results per page. 0 to retrieve them all
      * @return The list of activity log entries
@@ -599,7 +599,7 @@ public interface ApplicationEntityManager {
     public List<ActivityLogEntry> getGeneralActivityAuditTrail(int page, int limit);
     
     /**
-     * Validates if an user is allowed to call a given web service method
+     * Validates if a user is allowed to call a given web service method
      * @param methodName The method to check if the user is allowed to call it.
      * @param ipAddress The IP address the method is being invoked from
      * @param sessionId The session token
