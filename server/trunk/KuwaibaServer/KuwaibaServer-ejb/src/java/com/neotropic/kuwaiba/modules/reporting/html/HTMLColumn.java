@@ -27,6 +27,12 @@ public class HTMLColumn extends HTMLComponent {
     public HTMLColumn(Object content) {
         this.content = content;
     }
+    
+    public HTMLColumn(String style, String cssClass, Object content, String colspan, String rowspan) {
+        this(style, cssClass, content);
+        this.colspan = colspan;
+        this.rowspan = rowspan;
+    }
 
     public HTMLColumn(String style, String cssClass, Object content) {
         super(style, cssClass);

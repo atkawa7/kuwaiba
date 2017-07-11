@@ -1115,11 +1115,13 @@ public class Util {
         String outputString = "";
         int i;
         
-        for (i = 0;  i <  ((howManyToShow == -1 || howManyToShow >= objectList.size()) ? objectList.size() - 1 : howManyToShow - 1); i++) 
-            outputString += objectList.get(i) + " / ";
-        
-        
-        outputString += objectList.get(i);
+        for (i = 0;  i <  ((howManyToShow == -1 || howManyToShow >= objectList.size()) ? objectList.size() - 1 : howManyToShow - 1); i++) {
+            if (!objectList.get(i).getName().equals(Constants.NODE_DUMMYROOT)) {
+                outputString += objectList.get(i) + " / ";
+            }
+        }
+        if (!objectList.get(i).getName().equals(Constants.NODE_DUMMYROOT))
+            outputString += objectList.get(i);
         return outputString;
     }
 }

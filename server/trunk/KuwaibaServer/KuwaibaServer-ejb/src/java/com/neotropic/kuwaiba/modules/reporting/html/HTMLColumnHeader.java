@@ -26,9 +26,7 @@ public class HTMLColumnHeader extends HTMLColumn {
     }
     
     public HTMLColumnHeader(String style, String cssClass, Object content, String colspan, String rowspan) {
-        super(content);
-        this.setColspan(colspan);
-        this.setRowspan(rowspan);
+        super(style, cssClass, content, colspan, rowspan);
     }
 
     public HTMLColumnHeader(String style, String cssClass, Object content) {
