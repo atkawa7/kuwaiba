@@ -557,6 +557,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 throw new MetadataObjectNotFoundException(String.format(
                         "Can not find a class with name %s", className));
             clmt = Util.createClassMetadataFromNode(node);
+            tx.success();
         }
         return clmt;
     }

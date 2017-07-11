@@ -775,10 +775,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             for (Relationship childRel : classNode.getRelationships(RelTypes.INSTANCE_OF)) {
                 Node child = childRel.getStartNode();
-                if (child.getId() == listTypeItemId)
+                if (child.getId() == listTypeItemId) {
+                    tx.success();
                     return new RemoteBusinessObjectLight(child.getId(), (String) child.getProperty(Constants.PROPERTY_NAME), listTypeClassName);
+                }
             }
-            throw new ObjectNotFoundException(listTypeClassName, listTypeItemId);
+            throw new InvalidArgumentException(String.format("Can not find the list type item with id %s", listTypeItemId));
         }
     }
 
