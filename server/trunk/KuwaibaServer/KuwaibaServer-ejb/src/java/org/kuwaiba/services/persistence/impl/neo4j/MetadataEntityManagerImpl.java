@@ -1560,8 +1560,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     }
     
     /**
-     * Checks if an object has value in a given attribute
-     * @param classNode th class node
+     * Checks if all the instances of a class has a value in a given attribute
+     * @param classNode the class node
      * @param attributeName name of the attribute
      * @param attributeType type of the attribute
      * @return true if the given attribute has a value
@@ -1572,7 +1572,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         boolean everyObjectHasValue = true;
         Iterable<Relationship> iterableInstances = classNode.getRelationships(RelTypes.INSTANCE_OF, Direction.INCOMING);
         Iterator<Relationship> instances = iterableInstances.iterator();
-
+        //check if attribute is a pirmitive type, a property in the object node
         while (instances.hasNext()){
             Node objectNode = instances.next().getStartNode();
             if(AttributeMetadata.isPrimitive(attributeType)){
@@ -1581,18 +1581,22 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     break;    
                 }
             }
-            else{
+            else{//checks if the attribute is a list type property
                 //Iterates through relationships and transform the into "plain" attributes
                 everyObjectHasValue = false;
                 Iterable<Relationship> iterableRelationships = objectNode.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING);
                 Iterator<Relationship> relationships = iterableRelationships.iterator();
-                while(relationships.hasNext()){
-                    Relationship relationship = relationships.next();
-                    if (!relationship.hasProperty(Constants.PROPERTY_NAME))
-                        throw new InvalidArgumentException(String.format("Mandatory Attribute Missing: The object with id %s is malformed", objectNode.getId()));
-                    
-                    if (attributeName.equals((String)relationship.getProperty(Constants.PROPERTY_NAME)))
-                        everyObjectHasValue = true;
+                if(!relationships.hasNext())//if has no attribute
+                    return false;
+                else{
+                    while(relationships.hasNext()){
+                        Relationship relationship = relationships.next();
+                        if (!relationship.hasProperty(Constants.PROPERTY_NAME))
+                            throw new InvalidArgumentException(String.format("Mandatory Attribute Missing: The object with id %s is malformed", objectNode.getId()));
+
+                        if (attributeName.equals((String)relationship.getProperty(Constants.PROPERTY_NAME)))
+                            everyObjectHasValue = true;
+                    }
                 }
             }
         }
