@@ -2481,36 +2481,6 @@ public class KuwaibaService {
     }
     
     /**
-     * Allows to create multiple connections at once
-     * @param connectionClass Class all the connections are going to be instance of
-     * @param numberOfChildren Number of connections to be created
-     * @param parentClass Class of the parent object to the connections. Null for none, anything for DummyRoot
-     * @param parentId Id of the parent object to the connections. Anything none, -1 for DummyRoot
-     * @param sessionId Session token
-     * @return The ids of the new objects
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
-     * @deprecated Use createBulkSpecialObjects to create special objects like the physical connections
-     */
-    @WebMethod(operationName = "createBulkPhysicalConnections")
-    public long[] createBulkPhysicalConnections(@WebParam(name = "connectionClass")String connectionClass, 
-            @WebParam(name = "numberOfChildren")int numberOfChildren, 
-            @WebParam(name = "parentClass")String parentClass, 
-            @WebParam(name = "parentId")long parentId, 
-            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
-        try{
-            return wsBean.createBulkPhysicalConnections(connectionClass, numberOfChildren,
-                   parentClass, parentId, getIPAddress(), sessionId);
-        } catch(Exception e){
-            if (e instanceof ServerSideException)
-                throw e;
-            else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in createBulkPhysicalConnections: " + e.getMessage());
-                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
-            }
-        }
-    }
-    
-    /**
      * Returns the endpoints of a physical connection
      * @param connectionClass Connection class
      * @param connectionId Connection id

@@ -673,7 +673,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 else { 
                     String parentNodeClass = Util.getClassName(parentNode);
                     parents.add(Util.createRemoteObjectLightFromNode(parentNode));
-                    if (cm.isSubClass(objectToMatchClassName, objectClass))
+                    if (cm.isSubClass(objectToMatchClassName, parentNodeClass))
                         return parents;
                     
                     objectNode = parentNode;

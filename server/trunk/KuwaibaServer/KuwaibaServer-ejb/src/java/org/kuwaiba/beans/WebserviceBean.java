@@ -1348,12 +1348,17 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 throw new ServerSideException("Class %s is not subclass of GenericPhysicalConnection");
 
             //Check if the endpoints are already connected, but only if the connection is a link (the endpoints are ports)
-            if (mem.isSubClass("GenericPhysicalLink", connectionClass)){
+            if (mem.isSubClass("GenericPhysicalLink", connectionClass)) {
+                
+                if (!mem.isSubClass("GenericPort", aObjectClass) || !mem.isSubClass("GenericPort", bObjectClass))
+                    throw new ServerSideException("One of the endpoints provided is not a port");
+                
                 if (!bem.getSpecialAttribute(aObjectClass, aObjectId, "endpointA").isEmpty())
-                    throw new ServerSideException(String.format("The selected endpoint %s [%s] is already connected", aObjectClass, aObjectId));
+                    
+                    throw new ServerSideException(String.format("The selected endpoint %s is already connected", bem.getObjectLight(aObjectClass, aObjectId)));
 
                 if (!bem.getSpecialAttribute(bObjectClass, bObjectId, "endpointB").isEmpty())
-                    throw new ServerSideException(String.format("The selected endpoint %s [%s] is already connected", bObjectClass, bObjectId));
+                    throw new ServerSideException(String.format("The selected endpoint %s is already connected", bem.getObjectLight(bObjectClass, bObjectId)));
             }
 
             
@@ -1366,39 +1371,15 @@ public class WebserviceBean implements WebserviceBeanRemote {
             bem.createSpecialRelationship(connectionClass, newConnectionId, bObjectClass, bObjectId, "endpointB", true);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
-                    ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.format("New connection (%s) of class %s", newConnectionId, connectionClass));
+                    ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.format("%s [%s] (%s)", name, connectionClass, newConnectionId));
             return newConnectionId;
         } catch (InventoryException e) {
             //If the new connection was successfully created, but there's a problem creating the relationships,
             //delete the connection and throw an exception
             if (newConnectionId != -1)
-                deleteObjects(new String[]{connectionClass}, new long[]{newConnectionId}, true, ipAddress, sessionId);
+                deleteObjects(new String[]{ connectionClass }, new long[]{ newConnectionId }, true, ipAddress, sessionId);
 
             throw new ServerSideException(e.getMessage());
-        }
-    }
-    
-    @Override
-    public long[] createBulkPhysicalConnections(String connectionClass, int numberOfChildren,
-            String parentClass, long parentId, String ipAddress, String sessionId) throws ServerSideException {
-        if (bem == null || aem == null)
-            throw new ServerSideException("Can't reach the backend. Contact your administrator");
-        try {
-            aem.validateWebServiceCall("createBulkPhysicalConnections", ipAddress, sessionId);
-            if (!mem.isSubClass("GenericPhysicalConnection", connectionClass))
-                throw new ServerSideException(String.format("Class %s is not a physical connection", connectionClass));
-            
-            //long[] newConnections = bem.createBulkSpecialObjects(connectionClass, numberOfChildren, parentClass, parentId);
-            String namePattern = "[sequence(1,"+ numberOfChildren + ")]";
-            long [] newConnections = bem.createBulkSpecialObjects(connectionClass, parentClass, parentId, numberOfChildren, namePattern);
-            
-            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
-                    String.format("%s new connections  of class %s", numberOfChildren, connectionClass));
-            
-            return newConnections;
-
-        } catch (InventoryException ex) {
-            throw new ServerSideException(ex.getMessage());
         }
     }
 
