@@ -1977,12 +1977,15 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                             long listTypeItemId = Long.valueOf(attributes.get(attributeName));
                             Node listTypeNodeClass = classIndex.get(Constants.PROPERTY_NAME, classMetadata.getType(attributeName)).getSingle();
                             Node listTypeNode = Util.getRealValue(listTypeItemId, listTypeNodeClass);
-
-                            //Create the new relationships
-                            newValues += listTypeNode.getProperty(Constants.PROPERTY_NAME) + " ";
-                            Relationship newRelationship = instance.createRelationshipTo(listTypeNode, RelTypes.RELATED_TO);
-                            newRelationship.setProperty(Constants.PROPERTY_NAME, attributeName);
-
+                            if(listTypeNode != null){
+                                //Create the new relationships
+                                newValues += listTypeNode.getProperty(Constants.PROPERTY_NAME) + " ";
+                                Relationship newRelationship = instance.createRelationshipTo(listTypeNode, RelTypes.RELATED_TO);
+                                newRelationship.setProperty(Constants.PROPERTY_NAME, attributeName);
+                            }
+                            else if(classMetadata.getAttribute(attributeName).isMandatory())
+                                throw new InvalidArgumentException(String.format("The attribute %s is mandatory, can not be set to None", attributeName));
+                            
                         } catch(NumberFormatException ex) {
                             throw new InvalidArgumentException(String.format("The value %s is not a valid list type item id", attributes.get(attributeName)));
                         }
