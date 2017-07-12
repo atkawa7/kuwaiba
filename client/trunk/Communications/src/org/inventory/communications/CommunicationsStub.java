@@ -35,6 +35,7 @@ import org.inventory.communications.core.LocalAttributeMetadata;
 import org.inventory.communications.core.LocalFavoritesFolder;
 import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalClassMetadataLight;
+import org.inventory.communications.core.LocalLogicalConnectionDetails;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalObjectLightList;
@@ -69,6 +70,7 @@ import org.inventory.communications.wsclient.PrivilegeInfo;
 import org.inventory.communications.wsclient.RemoteFavoritesFolder;
 import org.inventory.communications.wsclient.RemoteBusinessObjectLight;
 import org.inventory.communications.wsclient.RemoteBusinessObjectLightList;
+import org.inventory.communications.wsclient.RemoteLogicalConnectionDetails;
 import org.inventory.communications.wsclient.RemoteObject;
 import org.inventory.communications.wsclient.RemoteObjectLight;
 import org.inventory.communications.wsclient.RemoteObjectLightArray;
@@ -339,25 +341,13 @@ public class CommunicationsStub {
     }
 
     /**
-     * This is a wrapper method with the same name as the one in the webservice used to lock
-     * an object as read only because an operation is being performed on it
-     * @param oid the object oid
-     * @param objectClass the object class
-     * @param value Lock value. By now is a boolean, but I expect in the future a three level lock can be implemented (r,w,nothing)
-     * @return success or failure
-     */
-    public boolean setObjectLock(long oid, String objectClass,boolean value){
-        return true;
-    }
-
-    /**
      * Retrieves the whole object info
      * @param objectClass object class
      * @param oid object id
      * @return The local representation of the object
      */
     public LocalObject getObjectInfo(String objectClass, long oid){
-        try{
+        try {
             LocalClassMetadata lcmd = getMetaForClass(objectClass, false);
             RemoteObject myObject = service.getObject(objectClass, oid,this.session.getSessionId());
             List<List<String>> values = new ArrayList<>();
@@ -374,6 +364,28 @@ public class CommunicationsStub {
     public List<LocalObjectLight> getParents(String objectClass, long objectId) {
         try {
             List<RemoteObjectLight> parents = service.getParents(objectClass, objectId, session.getSessionId());
+            List<LocalObjectLight> res = new ArrayList<>();
+            for (RemoteObjectLight aParent : parents)
+                res.add(new LocalObjectLight(aParent.getOid(), aParent.getName(), aParent.getClassName()));
+
+            return res;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Gets the list of parents (according to the special and standard containment hierarchy) until it finds an instance of class 
+     * objectToMatchClassName (for example "give me the parents of this port until you find the nearest rack")
+     * @param objectClass Class of the object to get the parents from
+     * @param objectId Id of the object to get the parents from
+     * @param objectToMatchClassName Class of the object that will limit the search. It can be a superclass, if you want to match many classes at once
+     * @return The list of parents until an instance of objectToMatchClassName is found. If no instance of that class is found, all parents until the Dummy Root will be returned. NUll in case of error
+     */
+    public List<LocalObjectLight> getParentsUntilFirstOfClass(String objectClass, long objectId, String objectToMatchClassName) {
+        try {
+            List<RemoteObjectLight> parents = service.getParentsUntilFirstOfClass(objectClass, objectId, objectToMatchClassName, session.getSessionId());
             List<LocalObjectLight> res = new ArrayList<>();
             for (RemoteObjectLight aParent : parents)
                 res.add(new LocalObjectLight(aParent.getOid(), aParent.getName(), aParent.getClassName()));
@@ -1658,25 +1670,6 @@ public class CommunicationsStub {
         }
     }
     
-    /**
-     * Create multiple physical connections at once
-     * @param connectionClass Class name to the new physical connections
-     * @param numberOfChildren Number of new physical connections
-     * @param parentClass Parent of the physical connections
-     * @param parentId Id of Parent of the physical connections
-     * @return A list of ids for the new physical connections
-     * @deprecated Use createBulkSpecialObjects to create special objects like the physical connections
-     */
-    public List<Long> createBulkPhysicalConnections(String connectionClass, int numberOfChildren, String parentClass, long parentId) {
-        try{
-            return service.createBulkPhysicalConnections(connectionClass, 
-                        numberOfChildren, parentClass, parentId, session.getSessionId());
-        }catch(Exception ex){
-            this.error =  ex.getMessage();
-            return null;
-        }
-    }
-    
     public LocalObjectLight[] getConnectionEndpoints(String connectionClass, long connectionId) {
         try{
             List<RemoteObjectLight> endpoints = service.getPhysicalConnectionEndpoints(connectionClass, connectionId, session.getSessionId());
@@ -1686,6 +1679,22 @@ public class CommunicationsStub {
                     null : new LocalObjectLight(endpoints.get(1).getOid(), endpoints.get(1).getName(), endpoints.get(1).getClassName())};
             return res;
         }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Returns the structure of a logical connection. The current implementation is quite simple and the return object 
+     * simply provides the endpoints and the next ports connected to such endpoints using a physical connection
+     * @param linkClass The class of the connection to be evaluated
+     * @param linkId The id of the connection to be evaluated
+     * @return An object with the details of the connection and the physical resources associated to it. Null in case of error
+     */
+    public LocalLogicalConnectionDetails getLogicalLinkDetails(String linkClass, long linkId) { 
+        try {
+            return new LocalLogicalConnectionDetails(service.getLogicalLinkDetails(linkClass, linkId, session.getSessionId()));
+        }catch(Exception ex) {
             this.error =  ex.getMessage();
             return null;
         }

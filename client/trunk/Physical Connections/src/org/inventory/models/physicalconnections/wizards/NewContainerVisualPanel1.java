@@ -79,7 +79,7 @@ public class NewContainerVisualPanel1 extends javax.swing.JPanel {
     
     @Override
     public String getName() {
-        return "Container class and type";
+        return "Container information";
     }
     
     

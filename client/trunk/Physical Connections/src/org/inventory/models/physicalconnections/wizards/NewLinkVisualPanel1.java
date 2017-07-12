@@ -17,6 +17,7 @@ package org.inventory.models.physicalconnections.wizards;
 
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
@@ -79,7 +80,7 @@ public final class NewLinkVisualPanel1 extends JPanel {
     
     @Override
     public String getName() {
-        return "Link class and template";
+        return "Link information";
     }
 
     /**
@@ -153,32 +154,36 @@ public final class NewLinkVisualPanel1 extends JPanel {
     
     private class LinkTemplateComboBoxModel implements ComboBoxModel<LocalObjectLight> {
         private List<LocalObjectLight> linkTemplates;
-        private int selectedTemplateIndex = -1;
+        private int selectedTemplateIndex;
 
-        public LinkTemplateComboBoxModel() { }
+        public LinkTemplateComboBoxModel() { 
+            linkTemplates = new ArrayList<>();
+            linkTemplates.add(new LocalObjectLight(-1, "<No Template>", cmbLinkClass.getSelectedItem().toString()));
+        }
         
         public LinkTemplateComboBoxModel(LocalClassMetadataLight linkClass) {
-            linkTemplates = CommunicationsStub.getInstance().getTemplatesForClass(linkClass.getClassName(), false);
+            this();
+            linkTemplates.addAll(CommunicationsStub.getInstance().getTemplatesForClass(linkClass.getClassName(), false));
         }
 
         @Override
         public void setSelectedItem(Object anItem) {
-            selectedTemplateIndex = linkTemplates == null ? -1 : linkTemplates.indexOf(anItem);
+            selectedTemplateIndex = linkTemplates.indexOf(anItem);
         }
 
         @Override
         public Object getSelectedItem() {
-            return selectedTemplateIndex == -1 ? null : linkTemplates.get(selectedTemplateIndex);
+            return linkTemplates.get(selectedTemplateIndex);
         }
 
         @Override
         public int getSize() {
-            return linkTemplates == null ? -1 : linkTemplates.size();
+            return linkTemplates.size();
         }
 
         @Override
         public LocalObjectLight getElementAt(int index) {
-            return linkTemplates == null ? null : linkTemplates.get(index);
+            return linkTemplates.get(index);
         }
 
         @Override
@@ -188,11 +193,13 @@ public final class NewLinkVisualPanel1 extends JPanel {
         public void removeListDataListener(ListDataListener l) {}
         
         public void setTemplates(List<LocalObjectLight> newTemplates) {
+            newTemplates.add(0, new LocalObjectLight(-1, "<No Template>", cmbLinkClass.getSelectedItem().toString()));
             linkTemplates = newTemplates;
         }
         
         public void resetTemplates() {
-            linkTemplates = null;
+            linkTemplates.clear();
+            linkTemplates.add(new LocalObjectLight(-1, "<No Template>", cmbLinkClass.getSelectedItem().toString()));
         }
     }
 }

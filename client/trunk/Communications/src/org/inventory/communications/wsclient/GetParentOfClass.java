@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="objectclass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="objectClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="oid" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="parentClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -30,40 +30,40 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getParentOfClass", propOrder = {
-    "objectclass",
+    "objectClass",
     "oid",
     "parentClass",
     "sessionId"
 })
 public class GetParentOfClass {
 
-    protected String objectclass;
+    protected String objectClass;
     protected long oid;
     protected String parentClass;
     protected String sessionId;
 
     /**
-     * Gets the value of the objectclass property.
+     * Gets the value of the objectClass property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getObjectclass() {
-        return objectclass;
+    public String getObjectClass() {
+        return objectClass;
     }
 
     /**
-     * Sets the value of the objectclass property.
+     * Sets the value of the objectClass property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setObjectclass(String value) {
-        this.objectclass = value;
+    public void setObjectClass(String value) {
+        this.objectClass = value;
     }
 
     /**

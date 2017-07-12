@@ -17,13 +17,15 @@ package org.inventory.models.physicalconnections.wizards;
 
 import javax.swing.event.ChangeListener;
 import org.openide.WizardDescriptor;
+import org.openide.WizardValidationException;
 import org.openide.util.HelpCtx;
 
 /**
  * Logic of the first step of the New Link wizard
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class NewLinkWizardPanel1 implements WizardDescriptor.Panel<WizardDescriptor> {
+public class NewLinkWizardPanel1 implements WizardDescriptor.Panel<WizardDescriptor>,
+        WizardDescriptor.ValidatingPanel<WizardDescriptor> {
 
     /**
      * The visual component that displays this panel. If you need to access the
@@ -31,10 +33,6 @@ public class NewLinkWizardPanel1 implements WizardDescriptor.Panel<WizardDescrip
      */
     private NewLinkVisualPanel1 component;
 
-    // Get the visual component for the panel. In this template, the component
-    // is kept separate. This can be more efficient: if the wizard is created
-    // but never displayed, or not all panels are displayed, it is better to
-    // create only those which really need to be visible.
     @Override
     public NewLinkVisualPanel1 getComponent() {
         if (component == null) {
@@ -53,12 +51,8 @@ public class NewLinkWizardPanel1 implements WizardDescriptor.Panel<WizardDescrip
 
     @Override
     public boolean isValid() {
-        // If it is always OK to press Next or Finish, then:
+        // The Next/Finish button will always be enabled, but to pass to the next/final step, the information will be validated first
         return true;
-        // If it depends on some condition (form filled out...) and
-        // this condition changes (last form field filled in...) then
-        // use ChangeSupport to implement add/removeChangeListener below.
-        // WizardDescriptor.ERROR/WARNING/INFORMATION_MESSAGE will also be useful.
     }
 
     @Override
@@ -70,13 +64,15 @@ public class NewLinkWizardPanel1 implements WizardDescriptor.Panel<WizardDescrip
     }
 
     @Override
-    public void readSettings(WizardDescriptor wiz) {
-        // use wiz.getProperty to retrieve previous panel state
-    }
+    public void readSettings(WizardDescriptor wiz) { }
 
     @Override
-    public void storeSettings(WizardDescriptor wiz) {
-        // use wiz.putProperty to remember current panel state
-    }
+    public void storeSettings(WizardDescriptor wiz) { }
+    
+    @Override
+    public void validate() throws WizardValidationException {
+        if (component.getLinkName().trim().isEmpty())
+            throw new WizardValidationException(component, "The name of the connection can not be empty", "The name of the connection can not be empty");
+    }  
 
 }

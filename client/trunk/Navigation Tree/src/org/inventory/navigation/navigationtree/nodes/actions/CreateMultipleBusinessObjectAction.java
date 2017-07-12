@@ -113,26 +113,30 @@ public final class CreateMultipleBusinessObjectAction extends GenericObjectNodeA
         JMenu mnuPossibleChildren = new JMenu("New Multiple");
         
         LocalObjectLight selectedObject = Utilities.actionsGlobalContext().lookup(LocalObjectLight.class);
-                
-        List<LocalClassMetadataLight> items = com.getPossibleChildren(selectedObject.getClassName(), false);
-
-        if (items == null) {
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE,
-                com.getError());
+        if (selectedObject == null) 
             mnuPossibleChildren.setEnabled(false);
-        }
         else {
-            if (items.isEmpty())
-                mnuPossibleChildren.setEnabled(false);
-            else
-                for(LocalClassMetadataLight item: items){
-                        JMenuItem smiChildren = new JMenuItem(item.getClassName());
-                        smiChildren.setName(item.getClassName());
-                        smiChildren.addActionListener(this);
-                        mnuPossibleChildren.add(smiChildren);
-                }
+            
+            List<LocalClassMetadataLight> items = com.getPossibleChildren(selectedObject.getClassName(), false);
 
-            MenuScroller.setScrollerFor(mnuPossibleChildren, 20, 100);
+            if (items == null) {
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE,
+                    com.getError());
+                mnuPossibleChildren.setEnabled(false);
+            }
+            else {
+                if (items.isEmpty())
+                    mnuPossibleChildren.setEnabled(false);
+                else
+                    for(LocalClassMetadataLight item: items){
+                            JMenuItem smiChildren = new JMenuItem(item.getClassName());
+                            smiChildren.setName(item.getClassName());
+                            smiChildren.addActionListener(this);
+                            mnuPossibleChildren.add(smiChildren);
+                    }
+
+                MenuScroller.setScrollerFor(mnuPossibleChildren, 20, 100);
+            }
         }
         return mnuPossibleChildren;
     }

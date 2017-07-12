@@ -153,16 +153,16 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
     }
 
     @Override
-    protected void attachEdgeSourceAnchor(LocalObjectLight edge, LocalObjectLight oldSourceNode, LocalObjectLight sourceNode) {
+    protected void attachEdgeSourceAnchor(LocalObjectLight edge, LocalObjectLight oldSourceNode, LocalObjectLight newSourceNode) {
         ObjectConnectionWidget connectionWidget = (ObjectConnectionWidget)findWidget(edge);
-        Widget sourceWidget = findWidget(sourceNode);
+        Widget sourceWidget = findWidget(newSourceNode);
         connectionWidget.setSourceAnchor(sourceWidget != null ? AnchorFactory.createCircularAnchor(sourceWidget, 3) : null);
     }
 
     @Override
-    protected void attachEdgeTargetAnchor(LocalObjectLight edge, LocalObjectLight oldTargetNode, LocalObjectLight targetNode) {
+    protected void attachEdgeTargetAnchor(LocalObjectLight edge, LocalObjectLight oldTargetNode, LocalObjectLight newTargetNode) {
         ObjectConnectionWidget connectionWidget = (ObjectConnectionWidget)findWidget(edge);
-        Widget targetWidget = findWidget(targetNode);
+        Widget targetWidget = findWidget(newTargetNode);
         connectionWidget.setTargetAnchor(targetWidget != null ? AnchorFactory.createCircularAnchor(targetWidget, 3) : null);
     }
 

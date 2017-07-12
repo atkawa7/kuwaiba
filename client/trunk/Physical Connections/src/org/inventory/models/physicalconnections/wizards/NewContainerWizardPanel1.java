@@ -15,7 +15,6 @@
  */
 package org.inventory.models.physicalconnections.wizards;
 
-import java.util.ArrayList;
 import javax.swing.event.ChangeListener;
 import org.openide.WizardDescriptor;
 import org.openide.WizardValidationException;
@@ -34,10 +33,6 @@ public class NewContainerWizardPanel1 implements WizardDescriptor.Panel<WizardDe
      */
     private NewContainerVisualPanel1 component;
     
-    // Get the visual component for the panel. In this template, the component
-    // is kept separate. This can be more efficient: if the wizard is created
-    // but never displayed, or not all panels are displayed, it is better to
-    // create only those which really need to be visible.
     @Override
     public NewContainerVisualPanel1 getComponent() {
         if (component == null)
@@ -48,36 +43,13 @@ public class NewContainerWizardPanel1 implements WizardDescriptor.Panel<WizardDe
 
     @Override
     public HelpCtx getHelp() {
-        // Show no Help button for this panel:
         return HelpCtx.DEFAULT_HELP;
-        // If you have context help:
-        // return new HelpCtx("help.key.here");
     }
 
     @Override
     public boolean isValid() {
-        // If it is always OK to press Next or Finish, then:
+        // The Next/Finish button will always be enabled, but to pass to the next/final step, the information will be validated first
         return true;
-        // If it depends on some condition (form filled out...) and
-        // this condition changes (last form field filled in...) then
-        // use ChangeSupport to implement add/removeChangeListener below.
-        // WizardDescriptor.ERROR/WARNING/INFORMATION_MESSAGE will also be useful.
-    }
-
-    private final ArrayList<ChangeListener> listeners = new ArrayList<>();
-    
-    @Override
-    public void addChangeListener(ChangeListener l) {
-        synchronized(listeners) {
-            listeners.add(l);
-        }
-    }
-
-    @Override
-    public void removeChangeListener(ChangeListener l) {
-        synchronized(listeners) {
-            listeners.remove(l);
-        }
     }
 
     @Override
@@ -91,4 +63,10 @@ public class NewContainerWizardPanel1 implements WizardDescriptor.Panel<WizardDe
         if (component.getContainerName().trim().isEmpty())
             throw new WizardValidationException(component, "The name of the connection can not be empty", "The name of the connection can not be empty");
     }    
+
+    @Override
+    public void addChangeListener(ChangeListener l) { }
+
+    @Override
+    public void removeChangeListener(ChangeListener l) { }
 }
