@@ -2759,14 +2759,14 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         try (Transaction tx = graphDb.beginTx()) {
             Node favoritesFolderNode = getFavoritesFolderForUser(favoritesFolderId, userId);
             if (favoritesFolderNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("Can not find the Bookmark folder with id %s", favoritesFolderId));
+                throw new ApplicationObjectNotFoundException(String.format("Can not find a favorites folder with id %s", favoritesFolderId));
             
             Node objectNode = getInstanceOfClass(objectClass, objectId);
             
             if (objectNode.hasRelationship(Direction.OUTGOING, RelTypes.IS_BOOKMARK_ITEM_IN)) {
                 for (Relationship relationship : objectNode.getRelationships(Direction.OUTGOING, RelTypes.IS_BOOKMARK_ITEM_IN)) {
                     if (favoritesFolderNode.getId() == relationship.getEndNode().getId())
-                        throw new OperationNotPermittedException("An object can not be added twice to the same Bookmark folder");
+                        throw new OperationNotPermittedException("An object can not be added twice to the same favorites folder");
                 }
             }
             objectNode.createRelationshipTo(favoritesFolderNode, RelTypes.IS_BOOKMARK_ITEM_IN);
@@ -2787,7 +2787,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 
                 Node favoritesFolderNode = getFavoritesFolderForUser(favoritesFolderId, userId);
                 if (favoritesFolderNode == null)
-                    throw new ApplicationObjectNotFoundException(String.format("Can not find the Bookmark folder with id %s", favoritesFolderId));
+                    throw new ApplicationObjectNotFoundException(String.format("Can not find a favorites folder with id %s", favoritesFolderId));
                 
                 Relationship relationshipToDelete = null;
                 
@@ -2806,7 +2806,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     @Override
     public long createFavoritesFolderForUser(String name, long userId) 
-        throws ApplicationObjectNotFoundException {
+        throws ApplicationObjectNotFoundException, InvalidArgumentException {
+        
+        if (name == null || name.trim().isEmpty())
+                throw new InvalidArgumentException("The name of the favorites folder can not be empty");
+        
         try (Transaction tx = graphDb.beginTx()) {
             Node userNode = userIndex.get(Constants.PROPERTY_ID, userId).getSingle();
             
@@ -2814,9 +2818,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 throw new ApplicationObjectNotFoundException(String.format("User with id %s could not be found", userId));
             
             Node favoritesFolderNode = graphDb.createNode();
-            
-            if (name != null)
-                favoritesFolderNode.setProperty(Constants.PROPERTY_NAME, name);            
+            favoritesFolderNode.setProperty(Constants.PROPERTY_NAME, name);            
             
             userNode.createRelationshipTo(favoritesFolderNode, RelTypes.HAS_BOOKMARK);
             
@@ -2835,7 +2837,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     Node favoritesFolderNode = getFavoritesFolderForUser(id, userId);
                     
                     if (favoritesFolderNode == null)
-                        throw new ApplicationObjectNotFoundException(String.format("Can not find the Bookmark with id %s",id));
+                        throw new ApplicationObjectNotFoundException(String.format("Can not find a favorites folder with id %s",id));
                     
                     for (Relationship relationship : favoritesFolderNode.getRelationships(Direction.INCOMING, RelTypes.HAS_BOOKMARK))
                         relationship.delete();
@@ -2883,7 +2885,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             Node favoritesFolderNode = getFavoritesFolderForUser(favoritesFolderId, userId);
             
             if (favoritesFolderNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("Can not find the Bookmark folder with id %s", favoritesFolderId));
+                throw new ApplicationObjectNotFoundException(String.format("Can not find a favorites folder with id %s", favoritesFolderId));
             
             List<RemoteBusinessObjectLight> bookmarkItems = new ArrayList<>();
             
@@ -2915,19 +2917,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             Node objectNode = getInstanceOfClass(objectClass, objectId);
                         
             List<FavoritesFolder> favoritesFolders = new ArrayList(); 
-            
-            if (objectNode.hasRelationship(Direction.OUTGOING, RelTypes.IS_BOOKMARK_ITEM_IN)) {
                 
-                for (Relationship relationship : objectNode.getRelationships(Direction.OUTGOING, RelTypes.IS_BOOKMARK_ITEM_IN)) {
-                    Node favoritesFolderNode = relationship.getEndNode();
-                    
-                    if (getFavoritesFolderForUser(favoritesFolderNode.getId(), userId) == null)
-                        throw new ApplicationObjectNotFoundException(String.format("Can not find the Bookmark folder with id %s", favoritesFolderNode.getId()));
-                    
-                    String name = favoritesFolderNode.hasProperty(Constants.PROPERTY_NAME) ? (String) favoritesFolderNode.getProperty(Constants.PROPERTY_NAME) : null;
-                    
-                    favoritesFolders.add(new FavoritesFolder(favoritesFolderNode.getId(), name));
-                }
+            for (Relationship relationship : objectNode.getRelationships(Direction.OUTGOING, RelTypes.IS_BOOKMARK_ITEM_IN)) {
+                Node favoritesFolderNode = relationship.getEndNode();
+
+                if (getFavoritesFolderForUser(favoritesFolderNode.getId(), userId) != null) //If null, the object is in a favorites folder, but that folder does not belong to the current user, so it's safe to omiit it
+                    favoritesFolders.add(new FavoritesFolder(favoritesFolderNode.getId(), (String) favoritesFolderNode.getProperty(Constants.PROPERTY_NAME)));
             }
             return favoritesFolders;
         }
@@ -2941,7 +2936,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             Node favoritesFolderNode = getFavoritesFolderForUser(favoritesFolderId, userId);
             
             if (favoritesFolderNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("Can not find the bookmark folder with id %s", favoritesFolderId));
+                throw new ApplicationObjectNotFoundException(String.format("Can not find a favorites folder with id %s", favoritesFolderId));
             
             String name = favoritesFolderNode.hasProperty(Constants.PROPERTY_NAME) ? (String) favoritesFolderNode.getProperty(Constants.PROPERTY_NAME) : null;
                     
@@ -2958,7 +2953,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             Node favoritesFolderNode = getFavoritesFolderForUser(favoritesFolderId, userId);
             
             if (favoritesFolderNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("Can not find the Bookmark folder with id %s", favoritesFolderId));
+                throw new ApplicationObjectNotFoundException(String.format("Can not find a favorites folder with id %s", favoritesFolderId));
             
             if (favoritesFolderNode.hasProperty(Constants.PROPERTY_NAME)) {
                 
@@ -2974,25 +2969,21 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         try (Transaction tx = graphDb.beginTx()) {
             Node userNode = userIndex.get(Constants.PROPERTY_ID, userId).getSingle();
             
-            if (userNode == null) {
-                tx.success();
+            if (userNode == null)
                 return null; // user not found
-            }
+            
             
             if (userNode.hasRelationship(Direction.OUTGOING, RelTypes.HAS_BOOKMARK)) {
-                
                 for (Relationship relationship : userNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_BOOKMARK)) {
                     
                     Node favoritesFolderNode = relationship.getEndNode();
                     
-                    if (favoritesFolderNode.getId() == favoritesFolderId) {
-                        tx.success();
+                    if (favoritesFolderNode.getId() == favoritesFolderId)
                         return favoritesFolderNode;
-                    }
+                    
                 }
             }
-            tx.success();
-            return null; // the user with userId no have a bookmark folder with favoritesFolderId
+            return null; //The user doesn't seem to have a favorites folder with that id
         }
     }
 }

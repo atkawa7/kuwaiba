@@ -990,10 +990,11 @@ public interface ApplicationEntityManager {
      * @param name favorites folder name
      * @param userId User id
      * @return The new favorites folder Id
-     * @throws ApplicationObjectNotFoundException If the user can not be found
+     * @throws ApplicationObjectNotFoundException If the user can not be found 
+     * @throws InvalidArgumentException If the name is null or empty
      */
     public long createFavoritesFolderForUser(String name, long userId) 
-        throws ApplicationObjectNotFoundException;
+        throws ApplicationObjectNotFoundException, InvalidArgumentException;
     
     /**
      * Delete a Bookmark Folder of an User
