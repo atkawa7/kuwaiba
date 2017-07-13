@@ -179,7 +179,7 @@ public abstract class AbstractScene<N, E> extends GraphScene<N, E> {
             listener.actionPerformed(ev);
     }
     
-    public void clear(){
+    public void clear() {
         while (!getNodes().isEmpty())
             removeNode(getNodes().iterator().next());
 

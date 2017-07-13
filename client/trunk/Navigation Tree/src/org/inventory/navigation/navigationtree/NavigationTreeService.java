@@ -16,10 +16,10 @@
  */
 package org.inventory.navigation.navigationtree;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.core.services.api.notifications.NotificationUtil;
 
 /**
  * Provides the business logic for the related TopComponent
@@ -33,13 +33,11 @@ public class NavigationTreeService {
         this.component = component;
     }
     
-    public LocalObjectLight[] getRootChildren(){
+    public List<LocalObjectLight> getRootChildren(){
         List<LocalObjectLight> rootChildren = com.getObjectChildren(-1, -1);
         if(rootChildren != null)
-            return rootChildren.toArray(new LocalObjectLight[0]);
-        else{
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
-            return new LocalObjectLight[0];
-        }
+            return rootChildren;
+        else
+            return new ArrayList<>();
     }
 }

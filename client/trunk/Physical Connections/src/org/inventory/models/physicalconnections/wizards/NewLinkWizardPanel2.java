@@ -16,15 +16,19 @@
 package org.inventory.models.physicalconnections.wizards;
 
 import javax.swing.event.ChangeListener;
+import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.util.Constants;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.openide.WizardDescriptor;
+import org.openide.WizardValidationException;
 import org.openide.util.HelpCtx;
 
 /**
  * Logic of the second step of the New Link wizard
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class NewLinkWizardPanel2 implements WizardDescriptor.Panel<WizardDescriptor> {
+public class NewLinkWizardPanel2 implements WizardDescriptor.Panel<WizardDescriptor>,
+        WizardDescriptor.ValidatingPanel<WizardDescriptor> {
 
     private ObjectNode aSide;
     private ObjectNode bSide;
@@ -40,10 +44,6 @@ public class NewLinkWizardPanel2 implements WizardDescriptor.Panel<WizardDescrip
         this.bSide = bSide;
     }
 
-    // Get the visual component for the panel. In this template, the component
-    // is kept separate. This can be more efficient: if the wizard is created
-    // but never displayed, or not all panels are displayed, it is better to
-    // create only those which really need to be visible.
     @Override
     public NewLinkVisualPanel2 getComponent() {
         if (component == null) {
@@ -54,20 +54,12 @@ public class NewLinkWizardPanel2 implements WizardDescriptor.Panel<WizardDescrip
 
     @Override
     public HelpCtx getHelp() {
-        // Show no Help button for this panel:
         return HelpCtx.DEFAULT_HELP;
-        // If you have context help:
-        // return new HelpCtx("help.key.here");
     }
 
     @Override
     public boolean isValid() {
-        // If it is always OK to press Next or Finish, then:
         return true;
-        // If it depends on some condition (form filled out...) and
-        // this condition changes (last form field filled in...) then
-        // use ChangeSupport to implement add/removeChangeListener below.
-        // WizardDescriptor.ERROR/WARNING/INFORMATION_MESSAGE will also be useful.
     }
 
     @Override
@@ -79,13 +71,19 @@ public class NewLinkWizardPanel2 implements WizardDescriptor.Panel<WizardDescrip
     }
 
     @Override
-    public void readSettings(WizardDescriptor wiz) {
-        // use wiz.getProperty to retrieve previous panel state
-    }
+    public void readSettings(WizardDescriptor wiz) { }
 
     @Override
-    public void storeSettings(WizardDescriptor wiz) {
-        // use wiz.putProperty to remember current panel state
+    public void storeSettings(WizardDescriptor wiz) { }
+    
+    @Override
+    public void validate() throws WizardValidationException {
+        if (component.getSelectedAEndpoint() == null || component.getSelectedBEndpoint() == null)
+            throw new WizardValidationException(component, "You need to select both sides of the connection", 
+                    "You need to select both sides of the connection");
+          if (!CommunicationsStub.getInstance().isSubclassOf(component.getSelectedAEndpoint().getClassName(), Constants.CLASS_GENERICPORT) || 
+                !CommunicationsStub.getInstance().isSubclassOf(component.getSelectedBEndpoint().getClassName(), Constants.CLASS_GENERICPORT))
+            throw new WizardValidationException(component, "Only ports can be connected using links", "Only ports can be connected using links");
     }
 
 }

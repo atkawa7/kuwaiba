@@ -21,6 +21,8 @@ import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.navigation.navigationtree.nodes.actions.ExecuteClassLevelReportAction;
 import org.inventory.navigation.navigationtree.nodes.actions.ShowMoreInformationAction;
 import org.kuwaiba.management.services.nodes.actions.ServiceManagerActionFactory;
+import org.kuwaiba.management.services.nodes.actions.ShowEndToEndViewAction;
+import org.openide.util.Lookup;
 
 /**
  * Node representing a service
@@ -38,6 +40,9 @@ public class ServiceNode extends ObjectNode {
         return new Action [] { 
             ExecuteClassLevelReportAction.getInstance(),
             ServiceManagerActionFactory.getDeleteServiceAction(),
+            null,
+            Lookup.getDefault().lookup(ShowEndToEndViewAction.class),
+            null,
             showMoreInformationAction == null ? showMoreInformationAction = 
                 new ShowMoreInformationAction(getObject().getOid(), getObject().getClassName()) : showMoreInformationAction
         };        

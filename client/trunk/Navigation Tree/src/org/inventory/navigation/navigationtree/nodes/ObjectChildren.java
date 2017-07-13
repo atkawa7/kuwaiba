@@ -32,7 +32,7 @@ public class ObjectChildren extends AbstractChildren {
         setKeys(Collections.EMPTY_SET);
     }
     
-    public ObjectChildren(LocalObjectLight[] lols){
+    public ObjectChildren(List<LocalObjectLight> lols){
         setKeys(lols);
     }
 

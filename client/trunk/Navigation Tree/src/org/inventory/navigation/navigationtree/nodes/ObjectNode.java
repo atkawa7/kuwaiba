@@ -74,7 +74,6 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
     protected static OpenLocalExplorerAction explorerAction = new OpenLocalExplorerAction();
     protected CommunicationsStub com;
     protected CreateBusinessObjectAction createAction;
-//    protected CreateMultipleBusinessObjectAction createMultipleAction;
     protected CreateBusinessObjectFromTemplateAction createFromTemplateAction;
     protected RefreshObjectAction refreshAction;
     protected EditObjectAction editAction;

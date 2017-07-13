@@ -81,11 +81,7 @@ public class FavoritesFolderNode extends AbstractNode implements PropertyChangeL
     
     @Override
     public String getName(){
-        return getEditableText();
-    }
-    
-    public String getEditableText() {
-        return localFavoritesFolder.getName() == null ? "" : localFavoritesFolder.getName();
+        return localFavoritesFolder.getName();
     }
     
     @Override

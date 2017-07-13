@@ -40,6 +40,6 @@ public final class RefreshLocalCacheAction implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         Cache.getInstace().resetAll();
         JOptionPane.showMessageDialog(null, "The local cache was reset",
-                "Refresh Operation",JOptionPane.INFORMATION_MESSAGE);
+                "Refresh Operation", JOptionPane.INFORMATION_MESSAGE);
     }
 }

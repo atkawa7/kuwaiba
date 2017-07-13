@@ -100,8 +100,8 @@ public class NewContainerWizardPanel2 implements WizardDescriptor.Panel<WizardDe
     @Override
     public void validate() throws WizardValidationException {
         if (component.getSelectedAEndpoint() == null || component.getSelectedBEndpoint() == null)
-            throw new WizardValidationException(component, "The container needs two endpoints. Make sure you selected them in the trees", 
-                    "The container needs two endpoints. Make sure you selected them in the trees");
+            throw new WizardValidationException(component, "You need to select both sides of the connection", 
+                    "You need to select both sides of the connection");
           if (CommunicationsStub.getInstance().isSubclassOf(component.getSelectedAEndpoint().getClassName(), Constants.CLASS_GENERICPORT) || 
                 CommunicationsStub.getInstance().isSubclassOf(component.getSelectedBEndpoint().getClassName(), Constants.CLASS_GENERICPORT))
             throw new WizardValidationException(component, "Ports can not be connected using containers", "Ports can not be connected using containers");
