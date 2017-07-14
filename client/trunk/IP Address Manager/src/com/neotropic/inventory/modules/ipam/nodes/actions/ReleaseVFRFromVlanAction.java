@@ -64,7 +64,7 @@ public class ReleaseVFRFromVlanAction  extends GenericObjectNodeAction implement
         JMenu mnuAction = new JMenu(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELEASE_VLAN"));
         Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
         
-        if (!selectedNodes.hasNext())
+        if (!isEnabled() || !selectedNodes.hasNext())
             return null;
         
         ObjectNode selectedNode = (ObjectNode)selectedNodes.next();

@@ -99,12 +99,22 @@ public class Cache{
     }
 
     public LocalClassMetadataLight[] getLightMetadataIndex() {
-        return metadataIndex.values().toArray(new LocalClassMetadataLight[0]);
+        return lightMetadataIndex.values().toArray(new LocalClassMetadataLight[0]);
     }
-
+    
+    public LocalClassMetadataLight getLightMetaForClass(String className) {
+        if (className == null)
+            return null;
+        return lightMetadataIndex.get(className);
+    }
+    
     public void addLightMeta(LocalClassMetadataLight[] all){
         for (LocalClassMetadataLight lcml : all)
             this.lightMetadataIndex.put(lcml.getClassName(), lcml);
+    }
+    
+    public void removeLightMeta(String className) {
+        lightMetadataIndex.remove(className);
     }
 
     public void addPossibleChildrenCached(String className, List<LocalClassMetadataLight> children){

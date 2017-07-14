@@ -23,16 +23,14 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -43,26 +41,27 @@ import org.inventory.communications.core.LocalAttributeMetadata;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalObjectListItem;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
+import org.inventory.core.services.api.actions.ComposedAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
-import org.inventory.core.services.utils.MenuScroller;
+import org.inventory.core.services.utils.SubMenuDialog;
+import org.inventory.core.services.utils.SubMenuItem;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.navigation.navigationtree.nodes.RootObjectNode;
 import org.openide.nodes.AbstractNode;
-import org.openide.util.actions.Presenter.Popup;
 
 /**
  * Action that requests a business object creation
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public final class CreateBusinessObjectAction extends AbstractAction implements Popup {
+public final class CreateBusinessObjectAction extends GenericObjectNodeAction implements ComposedAction {
     
     private AbstractNode node;
     private CommunicationsStub com;
     
-
     public CreateBusinessObjectAction(ObjectNode node) {
         putValue(NAME, "New");
         com = CommunicationsStub.getInstance();
@@ -76,21 +75,7 @@ public final class CreateBusinessObjectAction extends AbstractAction implements 
     }
     
     @Override
-    public void actionPerformed(ActionEvent ev) {
-        final LocalAttributeMetadata[] mandatoryObjectAttributes = com.getMandatoryAttributesInClass(((JMenuItem)ev.getSource()).getName());
-        HashMap<String, Object> attributes = new HashMap<>();
-        if(mandatoryObjectAttributes.length > 0){
-            attributes = createNewObjectForm(mandatoryObjectAttributes);
-            if(!attributes.isEmpty()) //the createNewObject form is closed, and the ok button is never clicked 
-                createObject(((JMenuItem)ev.getSource()).getName(), attributes);
-        } 
-        else
-            createObject(((JMenuItem)ev.getSource()).getName(), attributes);
-    }
-
-    @Override
-    public JMenuItem getPopupPresenter() {
-        JMenu mnuPossibleChildren = new JMenu("New");
+    public void actionPerformed(ActionEvent ev) {        
         List<LocalClassMetadataLight> items;
         if (node instanceof RootObjectNode) //For the root node
             items = com.getPossibleChildren(Constants.DUMMYROOT, false);
@@ -100,24 +85,38 @@ public final class CreateBusinessObjectAction extends AbstractAction implements 
         if (items == null) {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE,
                 com.getError());
-            mnuPossibleChildren.setEnabled(false);
         }
         else {
             if (items.isEmpty())
-                mnuPossibleChildren.setEnabled(false);
-            else
-                for(LocalClassMetadataLight item: items){
-                        JMenuItem smiChildren = new JMenuItem(item.getClassName());
-                        smiChildren.setName(item.getClassName());
-                        smiChildren.addActionListener(this);
-                        mnuPossibleChildren.add(smiChildren);
-                }
-
-            MenuScroller.setScrollerFor(mnuPossibleChildren, 20, 100);
+                NotificationUtil.getInstance().showSimplePopup("Info", NotificationUtil.INFO_MESSAGE,
+                "The object class not has possible children"); // TODO: Add a method to review if the current object class have children
+            else {
+                List<SubMenuItem> subMenuitems = new ArrayList();
+                for(LocalClassMetadataLight item: items)
+                    subMenuitems.add(new SubMenuItem(item.getClassName()));
+                //Gets an instance of subMenu dialog to shown a set of given items
+                SubMenuDialog.getInstance((String) getValue(NAME), this).showSubmenu(subMenuitems);
+            }
         }
-        return mnuPossibleChildren;
     }
-        
+    
+    @Override
+    public void finalActionPerformed(ActionEvent e) {
+        if (e != null && e.getSource() instanceof SubMenuDialog) {
+            String objectClass = ((SubMenuDialog) e.getSource()).getSelectedSubMenuItem().getCaption();
+            
+            final LocalAttributeMetadata[] mandatoryObjectAttributes = com.getMandatoryAttributesInClass(objectClass);
+            HashMap<String, Object> attributes = new HashMap<>();
+            if(mandatoryObjectAttributes.length > 0){
+                attributes = createNewObjectForm(mandatoryObjectAttributes);
+                if(!attributes.isEmpty()) //the createNewObject form is closed, and the ok button is never clicked 
+                    createObject(objectClass, attributes);
+            } 
+            else
+                createObject(objectClass, attributes);
+        }
+    }
+    
     //helpers
     /**
      * Invokes the JOptionpane and also creates all the listeners for every field created
@@ -346,5 +345,15 @@ public final class CreateBusinessObjectAction extends AbstractAction implements 
 
             NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Element created successfully");
         }
+    }
+
+    @Override
+    public String getValidator() {
+        return null;
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_NAVIGATION_TREE, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

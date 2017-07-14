@@ -63,7 +63,7 @@ public class ReleaseGenericPortFromInterfaceAction extends GenericObjectNodeActi
         JMenu mnuAction = new JMenu(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELEASE_INTERFACE"));
         Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
         
-        if (!selectedNodes.hasNext())
+        if (!isEnabled() || !selectedNodes.hasNext())
             return null;
         
         ObjectNode selectedNode = (ObjectNode)selectedNodes.next();

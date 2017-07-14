@@ -18,13 +18,14 @@ package org.kuwaiba.management.services.nodes.actions;
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
 import java.util.List;
-import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.kuwaiba.management.services.nodes.ServicePoolNode;
 import org.openide.util.Utilities;
@@ -34,7 +35,7 @@ import org.openide.util.actions.Presenter;
  * This action allows to create a service
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-class CreateServiceAction extends AbstractAction implements Presenter.Popup {
+class CreateServiceAction extends GenericInventoryAction implements Presenter.Popup {
 
     public CreateServiceAction() {
         putValue(NAME, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATE_SERVICE"));
@@ -74,5 +75,10 @@ class CreateServiceAction extends AbstractAction implements Presenter.Popup {
             menu.add(customerEntry);
         }
         return menu;
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_SERVICE_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ);
     }
 }

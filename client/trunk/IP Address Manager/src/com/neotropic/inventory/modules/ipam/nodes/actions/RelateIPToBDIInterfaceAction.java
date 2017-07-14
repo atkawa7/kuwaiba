@@ -40,8 +40,6 @@ public class RelateIPToBDIInterfaceAction extends GenericObjectNodeAction {
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        super.actionPerformed(e);
-        
         List<LocalObjectLight> bdis = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_BRIDGEDOMAININTERFACE);
         
         if (bdis != null) {

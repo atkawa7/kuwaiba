@@ -80,7 +80,7 @@ public class ReleaseFromContractAction extends GenericObjectNodeAction implement
         
         Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
         
-        if (!selectedNodes.hasNext())
+        if (!isEnabled() || !selectedNodes.hasNext())
             return null;
         
         ObjectNode selectedNode = selectedNodes.next(); //Uses the last selected only

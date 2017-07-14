@@ -40,8 +40,6 @@ public final class ShowObjectAuditTrailAction extends GenericObjectNodeAction {
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        super.actionPerformed(ev);
-        
         LocalApplicationLogEntry[] entries = com.getBusinessObjectAuditTrail(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getOid());
         if (entries == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());

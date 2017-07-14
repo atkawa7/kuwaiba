@@ -38,8 +38,6 @@ public class ReleaseMirrorPortAction extends GenericObjectNodeAction {
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        super.actionPerformed(e);
-        
         if (JOptionPane.showConfirmDialog(null, 
                 "Are you sure you want to release this mirror port?", "Warning", 
                 JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {

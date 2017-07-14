@@ -48,24 +48,19 @@ public class GraphicalRepSpecialRelationshipService {
         HashMap<String, LocalObjectLight[]> specialRelationships = CommunicationsStub.getInstance()
             .getSpecialAttributes(lol.getClassName(), lol.getOid());
         
-        if (specialRelationships == null) 
+        if (specialRelationships == null) {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-        
-        else {
-            List<LocalObjectLight> listOfParents = CommunicationsStub.getInstance()
-                .getParents(lol.getClassName(), lol.getOid());
+            return null;
+        } else {
+            LocalObjectLight parent = CommunicationsStub.getInstance().getParent(lol.getClassName(), lol.getOid());
             
-            if (listOfParents == null) 
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-            else {
-                
-                if (!listOfParents.isEmpty() && listOfParents.get(0).getOid() != -1 && !listOfParents.get(0).getClassName().startsWith("Pool of")) { //Ignore the dummy root and the pools        
-                    specialRelationships.put(Constants.PROPERTY_PARENT, new LocalObjectLight[] { listOfParents.get(0) });
-                    return specialRelationships;
-                }
-            }
+            //Ignore the dummy root and the pools
+            if (parent != null && parent.getOid() != -1 && !parent.getClassName().startsWith("Pool of")) 
+                specialRelationships.put(Constants.PROPERTY_PARENT, new LocalObjectLight[] { parent });
+            //else
+            //    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         }
-        return null;
+        return specialRelationships;
     }
     
     public void showSpecialRelationshipChildren(LocalObjectLightWrapper lolWrapper) {
@@ -80,10 +75,10 @@ public class GraphicalRepSpecialRelationshipService {
 
                 List<String> relationshipNames = new ArrayList(specialRelationships.keySet());
                 Collections.sort(relationshipNames);
-
-                String propertyParent = (String) relationshipNames.remove(relationshipNames.indexOf(Constants.PROPERTY_PARENT));
-                relationshipNames.add(0, propertyParent);
-
+                
+                if (relationshipNames.remove(Constants.PROPERTY_PARENT))
+                    relationshipNames.add(0, Constants.PROPERTY_PARENT);
+                
                 for (String relationshipName : relationshipNames) {
                     for (LocalObjectLight specialRelatedObjNode : specialRelationships.get(relationshipName)) {
 

@@ -70,7 +70,6 @@ import org.inventory.communications.wsclient.PrivilegeInfo;
 import org.inventory.communications.wsclient.RemoteFavoritesFolder;
 import org.inventory.communications.wsclient.RemoteBusinessObjectLight;
 import org.inventory.communications.wsclient.RemoteBusinessObjectLightList;
-import org.inventory.communications.wsclient.RemoteLogicalConnectionDetails;
 import org.inventory.communications.wsclient.RemoteObject;
 import org.inventory.communications.wsclient.RemoteObjectLight;
 import org.inventory.communications.wsclient.RemoteObjectLightArray;
@@ -361,6 +360,13 @@ public class CommunicationsStub {
         }
     }
     
+    /**
+     * Retrieves all the ancestors of an object in the standard and special containment hierarchy. 
+     * If the provided object is in a pool, the ancestor pools will be returned.
+     * @param objectClass Object class of child
+     * @param objectId Object id for the child
+     * @return The list of ancestors.
+     */
     public List<LocalObjectLight> getParents(String objectClass, long objectId) {
         try {
             List<RemoteObjectLight> parents = service.getParents(objectClass, objectId, session.getSessionId());
@@ -370,6 +376,23 @@ public class CommunicationsStub {
 
             return res;
         }catch(Exception ex){
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    /** 
+     * Gets the parent of a given object in the standard or special containment
+     * hierarchy.
+     * @param objectClass Object class of child
+     * @param objectId Object id for the child
+     * @return The parent object
+     */
+    public LocalObjectLight getParent(String objectClass, long objectId) {
+        try {
+            RemoteObjectLight parent = service.getParent(objectClass, objectId, session.getSessionId());
+            return new LocalObjectLight(parent.getOid(), parent.getName(), parent.getClassName());
+        } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
         }
@@ -735,17 +758,42 @@ public class CommunicationsStub {
         }
     }
     
+    /**
+     * According to the cached light metadata, finds out if a given class if subclass of another
+     * @param className Class to be evaluated
+     * @param allegedParentClassName Possible super class
+     * @return is className subClass of allegedParentClass?
+     */
+    public boolean isSubclassOf(String className, String allegedParentClassName) {
+        if (className == null || allegedParentClassName == null)
+            return false;
+        
+        if (allegedParentClassName.equals("RootObject") || 
+            allegedParentClassName.equals("ApplicationObject"))
+            return false;
+       
+        LocalClassMetadataLight allegedParentClass = cache.getLightMetaForClass(allegedParentClassName);        
+                
+        if (allegedParentClass == null) {
+            List<LocalClassMetadataLight> subclasses = getLightSubclasses(allegedParentClassName, true, true);
+            for (LocalClassMetadataLight subclass : subclasses)
+                cache.addLightMeta(new LocalClassMetadataLight[]{subclass});
+        }
+        
+        LocalClassMetadataLight currentClass = cache.getLightMetaForClass(className);
+        
+        if (currentClass == null) // The class name can not be found
+            return false;
+        
+        if (currentClass.getParentName() == null)
+            return false;
+        
+        if (allegedParentClassName.equals(currentClass.getParentName()))
+            return true;
+        else
+            return isSubclassOf(currentClass.getParentName(), allegedParentClassName);
+    }
     
-    
-   public boolean isSubclassOf (String className, String subclassOf) {
-       try {
-           return service.isSubclassOf(className, subclassOf, this.session.getSessionId());
-       } catch (Exception ex) {
-           this.error = ex.getMessage();
-           return false;
-       }
-   }
-
     // <editor-fold defaultstate="collapsed" desc="Metadata methods. Click on the + sign on the left to edit the code.">
     /**
      * The result is cached to be used when needed somewhere else, but the whole
@@ -2021,11 +2069,8 @@ public class CommunicationsStub {
                     cache.addMeta(new LocalClassMetadata[]{myLocal});
                 }
             }
-            if (refreshLightMeta){
-                List<ClassInfoLight> myLocalLight  = service.getAllClassesLight(true, this.session.getSessionId());
-                if (myLocalLight != null){
-                    getAllLightMeta(true);
-                }
+            if (refreshLightMeta) {
+                getAllLightMeta(true);
             }
 
             if (refreshList){

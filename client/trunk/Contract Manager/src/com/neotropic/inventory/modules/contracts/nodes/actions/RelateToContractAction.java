@@ -40,8 +40,6 @@ public class RelateToContractAction extends GenericObjectNodeAction {
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        super.actionPerformed(e);
-        
         List<LocalObjectLight> contracts = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_GENERICCONTRACT);
 
         if (contracts ==  null)

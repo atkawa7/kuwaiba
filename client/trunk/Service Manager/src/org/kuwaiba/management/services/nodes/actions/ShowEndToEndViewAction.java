@@ -38,7 +38,6 @@ public class ShowEndToEndViewAction extends GenericObjectNodeAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        super.actionPerformed(e);
         if (selectedObjects.isEmpty()) 
             JOptionPane.showMessageDialog(null, "This action can not be executed here", "Information", JOptionPane.INFORMATION_MESSAGE);
         else {

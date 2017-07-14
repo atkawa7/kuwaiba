@@ -39,8 +39,6 @@ public class RelateToServiceAction extends GenericObjectNodeAction {
    
     @Override
     public void actionPerformed(ActionEvent e) {
-        super.actionPerformed(e);
-        
         List<LocalObjectLight> services = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_GENERICSERVICE);
 
         if (services ==  null)

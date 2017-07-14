@@ -40,7 +40,6 @@ public class ShowObjectViewAction extends GenericObjectNodeAction {
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        super.actionPerformed(e);
         if (selectedObjects.size() != 1)
             JOptionPane.showMessageDialog(null, "Select only one object.", "Error", JOptionPane.ERROR_MESSAGE);
         else {

@@ -39,8 +39,6 @@ public class RelateEndPointToInterfaceAction extends GenericObjectNodeAction {
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        super.actionPerformed(e);
-        
         List<LocalObjectLight> interfaces = new ArrayList<>();
         List<LocalObjectLight> objects = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_BRIDGEDOMAININTERFACE);
         if(objects != null){

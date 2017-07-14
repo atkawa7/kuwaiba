@@ -40,8 +40,6 @@ public class RelateToProjectAction extends GenericObjectNodeAction {
         
     @Override
     public void actionPerformed(ActionEvent e) {
-        super.actionPerformed(e);
-        
         List<LocalObjectLight> projects = ProjectsModuleService.getAllProjects();
         if (projects == null) {
             JOptionPane.showMessageDialog(null, "This database seems outdated. Contact your administrator to apply the necessary patches to run the Projects module", "Error", JOptionPane.ERROR_MESSAGE);

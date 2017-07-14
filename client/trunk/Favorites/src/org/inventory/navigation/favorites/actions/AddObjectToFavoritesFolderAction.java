@@ -44,7 +44,6 @@ public class AddObjectToFavoritesFolderAction extends GenericObjectNodeAction {
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        super.actionPerformed(e);
         List<LocalFavoritesFolder> favoritesFolders = CommunicationsStub.getInstance().getFavoritesFoldersForUser();
                 
         if (favoritesFolders == null) {

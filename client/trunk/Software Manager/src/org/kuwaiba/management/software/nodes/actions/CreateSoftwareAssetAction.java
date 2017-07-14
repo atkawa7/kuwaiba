@@ -38,8 +38,6 @@ public class CreateSoftwareAssetAction extends GenericObjectNodeAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        super.actionPerformed(e);
-        
         LocalObjectLight newLicense = CommunicationsStub.getInstance().createSpecialObject("SoftwareLicense", selectedObjects.get(0).getClassName(), 
                 selectedObjects.get(0).getOid(), -1);
         if (newLicense == null)

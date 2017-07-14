@@ -147,10 +147,22 @@ public final class DataModelManagerTopComponent extends TopComponent
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnshowClassHierarchyViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnshowClassHierarchyViewActionPerformed
-        TopComponent tc = new ClassHierarchyTopComponent();
-        tc.open();
-        tc.requestActive();
-        tc.requestAttention(true);
+        ClassHierarchyTopComponent classHierarchyTC = (ClassHierarchyTopComponent) 
+            WindowManager.getDefault().findTopComponent("ClassHierarchyTopComponent");
+            
+            if (classHierarchyTC == null) {
+                classHierarchyTC = new ClassHierarchyTopComponent();
+                classHierarchyTC.open();
+            } else {
+                if (classHierarchyTC.isOpened())
+                    classHierarchyTC.requestAttention(true);
+                else { //Even after closed, the TCs (even the no-singletons) continue to exist in the NBP's PersistenceManager registry, 
+                       //so we will reuse the instance, refreshing the vierw first
+                    classHierarchyTC.refresh();
+                    classHierarchyTC.open();
+                }
+            }
+            classHierarchyTC.requestActive();
     }//GEN-LAST:event_btnshowClassHierarchyViewActionPerformed
 
     private void btndefaultDataModelManagetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btndefaultDataModelManagetActionPerformed

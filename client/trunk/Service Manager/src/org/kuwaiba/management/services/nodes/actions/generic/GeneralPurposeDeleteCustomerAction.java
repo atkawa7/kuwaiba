@@ -37,8 +37,6 @@ public class GeneralPurposeDeleteCustomerAction extends GenericObjectNodeAction 
     
     @Override
     public void actionPerformed(ActionEvent ev) {
-        super.actionPerformed(ev);
-        
         if(JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this customer? All services associated will be deleted too",
                 "Delete Customer",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
                         

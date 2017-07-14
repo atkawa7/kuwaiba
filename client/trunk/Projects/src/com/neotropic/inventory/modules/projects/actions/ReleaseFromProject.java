@@ -47,8 +47,6 @@ public class ReleaseFromProject extends GenericObjectNodeAction implements Prese
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        super.actionPerformed(e);
-        
         JMenuItem eventSource = (JMenuItem) e.getSource();
         String objectClass = selectedObjects.get(0).getClassName();
         long objectId = selectedObjects.get(0).getOid();
@@ -80,11 +78,10 @@ public class ReleaseFromProject extends GenericObjectNodeAction implements Prese
 
     @Override
     public JMenuItem getPopupPresenter() {
-        
         JMenu mnuProjects = new JMenu(this);
         
         ObjectNode selectedNode = Utilities.actionsGlobalContext().lookup(ObjectNode.class);
-        if (selectedNode != null) {
+        if (isEnabled() && selectedNode != null) {
             
             List<LocalObjectLight> projects = CommunicationsStub.getInstance().getProjectsAssociateToObject(
                 selectedNode.getObject().getClassName(), 

@@ -22,6 +22,7 @@ import java.util.List;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
+import org.openide.util.Lookup;
 import org.openide.util.Utilities;
 
 
@@ -31,16 +32,30 @@ import org.openide.util.Utilities;
  */
 public abstract class GenericObjectNodeAction extends GenericInventoryAction {
     protected List<LocalObjectLight> selectedObjects;
-
+    
     @Override
-    public void actionPerformed(ActionEvent e) {
-        Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
-        selectedObjects = new ArrayList<>();
+    public abstract void actionPerformed(ActionEvent e);
+    
+    @Override
+    public boolean isEnabled() {
+        Lookup.Result<? extends ObjectNode> selectedObjectNode = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class);
+        Iterator<? extends ObjectNode> selectedNodes = null;
+        if (selectedObjectNode != null)
+            selectedNodes = selectedObjectNode.allInstances().iterator();
+        
+        if (selectedObjects == null)
+            selectedObjects = new ArrayList<>();
+        else
+            selectedObjects.clear();
+        
+        if (selectedNodes == null)
+            return false;
         
         while(selectedNodes.hasNext()) {
             LocalObjectLight selectedObject  = selectedNodes.next().getLookup().lookup(LocalObjectLight.class);
             selectedObjects.add(selectedObject);
         }
+        return !selectedObjects.isEmpty();
     }
     
     /**

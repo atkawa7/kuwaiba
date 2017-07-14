@@ -92,7 +92,7 @@ public class RemoveObjectFromFavoritesFolder extends GenericObjectNodeAction imp
         
         Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
         
-        if (selectedNodes.hasNext()) {
+        if (isEnabled() && selectedNodes.hasNext()) {
         
             ObjectNode selectedNode = selectedNodes.next(); //Uses the last selected only
             

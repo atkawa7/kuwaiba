@@ -50,6 +50,8 @@ public class ReleaseIPFromBDIInterfaceAction extends GenericObjectNodeAction imp
 
     @Override
     public JMenuItem getPopupPresenter() {
+        if (!isEnabled())
+            return null;
         
         JMenu mnuAction = new JMenu(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELEASE_INTERFACE"));
         Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();

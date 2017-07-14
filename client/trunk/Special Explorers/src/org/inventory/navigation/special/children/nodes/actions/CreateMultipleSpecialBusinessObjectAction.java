@@ -101,6 +101,8 @@ public class CreateMultipleSpecialBusinessObjectAction extends GenericObjectNode
 
     @Override
     public JMenuItem getPopupPresenter() {
+        if (!isEnabled())
+            return null;
         JMenu mnuPossibleChildren = new JMenu("New Special (Multiple)");
         SpecialObjectNode node = Utilities.actionsGlobalContext().lookup(SpecialObjectNode.class);
         if (node != null) {
