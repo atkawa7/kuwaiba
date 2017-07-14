@@ -1862,15 +1862,18 @@ public class KuwaibaService {
     }
     
     /**
-     * Gets the parent of a given object in the containment hierarchy
-     * @param objectClass Object class
-     * @param oid Object id
+     * Gets the parent of a given object in the standard and special containment hierarchy
+     * @param objectClass Object class of child
+     * @param oid Object id for the child
      * @param sessionId Session id
      * @return The parent object
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the requested object can't be found
+     *                             If any of the class nodes involved is malformed
+     *                             If the database object could not be properly 
+     *                            mapped into a serializable java object.
      */
     @WebMethod(operationName = "getParent")
-    public RemoteObject getParent(@WebParam(name = "objectclass") String objectClass,
+    public RemoteObjectLight getParent(@WebParam(name = "objectclass") String objectClass,
             @WebParam(name = "oid") long oid,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{

@@ -604,7 +604,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public RemoteBusinessObject getParent(String objectClass, long oid) 
+    public RemoteBusinessObjectLight getParent(String objectClass, long oid) 
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         
         try(Transaction tx = graphDb.beginTx()) {
@@ -616,13 +616,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 if (parentNode.hasProperty(Constants.PROPERTY_NAME) && Constants.NODE_DUMMYROOT.equals(parentNode.getProperty(Constants.PROPERTY_NAME)) )
                     return new RemoteBusinessObject(-1L, Constants.NODE_DUMMYROOT, Constants.NODE_DUMMYROOT);
                 else    
-                    return Util.createRemoteObjectFromNode(parentNode, cm.getClass(Util.getClassName(parentNode)));
+                    return Util.createRemoteObjectLightFromNode(parentNode);
             }
             if (objectNode.hasRelationship(Direction.OUTGOING, RelTypes.CHILD_OF_SPECIAL)){
                 Node parentNode = objectNode.getSingleRelationship(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).getEndNode();
-                return Util.createRemoteObjectFromNode(parentNode, cm.getClass(Util.getClassName(parentNode)));
+                return Util.createRemoteObjectLightFromNode(parentNode);
             }
-            return null;
+            throw new InvalidArgumentException(String.format("The Parent of object with id %s cannot be found", oid));
         }
     }
     

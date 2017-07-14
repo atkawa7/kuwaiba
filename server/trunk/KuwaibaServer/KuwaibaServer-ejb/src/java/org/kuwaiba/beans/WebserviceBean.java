@@ -912,12 +912,13 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public RemoteObject getParent(String objectClass, long oid, String ipAddress, String sessionId) throws ServerSideException{
+    public RemoteObjectLight getParent(String objectClass, long oid, String ipAddress, String sessionId) throws ServerSideException{
         if (bem == null || aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("getParent", ipAddress, sessionId);
-            return new RemoteObject(bem.getParent(objectClass, oid));
+            RemoteBusinessObjectLight parent = bem.getParent(objectClass, oid);
+            return new RemoteObjectLight(parent.getId(), parent.getName(), parent.getClassName());
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }

@@ -196,7 +196,7 @@ public interface BusinessEntityManager {
      * @throws MetadataObjectNotFoundException If any of the class nodes involved is malformed
      * @throws InvalidArgumentException If the database object could not be properly mapped into a serializable java object.
      */
-    public RemoteBusinessObject getParent(String objectClass, long oid)
+    public RemoteBusinessObjectLight getParent(String objectClass, long oid)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
     
     /**
