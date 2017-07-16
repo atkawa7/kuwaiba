@@ -381,8 +381,9 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportActionPerformed
-        ExportScenePanel exportPanel = new ExportScenePanel(new SceneExportFilter[]{ ImageFilter.getInstance() }, scene);
-        DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export options",true, exportPanel);
+        ExportScenePanel exportPanel = new ExportScenePanel(new SceneExportFilter[]{ ImageFilter.getInstance() }, 
+                scene, getDisplayName());
+        DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export Options",true, exportPanel);
         DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
     }//GEN-LAST:event_btnExportActionPerformed
 

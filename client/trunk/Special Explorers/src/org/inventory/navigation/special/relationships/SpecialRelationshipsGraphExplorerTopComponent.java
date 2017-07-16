@@ -147,8 +147,9 @@ public final class SpecialRelationshipsGraphExplorerTopComponent extends TopComp
     }//GEN-LAST:event_btnOrganizeMouseClicked
 
     private void btnExportAsImgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportAsImgActionPerformed
-        ExportScenePanel exportPanel = new ExportScenePanel(new SceneExportFilter[]{ImageFilter.getInstance()}, scene);
-        DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export options", true, exportPanel);
+        ExportScenePanel exportPanel = new ExportScenePanel(new SceneExportFilter[]{ImageFilter.getInstance()}, 
+                scene, getDisplayName());
+        DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export Options", true, exportPanel);
         DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
     }//GEN-LAST:event_btnExportAsImgActionPerformed
 

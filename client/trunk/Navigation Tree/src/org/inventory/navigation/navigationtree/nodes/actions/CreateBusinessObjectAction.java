@@ -60,17 +60,15 @@ import org.openide.nodes.AbstractNode;
 public final class CreateBusinessObjectAction extends GenericObjectNodeAction implements ComposedAction {
     
     private AbstractNode node;
-    private CommunicationsStub com;
+    private CommunicationsStub com = CommunicationsStub.getInstance();
     
     public CreateBusinessObjectAction(ObjectNode node) {
         putValue(NAME, "New");
-        com = CommunicationsStub.getInstance();
         this.node = node;
     }
 
     public CreateBusinessObjectAction(RootObjectNode node) {
         putValue(NAME, "New");
-        com = CommunicationsStub.getInstance();
         this.node = node;
     }
     
@@ -88,8 +86,8 @@ public final class CreateBusinessObjectAction extends GenericObjectNodeAction im
         }
         else {
             if (items.isEmpty())
-                NotificationUtil.getInstance().showSimplePopup("Info", NotificationUtil.INFO_MESSAGE,
-                "The object class not has possible children"); // TODO: Add a method to review if the current object class have children
+                JOptionPane.showMessageDialog(null, 
+                        "The selected object has not been configured to have children. Check your Containment Hierarchy", "Information", JOptionPane.INFORMATION_MESSAGE);
             else {
                 List<SubMenuItem> subMenuitems = new ArrayList();
                 for(LocalClassMetadataLight item: items)
@@ -319,11 +317,11 @@ public final class CreateBusinessObjectAction extends GenericObjectNodeAction im
     
     private boolean isNumeric(String str){  
         try {  
-          double d = Double.parseDouble(str);  
+          Double.parseDouble(str);  
+          return true; 
         }catch(NumberFormatException nfe) {  
           return false;  
         }  
-        return true;  
     }
 
     /**

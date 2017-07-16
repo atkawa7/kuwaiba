@@ -37,10 +37,12 @@ public final class RackViewTopComponent extends TopComponent implements Explorer
     private ExplorerManager em;
     private RackViewService service;
     private RackViewScene scene;
+    private LocalObjectLight currentRack;
     
     public RackViewTopComponent(LocalObjectLight rack) {
+        this.currentRack = rack;
         initComponents();
-        initCustomComponents(rack);
+        initCustomComponents();
         setName(Bundle.CTL_RackViewTopComponent());
         setToolTipText(Bundle.HINT_RackViewTopComponent());
     }
@@ -55,7 +57,7 @@ public final class RackViewTopComponent extends TopComponent implements Explorer
         return TopComponent.PERSISTENCE_NEVER;
     }
     
-    private void initCustomComponents(LocalObjectLight rack) {
+    private void initCustomComponents() {
         em = new ExplorerManager();
         
         scene = new RackViewScene();
@@ -64,7 +66,7 @@ public final class RackViewTopComponent extends TopComponent implements Explorer
         associateLookup(scene.getLookup());
         pnlMainScrollPanel.setViewportView(scene.createView());
         
-        service = new RackViewService(scene, rack);                
+        service = new RackViewService(scene, currentRack);                
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -131,7 +133,7 @@ public final class RackViewTopComponent extends TopComponent implements Explorer
     private void btnExportMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnExportMouseClicked
         ExportScenePanel exportPanel = new ExportScenePanel(
             new SceneExportFilter[]{ImageFilter.getInstance()}, 
-            scene);
+            scene, currentRack.toString());
         
         DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export options",true, exportPanel);
         DialogDisplayer.getDefault().createDialog(dd).setVisible(true);

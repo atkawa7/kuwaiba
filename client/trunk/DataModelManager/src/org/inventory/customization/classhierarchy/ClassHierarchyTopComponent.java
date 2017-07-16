@@ -257,7 +257,8 @@ public final class ClassHierarchyTopComponent extends TopComponent implements Ex
     }//GEN-LAST:event_btnOrganizeActionPerformed
 
     private void btnExportAsImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportAsImageActionPerformed
-        ExportScenePanel exportPanel = new ExportScenePanel(new SceneExportFilter[]{ImageFilter.getInstance()}, scene);
+        ExportScenePanel exportPanel = new ExportScenePanel(new SceneExportFilter[]{ ImageFilter.getInstance() }, 
+                scene, "class_hierarchy");
         DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export options", true, exportPanel);
         DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
     }//GEN-LAST:event_btnExportAsImageActionPerformed

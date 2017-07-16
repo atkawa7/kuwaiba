@@ -23,6 +23,7 @@ import org.inventory.core.visual.scene.SelectableNodeWidget;
 import org.netbeans.api.visual.layout.LayoutFactory;
 import org.netbeans.api.visual.model.ObjectState;
 import org.netbeans.api.visual.widget.LabelWidget;
+import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
@@ -40,7 +41,7 @@ public class ObjectBoxWidget extends SelectableNodeWidget {
     private LabelWidget labelWidget;
     private Widget childrenWidget;
     
-    public ObjectBoxWidget(EndToEndViewScene scene, LocalObjectLight object) {
+    public ObjectBoxWidget(Scene scene, LocalObjectLight object) {
         super(scene, object);
         setOpaque(true);
         setLayout(LayoutFactory.createVerticalFlowLayout());
@@ -48,11 +49,11 @@ public class ObjectBoxWidget extends SelectableNodeWidget {
         this.labelWidget.setBorder(emptyBorder);
         addChild(labelWidget);
         this.childrenWidget = new Widget(scene);
-        this.childrenWidget.setLayout(LayoutFactory.createHorizontalFlowLayout());
+        this.childrenWidget.setLayout(LayoutFactory.createVerticalFlowLayout());
         this.childrenWidget.setBorder(emptyBorder);
         addChild(childrenWidget);
     }
-    public ObjectBoxWidget(EndToEndViewScene scene, LocalObjectLight object, Color originalColor) {
+    public ObjectBoxWidget(Scene scene, LocalObjectLight object, Color originalColor) {
         this (scene, object);
         this.originalColor = originalColor;
         setBackground(originalColor);

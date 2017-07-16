@@ -49,7 +49,7 @@ public class EditConnectionsAction extends GenericObjectNodeAction {
                     "Container %s is missing one of its endpoints", selectedObjects.get(0)));
             return;
         }
-        EditConnectionsFrame frame = new EditConnectionsFrame(selectedObjects.get(0), containerEndpoints[0],containerEndpoints[1]);
+        EditConnectionsFrame frame = new EditConnectionsFrame(selectedObjects.get(0), containerEndpoints[0], containerEndpoints[1]);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }

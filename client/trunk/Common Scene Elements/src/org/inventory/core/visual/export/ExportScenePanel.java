@@ -37,20 +37,21 @@ import org.openide.DialogDisplayer;
  * Dialog to export a scene to a file
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ExportScenePanel extends JPanel implements ActionListener{
+public class ExportScenePanel extends JPanel implements ActionListener {
 
     private SceneExportFilter[] filters;
     private AbstractScene exportable;
+    private String defaultFileName;
 
-    public ExportScenePanel(SceneExportFilter[] filters, AbstractScene exportable) {
+    public ExportScenePanel(SceneExportFilter[] filters, AbstractScene exportable, String defaultFileName) {
         this.filters = filters;
+        this.exportable = exportable;
+        this.defaultFileName = defaultFileName;
         initComponents();
         initCustomComponents();
-        this.exportable = exportable;
     }
 
     private void initCustomComponents() {
-        txtOutputFile.setText(System.getProperty("user.home"));
         for (SceneExportFilter filter : filters)
             cmbExportTo.addItem(filter);
         cmbExportTo.addItemListener(new ItemListener() {
@@ -60,6 +61,9 @@ public class ExportScenePanel extends JPanel implements ActionListener{
                 updateExtension(e.getSource());
             }
         });
+        
+        txtOutputFile.setText(System.getProperty("user.home") + File.separator + 
+                defaultFileName + ((SceneExportFilter)cmbExportTo.getSelectedItem()).getExtension());
     }
 
     /** This method is called from within the constructor to

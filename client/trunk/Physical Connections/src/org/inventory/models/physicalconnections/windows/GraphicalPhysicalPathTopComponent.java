@@ -63,7 +63,8 @@ public class GraphicalPhysicalPathTopComponent extends TopComponent implements E
         btnExport.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ExportScenePanel exportPanel = new ExportScenePanel(new SceneExportFilter[]{ImageFilter.getInstance()}, scene);
+                ExportScenePanel exportPanel = new ExportScenePanel(new SceneExportFilter[]{ImageFilter.getInstance()}, 
+                        scene, getDisplayName());
                 DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export options",true, exportPanel);
                 DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
             }

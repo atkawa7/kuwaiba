@@ -19,7 +19,7 @@ package org.kuwaiba.management.services.nodes.actions;
 import java.awt.event.ActionEvent;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
-import org.kuwaiba.management.services.nodes.actions.endtoend.EndToEndViewScene;
+import org.kuwaiba.management.services.nodes.actions.endtoend.EndToEndViewDetailedScene;
 import org.kuwaiba.management.services.nodes.actions.endtoend.EndToEndViewTopComponent;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.windows.TopComponent;
@@ -30,15 +30,15 @@ import org.openide.windows.TopComponent;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @ServiceProvider(service = GenericObjectNodeAction.class)
-public class ShowEndToEndViewAction extends GenericObjectNodeAction {
+public class ShowEndToEndDetailedViewAction extends GenericObjectNodeAction {
 
-    public ShowEndToEndViewAction() {
-        putValue(NAME, "Show End-to-End View (Normal)");
+    public ShowEndToEndDetailedViewAction() {
+        putValue(NAME, "Show End-to-End View (Detailed)");
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        TopComponent endToEndTC = new EndToEndViewTopComponent(selectedObjects.get(0), new EndToEndViewScene());
+        TopComponent endToEndTC = new EndToEndViewTopComponent(selectedObjects.get(0), new EndToEndViewDetailedScene());
         endToEndTC.open();
         endToEndTC.requestActive();
     }

@@ -332,8 +332,8 @@ public final class ObjectViewTopComponent extends TopComponent
 
     private void btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportActionPerformed
         ExportScenePanel exportPanel = new ExportScenePanel(
-            new SceneExportFilter[]{ImageFilter.getInstance()}, scene);
-        DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export options",true, exportPanel);
+            new SceneExportFilter[]{ImageFilter.getInstance()}, scene, currentObject.toString());
+        DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export Options",true, exportPanel);
         DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
     }//GEN-LAST:event_btnExportActionPerformed
 

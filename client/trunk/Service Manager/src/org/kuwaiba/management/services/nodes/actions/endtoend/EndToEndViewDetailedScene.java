@@ -20,17 +20,15 @@ import java.awt.Color;
 import java.awt.Point;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalLogicalConnectionDetails;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.core.visual.scene.ObjectConnectionWidget;
-import org.inventory.core.visual.scene.ObjectNodeWidget;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.anchor.AnchorFactory;
-import org.netbeans.api.visual.anchor.PointShape;
+import org.netbeans.api.visual.router.Router;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Widget;
 
@@ -39,23 +37,26 @@ import org.netbeans.api.visual.widget.Widget;
  * directly associated to the selected instance. The view looks a lot like the Physical Path view, but they're totally different
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObjectLight>{
+public class EndToEndViewDetailedScene extends AbstractScene<LocalObjectLight, LocalObjectLight>{
     
     private CommunicationsStub com = CommunicationsStub.getInstance();
+    private Router router;
     
-    public EndToEndViewScene() {
+    public EndToEndViewDetailedScene() {
         nodeLayer = new LayerWidget(this);
         edgeLayer = new LayerWidget(this);
         
         addChild(edgeLayer);
         addChild(nodeLayer);
         
+        
         getActions().addAction(ActionFactory.createZoomAction());
-        initSelectionListener();
     }
     
     @Override
-    public byte[] getAsXML() { return null; }
+    public byte[] getAsXML() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
     @Override
     public void render(byte[] structure) throws IllegalArgumentException { }
@@ -75,18 +76,13 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
                         List<LocalObjectLight> parentsUntilFirstComEquipmentA = com.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointA().
                                 getClassName(), logicalCircuitDetails.getEndpointA().getOid(), "GenericCommunicationsElement");
                         
-                        LocalObjectLight aSideEquipmentLogical = parentsUntilFirstComEquipmentA.get(parentsUntilFirstComEquipmentA.size() - 1);
-                        
-                        addEquipmentPortPair(aSideEquipmentLogical, logicalCircuitDetails.getEndpointA());
+                        renderObjectStack(parentsUntilFirstComEquipmentA, logicalCircuitDetails.getEndpointA());
                         
                         //Now the other side
                         List<LocalObjectLight> parentsUntilFirstComEquipmentB = com.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointB().
                                 getClassName(), logicalCircuitDetails.getEndpointB().getOid(), "GenericCommunicationsElement");
                         
-                        LocalObjectLight bSideEquipmentLogical = parentsUntilFirstComEquipmentB.get(parentsUntilFirstComEquipmentB.size() - 1);
-                        
-                        addEquipmentPortPair(bSideEquipmentLogical, logicalCircuitDetails.getEndpointB());
-                        
+                        renderObjectStack(parentsUntilFirstComEquipmentB, logicalCircuitDetails.getEndpointB());
                         
                         //Now the logical link
                         addEdge(logicalCircuitDetails.getConnectionObject());
@@ -99,15 +95,8 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
                             LocalObjectLight nextPhysicalHop = logicalCircuitDetails.getPhysicalPathForEndpointA().get(logicalCircuitDetails.getPhysicalPathForEndpointA().size() - 1);
                             List<LocalObjectLight> parentsUntilFirstNextComEquipmentA = com.getParentsUntilFirstOfClass(nextPhysicalHop.
                                 getClassName(), nextPhysicalHop.getOid(), "GenericCommunicationsElement");
-                            
-                            LocalObjectLight aSideEquipmentPhysical = parentsUntilFirstNextComEquipmentA.get(parentsUntilFirstNextComEquipmentA.size() - 1);
-                            addEquipmentPortPair(aSideEquipmentPhysical, nextPhysicalHop);
-                            
-                            if (findWidget(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1)) == null) { 
-                                addEdge(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1));
-                                setEdgeSource(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1), logicalCircuitDetails.getEndpointA());
-                                setEdgeTarget(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1), nextPhysicalHop);
-                            }
+                        
+                            renderObjectStack(parentsUntilFirstNextComEquipmentA, nextPhysicalHop);
                         }
                         
                         //Now the b side
@@ -116,19 +105,29 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
                             List<LocalObjectLight> parentsUntilFirstNextComEquipmentB = com.getParentsUntilFirstOfClass(nextPhysicalHop.
                                 getClassName(), nextPhysicalHop.getOid(), "GenericCommunicationsElement");
                         
-                            LocalObjectLight bSideEquipmentPhysical = parentsUntilFirstNextComEquipmentB.get(parentsUntilFirstNextComEquipmentB.size() - 1);
-                            addEquipmentPortPair(bSideEquipmentPhysical, nextPhysicalHop);
-                            
+                            renderObjectStack(parentsUntilFirstNextComEquipmentB, nextPhysicalHop);
+                        }
+                        
+                        //Now the physical links
+                        if (!logicalCircuitDetails.getPhysicalPathForEndpointA().isEmpty()) {
+                            if (findWidget(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1)) == null) { 
+                                addEdge(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1));
+                                setEdgeSource(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1), logicalCircuitDetails.getEndpointA());
+                                setEdgeTarget(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1), logicalCircuitDetails.getPhysicalPathForEndpointA().get(logicalCircuitDetails.getPhysicalPathForEndpointA().size() - 1));
+                            }
+                        }
+                        
+                        if (!logicalCircuitDetails.getPhysicalPathForEndpointB().isEmpty()) {
                             if (findWidget(logicalCircuitDetails.getPhysicalPathForEndpointB().get(1)) == null) { 
                                 addEdge(logicalCircuitDetails.getPhysicalPathForEndpointB().get(1));
                                 setEdgeSource(logicalCircuitDetails.getPhysicalPathForEndpointB().get(1), logicalCircuitDetails.getEndpointB());
-                                setEdgeTarget(logicalCircuitDetails.getPhysicalPathForEndpointB().get(1), bSideEquipmentPhysical);
+                                setEdgeTarget(logicalCircuitDetails.getPhysicalPathForEndpointB().get(1), logicalCircuitDetails.getPhysicalPathForEndpointB().get(logicalCircuitDetails.getPhysicalPathForEndpointB().size() - 1));
                             }
                         }
+                        
                     }
                 }
             } catch (Exception ex) {
-                ex.printStackTrace();
                 clear();
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             }
@@ -148,35 +147,15 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
     public boolean supportsBackgrounds() { return false; }
 
     @Override
-    protected Widget attachNodeWidget(LocalObjectLight node) {
-        Widget newWidget;
-        LocalClassMetadata classMetadata = CommunicationsStub.getInstance().getMetaForClass(node.getClassName(), false);
-        if (classMetadata != null)
-            newWidget = new ObjectBoxWidget(this, node, classMetadata.getColor());
-        else
-            newWidget = new ObjectNodeWidget(this, node, new Color((int)(Math.random() * 0x1000000)));
-        
-        newWidget.getActions().addAction(createSelectAction());
-        
-        newWidget.setPreferredLocation(new Point(nodeLayer.getChildren().size() * 200, (nodeLayer.getChildren().size() % 2) * 200 ));
-        
-        validate();
+    protected Widget attachNodeWidget(LocalObjectLight node) {      
+        Widget newWidget = new ObjectBoxWidget(this, node, new Color((int)(Math.random() * 0x1000000)));
+        newWidget.setPreferredLocation(new Point(nodeLayer.getChildren().size() * 500, 0));
         return newWidget;
     }
 
     @Override
     protected Widget attachEdgeWidget(LocalObjectLight edge) {
         ObjectConnectionWidget newWidget = new ObjectConnectionWidget(this, edge);
-        newWidget.getActions().addAction(createSelectAction());
-        newWidget.getActions().addAction(ActionFactory.createAddRemoveControlPointAction());
-        newWidget.getActions().addAction(ActionFactory.createMoveControlPointAction(ActionFactory.createFreeMoveControlPointProvider()));
-        newWidget.setControlPointShape(PointShape.SQUARE_FILLED_BIG);
-        newWidget.setEndPointShape(PointShape.SQUARE_FILLED_BIG);
-        
-        LocalClassMetadata classMetadata = CommunicationsStub.getInstance().getMetaForClass(edge.getClassName(), false);
-        if (classMetadata != null)
-            newWidget.setLineColor(classMetadata.getColor());
-        
         edgeLayer.addChild(newWidget);
         validate();
         return newWidget;
@@ -195,19 +174,42 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
         Widget targetWidget = findWidget(newTargetNode);
         connectionWidget.setTargetAnchor(targetWidget != null ? AnchorFactory.createCircularAnchor(targetWidget, 3) : null);
     }
-    
-    public void addEquipmentPortPair(LocalObjectLight equipment, LocalObjectLight port) {
-        Widget newEquipmentWidget = findWidget(equipment);
-        if (newEquipmentWidget == null) {
-            newEquipmentWidget = addNode(equipment);
-            nodeLayer.addChild(newEquipmentWidget);
-            newEquipmentWidget.getActions().addAction(ActionFactory.createMoveAction());
-        } 
 
-        Widget newPortWidget = findWidget(port);
-        if (newPortWidget == null) {
-            newPortWidget = addNode(port);
-            newEquipmentWidget.addChild(newPortWidget);
+    /**
+     * Helper method that renders a list of parents, from a port to, presumably, a network equipment, 
+     * @param objectStack The list of parents
+     * @param endpointToConnect The port in the stack
+     */
+    private void renderObjectStack(List<LocalObjectLight> objectStack, LocalObjectLight endpointToConnect) {
+        Widget lastParentWidgetA = null;
+
+        for (int i = objectStack.size() - 1; i >= 0 ; i--) {
+            Widget aWidget = findWidget(objectStack.get(i));
+            if (aWidget == null) {
+                aWidget = addNode(objectStack.get(i));
+
+                if (lastParentWidgetA != null)
+                    lastParentWidgetA.addChild(aWidget);
+                else {
+                        nodeLayer.addChild(aWidget);
+                        aWidget.getActions().addAction(ActionFactory.createMoveAction());
+                }
+
+                lastParentWidgetA = aWidget;
+                validate();
+            }
+            else {
+                lastParentWidgetA = aWidget;
+                break;
+            }
+        }
+
+        Widget aEndpointWidget = findWidget(endpointToConnect);
+        if (aEndpointWidget == null) {
+            aEndpointWidget = addNode(endpointToConnect);
+            lastParentWidgetA.addChild(aEndpointWidget);
+            validate();
         }
     }
+    
 }

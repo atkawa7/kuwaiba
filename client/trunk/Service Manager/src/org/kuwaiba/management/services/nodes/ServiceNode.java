@@ -17,10 +17,13 @@ package org.kuwaiba.management.services.nodes;
 
 import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.navigation.favorites.actions.AddObjectToFavoritesFolderAction;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.navigation.navigationtree.nodes.actions.ExecuteClassLevelReportAction;
 import org.inventory.navigation.navigationtree.nodes.actions.ShowMoreInformationAction;
 import org.kuwaiba.management.services.nodes.actions.ServiceManagerActionFactory;
+import org.kuwaiba.management.services.nodes.actions.ShowEndToEndDetailedViewAction;
+import org.kuwaiba.management.services.nodes.actions.ShowEndToEndSimpleViewAction;
 import org.kuwaiba.management.services.nodes.actions.ShowEndToEndViewAction;
 import org.openide.util.Lookup;
 
@@ -41,7 +44,10 @@ public class ServiceNode extends ObjectNode {
             ExecuteClassLevelReportAction.getInstance(),
             ServiceManagerActionFactory.getDeleteServiceAction(),
             null,
+            Lookup.getDefault().lookup(ShowEndToEndSimpleViewAction.class),
             Lookup.getDefault().lookup(ShowEndToEndViewAction.class),
+            Lookup.getDefault().lookup(ShowEndToEndDetailedViewAction.class),
+            Lookup.getDefault().lookup(AddObjectToFavoritesFolderAction.class),
             null,
             showMoreInformationAction == null ? showMoreInformationAction = 
                 new ShowMoreInformationAction(getObject().getOid(), getObject().getClassName()) : showMoreInformationAction
