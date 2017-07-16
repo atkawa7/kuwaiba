@@ -2894,7 +2894,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 if (limit != -1) {
                     if (i >= limit)
                         break;
-                    i += 1;
+                    i++;
                 }
                 Node bookmarkItem = relationship.getStartNode();
                 
@@ -2940,14 +2940,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             String name = favoritesFolderNode.hasProperty(Constants.PROPERTY_NAME) ? (String) favoritesFolderNode.getProperty(Constants.PROPERTY_NAME) : null;
                     
-            tx.success();
             return new FavoritesFolder(favoritesFolderNode.getId(), name);
         }
     }
     
     @Override
     public void updateFavoritesFolder(long favoritesFolderId, long userId, String favoritesFolderName) 
-        throws ApplicationObjectNotFoundException {
+        throws ApplicationObjectNotFoundException, IllegalArgumentException {
         
         try (Transaction tx = graphDb.beginTx()) {
             Node favoritesFolderNode = getFavoritesFolderForUser(favoritesFolderId, userId);
@@ -2955,35 +2954,31 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (favoritesFolderNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Can not find a favorites folder with id %s", favoritesFolderId));
             
-            if (favoritesFolderNode.hasProperty(Constants.PROPERTY_NAME)) {
-                
-                if (favoritesFolderName != null) {
-                    favoritesFolderNode.setProperty(Constants.PROPERTY_NAME, favoritesFolderName);
-                    tx.success();
-                }
-            }
+            if (favoritesFolderName != null && !favoritesFolderName.trim().isEmpty()) {
+                favoritesFolderNode.setProperty(Constants.PROPERTY_NAME, favoritesFolderName);
+                tx.success();
+            } else 
+                throw new IllegalArgumentException("Favorites folder name can not be empty");
         }
     }
     
     private Node getFavoritesFolderForUser(long favoritesFolderId, long userId) {
-        try (Transaction tx = graphDb.beginTx()) {
-            Node userNode = userIndex.get(Constants.PROPERTY_ID, userId).getSingle();
-            
-            if (userNode == null)
-                return null; // user not found
-            
-            
-            if (userNode.hasRelationship(Direction.OUTGOING, RelTypes.HAS_BOOKMARK)) {
-                for (Relationship relationship : userNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_BOOKMARK)) {
-                    
-                    Node favoritesFolderNode = relationship.getEndNode();
-                    
-                    if (favoritesFolderNode.getId() == favoritesFolderId)
-                        return favoritesFolderNode;
-                    
-                }
+        Node userNode = userIndex.get(Constants.PROPERTY_ID, userId).getSingle();
+
+        if (userNode == null)
+            return null; // user not found
+
+
+        if (userNode.hasRelationship(Direction.OUTGOING, RelTypes.HAS_BOOKMARK)) {
+            for (Relationship relationship : userNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_BOOKMARK)) {
+
+                Node favoritesFolderNode = relationship.getEndNode();
+
+                if (favoritesFolderNode.getId() == favoritesFolderId)
+                    return favoritesFolderNode;
+
             }
-            return null; //The user doesn't seem to have a favorites folder with that id
         }
+        return null; //The user doesn't seem to have a favorites folder with that id
     }
 }
