@@ -268,6 +268,12 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
 
     @Override
     public void render(byte[] structure) throws IllegalArgumentException {
+        CommunicationsStub com = CommunicationsStub.getInstance();
+        
+        ObjectViewConfigurationObject configObject = Lookup.getDefault().lookup(ObjectViewConfigurationObject.class);
+        LocalObjectLight object = (LocalObjectLight) configObject.getProperty("currentObject");
+        LocalObjectView currentView = (LocalObjectView) configObject.getProperty("currentView");
+        
         /* Comment this out for debugging purposes
         try{
             FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_"+currentView.getId()+".xml");
@@ -276,11 +282,6 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
         } catch(Exception e) {
         }
         */
-        CommunicationsStub com = CommunicationsStub.getInstance();
-        
-        ObjectViewConfigurationObject configObject = Lookup.getDefault().lookup(ObjectViewConfigurationObject.class);
-        LocalObjectLight object = (LocalObjectLight) configObject.getProperty("currentObject");
-        LocalObjectView currentView = (LocalObjectView) configObject.getProperty("currentView");
         
         List<LocalObjectLight> myChildren = com.getObjectChildren(object.getOid(), com.getMetaForClass(object.getClassName(),false).getOid());
         if (myChildren == null)
@@ -425,13 +426,28 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
         for (LocalObject container : connections) {            
             List<LocalObjectLight> aSide = CommunicationsStub.getInstance()
                 .getSpecialAttribute(container.getClassName(), container.getOid(), "endpointA");
-            if (aSide == null)
+            if (aSide == null) {
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 continue;
-
+            }
+            
+            if (aSide.isEmpty()) {
+                NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, String.format("Connection %s has a loose endpoint and won't be displayed", container));
+                continue;
+            }
+            
             List<LocalObjectLight> bSide = CommunicationsStub.getInstance()
                 .getSpecialAttribute(container.getClassName(), container.getOid(), "endpointB");
-            if (bSide == null)
+            
+            if (bSide == null) {
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 continue;
+            }
+            
+            if (bSide.isEmpty()) {
+                NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, String.format("Connection %s has a loose endpoint and won't be displayed", container));
+                continue;
+            }
 
             //The nodes in the view correspond to equipment or infrastructure, not the actual ports
             //so we have to find the equipment being dislayed so we can find them in the scene            
