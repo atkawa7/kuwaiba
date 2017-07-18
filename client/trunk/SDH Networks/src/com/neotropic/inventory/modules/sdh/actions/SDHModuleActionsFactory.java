@@ -51,7 +51,6 @@ public class SDHModuleActionsFactory {
     private RemoveSDHBusinessObjectFromView removeSDHBusinessObjectFromViewAction;
     private DeleteSDHTransportLink deleteSDHTransportLink;
     private ShowSDHContainersInTransportLink showSDHContainersInTransportLinkAction;
-    private ShowSDHConnectionsInGenericCommunicationsElement showSDHConnectionsInGenericCommunicationsElementAction;
     private SDHModuleScene scene;
 
     public SDHModuleActionsFactory(SDHModuleScene scene) {
@@ -59,7 +58,6 @@ public class SDHModuleActionsFactory {
         removeSDHBusinessObjectFromViewAction = new RemoveSDHBusinessObjectFromView();
         deleteSDHTransportLink = new DeleteSDHTransportLink();
         showSDHContainersInTransportLinkAction = new ShowSDHContainersInTransportLink();
-        showSDHConnectionsInGenericCommunicationsElementAction = new ShowSDHConnectionsInGenericCommunicationsElement();
     }
     
     public PopupMenuProvider createMenuForNode() {
@@ -171,18 +169,6 @@ public class SDHModuleActionsFactory {
                 sdhLinkStructure.open();
                 sdhLinkStructure.requestActive();
             }
-        }
-    }
-    
-    public class ShowSDHConnectionsInGenericCommunicationsElement extends AbstractAction {
-
-        public ShowSDHConnectionsInGenericCommunicationsElement() {
-            this.putValue(NAME, "Show transport links");
-        }
-        
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            
         }
     }
 }

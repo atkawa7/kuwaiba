@@ -88,7 +88,9 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
                             addNode(bSideEquipmentLogical);
                         
                         //Now the logical link
-                        addEdge(logicalCircuitDetails.getConnectionObject());
+                        ObjectConnectionWidget logicalLinkWidget = (ObjectConnectionWidget)addEdge(logicalCircuitDetails.getConnectionObject());
+                        logicalLinkWidget.getLabelWidget().setLabel(aSideEquipmentLogical.getName() + ":" + logicalCircuitDetails.getEndpointA().getName() + " ** " +
+                                bSideEquipmentLogical.getName() + ":" + logicalCircuitDetails.getEndpointB().getName());
                         setEdgeSource(logicalCircuitDetails.getConnectionObject(), aSideEquipmentLogical);
                         setEdgeTarget(logicalCircuitDetails.getConnectionObject(), bSideEquipmentLogical);
                         
@@ -104,7 +106,9 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
                                 addNode(aSideEquipmentPhysical);
                             
                             if (findWidget(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1)) == null) { 
-                                addEdge(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1));
+                                ObjectConnectionWidget physicalLinkWidgetA = (ObjectConnectionWidget)addEdge(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1));
+                                physicalLinkWidgetA.getLabelWidget().setLabel(aSideEquipmentLogical.getName() + ":" + logicalCircuitDetails.getEndpointA().getName() + " ** " +
+                                    aSideEquipmentPhysical.getName() + ":" + nextPhysicalHop.getName());
                                 setEdgeSource(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1), aSideEquipmentLogical);
                                 setEdgeTarget(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1), aSideEquipmentPhysical);
                             }
@@ -121,7 +125,9 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
                                 addNode(bSideEquipmentPhysical);
                             
                             if (findWidget(logicalCircuitDetails.getPhysicalPathForEndpointB().get(1)) == null) { 
-                                addEdge(logicalCircuitDetails.getPhysicalPathForEndpointB().get(1));
+                                ObjectConnectionWidget physicalLinkWidgetB = (ObjectConnectionWidget)addEdge(logicalCircuitDetails.getPhysicalPathForEndpointB().get(1));
+                                physicalLinkWidgetB.getLabelWidget().setLabel(bSideEquipmentLogical.getName() + ":" + logicalCircuitDetails.getEndpointB().getName() + " ** " +
+                                    bSideEquipmentPhysical.getName() + ":" + nextPhysicalHop.getName());
                                 setEdgeSource(logicalCircuitDetails.getPhysicalPathForEndpointB().get(1), bSideEquipmentLogical);
                                 setEdgeTarget(logicalCircuitDetails.getPhysicalPathForEndpointB().get(1), bSideEquipmentPhysical);
                             }
@@ -129,9 +135,8 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
                     }
                 }
             } catch (Exception ex) {
-                ex.printStackTrace();
-//                clear();
-//                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+                clear();
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             }
         }
     }
