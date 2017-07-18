@@ -23,7 +23,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +30,8 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -43,37 +44,57 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
-import org.inventory.core.services.api.actions.ComposedAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
-import org.inventory.core.services.utils.SubMenuDialog;
-import org.inventory.core.services.utils.SubMenuItem;
+import org.inventory.core.services.utils.MenuScroller;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.navigation.navigationtree.nodes.RootObjectNode;
 import org.openide.nodes.AbstractNode;
+import org.openide.util.actions.Presenter;
 
 /**
  * Action that requests a business object creation
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public final class CreateBusinessObjectAction extends GenericObjectNodeAction implements ComposedAction {
-    
+public final class CreateBusinessObjectAction extends GenericObjectNodeAction implements Presenter.Popup {
+    private static CreateBusinessObjectAction instance;
     private AbstractNode node;
     private CommunicationsStub com = CommunicationsStub.getInstance();
     
-    public CreateBusinessObjectAction(ObjectNode node) {
+    private CreateBusinessObjectAction() {
         putValue(NAME, "New");
-        this.node = node;
     }
-
-    public CreateBusinessObjectAction(RootObjectNode node) {
-        putValue(NAME, "New");
-        this.node = node;
+    
+    public static CreateBusinessObjectAction getInstance(AbstractNode node) {
+        if (instance == null)
+            instance = new CreateBusinessObjectAction();
+        instance.setNode(node);
+        return instance;                    
+    }
+    
+    public void setNode(AbstractNode node) {
+        this.node = node;        
     }
     
     @Override
-    public void actionPerformed(ActionEvent ev) {        
+    public void actionPerformed(ActionEvent ev) {
+        String objectClass = ((JMenuItem) ev.getSource()).getName();
+            
+        final LocalAttributeMetadata[] mandatoryObjectAttributes = com.getMandatoryAttributesInClass(objectClass);
+        HashMap<String, Object> attributes = new HashMap<>();
+        if(mandatoryObjectAttributes.length > 0){
+            attributes = createNewObjectForm(mandatoryObjectAttributes);
+            if(!attributes.isEmpty()) //the createNewObject form is closed, and the ok button is never clicked 
+                createObject(objectClass, attributes);
+        } 
+        else
+            createObject(objectClass, attributes);
+    }
+    
+    @Override
+    public JMenuItem getPopupPresenter() {
+        JMenu mnuPossibleChildren = new JMenu((String) getValue(NAME));
         List<LocalClassMetadataLight> items;
         if (node instanceof RootObjectNode) //For the root node
             items = com.getPossibleChildren(Constants.DUMMYROOT, false);
@@ -83,38 +104,23 @@ public final class CreateBusinessObjectAction extends GenericObjectNodeAction im
         if (items == null) {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE,
                 com.getError());
+            mnuPossibleChildren.setEnabled(false);
         }
         else {
-            if (items.isEmpty())
-                JOptionPane.showMessageDialog(null, 
-                        "The selected object has not been configured to have children. Check your Containment Hierarchy", "Information", JOptionPane.INFORMATION_MESSAGE);
-            else {
-                List<SubMenuItem> subMenuitems = new ArrayList();
-                for(LocalClassMetadataLight item: items)
-                    subMenuitems.add(new SubMenuItem(item.getClassName()));
-                //Gets an instance of subMenu dialog to shown a set of given items
-                SubMenuDialog.getInstance((String) getValue(NAME), this).showSubmenu(subMenuitems);
+            if (items.isEmpty()) {
+                mnuPossibleChildren.setEnabled(false);
+            } else {
+                for (LocalClassMetadataLight item : items) {
+                    JMenuItem mnuiChildren = new JMenuItem(item.getClassName());
+                    mnuiChildren.setName(item.getClassName());
+                    mnuiChildren.addActionListener(this);
+                    mnuPossibleChildren.add(mnuiChildren);
+                }
             }
+            MenuScroller.setScrollerFor(mnuPossibleChildren, 20, 100);
         }
+        return mnuPossibleChildren;
     }
-    
-    @Override
-    public void finalActionPerformed(ActionEvent e) {
-        if (e != null && e.getSource() instanceof SubMenuDialog) {
-            String objectClass = ((SubMenuDialog) e.getSource()).getSelectedSubMenuItem().getCaption();
-            
-            final LocalAttributeMetadata[] mandatoryObjectAttributes = com.getMandatoryAttributesInClass(objectClass);
-            HashMap<String, Object> attributes = new HashMap<>();
-            if(mandatoryObjectAttributes.length > 0){
-                attributes = createNewObjectForm(mandatoryObjectAttributes);
-                if(!attributes.isEmpty()) //the createNewObject form is closed, and the ok button is never clicked 
-                    createObject(objectClass, attributes);
-            } 
-            else
-                createObject(objectClass, attributes);
-        }
-    }
-    
     //helpers
     /**
      * Invokes the JOptionpane and also creates all the listeners for every field created

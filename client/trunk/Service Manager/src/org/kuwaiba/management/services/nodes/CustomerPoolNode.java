@@ -52,8 +52,8 @@ public class CustomerPoolNode extends PoolNode {
     @Override
     public Action[] getActions(boolean context){
         return new Action[]{ ServiceManagerActionFactory.getCreateCustomerAction(), 
-            ServiceManagerActionFactory.getDeleteCustomerPoolAction(),
-            new ShowMoreInformationAction(getPool().getOid(), getPool().getClassName())};
+            ServiceManagerActionFactory.getDeleteCustomerPoolAction(), 
+            ShowMoreInformationAction.getInstance(getPool().getOid(), getPool().getClassName())};
     }
    
     @Override

@@ -21,7 +21,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import org.inventory.core.visual.scene.SelectableVMDNodeWidget;
 import org.inventory.customization.classhierarchy.nodes.ClassMetadataNode;
-import org.inventory.customization.classhierarchy.nodes.actions.DeleteAttributeAction;
 import org.inventory.customization.classhierarchy.scene.ClassHierarchyScene;
 import org.inventory.customization.classhierarchy.scene.actions.HideSubclassAction;
 import org.inventory.customization.classhierarchy.scene.actions.ShowSubclassAction;
@@ -54,12 +53,8 @@ public class ClassMetadataWidgetMenu implements PopupMenuProvider {
             getLookup().lookup(ClassMetadataNode.class).getActions(false);
         
         for (Action action : classMetadataNodeActions) {
-            if (action != null) {
-                if (action instanceof DeleteAttributeAction)
-                    popupMenu.add(((DeleteAttributeAction) action).getPopupPresenter());
-                else
-                    popupMenu.add(action);
-            }
+            if (action != null)
+                popupMenu.add(action);
         }
         return popupMenu;
     }

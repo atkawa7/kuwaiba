@@ -49,8 +49,7 @@ public class ServiceNode extends ObjectNode {
             Lookup.getDefault().lookup(ShowEndToEndDetailedViewAction.class),
             Lookup.getDefault().lookup(AddObjectToFavoritesFolderAction.class),
             null,
-            showMoreInformationAction == null ? showMoreInformationAction = 
-                new ShowMoreInformationAction(getObject().getOid(), getObject().getClassName()) : showMoreInformationAction
+            ShowMoreInformationAction.getInstance(getObject().getOid(), getObject().getClassName())
         };        
     }
 }

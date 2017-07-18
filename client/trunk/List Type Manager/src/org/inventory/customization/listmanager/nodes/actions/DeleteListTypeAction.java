@@ -17,9 +17,10 @@
 package org.inventory.customization.listmanager.nodes.actions;
 
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.customization.listmanager.nodes.ListTypeItemNode;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
@@ -28,7 +29,7 @@ import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
  * Action to delete an a list type item
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public final class DeleteListTypeAction extends AbstractAction {
+public final class DeleteListTypeAction extends GenericInventoryAction {
 
     private ListTypeItemNode node;
     
@@ -52,5 +53,10 @@ public final class DeleteListTypeAction extends AbstractAction {
             else
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         }
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_LIST_TYPE_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

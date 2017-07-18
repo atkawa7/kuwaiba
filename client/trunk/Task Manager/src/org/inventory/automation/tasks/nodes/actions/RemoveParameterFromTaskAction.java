@@ -17,12 +17,13 @@ package org.inventory.automation.tasks.nodes.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.HashMap;
-import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import org.inventory.automation.tasks.nodes.TaskNode;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalTask;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter;
@@ -31,7 +32,7 @@ import org.openide.util.actions.Presenter;
  * Adds a custom parameter to the task
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-class RemoveParameterFromTaskAction extends AbstractAction implements Presenter.Popup {
+class RemoveParameterFromTaskAction extends GenericInventoryAction implements Presenter.Popup {
     
     RemoveParameterFromTaskAction() {
         putValue(NAME, "Remove Parameter");
@@ -71,4 +72,9 @@ class RemoveParameterFromTaskAction extends AbstractAction implements Presenter.
         }
         return mnuParameters;
     }    
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_TASK_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+    }
 }

@@ -17,23 +17,44 @@
 package org.inventory.navigation.navigationtree.nodes.actions;
 
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 
 /**
  * Refreshes the node
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public final class RefreshObjectAction extends AbstractAction {
+public final class RefreshObjectAction extends GenericObjectNodeAction {
+    private static RefreshObjectAction instance;
     private ObjectNode node;
 
-    public RefreshObjectAction(ObjectNode node) {
-        this.node = node;
+    public RefreshObjectAction() {
         putValue(NAME, "Update");
+    }
+    
+    public static RefreshObjectAction getInstance(ObjectNode node) {
+        if (instance == null)
+            instance = new RefreshObjectAction();
+        instance.setNode(node);
+        return instance;
+    }
+    
+    public void setNode(ObjectNode node) {
+        this.node = node;
     }
 
     @Override
     public void actionPerformed(ActionEvent ev) {
         node.refresh();
+    }
+
+    @Override
+    public String getValidator() {
+        return null;
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_NAVIGATION_TREE, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

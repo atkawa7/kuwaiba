@@ -17,18 +17,19 @@ package org.inventory.automation.tasks.nodes.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.List;
-import javax.swing.AbstractAction;
 import org.inventory.automation.tasks.nodes.TaskNode;
 import org.inventory.automation.tasks.windows.UsersFrame;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalUserObject;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.openide.util.Utilities;
 
 /**
  * Subscribes a user to a task
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-class SubscribeUserAction extends AbstractAction {
+class SubscribeUserAction extends GenericInventoryAction {
     
     public SubscribeUserAction() {
         putValue(NAME, "Subscribe User...");
@@ -42,5 +43,9 @@ class SubscribeUserAction extends AbstractAction {
         UsersFrame frame = new UsersFrame(taskNode, users);
         frame.setVisible(true);
     }
-    
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_TASK_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+    }
 }

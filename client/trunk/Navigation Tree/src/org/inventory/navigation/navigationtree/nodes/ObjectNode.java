@@ -73,11 +73,6 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
     //There can be only one instance for OpenLocalExplorerAction, this attribute is a kind of singleton
     protected static OpenLocalExplorerAction explorerAction = new OpenLocalExplorerAction();
     protected CommunicationsStub com;
-    protected CreateBusinessObjectAction createAction;
-    protected CreateBusinessObjectFromTemplateAction createFromTemplateAction;
-    protected RefreshObjectAction refreshAction;
-    protected EditObjectAction editAction;
-    protected ShowMoreInformationAction showMoreInformationAction;
     protected Sheet sheet;
     private Image icon;
 
@@ -252,16 +247,16 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
         List<Action> actions = new ArrayList<>();
         LocalObjectLight object = getObject();
         
-        actions.add(createAction == null ? createAction = new CreateBusinessObjectAction(this) : createAction);
+        actions.add(CreateBusinessObjectAction.getInstance(this));
         actions.add(CreateMultipleBusinessObjectAction.getInstance());
-        actions.add(createFromTemplateAction == null ? createFromTemplateAction = new CreateBusinessObjectFromTemplateAction() : createFromTemplateAction);
+        actions.add(CreateBusinessObjectFromTemplateAction.getInstance());
         if (getParentNode() != null) {
             actions.add(SystemAction.get(CopyAction.class));
             actions.add(SystemAction.get(CutAction.class));
             actions.add(SystemAction.get(PasteAction.class));
         }        
-        actions.add(refreshAction == null ? refreshAction = new RefreshObjectAction(this) : refreshAction);
-        actions.add(editAction == null ? editAction = new EditObjectAction(this) : editAction);
+        actions.add(RefreshObjectAction.getInstance(this));
+        actions.add(EditObjectAction.getInstance(this));
         
         actions.add(null); //Separator
         
@@ -283,7 +278,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
         }        
         actions.add(null); //Separator
         actions.add(explorerAction);
-        actions.add(showMoreInformationAction == null ? showMoreInformationAction = new ShowMoreInformationAction(object.getOid(), object.getClassName()) : showMoreInformationAction);
+        actions.add(ShowMoreInformationAction.getInstance(getObject().getOid(), getObject().getClassName()));
         return actions.toArray(new Action[]{});
     }
 

@@ -17,23 +17,38 @@ package org.inventory.navigation.navigationtree.nodes.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.List;
-import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.JTextPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalPrivilege;
 
 /**
  * Shows the database id of the selected object. Useful for troubleshooting purposes. It will also show the object's complete containment structure.
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public final class ShowMoreInformationAction extends AbstractAction {
+public final class ShowMoreInformationAction extends GenericObjectNodeAction {
+    private static ShowMoreInformationAction instance;
     private long id;
     private String className;
 
-    public ShowMoreInformationAction(long id, String className) {
+    private ShowMoreInformationAction() {
         putValue(NAME, "Show More Information");
-        this.id  = id;
+    }
+    
+    public static ShowMoreInformationAction getInstance(long id, String className) {
+        if (instance == null)        
+            instance = new ShowMoreInformationAction();
+        instance.setId(id);
+        instance.setClassName(className);
+        return instance;
+    }
+    
+    public void setId(long id) {
+        this.id = id;
+    }
+    
+    public void setClassName(String className) {
         this.className = className;
     }
 
@@ -49,6 +64,16 @@ public final class ShowMoreInformationAction extends AbstractAction {
                 new SelectableLabel("<strong>id:</strong> " + id + "<br/><strong>Class: </strong>"+ className +"<br/><strong>Containment Path: </strong>" + msg), //NOI18N
                 "Extra Information",
                 JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    @Override
+    public String getValidator() {
+        return null;
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_NAVIGATION_TREE, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 
     private class SelectableLabel extends JTextPane {

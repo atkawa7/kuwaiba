@@ -16,13 +16,14 @@
 package org.inventory.automation.tasks.nodes.actions;
 
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import org.inventory.automation.tasks.nodes.TaskManagerRootNode;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalTask;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.openide.util.Utilities;
@@ -31,7 +32,7 @@ import org.openide.util.Utilities;
  * Creates a task
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-class CreateTaskAction extends AbstractAction {
+class CreateTaskAction extends GenericInventoryAction {
     
     CreateTaskAction() {
         putValue(NAME, "Create Task");
@@ -66,5 +67,9 @@ class CreateTaskAction extends AbstractAction {
             
         
     }
-    
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_TASK_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+    }
 }

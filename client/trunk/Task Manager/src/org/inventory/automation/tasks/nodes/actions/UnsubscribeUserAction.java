@@ -17,13 +17,14 @@ package org.inventory.automation.tasks.nodes.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.List;
-import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import org.inventory.automation.tasks.nodes.TaskNode;
 import org.inventory.automation.tasks.nodes.TaskUserNode;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalTask;
 import org.inventory.communications.core.LocalUserObjectLight;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.util.Utilities;
 
@@ -31,7 +32,7 @@ import org.openide.util.Utilities;
  * Unsubscribes a user from a task
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-class UnsubscribeUserAction extends AbstractAction {
+class UnsubscribeUserAction extends GenericInventoryAction {
     
     public UnsubscribeUserAction() {
         putValue(NAME, "Unsubscribe User");
@@ -64,5 +65,10 @@ class UnsubscribeUserAction extends AbstractAction {
             } else
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         }
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_TASK_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

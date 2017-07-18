@@ -19,13 +19,14 @@ package org.kuwaiba.management.services.nodes.actions;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
-import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalPool;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.kuwaiba.management.services.nodes.ServiceManagerRootNode;
@@ -35,7 +36,7 @@ import org.openide.util.Utilities;
  * Creates a new customer pool
  * @author adrian martinez molina <adrian.martinez@kuwaiba.org>
  */
-public class CreateCustomerPoolAction extends AbstractAction {
+public class CreateCustomerPoolAction extends GenericInventoryAction {
     /**
      * Reference to the communications stub singleton
      */
@@ -85,5 +86,10 @@ public class CreateCustomerPoolAction extends AbstractAction {
                         NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATED"));
                     }
         }
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_SERVICE_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

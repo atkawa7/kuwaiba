@@ -17,12 +17,13 @@ package org.inventory.reports.nodes.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalReportLight;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.reports.nodes.AbstractReportChildren;
@@ -33,7 +34,7 @@ import org.openide.util.Utilities;
  * Creates an inventory level report
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-class CreateInventoryLevelReportAction extends AbstractAction {
+class CreateInventoryLevelReportAction extends GenericInventoryAction {
     
     private CommunicationsStub com = CommunicationsStub.getInstance();
     
@@ -70,5 +71,10 @@ class CreateInventoryLevelReportAction extends AbstractAction {
                 NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Report created successfully");
             }
         }
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_REPORTS, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

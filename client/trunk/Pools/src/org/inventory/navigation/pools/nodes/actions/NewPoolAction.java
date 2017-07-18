@@ -24,6 +24,8 @@ import javax.swing.JTextField;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalPool;
+import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.navigation.pools.nodes.PoolNode;
@@ -33,7 +35,7 @@ import org.inventory.navigation.pools.nodes.PoolRootNode;
  * Creates a new pool
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class NewPoolAction extends AbstractAction{
+public class NewPoolAction extends GenericInventoryAction {
     /**
      * Reference to the communications stub singleton
      */
@@ -82,5 +84,10 @@ public class NewPoolAction extends AbstractAction{
                         NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Pool created successfully");
                     }
         }
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_POOLS, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

@@ -23,6 +23,8 @@ import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.MenuScroller;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
@@ -33,7 +35,7 @@ import org.openide.util.actions.Presenter;
  * Creates a new element in a pool
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class NewPoolItemAction extends AbstractAction implements Presenter.Popup {
+public class NewPoolItemAction extends GenericInventoryAction implements Presenter.Popup {
     private PoolNode poolNode;
     private CommunicationsStub com;
 
@@ -73,5 +75,10 @@ public class NewPoolItemAction extends AbstractAction implements Presenter.Popup
         MenuScroller.setScrollerFor(mnuPossibleChildren, 20, 100);
 		
         return mnuPossibleChildren;
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_POOLS, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

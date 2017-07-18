@@ -771,6 +771,9 @@ public class CommunicationsStub {
         if (allegedParentClassName.equals("RootObject") || 
             allegedParentClassName.equals("ApplicationObject"))
             return false;
+        
+        if (allegedParentClassName.equals(className))
+            return true;
        
         LocalClassMetadataLight allegedParentClass = cache.getLightMetaForClass(allegedParentClassName);        
                 

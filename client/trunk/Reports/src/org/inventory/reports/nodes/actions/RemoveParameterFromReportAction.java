@@ -16,12 +16,13 @@
 package org.inventory.reports.nodes.actions;
 
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalReport;
 import org.inventory.communications.core.LocalReportLight;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.reports.nodes.ReportNode;
 import org.openide.util.Utilities;
@@ -31,7 +32,7 @@ import org.openide.util.actions.Presenter;
  * Adds a custom parameter to the task
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-class RemoveParameterFromReportAction extends AbstractAction implements Presenter.Popup {
+class RemoveParameterFromReportAction extends GenericInventoryAction implements Presenter.Popup {
     
     private CommunicationsStub com = CommunicationsStub.getInstance();
     
@@ -73,4 +74,9 @@ class RemoveParameterFromReportAction extends AbstractAction implements Presente
         } else mnuParameters.setEnabled(false);
         return mnuParameters;
     }    
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_REPORTS, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+    }
 }

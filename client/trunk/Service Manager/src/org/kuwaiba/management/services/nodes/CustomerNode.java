@@ -36,7 +36,7 @@ public class CustomerNode extends ObjectNode {
     public Action[] getActions(boolean context) {
         return new Action [] { ServiceManagerActionFactory.getCreateServicePoolAction(),
             ServiceManagerActionFactory.getDeleteCustomerAction(),
-            showMoreInformationAction == null ? showMoreInformationAction = new ShowMoreInformationAction(getObject().getOid(), getObject().getClassName()) : showMoreInformationAction
+            ShowMoreInformationAction.getInstance(getObject().getOid(), getObject().getClassName())
         };        
     }
 }

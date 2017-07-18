@@ -23,6 +23,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.customization.listmanager.nodes.actions.DeleteListTypeAction;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
+import org.inventory.navigation.navigationtree.nodes.actions.EditObjectAction;
 import org.openide.util.ImageUtilities;
 
 /**
@@ -43,7 +44,9 @@ public class ListTypeItemNode extends ObjectNode {
 
     @Override
     public Action[] getActions(boolean context){
-        return new Action[]{editAction,new DeleteListTypeAction(this)};
+        return new Action[] { 
+            EditObjectAction.getInstance(this), 
+            new DeleteListTypeAction(this)};
     }
 
     @Override

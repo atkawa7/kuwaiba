@@ -16,8 +16,8 @@
 package org.inventory.customization.classhierarchy.nodes.actions;
 
 import java.awt.event.ActionEvent;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalAttributeMetadata;
@@ -25,21 +25,23 @@ import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.communications.core.caching.Cache;
+import org.inventory.core.services.api.actions.ComposedAction;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
+import org.inventory.core.services.utils.SubMenuDialog;
+import org.inventory.core.services.utils.SubMenuItem;
 import org.inventory.customization.classhierarchy.nodes.ClassMetadataNode;
-import org.openide.util.actions.Presenter;
 
 /**
  * Deletes an attribute
  * @author Adrian Martinez Molina <charles.bedon@kuwaiba.org>
  */
-public class DeleteAttributeAction extends GenericInventoryAction implements Presenter.Popup{
+public class DeleteAttributeAction extends GenericInventoryAction implements ComposedAction {
 
     private ClassMetadataNode classNode;
     private CommunicationsStub com;
 
     public DeleteAttributeAction() {
-        putValue(NAME, "Delete Attribute");
+        putValue(NAME, "Delete Attribute...");
         com = CommunicationsStub.getInstance();
     }
 
@@ -50,42 +52,37 @@ public class DeleteAttributeAction extends GenericInventoryAction implements Pre
     
     @Override
     public void actionPerformed(ActionEvent ae) {
-        if (JOptionPane.showConfirmDialog(null, "Are you sure you want to perform this operation? All subclasses will be modified as well", 
-                "Class metadata operation", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION){
-            if (com.deleteAttribute(this.classNode.getClassMetadata().getOid(), ((JMenuItem)ae.getSource()).getName())){
-                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Attribute deleted successfully");
-                //Force a cache reload
-                Cache.getInstace().resetAll();
-                //Refresh the class node
-                classNode.refresh();
-            }
-            else
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
-        }
-    }
-
-    @Override
-    public JMenuItem getPopupPresenter() {
-        JMenu deleteAttributeMenu = new JMenu ("Delete Attribute");
-        LocalClassMetadata metaForThisClass = com.getMetaForClass(this.classNode.getClassMetadata().getOid(), false);
-        
-        if (metaForThisClass == null){
-            deleteAttributeMenu.setEnabled(false);
+        LocalClassMetadata metaForThisClass = com.getMetaForClass(classNode.getClassMetadata().getOid(), false);
+        if (metaForThisClass == null) {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         } else {
-            for (LocalAttributeMetadata anAttribute : metaForThisClass.getAttributes()){
-                JMenuItem menuEntry = new JMenuItem(anAttribute.getName());
-                menuEntry.setName(anAttribute.getName());
-                menuEntry.addActionListener(this);
-                deleteAttributeMenu.add (menuEntry);
-            }
+            List<SubMenuItem> subMenuItems = new ArrayList();
+            for (LocalAttributeMetadata anAttribute : metaForThisClass.getAttributes())
+                subMenuItems.add(new SubMenuItem(anAttribute.getName()));
+            SubMenuDialog.getInstance((String) getValue(NAME), this).showSubmenu(subMenuItems);
         }
-                      
-        return deleteAttributeMenu;
     }
-    
+        
     @Override
     public LocalPrivilege getPrivilege() {
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_DATA_MODEL_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+    }
+
+    @Override
+    public void finalActionPerformed(ActionEvent e) {
+        if (e != null && e.getSource() instanceof SubMenuDialog) {
+            if (JOptionPane.showConfirmDialog(null, "Are you sure you want to perform this operation? All subclasses will be modified as well", 
+                    "Class metadata operation", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION){
+                if (com.deleteAttribute(classNode.getClassMetadata().getOid(), ((SubMenuDialog) e.getSource()).getSelectedSubMenuItem().getCaption())) {
+                    NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Attribute deleted successfully");
+                    //Force a cache reload
+                    Cache.getInstace().resetAll();
+                    //Refresh the class node
+                    classNode.refresh();
+                }
+                else
+                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+            }
+        }
     }
 }

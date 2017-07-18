@@ -47,8 +47,8 @@ public class SpecialObjectNode extends ObjectNode {
         actions.add(CreateSpecialBusinessObjectAction.getInstance()); //This changes from ObjectNode       
         actions.add(CreateMultipleSpecialBusinessObjectAction.getInstance()); //This changes from ObjectNode
         actions.add(CreateSpecialBusinessObjectFromTemplateAction.getInstance()); //This changes from ObjectNode
-        actions.add(refreshAction == null ? refreshAction = new RefreshObjectAction(this) : refreshAction);
-        actions.add(editAction == null ? editAction = new EditObjectAction(this) : editAction);
+        actions.add(RefreshObjectAction.getInstance(this));
+        actions.add(EditObjectAction.getInstance(this));
         actions.add(explorerAction);
         actions.add(null); //Separator
         for (GenericObjectNodeAction action : Lookup.getDefault().lookupAll(GenericObjectNodeAction.class)){
@@ -61,7 +61,7 @@ public class SpecialObjectNode extends ObjectNode {
             }
         }
         actions.add(null); //Separator
-        actions.add(showMoreInformationAction == null ? showMoreInformationAction = new ShowMoreInformationAction(getObject().getOid(), getObject().getClassName()) : showMoreInformationAction);
+        actions.add(ShowMoreInformationAction.getInstance(getObject().getOid(), getObject().getClassName()));
         
         return actions.toArray(new Action[]{});
     }

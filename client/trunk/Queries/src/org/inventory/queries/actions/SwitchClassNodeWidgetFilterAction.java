@@ -23,6 +23,8 @@ import javax.swing.AbstractAction;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalObjectListItem;
+import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.queries.scene.QueryEditorScene;
 import org.inventory.queries.scene.ClassNodeWidget;
 import org.inventory.queries.scene.QueryEditorNodeWidget;
@@ -35,7 +37,7 @@ import org.netbeans.api.visual.widget.Widget;
  * node will present instead, a list of attributes for the given list type
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class SwitchClassNodeWidgetFilterAction extends AbstractAction{
+public class SwitchClassNodeWidgetFilterAction extends GenericInventoryAction {
 
         private Widget classNode;
 
@@ -89,4 +91,9 @@ public class SwitchClassNodeWidgetFilterAction extends AbstractAction{
 
 
         }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_QUERY_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
+}

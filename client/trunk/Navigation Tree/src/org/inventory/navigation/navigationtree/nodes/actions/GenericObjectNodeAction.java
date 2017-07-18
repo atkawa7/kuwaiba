@@ -32,10 +32,7 @@ import org.openide.util.Utilities;
  */
 public abstract class GenericObjectNodeAction extends GenericInventoryAction {
     protected List<LocalObjectLight> selectedObjects;
-    
-    @Override
-    public abstract void actionPerformed(ActionEvent e);
-    
+        
     @Override
     public boolean isEnabled() {
         Lookup.Result<? extends ObjectNode> selectedObjectNode = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class);

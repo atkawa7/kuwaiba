@@ -18,9 +18,10 @@ package org.kuwaiba.management.services.nodes.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
-import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.kuwaiba.management.services.nodes.CustomerPoolNode;
 import org.kuwaiba.management.services.nodes.ServiceManagerRootNode;
@@ -30,7 +31,7 @@ import org.openide.util.Utilities;
  * Action to delete a business object
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-class DeleteCustomerPoolAction extends AbstractAction {
+class DeleteCustomerPoolAction extends GenericInventoryAction {
 
     public DeleteCustomerPoolAction() {
         putValue(NAME, "Delete Customer Pool");
@@ -53,5 +54,10 @@ class DeleteCustomerPoolAction extends AbstractAction {
                     ((ServiceManagerRootNode.ServiceManagerRootChildren)((ServiceManagerRootNode)selectedNode.getParentNode()).getChildren()).addNotify();
             }               
         }
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_SERVICE_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

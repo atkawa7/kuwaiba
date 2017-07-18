@@ -51,9 +51,11 @@ public class ServicePoolNode extends PoolNode {
     
     @Override
     public Action[] getActions(boolean context){
-        return new Action[]{ServiceManagerActionFactory.getCreateServiceAction(), 
+        return new Action[] {
+            ServiceManagerActionFactory.getCreateServiceAction(), 
             ServiceManagerActionFactory.getDeleteServicePoolAction(),
-            new ShowMoreInformationAction(getPool().getOid(), getPool().getClassName())};
+            ShowMoreInformationAction.getInstance(getPool().getOid(), getPool().getClassName())
+        };
     }
     
     @Override

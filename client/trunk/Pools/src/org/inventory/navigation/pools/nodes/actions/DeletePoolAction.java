@@ -16,9 +16,10 @@
 package org.inventory.navigation.pools.nodes.actions;
 
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.pools.nodes.PoolNode;
 import org.openide.nodes.Node;
@@ -27,7 +28,7 @@ import org.openide.nodes.Node;
  * Deletes a pool
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class DeletePoolAction extends AbstractAction {
+public class DeletePoolAction extends GenericInventoryAction {
     /**
      * Reference to the communications stub singleton
      */
@@ -57,5 +58,10 @@ public class DeletePoolAction extends AbstractAction {
             else
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         }
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_POOLS, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

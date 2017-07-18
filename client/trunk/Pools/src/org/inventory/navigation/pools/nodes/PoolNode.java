@@ -47,7 +47,6 @@ public class PoolNode extends AbstractNode implements PropertyChangeListener {
     private static final Image defaultIcon = ImageUtilities.loadImage("org/inventory/navigation/pools/res/pool.png");
     private NewPoolItemAction newPoolItemAction;
     private DeletePoolAction deletePoolAction;
-    private ShowMoreInformationAction showMoreInformationAction;
     private LocalPool pool;
     protected Sheet sheet;
     
@@ -91,9 +90,11 @@ public class PoolNode extends AbstractNode implements PropertyChangeListener {
         if (newPoolItemAction == null){
             newPoolItemAction = new NewPoolItemAction(this);
             deletePoolAction = new DeletePoolAction(this);
-            showMoreInformationAction = new ShowMoreInformationAction(pool.getOid(), pool.getClassName());
         }
-        return new Action[]{ newPoolItemAction, deletePoolAction, showMoreInformationAction};
+        return new Action[]{ 
+            newPoolItemAction, 
+            deletePoolAction, 
+            ShowMoreInformationAction.getInstance(pool.getOid(), pool.getClassName())};
     }
  
     @Override

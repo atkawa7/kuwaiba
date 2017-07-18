@@ -24,12 +24,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalReport;
 import org.inventory.communications.core.LocalReportLight;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.openide.util.Utilities;
@@ -38,7 +39,7 @@ import org.openide.util.Utilities;
  * Executes a class level report
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-class ExecuteInventoryLevelReportAction extends AbstractAction {
+class ExecuteInventoryLevelReportAction extends GenericInventoryAction {
     
     private CommunicationsStub com = CommunicationsStub.getInstance();
     
@@ -105,5 +106,10 @@ class ExecuteInventoryLevelReportAction extends AbstractAction {
             }
         }
            
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_REPORTS, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

@@ -16,10 +16,11 @@
 package org.inventory.reports.nodes.actions;
 
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalReportLight;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.reports.nodes.AbstractReportChildren;
 import org.inventory.reports.nodes.ReportNode;
@@ -29,7 +30,7 @@ import org.openide.util.Utilities;
  * Deletes a class level report
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-class DeleteReportAction extends AbstractAction {
+class DeleteReportAction extends GenericInventoryAction {
     
     private CommunicationsStub com = CommunicationsStub.getInstance();
     
@@ -52,5 +53,10 @@ class DeleteReportAction extends AbstractAction {
                 NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Report deleted successfully");
             }
         }
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_REPORTS, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

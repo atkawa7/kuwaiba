@@ -22,7 +22,6 @@ import java.awt.event.ActionListener;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -34,6 +33,7 @@ import javax.swing.JScrollPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.MenuScroller;
@@ -46,9 +46,17 @@ import org.openide.util.actions.Presenter.Popup;
  * Creates an inventory object from a template
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public final class CreateBusinessObjectFromTemplateAction extends AbstractAction implements Popup {
+public final class CreateBusinessObjectFromTemplateAction extends GenericObjectNodeAction implements Popup {
+    private static CreateBusinessObjectFromTemplateAction instance;
     private CommunicationsStub com = CommunicationsStub.getInstance();
-
+    
+    private CreateBusinessObjectFromTemplateAction() {
+    }
+    
+    public static CreateBusinessObjectFromTemplateAction getInstance() {
+        return instance == null ? instance = new CreateBusinessObjectFromTemplateAction() : instance;
+    }
+    
     @Override
     public void actionPerformed(ActionEvent ev) {
         String className = ((JMenuItem)ev.getSource()).getName();
@@ -98,6 +106,16 @@ public final class CreateBusinessObjectFromTemplateAction extends AbstractAction
             MenuScroller.setScrollerFor(mnuPossibleChildren, 20, 100);
         }
         return mnuPossibleChildren;
+    }
+
+    @Override
+    public String getValidator() {
+        return null;
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_NAVIGATION_TREE, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
     
     private class TemplateListFrame extends JFrame {

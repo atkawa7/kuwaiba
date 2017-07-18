@@ -40,14 +40,12 @@ public class ContractNode extends ObjectNode {
     }
 
     @Override
-    public Action[] getActions(boolean context) {
-        if (showMoreInformationAction == null) 
-            showMoreInformationAction = new ShowMoreInformationAction(getObject().getOid(), getObject().getClassName());
-
-        return new Action[] { ContractManagerActionFactory.getDeleteContractAction(), 
-                                null, 
-                                showMoreInformationAction
-                            };
+    public Action[] getActions(boolean context) {               
+        return new Action[] { 
+            ContractManagerActionFactory.getDeleteContractAction(), 
+            null, 
+            ShowMoreInformationAction.getInstance(getObject().getOid(), getObject().getClassName())
+        };
     }
     
     public static class ContractChildren extends Children.Keys<LocalObjectLight> {

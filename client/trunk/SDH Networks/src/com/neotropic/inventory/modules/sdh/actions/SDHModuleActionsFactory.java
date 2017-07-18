@@ -24,12 +24,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.visual.scene.ObjectNodeWidget;
 import org.inventory.core.visual.scene.AbstractScene;
@@ -102,7 +103,7 @@ public class SDHModuleActionsFactory {
         return connectionMenu;
     }
     
-    public class RemoveSDHBusinessObjectFromView extends AbstractAction {
+    public class RemoveSDHBusinessObjectFromView extends GenericInventoryAction {
 
         public RemoveSDHBusinessObjectFromView() {
             this.putValue(NAME, "Remove From View"); 
@@ -122,9 +123,14 @@ public class SDHModuleActionsFactory {
                 scene.fireChangeEvent(new ActionEvent(selectedObject, AbstractScene.SCENE_CHANGE, "manualDelete"));
             }         
         }
+
+        @Override
+        public LocalPrivilege getPrivilege() {
+            return new LocalPrivilege(LocalPrivilege.PRIVILEGE_SDH_MODULE, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+        }
     }
     
-    public class DeleteSDHTransportLink extends AbstractAction {
+    public class DeleteSDHTransportLink extends GenericInventoryAction {
         
         public DeleteSDHTransportLink() {
             this.putValue(NAME, "Delete Transport Link"); 
@@ -148,9 +154,14 @@ public class SDHModuleActionsFactory {
                 }
             }
         }
+
+        @Override
+        public LocalPrivilege getPrivilege() {
+            return new LocalPrivilege(LocalPrivilege.PRIVILEGE_SDH_MODULE, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+        }
     }
     
-    public class ShowSDHContainersInTransportLink extends AbstractAction {
+    public class ShowSDHContainersInTransportLink extends GenericInventoryAction {
 
         public ShowSDHContainersInTransportLink() {
             this.putValue(NAME, "Show Virtual Circuits Inside");
@@ -169,6 +180,11 @@ public class SDHModuleActionsFactory {
                 sdhLinkStructure.open();
                 sdhLinkStructure.requestActive();
             }
+        }
+
+        @Override
+        public LocalPrivilege getPrivilege() {
+            return new LocalPrivilege(LocalPrivilege.PRIVILEGE_SDH_MODULE, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
         }
     }
 }

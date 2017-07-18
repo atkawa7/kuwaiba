@@ -17,8 +17,8 @@
 package org.inventory.navigation.navigationtree.nodes.actions;
 
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.navigation.navigationtree.windows.ObjectEditorTopComponent;
 
@@ -26,11 +26,22 @@ import org.inventory.navigation.navigationtree.windows.ObjectEditorTopComponent;
  * Provides the necessary functionality to show a dedicated editor (using PropertySheetView)
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public final class EditObjectAction extends AbstractAction {
+public final class EditObjectAction extends GenericObjectNodeAction {
+    private static EditObjectAction instance;
     private ObjectNode node;
-
-    public EditObjectAction(ObjectNode node) {
+    
+    private EditObjectAction() {
         putValue(NAME, "Edit");
+    }
+    
+    public static EditObjectAction getInstance(ObjectNode node) {
+        if (instance == null)
+            instance = new EditObjectAction();
+        instance.setNode(node);
+        return instance;
+    }
+    
+    public void setNode(ObjectNode node) {
         this.node = node;
     }
 
@@ -44,5 +55,15 @@ public final class EditObjectAction extends AbstractAction {
         ObjectEditorTopComponent component = new ObjectEditorTopComponent(node);
         component.open();
         component.requestActive();
+    }
+
+    @Override
+    public String getValidator() {
+        return null;
+    }
+
+    @Override
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_NAVIGATION_TREE, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 }

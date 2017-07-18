@@ -37,7 +37,6 @@ import javax.swing.ListModel;
 import javax.swing.border.EmptyBorder;
 import org.inventory.core.services.api.actions.ComposedAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.openide.windows.WindowManager;
 
 /**
  * A subMenu dialog for composed actions which list a set of items to be selected
@@ -52,8 +51,9 @@ public class SubMenuDialog extends JDialog {
     
     private SubMenuDialog() {
         setModal(true);
+        setLocationByPlatform(true);
         setUndecorated(true);
-        setLocationRelativeTo(WindowManager.getDefault().getMainWindow());
+        
         initComponents();
         String escKey = "escKey";
         InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
