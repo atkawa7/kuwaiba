@@ -71,6 +71,7 @@ public class TempBusinessRulesEngine {
         subClassOfValidators.put("GenericSDHTransportLink", "sdhTransportLink");
         subClassOfValidators.put("GenericSDHContainerLink", "sdhContainerLink");
         subClassOfValidators.put("GenericSDHTributaryLink", "sdhTributaryLink");
+        subClassOfValidators.put("MPLSLink", "mplsLink");
         subClassOfValidators.put("GenericContract", "contract");
         subClassOfValidators.put("GenericCustomer", "customer");
     }
