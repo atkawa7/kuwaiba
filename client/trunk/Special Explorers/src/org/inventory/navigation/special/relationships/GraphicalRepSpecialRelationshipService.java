@@ -62,6 +62,14 @@ public class GraphicalRepSpecialRelationshipService {
         }
         return specialRelationships;
     }
+        
+    public void refreshScene() {
+        scene.clear();
+        scene.validate();
+        
+        scene.render(getRoot());
+        showSpecialRelationshipChildren(getRoot());
+    }
     
     public void showSpecialRelationshipChildren(LocalObjectLightWrapper lolWrapper) {
         
@@ -125,8 +133,7 @@ public class GraphicalRepSpecialRelationshipService {
             
             if (!source.equals(lolWrapper))
                 scene.removeNodeWithEdges(lolWrapper);
-        }
-        
+        }        
     }
         
     public void hideSpecialRelationshipChildren(LocalObjectLightWrapper lolWrapper) {

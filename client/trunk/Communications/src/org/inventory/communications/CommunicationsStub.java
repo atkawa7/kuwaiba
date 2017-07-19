@@ -360,6 +360,25 @@ public class CommunicationsStub {
         }
     }
     
+    /** 
+     * Gets the common parent of a given object in the standard or special containment
+     * hierarchy.
+     * @param aObjectClass Object class name of child a
+     * @param aOid Object id for the child a
+     * @param bObjectClass Object class name of child b
+     * @param bOid Object id for the child b
+     * @return The common parent object
+     */
+    public LocalObjectLight getCommonParent(String aObjectClass, long aOid, String bObjectClass, long bOid) {
+        try {
+            RemoteObjectLight parent = service.getCommonParent(aObjectClass, aOid, bObjectClass, bOid, session.getSessionId());
+            return new LocalObjectLight(parent.getOid(), parent.getName(), parent.getClassName());
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
     /**
      * Retrieves all the ancestors of an object in the standard and special containment hierarchy. 
      * If the provided object is in a pool, the ancestor pools will be returned.

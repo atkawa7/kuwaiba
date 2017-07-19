@@ -51,7 +51,7 @@ public class ReleaseEndPointFromIPAddresAction extends GenericObjectNodeAction i
         
         if (ipAddresses != null) {
             if (ipAddresses.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "There are not IP Addresses related to the selected object", 
+                JOptionPane.showMessageDialog(null, "There are no IP Addresses related to the selected object", 
                     "Information", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 List<SubMenuItem> subMenuItems = new ArrayList();

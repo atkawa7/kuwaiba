@@ -16,19 +16,20 @@
 package com.neotropic.inventory.modules.ipam.nodes.actions;
 
 import java.awt.event.ActionEvent;
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
+import java.util.ResourceBundle;
+import static javax.swing.Action.NAME;
+import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
+import org.inventory.core.services.api.actions.ComposedAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.navigationtree.nodes.ObjectNode;
+import org.inventory.core.services.utils.SubMenuDialog;
+import org.inventory.core.services.utils.SubMenuItem;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
-import org.openide.util.Utilities;
-import org.openide.util.actions.Presenter;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -36,52 +37,38 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ReleaseIPFromBDIInterfaceAction extends GenericObjectNodeAction implements Presenter.Popup {
+public class ReleaseIPFromBDIInterfaceAction extends GenericObjectNodeAction implements ComposedAction {
+    
+    public ReleaseIPFromBDIInterfaceAction() {
+        putValue(NAME, ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELEASE_INTERFACE"));
+    }
        
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (CommunicationsStub.getInstance().releasePortFromInterface((String)((JMenuItem)e.getSource()).getClientProperty("portClassName"),  //NOI18N
-                (long)((JMenuItem)e.getSource()).getClientProperty("portId"), (long)((JMenuItem)e.getSource()).getClientProperty("bdiId")))
-            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
-                    java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_SUCCESS"));
-        else
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-    }
-
-    @Override
-    public JMenuItem getPopupPresenter() {
-        if (!isEnabled())
-            return null;
+        LocalObjectLight selectedObject = selectedObjects.get(0);
+        List<LocalObjectLight> bdis = CommunicationsStub.getInstance().getSpecialAttribute(selectedObject.getClassName(), 
+            selectedObject.getOid(), Constants.RELATIONSHIP_IPAMPORTRELATEDTOINTERFACE);
         
-        JMenu mnuAction = new JMenu(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELEASE_INTERFACE"));
-        Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
-        
-        ObjectNode selectedNode = (ObjectNode)selectedNodes.next();
-        
-        List<LocalObjectLight> bdis = CommunicationsStub.getInstance().getSpecialAttribute(selectedNode.getObject().getClassName(), 
-                selectedNode.getObject().getOid(), Constants.RELATIONSHIP_IPAMPORTRELATEDTOINTERFACE);
-
         if (bdis != null) {
-        
-            if (bdis.isEmpty())
-                mnuAction.setEnabled(false);
-            else {
-                for (LocalObjectLight bdi : bdis){
-                    JMenuItem mnuBdis = new JMenuItem(bdi.toString());
-                    mnuBdis.putClientProperty("bdiId", bdi.getOid()); //NOI18N
-                    mnuBdis.putClientProperty("portClassName", selectedNode.getObject().getClassName());  //NOI18N
-                    mnuBdis.putClientProperty("portId", selectedNode.getObject().getOid()); //NOI18N
-                    mnuBdis.addActionListener(this);
-                    mnuAction.add(mnuBdis);
+            if (bdis.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "There are no IPs related to BDI interface", 
+                    "Information", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                List<SubMenuItem> subMenuItems = new ArrayList();
+                for (LocalObjectLight bdi : bdis) {
+                    SubMenuItem subMenuItem = new SubMenuItem(bdi.toString());
+                    subMenuItem.addProperty("bdiId", bdi.getOid()); //NOI18N
+                    subMenuItem.addProperty("portClassName", selectedObject.getClassName()); //NOI18N
+                    subMenuItem.addProperty("portId", selectedObject.getOid()); //NOI18N
+                    subMenuItems.add(subMenuItem);
                 }
+                SubMenuDialog.getInstance((String) getValue(NAME), this).showSubmenu(subMenuItems);
             }
-            return mnuAction;
         } else {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-            return null;
-        } 
+        }
     }
-
+    
     @Override
     public String getValidator() {
         return Constants.VALIDATOR_LOGICAL_SET;
@@ -90,6 +77,23 @@ public class ReleaseIPFromBDIInterfaceAction extends GenericObjectNodeAction imp
     @Override
     public LocalPrivilege getPrivilege() {
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_IP_ADDRESS_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+    }
+
+    @Override
+    public void finalActionPerformed(ActionEvent e) {
+        if (e != null && e.getSource() instanceof SubMenuDialog) {
+            SubMenuItem selectedItem = ((SubMenuDialog) e.getSource()).getSelectedSubMenuItem();
+            
+            if (CommunicationsStub.getInstance().releasePortFromInterface(
+                    (String) selectedItem.getProperty("portClassName"), //NOI18N
+                    (long) selectedItem.getProperty("portId"), //NOI18N
+                    (long) selectedItem.getProperty("bdiId")) //NOI18N 
+                    )
+                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
+                        java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_SUCCESS"));
+            else
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+        }
     }
     
 }

@@ -15,7 +15,6 @@
  */
 package org.inventory.navigation.navigationtree.nodes.actions;
 
-import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

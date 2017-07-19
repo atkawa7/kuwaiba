@@ -22,6 +22,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
@@ -125,9 +126,15 @@ public class SubMenuDialog extends JDialog {
             public void mouseClicked(MouseEvent e) {
                 submenuItemMouseClicked(e);
             }
-            
+        });
+        lstSubMenuItems.addMouseMotionListener(new MouseMotionListener() {
+
             @Override
-            public void mouseMoved(MouseEvent e){
+            public void mouseDragged(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
                 submenuItemMouseMoved(e);
             }
         });
@@ -142,6 +149,7 @@ public class SubMenuDialog extends JDialog {
         panel.add(pnlButtons, gbc);
         
         add(panel);
+        getRootPane().setDefaultButton(btnOk);
         
         pack();
     }
@@ -166,9 +174,13 @@ public class SubMenuDialog extends JDialog {
         if (e.getSource() instanceof JList) {
             JList list = (JList) e.getSource();
             int index = list.locationToIndex(e.getPoint());
-            
-            if (index != -1)
-                list.setSelectedIndex(index);            
+            if (index > -1) {
+                SubMenuItem listItem = (SubMenuItem) list.getModel().getElementAt(index);
+                
+                String toolTipText = listItem.getToolTipText();
+                if (toolTipText != null)
+                    list.setToolTipText(toolTipText);
+            }
         }
     }
     

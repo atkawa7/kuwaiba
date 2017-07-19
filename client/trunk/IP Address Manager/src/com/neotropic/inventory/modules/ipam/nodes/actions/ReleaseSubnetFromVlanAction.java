@@ -17,29 +17,34 @@ package com.neotropic.inventory.modules.ipam.nodes.actions;
 
 
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
+import java.util.ResourceBundle;
+import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
+import org.inventory.core.services.api.actions.ComposedAction;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.utils.SubMenuDialog;
+import org.inventory.core.services.utils.SubMenuItem;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.openide.util.Utilities;
-import org.openide.util.actions.Presenter;
 
 /**
  * Releases a relation between a VRF and a VLAN
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class ReleaseSubnetFromVlanAction  extends GenericInventoryAction implements Presenter.Popup {
+public class ReleaseSubnetFromVlanAction  extends GenericInventoryAction implements ComposedAction {
     
     private static ReleaseSubnetFromVlanAction instance;
     
-    private ReleaseSubnetFromVlanAction() { }
+    private ReleaseSubnetFromVlanAction() { 
+        putValue(NAME, ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELEASE_VLAN"));
+    }
     
     public static ReleaseSubnetFromVlanAction getInstance() {
         return instance == null ? instance = new ReleaseSubnetFromVlanAction() : instance;
@@ -47,50 +52,53 @@ public class ReleaseSubnetFromVlanAction  extends GenericInventoryAction impleme
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        JMenuItem eventSource = (JMenuItem)e.getSource();
-        if (CommunicationsStub.getInstance().releaseSubnetFromVLAN(
-                (long)eventSource.getClientProperty("subnetId"), (long)eventSource.getClientProperty("vlanId")))
-            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
-                    java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_SUCCESS"));
-        else
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-    }
-
-    @Override
-    public JMenuItem getPopupPresenter() {
-        JMenu mnuVLANs = new JMenu(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELEASE_VLAN"));
         Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
         
         if (!selectedNodes.hasNext())
-            return null;
+            return;
         
         ObjectNode selectedNode = (ObjectNode)selectedNodes.next();
         
         List<LocalObjectLight> vlans = CommunicationsStub.getInstance().getSpecialAttribute(selectedNode.getObject().getClassName(), 
                 selectedNode.getObject().getOid(), Constants.RELATIONSHIP_IPAMBELONGSTOVLAN);
-
+        
         if (vlans != null) {
             if (vlans.isEmpty())
-                mnuVLANs.setEnabled(false);
+                JOptionPane.showMessageDialog(null, "There are no VLANs related to the selected Subnet", 
+                    "Information", JOptionPane.INFORMATION_MESSAGE);
             else {
+                List<SubMenuItem> subMenuItems = new ArrayList();
                 for (LocalObjectLight vlan : vlans){
-                    JMenuItem smiVLAN = new JMenuItem(vlan.toString());
-                    smiVLAN.putClientProperty("subnetId", selectedNode.getObject().getOid()); //NOI18N
-                    smiVLAN.putClientProperty("vlanId", vlan.getOid()); //NOI18N
-                    smiVLAN.addActionListener(this);
-                    mnuVLANs.add(smiVLAN);
+                    SubMenuItem subMenuItem = new SubMenuItem(vlan.toString());
+                    subMenuItem.addProperty("subnetId", selectedNode.getObject().getOid()); //NOI18N
+                    subMenuItem.addProperty("vlanId", vlan.getOid()); //NOI18N
+                    subMenuItems.add(subMenuItem);
                 }
+                SubMenuDialog.getInstance((String) getValue(NAME), this).showSubmenu(subMenuItems);
             }
-            return mnuVLANs;
         } else {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-            return null;
-        } 
+        }
     }
-
+    
     @Override
     public LocalPrivilege getPrivilege() {
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_IP_ADDRESS_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
-    
+
+    @Override
+    public void finalActionPerformed(ActionEvent e) {
+        if (e != null && e.getSource() instanceof SubMenuDialog) {            
+            SubMenuItem selectedItem = ((SubMenuDialog) e.getSource()).getSelectedSubMenuItem();
+                        
+            if (CommunicationsStub.getInstance().releaseSubnetFromVLAN(
+                    (long) selectedItem.getProperty("subnetId"), //NOI18N
+                    (long) selectedItem.getProperty("vlanId")) //NOI18N
+                )
+                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
+                    java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_SUCCESS"));
+            else
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+        }
+    }
 }

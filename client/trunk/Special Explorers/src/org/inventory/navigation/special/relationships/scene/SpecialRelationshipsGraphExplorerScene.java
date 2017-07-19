@@ -85,6 +85,10 @@ public class SpecialRelationshipsGraphExplorerScene extends AbstractScene<LocalO
         return current;
     }
     
+    public void setEdgeCounter(long edgeCounter) {
+        this.edgeCounter = edgeCounter;
+    }
+    
     public void reorganizeNodes() {
         sceneLayout.invokeLayoutImmediately();
         repaint();

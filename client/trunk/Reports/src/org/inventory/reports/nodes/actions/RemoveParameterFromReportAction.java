@@ -16,67 +16,70 @@
 package org.inventory.reports.nodes.actions;
 
 import java.awt.event.ActionEvent;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
+import java.util.ArrayList;
+import java.util.List;
+import static javax.swing.Action.NAME;
+import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalReport;
 import org.inventory.communications.core.LocalReportLight;
+import org.inventory.core.services.api.actions.ComposedAction;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.utils.SubMenuDialog;
+import org.inventory.core.services.utils.SubMenuItem;
 import org.inventory.reports.nodes.ReportNode;
 import org.openide.util.Utilities;
-import org.openide.util.actions.Presenter;
 
 /**
  * Adds a custom parameter to the task
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-class RemoveParameterFromReportAction extends GenericInventoryAction implements Presenter.Popup {
+class RemoveParameterFromReportAction extends GenericInventoryAction implements ComposedAction {
     
     private CommunicationsStub com = CommunicationsStub.getInstance();
     
     RemoveParameterFromReportAction() {
-        putValue(NAME, "Remove Parameter");
+        putValue(NAME, "Remove Parameter...");
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        
-        String parameterName = ((JMenuItem)e.getSource()).getText();
-        
-        LocalReportLight report = Utilities.actionsGlobalContext().lookup (LocalReportLight.class);
-        
-        if (com.updateReportParameters(report.getId(), null, new String[] {parameterName})) {
-            Utilities.actionsGlobalContext().lookup (ReportNode.class).resetPropertySheet();
-            NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Parameter deleted successfully");
-        } else
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());        
-    }
-
-    @Override
-    public JMenuItem getPopupPresenter() {
-        JMenu mnuParameters = new JMenu("Remove Parameter");
-        
-        LocalReportLight reportLight = Utilities.actionsGlobalContext().lookup (LocalReportLight.class);
+        LocalReportLight reportLight = Utilities.actionsGlobalContext().lookup(LocalReportLight.class);
         LocalReport theReport = com.getReport(reportLight.getId());
         
-        if (theReport != null) {
-            if (theReport.getParameters() == null || theReport.getParameters().isEmpty())
-                mnuParameters.setEnabled(false);
-            else {
-                for (String parameter : theReport.getParameters()) {
-                    JMenuItem mnuParameter  = new JMenuItem(this);
-                    mnuParameter.setText(parameter);
-                    mnuParameters.add(mnuParameter);
-                }
+        if (theReport != null) {            
+            if (theReport.getParameters() == null || theReport.getParameters().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "There are no parameters to the selected report", 
+                    "Information", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                List<SubMenuItem> subMenuItems = new ArrayList();
+                for (String parameter : theReport.getParameters())
+                    subMenuItems.add(new SubMenuItem(parameter));
+                SubMenuDialog.getInstance((String) getValue(NAME), this).showSubmenu(subMenuItems);
             }
-        } else mnuParameters.setEnabled(false);
-        return mnuParameters;
-    }    
-
+        } else
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+    }
+    
     @Override
     public LocalPrivilege getPrivilege() {
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_REPORTS, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+    }
+
+    @Override
+    public void finalActionPerformed(ActionEvent e) {
+        if (e != null && e.getSource() instanceof SubMenuDialog) {
+            String parameterName = ((SubMenuDialog) e.getSource()).getSelectedSubMenuItem().getCaption();
+
+            LocalReportLight report = Utilities.actionsGlobalContext().lookup (LocalReportLight.class);
+
+            if (com.updateReportParameters(report.getId(), null, new String[] {parameterName})) {
+                Utilities.actionsGlobalContext().lookup (ReportNode.class).resetPropertySheet();
+                NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Parameter deleted successfully");
+            } else
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+        }
     }
 }

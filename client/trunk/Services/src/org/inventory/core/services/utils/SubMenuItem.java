@@ -23,6 +23,7 @@ import java.util.HashMap;
  */
 public class SubMenuItem {
     private final String caption;
+    private String toolTipText;
     private HashMap<String, Object> properties;
         
     public SubMenuItem(String caption) {
@@ -31,6 +32,14 @@ public class SubMenuItem {
     
     public String getCaption() {
         return caption;
+    }
+    
+    public String getToolTipText() {
+        return toolTipText;
+    }
+    
+    public void setToolTipText(String toolTipText) {
+        this.toolTipText = toolTipText;
     }
     
     public Object getProperty(String key) {

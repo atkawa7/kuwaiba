@@ -17,72 +17,83 @@
 package org.inventory.core.usermanager.nodes.actions;
 
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
+import static javax.swing.Action.NAME;
+import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalUserGroupObject;
 import org.inventory.communications.core.LocalUserObject;
+import org.inventory.core.services.api.actions.ComposedAction;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.utils.SubMenuDialog;
+import org.inventory.core.services.utils.SubMenuItem;
 import org.inventory.core.usermanager.nodes.UserNode;
 import org.openide.util.Utilities;
-import org.openide.util.actions.Presenter;
 
 /**
  * Relates a user to an existing group
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-class RelateToGroupAction extends GenericInventoryAction implements Presenter.Popup {
+class RelateToGroupAction extends GenericInventoryAction implements ComposedAction {
     
     private LocalUserObject currentUser;
     
     public RelateToGroupAction() {
-        putValue(NAME, "Relate to Group");
+        putValue(NAME, "Relate to Group...");
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        LocalUserGroupObject destinationGroup = (LocalUserGroupObject)((JMenuItem)e.getSource()).getClientProperty("destinationGroup");
-        if (CommunicationsStub.getInstance().addUserToGroup(currentUser.getId(), destinationGroup.getId()))
-            NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE,
-                    String.format("The user %s has been successfully added to group %s", currentUser.toString(), destinationGroup));
-        else
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-    }
-
-    @Override
-    public JMenuItem getPopupPresenter() {
-        JMenu mnuGroups = new JMenu(this);
-        mnuGroups.setEnabled(false);
-        Iterator<? extends UserNode> selectedNodes = 
-                Utilities.actionsGlobalContext().lookupResult(UserNode.class).allInstances().iterator();
-
+        Iterator<? extends UserNode> selectedNodes = Utilities.actionsGlobalContext()
+            .lookupResult(UserNode.class).allInstances().iterator();
+        
         if (selectedNodes.hasNext()) {
             UserNode selectedNode = selectedNodes.next(); //This action will be applied only to the last selected node
             LocalUserGroupObject currentGroup = selectedNode.getParentNode().getLookup().lookup(LocalUserGroupObject.class);
             currentUser = selectedNode.getLookup().lookup(LocalUserObject.class);
             
+            List<SubMenuItem> subMenuItems = new ArrayList();
+            
             List<LocalUserGroupObject> allGroups = CommunicationsStub.getInstance().getGroups();
+            if (allGroups == null) {
+                NotificationUtil.getInstance().showSimplePopup("Error", 
+                    NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                return;
+            }
+            
             for (LocalUserGroupObject aGroup : allGroups) { //We should display only the other groups
                 if (!aGroup.equals(currentGroup)) {
-                    JMenuItem mnuGroup = new JMenuItem(aGroup.getName());
-                    mnuGroup.putClientProperty("destinationGroup", aGroup);
-                    mnuGroup.addActionListener(this);
-                    mnuGroups.add(mnuGroup);
+                    SubMenuItem subMenuItem = new SubMenuItem(aGroup.getName());
+                    subMenuItem.addProperty("destinationGroup", aGroup); //NOI18N
+                    subMenuItems.add(subMenuItem);
                 }
             }
             
-            if (mnuGroups.getItemCount() != 0)
-                mnuGroups.setEnabled(true);
+            if (allGroups.isEmpty() || subMenuItems.isEmpty())
+                JOptionPane.showMessageDialog(null, "There are no other groups", "Information", JOptionPane.INFORMATION_MESSAGE);
+            else
+                SubMenuDialog.getInstance((String) getValue(NAME), this).showSubmenu(subMenuItems);
         }
-        return mnuGroups;
     }
     
     @Override
     public LocalPrivilege getPrivilege() {
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_USER_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+    }
+
+    @Override
+    public void finalActionPerformed(ActionEvent e) {
+        if (e != null && e.getSource() instanceof SubMenuDialog) {
+            LocalUserGroupObject destinationGroup = (LocalUserGroupObject) ((SubMenuDialog) e.getSource()).getSelectedSubMenuItem().getProperty("destinationGroup"); //NOI18N
+            if (CommunicationsStub.getInstance().addUserToGroup(currentUser.getId(), destinationGroup.getId()))
+                NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE,
+                        String.format("The user %s has been successfully added to group %s", currentUser.toString(), destinationGroup));
+            else
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+        }
     }
 }

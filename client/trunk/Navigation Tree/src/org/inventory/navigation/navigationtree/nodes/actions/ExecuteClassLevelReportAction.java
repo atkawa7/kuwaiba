@@ -20,30 +20,33 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
+import static javax.swing.Action.NAME;
+import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalReportLight;
+import org.inventory.communications.util.Constants;
+import org.inventory.core.services.api.actions.ComposedAction;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.core.services.utils.MenuScroller;
+import org.inventory.core.services.utils.SubMenuDialog;
+import org.inventory.core.services.utils.SubMenuItem;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.openide.util.Utilities;
-import org.openide.util.actions.Presenter;
 
 /**
  * Shows the class reports available for the selected node (if any) and run any of them
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ExecuteClassLevelReportAction extends GenericInventoryAction implements Presenter.Popup {
+public class ExecuteClassLevelReportAction extends GenericInventoryAction implements ComposedAction {
     private static ExecuteClassLevelReportAction instance;
     
     private ExecuteClassLevelReportAction() {
-        putValue(NAME, "Reports");
+        putValue(NAME, "Reports...");
     }
     
     public static ExecuteClassLevelReportAction getInstance() {
@@ -53,17 +56,29 @@ public class ExecuteClassLevelReportAction extends GenericInventoryAction implem
     @Override
     public void actionPerformed(ActionEvent ev) {
         Iterator selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
-        
-        if (!selectedNodes.hasNext()) {
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.WARNING_MESSAGE, "You have to select a node");
-            return;
+        if (selectedNodes.hasNext()) {
+            LocalObjectLight selectedObject = ((ObjectNode) selectedNodes.next()).getObject();
+            List<LocalReportLight> reportDescriptors = CommunicationsStub.getInstance().getClassLevelReports(selectedObject.getClassName(), true, false);
+            
+            if (reportDescriptors == null) {
+                NotificationUtil.getInstance().showSimplePopup("Error", 
+                    NotificationUtil.WARNING_MESSAGE, CommunicationsStub.getInstance().getError());
+            } else {
+                if (!reportDescriptors.isEmpty()) {
+                    List<SubMenuItem> subMenuItems = new ArrayList();
+                    for (LocalReportLight reportDescriptor : reportDescriptors) {
+                        SubMenuItem subMenuItem = new SubMenuItem(reportDescriptor.getName());
+                        subMenuItem.setToolTipText(reportDescriptor.getDescription());
+                        subMenuItem.addProperty(Constants.PROPERTY_ID, reportDescriptor.getId());
+                        subMenuItems.add(subMenuItem);
+                    }
+                    SubMenuDialog.getInstance((String) getValue(NAME), this).showSubmenu(subMenuItems);
+                } else {
+                    JOptionPane.showMessageDialog(null, "There are no reports related to the selected object", 
+                        "Information", JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
         }
-        
-        LocalObjectLight theObject = ((ObjectNode)selectedNodes.next()).getObject();
-        JMenuItem mniReport = (JMenuItem)ev.getSource();
-        
-        actionPerformed(theObject, Long.valueOf(mniReport.getName()));
-        
     }
     
     public void actionPerformed(LocalObjectLight theObject, long reportId) {
@@ -94,49 +109,25 @@ public class ExecuteClassLevelReportAction extends GenericInventoryAction implem
         }
     }
     
-    public JMenuItem getPopupPresenter (LocalObjectLight theObject) {
-        JMenu mnuPossibleChildren = new JMenu("Reports");
-        mnuPossibleChildren.setEnabled(false);
-        List<LocalReportLight> reportDescriptors = CommunicationsStub.getInstance().
-                    getClassLevelReports(theObject.getClassName(), true, false);
-            
-        if (reportDescriptors == null)
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.WARNING_MESSAGE, CommunicationsStub.getInstance().getError());
-        else {
-            if (!reportDescriptors.isEmpty()) {
-                for (LocalReportLight reportDescriptor : reportDescriptors) {
-                    JMenuItem mnuReport = new JMenuItem(reportDescriptor.getName());
-                    mnuReport.setToolTipText(reportDescriptor.getDescription());
-                    mnuReport.setName(String.valueOf(reportDescriptor.getId()));
-                    mnuReport.addActionListener(this);
-                    mnuPossibleChildren.add(mnuReport);
-                }
-                mnuPossibleChildren.setEnabled(true);
-                MenuScroller.setScrollerFor(mnuPossibleChildren, 20, 100);
-            } 
-        }
-        
-        return mnuPossibleChildren;
-    }
-
-    @Override
-    public JMenuItem getPopupPresenter() {
-
-        Iterator selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
-        
-        if (selectedNodes.hasNext()) {
-            ObjectNode selectedNode = (ObjectNode)selectedNodes.next();
-            return getPopupPresenter(selectedNode.getObject());
-        } else {
-            JMenu mnuPossibleChildren = new JMenu("Reports");
-            mnuPossibleChildren.setEnabled(false);
-            return mnuPossibleChildren;
-        }
-    }
-
     @Override
     public LocalPrivilege getPrivilege() {
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_REPORTS, LocalPrivilege.ACCESS_LEVEL_READ);
     }
-    
+
+    @Override
+    public void finalActionPerformed(ActionEvent e) {
+        if (e != null && e.getSource() instanceof SubMenuDialog) {
+            Iterator selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
+
+            if (!selectedNodes.hasNext()) {
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.WARNING_MESSAGE, "You have to select a node");
+                return;
+            }
+
+            LocalObjectLight theObject = ((ObjectNode)selectedNodes.next()).getObject();
+            Long reportId = (Long) ((SubMenuDialog) e.getSource()).getSelectedSubMenuItem().getProperty(Constants.PROPERTY_ID);
+
+            actionPerformed(theObject, reportId);
+        }
+    }
 }

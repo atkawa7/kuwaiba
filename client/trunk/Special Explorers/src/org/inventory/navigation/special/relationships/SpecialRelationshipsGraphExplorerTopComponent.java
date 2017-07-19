@@ -89,12 +89,12 @@ public final class SpecialRelationshipsGraphExplorerTopComponent extends TopComp
         btnCollapse = new javax.swing.JButton();
         btnExportAsImg = new javax.swing.JButton();
         btnOrganize = new javax.swing.JButton();
+        btnRefresh = new javax.swing.JButton();
         pnlMainScrollPanel = new javax.swing.JScrollPane();
 
         setLayout(new java.awt.BorderLayout());
 
         toolBarMain.setRollover(true);
-        toolBarMain.setAlignmentY(0.5F);
         toolBarMain.setMaximumSize(new java.awt.Dimension(392, 38));
         toolBarMain.setMinimumSize(new java.awt.Dimension(392, 38));
         toolBarMain.setPreferredSize(new java.awt.Dimension(326, 33));
@@ -138,6 +138,19 @@ public final class SpecialRelationshipsGraphExplorerTopComponent extends TopComp
         });
         toolBarMain.add(btnOrganize);
 
+        btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/navigation/special/relationships/res/refresh.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnRefresh, org.openide.util.NbBundle.getMessage(SpecialRelationshipsGraphExplorerTopComponent.class, "SpecialRelationshipsGraphExplorerTopComponent.btnRefresh.text")); // NOI18N
+        btnRefresh.setToolTipText(org.openide.util.NbBundle.getMessage(SpecialRelationshipsGraphExplorerTopComponent.class, "SpecialRelationshipsGraphExplorerTopComponent.btnRefresh.toolTipText")); // NOI18N
+        btnRefresh.setFocusable(false);
+        btnRefresh.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnRefresh.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnRefresh.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnRefreshMouseClicked(evt);
+            }
+        });
+        toolBarMain.add(btnRefresh);
+
         add(toolBarMain, java.awt.BorderLayout.PAGE_START);
         add(pnlMainScrollPanel, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
@@ -158,10 +171,15 @@ public final class SpecialRelationshipsGraphExplorerTopComponent extends TopComp
         service.hideSpecialRelationshipChildren(service.getRoot());
     }//GEN-LAST:event_btnCollapseMouseClicked
 
+    private void btnRefreshMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRefreshMouseClicked
+        refresh();
+    }//GEN-LAST:event_btnRefreshMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCollapse;
     private javax.swing.JButton btnExportAsImg;
     private javax.swing.JButton btnOrganize;
+    private javax.swing.JButton btnRefresh;
     private javax.swing.JScrollPane pnlMainScrollPanel;
     private javax.swing.JToolBar toolBarMain;
     // End of variables declaration//GEN-END:variables
@@ -196,6 +214,7 @@ public final class SpecialRelationshipsGraphExplorerTopComponent extends TopComp
 
     @Override
     public void refresh() {
+        service.refreshScene();
     }
     
     @Override

@@ -16,21 +16,24 @@
 package org.kuwaiba.management.services.nodes.actions;
 
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
+import java.util.ResourceBundle;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.communications.util.Constants;
+import org.inventory.core.services.api.actions.ComposedAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.utils.SubMenuDialog;
+import org.inventory.core.services.utils.SubMenuItem;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.kuwaiba.management.services.nodes.ServiceChildren;
 import org.kuwaiba.management.services.nodes.ServiceNode;
 import org.openide.util.Utilities;
-import org.openide.util.actions.Presenter;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -38,32 +41,63 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ReleaseFromServiceAction extends GenericObjectNodeAction implements Presenter.Popup {
+public class ReleaseFromServiceAction extends GenericObjectNodeAction implements ComposedAction {
+    
+    public ReleaseFromServiceAction() {
+        putValue(NAME, ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_RELEASE_ELEMENT"));
+    }
     
     @Override
     public void actionPerformed(ActionEvent e) {
+        LocalObjectLight selectedObject = selectedObjects.get(0); //Uses the last selected only
         
-        if (JOptionPane.showConfirmDialog(null, 
-                "Are you sure you want to release this service?", "Warning", 
-                JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+        List<LocalObjectLight> services = CommunicationsStub.getInstance().
+            getSpecialAttribute(selectedObject.getClassName(), selectedObject.getOid(), "uses"); //NOI18N
         
-            Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
-
-            boolean success = true;
-            while (selectedNodes.hasNext()) {
-                ObjectNode selectedNode = selectedNodes.next();
-                if (CommunicationsStub.getInstance().releaseObjectFromService(selectedNode.getObject().getClassName(), 
-                    selectedNode.getObject().getOid(), Long.valueOf(((JMenuItem)e.getSource()).getName()))) {
-                    if (selectedNode.getParentNode() instanceof ServiceNode)
-                        ((ServiceChildren)selectedNode.getParentNode().getChildren()).addNotify();
-                } else {
-                    success = false;
-                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+        if (services != null) {
+            if (!services.isEmpty()) {
+                List<SubMenuItem> subMenuItems = new ArrayList();
+                for (LocalObjectLight service : services) {
+                    SubMenuItem subMenuItem = new SubMenuItem(service.toString());                    
+                    subMenuItem.addProperty(Constants.PROPERTY_ID, service.getOid());
+                    subMenuItems.add(subMenuItem);
                 }
+                SubMenuDialog.getInstance((String) getValue(NAME), this).showSubmenu(subMenuItems);
+            } else {
+                JOptionPane.showMessageDialog(null, "There are not services related to the selected object", 
+                    "Information", JOptionPane.INFORMATION_MESSAGE);
             }
+        } else {
+            NotificationUtil.getInstance().showSimplePopup("Error", 
+                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+        }
+    }
+    
+    @Override
+    public void finalActionPerformed(ActionEvent e) {
+        if (e != null && e.getSource() instanceof SubMenuDialog) {
+            if (JOptionPane.showConfirmDialog(null, 
+                    "Are you sure you want to release this service?", "Warning", 
+                    JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
 
-            if (success)
-                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "The selected resources were released from the service");
+                Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
+
+                boolean success = true;
+                while (selectedNodes.hasNext()) {
+                    ObjectNode selectedNode = selectedNodes.next();
+                    if (CommunicationsStub.getInstance().releaseObjectFromService(selectedNode.getObject().getClassName(), 
+                        selectedNode.getObject().getOid(), (long) ((SubMenuDialog) e.getSource()).getSelectedSubMenuItem().getProperty(Constants.PROPERTY_ID))) {
+                        if (selectedNode.getParentNode() instanceof ServiceNode)
+                            ((ServiceChildren)selectedNode.getParentNode().getChildren()).addNotify();
+                    } else {
+                        success = false;
+                        NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                    }
+                }
+
+                if (success)
+                    NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "The selected resources were released from the service");
+            }
         }
     }
 
@@ -71,39 +105,7 @@ public class ReleaseFromServiceAction extends GenericObjectNodeAction implements
     public String getValidator() {
         return null; //Enable this action for any object
     }
-
-    @Override
-    public JMenuItem getPopupPresenter() {
-        JMenu mnuServices = new JMenu(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_RELEASE_ELEMENT"));
-        mnuServices.setEnabled(false);
-        
-        Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
-        
-        if (isEnabled() && selectedNodes.hasNext()) {
-        
-            ObjectNode selectedNode = selectedNodes.next(); //Uses the last selected only
-
-            List<LocalObjectLight> services = CommunicationsStub.getInstance().getSpecialAttribute(selectedNode.getObject().getClassName(), 
-                    selectedNode.getObject().getOid(), "uses");
-
-            if (services != null) {
-
-                if (!services.isEmpty()) {
-                    for (LocalObjectLight service : services){
-                        JMenuItem smiServices = new JMenuItem(service.toString());
-                        smiServices.setName(String.valueOf(service.getOid()));
-                        smiServices.addActionListener(this);
-                        mnuServices.add(smiServices);
-                    }
-                    mnuServices.setEnabled(true);
-                }
-            } else
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-        }
-        
-        return mnuServices;
-    }
-
+    
     @Override
     public LocalPrivilege getPrivilege() {
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_SERVICE_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
