@@ -1862,6 +1862,38 @@ public class KuwaibaService {
     }
     
     /**
+     * Gets the common parent between an a object and b object
+     * @param aObjectClass Object a class name
+     * @param aOid Object a id
+     * @param bObjectClass Object b class name
+     * @param bOid Object a id
+     * @param sessionId Session Id token
+     * @return The common parent
+     * @throws ServerSideException If the requested object can't be found
+     *                             If any of the class nodes involved is malformed
+     *                             If the database object could not be properly mapped into a serializable java object.
+     */
+    @WebMethod(operationName = "getCommonParent")
+    public RemoteObjectLight getCommonParent(
+        @WebParam(name = "aObjectClass") String aObjectClass, 
+        @WebParam(name = "aOid") long aOid, 
+        @WebParam(name = "bObjectClass") String bObjectClass, 
+        @WebParam(name = "bOid") long bOid, 
+        @WebParam(name = "sessionId") String sessionId) 
+        throws ServerSideException {
+        try {
+            return wsBean.getCommonParent(aObjectClass, aOid, bObjectClass, bOid, getIPAddress(), sessionId);
+        } catch (Exception e) {
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getCommonParent: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
      * Gets the parent of a given object in the standard and special containment hierarchy
      * @param objectClass Object class of child
      * @param oid Object id for the child

@@ -186,6 +186,20 @@ public interface BusinessEntityManager {
      */
     public RemoteBusinessObjectLight getObjectLight(String className, long oid)
             throws MetadataObjectNotFoundException, ObjectNotFoundException;
+    
+    /**
+     * Gets the common parent between an a object and b object
+     * @param aObjectClass Object a class name
+     * @param aOid Object a id
+     * @param bObjectClass Object b class name
+     * @param bOid Object a id
+     * @return The common parent
+     * @throws ObjectNotFoundException If the requested object can't be found
+     * @throws MetadataObjectNotFoundException If any of the class nodes involved is malformed
+     * @throws InvalidArgumentException If the database object could not be properly mapped into a serializable java object.
+     */
+    public RemoteBusinessObjectLight getCommonParent(String aObjectClass, long aOid, String bObjectClass, long bOid)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
      * Gets the parent of a given object in the containment hierarchy
