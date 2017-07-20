@@ -1315,15 +1315,15 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateWebServiceCall("connectMirrorPort", ipAddress, sessionId);
             
             if (!mem.isSubClass("GenericPort", aObjectClass))
-                throw new ServerSideException(String.format("Object %s [%s] is not a port", aObjectId, aObjectClass));
+                throw new ServerSideException(String.format("Object %s is not a port", bem.getObjectLight(aObjectClass, aObjectId)));
             if (!mem.isSubClass("GenericPort", bObjectClass))
-                throw new ServerSideException(String.format("Object %s [%s] is not a port", bObjectId, bObjectClass));
+                throw new ServerSideException(String.format("Object %s is not a port", bem.getObjectLight(bObjectClass, bObjectId)));
             
             if (bem.hasSpecialRelationship(aObjectClass, aObjectId, "mirror", 1))
-                throw new ServerSideException(String.format("Object %s [%s] already has a mirror port", aObjectId, aObjectClass));
+                throw new ServerSideException(String.format("Object %s already has a mirror port", bem.getObjectLight(aObjectClass, aObjectId)));
             
             if (bem.hasSpecialRelationship(bObjectClass, bObjectId, "mirror", 1))
-                throw new ServerSideException(String.format("Object %s [%s] already has a mirror port", bObjectId, bObjectClass));
+                throw new ServerSideException(String.format("Object %s [%s] already has a mirror port", bem.getObjectLight(bObjectClass, bObjectId)));
             
             bem.createSpecialRelationship(aObjectClass, aObjectId, bObjectClass, bObjectId, "mirror", true);
             
@@ -1340,7 +1340,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("releaseMirrorPort", ipAddress, sessionId);
             if (!mem.isSubClass("GenericPort", objectClass))
-                throw new ServerSideException(String.format("Object %s [%s] is not a port", objectId, objectClass));
+                throw new ServerSideException(String.format("Object %s is not a port", bem.getObjectLight(objectClass, objectId)));
                         
             bem.releaseSpecialRelationship(objectClass, objectId, -1, "mirror");
             
@@ -1456,22 +1456,22 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 if (sideAIds[i] != null && sideAClassNames[i] != null) {
                     if (!bem.getSpecialAttribute(sideAClassNames[i], sideAIds[i], "endpointA").isEmpty() || 
                         !bem.getSpecialAttribute(sideAClassNames[i], sideAIds[i], "endpointB").isEmpty())
-                        throw new ServerSideException(String.format("The selected endpoint with id %s [%s] is already connected", sideAIds[i], sideAClassNames[i]));
+                        throw new ServerSideException(String.format("The selected endpoint %s is already connected", bem.getObjectLight(sideAClassNames[i], sideAIds[i])));
                     
                     if (aEndpointList.isEmpty())
                         bem.createSpecialRelationship(linksClassNames[i], linksIds[i], sideAClassNames[i], sideAIds[i], "endpointA", true);
                     else
-                        throw new ServerSideException(String.format("Link %s [%s] already has an endpoint A", linksIds[i], linksClassNames[i]));
+                        throw new ServerSideException(String.format("Link %s already has an endpoint A", bem.getObjectLight(linksClassNames[i], linksIds[i])));
                 }
                 if (sideBIds[i] != null && sideBClassNames[i] != null) {
                     if (!bem.getSpecialAttribute(sideBClassNames[i], sideBIds[i], "endpointB").isEmpty() || 
                         !bem.getSpecialAttribute(sideBClassNames[i], sideBIds[i], "endpointA").isEmpty())
-                        throw new ServerSideException(String.format("The selected endpoint with id %s [%s] is already connected", sideBIds[i], sideBClassNames[i]));
+                        throw new ServerSideException(String.format("The selected endpoint %s is already connected", bem.getObjectLight(sideBClassNames[i], sideBIds[i])));
                     
                     if (bEndpointList.isEmpty())
                         bem.createSpecialRelationship(linksClassNames[i], linksIds[i], sideBClassNames[i], sideBIds[i], "endpointB", true);
                     else
-                        throw new ServerSideException(String.format("Link with id %s [%s] already has an endpoint B", linksIds[i], linksClassNames[i]));
+                        throw new ServerSideException(String.format("Link %s already has an endpoint B", bem.getObjectLight(linksClassNames[i], linksIds[i])));
                 }
             }
         } catch (InventoryException ex) {
@@ -1498,14 +1498,14 @@ public class WebserviceBean implements WebserviceBeanRemote {
                     throw new ServerSideException(String.format("Can not connect an instance of %s to a port", containersClassNames[i]));
                 
                 if (Objects.equals(sideAIds[i], sideBIds[i]))
-                    throw new ServerSideException(String.format("Both sides of the specified connections are the same (%s - %s)", sideAIds[i], sideBIds[i]));
+                    throw new ServerSideException("Can not connect an object to itself");
                 
                 if (sideAIds[i] != null && sideAClassNames[i] != null) {
                     List<RemoteBusinessObjectLight> aEndpointList = bem.getSpecialAttribute(containersClassNames[i], containersIds[i], "endpointA");
                     if (aEndpointList.isEmpty())
                         bem.createSpecialRelationship(containersClassNames[i], containersIds[i], sideAClassNames[i], sideAIds[i], "endpointA", true);
                     else
-                        throw new ServerSideException(String.format("Container with id %s [%s] already has an endpoint A", containersIds[i], containersClassNames[i]));
+                        throw new ServerSideException(String.format("Container %s already has an endpoint A", bem.getObjectLight(containersClassNames[i], containersIds[i])));
                 }
                 
                 if (sideBIds[i] != null && sideBClassNames[i] != null) {
@@ -1513,7 +1513,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
                     if (bEndpointList.isEmpty())
                         bem.createSpecialRelationship(containersClassNames[i], containersIds[i], sideBClassNames[i], sideBIds[i], "endpointB", true);
                     else
-                        throw new ServerSideException(String.format("Container with id %s [%s] already has a endpoint B", containersIds[i], containersClassNames[i]));
+                        throw new ServerSideException(String.format("Container %s already has a endpoint B", bem.getObjectLight(containersClassNames[i], containersIds[i])));
                 }
             }
         } catch (InventoryException ex) {
