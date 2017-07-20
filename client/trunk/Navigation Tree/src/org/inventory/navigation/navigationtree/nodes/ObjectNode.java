@@ -65,7 +65,6 @@ import org.openide.util.lookup.Lookups;
 
 /**
  * Represents a node within the navigation tree and perhaps other trees displaying inventory objects
- *
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ObjectNode extends AbstractNode implements PropertyChangeListener {
@@ -73,7 +72,6 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
     //There can be only one instance for OpenLocalExplorerAction, this attribute is a kind of singleton
     protected static OpenLocalExplorerAction explorerAction = new OpenLocalExplorerAction();
     protected CommunicationsStub com;
-    protected Sheet sheet;
     private Image icon;
 
     public ObjectNode(Children children) {
@@ -114,7 +112,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
 
     @Override
     protected Sheet createSheet() {
-        sheet = Sheet.createDefault();
+        Sheet sheet = Sheet.createDefault();
         Set generalPropertySet = Sheet.createPropertiesSet(); //General attributes category
         Set mandatoryPropertySet = Sheet.createPropertiesSet(); //Set with the mandatory attributes
         
@@ -215,7 +213,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
     public boolean refresh() {
          LocalObjectLight object = getObject();
         //Force to get the attributes again, but only if there's a property sheet already asigned
-        if (this.sheet != null) 
+        if (getSheet() != null) 
             setSheet(createSheet());
         else
             //*****************
@@ -233,7 +231,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
         if (isLeaf())
             return true;
         
-        //See if te children changed
+        //Update the children list
         if (getChildren() instanceof AbstractChildren)
             ((AbstractChildren) getChildren()).addNotify();
                 

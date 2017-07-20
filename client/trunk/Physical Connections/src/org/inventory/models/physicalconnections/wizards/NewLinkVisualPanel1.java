@@ -17,12 +17,9 @@ package org.inventory.models.physicalconnections.wizards;
 
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.ArrayList;
 import java.util.List;
-import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JPanel;
-import javax.swing.event.ListDataListener;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
@@ -44,11 +41,19 @@ public final class NewLinkVisualPanel1 extends JPanel {
         
         cmbLinkClass.setModel(linkClasses == null ? new DefaultComboBoxModel() : new DefaultComboBoxModel(linkClasses.toArray()));
         
-        if (cmbLinkClass.getItemCount() == 0)
-            cmbLinkTemplate.setModel(new LinkTemplateComboBoxModel());
-        else
-            cmbLinkTemplate.setModel(new LinkTemplateComboBoxModel((LocalClassMetadataLight)cmbLinkClass.getItemAt(0)));
-        
+        if (!linkClasses.isEmpty()) {
+            List<LocalObjectLight> linkTemplates = CommunicationsStub.getInstance().getTemplatesForClass(((LocalClassMetadataLight)cmbLinkClass.getItemAt(0)).getClassName(), false);
+            cmbLinkTemplate.setModel(new DefaultComboBoxModel(linkTemplates.toArray(new LocalObjectLight[0])));
+            
+            chkNoTemplate.setSelected(linkTemplates.isEmpty());
+            chkNoTemplate.setEnabled(!linkTemplates.isEmpty());
+            cmbLinkTemplate.setEnabled(!linkTemplates.isEmpty());
+        } else {
+            cmbLinkTemplate.setModel(new DefaultComboBoxModel());
+            chkNoTemplate.setSelected(true);
+            chkNoTemplate.setEnabled(false);
+            cmbLinkTemplate.setEnabled(false);
+        }
         
         cmbLinkClass.addItemListener(new ItemListener() {
 
@@ -57,13 +62,16 @@ public final class NewLinkVisualPanel1 extends JPanel {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     LocalClassMetadataLight selectedClass = (LocalClassMetadataLight)cmbLinkClass.getSelectedItem();
                     List<LocalObjectLight> linkTemplates = CommunicationsStub.getInstance().getTemplatesForClass(selectedClass.getClassName(), false);
-                    if (linkTemplates != null)
-                        ((LinkTemplateComboBoxModel)cmbLinkTemplate.getModel()).setTemplates(linkTemplates);
-                    else
-                        ((LinkTemplateComboBoxModel)cmbLinkTemplate.getModel()).resetTemplates();
+                    ((DefaultComboBoxModel)cmbLinkTemplate.getModel()).removeAllElements();
+                    if (linkTemplates != null) {
+                        cmbLinkTemplate.setModel(new DefaultComboBoxModel(linkTemplates.toArray(new LocalObjectLight[0])));
+                        chkNoTemplate.setSelected(linkTemplates.isEmpty());
+                        chkNoTemplate.setEnabled(!linkTemplates.isEmpty());
+                        cmbLinkTemplate.setEnabled(!linkTemplates.isEmpty());
+                    }
                 }
             }
-        });
+        });    
     }
 
     public String getLinkName() {
@@ -76,6 +84,10 @@ public final class NewLinkVisualPanel1 extends JPanel {
     
     public LocalObjectLight getLinkTemplate() {
         return (LocalObjectLight)cmbLinkTemplate.getSelectedItem();
+    }
+    
+    public boolean dontUseTemplate() {
+        return chkNoTemplate.isSelected();
     }
     
     @Override
@@ -97,6 +109,7 @@ public final class NewLinkVisualPanel1 extends JPanel {
         cmbLinkClass = new javax.swing.JComboBox();
         jLabel1 = new javax.swing.JLabel();
         cmbLinkTemplate = new javax.swing.JComboBox();
+        chkNoTemplate = new javax.swing.JCheckBox();
 
         org.openide.awt.Mnemonics.setLocalizedText(lblLinkName, org.openide.util.NbBundle.getMessage(NewLinkVisualPanel1.class, "NewLinkVisualPanel1.lblLinkName.text")); // NOI18N
 
@@ -105,6 +118,13 @@ public final class NewLinkVisualPanel1 extends JPanel {
         org.openide.awt.Mnemonics.setLocalizedText(lblLinkClass, org.openide.util.NbBundle.getMessage(NewLinkVisualPanel1.class, "NewLinkVisualPanel1.lblLinkClass.text")); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(NewLinkVisualPanel1.class, "NewLinkVisualPanel1.jLabel1.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(chkNoTemplate, org.openide.util.NbBundle.getMessage(NewLinkVisualPanel1.class, "NewLinkVisualPanel1.chkNoTemplate.text")); // NOI18N
+        chkNoTemplate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkNoTemplateActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -118,10 +138,12 @@ public final class NewLinkVisualPanel1 extends JPanel {
                     .addComponent(jLabel1))
                 .addGap(44, 44, 44)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(txtLinkName, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(cmbLinkClass, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(cmbLinkTemplate, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(chkNoTemplate)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txtLinkName, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cmbLinkClass, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(cmbLinkTemplate, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(49, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -139,11 +161,18 @@ public final class NewLinkVisualPanel1 extends JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(cmbLinkTemplate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(108, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(chkNoTemplate)
+                .addContainerGap(69, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void chkNoTemplateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkNoTemplateActionPerformed
+        cmbLinkTemplate.setEnabled(!chkNoTemplate.isSelected());
+    }//GEN-LAST:event_chkNoTemplateActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox chkNoTemplate;
     private javax.swing.JComboBox cmbLinkClass;
     private javax.swing.JComboBox cmbLinkTemplate;
     private javax.swing.JLabel jLabel1;
@@ -151,55 +180,5 @@ public final class NewLinkVisualPanel1 extends JPanel {
     private javax.swing.JLabel lblLinkName;
     private javax.swing.JTextField txtLinkName;
     // End of variables declaration//GEN-END:variables
-    
-    private class LinkTemplateComboBoxModel implements ComboBoxModel<LocalObjectLight> {
-        private List<LocalObjectLight> linkTemplates;
-        private int selectedTemplateIndex;
 
-        public LinkTemplateComboBoxModel() { 
-            linkTemplates = new ArrayList<>();
-            linkTemplates.add(new LocalObjectLight(-1, "<No Template>", cmbLinkClass.getSelectedItem().toString()));
-        }
-        
-        public LinkTemplateComboBoxModel(LocalClassMetadataLight linkClass) {
-            this();
-            linkTemplates.addAll(CommunicationsStub.getInstance().getTemplatesForClass(linkClass.getClassName(), false));
-        }
-
-        @Override
-        public void setSelectedItem(Object anItem) {
-            selectedTemplateIndex = linkTemplates.indexOf(anItem);
-        }
-
-        @Override
-        public Object getSelectedItem() {
-            return linkTemplates.get(selectedTemplateIndex);
-        }
-
-        @Override
-        public int getSize() {
-            return linkTemplates.size();
-        }
-
-        @Override
-        public LocalObjectLight getElementAt(int index) {
-            return linkTemplates.get(index);
-        }
-
-        @Override
-        public void addListDataListener(ListDataListener l) {}
-
-        @Override
-        public void removeListDataListener(ListDataListener l) {}
-        
-        public void setTemplates(List<LocalObjectLight> newTemplates) {
-            newTemplates.add(0, new LocalObjectLight(-1, "<No Template>", cmbLinkClass.getSelectedItem().toString()));
-            linkTemplates = newTemplates;
-        }
-        
-        public void resetTemplates() {
-            linkTemplates.clear();
-            linkTemplates.add(new LocalObjectLight(-1, "<No Template>", cmbLinkClass.getSelectedItem().toString()));
-        }
-    }
 }

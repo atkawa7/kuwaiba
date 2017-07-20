@@ -46,11 +46,10 @@ public class IPAddressNode extends ObjectNode {
     }
     
     @Override
-    protected Sheet createSheet(){
+    protected Sheet createSheet() {
         LocalObject sp = com.getObjectInfo(getObject().getClassName(), getObject().getOid());
-        LocalObject lo = com.getObjectInfo(getObject().getClassName(), getObject().getOid());
         
-        sheet = Sheet.createDefault();
+        Sheet sheet = Sheet.createDefault();
         Sheet.Set generalPropertySet = Sheet.createPropertiesSet(); //General attributes category
         
         generalPropertySet.put(new NotEditableProperty(Constants.CLASS_SUBNET, String.class, 
@@ -72,11 +71,11 @@ public class IPAddressNode extends ObjectNode {
                 return sheet;
         }
         LocalObjectListItem val = null;
-        if (lo.getAttribute(Constants.PROPERTY_STATE) == null) {
+        if (sp.getAttribute(Constants.PROPERTY_STATE) == null) {
             val = list.get(0); //None
         } else {
             for (LocalObjectListItem loli : list) {
-                if (lo.getAttribute(Constants.PROPERTY_STATE).equals(loli.getOid())) {
+                if (sp.getAttribute(Constants.PROPERTY_STATE).equals(loli.getOid())) {
                     val = loli;
                     break;
                 }
@@ -99,8 +98,6 @@ public class IPAddressNode extends ObjectNode {
         
         return super.getActions(context);
     }
-    
-    
     
     @Override
     public boolean canRename() {

@@ -36,7 +36,7 @@ import org.openide.util.Utilities;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- * This action allows to create a connection inside between two selected nodes
+ * Creates a connection between two selected nodes anywhere within the application
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
@@ -59,7 +59,7 @@ public class CreatePhysicalConnectionAction extends GenericObjectNodeAction {
     @Override
     public boolean isEnabled() {
         super.isEnabled();
-        return !(selectedObjects.size() < 2 || selectedObjects.size() > 2);
+        return selectedObjects.size() == 2;
     }
     
     @Override
@@ -83,30 +83,21 @@ public class CreatePhysicalConnectionAction extends GenericObjectNodeAction {
         }
             
         if (commonParent.getOid() == -1L) {
-            JOptionPane.showMessageDialog(null, "Can no create a connection between two nodes that have the Dummy Root like common parent", 
+            JOptionPane.showMessageDialog(null, "Can not create a connection between two nodes whose common parent is the root of the hierarchy", 
                 "Information", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
                             
-        String [] connTypes = {"Container", "Link"};
-        JComboBox cmbConnectionType = new JComboBox();
-        cmbConnectionType.addItem(connTypes[0]);
-        cmbConnectionType.addItem(connTypes[1]);
+        JComboBox cmbConnectionType = new JComboBox(new String[] {"Container", "Link"});
             
-        JComplexDialogPanel connTypeDialog = new JComplexDialogPanel(new String[] {"Connection type: "}, new JComponent [] {cmbConnectionType});
+        JComplexDialogPanel connTypeDialog = new JComplexDialogPanel(new String[] {"Connection Type: "}, new JComponent [] {cmbConnectionType});
             
         if (JOptionPane.showConfirmDialog(null, connTypeDialog, (String) getValue(NAME), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
 
-            String connType = (String) cmbConnectionType.getSelectedItem();
-                
-            if (connTypes[0].equals(connType)) {
-                NewContainerWizard newContainerWizard = new NewContainerWizard(endpointNodes.get(0), endpointNodes.get(1), commonParent);
-                newContainerWizard.show();
-            }
-            if (connTypes[1].equals(connType)) {
-                NewLinkWizard newLinkWizard = new NewLinkWizard(endpointNodes.get(0), endpointNodes.get(1), commonParent);
-                newLinkWizard.show();
-            }
+            if (cmbConnectionType.getSelectedIndex() == 0) 
+                new NewContainerWizard(endpointNodes.get(0), endpointNodes.get(1), commonParent).show();
+            else 
+                new NewLinkWizard(endpointNodes.get(0), endpointNodes.get(1), commonParent).show();
         }
     }
 }

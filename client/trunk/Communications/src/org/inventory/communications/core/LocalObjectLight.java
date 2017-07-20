@@ -114,9 +114,11 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
         propertyChangeListeners.remove(listener);
     }
 
-    public void firePropertyChangeEvent(String property, Object oldValue, Object newValue){
-        for (PropertyChangeListener listener : propertyChangeListeners)
-            listener.propertyChange(new PropertyChangeEvent(this, property, oldValue, newValue));
+    public void firePropertyChangeEvent(String property, Object oldValue, Object newValue) {
+        synchronized(propertyChangeListeners) {
+            for (PropertyChangeListener listener : propertyChangeListeners)
+                listener.propertyChange(new PropertyChangeEvent(this, property, oldValue, newValue));
+        }
     }
 
    @Override

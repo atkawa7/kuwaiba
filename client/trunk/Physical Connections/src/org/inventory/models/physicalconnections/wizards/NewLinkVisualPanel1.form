@@ -25,11 +25,14 @@
               </Group>
               <EmptySpace min="44" pref="44" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="txtLinkName" min="-2" pref="215" max="-2" attributes="0"/>
-                      <Component id="cmbLinkClass" min="-2" pref="215" max="-2" attributes="0"/>
+                  <Component id="chkNoTemplate" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Component id="txtLinkName" min="-2" pref="215" max="-2" attributes="0"/>
+                          <Component id="cmbLinkClass" min="-2" pref="215" max="-2" attributes="0"/>
+                      </Group>
+                      <Component id="cmbLinkTemplate" alignment="1" min="-2" pref="215" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="cmbLinkTemplate" alignment="1" min="-2" pref="215" max="-2" attributes="0"/>
               </Group>
               <EmptySpace pref="49" max="32767" attributes="0"/>
           </Group>
@@ -53,7 +56,9 @@
                   <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="cmbLinkTemplate" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="108" max="32767" attributes="0"/>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <Component id="chkNoTemplate" min="-2" max="-2" attributes="0"/>
+              <EmptySpace pref="69" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -100,6 +105,16 @@
           <StringArray count="0"/>
         </Property>
       </Properties>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="chkNoTemplate">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="org/inventory/models/physicalconnections/wizards/Bundle.properties" key="NewLinkVisualPanel1.chkNoTemplate.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+        </Property>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="chkNoTemplateActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

@@ -272,7 +272,7 @@ public class QueryManagerService implements ActionListener {
             case QueryEditorScene.SCENE_FILTERDISABLED:
                 if (insideCheck.getClientProperty("related-node") == null)
                     return;
-                ((QueryEditorScene)qbtc.getQueryScene()).removeAllRelatedNodes(insideCheck.getClientProperty("related-node"));
+                qbtc.getQueryScene().removeAllRelatedNodes(insideCheck.getClientProperty("related-node"));
                 insideCheck.putClientProperty("related-node",null);
         }
         qbtc.getQueryScene().validate();

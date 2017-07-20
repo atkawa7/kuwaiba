@@ -134,7 +134,9 @@
 * The connections wizard was improved and now it is possible to create other links apart from Electrical, Optical and Power ones
 * The color of the connections is no longer hardcoded. It is now taken from the class color (configured with the data model manager)
 * Object View is no longer selection-sensitive. You can access it via context menu
-* It is possible to create multiple normal and special objects at once
+* It is possible to create multiple normal and special objects at once and name them using a dynamic expression
 * It is possible to edit the connections inside a container (changing or disconnecting endpoints)
 * The icons were rearranged to make easier to open modules
 * Multiple bugfixes and improvements
+* It is now possible to select to arbitrary nodes from any tree and start the physical connections wizard
+* Except for the "New Object" actions, all other node actions with submenus have changed the submenus for separate windows to optimized the load of the node menus 

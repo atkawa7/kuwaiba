@@ -18,7 +18,6 @@ package org.inventory.core.services.utils;
 
 import javax.swing.JScrollPane;
 import org.openide.explorer.ExplorerManager;
-import org.openide.explorer.ExplorerManager.Provider;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.util.Lookup;
 
@@ -26,7 +25,7 @@ import org.openide.util.Lookup;
  * This panel can embed an explorer view
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ExplorablePanel extends JScrollPane implements Provider, Lookup.Provider {
+public class ExplorablePanel extends JScrollPane implements ExplorerManager.Provider, Lookup.Provider {
 
     private ExplorerManager em;
     private Lookup lookup;

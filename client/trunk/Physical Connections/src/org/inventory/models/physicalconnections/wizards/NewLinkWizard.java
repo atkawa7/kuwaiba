@@ -75,7 +75,7 @@ public final class NewLinkWizard {
             newConnection = CommunicationsStub.getInstance().createPhysicalConnection(selectedAEndpoint.getClassName(), selectedAEndpoint.getOid(),
                     selectedBEndpoint.getClassName(), selectedBEndpoint.getOid(), parent.getClassName(), parent.getOid(),
                     panel1.getComponent().getLinkName(), panel1.getComponent().getLinkClass().getClassName(),
-                    panel1.getComponent().getLinkTemplate() == null ? -1 : panel1.getComponent().getLinkTemplate().getOid());
+                    panel1.getComponent().dontUseTemplate() || panel1.getComponent().getLinkTemplate() == null ? - 1 : panel1.getComponent().getLinkTemplate().getOid());
             
             if (newConnection == null)
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
