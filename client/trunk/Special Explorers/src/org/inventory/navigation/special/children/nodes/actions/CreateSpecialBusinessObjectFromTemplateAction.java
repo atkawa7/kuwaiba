@@ -37,8 +37,8 @@ import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.MenuScroller;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
+import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
-import org.openide.nodes.AbstractNode;
 import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter.Popup;
 
@@ -104,10 +104,10 @@ public class CreateSpecialBusinessObjectFromTemplateAction extends GenericObject
                 mnuPossibleSpecialChildren.setEnabled(false);
             else
                 for(LocalClassMetadataLight item: items){
-                        JMenuItem smiChildren = new JMenuItem(item.getClassName());
-                        smiChildren.setName(item.getClassName());
-                        smiChildren.addActionListener(this);
-                        mnuPossibleSpecialChildren.add(smiChildren);
+                    JMenuItem smiChildren = new JMenuItem(item.getClassName());
+                    smiChildren.setName(item.getClassName());
+                    smiChildren.addActionListener(this);
+                    mnuPossibleSpecialChildren.add(smiChildren);
                 }
 
             MenuScroller.setScrollerFor(mnuPossibleSpecialChildren, 20, 100);
@@ -117,7 +117,7 @@ public class CreateSpecialBusinessObjectFromTemplateAction extends GenericObject
 
     @Override
     public String getValidator() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return null;
     }
     
     private class TemplateListFrame extends JFrame {
@@ -155,7 +155,7 @@ public class CreateSpecialBusinessObjectFromTemplateAction extends GenericObject
                             NotificationUtil.getInstance().showSimplePopup("Error", 
                                 NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                         } else {
-                            AbstractNode selectedNode = Utilities.actionsGlobalContext().lookup(AbstractNode.class);
+                            ObjectNode selectedNode = Utilities.actionsGlobalContext().lookup(ObjectNode.class);
                             if (selectedNode.getChildren() instanceof AbstractChildren) //Some nodes are created on the fly and does not have children. For those cases, let's avoid refreshing their children lists
                                 ((AbstractChildren)selectedNode.getChildren()).addNotify();
 

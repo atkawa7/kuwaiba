@@ -31,8 +31,9 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.core.services.utils.MenuScroller;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
+import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
-import org.inventory.navigation.special.children.nodes.SpecialObjectNode;
+import org.openide.nodes.AbstractNode;
 import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter;
 
@@ -61,7 +62,7 @@ public class CreateMultipleSpecialBusinessObjectAction extends GenericObjectNode
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        SpecialObjectNode node = Utilities.actionsGlobalContext().lookup(SpecialObjectNode.class);
+        ObjectNode node = Utilities.actionsGlobalContext().lookup(ObjectNode.class);
         
         JTextField txtNamePattern = new JTextField();
         txtNamePattern.setName("txtNamePattern"); //NOI18N
@@ -94,7 +95,7 @@ public class CreateMultipleSpecialBusinessObjectAction extends GenericObjectNode
             else {
                 ((AbstractChildren)node.getChildren()).addNotify();
                 
-                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "The bulk of special objects was created successfully");
+                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Special objects created successfully");
             }
         }
     }
@@ -103,10 +104,11 @@ public class CreateMultipleSpecialBusinessObjectAction extends GenericObjectNode
     public JMenuItem getPopupPresenter() {
         if (!isEnabled())
             return null;
-        JMenu mnuPossibleChildren = new JMenu("New Special (Multiple)");
-        SpecialObjectNode node = Utilities.actionsGlobalContext().lookup(SpecialObjectNode.class);
+        JMenu mnuPossibleChildren = new JMenu("New Special Multiple");
+        AbstractNode node = Utilities.actionsGlobalContext().lookup(AbstractNode.class);
         if (node != null) {
-            List<LocalClassMetadataLight> items = com.getPossibleSpecialChildren(node.getObject().getClassName(), false);
+            List<LocalClassMetadataLight> items = com.getPossibleSpecialChildren(node.getLookup().lookup(LocalObjectLight.class).getClassName(), 
+                    false);
 
             if (items.isEmpty())
                 mnuPossibleChildren.setEnabled(false);
@@ -119,10 +121,9 @@ public class CreateMultipleSpecialBusinessObjectAction extends GenericObjectNode
                 }
 
             MenuScroller.setScrollerFor(mnuPossibleChildren, 20, 100);
-        } else {
+        } else 
             mnuPossibleChildren.setEnabled(false);
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, "This action can not be executed here");
-        }
+        
         return mnuPossibleChildren;
     }
 

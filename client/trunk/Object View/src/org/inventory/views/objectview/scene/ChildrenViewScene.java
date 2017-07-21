@@ -275,7 +275,7 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
         LocalObjectView currentView = (LocalObjectView) configObject.getProperty("currentView");
         
         /* Comment this out for debugging purposes
-        try{
+        try {
             FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_"+currentView.getId()+".xml");
             fos.write(currentView.getStructure());
             fos.close();
@@ -318,11 +318,15 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
 
                             LocalObjectLight lol = CommunicationsStub.getInstance().getObjectInfoLight(objectClass, objectId);
                             if (lol != null) {
-                                Widget widget = addNode(lol);
-                                widget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
-                                widget.setBackground(com.getMetaForClass(objectClass, false).getColor());
-                                validate();
-                                myChildren.remove(lol);
+                                if (getNodes().contains(lol))
+                                    NotificationUtil.getInstance().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, "The view seems to be corrupted. Self-healing measures were taken");
+                                else {
+                                    Widget widget = addNode(lol);
+                                    widget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
+                                    widget.setBackground(com.getMetaForClass(objectClass, false).getColor());
+                                    validate();
+                                    myChildren.remove(lol);
+                                }
                             }
                             else
                                 currentView.setDirty(true);
@@ -348,22 +352,26 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
                                     if (aSideWidget == null || bSideWidget == null)
                                         currentView.setDirty(true);
                                     else {
-                                        ObjectConnectionWidget newEdge = (ObjectConnectionWidget) addEdge(container);
-                                        newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideWidget.getNodeWidget()));
-                                        newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideWidget.getNodeWidget()));
-                                        List<Point> localControlPoints = new ArrayList<>();
-                                        while(true) {
-                                            reader.nextTag();
+                                        if (getEdges().contains(container))
+                                            NotificationUtil.getInstance().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, "The view seems to be corrupted. Self-healing measures were taken");
+                                        else {
+                                            ObjectConnectionWidget newEdge = (ObjectConnectionWidget) addEdge(container);
+                                            newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideWidget.getNodeWidget()));
+                                            newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideWidget.getNodeWidget()));
+                                            List<Point> localControlPoints = new ArrayList<>();
+                                            while(true) {
+                                                reader.nextTag();
 
-                                            if (reader.getName().equals(qControlPoint)) {
-                                                if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
-                                                    localControlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")), Integer.valueOf(reader.getAttributeValue(null,"y"))));
-                                            } else {
-                                                newEdge.setControlPoints(localControlPoints,false);
-                                                break;
+                                                if (reader.getName().equals(qControlPoint)) {
+                                                    if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
+                                                        localControlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")), Integer.valueOf(reader.getAttributeValue(null,"y"))));
+                                                } else {
+                                                    newEdge.setControlPoints(localControlPoints,false);
+                                                    break;
+                                                }
                                             }
+                                            validate();
                                         }
-                                        validate();
                                     }
                                 } else
                                     currentView.setDirty(true);
@@ -377,7 +385,7 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
                                         if (reader.getName().equals(qCenter)) {
                                             double x = Double.valueOf(reader.getAttributeValue(null, "x"));
                                             double y = Double.valueOf(reader.getAttributeValue(null, "y"));
-                                            currentView.setCenter(new double[]{x,y});
+                                            currentView.setCenter(new double[]{ x, y });
                                         } else {
                                             //Place more tags
                                         }
@@ -397,8 +405,8 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
 
                 setBackgroundImage(currentView.getBackground());
                 if (currentView.isDirty()) {
-                    NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.WARNING_MESSAGE, "Some elements in the view has been deleted since the last time it was opened. They were removed");
                     fireChangeEvent(new ActionEvent(this, ChildrenViewScene.SCENE_CHANGEANDSAVE, "Removing old objects"));
+                    NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.WARNING_MESSAGE, "Some changes has been detected since the last time the view was saved. The view was updated accordingly");
                     currentView.setDirty(false);
                 }
             } catch (XMLStreamException ex) {
@@ -406,6 +414,7 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
                     Exceptions.printStackTrace(ex);
             }
             validate();
+            repaint();
         }
     }
     

@@ -76,7 +76,7 @@ public class NotificationUtil {
                 popupIcon = INFO_ICON;
         }
         
-        if (NotificationDisplayer.getDefault() != null){
+        if (NotificationDisplayer.getDefault() != null) {
             final Notification lastNotification = NotificationDisplayer.getDefault().
                     notify(title, popupIcon, text, null);
 

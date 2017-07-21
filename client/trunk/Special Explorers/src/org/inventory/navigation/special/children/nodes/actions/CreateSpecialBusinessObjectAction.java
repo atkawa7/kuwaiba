@@ -26,8 +26,8 @@ import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.MenuScroller;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
+import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
-import org.inventory.navigation.special.children.nodes.SpecialObjectNode;
 import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter;
 
@@ -51,7 +51,7 @@ public final class CreateSpecialBusinessObjectAction extends GenericObjectNodeAc
     
     @Override
     public void actionPerformed(ActionEvent ev) {
-        SpecialObjectNode node = Utilities.actionsGlobalContext().lookup(SpecialObjectNode.class);
+        ObjectNode node = Utilities.actionsGlobalContext().lookup(ObjectNode.class);
         
         LocalObjectLight myLol = com.createSpecialObject(
                 ((JMenuItem)ev.getSource()).getName(),
@@ -69,7 +69,7 @@ public final class CreateSpecialBusinessObjectAction extends GenericObjectNodeAc
     @Override
     public JMenuItem getPopupPresenter() {
         JMenu mnuPossibleChildren = new JMenu("New Special");
-        SpecialObjectNode node = Utilities.actionsGlobalContext().lookup(SpecialObjectNode.class);
+        ObjectNode node = Utilities.actionsGlobalContext().lookup(ObjectNode.class);
         if (node != null) {
             List<LocalClassMetadataLight> items = com.getPossibleSpecialChildren(node.getObject().getClassName(), false);
 
@@ -84,10 +84,9 @@ public final class CreateSpecialBusinessObjectAction extends GenericObjectNodeAc
                 }
 
             MenuScroller.setScrollerFor(mnuPossibleChildren, 20, 100);
-        } else {
+        } else
             mnuPossibleChildren.setEnabled(false);
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, "This action can not be executed here");
-        }
+        
         return mnuPossibleChildren;
     }
 

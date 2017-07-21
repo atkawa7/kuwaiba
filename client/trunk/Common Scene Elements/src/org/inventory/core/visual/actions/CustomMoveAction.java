@@ -134,6 +134,7 @@ public final class CustomMoveAction extends WidgetAction.LockedAdapter {
         newLocation = widget.convertLocalToScene (newLocation);
         Point location = new Point (originalSceneLocation.x + newLocation.x - dragSceneLocation.x, originalSceneLocation.y + newLocation.y - dragSceneLocation.y);
         provider.setNewLocation (widget, strategy.locationSuggested (widget, originalSceneLocation, location));
+        scene.repaint(); //Weirdlky enough, I had to add this, because the scene was not being updated correctly. Review this in the modulke rewrite
         return true;
     }
 }

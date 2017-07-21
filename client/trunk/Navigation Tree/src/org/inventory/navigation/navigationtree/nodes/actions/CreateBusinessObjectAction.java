@@ -107,9 +107,9 @@ public final class CreateBusinessObjectAction extends GenericObjectNodeAction im
             mnuPossibleChildren.setEnabled(false);
         }
         else {
-            if (items.isEmpty()) {
+            if (items.isEmpty()) 
                 mnuPossibleChildren.setEnabled(false);
-            } else {
+            else {
                 for (LocalClassMetadataLight item : items) {
                     JMenuItem mnuiChildren = new JMenuItem(item.getClassName());
                     mnuiChildren.setName(item.getClassName());
