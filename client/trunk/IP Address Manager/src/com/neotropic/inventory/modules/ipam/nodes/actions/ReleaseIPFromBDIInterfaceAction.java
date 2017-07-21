@@ -51,7 +51,7 @@ public class ReleaseIPFromBDIInterfaceAction extends GenericObjectNodeAction imp
         
         if (bdis != null) {
             if (bdis.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "There are no IPs related to BDI interface", 
+                JOptionPane.showMessageDialog(null, "There are no Bridge Domain Interfaces related to the selected IP", 
                     "Information", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 List<SubMenuItem> subMenuItems = new ArrayList();

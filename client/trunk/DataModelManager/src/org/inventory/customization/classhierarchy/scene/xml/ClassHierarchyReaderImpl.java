@@ -58,7 +58,8 @@ public class ClassHierarchyReaderImpl implements ClassHierarchyReader {
 
     @Override
     public List<LocalClassWrapper> getRootClasses() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
+        //throw new UnsupportedOperationException("Not supported yet.");
     }
     
     @Override

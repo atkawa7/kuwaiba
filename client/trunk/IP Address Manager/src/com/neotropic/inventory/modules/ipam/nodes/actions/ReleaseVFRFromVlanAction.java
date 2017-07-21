@@ -52,7 +52,7 @@ public class ReleaseVFRFromVlanAction  extends GenericObjectNodeAction implement
         
         if (vlans != null) {
             if (vlans.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "There are no Vlan related to the selected VFR", 
+                JOptionPane.showMessageDialog(null, "There are no VLANs related to the selected VFR Instance", 
                     "Information", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 List<SubMenuItem> subMenuItems = new ArrayList();

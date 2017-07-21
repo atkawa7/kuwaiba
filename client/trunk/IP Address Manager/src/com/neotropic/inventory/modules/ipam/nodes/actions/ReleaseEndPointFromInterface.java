@@ -51,7 +51,7 @@ public class ReleaseEndPointFromInterface extends GenericObjectNodeAction implem
         
         if (serviceInstances != null) {
             if (serviceInstances.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "There are no port related to interface", 
+                JOptionPane.showMessageDialog(null, "There are no interfaces related to the selected port", 
                     "Information", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 List<SubMenuItem> subMenuItems = new ArrayList();

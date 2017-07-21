@@ -81,9 +81,30 @@ public class NewLinkWizardPanel2 implements WizardDescriptor.Panel<WizardDescrip
         if (component.getSelectedAEndpoint() == null || component.getSelectedBEndpoint() == null)
             throw new WizardValidationException(component, "You need to select both sides of the connection", 
                     "You need to select both sides of the connection");
-          if (!CommunicationsStub.getInstance().isSubclassOf(component.getSelectedAEndpoint().getClassName(), Constants.CLASS_GENERICPORT) || 
+        
+        if (!CommunicationsStub.getInstance().isSubclassOf(component.getSelectedAEndpoint().getClassName(), Constants.CLASS_GENERICPORT) || 
                 !CommunicationsStub.getInstance().isSubclassOf(component.getSelectedBEndpoint().getClassName(), Constants.CLASS_GENERICPORT))
             throw new WizardValidationException(component, "Only ports can be connected using links", "Only ports can be connected using links");
+        
+        String endpointConnected = "";
+        if (
+        !CommunicationsStub.getInstance().getSpecialAttribute(component.getSelectedAEndpoint().getClassName(), component.getSelectedAEndpoint().getOid(), "endpointA").isEmpty() ||
+        !CommunicationsStub.getInstance().getSpecialAttribute(component.getSelectedAEndpoint().getClassName(), component.getSelectedAEndpoint().getOid(), "endpointB").isEmpty()
+        ) {
+            endpointConnected = String.format("The selected endpoint %s is already connected", component.getSelectedAEndpoint());
+        }
+        
+        if (
+        !CommunicationsStub.getInstance().getSpecialAttribute(component.getSelectedBEndpoint().getClassName(), component.getSelectedBEndpoint().getOid(), "endpointA").isEmpty() ||
+        !CommunicationsStub.getInstance().getSpecialAttribute(component.getSelectedBEndpoint().getClassName(), component.getSelectedBEndpoint().getOid(), "endpointB").isEmpty()
+        ) {
+            if (!"".equals(endpointConnected))
+                endpointConnected += ", ";
+            endpointConnected += String.format("The selected endpoint %s is already connected", component.getSelectedBEndpoint());
+        }
+        
+        if (!"".equals(endpointConnected))
+            throw new WizardValidationException(component, endpointConnected, endpointConnected);
     }
 
 }

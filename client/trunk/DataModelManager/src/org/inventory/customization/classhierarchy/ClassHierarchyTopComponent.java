@@ -111,6 +111,7 @@ public final class ClassHierarchyTopComponent extends TopComponent implements Ex
         btnOrganize = new javax.swing.JButton();
         btnExportAsImage = new javax.swing.JButton();
         btnExportAsXML = new javax.swing.JButton();
+        btnRefresh = new javax.swing.JButton();
         layeredPaneLbl = new javax.swing.JLayeredPane();
         lblLocate = new javax.swing.JLabel();
         layeredPaneCmb = new javax.swing.JLayeredPane();
@@ -120,7 +121,6 @@ public final class ClassHierarchyTopComponent extends TopComponent implements Ex
         setLayout(new java.awt.BorderLayout());
 
         toolMain.setRollover(true);
-        toolMain.setAlignmentY(0.5F);
         toolMain.setMaximumSize(new java.awt.Dimension(392, 38));
         toolMain.setMinimumSize(new java.awt.Dimension(392, 38));
         toolMain.setPreferredSize(new java.awt.Dimension(326, 33));
@@ -228,6 +228,23 @@ public final class ClassHierarchyTopComponent extends TopComponent implements Ex
         });
         toolMain.add(btnExportAsXML);
 
+        btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/customization/classhierarchy/res/refresh.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnRefresh, org.openide.util.NbBundle.getMessage(ClassHierarchyTopComponent.class, "ClassHierarchyTopComponent.btnRefresh.text")); // NOI18N
+        btnRefresh.setToolTipText(org.openide.util.NbBundle.getMessage(ClassHierarchyTopComponent.class, "ClassHierarchyTopComponent.btnRefresh.toolTipText")); // NOI18N
+        btnRefresh.setActionCommand(org.openide.util.NbBundle.getMessage(ClassHierarchyTopComponent.class, "ClassHierarchyTopComponent.btnRefresh.actionCommand")); // NOI18N
+        btnRefresh.setFocusable(false);
+        btnRefresh.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnRefresh.setMaximumSize(new java.awt.Dimension(34, 34));
+        btnRefresh.setMinimumSize(new java.awt.Dimension(34, 34));
+        btnRefresh.setPreferredSize(new java.awt.Dimension(34, 34));
+        btnRefresh.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRefreshActionPerformed(evt);
+            }
+        });
+        toolMain.add(btnRefresh);
+
         layeredPaneLbl.setLayout(new java.awt.BorderLayout());
 
         org.openide.awt.Mnemonics.setLocalizedText(lblLocate, org.openide.util.NbBundle.getMessage(ClassHierarchyTopComponent.class, "ClassHierarchyTopComponent.lblLocate.text")); // NOI18N
@@ -326,12 +343,17 @@ public final class ClassHierarchyTopComponent extends TopComponent implements Ex
         service.showAllAttributes();
     }//GEN-LAST:event_btnShowAttributesActionPerformed
 
+    private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
+        refresh();        
+    }//GEN-LAST:event_btnRefreshActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCollapse;
     private javax.swing.JButton btnExpand;
     private javax.swing.JButton btnExportAsImage;
     private javax.swing.JButton btnExportAsXML;
     private javax.swing.JButton btnOrganize;
+    private javax.swing.JButton btnRefresh;
     private javax.swing.JButton btnShowAttributes;
     private javax.swing.JComboBox cmbClassList;
     private javax.swing.JLayeredPane layeredPaneCmb;
@@ -351,6 +373,8 @@ public final class ClassHierarchyTopComponent extends TopComponent implements Ex
     
     @Override
     public void componentClosed() {
+        cmbClassList.removeActionListener(this);
+        cmbClassList.removeAllItems();
         scene.removeAllListeners();
         scene.clear();
     }
@@ -395,6 +419,14 @@ public final class ClassHierarchyTopComponent extends TopComponent implements Ex
 
     @Override
     public void refresh() {
+        if (isOpened()) {
+            List<LocalClassMetadata> classes = new ArrayList();
+            for (int i = 0; i < cmbClassList.getItemCount(); i += 1)
+                classes.add((LocalClassMetadata) cmbClassList.getItemAt(i));
+
+            service.refreshScene(classes);
+            listOfClasses();
+        }
     }
     
     private void listOfClasses() {

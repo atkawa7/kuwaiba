@@ -17,6 +17,7 @@ package org.kuwaiba.management.services.nodes.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.List;
+import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
@@ -44,8 +45,13 @@ public class RelateToServiceAction extends GenericObjectNodeAction {
         if (services ==  null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else {
-            ServicesFrame frame = new ServicesFrame(selectedObjects, services);
-            frame.setVisible(true);
+            if (services.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "There are no services created. Create at least one using the Service Manager", 
+                    "Information", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                ServicesFrame frame = new ServicesFrame(selectedObjects, services);
+                frame.setVisible(true);
+            }
         }
     }
 

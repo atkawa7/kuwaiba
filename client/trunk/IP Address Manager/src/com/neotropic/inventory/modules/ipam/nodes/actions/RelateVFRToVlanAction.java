@@ -19,6 +19,7 @@ import com.neotropic.inventory.modules.ipam.windows.VlansFrame;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import static javax.swing.Action.NAME;
+import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
@@ -46,8 +47,14 @@ public class RelateVFRToVlanAction extends GenericObjectNodeAction {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         
         else {
-            VlansFrame frame = new VlansFrame(selectedObjects, vlans);
-            frame.setVisible(true);
+            
+            if (vlans.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "There are no VLANs created. Create at least one using the Navigation Tree", 
+                    "Information", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                VlansFrame frame = new VlansFrame(selectedObjects, vlans);
+                frame.setVisible(true);
+            }
         }
     }
 

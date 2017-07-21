@@ -17,6 +17,7 @@ package org.inventory.navigation.favorites.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.List;
+import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.favorites.windows.ChooseFavoritesFolderFrame;
@@ -50,8 +51,13 @@ public class AddObjectToFavoritesFolderAction extends GenericObjectNodeAction {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, 
                 CommunicationsStub.getInstance().getError());
         } else {
-            ChooseFavoritesFolderFrame frame = new ChooseFavoritesFolderFrame(selectedObjects, favoritesFolders);
-            frame.setVisible(true);
+            if (favoritesFolders.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "There are no favorites folders created. Create at least one using the Favorites Module", 
+                    "Information", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                ChooseFavoritesFolderFrame frame = new ChooseFavoritesFolderFrame(selectedObjects, favoritesFolders);
+                frame.setVisible(true);
+            }
         }
     }
 

@@ -17,8 +17,8 @@ package com.neotropic.inventory.modules.ipam.nodes.actions;
 
 import com.neotropic.inventory.modules.ipam.windows.BDIsInterfaceFrame;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
@@ -43,9 +43,13 @@ public class RelateIPToBDIInterfaceAction extends GenericObjectNodeAction {
         List<LocalObjectLight> bdis = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_BRIDGEDOMAININTERFACE);
         
         if (bdis != null) {
-            List<LocalObjectLight> interfaces = new ArrayList<>(bdis);
-            BDIsInterfaceFrame frame = new BDIsInterfaceFrame(selectedObjects, interfaces);
-            frame.setVisible(true);
+            if (bdis.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "There are no Bridge Domain Interfaces created. Create at least one using the Navigation Tree", 
+                    "Information", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                BDIsInterfaceFrame frame = new BDIsInterfaceFrame(selectedObjects, bdis);
+                frame.setVisible(true);
+            }
         } else
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
     }

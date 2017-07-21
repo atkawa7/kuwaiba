@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
@@ -61,9 +62,14 @@ public class RelateSubnetToVFRAction extends GenericInventoryAction {
             
             while (iterator.hasNext())
                 selectedObjects.add((LocalObjectLight)iterator.next());
-
-            VFRsFrame frame = new VFRsFrame(selectedObjects, vfrInstances);
-            frame.setVisible(true);
+            
+            if (vfrInstances.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "There are no VRF instances created. Create at least one using the Navigation Tree", 
+                    "Information", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                VFRsFrame frame = new VFRsFrame(selectedObjects, vfrInstances);
+                frame.setVisible(true);
+            }
         }    
 
     }

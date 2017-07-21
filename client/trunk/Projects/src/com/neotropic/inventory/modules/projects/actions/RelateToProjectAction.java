@@ -44,8 +44,13 @@ public class RelateToProjectAction extends GenericObjectNodeAction {
         if (projects == null) {
             JOptionPane.showMessageDialog(null, "This database seems outdated. Contact your administrator to apply the necessary patches to run the Projects module", "Error", JOptionPane.ERROR_MESSAGE);
         } else {
-            ProjectsFrame projectsFrame = new ProjectsFrame(selectedObjects, projects);
-            projectsFrame.setVisible(true);
+            if (projects.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "There are no projects created. Create at least one using the Projects Module", 
+                    "Information", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                ProjectsFrame projectsFrame = new ProjectsFrame(selectedObjects, projects);
+                projectsFrame.setVisible(true);
+            }
         }
     }
 

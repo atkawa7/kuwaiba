@@ -49,7 +49,8 @@ public class DeleteClassAction extends GenericInventoryAction {
             return;
         
         if (com.deleteClassMetadata(classMetaData.getOid())){
-            ((ClassMetadataChildren)node.getParentNode().getChildren()).refreshList();
+            if (node.getParentNode() != null) // null for the class hierarchy view widgets
+                ((ClassMetadataChildren)node.getParentNode().getChildren()).refreshList();
             NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "The class was deleted successfully");
         }
         else

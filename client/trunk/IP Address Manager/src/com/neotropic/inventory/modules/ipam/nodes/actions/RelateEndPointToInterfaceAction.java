@@ -19,6 +19,7 @@ import com.neotropic.inventory.modules.ipam.windows.InterfaceFrame;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
@@ -61,8 +62,13 @@ public class RelateEndPointToInterfaceAction extends GenericObjectNodeAction {
                 interfaces.add(o);
         }        
         
-        InterfaceFrame frame = new InterfaceFrame(selectedObjects, interfaces);
-        frame.setVisible(true);
+        if (interfaces.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "There are no interfaces created. Create at least one using the Navigation Tree", 
+                "Information", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            InterfaceFrame frame = new InterfaceFrame(selectedObjects, interfaces);
+            frame.setVisible(true);
+        }
     }
     
     @Override

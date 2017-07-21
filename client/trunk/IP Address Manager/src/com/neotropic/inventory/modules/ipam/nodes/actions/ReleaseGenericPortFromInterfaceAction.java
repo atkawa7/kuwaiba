@@ -50,7 +50,7 @@ public class ReleaseGenericPortFromInterfaceAction extends GenericObjectNodeActi
             selectedObject.getOid(), Constants.RELATIONSHIP_IPAMPORTRELATEDTOINTERFACE);
         if (interfaces != null) {
             if (interfaces.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "There are no port related to interface", 
+                JOptionPane.showMessageDialog(null, "There are no interfaces related to the selected port", 
                     "Information", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 List<SubMenuItem> subMenuItems = new ArrayList();

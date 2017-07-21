@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import static javax.swing.Action.NAME;
+import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
@@ -64,8 +65,13 @@ public class RelateSubnetToVlanAction extends GenericInventoryAction {
             while (iterator.hasNext())
                 selectedObjects.add((LocalObjectLight)iterator.next());
             
-            VlansFrame frame = new VlansFrame(selectedObjects, vlans);
-            frame.setVisible(true);
+            if (vlans.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "There are no VLANs created. Create at least one using the Navigation Tree", 
+                    "Information", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                VlansFrame frame = new VlansFrame(selectedObjects, vlans);
+                frame.setVisible(true);
+            }
         }
     }
 

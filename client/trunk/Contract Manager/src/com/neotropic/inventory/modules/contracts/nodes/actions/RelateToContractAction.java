@@ -18,6 +18,7 @@ package com.neotropic.inventory.modules.contracts.nodes.actions;
 import com.neotropic.inventory.modules.contracts.windows.ContractFrame;
 import java.awt.event.ActionEvent;
 import java.util.List;
+import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
@@ -45,8 +46,13 @@ public class RelateToContractAction extends GenericObjectNodeAction {
         if (contracts ==  null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else {
-            ContractFrame frame = new ContractFrame(selectedObjects, contracts);
-            frame.setVisible(true);
+            if (contracts.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "There are no contracts created. Create at least one using the Contracts Manager", 
+                    "Information", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                ContractFrame frame = new ContractFrame(selectedObjects, contracts);
+                frame.setVisible(true);
+            }
         }
     }
 
