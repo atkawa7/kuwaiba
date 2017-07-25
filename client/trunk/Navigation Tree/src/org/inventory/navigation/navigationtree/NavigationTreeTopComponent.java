@@ -96,7 +96,6 @@ public final class NavigationTreeTopComponent extends TopComponent
         nts = new NavigationTreeService(this);
         associateLookup(ExplorerUtils.createLookup(em, map));
         treeView = new BeanTreeView();
-        treeView.setWheelScrollingEnabled(true);
         add(treeView);
     }
 
@@ -137,10 +136,6 @@ public final class NavigationTreeTopComponent extends TopComponent
     void readProperties(java.util.Properties p) {
         String version = p.getProperty("version");
         // TODO read your settings according to their version
-    }
-
-    private void readPropertiesImpl(java.util.Properties p) {
-        
     }
 
     @Override

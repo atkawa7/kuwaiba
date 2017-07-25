@@ -82,8 +82,7 @@ public class CreateMultipleSpecialBusinessObjectAction extends GenericObjectNode
             if (spinnerValue instanceof Integer) {
                 numberOfSpecialObjects = (Integer) spinnerValue;
                 if (numberOfSpecialObjects <= 0) {
-                    NotificationUtil.getInstance().showSimplePopup("Error", 
-                        NotificationUtil.ERROR_MESSAGE, "The number of special objects must be greater than 0");
+                    JOptionPane.showMessageDialog(null, "The number of objects to create must be greater than 0", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
             }
@@ -94,7 +93,6 @@ public class CreateMultipleSpecialBusinessObjectAction extends GenericObjectNode
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             else {
                 ((AbstractChildren)node.getChildren()).addNotify();
-                
                 NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Special objects created successfully");
             }
         }

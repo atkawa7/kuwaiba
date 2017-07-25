@@ -71,16 +71,15 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
 
     //There can be only one instance for OpenLocalExplorerAction, this attribute is a kind of singleton
     protected static OpenLocalExplorerAction explorerAction = new OpenLocalExplorerAction();
-    protected CommunicationsStub com;
-    private Image icon;
+    protected CommunicationsStub com = CommunicationsStub.getInstance();
+    protected Image icon;
 
-    public ObjectNode(Children children) {
-        super(children);
+    public ObjectNode(Children children, Lookup lookup) {
+        super(children, lookup);
     }
     
     public ObjectNode(LocalObjectLight lol) {
         super(new ObjectChildren(), Lookups.singleton(lol));
-        com = CommunicationsStub.getInstance();
         if (lol.getClassName() != null) {
             lol.addPropertyChangeListener(WeakListeners.propertyChange(this, lol));
             icon = com.getMetaForClass(lol.getClassName(), false).getSmallIcon();
@@ -91,7 +90,6 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
     public ObjectNode(LocalObjectLight lol, boolean isLeaf) {
         super(Children.LEAF, Lookups.singleton(lol));
         lol.addPropertyChangeListener(WeakListeners.propertyChange(this, lol));
-        com = CommunicationsStub.getInstance();
         icon = com.getMetaForClass(lol.getClassName(), false).getSmallIcon();
         explorerAction.putValue(OpenLocalExplorerAction.NAME, "Open a Explorer from Here");
     }
