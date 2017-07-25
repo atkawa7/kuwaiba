@@ -56,11 +56,11 @@
 				\midrule
 				December 26th 2010 & Update to cover the new features in 0.2.1 \\
 				\midrule
-				January 18 th 2001 & Changes in version 0.3 alpha \\
+				January 18th 2001 & Changes in version 0.3 alpha \\
 				\midrule
-				February 3 rd 2011 & Changes in version 0.3 beta \\
+				February 3rd 2011 & Changes in version 0.3 beta \\
 				\midrule
-				March 13 th	2011 & Changes in version 0.3 beta 2 \\
+				March 13th	2011 & Changes in version 0.3 beta 2 \\
 				\midrule
 				May 16th 2011 & Changes in version 0.3 stable (the clear button in the graphical query editor \\
 				\midrule
@@ -68,19 +68,19 @@
 				\midrule
 				October 23rd 2012 & Adapted to version 0.5 \\
 				\midrule
-				June 4 th 2013 & Added documentation	for Pools module \\
+				June 4th 2013 & Added documentation	for Pools module \\
 				\midrule
-				June 12 th 2013 & Added documentation for Data model Manager module and some other minor changes\\
+				June 12th 2013 & Added documentation for Data model Manager module and some other minor changes\\
 				\midrule
-				January 19 th 2015 & Adapted manual for version 0.7 \\
+				January 19th 2015 & Adapted manual for version 0.7 \\
 				\midrule
-				November 6 th 2015 & Added documentation about bulk upload, software asset management and detailed physical connections \\
+				November 6th 2015 & Added documentation about bulk upload, software asset management and detailed physical connections \\
 				\midrule
 				July 27th 2016 & Adapted to Kuwaiba version 1.0. LaTeX is now used instead of LibreOffice to create the documentation. \\
 				\midrule
 				December 19th 2016 & Added documentation for templates and reports.\\
 				\midrule
-				June 1th 2017 & Added documentation for Bookmarks, Update Center, Projects and new functions in the Relationship Explorer.\\
+				June 1st 2017 & Added documentation for Bookmarks, Update Center, Projects and new functions in the Relationship Explorer.\\
 				\midrule
 				June 30th 2017 & Added documentation for New (Multiple), New Special, New Special (Multiple) and New Special from Template actions. Updated documentation for Containment Hierarchy and Template Manager.\\
 				\bottomrule
@@ -96,7 +96,7 @@
 				\includegraphics[]{img/cc_license_logo.jpg} & This document is published under the terms of a license Creative Commons by-nc-sa. You can find details about it at\linebreak
 				\textbf{http://creativecommons.org/licenses/by-nc-sa/2.0/ } \\
 
-				\includegraphics[width=2cm]{img/osi_logo.jpg} & Kuwaiba Server and Client are licensed under EPL v1 and GPL v2. You can find the whole text of this licenses at \linebreak
+				\includegraphics[width=2cm]{img/osi_logo.jpg} & Kuwaiba Server and Client are licensed under EPL v1 and GPL v2. You can find the whole text of these licenses at \linebreak
 				\textbf{http://www.eclipse.org/legal/epl-v10.html} \linebreak
 				\textbf{http://www.gnu.org/licenses/old-licenses/gpl-2.0.html} \\
 			\end{tabular}
@@ -113,16 +113,16 @@
 	\newpage
 	\pagenumbering{arabic}
 	\section{Introduction}
-	Kuwaiba sees an inventory system as a living entity, not growing only in terms of size, but also in structure and intelligence. The main reason is that business requirements change constantly and therefore, the application must ready to respond to new scenarios. One of the key concepts that can help you unlock the potential of Kuwaiba is the \textbf{data model}. It provides a simplified representation of the network and the business from an operational point of view. It can be seen as the skeleton that supports the application, but a skeleton from which you can add, remove and change elements as you go. Later in this document you will be able to see what tools you can use to manage it. For now, just keep in mind that the better you design your data model and the more you get to know it, the more you will take advantage of the application.\newline
+	Kuwaiba sees an inventory system as a living entity, not growing only in terms of size, but also in structure and intelligence. The main reason being that business requirements change constantly and therefore, the application must be ready to respond to new scenarios. One of the key concepts that can help you unlock the potential of Kuwaiba is the \textbf{data model}. It provides a simplified representation of the network and the business from an operational point of view. It can be seen as the skeleton that supports the application, but a skeleton from which you can add, remove and change elements as you go. Later in this document you will be able to see what tools you can use to manage it. For now, just keep in mind that the better you design your data model and the more you get to know it, the more you will take advantage of the application.\newline
 	
 	Having said that, you will find four types of resources in a typical data model:
 	\begin{itemize}
 		\item \textbf{Physical:} Equipment, pipes, cables, fiber optics, facilities, parts and in general every physical asset from a port to a building. 
-		\item \textbf{Logical:} These are all the resources related to non-tangible technology assets. In this group fits timeslots, virtual circuits, VLANs, disk space, available bandwidth, etc.
+		\item \textbf{Logical:} These are all the resources related to non-tangible technology assets. In this group fit timeslots, virtual circuits, VLANs, disk space, available bandwidth, etc.
 		\item \textbf{Other Non-physical:} mostly software-related assets, such as licenses or virtual machines.
 		\item \textbf{Administrative:} These are all those related to administrative tasks, human resources or commercial management. Customers, their services, SLAs (and related parameters like availability or throughput), sales and technical staff assigned to those services, vendors and states belong to this category.
 	\end{itemize}
-	The Kuwaiba desktop client is a set of views (trees, topologies, editors) that allow to put together these elements based on business rules and  user-defined models. Kuwaiba extends the concept of \textbf{CMDB} (Configuration Management Database, a place where you store objects that can hold configuration information or be subject to configuration themselves -so called Configuration Items- and their relationships)  and enables you to perform network design tasks, support capacity management and provisioning workflows and assist field and customer service teams to improve response times.\newline
+	The Kuwaiba desktop client is a set of views (trees, topologies, editors) that allows to put together these elements based on business rules and  user-defined models. Kuwaiba extends the concept of \textbf{CMDB} (Configuration Management Database, a place where you store objects that can hold configuration information or be subject to configuration themselves - so called Configuration Items- and their relationships)  and enables you to perform network design tasks, support capacity management and provisioning workflows and assist field and customer service teams to improve response times.\newline
 	
 	Kuwaiba helps you model your network according to your needs, no matter if you're an ISP, a carrier or just a guy with a large (or small!) IT infrastructure to manage. It's open source, under active development and new models are added every release. You can contribute to the project by providing technical insight on a particular technology, testing, translating or just sending your feedback through forums\footnote{Forums https://sourceforge.net/p/kuwaiba/discussion/} and mailing lists\footnote{mailing lists https://sourceforge.net/p/kuwaiba/mailman/}.
 	
@@ -170,7 +170,7 @@
 		\label{fig:main_toolbar}
 	\end{figure}
 	
-	The toolbar contains the most frequently used tools. Here is an overview of what cab you do with them:
+	The toolbar contains the most frequently used tools. Here is an overview of what you can do with them:
 	\begin{table}[h!]
 		\centering
 		\begin{tabular}{cl}
@@ -202,7 +202,7 @@
 			\midrule
 			\includegraphics[width=0.5cm]{img/icon_pools_manager.png} & Create and manage objects that don't fit in the navigation tree\\
 			\midrule
-			\includegraphics[width=0.5cm]{img/icon_reports.png} & Crate and manage reports\\
+			\includegraphics[width=0.5cm]{img/icon_reports.png} & Create and manage reports\\
 			\midrule
 			\includegraphics[width=0.5cm]{img/icon_service_manager.png} & Manage client, services and resources associated to them\\
 		\end{tabular}	
@@ -212,7 +212,7 @@
 	
 	\newpage
 	\section{Data Model Manager} \label{sec:data_model_manager}
-		One of the key features of Kuwaiba is that it is completely object-oriented\footnote{Object-oriented Programming https://en.wikipedia.org/wiki/Object-oriented\_programming}. It means that every business (Router, City, Port) and application (users, types) element is represented by an \textbf{Object} in the application and these objects are in turn product of an reality abstraction called \textbf{Class}. Likewise, every attribute is a \textbf{Field} in a class. The set of classes, attributes and relationships between them is called data model. There's a default data model, but you can customize it depending on your needs by adding, removing and modifying classes. To achieve this, use the Data Model Manager module (figure~\ref{fig:data_model_manager}).
+		One of the key features of Kuwaiba is that it is completely object-oriented\footnote{Object-oriented Programming https://en.wikipedia.org/wiki/Object-oriented\_programming}. It means that every business (Router, City, Port) and application (users, types) element is represented by an \textbf{Object} in the application and these objects are in turn product of a reality abstraction called \textbf{Class}. Likewise, every attribute is a \textbf{Field} in a class. The set of classes, attributes and relationships between them is called data model. There's a default data model, but you can customize it depending on your needs by adding, removing and modifying classes. To achieve this, use the Data Model Manager module (figure~\ref{fig:data_model_manager}).
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.4\linewidth]{img/data_model_manager.png}
@@ -246,11 +246,11 @@
 			\end{figure}
 			The  property  sheet  is  divided  in  two  sections: 
 			\begin{itemize}
-				\item \textbf{General:} Contains the intrinsic properties  of  the class: \textbf{name} (can contain only letters and numbers with no special characters  or  blank  spaces). The  \textbf{display name} of the class, that's how the  will be displayed everywhere else (useful  for  internationalization  purposes, for example) and can contain any kind of UTF-8 character. A \textbf{description} (useful  to  document  the  data  model). If  the class is \textbf{abstract} (abstract classes  cannot  be  instantiated, they're only used to give consistency to the  data  model). The attribute \textbf{countable} is not used currently, but it should be used to mark classes whose instances can have graphical representations, but  they're  not really  part  of  the  inventory,  such  as  \textbf{Slots}. \textbf{In Design Stage} is just a way to mark a class as part of an ongoing data model intervention, and thus, classes with that attribute set to true can not be instantiated. \textbf{Color} is the color of the default square icon used to display the object in a tree or view. This icon will be used as long as the \textbf{Small Icon} attribute is null. \textbf{Small Icon} is the icon that will be used in trees and its size can't exceed 16x16 pixels. \textbf{Icon} is the icon used in views, and has a maximum size of 32x32 pixels.
+				\item \textbf{General:} Contains the intrinsic properties  of  the class: \textbf{name} (can contain only letters and numbers with no special characters  or  blank  spaces). The  \textbf{display name} of the class, that's how it  will be displayed everywhere else (useful  for  internationalization  purposes, for example) and can contain any kind of UTF-8 character. A \textbf{description} (useful  to  document  the  data  model). If  the class is \textbf{abstract} (abstract classes  cannot  be  instantiated, they're only used to give consistency to the  data  model). The attribute \textbf{countable} is not used currently, but it should be used to mark classes whose instances can have graphical representations, but  they're  not really  part  of  the  inventory,  such  as  \textbf{Slots}. \textbf{In Design Stage} is just a way to mark a class as part of an ongoing data model intervention, and thus, classes with that attribute set to true can not be instantiated. \textbf{Color} is the color of the default square icon used to display the object in a tree or view. This icon will be used as long as the \textbf{Small Icon} attribute is null. \textbf{Small Icon} is the icon that will be used in trees and its size can't exceed 16x16 pixels. \textbf{Icon} is the icon used in views, and has a maximum size of 32x32 pixels.
 				\begin{framed} {\large \textbf{Important}}
 					\begin{itemize}
 						\item All user-created classes are set In Design Stage = \textbf{\textcolor{green}{true}} by default. You won't be able to create objects of these classes until you set it to \textbf{\textcolor{blue}{false}}.
-						\item As a convention, all abstract classes have the prefix \textbf{Generic}. Note that a few core classes (like \textbf{InventoryObject} or \textbf{\textcolor{green}{true}}) are abstract are the exception to this rule. You, however, should try to follow this convention as much as possible.
+						\item As a convention, all abstract classes have the prefix \textbf{Generic}. Note that a few core classes (like \textbf{InventoryObject} or \textbf{\textcolor{green}{true}}) are abstract and are the exception to this rule. You, however, should try to follow this convention as much as possible.
 					\end{itemize}
 				\end{framed}
 				\item The second section  contains the class fields (attributes). In the  figure\ref{fig:properties_class_node}, class Router  has six attributes: name, state, conditions, vendor, serialNumber and creationDate. Click the button next to the attribute name to customize it (see figure~\ref{fig:class_attribute_details}).
@@ -265,7 +265,7 @@
 			
 			\begin{framed} {\large \textbf{Important}}
 				\begin{itemize}
-					\item You may lose information when changing an attribute's type. make sure the conversion to the new type is possible before you do it.
+					\item You may lose information when changing an attribute's type. Make sure the conversion to the new type is possible before you do it.
 					\item Although there's a Cancel button at the bottom of the window, it does not	really work. When you perform a change, it's saved immediately.
 				\end{itemize}
 			\end{framed}
@@ -276,7 +276,7 @@
 				\caption{Class \textbf{Router} context menu}
 				\label{fig:class_node_menu}
 			\end{figure}
-			New subclasses inherit the parent class attributes. Classes with instances or subclasses can not be deleted (this is  a  feature to avoid unintended loss of  data). Also, attribute \textbf{name} can not be deleted.
+			New subclasses inherit the parent class attributes. Classes with instances or subclasses can not be deleted (this is  a  feature to avoid unintended loss of data). Also, attribute \textbf{name} can not be deleted.
 			\begin{framed} {\large \textbf{Important}}
 				It's highly recommended \textbf{\textcolor{red}{NOT}} to rename abstract core classes, as some of them are used internally to support many features and renaming them may turn the system unstable.
 			\end{framed}
@@ -313,7 +313,7 @@
 	Another key concept in Kuwaiba is containment. It consists of the ability to define what kind of objects can be created within others. For example, a \textbf{Country} can be inside a \textbf{Continent}, but can't be inside a \textbf{Rack}. A \textbf{Port} is usually within a \textbf{Board}, and not inside a \textbf{City}. These business rules can be defined using the Containment Manager.
 	
 	\subsection{Standard Containment Hierarchy} \label{sec:standard_containment_hierarchy}
-	The main window is divided in two panels (see figure~\ref{fig:standard_containment_manager}, zoom in the image to see the details). The one on the left is a tree that holds all the classes plus the \textbf{Navigation Tree Root}. The children of the left-side tree node are the possible classes that can be contained. In the figure~\ref{fig:standard_containment_manager} there are five nodes expanded: \textbf{City}, that has one node inside: \textbf{Building}. That means that below a given city, you will only be able to add \textbf{Building} objects. Likewise, inside a \textbf{Continent} you can only create instances of \textbf{Country}, and inside those instances, only objects of class \textbf{City}. Under the root of the Navigation Tree, only instances of \textbf{Continent} are to be created. Finally, only \textbf{OpticalPorts} are supported under \textbf{DWDMBoards}. If for your operation Continents are not relevant, or if your routers do not have boards, but only ports, simplify the hierarchy as much as you want to meet your needs. To remove a possible children class, just right-click on it and select “Remove”, and instances from that class will no longer be available to be added under the parent class, though the objects created already will remain linked to the respective parent objects.
+	The main window is divided in two panels (see figure~\ref{fig:standard_containment_manager}, zoom in the image to see the details). The one on the left is a tree that holds all the classes plus the \textbf{Navigation Tree Root}. The children of the left-side tree node are the possible classes that can be contained. In the figure~\ref{fig:standard_containment_manager} there are five nodes expanded: \textbf{City}, that has one node inside: \textbf{Building}. That means that below a given city, you will only be able to add \textbf{Building} objects. Likewise, inside a \textbf{Continent} you can only create instances of \textbf{Country}, and inside those instances, only objects of class \textbf{City}. Under the root of the Navigation Tree, only instances of \textbf{Continent} are to be created. Finally, only \textbf{OpticalPorts} are supported under \textbf{DWDMBoards}. If for your operation Continents are not relevant, or if your routers do not have boards, but only ports, simplify the hierarchy as much as you want to meet your needs. To remove a possible children class, just right-click on it and select “Remove”, and instances from that class will no longer be available to be added under the parent class, though the objects already created will remain linked to the respective parent objects.
 	
 	\begin{figure}[h!]
 		\centering
@@ -323,7 +323,7 @@
 	\end{figure}
 	
 	\subsection{Special Containment Hierarchy} \label{sec:special_containment_hierarchy}
-	The special containment hierarchy (see figure~\ref{fig:special_containment_manager}) is used to define the business rules for special children see \textbf{\nameref{sec:extra_explorers_children_explorer}}. For example a cables inside a conduit connecting two buildings in this scenario to configure the hierarchy for a wire container drag links like (ElectricalLink, OpticalLink, PowerLink, RadioLink or for simply used the GenericPhysicalLink) from the right panel to the WireContainer class in the left panel, and in this way using the \textbf{\nameref{sec:extra_explorers_children_explorer}} you can create special children for a conduit.
+	The special containment hierarchy (see figure~\ref{fig:special_containment_manager}) is used to define the business rules for special children see \textbf{\nameref{sec:extra_explorers_children_explorer}}. For example a cable inside a conduit connecting two buildings: in this scenario to configure the hierarchy for a wire container drag links like (ElectricalLink, OpticalLink, PowerLink, RadioLink or for simply used the GenericPhysicalLink) from the right panel to the WireContainer class in the left panel, and in this way using the \textbf{\nameref{sec:extra_explorers_children_explorer}} you can create special children for a conduit.
 	
 	\begin{figure}[h!]
 		\centering
@@ -334,7 +334,7 @@
 	
 	\begin{framed} {\large \textbf{Important}}
 		\begin{itemize}
-			\item To avoid adding one by one many classes to a parent, you can use the flexibility of the data model as a hierarchical structure. For example, a \textbf{Rack} may contain within many types of equipment (routers, DDFs, switches, battery banks, etc). Instead of adding one by one each of these classes, you can add a common super class and all of them will be added automatically. For this example a common super class for most of those classes could be \textbf{GenericCommunicationsElement}.
+			\item To avoid adding one by one many classes to a parent, you can use the flexibility of the data model as a hierarchical structure. For example, a \textbf{Rack} may contain within many types of equipment (routers, DDFs, switches, battery banks, etc). Instead of adding each of these classes one by one, you can add a common super class and all of them will be added automatically. For this example a common super class for most of those classes could be \textbf{GenericCommunicationsElement}.
 			\item To search for a particular class, just select any node in the desired side of the panel and type the first letters of the class name. If there are many occurrences of the term, jump from one to another using the F3 key.
 			\item The changes are applied immediately, however, if you happen to not see them reflected, press the Refresh Cache button \includegraphics[width=0.5cm]{img/icon_refresh_cache.png} in the main toolbar (see table~\ref{tab:toolbar_icons}).
 		\end{itemize}
@@ -369,31 +369,31 @@
 	\end{figure}
 	\begin{itemize}
 		\item \textbf{New:} The list of object types that can be contained for the selected element type according to the configured Containment Hierarchy. In this case, a \textbf{Rack} can contain \textbf{DDFs}, \textbf{ODFs}, \textbf{Routers}, etc.
-		\item \textbf{New (Multiple):} Crates a defined number of objects at once using a given name pattern see \textbf{\nameref{app:AppendixA}} figure~\ref{fig:new_multiple}.
+		\item \textbf{New (Multiple):} Creates a defined number of objects at once using a given name pattern see \textbf{\nameref{app:AppendixA}} figure~\ref{fig:new_multiple}.
 			\begin{figure}[h!]
 				\centering
 				\includegraphics[width=0.5\linewidth]{img/new_multiple.png}
 				\caption{Creation of a \textbf{Router} set}
 				\label{fig:new_multiple}
 			\end{figure}
-		\item \textbf{New from template:} Crates a containment structure. See more details in the chapter \nameref{sec:template_manager}
+		\item \textbf{New from template:} Creates a containment structure. See more details in the chapter \nameref{sec:template_manager}
 		\item \textbf{Copy:} A plain copy operation.
 		\item \textbf{Cut:} A plain cut operation.
 		\item \textbf{Paste:} A plain paste operation. You can only paste objects where it is allowed according to the configured Containment Hierarchy.
-		\item \textbf{Update:} Updates the node information. Useful when a changed has made to the object from a external source (e.g. another user) or if you create a new list type affecting one of the attributes of the selected element. In this case, if you, for example, create an instance of \textbf{EquipmentVendor} (this will add a new entry to the \textbf{vendor} attribute list)
-		\item \textbf{Edit:} Opens a Property Sheet to edit the attributes values of the selected Inventory object node.
+		\item \textbf{Update:} Updates the node information. Useful when a change has been made to the object from an external source (e.g. another user) or if you create a new list type affecting one of the attributes of the selected element. In this case, if you, for example, create an instance of \textbf{EquipmentVendor} (this will add a new entry to the \textbf{vendor} attribute list)
+		\item \textbf{Edit:} Opens a Property Sheet to edit the attribute values of the selected Inventory object node.
 		\item \textbf{Delete:} Deletes the object. This will fail if the object has an incoming relationship, for example, a \textbf{Port} connected to a cable.
 		\item \textbf{Reports:} The reports associated to the objects of this class. In this case, \textbf{Rack} has a report called \textbf{Rack Usage}. If no reports are associated, this entry will appear grayed out.
 		\item \textbf{Relate to service:} All inventory objects can be associated to an existing service. See more details in the chapter \nameref{sec:service_manager}.
 		\item \textbf{Release from Service:} Removes the association between an object(resource) and a service. If the object is not related to any service, this option will appear grayed out.
 		\item \textbf{Add to Bookmark Folder:} All inventory objects can be added to an existing Bookmark Folder. See more details in the chapter \nameref{sec:bookmarks}.
-		\item \textbf{Remove from Bookmark Folder:} Removes the association between an object (bookmark) and a Bookmark Folder. If the object is not related to any Bookmark Folder, this option appear grayed out.
-		\item \textbf{Audit Trail:} This will display all the audit trail entries for the selected object, that is, all the changes made to the it.
-		\item \textbf{Relate to Project:} All inventory object can be a resource of an existing Project. See more details in the chapter \nameref{sec:projects}
-		\item \textbf{Release from Project:} Removes a selected object (resource) form a Project. If the object is not related to any Project, this option appear grayed out.
+		\item \textbf{Remove from Bookmark Folder:} Removes the association between an object (bookmark) and a Bookmark Folder. If the object is not related to any Bookmark Folder, this option appears grayed out.
+		\item \textbf{Audit Trail:} This will display all the audit trail entries for the selected object, that is, all the changes made to it.
+		\item \textbf{Relate to Project:} All inventory objects can be a resource of an existing Project. See more details in the chapter \nameref{sec:projects}
+		\item \textbf{Release from Project:} Removes a selected object (resource) form a Project. If the object is not related to any Project, this option appears grayed out.
 		\item \textbf{Relate to Contract:} All inventory objects can be associated to an existing Contract. See more details in chapter \nameref{sec:contract_manager}
-		\item \textbf{Release from Contract:} Removes the association between an object a contract. If the object is not related to any contract, this option will appear grayed out.
-		\item \textbf{Open a Navigation tree from Here:} Opens a Navigation tree whose root node will be the selected object. Useful when you want to explore an object with a many containment levels below.
+		\item \textbf{Release from Contract:} Removes the association between an object and a contract. If the object is not related to any contract, this option will appear grayed out.
+		\item \textbf{Open a Navigation tree from Here:} Opens a Navigation tree whose root node will be the selected object. Useful when you want to explore an object with as many containment levels below.
 		\item \textbf{Show More Information:} Shows the database id of the selected object. Useful for troubleshooting purposes. It will also show the object's complete containment structure.
 			\begin{figure}[h!]
 				\centering
@@ -412,7 +412,7 @@
 	Apart from the main navigation tree, there are also two explorers that are very useful to navigate through domain-specific models. Both explorers are located in the Tools $\rightarrow$ Navigation menu.
 
 	\subsubsection{Relationship Explorer} \label{sec:extra_explorers_relationship_explorer}
-		Allows to see the special relationships of the selected object. When an object makes part of a domain-specific model (SDH, Physical Connections, MPLS, Software Licensing, etc) there are special bounds to other objects called \textbf{relationships} they have names documented on model-basis, and they can be seen using this explorer. In the figure~\ref{fig:navigation_tree_relationship_explorer}, it is depicted an \textbf{OpticalPort} with three relationships, one called \textbf{parent}, which all inventory objects has and it is used to navigate in the containment structure, the \textbf{endpointA} used in the Physical Connections model and it indicates that this port is the endpoint to a physical connection, probably a fiber optic. It also has a relationship called \textbf{uses}, which makes part of the Service management model. It indicates that the service called PDH Service-01 uses that port as a resource.
+		Allows to see the special relationships of the selected object. When an object makes part of a domain-specific model (SDH, Physical Connections, MPLS, Software Licensing, etc) there are special bounds to other objects called \textbf{relationships}. They have names documented on model-basis, and they can be seen using this explorer. In the figure~\ref{fig:navigation_tree_relationship_explorer}, it is depicted an \textbf{OpticalPort} with three relationships, one called \textbf{parent}, which all inventory objects has and is used to navigate in the containment structure, the \textbf{endpointA} used in the Physical Connections model and it indicates that this port is the endpoint to a physical connection, probably a fiber optic. It also has a relationship called \textbf{uses}, which makes part of the Service management model. It indicates that the service called PDH Service-01 uses that port as a resource.
 		
 		\begin{figure}[h!]
 			\centering
@@ -421,7 +421,7 @@
 			\label{fig:navigation_tree_relationship_explorer}
 		\end{figure}
 		
-		In the Relationship Explorer you have a toolbar with one button which allows you navigate through the special relationships by means of a graphical representation, you can open the canvas figure~\ref{fig:graphical_representation_relationships} just right click in the icon \includegraphics[width=0.5cm]{img/icon_graphical_representation_relationships.png}		
+		In the Relationship Explorer you have a toolbar with one button which allows you to navigate through the special relationships by means of a graphical representation. You can open the canvas figure~\ref{fig:graphical_representation_relationships} just right click in the icon \includegraphics[width=0.5cm]{img/icon_graphical_representation_relationships.png}		
 						
 		\begin{figure}[h!]
 			\centering
@@ -430,7 +430,7 @@
 			\label{fig:graphical_representation_relationships}
 		\end{figure}
 			
-		In the canvas figure~\ref{fig:graphical_representation_relationships} you have a toolbar with a set of option listed in the Table~\ref{tab:graphical_representation_relationships_toolbar_icons}.
+		In the canvas figure~\ref{fig:graphical_representation_relationships} you have a toolbar with a set of options listed in the Table~\ref{tab:graphical_representation_relationships_toolbar_icons}.
 			
 		\begin{table}[h!]
 			\centering
@@ -447,7 +447,7 @@
 		\end{table}
 			
 		\subsubsection{Special Children Explorer} \label{sec:extra_explorers_children_explorer}							
-		The special children are children as in the containment hierarchy concept, but used in domain-specific models, which gives them particular behavior depending on the situation (that is, they can't be handled as simple objects in the navigation tree, because, for example, deleting them may require to perform other tasks but just removing the object from the database as they make part of a complex workflow). This is the case of the cables inside a conduit connecting two buildings. You can find more details about this scenario in the chapter \textbf{\nameref{sec:physical_connections}}.
+		The special children are children as in the containment hierarchy concept, but used in domain-specific models, which gives them particular behavior depending on the situation (that is, they can't be handled as simple objects in the navigation tree because, for example, deleting them may require to perform tasks other than just removing the object from the database as they make part of a complex workflow). This is the case of the cables inside a conduit connecting two buildings. You can find more details about this scenario in the chapter \textbf{\nameref{sec:physical_connections}}.
 						
 		\begin{figure}[h!]
 			\centering
@@ -456,7 +456,7 @@
 			\label{fig:navigation_tree_special_children_explorer}
 		\end{figure}
 		
-		Every node in the special children explorer has a set of actions, some will be active for all objects, some depend on the type of element that is selected. In the figure~\ref{fig:navigation_tree_special_children_explorer} you can see the actions enabled for a WireContainer object. The actions are the same that in the Navigation Tree with the next exceptions:
+		Every node in the special children explorer has a set of actions, some will be active for all objects, some depend on the type of element that is selected. In the figure~\ref{fig:navigation_tree_special_children_explorer} you can see the actions enabled for a WireContainer object. The actions are the same as in the Navigation Tree with the following exceptions:
 		
 		\begin{itemize}
 			\item \textbf{New Special:} The list of special object types that can be contained for the selected element type according to the configured Special Containment Hierarchy.
@@ -467,14 +467,14 @@
 				\caption{Creation of a \textbf{OpticalLink} set}
 				\label{fig:new_special_multiple}
 			\end{figure}			
-			\item \textbf{New Special from template:} Crates a containment structure. See more details in the chapter \nameref{sec:template_manager}
+			\item \textbf{New Special from template:} Creates a containment structure. See more details in the chapter \nameref{sec:template_manager}
 		\end{itemize}
 		
 		
 			
 	\newpage
 	\section{Template Manager} \label{sec:template_manager}
-	In many scenarios there are some containment structures that are created recurrently, like Building $\rightarrow$ Floor $\rightarrow$ Room $\rightarrow$ Rack, or ODF/DDFs with the same number of ports (12/24/36/48/72/96/144), or simply equipment with the same set of attributes, for example all the routers of certain model: The vendor, number of rack units, slots, etc will be always the same. Creating them from scratch every time is a tedious task. For this reason, Kuwaiba provides a module that allows you to create template of objects which actual inventory elements can be created from. Go to Tools $\rightarrow$ Template Manager to open it.
+	In many scenarios there are some containment structures that are created recurrently, like Building $\rightarrow$ Floor $\rightarrow$ Room $\rightarrow$ Rack, or ODF/DDFs with the same number of ports (12/24/36/48/72/96/144), or simply equipment with the same set of attributes, for example all the routers of a certain model: The vendor, number of rack units, slots, etc will be always the same. Creating them from scratch every time is a tedious task. For this reason, Kuwaiba provides a module that allows you to create templates of objects out of actual inventory elements. Go to Tools $\rightarrow$ Template Manager to open it.
 	
 	\begin{figure}[h!]
 		\centering
@@ -483,7 +483,7 @@
 		\label{fig:template_manager_intro}
 	\end{figure}
 
-	What you will see is a tree similar to that of the \ref{fig:data_model_manager}. The only difference is that no abstract or list type classes are listed. In the tree, locate the class which you want create the template for, right click the corresponding node and select \textit{New Template}.
+	What you will see is a tree similar to that of the \ref{fig:data_model_manager}. The only difference is that no abstract or list type classes are listed. In the tree, locate the class which you want to create the template for, right click on the corresponding node and select \textit{New Template}.
 	
 	\begin{figure}[h!]
 		\centering
@@ -510,7 +510,7 @@
 		\label{fig:template_manager_template_properties}
 	\end{figure}
 	
-	Also is available create template using special objects see \textbf{\nameref{sec:extra_explorers_children_explorer}}, in the \ref{fig:template_with_special_objects} show the template for a Non-Armored Loose Tube Cable. 
+	You can also create templates from special objects (see \textbf{\nameref{sec:extra_explorers_children_explorer}}). The Figure \ref{fig:template_with_special_objects} shows the template for a Non-Armored Loose Tube Cable. 
 	
 	\begin{figure}[h!]
 		\centering
@@ -527,7 +527,7 @@
 		\caption{Template with a complex containment structure}
 		\label{fig:template_manager_template_containment}
 	\end{figure}
-	Copy, paste and rename operations work as they do with normal inventory objects and you can use them to construct your templates. Remember that you have to configure correctly the standard (see \ref{fig:standard_containment_manager}) and special (see \ref{fig:special_containment_manager}) containment hierarchy  before creating templates.\\
+	Copy, paste and rename operations work as they do with normal inventory objects and you can use them to construct your templates. Remember that you have to correctly configure the standard (see \ref{fig:standard_containment_manager}) and special (see \ref{fig:special_containment_manager}) containment hierarchy  before creating templates.\\
 	Now you can create objects from templates. Just right-click on the parent object and select the \textbf{New from Template...} action.\\
 	\begin{figure}[h!]
 		\centering
@@ -547,7 +547,7 @@
 	
 	\newpage
 	\section{List Type Manager} \label{sec:list_type_manager}
-	Most of the attributes are primitive types (String, Integer, Booleans, etc), however, there are some more complex that point to another object in the database. This is the case of attributes such as \textit{vendor}, which points to an object holding the information about the vendor of that equipment (support lines, account manager, etc) or \textit{state}, that refers to the current operational state of the equipment (Working, Not Working, Stored, etc) and the state itself is an object, because it may hold information about what's the next allowed states, for example. Many objects in the database will have the same \textit{vendor}, and many other will have the same \textit{state}. In short, list types are those kind of attributes that point to an element in a limited set of objects. In terms of relational databases, you can see it as a many-to-one kind of relationships. To manage the existing list types and its instances, use the \textbf{\nameref{sec:data_model_manager}} and the \textbf{\nameref{sec:list_type_manager}}. \newline
+	Most of the attributes are primitive types (String, Integer, Booleans, etc), however, there are some more complex that point to another object in the database. This is the case of attributes such as \textit{vendor}, which points to an object holding the information about the vendor of that equipment (support lines, account manager, etc) or \textit{state}, that refers to the current operational state of the equipment (Working, Not Working, Stored, etc) and the state itself is an object, because it may hold information about what are the next allowed states, for example. Many objects in the database will have the same \textit{vendor}, and many other will have the same \textit{state}. In short, list types are those kind of attributes that point to an element in a limited set of objects. In terms of relational databases, you can see it as a many-to-one kind of relationship. To manage the existing list types and its instances, use the \textbf{\nameref{sec:data_model_manager}} and the \textbf{\nameref{sec:list_type_manager}}. \newline
 	
 	To add new list types, add a subclass under GenericObjectList directly or any of its utility subclasses. List types are like any other class, you can customize them as needed.
 	\begin{figure}[h!]
@@ -581,7 +581,7 @@
 	\newpage	
 	\section{Queries} \label{sec:querying}
 	\subsection{Graphical Query Editor} 
-	The query editor let you make a search with a graphical interface, based on nodes to represent the search criteria and connections to express the relationships. Once selected, clicking in the icon \includegraphics[width=0.5cm]{img/icon_query_manager.png} you will get a blank canvas with a toolbar on top with the following elements:
+	The query editor lets you make a search with a graphical interface, based on nodes to represent the search criteria and connections to express the relationships. Once selected, by clicking on the icon \includegraphics[width=0.5cm]{img/icon_query_manager.png} you will get a blank canvas with a toolbar on top with the following elements:
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=1.1\linewidth]{img/query_tool_bar.png}
@@ -611,7 +611,7 @@
 			\midrule
 			\includegraphics[width=2.2cm]{img/icon_logical_connector_query.png} & Logical connector used to chain the query predicates, by default AND\\
 			\midrule
-			\includegraphics[width=2.2cm]{img/icon_result_limit_query.png} & Max number of results per page, default 10, only integer values are allowed\\
+			\includegraphics[width=2.2cm]{img/icon_result_limit_query.png} & Max number of results per page, default 10; only integer values are allowed\\
 		\end{tabular}	
 		\caption{Query Toolbar items}
 		\label{tab:query_toolbar_icons}
@@ -624,7 +624,7 @@
 		\caption{Node added after selecting a element class}
 		\label{fig:query_node_added}
 	\end{figure}
-	in the figure~\ref{fig:query_node_added} the class Router was selected, and the corresponding node is created. You can search for a wider range of elements if you select an abstract class (often called GenericSomething). In the example above will search for all Routers in the database, but if you choose GenericPhysicalNode it will search for all physical nodes, this is, all objects that can be connected using a container (see Chapter \textbf{\nameref{sec:physical_connections}} for more information about containers). That includes: buildings, rooms, floors, towers, shelters and facilities. Note that the root class node is colored green.
+	in the figure~\ref{fig:query_node_added} the class Router was selected, and the corresponding node is created. You can search for a wider range of elements if you select an abstract class (often called GenericSomething). In the example above it will search for all Routers in the database, but if you choose GenericPhysicalNode it will search for all physical nodes, that is, all objects that can be connected using a container (see Chapter \textbf{\nameref{sec:physical_connections}} for more information about containers). That includes: buildings, rooms, floors, towers, shelters and facilities. Note that the root class node is colored green.
 	
 	\newpage
 	\begin{framed} {\large \textbf{Important}}
@@ -660,7 +660,7 @@
 		\label{tab:query_results_toolbar_icons}
 	\end{table}
 	
-	Now, if we want to see more fields related to the found elements, we should use the "field visibility icons". They're those eyes you can see along with the attributes names. By default none of them are selected, which means that no additional fields will be shown in the result list but the objects themselves. Think of them like the parts of a conventional SQL sentence that follows the SELECT clause: \textbf{SELECT creationDate, serialNumber FROM Router}, you can obtain a query like this pushing the toggle buttons with the eyes on it beside \textbf{serialNumber} and \textbf{creationDate} as you can see in the figure~\ref{fig:query_node_attributes_selected}
+	Now, if we want to see more fields related to the  elements found, we should use the "field visibility icons". They're those eyes you can see along with the attributes names. By default none of them are selected, which means that no additional fields will be shown in the result list but the objects themselves. Think of them like the parts of a conventional SQL sentence that follows the SELECT clause: \textbf{SELECT creationDate, serialNumber FROM Router}. You can obtain a query like this pushing the toggle buttons with the eyes on it beside \textbf{serialNumber} and \textbf{creationDate} as you can see in the figure~\ref{fig:query_node_attributes_selected}
 	
 	\begin{figure}[h!]
 		\centering
@@ -678,7 +678,7 @@
 		\label{fig:query_results_attributes_selected}
 	\end{figure}
 	
-	Now you may be wondering why the attributes \textbf{vendor}, \textbf{conditions} and \textbf{state} have their visibility icons disabled. That's because they're list type attributes (See \ref{sec:list_type_manager} for details about list type attributes).  Making again a comparison SQL, these attributes are related to other \textit{tables} (other classes, actually). You have two ways to use these list type attributes as criteria: the first is just selecting the attribute's checkbox and choosing from a list the value that you'd like to use:
+	Now you may be wondering why the attributes \textbf{vendor}, \textbf{conditions} and \textbf{state} have their visibility icons disabled. That's because they're list type attributes (See \ref{sec:list_type_manager} for details about list type attributes).  Comparing again to SQL, these attributes are related to other \textit{tables} (other classes, actually). You have two ways to use these list type attributes as criteria: the first is just selecting the attribute's checkbox and choosing from a list the value that you'd like to use:
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.9\linewidth]{img/query_vendor_selected.png}
@@ -686,7 +686,7 @@
 		\label{fig:query_vendor_selected}
 	\end{figure}
 	
-	Or you can pick manually what fields belonging to the relationship must be included in the result set. To do this, you first have to toggle the simple class node filter (in our example labeled as \textbf{Vendor [Filter]}) to a detailed view. You can do by right-clicking on the node's header and choosing the option \textbf{Toggle Simple/Detailed view}:
+	Or you can pick manually what fields belonging to the relationship must be included in the result set. To do this, you first have to toggle the simple class node filter (in our example labeled as \textbf{Vendor [Filter]}) to a detailed view. You can do that by right-clicking on the node's header and choosing the option \textbf{Toggle Simple/Detailed view}:
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.9\linewidth]{img/query_toggle_detail_view.png}
@@ -706,7 +706,7 @@
 	
 	\begin{framed} {\large \textbf{Example}}
 		\begin{itemize}
-			\item We want to search for all routers and we want to see the fields creation date, serial number, vendor and operational state. That would be:
+			\item We want to search for all routers and we want to see the fields creation date, serial number, vendor and operational state. That would take:
 			\\1. Enabling the visibility icon for the attribute \textbf{creationDate}
 			\\2. Checking the checkbox in the attributes  \textbf{vendor} and state and expanding the resulting nodes (we'll talk about the checkbox later in this chapter)
 			\\3. Enabling the visibility icon for the attribute  \textbf{name} in both newly spawned nodes.
@@ -733,7 +733,7 @@
 		The operational states and vendors were created using the List Manager (under OperationalState and Vendor, respectively) and their properties set in the Properties window.
 	\end{framed}			
 	
-	The checkboxes are used to construct the query predicates. Every time you select one of them, a new node is spawned. If the attribute is a basic one (String, Integer, Float, Boolean or Date), you will get a node like these (otherwise you will get the class nodes seen above):
+	The checkboxes are used to construct the query predicates. Every time you select one of them, a new node is spawned. If the attribute is a basic one (String, Integer, Float, Boolean or Date), you will get a node like one of these (otherwise you will get the class nodes seen above):
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.3\linewidth]{img/query_string_filter.png}
@@ -766,17 +766,17 @@
 		\label{fig:query_example_2}
 	\end{figure}
 	
-	The condition \textbf{Equal to} is case sensitive, while \textbf{like} it is not.
+	The condition \textbf{Equal to} is case sensitive, while \textbf{like} is not.
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=1.1\linewidth]{img/query_example_2_results.png}
 		\caption{Result set for the complex query}
 		\label{fig:query_example_2_results}
 	\end{figure}
-	If you hit the “Next Page” button \includegraphics[width=0.5cm]{img/icon_next_page.png} you will get the second page of result if theres is one and so on, The “Show all” button \includegraphics[width=0.5cm]{img/icon_retrieve_all.png} will retrieve the full list of results.
+	If you hit the “Next Page” button \includegraphics[width=0.5cm]{img/icon_next_page.png} you will get the second page of results if there is one and so on. The “Show all” button \includegraphics[width=0.5cm]{img/icon_retrieve_all.png} will retrieve the full list of results.
 	
 	\subsection{Exporting results}
-	You can export the results in four formats: CSV, XML, Microsoft Word (DOC) and Open Document Text (ODT). So far is only possible to export to CSV and XML. This is done by pressing the Export icon \includegraphics[width=0.5cm]{img/icon_export.png}, which will open a window to choose the location of the output file and the format:
+	You can export the results in four formats: CSV, XML, Microsoft Word (DOC) and Open Document Text (ODT). So far it is only possible to export to CSV and XML. This is done by pressing the Export icon \includegraphics[width=0.5cm]{img/icon_export.png}, which will open a window to choose the location of the output file and the format:
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.5\linewidth]{img/query_result_exportmenu.png}
@@ -784,9 +784,9 @@
 		\label{fig:query_result_exportmenu}
 	\end{figure}
 	
-	\textbf{Export to} contains the file destination (once you choose a directory with the file chooser, a random name will be generated, but you can change it as you wish). Note that writing file the extension is not mandatory, since it will detect the type and append the extension before to save the file.  
+	\textbf{Export to} contains the file destination (once you choose a directory with the chosen file, a random name will be generated, but you can change it as you wish). Note that writing file the extension is not mandatory, since it will detect the type and append the extension before to save the file.  
 	
-	\textbf{Format} to let's you choose the output format. The configure button \includegraphics[width=0.5cm]{img/icon_edit_saved_query.png} lets you set some particular options regarding to the selected format. Currently only CSV has advanced options:		
+	\textbf{Format} lets you choose the output format. The configure button \includegraphics[width=0.5cm]{img/icon_edit_saved_query.png} lets you set some particular options regarding to the selected format. Currently only CSV has advanced options:		
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.3\linewidth]{img/query_exports_settings.png}
@@ -801,19 +801,19 @@
 	Note: The XML structure used to export the results can be checked in kuwaiba's wiki\footnote{kuwaiba queries in xml format \detokenize{http://neotropic.co/kuwaiba/wiki/index.php?title=XML_Documents#To_Save_Queries/}}.
 	
 	\subsection{Saving and restoring queries}
-	The queries can be saved as public or private. It's probable that someone wants to execute the same query on a regular basis and if that's the case for many users, he/she would want to let other users to use the such query. After you design a query, you can save it and this small window will prompt for some basic information:
+	The queries can be saved as public or private. It's probable that someone wants to execute the same query on a regular basis and if that's the case for many users, he/she would want to let other users use such query. After you design a query, you can save it and this small window will prompt for some basic information:
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.5\linewidth]{img/query_save_menu.png}
-		\caption{Setting the query metadata before to save it}
+		\caption{Setting the query metadata before saving it}
 		\label{fig:query_save_menu}
 	\end{figure}
 	
 	\textit{Name} is the query name.
 	\textit{Description} is the query description
-	The last check box lets you to make the current query public. By default, the query is private, so you don't pollute the list of available queries for the rest of the users, you can change these settings anytime using the configure button \includegraphics[width=0.5cm]{img/icon_edit_saved_query.png}.
+	The last check box lets you make the current query public. By default, the query is private, so you don't pollute the list of available queries for the rest of the users. You can change these settings anytime using the configure button \includegraphics[width=0.5cm]{img/icon_edit_saved_query.png}.
 	To open a query, just use the open button\includegraphics[width=0.5cm]{img/icon_open.png}, then you will be asked if you want to see only your queries or both your queries and the public ones:
-	\textit{clicking in Cancel will show you both, clicking in Ok will list only those owned by you}
+	\textit{clicking on Cancel will show you both private and public, clicking on Ok will list only those owned by you}
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.7\linewidth]{img/query_save_as_private.png}
@@ -837,14 +837,14 @@
 	\end{figure}
 	
 	\begin{framed} {\large \textbf{Important}}
-		Please note that when a query is saved the values used to filter won't be saved,since the filter nodes are used as open parameters. For example: in figure~\ref{fig:query_filter_value_not_saved}, the value \textit{Manchester} won't be saved anywhere. Just the structure and the condition (\textbf{like}, in this case). The blue box is a parameter. It's supposed that you will fill it with the value you need depending on what you're looking for.
+		Please note that when a query is saved the values used to filter won't be saved, since the filter nodes are used as open parameters. For example: in figure~\ref{fig:query_filter_value_not_saved}, the value \textit{Manchester} won't be saved anywhere. Just the structure and the condition (\textbf{like}, in this case). The blue box is a parameter. It's supposed that you will fill it with the value you need depending on what you're looking for.
 		\\Note 1: Expanding a list type and not selecting anything from it has the same effect as selecting the value \textbf{None (null)} in the compact view of the filter.
 		\\Note 2: Every time you run a query, a new window with the results will be opened, so don't forget to close those you don't need to save memory.
 	\end{framed}
 	
 	\newpage
 	\section{Pools Manager} \label{sec:pools_manager}
-	This module enables you to manipulate pools of objects. Pools are entities where objects that can't be placed in the standard navigation tree are put. Most of them are logical or administrative elements such as VLANs or VPNs. You can see a pool like a bag where you put things you don't know where else to put. To use this module, click on the icon  \includegraphics[width=0.5cm]{img/icon_pools_manager.png} in the main toolbar or go to the menu item Tools/Pools. It will open a navigation tree similar to the one used to browse through the containment hierarchy. The first time it will be empty, you can add new pools by right-clicking the root new and selecting “New Pool” , as show in the figure below.
+	This module enables you to manipulate pools of objects. Pools are entities where objects that can't be placed in the standard navigation tree are put. Most of them are logical or administrative elements such as VLANs or VPNs. You can see a pool like a bag where you put things you don't know where else to put. To use this module, click on the icon  \includegraphics[width=0.5cm]{img/icon_pools_manager.png} in the main toolbar or go to the menu item Tools/Pools. It will open a navigation tree similar to the one used to browse through the containment hierarchy. The first time it will be empty; you can add new pools by right-clicking the root new and selecting “New Pool”, as show in the figure below.
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.5\linewidth]{img/pools_actions.png}
@@ -852,7 +852,7 @@
 		\label{fig:pools_actions}
 	\end{figure}
 	
-	The dialog box will prompt you for the newly created pool name, its description and what kind of objects do you want to store inside. If you choose, say, “Router”, it will let you store only instances of Router. On the other hand, if you choose an abstract class (this is any starting with “Generic” or one of the core classes like InventoryObject or ViewableObject) you will be able to place instances of any subclass of theirs. 
+	The dialog box will prompt you for the newly created pool name, its description and the kind of objects  you want to store inside. If you choose, let's say, “Router”, it will let you store only instances of Router. On the other hand, if you choose an abstract class (this is any starting with “Generic” or one of the core classes like InventoryObject or ViewableObject) you will be able to place instances of any subclasses of theirs. 
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.5\linewidth]{img/pools_create_new_pool.png}
@@ -869,7 +869,7 @@
 		\label{fig:pools_pool_properties}
 	\end{figure}
 	
-	You can add children to it. By right-clicking the corresponding node you can access to all actions associated to it. 
+	You can add children to it. By right-clicking on the corresponding node you can access to all actions associated to it. 
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.5\linewidth]{img/pools_pool_action.png}
@@ -955,14 +955,14 @@
 				\caption{Error displayed when the rack does not have a valid value of rack units}
 				\label{fig:error_rack_view_not_rackunits}
 			\end{figure}
-			\item The attribute \textbf{rackUnitsNumberingDescending} must exist, if the rack unit sorting has not been set; numbering ascending is assumed
+			\item The attribute \textbf{rackUnitsNumberingDescending} must exist, if the rack unit sorting has not been set numbering ascending is assumed
 			\begin{figure}
 				\centering
 				\includegraphics[width=0.4\linewidth]{img/rack_units_numbering_descending_attribute.png}
 				\caption{Attribute correctly set in a Rack}
 				\label{fig:rack_units_numbering_descending_attribute}
 			\end{figure}
-			\item The attributes \textbf{rackUnits} and \textbf{position} must exist and set to valid values in the elements contained inside the rack. \textbf{rackUnits} in this case, makes reference to the number of rack units occupied by the contained element, while \textbf{position} is the start position of the contained element, 1-based, numbered from top to bottom. Your equipment vendor usually provides this value.
+			\item The attributes \textbf{rackUnits} and \textbf{position} must exist and be set to valid values in the elements contained inside the rack. \textbf{rackUnits} in this case, makes reference to the number of rack units occupied by the contained element, while \textbf{position} is the start position of the contained element, 1-based, numbered from top to bottom. Your equipment vendor usually provides this value.
 			\begin{figure}[h!]
 				\centering
 				\includegraphics[width=0.4\linewidth]{img/rack_view_attributes_contained_element.png}
@@ -986,7 +986,7 @@
 			\label{fig:rack_view_sample_view}
 		\end{figure}
 
-		In the Rack View you have an toolbar to export the view or refresh the last change in the view.
+		In the Rack View you have a toolbar to export the view or refresh the last change in the view.
 		
 		\begin{figure}[h!]
 			\centering
@@ -1017,7 +1017,7 @@
 			\item \textbf{Nodes:} These objects are endpoints to \textit{Containers}. In the default data model you will find classes like: \textbf{Tower}, \textbf{Warehouse}, \textbf{Facility}, \textbf{Shelter}, \textbf{Building}, \textbf{Floor} and \textbf{Room}, but in general, any subclass of \textbf{GenericPhysicalNode} can be a so called \textit{Node}.
 			\textbf{Endpoints:} These objects are endpoints to \textit{Connections}. In practice, they're always some kind of \textbf{Port} (in the data model context, this means all subclasses of \textbf{GenericPort}).
 		\end{itemize}
-		In summary, you can only connect \textit{Nodes} using \textit{Containers} and \textit{Endpoints} using \textit{Connections}. To create new connections, select in the \textbf{\nameref{sec:navigation_tree}} an element and try to connected the desired children using the \nameref{sec:default_view}. For example, if you want to connect two buildings, select the city which is the parent for both. Likewise, if you want to connect a router to an ODF, you probably will have to select the room or the rack they are located. In short, select the nearest common parent between the two elements you want to connect.
+		In summary, you can only connect \textit{Nodes} using \textit{Containers} and \textit{Endpoints} using \textit{Connections}. To create new connections, select in the \textbf{\nameref{sec:navigation_tree}} an element and try to connect the desired children using the \nameref{sec:default_view}. For example, if you want to connect two buildings, select the city which is the parent for both. Likewise, if you want to connect a router to an ODF, you probably will have to select the room or the rack where they are located. In short, select the nearest common parent between the two elements you want to connect.
 		
 		\begin{table}[h!]
 			\centering
@@ -1038,7 +1038,7 @@
 			\end{tabular}
 			\caption{Connection tools}
 		\end{table}
-		Let's put together all this concepts  with some examples. 
+		Let's put together all these concepts  with some examples. 
 		\subsection{Example 1} \label{sec:physical_connections_example_1}
 			In this example, we will create a direct connection between two routers in the same room, but in different racks using a CAT-5 patch as shown in the figure~\ref{fig:l1_example_1}.\newline
 			\begin{figure}[h!]
@@ -1095,7 +1095,7 @@
 				\end{figure}
 			\end{enumerate}
 			
-			And that's it. Double-clicking the connection will add a control point to it. You can add as many as you want, and control its route. The Properties window will get updated accordingly if you select the link or a node.
+			And that's it. Double-clicking on the connection will add a control point to it. You can add as many as you want, and control its route. The Properties window will get updated accordingly if you select the link or a node.
 			\begin{figure}[h!]
 				\centering
 				\includegraphics[width=0.6\linewidth]{img/l1_example_1_final.png}
@@ -1107,7 +1107,7 @@
 			\end{framed}
 			
 		\subsection{Example 2}	
-			The second example is more complex. We will connect two buildings with a conduit that contains fibers. In each building there's a router and an ODF, one of the fiber pairs connecting the buildings, will be linking the two ODFs, and then, from the ODF, we'll patch our way the routers.
+			The second example is more complex. We will connect two buildings with a conduit that contains fibers. In each building there's a router and an ODF. One of the fiber pairs connecting the buildings will be linking the two ODFs, and then, from the ODF, we'll patch our way to the routers.
 			\begin{figure}[h!]
 				\centering
 				\includegraphics[width=0.8\linewidth]{img/l1_example_2.png}
@@ -1146,7 +1146,7 @@
 						\caption{Connection wizard, step 1}
 						\label{fig:l1_example_2_endpoints}
 					\end{figure}			
-					\item In the second step, we fill in the basic fields, but in addition to what we had seen already, it's also necessary to provide information about what's gonna be contained inside the \textbf{WireContainer} and how many of those elements are to be created. Since this example is about connecting fibers, we select \textbf{OpticalLink} in the field \textit{Children type} and 20 in \textit{Num of children} just for the sake of the example.
+					\item In the second step, we fill in the basic fields, but in addition to what we have already seen, it's also necessary to provide information about what's going to be contained inside the \textbf{WireContainer} and how many of those elements are to be created. Since this example is about connecting fibers, we select \textbf{OpticalLink} in the field \textit{Children type} and 20 in \textit{Num of children} just for the sake of the example.
 					\begin{figure}[h!]
 						\centering
 						\includegraphics[width=0.6\linewidth]{img/l1_example_2_basic_info.png}
@@ -1160,14 +1160,14 @@
 						\caption{Final result}
 						\label{fig:l1_example_2_final}
 					\end{figure}
-					\item Once the container has been created, we can now connect a pair of fibers to each side's ODF back port (note the naming used for the ODF ports in the figure~\ref{fig:l1_example_2_layout}). To start a wizard to perform this operation, right-click the container and select the option \textit{Connect links...}
+					\item Once the container has been created, we can now connect a pair of fibers to each side's ODF back port (note the naming used for the ODF ports in the figure~\ref{fig:l1_example_2_layout}). To start a wizard to perform this operation, right-click on the container and select the option \textit{Connect links...}
 					\begin{figure}[h!]
 						\centering
 						\includegraphics[width=0.3\linewidth]{img/l1_example_2_container_context_menu.png}
 						\caption{Container's contextual menu}
 						\label{fig:l1_example_2_container_context_menu}
 					\end{figure}
-					\item This open a window divided in three panels. The side panels let you choose what ports do you want to connect to the fibers in the container. In this example, we will connect the first pair to the ports labeled as \textit{Back} in the ODFs. You can select multiple ports and fibers and connect them at the same time (use the SHIFT key for multiple selection). Note that it's not necessary to connect both sides. Push the \textit{Connect} button on the lower part of the central panel to finish the procedure.
+					\item This open a window divided in three panels. The side panels let you choose what ports you want to connect to the fibers in the container. In this example, we will connect the first pair to the ports labeled as \textit{Back} in the ODFs. You can select multiple ports and fibers and connect them at the same time (use the SHIFT key for multiple selection). Note that it's not necessary to connect both sides. Push the \textit{Connect} button on the lower part of the central panel to finish the procedure.
 					\begin{figure}[h!]
 						\centering
 						\includegraphics[width=\linewidth]{img/l1_example_2_connect_links.png}
@@ -1176,10 +1176,10 @@
 					\end{figure}
 					\begin{framed} {\large \textbf{Important}}
 						\begin{itemize}
-							\item In optical connections, Rx and Tx ports are treated as a single port and a pair of fibers, are actually represented as a single \textbf{OpticalLink}.							
+							\item In optical connections, Rx and Tx ports are treated as a single port and a pair of fibers, actually represented as a single \textbf{OpticalLink}.							
 						\end{itemize}
 					\end{framed}
-					It's possible to explore the contents of a container and see to what fiber the ports are connected to using the explorers in the menu Tools $\rightarrow$ Navigation. In the figure~\ref{fig:l1_example_2_links_in_container} you will see the Special Children explorer when the container is selected in the view. In the figure~\ref{fig:l1_example_2_container_relationships}, the relationship explorer shows the connections of one of the ports in the ODF when selected in the \nameref{sec:navigation_tree}.
+					It's possible to explore the contents of a container and see to what fiber the ports are connected by using the explorers in the menu Tools $\rightarrow$ Navigation. In the figure~\ref{fig:l1_example_2_links_in_container} you will see the Special Children explorer when the container is selected in the view. In the figure~\ref{fig:l1_example_2_container_relationships}, the relationship explorer shows the connections of one of the ports in the ODF when selected in the \nameref{sec:navigation_tree}.
 					\begin{figure}
 						\centering
 						\includegraphics[width=0.3\linewidth]{img/l1_example_2_links_in_container.png}
@@ -1192,7 +1192,7 @@
 						\caption{Exploring the container's relationships}
 						\label{fig:l1_example_2_container_relationships}
 					\end{figure}
-					\item Now we will create an optical patch on each building between the routers and the 1-Front ports of their respective ODFs in a similar way we did in the \textbf{\nameref{sec:physical_connections_example_1}}.
+					\item Now we will create an optical patch in each building between the routers and the 1-Front ports of their respective ODFs in a similar way we did in the \textbf{\nameref{sec:physical_connections_example_1}}.
 					\begin{figure}[h!]
 						\centering
 						\includegraphics[width=0.5\linewidth]{img/l1_example_2_patch_a.png}\\
@@ -1203,7 +1203,7 @@
 					\begin{framed} {\large \textbf{Important}}\\
 							Remember to use an \textbf{OpticalLink} \includegraphics[width=0.5cm]{img/icon_optical_link.png} instead of an \textbf{ElectricalLink} \includegraphics[width=0.5cm]{img/icon_electrical_link.png}.							
 					\end{framed}
-					\item There's still one last step: The ports 1-Front and 1-Back in each ODF are not yet bridged. To do this, we just have to right-click any of the two ports on each ODF and select the option \textit{Connect Mirror Port...}. A mirror port is basically a direct connection between two ports. A cable is a separate object in Kuwaiba, a mirror connection is not even an object, is just a relationship between a port an another with the same parent (that is, a sibling). You can see it as a backplane connection.
+					\item There's still one last step: The ports 1-Front and 1-Back in each ODF are not yet bridged. To do this, we just have to right-click any of the two ports on each ODF and select the option \textit{Connect Mirror Port...}. A mirror port is basically a direct connection between two ports. A cable is a separate object in Kuwaiba, a mirror connection is not even an object, it is just a relationship between a port an another with the same parent (that is, a sibling). You can see it as a backplane connection.
 					\begin{figure}[h!]
 						\centering
 						\includegraphics[width=0.5\linewidth]{img/l1_example_2_mirror_connection_menu.png}
@@ -1211,7 +1211,7 @@
 						\label{fig:l1_example_2_mirror_connection_menu}
 					\end{figure}
 					\newpage
-					This will open a window where you can select what port do you want to be mirror of the selected one. Since 1-Front ports only have one sibling (1-Back), that's the only option available.
+					This will open a window where you can select what port you want to be mirror of the selected one. Since 1-Front ports only have one sibling (1-Back), that's the only option available.
 					\begin{figure}[h!]
 						\centering
 						\includegraphics[width=0.5\linewidth]{img/l1_example_2_mirror_connection_details.png}
@@ -1358,20 +1358,20 @@
 			\label{fig:topology_designer_connections}
 		\end{figure}
 		
-		Don't forget to save the topology with pressing the Save button \includegraphics[width=0.5cm]{img/icon_save.png}. If saved, this topology can be loaded later using the Open button  \includegraphics[width=0.5cm]{img/icon_open.png}
+		Don't forget to save the topology by pressing the Save button \includegraphics[width=0.5cm]{img/icon_save.png}. If saved, this topology can be loaded later using the Open button  \includegraphics[width=0.5cm]{img/icon_open.png}
 	
 	\newpage
     \section{Managing Software Assets} \label{sec:software_assets}
 	    
-	    With  Kuwaiba  is  possible create  software  licenses  and  associate  them  to  existing elements  or  to  keep  them  in  a  temporary  location  until  they  are  actually  used.  A  software license can only be associated to instances of subclasses of class \textbf{GenericApplicationElement}
+	    With  Kuwaiba it is possible to create  software  licenses  and  associate  them  to  existing elements  or  to  keep  them  in  a  temporary  location  until  they  are  actually  used.  A  software license can only be associated to instances of subclasses of class \textbf{GenericApplicationElement}
 	    \begin{figure}[h!]
 	    	\centering
 	    	\includegraphics[width=0.5\linewidth]{img/software_asset_generic_application_element.png}
-	    	\caption{GenericApplicationElement in the the data model}
+	    	\caption{GenericApplicationElement in the  data model}
 	    	\label{fig:software_asset_generic_application_element}
 	    \end{figure}
 	    
-	    By default the data model you  will find the classes in the figure above, but of course, you can create as many more as you want and all of them will be enabled to be associated to software licenses. To customize the properties of a software license, just modify the SoftwareLicense class:
+	    In the defautl data model you will find the classes in the figure above but you can, of course, create as many as you want and all of them will be enabled to be associated to software licenses. To customize the properties of a software license, just modify the SoftwareLicense class:
 	    \begin{figure}[h!]
 	    	\centering
 	    	\includegraphics[width=0.5\linewidth]{img/software_asset_data_model_software_asset.png}
@@ -1397,7 +1397,7 @@
 	    
 	    You  can  also  manually  open  the  \textit{Special  Children}  window  by  going  to  the  menu  Tools $rightarrow$ Navigation $rightarrow$ Special Children. This explorer  window  can  also  be  used  to  other  things, such  as seeing  the contents  of  a Physical  Container  (ducts,  ditches, etc).  
 	    \newline
-	    It’s  also  possible  to  keep  your  spare  licenses  in  a  pool  (see for more details \textbf{\nameref{sec:pools_manager}})
+	    It’s  also  possible  to  keep  your  spare  licenses  in  a  pool  (for more details see \textbf{\nameref{sec:pools_manager}})
 	    \begin{figure}[h!]
 	    	\centering
 	    	\includegraphics[width=0.5\linewidth]{img/software_asset_pool_liceses_not_used.png}
@@ -1416,8 +1416,8 @@
 	\newpage
 	\section{Service Manager} \label{sec:service_manager}
 	
-	The Service Manager allows you to organize all the services in pools, this pools of services belong to customers, these customers are at the same time organized in pools. To open the Services Manager look in the menu for Tools $\rightarrow$ Service Manager or just click in the icon \includegraphics[width=0.5cm]{img/icon_service_manager.png}.   
-	To star using the Service Manager you must create a pool of customers, depending of the loaded data model you can create pools of HomeCustomer or CorporateCustomer or any subclass of GenericCustomer (see \textbf{\nameref{sec:data_model_manager}} if you need to create a different kind of customers).  
+	The Service Manager allows you to organize all the services in pools. These pools of services belong to customers, these customers are at the same time organized in pools. To open the Services Manager look at the menu for Tools $\rightarrow$ Service Manager or just click on the icon \includegraphics[width=0.5cm]{img/icon_service_manager.png}.   
+	To start using the Service Manager you must create a pool of customers; depending on the loaded data model you can create pools of HomeCustomer or CorporateCustomer or any subclass of GenericCustomer (see \textbf{\nameref{sec:data_model_manager}} if you need to create a different kind of customers).  
 
 	\begin{figure}[h!]
 		\centering
@@ -1426,7 +1426,7 @@
 		\label{fig:sm_root_node}
 	\end{figure}
 
-	Once you create your pool of customers you can create new customers, delete the created pool or show it id; as you can see in the \textbf{figure~\ref{fig:sm_pools_service_actions}} you are able to create new customers of type CorporateCustomer or TelecomunicationsOperator ¿why can we create new customers of the class TelecomunicationsOperator if the class of objects of the pool we created was CorporateCustomer? Well we can create customers of that class because TelecomunicationsOperator is a subclass of CorporateCustomer, this is defined in the data model, (see \textbf{\nameref{sec:data_model_manager}} if you need to adjust the model to your needs)
+	Once you create your pool of customers you can create new customers, delete the created pool or show its id; as you can see in the \textbf{figure~\ref{fig:sm_pools_service_actions}} you are able to create new customers of type CorporateCustomer or TelecomunicationsOperator. Why can we create new customers of the class TelecomunicationsOperator if the class of objects of the pool we created was CorporateCustomer? Well, we can create customers of that class because TelecomunicationsOperator is a subclass of CorporateCustomer - this is defined in the data model, (see \textbf{\nameref{sec:data_model_manager}} if you need to adjust the model to your needs)
 	
 	\begin{figure}[h!]
 		\centering
@@ -1443,7 +1443,7 @@
 		\label{fig:sm_customer_actions}
 	\end{figure}	
 
-	Every pool of service has a name and a description, this properties could be changed later in the property sheet, just selecting the pool fo services and editing its the values of its attributes.
+	Every pool of service has a name and a description, these properties could be changed later in the property sheet, just selecting the pool of services and editing the values of its attributes.
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.4\linewidth]{img/sm_new_service_pool.png}
@@ -1452,7 +1452,7 @@
 	\end{figure}
 
 	\newpage
-	Once the pool of services had been created your are able to create services in it, just making right-click in the pool and selecting the kind of service you want to add, as we mention before if you need a a new kind of service that is not listed just add it to your data model (see \textbf{\nameref{sec:data_model_manager}}). 
+	Once the pool of services has been created your are able to create services in it, just right-click in the pool and select the kind of service you want to add. As mentioned before, if you need a a new kind of service that is not listed, just add it to your data model (see \textbf{\nameref{sec:data_model_manager}}). 
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.6\linewidth]{img/sm_create_new_service.png}
@@ -1460,16 +1460,16 @@
 		\label{fig:sm_create_new_service}
 	\end{figure}
 	
-	After you finish to create and organize all your customers and services in pools, you can go to the Navigation Tree (see \textbf{\nameref{sec:navigation_tree}}) or to the IP Address Manager (see \textbf{\nameref{sec:ip_address_manager}}), and relate objects to a service, as you can see in figure~\ref{fig:sm_relate_to_service}), just make right click in the object and select the action \textbf{Relate to service},
+	After you finish creating and organizing all of your customers and services in pools, you can go to the Navigation Tree (see \textbf{\nameref{sec:navigation_tree}}) or to the IP Address Manager (see \textbf{\nameref{sec:ip_address_manager}}), and relate objects to a service, as you can see in figure~\ref{fig:sm_relate_to_service}). Just right click in the object and select the action \textbf{Relate to service},
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.9\linewidth]{img/sm_relate_to_service.png}
-		\caption{Related an object to a service}
+		\caption{Relating an object to a service}
 		\label{fig:sm_relate_to_service}
 	\end{figure}
 	
 	\newpage
-	Of course you are also able to release an object from a service, after associate an object to a service if you want to release that relationship you need to make right click in the object an select  \textbf{Release from service}, if the object has a service associated this will be shown, if you click on it, the object won't be related to that service any more, for your own safety Kuwaiba will show you a message to confirm the release action.
+	Of course you are also able to release an object from a service. After associating an object to a service, if you want to release that relationship you need to right click in the object an select  \textbf{Release from service}, if the object has a service associated this will be shown; if you click on it, the object won't be related to that service anymore. For your own safety, Kuwaiba will show you a message to confirm the release action.
 	
 	\begin{figure}[h!]
 		\centering
@@ -1493,7 +1493,7 @@
 		\label{fig:sm_device_relate_to_service}
 	\end{figure}
 	\begin{framed} {\large \textbf{Important}}\\
-		You be able to delete an object if the object is associate to a service, if you want to delete that object you should first release the relationship with the service.
+		You are not able to delete an object if the object is associated to a service; if you want to delete that object you should first release the relationship with the service.
 	\end{framed}
 	
 	
@@ -1507,7 +1507,7 @@
 			\label{fig:contract_manager_new_contract_pool}
 		\end{figure}
 		
-		The contracts are stored in pools, so first, you need to create your contract structure. Right click on the root node and select \textit{New Contract Pool}. Then, inside the pools create the contracts you want, and set their properties.
+		The contracts are stored in pools, so you first need to create your contract structure. Right click on the root node and select \textit{New Contract Pool}. Then, inside the pools, create the contracts you want and set their properties.
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.4\linewidth]{img/contract_manager_editing_properties.png}
@@ -1515,7 +1515,7 @@
 			\label{fig:contract_manager_editing_properties}
 		\end{figure}		
 		\begin{framed} {\large \textbf{Important}}\\
-			If you are editing a date, so it can be set correctly, instead of just hitting the Enter key, change the focus to other attribute in the property sheet (that is, select another property with the mouse).							
+			If you are editing a date, in order to set it correctly, instead of just hitting the Enter key, change the focus to other attribute in the property sheet (that is, select another property with the mouse).							
 		\end{framed}
 		To create a service provider for the contracts, go to the \textbf{\nameref{sec:list_type_manager}} and create an entry under \textbf{ServiceProvider}.
 		\begin{figure}[h!]
@@ -1525,7 +1525,7 @@
 			\label{fig:contract_manager_service_providers}
 		\end{figure}
 		
-		Any inventory object can be subject to a contract. You can associate an element to an existing contract, right click on it and select the option \textit{Associate to contract...} and select the desired one as shown in the figure~\ref{fig:contract_manager_contract_list}.
+		Any inventory object can be subject to a contract. You can associate an element to an existing contract by right clicking on it and selecting the option \textit{Associate to contract...} and then selecting the desired one as shown in the figure~\ref{fig:contract_manager_contract_list}.
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.4\linewidth]{img/contract_manager_associate_option.png}
@@ -1559,14 +1559,17 @@
 		
 	\newpage
 	\section{Task Manager} \label{sec:task_manager}
-		The Task Manager is the early release of a complete automation and notification module. At this stage, you can create tasks, edit a script that will be executed and execute this task either on demand or associated to a Dashboard widget that will be loaded at user login time. To open the Task Manager, select the menu option Tools $\rightarrow$ Task Manager or press the button \includegraphics[width=0.5cm]{img/icon_task_manager.png} in the main toolbar.
+		The Task Manager is the early release of a complete automation and notification module. At this stage, you can create tasks, edit a script that will be executed and execute this task either on demand or associated to a Dashboard widget that will be loaded at user login time. To open the Task Manager, select the menu option Tools $\rightarrow$ Task Manager or press the button \includegraphics[width=0.5cm]{img/icon_task_manager.png} in the main toolbar.\\
+		
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.3\linewidth]{img/task_manager_create_task.png}
 			\caption{Creating a new task}
 			\label{fig:task_manager_create_task}
 		\end{figure}
-		Right-clicking the root node of the task tree will present a menu to create tasks. A task object has the following attributes
+		
+		Right-clicking the root node of the task tree will present a menu to create tasks. A task object has the following attributes:
+		
 		\begin{table}[h!]
 			\centering
 			\begin{tabular}{lp{10cm}}
@@ -1578,11 +1581,11 @@
 				\midrule
 				\textbf{script} & The Groovy script to be executed by this task.\\
 				\midrule
-				\textbf{startTime} & The exact time and date this task shoud start its execution. Applicable only to tasks with \textit{executionType} set to Loop. 
+				\textbf{startTime} & The exact time and date this task should start its execution. Applicable only to tasks with \textit{executionType} set to Loop. 
 				\textbf{Not used yet}. \\
 				\midrule
-				\textbf{everyXMinutes} & After the start time, every how many minutes should this task be executed? Applicable only to tasks with \textit{executionType} set to Loop. \textbf{Not used yet}.\\
-				\textbf{executionType} & How should the task be executed.
+				\textbf{everyXMinutes} & After the starting time, at which interval should this task be executed? Applicable only to tasks with \textit{executionType} set to Loop. \textbf{Not used yet}.\\
+				\textbf{executionType} & How the task should be executed.
 					\begin{itemize}
 						\item On Demand: Run only if the user executes it manually.
 						\item User Login: Run upon subscribed users login.
@@ -1611,7 +1614,7 @@
 			\label{fig:task_manager_subscribe_users}
 		\end{figure}
 		
-		It is out of the scope of this document to teach how to code scripts, however, in the directory \textbf{scripts} of the client installer, you will find some samples to guide you through. It's important to note, though, that most of the times, the scripts will require input parameters. This parameters can be easily added to the task so the user can fill them in before to run the task. To create parameters, right-click the task node and select the option \textit{Add Parameter...}
+		It is out of the scope of this document to teach how to code scripts, however, in the directory \textbf{scripts} of the client installer, you will find some samples to guide you through. It's important to note, however, that most  times, the scripts will require input parameters. These parameters can be easily added to the task so that the user can fill them in before running the task. To create parameters, right-click the task node and select the option \textit{Add Parameter...}
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.3\linewidth]{img/task_manager_add_parameter.png}
@@ -1627,7 +1630,7 @@
 			\label{fig:task_manager_property_sheet}
 		\end{figure}
 		
-		Tasks can also be executed on-demand. To do that, select the \textit{Execute Task} option from the task node's context menu.
+		Tasks can also be executed on demand. To do that, select the \textit{Execute Task} option from the task node's context menu.
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=1.1\linewidth]{img/task_manager_execute_task.png}
@@ -1642,10 +1645,10 @@
 		This module allows to create end-to-end virtual circuits and all other logical entities required by the SDH protocol\footnote{SDH Graphical Overview http://www.cisco.com/c/en/us/support/docs/optical/synchronous-digital-hierarchy-sdh/28327-sdh-28327.html}. Let's introduce some concepts first. See figure~\ref{fig:sdh_module_description} for sample connection that illustrate the following terms.
 		\begin{enumerate}
 			\item \textbf{TransportLink:} A point-to-point logical connection that represents a single STMX. By default, the \textbf{TransportLinks} included in Kuwaiba are SMT1, STM4, STM16, STM64 and STM256.
-			\item \textbf{ContainerLink:} It's a  logical connection that may or may not have multiple hops and connects ports within the boundaries of the transport network. A \textbf{ContainerLink} ends where at least one \textbf{TransporLink} ends, but in its path, the \textbf{ContainerLink} may have used many \textbf{TransportLinks}. In simple terms, a ContainerLink is an SDH virtual circuit. By default there are defined 5 types of ContainerLinks: VC12, VC3, VC4, VC4x4 and VC4x16. The latter two provide support for concatenation.
-			\item \textbf{TributaryLink:} Objects of this types are not circuits themselves, they rather use actual virtual circuits (ContainerLinks) and end in the ports where the SDH service is delivered to the customer (usually tributary ports).
+			\item \textbf{ContainerLink:} It's a  logical connection that may or may not have multiple hops and connects ports within the boundaries of the transport network. A \textbf{ContainerLink} ends where at least one \textbf{TransporLink} ends, but in its path, the \textbf{ContainerLink} may have used many \textbf{TransportLinks}. In simple terms, a ContainerLink is an SDH virtual circuit. By default there are 5 types of ContainerLinks defined: VC12, VC3, VC4, VC4x4 and VC4x16. The latter two provide support for concatenation.
+			\item \textbf{TributaryLink:} Objects of this type are not circuits themselves, they rather use actual virtual circuits (ContainerLinks) and end in the ports where the SDH service is delivered to the customer (usually tributary ports).
 		\end{enumerate}
-		In short, Transport and ContainerLinks provide the foundations for the hierarchy, while the TributaryLinks provide information about where the circuits are delivered (that is, what are the endpoints of the connections). Detailed information about the data model portion devoted to SDH, read the document \textit{SDH Model and Tools}.
+		In short, Transport and ContainerLinks provide the foundations for the hierarchy, while the TributaryLinks provide information about where the circuits are delivered (that is, what are the endpoints of the connections). For detailed information about the data model portion devoted to SDH, read the document \textit{SDH Model and Tools}.
 		\newpage
 		\begin{landscape}
 			\begin{figure}
@@ -1656,7 +1659,7 @@
 			\end{figure}
 		\end{landscape}
 		\newpage
-		To create an SDH topology, go to the menu option Tols $\rightarrow$ Advanced $\rightarrow$ SDH Networks. This will open an empty canvas similar to the \nameref{sec:topology_designer}.
+		To create an SDH topology, go to the menu option Tools $\rightarrow$ Advanced $\rightarrow$ SDH Networks. This will open an empty canvas similar to the \nameref{sec:topology_designer}.
 		\begin{table}[h!]
 			\centering
 			\begin{tabular}{lp{10cm}}
@@ -1696,7 +1699,7 @@
 			\label{fig:sdh_module_initial_view}
 		\end{figure}
 		
-		Let's consider this 4 equipment topology. What we are going to do, is to create a ring using STM-4 on one branch and SMT-1 on the other. We will create a VC12 between \textbf{SDH-87} and \textbf{Router 1}. Each equipment has the same board/port layout: Two boards, a tributary and an aggregate one, with two ports each.
+		Let's consider this 4 equipment topology. What we are going to do is to create a ring using STM-4 on one branch and SMT-1 on the other. We will create a VC12 between \textbf{SDH-87} and \textbf{Router 1}. Each equipment has the same board/port layout: Two boards, a tributary and an aggregate one, with two ports each.
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.4\linewidth]{img/sdh_module_layout.png}
@@ -1722,7 +1725,7 @@
 			\label{fig:sdh_module_transport_link_step_1}
 		\end{figure}
 		\newpage
-		The second will request for the the connection endpoints, which will always be aggregate ports.
+		The second will request the connection endpoints, which will always be aggregate ports.
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=\linewidth]{img/sdh_module_transport_link_step_2.png}
@@ -1730,7 +1733,7 @@
 			\label{fig:sdh_module_transport_link_step_2}
 		\end{figure}
 		
-		After repeating the procedure three more time, the ring will be finished. In the figure~\ref{fig:sdh_module_ring}, the SMT4 links are colored light purple, while the SMT1 ones are blue.
+		After repeating the procedure three more times, the ring will be finished. In the figure~\ref{fig:sdh_module_ring}, the SMT4 links are colored light purple, while the SMT1 ones are blue.
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.7\linewidth]{img/sdh_module_ring.png}
@@ -1738,7 +1741,7 @@
 			\label{fig:sdh_module_ring}
 		\end{figure}
 		\newpage
-		The next level in the hierarchy is the set of structured high-order circuits (VC4) that will contain the E1s that we will add later. We will create three VC4: One long, \textbf{from SDH-87} to \textbf{Router 1}, other short, from \textbf{SDH-87} to \textbf{Router 2}, and finally another short between \textbf{Router 2} and \textbf{Router 1}. This will provide two paths to route the E1s later on. To create the VC4 connections (a.k.a. ContainerLinks), we will leave the Connection tool selected and press the \textit{Create ContainerLink} button \includegraphics[width=0.5cm]{img/sdh_module_container_link.png}. To create the first ContainerLink, let's drag a line between the \textbf{SDH-87} and the \textbf{Router 1}. That will start a wizard.
+		The next level in the hierarchy is the set of structured high-order circuits (VC4) that will contain the E1s that we will add later. We will create three VC4: A long one, \textbf{from SDH-87} to \textbf{Router 1}, a short one, from \textbf{SDH-87} to \textbf{Router 2}, and finally another short one between \textbf{Router 2} and \textbf{Router 1}. This will provide two paths to route the E1s later on. To create the VC4 connections (a.k.a. ContainerLinks), we will leave the Connection tool selected and press the \textit{Create ContainerLink} button \includegraphics[width=0.5cm]{img/sdh_module_container_link.png}. To create the first ContainerLink, let's drag a line between the \textbf{SDH-87} and the \textbf{Router 1}. That will start a wizard.
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=\linewidth]{img/sdh_module_container_link_step_1.png}
@@ -1754,7 +1757,7 @@
 			\label{fig:sdh_module_container_link_step_2}
 		\end{figure}
 		\newpage
-		For this example, we're going to use the lower branch composed by the STM1 TransportLinks. The next step will ask you to define what timeslots will you use from each TransportLink in the route(figure~\ref{fig:sdh_module_container_link_step_3}). Since the TransportLinks are STM1, there will be only one slot available. To select the timeslot, double-click the desired STM, and select the timeslot from the list (figure~\ref{fig:sdh_module_container_link_step_3_2}).
+		For this example, we're going to use the lower branch composed by the STM1 TransportLinks. The next step will ask you to define what timeslots you will use from each TransportLink in the route(figure~\ref{fig:sdh_module_container_link_step_3}). Since the TransportLinks are STM1, there will only be one slot available. To select the timeslot, double-click the desired STM, and select the timeslot from the list (figure~\ref{fig:sdh_module_container_link_step_3_2}).
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=\linewidth]{img/sdh_module_container_link_step_3.png}
@@ -1762,7 +1765,7 @@
 			\label{fig:sdh_module_container_link_step_3}
 		\end{figure}
 		\newpage
-		This list will be populated with the available timeslots, but besides, it will inform you what timelots are already in use and who's using them.
+		This list will be populated with the available timeslots, but it will also inform you what timelots are already in use and who's using them.
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.7\linewidth]{img/sdh_module_container_link_step_3_2.png}
@@ -1780,7 +1783,7 @@
 			\label{fig:sdh_module_tributary_link_step_1}
 		\end{figure}
 		
-		In the next step, it's requested to pick a route. Note that the STM4-based route won't be offered, as it doesn't have ContainerLinks to transport the TributaryLink.
+		In the next step, you will be requested to pick a route. Note that the STM4-based route won't be offered, as it doesn't have ContainerLinks to transport the TributaryLink.
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=\linewidth]{img/sdh_module_tributary_link_step_2.png}
@@ -1804,7 +1807,7 @@
 			\label{fig:sdh_module_tributary_link_step_3_2}
 		\end{figure}
 		
-		The next step is choosing the endpoints. For this example, we're going to end the SDH connection in a tributary port of a PDHBoard. It, of course, could end in any port of any board, however this is the most common scenario.
+		The next step is choosing the endpoints. For this example, we're going to end the SDH connection in a tributary port of a PDHBoard. It could, of course, end in any port of any board, however this is the most common scenario.
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=\linewidth]{img/sdh_module_tributary_link_step_4.png}
@@ -1820,7 +1823,7 @@
 			\label{fig:sdh_module_tributary_link_step_5}
 		\end{figure}
 		
-		To see the resources used by the circuit, right-click on it either in the search results or the service manager and select the option Reports $\rightarrow$ TributaryLink Resources.
+		To see the resources used by the circuit, right-click either on the search results or on the service manager and select the option Reports $\rightarrow$ TributaryLink Resources.
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=\linewidth]{img/sdh_module_tributary_link_service_report.png}
@@ -1842,10 +1845,10 @@
 		
 		\newpage
 		\section{IP Address Manager}\label{sec:ip_address_manager}
-		The IP Address Manager(IPAM) let you store and manage your subnets and their IP addresses, kuwaiba let you integrate your IPAM to the whole network inventory allowing to relate the created subnets to existing VLANs or services, also allow you to associate the IP addresses of a subnet to an existing network device or service.
+		The IP Address Manager(IPAM) lets you store and manage your subnets and their IP addresses; Kuwaiba lets you integrate your IPAM to the whole network inventory allowing to relate the created subnets to existing VLANs or services, and also allowing you to associate the IP addresses of a subnet to an existing network device or service.
 		
-		Once you open the IPAM manager you will finds two default nodes IPv4 and IPv6.
-		These nodes has two actions you can create subnets or folders.
+		Once you open the IPAM manager you will find two default nodes IPv4 and IPv6.
+		These nodes have two actions you can create: subnets or folders.
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.4\linewidth]{img/ipam_root_nodes_actions.png}
@@ -1854,7 +1857,7 @@
 		\end{figure}
 		
 		\subsection{Folders}
-		A folder is a way to store and arrange several subnets, you can create as many folders as you want, you can also create a folder inside other folder.
+		A folder is a way to store and arrange several subnets; you can create as many folders as you want and you can also create a folder inside another folder.
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.4\linewidth]{img/ipam_create_new_folder.png}
@@ -1872,9 +1875,9 @@
 			\label{fig:ipam_folder_actions}
 		\end{figure}
 	
-		There are two main roots in the IPAM one for IPv4 subnets and other for IPV6 subnets, we don't want you to mix between IPv4 and IPv6 subnets thats why we made this separation.  To add a new subnet (IPv4 or IPv6) make right click in a folder, then select \textit{Create subnet}, after this kuwaiba will show you a form where you should type your new subnet in Classless Inter-Domain Routing (CIDR) Format\footnote{CIDR Format http://ip2cidr.com/cidr.php}.
-		\newline i.e. For an IPv4 address you could use 182.5.13.0/26 and will be accepted, remember de CIDR Format. 
-		\newline i.e. For an IPv6 address you could use a compress or an expand notation for example you could use 2000::/3 or 2000:0000:0000:0000:0000:0000:0000:0000/3 both will be accepted.
+		There are two main roots in the IPAM, one for IPv4 subnets and another one for IPV6 subnets; we don't want you to mix between IPv4 and IPv6 subnets, that's why we made this separation.  To add a new subnet (IPv4 or IPv6), right click on a folder, then select \textit{Create subnet}. After this, Kuwaiba will show you a form where you should type your new subnet in Classless Inter-Domain Routing (CIDR) Format\footnote{CIDR Format http://ip2cidr.com/cidr.php}.
+		\newline i.e. For an IPv4 address you could use 182.5.13.0/26 and it will be accepted, remember de CIDR Format. 
+		\newline i.e. For an IPv6 address you could use a compress or an expand notation. For example, you could use 2000::/3 or 2000:0000:0000:0000:0000:0000:0000:0000/3 both will be accepted.
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.5\linewidth]{img/ipam_add_subnet.png}
@@ -1884,7 +1887,7 @@
 		
 		\subsection{Adding IPs}
 		
-		Once you have created a subnet you can an add an IP address or a range of IP addresses, making right click in the subnet and then selecting \textit{add IP address} kuwaiba will show you a form to add IPs.
+		Once you have created a subnet you can an add an IP address or a range of IP addresses; by right clicking on the subnet and then selecting \textit{add IP address}, Kuwaiba will show you a form to add IPs.
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.4\linewidth]{img/ipam_subnet_actions.png}
@@ -1892,7 +1895,7 @@
 			\label{fig:ipam_subnet_actions}
 		\end{figure}
 		
-		Kuwaiba will put by default in text box the next no used ip address of the subnet, but you could type any IP address that belongs the subnet range, Kuwaiba let you add the network IP or de broadcast IP, but you should type them manually, to add a range of IPs you shall type [the first IP] - [the last IP] Kuwaiba will create every IP of the given range. 
+		By default, Kuwaiba will put in the text box the next not used IP address of the subnet, but you could type any IP address that belongs to the subnet range. Kuwaiba will let you add the network IP or the broadcast IP, but you should type them manually. To add a range of IPs you shall type [the first IP] - [the last IP] Kuwaiba will create every IP of the given range. 
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.5\linewidth]{img/ipam_add_ip_address.png}
@@ -1902,7 +1905,7 @@
 	
 	   	\subsection{Creating nested Subnets}
 	   	
-		Subnets can be nested inside other subnets as long as the limits of subnet you are trying to nest belongs  completely to the biger subnet, to nest a a subnet inside other subnet, make right click in the wished subnet and then select \textit{Create subnet}, Kuwaiba will show you the form to create a subnet, by default the subnet field will be filled with the bigger subent Network IP address, so you shall complete the CIDR format with the number of bits for the mask.
+		Subnets can be nested inside other subnets as long as the limits of the subnet you are trying to nest belong completely to the bigger subnet. To nest a a subnet inside another subnet, right click on the wished subnet and then select \textit{Create subnet}. Kuwaiba will show you the form to create a subnet; by default the subnet field will be filled with the bigger subnet Network IP address, so you shall complete the CIDR format with the number of bits for the mask.
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.5\linewidth]{img/ipam_add_subsubnet.png}
@@ -1911,7 +1914,7 @@
 		\end{figure}
 		
 		
-		The subnets can be associate to VLANs o VFR instances, just make right-click in the subnet and select \textit{Relate to a VLAN} or \textit{Relate to a VFRs} then kuwaiba will display a text dialog with a list of all the existing VLANs or VFRs.
+		The subnets can be associated to VLANs o VFR instances, just right-click on the subnet and select \textit{Relate to a VLAN} or \textit{Relate to a VFRs}, then Kuwaiba will display a text dialog with a list of all the existing VLANs or VFRs.
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.3\linewidth]{img/ipam_available_vlans.png}
@@ -1919,7 +1922,7 @@
 			\label{fig:ipam_available_vlans}
 		\end{figure}
 		
-		Both subnets and IP addresses can be associate to services, you can associate them to a service one by one or you can select all the subnet or IP address at once and then make right-click in the selected item(s) and choose \textit{Relate to a service} then, Kuwaiba will display a dialog with a list of all the existing services  (see \textbf{\nameref{sec:service_manager}})
+		Both subnets and IP addresses can be associated to services, you can associate them to a service one by one or you can select all the subnets or IP addresses at once and then right-click on the selected item(s) and choose \textit{Relate to a service}. Kuwaiba will then display a dialog with a list of all the existing services  (see \textbf{\nameref{sec:service_manager}})
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.4\linewidth]{img/ipam_available_services.png}
@@ -1927,12 +1930,12 @@
 			\label{fig:ipam_available_services}
 		\end{figure}
 		\begin{framed} {\large \textbf{Note}}
-			It won't be possible delete a subnet or an IP address if are associate to something else like a VLAN a service or a network device.
+			It won't be possible to delete a subnet or an IP address if they are associated to something else like a VLAN a service or a network device.
 		\end{framed}		 		 
 		
 
 		\newpage
-		An IP addresses can be associate to network devices, just make right-click in the IP address and select \textit{Relate to a device} then Kuwaiba will display a text dialog with a list of all the existing network devices than had been created.
+		An IP address can be associated to network devices, just right-click on the IP address, select \textit{Relate to a device} and then Kuwaiba will display a text dialog with a list of all the existing network devices that have been created.
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.4\linewidth]{img/ipam_available_devices.png}
@@ -1941,7 +1944,7 @@
 		\end{figure}
 		
 		\newpage
-		Once you create your folders, subnets and IP addresses and after associate them to services, VLANs or network devices, you generate a report about the subnet in the subnet's action menu, this report will give you a detail resume of the subnet usage, the services and VLANs associate to the subnet and every IP address added, the network devices associate to them.
+		Once you create your folders, subnets and IP addresses and after associating them to services, VLANs or network devices, you generate a report about the subnet in the subnet's action menu. This report will give you a detailed summary of the subnet usage, the services and VLANs associated to the subnet and every IP address added, and the network devices associated to them.
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=1.1\linewidth]{img/ipam_report_subnet_usage_detail.png}
@@ -1953,8 +1956,8 @@
 		\section{Reports}
 		Since version 1.0, Kuwaiba provides a set of predefined reports, but only as of version 1.1 it was possible for users to create their own reports using Groovy\footnote{Groovy Language: http://www.groovy-lang.org/} scripts. Writing a report script usually has three steps:
 		\begin{enumerate}
-			\item \textbf{Retrieving the data:} Either by performing a query directly on the database or by using the high level API provided by Kuwaiba. In the first case, you will have to deal with the raw nodes and relationships contained in the graph database and it's very likely that you have to use Cypher\footnote{No4J's Graph Query Language: https://neo4j.com/developer/cypher-query-language/}. In the second case, you will, have to use the documented\footnote{Kuwaiba Persistence API: http://www.kuwaiba.org/javadoc/persistence} Java API.
-			\item \textbf{Processing the information:} Consist of taking the data retrieved from the database and perform calculations, filtering and other processing to turn it into meaningful information.
+			\item \textbf{Retrieving the data:} Either by performing a query directly on the database or by using the high level API provided by Kuwaiba. In the first case, you will have to deal with the raw nodes and relationships contained in the graph database and it's very likely that you have to use Cypher\footnote{No4J's Graph Query Language: https://neo4j.com/developer/cypher-query-language/}. In the second case, you will have to use the documented\footnote{Kuwaiba Persistence API: http://www.kuwaiba.org/javadoc/persistence} Java API.
+			\item \textbf{Processing the information:} It consists of taking the data retrieved from the database and performing calculations, filtering and other processing to turn it into meaningful information.
 			\item \textbf{Formatting and displaying:} Which consists of creating a structure of tables, labels and/or charts to present the information in a clear and easy-to-read fashion.
 		\end{enumerate}
 		The Report module can be found in Tools $\rightarrow$ Reports or by selecting the button \textit{Reports} \includegraphics[width=0.5cm]{img/icon_reports.png} from the main toolbar.  There are two types of reports: Class and Inventory Level.
@@ -1972,7 +1975,7 @@
 				\caption{Class reports depend on particular instances}
 				\label{fig:reports_rack_report}
 			\end{figure}\\
-			These reports can be created for abstract classes, and they will be applied to all subclasses. So for example, if you create a Report for \textit{GenericService}, it will be available for \textit{HousingService}, \textit{HostingService}, \textit{FTTHService}, etc. This is the case of the built-in report "Service Details".\\
+			These reports can be created for abstract classes, and they will be applied to all subclasses. For example, if you create a Report for \textit{GenericService}, it will be available for \textit{HousingService}, \textit{HostingService}, \textit{FTTHService}, etc. This is the case of the built-in report "Service Details".\\
 			\newpage
 			\begin{figure}[h!]
 				\centering
@@ -1980,7 +1983,7 @@
 				\caption{Report can be applied to abstract classes}
 				\label{fig:reports_abstract_class_report}
 			\end{figure}
-			As seen later on in this chapter, the object from which you launch the report will be passed as parameter to the script. To create a new report, just expand the node "Class Level Reports" and locate the desired class. Remember that you can easily search for it by selecting any node of the tree and type the name you are looking for. Right-click on the class node and select "New Report".
+			As it will be seen later on this chapter, the object from which you launch the report will be passed as parameter to the script. To create a new report, just expand the node "Class Level Reports" and locate the desired class. Remember that you can easily search for it by selecting any node of the tree and typing the name you are looking for. Right-click on the class node and select "New Report".
 			\begin{figure}[h!]
 				\centering
 				\includegraphics[scale=0.8]{img/reports_new_report.png}
@@ -1995,7 +1998,7 @@
 				\label{fig:reports_report_properties}
 			\end{figure}
 			\begin{framed} {\large \textbf{Important}}\\
-				If you create a report and it's enabled, but does not appear in the list of available reports for the instances it should be related to, press the refresh cache button \includegraphics[width=0.5cm]{img/icon_refresh_cache.png} in the main toolbar.
+				If you create a report and it's enabled but does not appear in the list of available reports for the instances it should be related to, press the refresh cache button \includegraphics[width=0.5cm]{img/icon_refresh_cache.png} in the main toolbar.
 			\end{framed}
 		\subsection{Inventory Level Reports}
 			These reports are not related to objects in the inventory. Instead, they're used to display general purpose information, for example, "All support contracts about to expire" or "All inventory objects with operational state being Defective". You can define custom parameters for them, as opposed to the Class Level Reports, whose only parameter is the object that triggered the report. The parameters are captured always as strings, and you must parse them and make sure they match the right format at the beginning of the report.
@@ -2037,11 +2040,11 @@
 	    
 	    
 	    \begin{framed} {\large \textbf{Important}} \\
-	    	If you click on \textit{Execute Report} and nothing seems to happen, the most likely reason is a misconfiguration in your default browser settings. If there's no default browser set in your system, or if the system is not configured to open HTML files with the browser, the report will be created in a temporary location (/tmp in Unix-like systems and C:\textbackslash{}Users\textbackslash{}\textless{}username\textgreater\textbackslash{}AppData\textbackslash{}Local\textbackslash{}Temp in most MS Windows versions). Some times the OS does not report correctly that couldn't open the file, so the client won't be aware of the issue and that's the reason why it won't provide any feedback to the user. 
+	    	If you click on \textit{Execute Report} and nothing seems to happen, the most likely reason is a misconfiguration in your default browser settings. If there's no default browser set in your system, or if the system is not configured to open HTML files with the browser, the report will be created in a temporary location (/tmp in Unix-like systems and C:\textbackslash{}Users\textbackslash{}\textless{}username\textgreater\textbackslash{}AppData\textbackslash{}Local\textbackslash{}Temp in most MS Windows versions). Sometimes the OS does not report correctly that it couldn't open the file, so the client won't be aware of the issue and that's the reason why it won't provide any feedback to the user. 
 	    \end{framed}
 	    
 		\subsection{How to Create Scripts}
-		Creating complex scripts requires some knowledge about the Persistence API and the database structure. It's out of the scope of this document to explore in depth these topics, but this section will give you a starting point. More documentation and examples will be published in the coming releases, for now, use the reports provided in the directory \textbf{scripts} in the client installation bundle as reference.
+		Creating complex scripts requires some knowledge about the Persistence API and the database structure. It's out of the scope of this document to deeply explore these topics, but this section will give you a starting point. More documentation and examples will be published in the coming releases; for now, use the reports provided in the directory \textbf{scripts} in the client installation bundle as reference.
 		\begin{itemize}
 			\item Kuwaiba uses Groovy as scripting language. Its syntax is very similar to Java's, but it's optionally typed. We recommend you to use an external editor that supports Groovy syntax recognition such as Notepad++ (Windows) or GEdit (Linux/MacOS) to write your scripts, then copy the text to the corresponding field in the report properties.
 			\item All scripts must return an HTMLReport object. This class and the others that are used to build the report are located in the package \textbf{com.neotropic.kuwaiba.modules.reporting.html}\footnote{http://kuwaiba.org/javadoc/persistence/com/neotropic/kuwaiba/modules/reporting/html/package-summary.html}. There are wrappers for the most common HTML tags, and constructing a report consists of nesting instances of these classes in the right order.
@@ -2095,7 +2098,7 @@
 			\label{fig:users_and_groups_delete}
 		\end{figure}
 		
-		If you want to delete an user or a group, just right click the element and choose \textit{Delete}. Deleting a group won't delete the related users. If you want to change a user's password, click the button  \includegraphics[width=0.5cm]{img/icon_edit_user.png} in the \textit{Password} or \textit{Group} column and a custom editor will be shown.
+		If you want to delete a user or a group, just right click the element and choose \textit{Delete}. Deleting a group won't delete the related users. If you want to change a user's password, click the button  \includegraphics[width=0.5cm]{img/icon_edit_user.png} in the \textit{Password} or \textit{Group} column and a custom editor will be shown.
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.3\linewidth]{img/users_and_groups_change_password.png}
@@ -2107,15 +2110,15 @@
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.2\linewidth]{img/users_and_groups_select_groups.png}
-			\caption{Changing an user user group association}
+			\caption{Changing a user group association}
 			\label{fig:users_and_groups_select_groups}
 		\end{figure}
 		
-		Currently is only possible to add/remove groups to/from a user (not vice versa)
+		Currently it is only possible to add/remove groups to/from a user (not vice versa)
 				
 		\newpage
 		\section{Bulk import}\label{sec:bulk_import}
-			Kuwaiba  provides a  way  to  import  objects  and  list  types  from CVS text files with a define format.  This  module  can be  found at \textit{Tools} $\rightarrow$ \textit{Bulk Import}. Examples of these files are included in the client installer bundle under the directory \textit{Samples}.
+			Kuwaiba  provides a  way  to  import  objects  and  list  types  from CVS text files with a defined format.  This  module  can be  found at \textit{Tools} $\rightarrow$ \textit{Bulk Import}. Examples of these files are included in the client installer bundle under the directory \textit{Samples}.
 			\subsection{Load Objects}\label{sec:bi_load_objects}
 		    	\begin{table}[!h]
 					\centering			    		
@@ -2190,7 +2193,7 @@
 					\label{fig:bulk_import_interface}
 				\end{figure}					
 				The interface to upload the file has two tabs: One to import objects and the other to import list types:
-				First select the file using the  \textit{Select file} button, then, to process the data, click on \textit{Process file}. This can take from a few seconds to some minutes depending on the size of the file and the I/O constraints of your server. The result will be shown in the \textit{Output} window. This window will be opened automatically, but if you close it by mistake, it’s possible to reopen it from the menu option Window Output Output or by hitting CTRL+4
+				First select the file using the  \textit{Select file} button, then, to process the data, click on \textit{Process file}. This can take from a few seconds to some minutes depending on the size of the file and the I/O constraints of your server. The result will be shown in the \textit{Output} window. This window will be opened automatically, but if you close it by mistake, it’s possible to reopen it from the menu option Window Output or by hitting CTRL+4
 
 				Only the errors and relevant information messages will be displayed. The output can be easily processed since the fields (message type, line number and message)	are separated by tabs so it can be opened as a CSV file in a spreadsheet editor. 
 				
@@ -2206,13 +2209,13 @@
 					\begin{itemize}
 					\item The lines with no errors will be committed into the database. Make sure to comment out the lines uploaded correctly to avoid creating the same object many times.
 					
-					\item If you perform changes infile after loading it (that is, after pressing \textit{Select file}), you will have to select it again so it can take the changes, otherwise, it will process the old file instead. To save the output messages, right-click the window.
+					\item If you perform changes in a file after loading it (that is, after pressing \textit{Select file}), you will have to select it again so it can take the changes. Otherwise, it will process the old file instead. To save the output messages, right-click the window.
 					\end{itemize}
 				\end{framed}
 		\newpage
 		\section{Bookmarks}\label{sec:bookmarks}
 		
-			The Bookmarks module let you manage bookmarks. In Kuwaiba a bookmark are an object of the inventory which are pooled in a bookmark folder. To open the Bookmarks module look in the menu for Tools $\rightarrow$ Bookmarks or just click in the icon
+			The Bookmarks module lets you manage bookmarks. In Kuwaiba a bookmark is an object of the inventory which is pooled in a bookmark folder. To open the Bookmarks module look in the menu for Tools $\rightarrow$ Bookmarks or just click in the icon
 			\includegraphics[width=0.5cm]{img/icon_bookmarks.png}
 			
 			\begin{figure}[h!]
@@ -2222,7 +2225,7 @@
 				\label{fig:bookmakrs}
 			\end{figure}
 			
-			To add a object from the Navigation Tree just right click and select the option of Add to bookmark folder \textbf{figure~\ref{fig:add_to_bookmark_folder}} or Remove from Bookmark Folder to remove it.
+			To add an object from the Navigation Tree, just right click and select the option of Add to bookmark folder \textbf{figure~\ref{fig:add_to_bookmark_folder}} or Remove from Bookmark Folder to remove it.
 						
 			\begin{figure}[h!]
 				\centering
@@ -2233,9 +2236,9 @@
 							
 		\newpage
 		\section{Update Center}\label{sec:update_center}
-		The Update Center module is used to get the latest version of Kuwaiba. Your Administrator must provided to you a URL where was located the update center. To open the Update Center module look in the menu for Tools $\rightarrow$ Update Center
+		The Update Center module is used to get the latest version of Kuwaiba. Your Administrator must provided you a URL where the update center was located. To open the Update Center module look at the menu for Tools $\rightarrow$ Update Center
 		\newline
-		Once the Update Center URL was assigned, and doing just click in the OK button, must be begin the update right away. For the next Kuwaiba run if  there are updates, the update will be automatically, and if is necessary restart the application, it shows a notification to begin the restart.
+		Once the Update Center URL was assigned, just click on the OK button and the update must begin right away. For the next Kuwaiba run, if there are updates, the update will automatically start and if it is necessary to restart the application, it will show a notification to begin restarting.
 		\newline
 		For details see Appendix E in the administrator's manual
 		
@@ -2249,7 +2252,7 @@
 		\newpage		
 		\section{Projects}\label{sec:projects}
 		
-			The Project module allows you have all projects, activities and resources in a place. To open the Projects module look in the menu for Tools $\rightarrow$ Advanced $\rightarrow$ Projects
+			The Project module allows you to have all projects, activities and resources in a place. To open the Projects module look at the menu for Tools $\rightarrow$ Advanced $\rightarrow$ Projects
 			\newline
 			
 			\begin{figure}[h!]
@@ -2259,7 +2262,7 @@
 				\label{fig:projects}
 		    \end{figure}
 		    
-		    To start using the Projects module you must crate a Project, depending of the loaded data model you can create project of GeneralPurposeProject or NetworkProject or any subclass of GenericProject (see \textbf{\nameref{sec:data_model_manager}} if you need to create a different kind  of Projects).
+		    To start using the Projects module you must create a Project. Depending on the loaded data model you can create a  GeneralPurposeProject or NetworkProject or any subclass of GenericProject (see \textbf{\nameref{sec:data_model_manager}} if you need to create a different kind  of Project).
 		    \newline
 		    
 		    \begin{figure}[h!]
@@ -2269,7 +2272,7 @@
 		    	\label{fig:projects_actions}
 		    \end{figure}
 		    
-		    A Project can contain sub projects or activities, you can create an activity just making right click in a Project an selecting the kind of Activity you want to add, if you need to create a different kind of Activities (see \textbf{\nameref{sec:data_model_manager}})
+		    A Project can contain sub projects or activities; you can create an activity just by right clicking on a Project and selecting the kind of Activity you want to add. If you need to create a different kind of Activity (see \textbf{\nameref{sec:data_model_manager}})
 		    \newline
 		    
 		    \begin{figure}[h!]
@@ -2279,7 +2282,7 @@
 		    	\label{fig:activity_actions}
 		    \end{figure}
 		    
-		    The Projects has relate resources that are inventory objects in the Navigation tree. you can relate or release objects just making right click in a Inventory object \textbf{figure~\ref{fig:pm_relate_to_project}}.
+		    The Projects have related resources that are inventory objects in the Navigation tree. You can relate or release objects just by right clicking on an Inventory object \textbf{figure~\ref{fig:pm_relate_to_project}}.
 		    \newline
 		    		    
 		    \begin{figure}[h!]
@@ -2289,8 +2292,8 @@
 		    	\label{fig:pm_relate_to_project}
 		    \end{figure}
 		    
-		    If you have an old data base, the data model for Projects module are not available, and when try open the Projects explorer or relate an object with a Project
-		    Kuwaiba show you the message like in the \textbf{figure~\ref{fig:patch_projects}}.
+		    If you have an old data base, the data model for Projects module is not available, and when you try to open the Projects explorer or relate an object to a Project,
+		    Kuwaiba will show you the message like in the \textbf{figure~\ref{fig:patch_projects}}.
 		    \newline
 		    
 		    \begin{figure}[h!]
@@ -2303,20 +2306,20 @@
 		\begin{appendices}
 			\appendix
 			\section{Appendix A. Name Pattern} \label{app:AppendixA}
-			A name pattern is used to create dynamically the names of new objects or new special objects using the actions New (Multiple) and New Special (Multiple) respectively.			
+			A name pattern is used to dynamically create the names of new objects or new special objects using the actions New (Multiple) and New Special (Multiple) respectively.			
 			
-			The name pattern is a set of static and dynamic sections, in the static section can be place any string of characters with the exception of the special characters "[" and "]", and in the dynamic section only can be placed pre-defined functions listed below.
+			The name pattern is a set of static and dynamic sections. In the static section, any string of characters can be placed, with the exception of the special characters "[" and "]"; and in the dynamic section only the pre-defined functions listed below can be placed.
 			
 			\begin{itemize}
-				\item \textbf{[sequence(a,z)]:} Function that generate an alphabetic ascending lowercase inclusive sequence that begin in the parameter a (a-z) to the parameter z (a-z)
-				\item \textbf{[sequence(A,Z)]:} Function that generate an alphabetic ascending uppercase inclusive sequence that begin in the parameter A (A-Z) to the parameter Z (A-Z)
-				\item \textbf{[sequence(n,m)]:} Function that generate an numeric ascending inclusive sequence that begin in the parameter n (0...) to the parameter m (0...)
-				\item \textbf{[value(object id,attribute name)]:} Function to get the value of an attribute value given the object id and attribute name. For example if there are an object with id 1000, attribute name "name" and attribute value "Colombia" the function would remain [value(1000,name)] and return Colombia.
+				\item \textbf{[sequence(a,z)]:} Function that generates an alphabetic ascending lowercase inclusive sequence that begin in the parameter a (a-z) to the parameter z (a-z)
+				\item \textbf{[sequence(A,Z)]:} Function that generates an alphabetic ascending uppercase inclusive sequence that begin in the parameter A (A-Z) to the parameter Z (A-Z)
+				\item \textbf{[sequence(n,m)]:} Function that generates a numeric ascending inclusive sequence that begin in the parameter n (0...) to the parameter m (0...)
+				\item \textbf{[value(object id,attribute name)]:} Function to get the value of an attribute value given to the object id and attribute name. For example if there is an object with id 1000, attribute name "name" and attribute value "Colombia" the function would remain [value(1000,name)] and return Colombia.
 			\end{itemize}
 			
-			Examples of name pattern are: router-[sequence(1,3)]-[sequence(a,c)], [value(1111,name)]-[sequence(A,Z)], the first pattern generate six different names, and the second twenty six different names.
+			Examples of name pattern are: router-[sequence(1,3)]-[sequence(a,c)], [value(1111,name)]-[sequence(A,Z)], the first pattern generates six different names, and the second twenty six different names.
 			
-			When name pattern are define this only can generate a limited number of names. If in the dialog see figure~\ref{fig:new_multiple} and see figure~\ref{fig:new_special_multiple}, is assigned a number greather than the possible names, the objects or special objects are not created.
+			When name patterns are defined, this can only generate a limited number of names. If in the dialog see figure~\ref{fig:new_multiple} and see figure~\ref{fig:new_special_multiple}, a number greater than the possible names is assigned, the objects or special objects are not created.
 
 						
 		\end{appendices}				
