@@ -58,10 +58,9 @@ public class SubnetPoolChildren extends AbstractChildren {
 
     @Override
     protected Node[] createNodes(LocalObjectLight key) {
-        boolean enableActions = ((SubnetPoolNode)getNode()).enableActions();
         if(key instanceof LocalPool)
-            return new Node[] { new SubnetPoolNode((LocalPool)key, enableActions) };
+            return new Node[] { new SubnetPoolNode((LocalPool)key) };
         else
-            return new Node[] { new SubnetNode(key, enableActions) };
+            return new Node[] { new SubnetNode(key) };
     }
 }

@@ -16,6 +16,8 @@
 package org.inventory.models.physicalconnections.actions;
 
 import java.awt.event.ActionEvent;
+import java.util.HashMap;
+import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
@@ -38,18 +40,28 @@ public class EditConnectionsAction extends GenericObjectNodeAction {
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        LocalObjectLight[] containerEndpoints = CommunicationsStub.getInstance().getConnectionEndpoints(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getOid());
-        if (containerEndpoints == null){
+        LocalObjectLight selectedObject = selectedObjects.get(0);
+        
+        HashMap<String, LocalObjectLight[]> specialAttributes = CommunicationsStub.getInstance().getSpecialAttributes(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getOid());
+        List<LocalObjectLight> parents = CommunicationsStub.getInstance().getParentsUntilFirstOfClass(selectedObject.getClassName(), selectedObject.getOid(), "GenericLocation");
+        LocalObjectLight parent = parents.get(parents.size() - 1);
+        
+        if (specialAttributes == null || parent == null) {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             return;
         }
         
-        if (containerEndpoints[0] == null || containerEndpoints[1] == null){
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, String.format(
-                    "Container %s is missing one of its endpoints", selectedObjects.get(0)));
-            return;
-        }
-        EditConnectionsFrame frame = new EditConnectionsFrame(selectedObjects.get(0), containerEndpoints[0], containerEndpoints[1]);
+        LocalObjectLight endpointA = null;
+        LocalObjectLight endpointB = null;
+            
+        if (specialAttributes.containsKey("endpointA"))
+            endpointA = specialAttributes.get("endpointA")[0];
+            
+        if (specialAttributes.containsKey("endpointB"))
+            endpointB = specialAttributes.get("endpointB")[0];
+            
+            
+        EditConnectionsFrame frame = new EditConnectionsFrame(selectedObjects.get(0), endpointA != null ? endpointA : parent, endpointB != null ? endpointB : parent);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }

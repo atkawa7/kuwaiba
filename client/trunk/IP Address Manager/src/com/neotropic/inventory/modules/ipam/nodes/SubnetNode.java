@@ -58,19 +58,13 @@ public class SubnetNode extends ObjectNode {
     /**
      * Should the context actions be available?
      */
-    private boolean enableActions;
-
-    public SubnetNode(LocalObjectLight subnet, boolean enableActions) {
+    public SubnetNode(LocalObjectLight subnet) {
         super(subnet);
-        this.enableActions = enableActions;
         setChildren(new SubnetChildren());
     }
     
     @Override
     public Action[] getActions(boolean context) {
-        if (!enableActions)
-            return new Action[0];
-        
         return new Action[] {
             AddIPAddressAction.getInstance(),
             CreateSubnetAction.getInstance(),
@@ -96,10 +90,6 @@ public class SubnetNode extends ObjectNode {
     @Override
     public Image getOpenedIcon(int i){
         return getIcon(i);
-    }
-
-    public boolean enableActions() {
-        return enableActions;
     }
     
     @Override

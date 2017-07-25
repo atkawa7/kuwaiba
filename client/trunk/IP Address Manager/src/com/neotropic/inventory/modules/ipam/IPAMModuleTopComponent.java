@@ -112,7 +112,7 @@ public final class IPAMModuleTopComponent extends TopComponent implements Explor
     }
 
     public void setRoot(){
-        em.setRootContext(new IPAMRootNode(ipams.getRootChildren(), true));
+        em.setRootContext(new IPAMRootNode(ipams.getRootChildren()));
     }
     
     @Override

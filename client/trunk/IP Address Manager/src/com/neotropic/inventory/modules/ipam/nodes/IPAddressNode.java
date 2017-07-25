@@ -34,15 +34,9 @@ import org.openide.nodes.Sheet;
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class IPAddressNode extends ObjectNode {
-
-    /**
-     * Should the context actions be available?
-     */
-    private boolean enableActions;
     
-    public IPAddressNode(LocalObjectLight lol, boolean enableActions) {
+    public IPAddressNode(LocalObjectLight lol) {
         super(lol, true);
-        this.enableActions = enableActions;
     }
     
     @Override
@@ -93,9 +87,6 @@ public class IPAddressNode extends ObjectNode {
 
     @Override
     public Action[] getActions(boolean context) {
-        if (!enableActions)
-            return new Action[0];
-        
         return super.getActions(context);
     }
     

@@ -35,7 +35,7 @@ import org.inventory.communications.util.Utils;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.ExplorablePanel;
 import org.inventory.navigation.navigationtree.nodes.ActionlessObjectNode;
-import org.inventory.navigation.special.children.nodes.SpecialObjectNode;
+import org.inventory.navigation.special.children.nodes.ActionlessSpecialObjectNode;
 import org.openide.explorer.view.BeanTreeView;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
@@ -151,7 +151,7 @@ public class EditConnectionsFrame extends JFrame {
     
     private void init() {
         pnlLeft.getExplorerManager().setRootContext(new ActionlessObjectNode(aSideRoot));
-        pnlCenter.getExplorerManager().setRootContext(new SpecialObjectNode(centerRoot));
+        pnlCenter.getExplorerManager().setRootContext(new ActionlessSpecialObjectNode(centerRoot));
         pnlRight.getExplorerManager().setRootContext(new ActionlessObjectNode(bSideRoot));
         
         pnlLeft.getLookup().lookupResult(LocalObjectLight.class).addLookupListener(new LookupListener() {

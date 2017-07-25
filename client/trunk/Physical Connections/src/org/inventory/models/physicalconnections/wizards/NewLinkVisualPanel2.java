@@ -20,6 +20,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.utils.ExplorablePanel;
+import org.inventory.navigation.navigationtree.nodes.ActionlessObjectNode;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.openide.explorer.view.BeanTreeView;
 
@@ -53,8 +54,8 @@ public final class NewLinkVisualPanel2 extends JPanel {
         pnlLeft = new ExplorablePanel();
         pnlRight = new ExplorablePanel();
                   
-        pnlLeft.getExplorerManager().setRootContext(aSide);
-        pnlRight.getExplorerManager().setRootContext(bSide);
+        pnlLeft.getExplorerManager().setRootContext(new ActionlessObjectNode(aSide.getObject()));
+        pnlRight.getExplorerManager().setRootContext(new ActionlessObjectNode(bSide.getObject()));
         
         pnlLeft.setViewportView(treeLeft);
         pnlRight.setViewportView(treeRight);

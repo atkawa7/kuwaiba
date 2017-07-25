@@ -48,7 +48,7 @@ import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.ExplorablePanel;
 import org.inventory.core.services.utils.JComplexDialogPanel;
-import org.inventory.navigation.navigationtree.nodes.ObjectNode;
+import org.inventory.navigation.navigationtree.nodes.ActionlessObjectNode;
 import org.openide.DialogDisplayer;
 import org.openide.WizardDescriptor;
 import org.openide.WizardValidationException;
@@ -811,8 +811,8 @@ public class SDHConnectionWizard {
             pnlTreeASide = new ExplorablePanel();
             pnlTreeBSide = new ExplorablePanel();
             
-            pnlTreeASide.getExplorerManager().setRootContext(new ObjectNode(equipmentA));
-            pnlTreeBSide.getExplorerManager().setRootContext(new ObjectNode(equipmentB));
+            pnlTreeASide.getExplorerManager().setRootContext(new ActionlessObjectNode(equipmentA));
+            pnlTreeBSide.getExplorerManager().setRootContext(new ActionlessObjectNode(equipmentB));
             
             pnlTreeASide.setViewportView(treeASide);
             pnlTreeBSide.setViewportView(treeBSide);

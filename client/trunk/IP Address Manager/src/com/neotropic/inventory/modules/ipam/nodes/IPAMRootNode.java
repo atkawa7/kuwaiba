@@ -33,10 +33,10 @@ public class IPAMRootNode extends AbstractNode {
      * @param enableActions Should the context actions be available? When this tree is displayed outside the IPAM, like for example, within an ExplorablePanel,
      *                  the explorer manager lookup could conflict with the global lookup, so it's better to disable the actions
      */
-    public IPAMRootNode(List<LocalPool> subnetPools, boolean enableActions) {
+    public IPAMRootNode(List<LocalPool> subnetPools) {
         super (new Children.Array());
         for (LocalPool subnetPool : subnetPools)
-            getChildren().add(new SubnetPoolNode[] { new SubnetPoolNode(subnetPool, enableActions) });
+            getChildren().add(new SubnetPoolNode[] { new SubnetPoolNode(subnetPool) });
     }
    
     @Override

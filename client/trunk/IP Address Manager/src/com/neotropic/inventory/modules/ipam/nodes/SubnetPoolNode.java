@@ -53,12 +53,10 @@ public class SubnetPoolNode extends AbstractNode implements PropertyChangeListen
     protected Sheet sheet;
     private LocalPool subnetPool;
     private CommunicationsStub com;
-    private boolean enableActions;
-    
-    public SubnetPoolNode(LocalPool subnetPool, boolean enableActions) {
+        
+    public SubnetPoolNode(LocalPool subnetPool) {
         super(new SubnetPoolChildren(), Lookups.singleton(subnetPool));
         this.subnetPool = subnetPool;
-        this.enableActions = enableActions;
         this.subnetPool.addPropertyChangeListener(this);
         com = CommunicationsStub.getInstance();
         setChildren(new SubnetPoolChildren());
@@ -66,9 +64,6 @@ public class SubnetPoolNode extends AbstractNode implements PropertyChangeListen
     
     @Override
     public Action[] getActions(boolean context) {
-        
-        if (!enableActions)
-            return new Action[0];
         
         List<Action> actions = new ArrayList<>();
         
@@ -96,10 +91,6 @@ public class SubnetPoolNode extends AbstractNode implements PropertyChangeListen
     @Override
     public Image getOpenedIcon(int i){
         return getIcon(i);
-    }
-
-    public boolean enableActions() {
-        return enableActions;
     }
     
     @Override

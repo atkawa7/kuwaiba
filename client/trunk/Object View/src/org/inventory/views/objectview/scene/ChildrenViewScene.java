@@ -22,6 +22,7 @@ import java.awt.event.ActionEvent;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
@@ -340,7 +341,28 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
                                 String className = reader.getAttributeValue(null,"class"); //NOI18N
 
                                 LocalObjectLight container = com.getObjectInfoLight(className, objectId);
-                                if (container != null) {
+                                
+                                LocalObjectLight endpointA = null;
+                                LocalObjectLight endpointB = null;
+                                
+                                if (container != null) { // if the connection exist
+                                    HashMap<String, LocalObjectLight[]> specialAttributes = com.getSpecialAttributes(className, objectId);
+
+                                    if (specialAttributes.containsKey("endpointA")) {
+                                        endpointA = specialAttributes.get("endpointA")[0];
+
+                                        if (endpointA.getOid() != aSide)
+                                            endpointA = null;                                        
+                                    }
+                                    if (specialAttributes.containsKey("endpointB")) {
+                                        endpointB = specialAttributes.get("endpointB")[0];
+
+                                        if (endpointB.getOid() != bSide)
+                                            endpointB = null;
+                                    }
+                                }
+                                
+                                if (container != null && endpointA != null && endpointB != null) {
                                     myConnections.remove(container);
 
                                     LocalObjectLight aSideObject = new LocalObjectLight(aSide, null, null);
