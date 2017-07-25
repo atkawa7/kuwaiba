@@ -52,7 +52,7 @@
 				\midrule
 				March 17th 2011 & Corrections regarding to the changes made in the version 0.3 beta 2 \\
 				\midrule
-				November 8th  2011 & Added details related to the database setup. Added a troubleshooting section \\
+				November 8th 2011 & Added details related to the database setup. Added a troubleshooting section \\
 				\midrule
 				May 22nd 2012 & Adaptation to version 0.4 \\
 				\midrule
@@ -68,7 +68,7 @@
 				\midrule
 				March 24th 2017 & Added notes about configuring Glassfish to support HTTP compression. \\
 				\midrule
-				June 1th 2017 & Added Appendix E Configuring Update Center\\
+				June 1st 2017 & Added Appendix E Configuring Update Center\\
 				\bottomrule
 			\end{tabular}	
 				
@@ -82,14 +82,14 @@
 				\includegraphics[]{img/cc_license_logo.jpg} & This document is published under the terms of a license Creative Commons by-nc-sa. You can find details about it at\linebreak
 				\textbf{http://creativecommons.org/licenses/by-nc-sa/2.0/ } \\
 
-				\includegraphics[width=2cm]{img/osi_logo.jpg} & Kuwaiba Server and Client are licensed under EPL v1 and GPL v2. You can find the whole text of this licenses at \linebreak
+				\includegraphics[width=2cm]{img/osi_logo.jpg} & Kuwaiba Server and Client are licensed under EPL v1 and GPL v2. You can find the whole text of these licenses at \linebreak
 				\textbf{http://www.eclipse.org/legal/epl-v10.html} \linebreak
 				\textbf{http://www.gnu.org/licenses/old-licenses/gpl-2.0.html} \\
 			\end{tabular}
 		\end{table}
 		\paragraph{Disclaimer} \hspace{0pt}
 		\begin{itemize}
-			\item Netbeans and Java are registered trademarks of Oracle and/or its affiliates. Other names may be trademarks of their respective owners. The Kuwaiba project is not endorsed to any of them.
+			\item Netbeans and Java are registered trademarks of Oracle and/or its affiliates. Other names may be trademarks of their respective owners. The Kuwaiba project is not endorsed by any of them.
 			
 			\item This document is provided “as is”, with no warranty at all. Install the software and follow the instructions included at your own risk.
 			
@@ -109,11 +109,11 @@
 		
 		We won't go into technical details here, suffice to say that there are three main blocks that are important to keep in mind, as all the troubleshooting procedures will revolve around them. The lower level component is the database. Kuwaiba uses a graph-oriented database called Neo4J. After a few releases using a conventional relational database, we realized that the best way to model a telecommunications network is not a set of related tables, but a graph. Neo4J may work in two modes: as a server responding JSON requests on a TCP port or as an embedded database, when the application access the database files directly without any service mediating between the application and the data. Kuwaiba uses the latter. This means that you can't access the database while Kuwaiba is running, because it will be locked. Running Neo4J in embedded mode increases the performance, sacrificing accessibility to the data.\newline
 		
-		The middle layer is called the Persistence Service. This is one of the most important components, and it's the responsible of accessing the information stored in the database in a safe way, isolating that logic from the res of the application. Other layers of the application will never know that the backend is Neo4J thanks to this module, and this enables the development of implementations using other DBMS like Oracle, for example. It's called a service for historic reasons: Prior to version 1.0 this component was a standalone application that ran in a different JVM than the one used by the application server. This was complicated to setup, so it was merged with the application running on the application server. However, It still runs when the application is deployed or at application server (AS) startup. You should check the AS log files to see if the Persistence Service is running correctly, or nothing else will work.\newline
+		The middle layer is called the Persistence Service. This is one of the most important components, and it's responsible for accessing the information stored in the database in a safe way, isolating that logic from the rest of the application. Other layers of the application will never know that the backend is Neo4J thanks to this module, and this enables the development of implementations using other DBMS like Oracle, for example. It's called a service for historic reasons: Prior to version 1.0 this component was a standalone application that ran in a different JVM than the one used by the application server. This was complicated to setup, so it was merged with the application running on the application server. However, It still runs when the application is deployed or at application server (AS) startup. You should check the AS log files to see if the Persistence Service is running correctly, or nothing else will work.\newline
 		
 		The third component is the frontend of the server. It implements the web service that allows the communication between the server and its clients or third party applications. In a general sense, it's a northbound interface. As we will see later, you will be able to access a simple web-based interface to perform administrative tasks, like resetting passwords or creating the default database structure. Also, you will be able to access the WSDL that would eventually allow you to integrate in-house applications.\newline
 		
-		As you can see, this is pretty straightforward and once it's done the first time, it can be easily reproduced. Starting from scratch, given that all requirements are already downloaded, the server can be configured and started in less than 10 minutes.
+		As you can see, this is pretty straightforward and once it's done the first time, it can easily be reproduced. Starting from scratch, given that all requirements are already downloaded, the server can be configured and started in less than 10 minutes.
 	\newpage
 	
 	\section{Server Installation}
@@ -215,7 +215,7 @@
 					\theverbbox
 				\end{figure}
 				\begin{framed} {\large \textbf{Important}} \\
-					If the the database directory does not exist or can not be written, the \textbf{Persistence Service won't start}. Check the \textbf{\nameref{sec:Troubleshooting}} section for more details if this happens.
+					If the database directory does not exist or can not be written, the \textbf{Persistence Service won't start}. Check the \textbf{\nameref{sec:Troubleshooting}} section for more details if this happens.
 				\end{framed}
 				\item Finally, copy all .jar files in the directory \textbf{lib} of the Neo4J's install package to the path
 				\begin{verbbox}
@@ -270,7 +270,7 @@
 			\newpage
 			\section{Server Side Troubleshooting} \label{sec:Troubleshooting}
 				\begin{enumerate}
-					\item If you get a \textit{Cant't reach backend} error, it means that the Persistence Service didn't start. The most probable cause is that the database path was not set correctly, or the service does not have write access to it. Check Glassfish log files and search for the "[KUWAIBA]" tag to see the service startup messages. The log file is typically located at:
+					\item If you get a \textit{Cant't reach backend} error, it means that the Persistence Service didn't start. The most probable cause is that the database path was not set correctly, or the service does not have written access to it. Check Glassfish log files and search for the "[KUWAIBA]" tag to see the service startup messages. The log file is typically located at:
 					\begin{verbbox}
 						[GF_INSTALL_DIR]/glassfish/domains/domain1/logs/server.log
 					\end{verbbox}
@@ -279,8 +279,8 @@
 						\theverbbox
 					\end{figure}					
 					\item A message \textit{Can not find the class InventoryObject} means that 
-					\item If you install Glassfish under MS Windows 7/Vista in \textbf{c:/glassfishv3}, check you have proper permissions to write on this location, since due to system restrictions it's not possible by default. That will affect the domain creation and application deployment processes.
-					\item In some cases, if you install Glassfish before to install the JDK under MS Windows (especially versions 7 and Vista) or when the installer detects a wrong version of Java, the variable AS\_JAVA in \textbf{[GLASSFISH\_INSTALL\_DIR]/glassfish/config/asenv.bat} is set to a wrong location. It should be pointing to the JAVA\_HOME value (this is, the JDK installation directory).
+					\item If you install Glassfish under MS Windows 7/Vista in \textbf{c:/glassfishv3}, check if you have proper permissions to write on this location, since due to system restrictions it's not possible by default. That will affect the domain creation and application deployment processes.
+					\item In some cases, if you install Glassfish before installing the JDK under MS Windows (especially versions 7 and Vista) or when the installer detects a wrong version of Java, the variable AS\_JAVA in \textbf{[GLASSFISH\_INSTALL\_DIR]/glassfish/config/asenv.bat} is set to a wrong location. It should be pointing to the JAVA\_HOME value (this is, the JDK installation directory).
 				\end{enumerate}
 			\newpage
 			\section{Client Installation}
@@ -302,7 +302,7 @@
 							\centering	
 							\theverbbox
 						\end{figure}
-						The file is called \textbf{kuwaibainventory.exe} for Windows platforms and \textbf{kuwaibainventory} for Unix-like systems. \textbf{[EXTRACTION\_DIR]} is the directory where you extracted the files.
+						The file is called \textbf{kuwaibainventory.exe} for Windows platforms and \textbf{kuwaibainventory} for Unix-like systems. \textbf{[EXTRACTION\_DIR]} is the directory from where you extracted the files.
 						\item You may need to change the file permissions to make the binary executable under Unix-like OS using the command
 						\begin{verbbox}
 							chmod 755 [EXTRACTION_DIR]/kuwaibainventory/bin/kuwaibainventory
@@ -340,7 +340,7 @@
 				\centering	
 				\theverbbox
 			\end{figure}
-			Note that you should NOT run Glassfish as root. These settings can be used if the persistence service AND the application run in the same box (the last line governs who can get connected to the service, in this case, only those applications running in the same computer). You might to add some more permissions depending on what other Java applications are you running on that computer. Also, the last two lines can be tuned to be less permissive, if preferred. For more information about permissions, please check the official documentation by Oracle\footnote{Policy files http://docs.oracle.com/javase/1.3/docs/guide/security/PolicyFiles.html} \footnote{Permissions http://docs.oracle.com/javase/6/docs/technotes/guides/security/permissions.html}.
+			Note that you should NOT run Glassfish as root. These settings can be used if the persistence service AND the application run in the same box (the last line governs who can get connected to the service - in this case, only those applications running in the same computer). You might add some more permissions depending on what other Java applications you are running on that computer. Also, the last two lines can be tuned to be less permissive, if preferred. For more information about permissions, please check the official documentation by Oracle\footnote{Policy files http://docs.oracle.com/javase/1.3/docs/guide/security/PolicyFiles.html} \footnote{Permissions http://docs.oracle.com/javase/6/docs/technotes/guides/security/permissions.html}.
 			
 			There's also some information on how to apply the security manager rules only to Glassfish here\footnote{The server.policy file https://docs.oracle.com/cd/E18930\_01/html/821-2418/beabx.html}
 			
@@ -351,7 +351,7 @@
 				\textbf{Note:} You can find detailed information about how to manage digital certificates in Glassfish in the Oracle's Java EE documentation \footnote{Working with Digital Certificates https://docs.oracle.com/javaee/6/tutorial/doc/bnbyb.html}. \\
 				
 				\begin{enumerate}
-					\item If you already own a certificate issued by a Certification Authority, skip this step. Otherwise, it means you will use a self-signed certificate. The first time you run Glassfish and/or create a domain, a certificate is generated, you can use that one or generate another with your own corporate information. To do this, execute the following command (the command is located in the \textit{bin} directory of you JDK installation):\\
+					\item If you already own a certificate issued by a Certification Authority, skip this step. Otherwise, it means you will use a self-signed certificate. The first time you run Glassfish and/or create a domain, a certificate is generated; you can use that one or generate another with your own corporate information. To do this, execute the following command (the command is located in the \textit{bin} directory of you JDK installation):\\
 					
 					\small keytool -genkey -keyalg RSA -alias [alias] -keystore [keystore\_filename] -validity 3600 -keysize 2048\\
 					
@@ -405,7 +405,7 @@
 						\caption{Contents of \textbf{etc} directory}
 						\label{fig:etc-contents}
 					\end{figure}
-					In the file \textbf{kuwaiba.conf} you can configure the name of the keystore file. The same file can be used in as many clients as you need.
+					In the file \textbf{kuwaiba.conf} you can configure the name of the keystore file. The same file can be used for as many clients as you need.
 				\end{enumerate}
 			\section{Appendix C. Starting Glassfish on Boot} \label{app:AppendixC}
 				\subsection{Systemd}
@@ -520,7 +520,7 @@
 						\caption{HTTP tab}
 						\label{fig:http-tab}
 					\end{figure}
-					\item Enable compression, make sure "text/xml" is included in the list of compressible MIME types and set the value, in bytes, over which, the content is going to be compressed. 2048 is a good default number, but you should change it depending on the size of your views.
+					\item Enable compression, make sure "text/xml" is included in the list of compressible MIME types and set the value, in bytes, over which the content is going to be compressed. 2048 is a good default number, but you should change it depending on the size of your views.
 					\begin{figure}[h!]
 						\centering
 						\includegraphics[width=0.7\linewidth]{img/gf_enable_compression.png} 	
@@ -530,7 +530,7 @@
 				\end{enumerate}
 			\newpage
 			\section{Appendix E. Configuring Update Center} \label{app:AppendixE}
-			Since version 1.5, the Kuwaiba client can be updated using an update center. An \textbf{Update Center} are a set of files which are putting in a server to be download by client application. The server can be anyone; e.g., GlassFish, Apache, Apache Tomcat. Once the server are selected, unzip the updates.zip and locate the files in the server, and find the URL for the \textbf{updates.xml} file, this URL are used to configure the Kuwiaba client to get the latest version \textbf{figure~\ref{fig:update_center_options}}.
+			Since version 1.5, the Kuwaiba client can be updated using an update center. An \textbf{Update Center} is a set of files which are put in a server to be download by client application. The server can be anyone; e.g., GlassFish, Apache, Apache Tomcat. Once the server is selected, unzip the updates.zip, locate the files in the server and find the URL for the \textbf{updates.xml} file; this URL is used to configure the Kuwaiba client to get the latest version \textbf{figure~\ref{fig:update_center_options}}.
 			
 			\begin{figure}[h!]
 				\centering
@@ -539,10 +539,10 @@
 				\label{fig:update_center_options}
 			\end{figure}
 						
-			In the kuwaiba client you must configure the update center. To open the Update Center module look in the menu for Tools $\rightarrow$ Update Center. Once the Update Center URL was assigned, the update must begin right away. For the next Kuwaiba run if there are updates, the update will be automatically, and if is necessary restart the application, it shows a notification to begin the restart.
+			 You must configure the update center in the Kuwaiba client. Open the Update Center module look in the menu for Tools $\rightarrow$ Update Center. Once the Update Center URL was assigned, the update must begin right away. For the next Kuwaiba run, if there are updates, the update will be automatical, and if it is necessary to restart the application, it will show a notification to restart.
 			\newline
 			\newline
-			You can decide no configure a server for the update center, in this case in the Kuwaiba client there are an option to hide the warnings generated when not found the update.xml resource  \textbf{figure~\ref{fig:update_center_options}}.					
+			You can decide not to configure a server for the update center. In this case, there is the option to hide the warnings generated in the Kuwaiba client when the update is not found update.xml resource  \textbf{figure~\ref{fig:update_center_options}}.					
 			
 		\end{appendices}			
 \end{document}
