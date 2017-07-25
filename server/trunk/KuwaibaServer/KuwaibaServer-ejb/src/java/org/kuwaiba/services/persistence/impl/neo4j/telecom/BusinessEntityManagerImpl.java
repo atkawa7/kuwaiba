@@ -701,7 +701,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             Node objectNode = getInstanceOfClass(objectClass, oid);
             List<RemoteBusinessObjectLight> parents = new ArrayList<>();
             while (true) {
-                Node parentNode = objectNode.getSingleRelationship(RelTypes.CHILD_OF, Direction.OUTGOING).getEndNode();
+                Node parentNode = null;
+                if (objectNode.hasRelationship(RelTypes.CHILD_OF, Direction.OUTGOING))
+                    parentNode = objectNode.getSingleRelationship(RelTypes.CHILD_OF, Direction.OUTGOING).getEndNode();
+                
+                if (objectNode.hasRelationship(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING))
+                    parentNode = objectNode.getSingleRelationship(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).getEndNode();
+                                
                 Label label = DynamicLabel.label(Constants.LABEL_ROOT); //If the parent node is the dummy root, just return null
                 if (parentNode.hasLabel(label))
                     return parents;
@@ -715,6 +721,25 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 }
             }
         }
+        /*
+        try(Transaction tx = graphDb.beginTx()) {
+            Node objectNode = getInstanceOfClass(objectClass, oid);
+            if (objectNode.hasRelationship(Direction.OUTGOING, RelTypes.CHILD_OF)){
+                Node parentNode = objectNode.getSingleRelationship(RelTypes.CHILD_OF, Direction.OUTGOING).getEndNode();
+
+                //If the direct parent is DummyRoot, return a dummy RemoteBusinessObject with oid = -1
+                if (parentNode.hasProperty(Constants.PROPERTY_NAME) && Constants.NODE_DUMMYROOT.equals(parentNode.getProperty(Constants.PROPERTY_NAME)) )
+                    return new RemoteBusinessObject(-1L, Constants.NODE_DUMMYROOT, Constants.NODE_DUMMYROOT);
+                else    
+                    return Util.createRemoteObjectLightFromNode(parentNode);
+            }
+            if (objectNode.hasRelationship(Direction.OUTGOING, RelTypes.CHILD_OF_SPECIAL)){
+                Node parentNode = objectNode.getSingleRelationship(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).getEndNode();
+                return Util.createRemoteObjectLightFromNode(parentNode);
+            }
+            throw new InvalidArgumentException(String.format("The Parent of object with id %s cannot be found", oid));
+        }
+        */
     }
     
     @Override
