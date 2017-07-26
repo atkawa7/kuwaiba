@@ -1395,6 +1395,7 @@ public class CommunicationsStub {
      * @param objectClass
      * @param parentClass
      * @param parentOid
+     * @param attributes
      * @param template
      * @return 
      */
@@ -1432,10 +1433,28 @@ public class CommunicationsStub {
     }
     
     public LocalObjectLight createSpecialObject(String className, String parentClassName, 
-            long parentOid, long templateId) {
+            long parentOid, HashMap<String, Object> attributes, long templateId) {
         try{
+            List<String> attributeNames = new ArrayList<>();
+            List<String> attributeValues = new ArrayList<>();
+
+            for (String key : attributes.keySet()){
+                String value;
+                attributeNames.add(key);
+                
+                Object theValue = attributes.get(key);
+                if (theValue instanceof LocalObjectListItem)
+                    value = String.valueOf(((LocalObjectListItem)theValue).getId());
+                else {
+                    if (theValue instanceof Date)
+                        value = String.valueOf(((Date)theValue).getTime());
+                    else
+                        value = theValue.toString();
+                }
+                attributeValues.add(value);
+            }
             long objectId  = service.createSpecialObject(className,parentClassName, parentOid, 
-                    new ArrayList<String>(), new ArrayList<String>(),templateId,this.session.getSessionId());
+                    attributeNames, attributeValues,templateId,this.session.getSessionId());
             return new LocalObjectLight(objectId, null, className);
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -1491,7 +1510,7 @@ public class CommunicationsStub {
      */
     public boolean removePossibleChildren(long parentClassId, long[] childrenToBeDeleted){
         try{
-            List<Long> pChildren = new ArrayList<Long>();
+            List<Long> pChildren = new ArrayList<>();
             for (long pChild : childrenToBeDeleted){
                 pChildren.add(pChild);
             }
@@ -2659,7 +2678,6 @@ public class CommunicationsStub {
      * Create a view for a given object. If there's already a view of the provided view type, it will be overwritten
      * @param oid object's oid
      * @param objectClass object class
-     * @param view id
      * @param name view name
      * @param description view description
      * @param structure XML document with the view structure (see http://neotropic.co/kuwaiba/wiki/index.php?title=XML_Documents#To_Save_Object_Views for details about the supported format)
@@ -3199,7 +3217,8 @@ public class CommunicationsStub {
      * @param templateElementName Name of the element.
      * @return The id of the new object.
      */
-    public LocalObjectLight createTemplateElement(String templateElementClass, String templateElementParentClassName, long templateElementParentId, String templateElementName) {
+    public LocalObjectLight createTemplateElement(String templateElementClass, 
+            String templateElementParentClassName, long templateElementParentId, String templateElementName) {
             try {
             return new LocalObjectLight(service.createTemplateElement(templateElementClass, templateElementParentClassName, 
                     templateElementParentId, templateElementName, session.getSessionId()), templateElementName, templateElementClass);
