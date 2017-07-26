@@ -197,7 +197,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 if (templateNode == null)
                     throw new ApplicationObjectNotFoundException(String.format("No template with id %s was found for class %s", template, className));
                 
-                newObject = copyTemplateElement(templateNode, true);
+                newObject = copyTemplateElement(templateNode, myClass, true);
             }
             newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF);
             tx.success();
@@ -291,7 +291,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 if (templateNode == null)
                     throw new ApplicationObjectNotFoundException(String.format("No template with id %s was found for class %s", template, className));
                 
-                newObject = copyTemplateElement(templateNode, true);
+                newObject = copyTemplateElement(templateNode, objectClass, true);
             }
             
             newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF);
@@ -352,7 +352,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 if (templateNode == null)
                     throw new ApplicationObjectNotFoundException(String.format("No template with id %s was found for class %s", template, className));
                 
-                newObject = copyTemplateElement(templateNode, true);
+                newObject = copyTemplateElement(templateNode, classMetadata, true);
                 updateObject(newObject, classMetadata, attributes); //Override the template values with those provided, if any
             }
             if (parentNode !=null)
@@ -2092,12 +2092,15 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      * @param recursive Should the spawn operation be recursive?
      * @return The root copied object
      */
-    private Node copyTemplateElement(Node templateObject, boolean recursive) {
+    private Node copyTemplateElement(Node templateObject, ClassMetadata classToMap, boolean recursive) throws InvalidArgumentException {
         
         Node newInstance = graphDb.createNode();
-        for (String property : templateObject.getPropertyKeys())
+        for (String property : templateObject.getPropertyKeys()){
+            if(classToMap.isMandatory(property) && ((String)templateObject.getProperty(property)).isEmpty())
+                throw new InvalidArgumentException(String.format("The attribute %s is mandatory, can not be set null or empty", property));
+            
             newInstance.setProperty(property, templateObject.getProperty(property));
-        
+        }
         for (Relationship rel : templateObject.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING))
             newInstance.createRelationshipTo(rel.getEndNode(), RelTypes.RELATED_TO).setProperty(Constants.PROPERTY_NAME, rel.getProperty(Constants.PROPERTY_NAME));
         
@@ -2108,11 +2111,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
         if (recursive){
             for (Relationship rel : templateObject.getRelationships(RelTypes.CHILD_OF, Direction.INCOMING)) {
-                Node newChild = copyTemplateElement(rel.getStartNode(), true);
+                Node classNode = rel.getStartNode().getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode();
+                Node newChild = copyTemplateElement(rel.getStartNode(), Util.createClassMetadataFromNode(classNode), true);
                 newChild.createRelationshipTo(newInstance, RelTypes.CHILD_OF);
             }
             for (Relationship rel : templateObject.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.INCOMING)) {
-                Node newChild = copyTemplateElement(rel.getStartNode(), true);
+                Node classNode = rel.getStartNode().getSingleRelationship(RelTypes.INSTANCE_OF_SPECIAL, Direction.OUTGOING).getEndNode();
+                Node newChild = copyTemplateElement(rel.getStartNode(), Util.createClassMetadataFromNode(classNode), true);
                 newChild.createRelationshipTo(newInstance, RelTypes.CHILD_OF_SPECIAL);
             }
         }
