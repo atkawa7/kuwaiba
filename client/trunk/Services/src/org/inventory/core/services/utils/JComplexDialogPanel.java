@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
@@ -82,5 +82,4 @@ public class JComplexDialogPanel extends JPanel {
     public JComponent getComponent(String name){
         return components.get(name);
     }
-    
 }
