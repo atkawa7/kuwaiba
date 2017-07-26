@@ -153,6 +153,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
      */
     private Index<Node> specialNodesIndex;
     /**
+     * Index for business rules
+     */
+    private Index<Node> businessRulesIndex;
+    /**
      * Reference to the singleton instance of CacheManager
      */
     private CacheManager cm;
@@ -185,6 +189,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             this.poolsIndex = graphDb.index().forNodes(Constants.INDEX_POOLS);
             this.taskIndex = graphDb.index().forNodes(Constants.INDEX_TASKS);
             this.specialNodesIndex = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES);
+            this.businessRulesIndex = graphDb.index().forNodes(Constants.INDEX_BUSINESS_RULES);
             for (Node listTypeNode : listTypeItemsIndex.query(Constants.PROPERTY_ID, "*")){
                 GenericObjectList aListType = Util.createGenericObjectListFromNode(listTypeNode);
                 cm.putListType(aListType);
@@ -2961,6 +2966,49 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 throw new IllegalArgumentException("Favorites folder name can not be empty");
         }
     }
+    
+    //<editor-fold desc="Business Rules" defaultstate="collapsed">
+    public long createBusinessRule(String ruleName, String ruleDescription, int ruleType, 
+            int ruleScope, List<String> constraints) throws InvalidArgumentException {
+        
+        if (ruleName == null || ruleDescription == null || ruleType < 1 || ruleScope < 1)
+            throw new InvalidArgumentException("Parameter invalid. Make sure all parameters are not null and greater than 1");
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            Node businessRuleNode = graphDb.createNode();
+            
+            businessRuleNode.setProperty(Constants.PROPERTY_NAME, ruleName);
+            businessRuleNode.setProperty(Constants.PROPERTY_DESCRIPTION, ruleDescription);
+            businessRuleNode.setProperty(Constants.PROPERTY_TYPE, ruleType);
+            businessRuleNode.setProperty(Constants.PROPERTY_SCOPE, ruleScope);
+            
+            if (constraints != null) {
+                for (int i = 0; i < constraints.size(); i++)
+                    businessRuleNode.setProperty("constraint" + i, constraints.get(i)); //NOI18N
+            }
+            businessRulesIndex.putIfAbsent(businessRuleNode, Constants.PROPERTY_ID, businessRuleNode.getId());
+            tx.success();
+            return businessRuleNode.getId();
+        }
+    }
+    
+    public void deleteBusinessRule(long businessRuleId) throws ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            
+            Node businessRuleNode = businessRulesIndex.get(Constants.PROPERTY_ID, businessRuleId).getSingle();
+            
+            if (businessRuleNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Business rule with id %s not found", businessRuleId));
+            
+            businessRulesIndex.remove(businessRuleNode);
+            businessRuleNode.delete();
+            
+            tx.success();
+        }
+    }
+    
+    //</editor-fold>
+    //Helpers
     
     private Node getFavoritesFolderForUser(long favoritesFolderId, long userId) {
         Node userNode = userIndex.get(Constants.PROPERTY_ID, userId).getSingle();

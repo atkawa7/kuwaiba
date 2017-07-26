@@ -138,17 +138,13 @@ public class Constants {
      */
     public static final String INDEX_CLASS = "classes"; //NOI18N
     /**
-     * Label used for the category index
-     */
-    //public static final String INDEX_CATEGORY = "categories"; //NOI18N
-    /**
      * Label used for the special nodes index
      */
     public static final String INDEX_SPECIAL_NODES = "specialNodes"; //NOI18N
     /**
-     * Label used for the privilege nodes index
+     * Label used for the business rules index
      */
-    public static final String INDEX_PRIVILEGE_NODES = "privilegeNodes"; //NOI18N
+    public static final String INDEX_BUSINESS_RULES = "businessRules"; //NOI18N
     /**
      * Label used for the attributes nodes label
      */
@@ -224,6 +220,7 @@ public class Constants {
     public static final String PROPERTY_SUPPORT_PHONE_NUMBER = "supportPhoneNumber"; //NOI18N
     public static final String PROPERTY_SUPPORT_EMAIL = "supportEmail"; //NOI18N
     public static final String PROPERTY_PARAMETERS = "parameters"; //NOI18N
+    public static final String PROPERTY_SCOPE = "scope"; //NOI18N
     
     /**
      * Root for all business classes
