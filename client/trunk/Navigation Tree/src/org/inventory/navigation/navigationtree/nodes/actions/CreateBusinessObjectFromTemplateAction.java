@@ -145,7 +145,7 @@ public final class CreateBusinessObjectFromTemplateAction extends GenericObjectN
                         JOptionPane.showMessageDialog(null, "Select a template", "Create Object", JOptionPane.INFORMATION_MESSAGE);
                     else {
                         LocalObjectLight selectedObject = Utilities.actionsGlobalContext().lookup(LocalObjectLight.class);
-                        
+
                         LocalObjectLight newObject = CommunicationsStub.getInstance().createObject(selectedTemplate.getClassName(), 
                             selectedObject.getClassName(), selectedObject.getOid(), attributes, selectedTemplate.getOid());
                         
@@ -159,7 +159,7 @@ public final class CreateBusinessObjectFromTemplateAction extends GenericObjectN
 
                             NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE,
                             "Element created successfully");
-                        }
+                        } 
                     }
                 }
             });
