@@ -16,14 +16,17 @@
 package org.inventory.navigation.special.children.nodes.actions;
 
 import java.awt.event.ActionEvent;
+import java.util.HashMap;
 import java.util.List;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalAttributeMetadata;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.utils.AttributesForm;
 import org.inventory.core.services.utils.MenuScroller;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
@@ -52,18 +55,18 @@ public final class CreateSpecialBusinessObjectAction extends GenericObjectNodeAc
     @Override
     public void actionPerformed(ActionEvent ev) {
         ObjectNode node = Utilities.actionsGlobalContext().lookup(ObjectNode.class);
-        
-        LocalObjectLight myLol = com.createSpecialObject(
-                ((JMenuItem)ev.getSource()).getName(),
-                node.getObject().getClassName(),
-                node.getObject().getOid(), -1);
-        if (myLol == null)
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
-        else {
-            ((AbstractChildren)node.getChildren()).addNotify();
-                
-            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "The special object was created successfully");
-        }
+        String className = ((JMenuItem)ev.getSource()).getName();
+        final LocalAttributeMetadata[] mandatoryObjectAttributes = com.getMandatoryAttributesInClass(className);
+        AttributesForm mandatoryAttributesForm = new AttributesForm(mandatoryObjectAttributes);
+        HashMap<String, Object> attributes = new HashMap<>();
+        if(mandatoryObjectAttributes.length > 0){
+            attributes = mandatoryAttributesForm.createNewObjectForm();
+            if(!attributes.isEmpty()) //the createNewObject form is closed, and the ok button is never clicked 
+                createSpecialObject(className, node, attributes);
+        } 
+        else
+            createSpecialObject(className, node, attributes);
+
     }
 
     @Override
@@ -98,5 +101,18 @@ public final class CreateSpecialBusinessObjectAction extends GenericObjectNodeAc
     @Override
     public String getValidator() {
         return null;
+    }
+    
+    private void createSpecialObject(String objectClass, ObjectNode node, HashMap<String, Object> attributes) {
+        LocalObjectLight myLol = com.createSpecialObject(
+                objectClass, node.getObject().getClassName(), 
+                node.getObject().getOid(), attributes, -1);
+        if (myLol == null)
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+        else {
+            ((AbstractChildren)node.getChildren()).addNotify();
+                
+            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "The special object was created successfully");
+        }
     }
 }

@@ -149,7 +149,7 @@ public class CreateSpecialBusinessObjectFromTemplateAction extends GenericObject
                         LocalObjectLight selectedObject = Utilities.actionsGlobalContext().lookup(LocalObjectLight.class);
                         
                         LocalObjectLight newObject = CommunicationsStub.getInstance().createSpecialObject(selectedTemplate.getClassName(), 
-                            selectedObject.getClassName(), selectedObject.getOid(), selectedTemplate.getOid());
+                            selectedObject.getClassName(), selectedObject.getOid(), attributes, selectedTemplate.getOid());
                         
                         if (newObject == null) {
                             NotificationUtil.getInstance().showSimplePopup("Error", 
@@ -161,7 +161,7 @@ public class CreateSpecialBusinessObjectFromTemplateAction extends GenericObject
 
                             NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE,
                             "Special Element created successfully");
-                        }
+                        } 
                     }
                 }
             });
