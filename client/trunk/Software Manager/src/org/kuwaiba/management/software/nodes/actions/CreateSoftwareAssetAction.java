@@ -16,6 +16,7 @@
 package org.kuwaiba.management.software.nodes.actions;
 
 import java.awt.event.ActionEvent;
+import java.util.HashMap;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
@@ -38,8 +39,9 @@ public class CreateSoftwareAssetAction extends GenericObjectNodeAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        HashMap<String, Object> attributes = new HashMap<>();
         LocalObjectLight newLicense = CommunicationsStub.getInstance().createSpecialObject("SoftwareLicense", selectedObjects.get(0).getClassName(), 
-                selectedObjects.get(0).getOid(), -1);
+                selectedObjects.get(0).getOid(), attributes, -1);
         if (newLicense == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else{
