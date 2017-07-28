@@ -180,13 +180,17 @@
 			\midrule
 			\includegraphics[width=0.5cm]{img/icon_refresh_cache.png} & Refresh local cache\\
 			\midrule
-			\includegraphics[width=0.5cm]{img/icon_object_view.png} & Physical/Rack View of an object\\
+			\includegraphics[width=0.5cm]{img/icon_navigation_tree.png} & Main tree used to explore physical assets\\
 			\midrule
-			\includegraphics[width=0.5cm]{img/icon_task_manager.png} & Create automation tasks (beta version)\\
+			\includegraphics[width=0.5cm]{img/icon_bookmarks.png} & Create and manage Favorite Folders and Favorites\\
 			\midrule
-			\includegraphics[width=0.5cm]{img/icon_audit_trail.png} & See the changes made to inventory and application objects\\
+			\includegraphics[width=0.5cm]{img/icon_pools_manager.png} & Create and manage objects that don't fit in the navigation tree\\
 			\midrule
-			\includegraphics[width=0.5cm]{img/icon_user_manager.png} & Manage users and groups\\
+			\includegraphics[width=0.5cm]{img/icon_relationship_explorer.png} & Show objects relationships\\
+			\midrule
+			\includegraphics[width=0.5cm]{img/icon_special_relationship_explorer.png} & Show objects special children\\
+			\midrule
+			\includegraphics[width=0.5cm]{img/icon_topology_designer.png} & Freely design network topologies\\
 			\midrule
 			\includegraphics[width=0.5cm]{img/icon_data_model_manager.png} & Change the data model\\
 			\midrule
@@ -194,17 +198,27 @@
 			\midrule
 			\includegraphics[width=0.5cm]{img/icon_list_type_manager.png} & Create new list types\\
 			\midrule
-			\includegraphics[width=0.5cm]{img/icon_topology_designer.png} & Freely design network topologies\\
+			\includegraphics[width=0.5cm]{img/icon_template_manager.png} & Create and manage templates\\
 			\midrule
-			\includegraphics[width=0.5cm]{img/icon_bookmarks.png} & Create and manage Bookmark Folders and Bookmarks\\
+			\includegraphics[width=0.5cm]{img/icon_user_manager.png} & Manage users and groups\\
 			\midrule
-			\includegraphics[width=0.5cm]{img/icon_navigation_tree.png} & Main tree used to explore physical assets\\
-			\midrule
-			\includegraphics[width=0.5cm]{img/icon_pools_manager.png} & Create and manage objects that don't fit in the navigation tree\\
+			\includegraphics[width=0.5cm]{img/icon_task_manager.png} & Create automation tasks (beta version)\\
 			\midrule
 			\includegraphics[width=0.5cm]{img/icon_reports.png} & Create and manage reports\\
 			\midrule
+			\includegraphics[width=0.5cm]{img/icon_audit_trail.png} & See the changes made to inventory and application objects\\
+			\midrule
 			\includegraphics[width=0.5cm]{img/icon_service_manager.png} & Manage client, services and resources associated to them\\
+			\midrule
+			\includegraphics[width=0.5cm]{img/icon_contract_manager.png} & Manage client, contracts and resources associated to them\\
+			\midrule
+			\includegraphics[width=0.5cm]{img/icon_IPAM_manager.png} & Manage Subnets and IP Addresses\\
+			\midrule
+			\includegraphics[width=0.5cm]{img/icon_SDH_networks.png} & Manage Synchronous Digital Hierarchy\\
+			\midrule
+			\includegraphics[width=0.5cm]{img/icon_MPLS_mudule.png} & Multiprotocol Label Switching module\\
+			\midrule
+			\includegraphics[width=0.5cm]{img/icon_projects.png} & Manage client, projects and resources associated to them\\
 		\end{tabular}	
 		\caption{Toolbar items}
 		\label{tab:toolbar_icons}
@@ -293,6 +307,12 @@
 					\midrule
 					\includegraphics[width=0.7cm]{img/icon_organize.png} & If after expanding a class node it overlaps with another, use this button to organize again the tree\\
 					\midrule
+					\includegraphics[width=0.7cm]{img/icon_export_as_image.png} & Export as Image Class Hierarchy\\
+					\midrule
+					\includegraphics[width=0.7cm]{img/icon_export_as_xml.png} & Export as XML Class Hierarchy\\
+					\midrule
+					\includegraphics[width=0.7cm]{img/icon_refresh_view.png} & Refresh Class Hierarchy view\\
+					\midrule
 					\includegraphics[width=3cm]{img/data_model_manager_locate.png} & Locate a class in the tree\\
 				\end{tabular}
 				\caption{Class Hierarchy View toolbar icons}
@@ -317,7 +337,7 @@
 	
 	\begin{figure}[h!]
 		\centering
-		\includegraphics[width=0.6\linewidth]{img/standard_containment_manager.png}
+		\includegraphics[width=0.8\linewidth]{img/standard_containment_manager.png}
 		\caption{Standard Containment Manager main window. Zoom in the image to see the details}
 		\label{fig:standard_containment_manager}
 	\end{figure}
@@ -327,7 +347,7 @@
 	
 	\begin{figure}[h!]
 		\centering
-		\includegraphics[width=0.6\linewidth]{img/special_containment_manager.png}
+		\includegraphics[width=0.8\linewidth]{img/special_containment_manager.png}
 		\caption{Special Containment Manager main window. Zoom in the image to see the details}
 		\label{fig:special_containment_manager}
 	\end{figure}
@@ -385,14 +405,14 @@
 		\item \textbf{Delete:} Deletes the object. This will fail if the object has an incoming relationship, for example, a \textbf{Port} connected to a cable.
 		\item \textbf{Reports:} The reports associated to the objects of this class. In this case, \textbf{Rack} has a report called \textbf{Rack Usage}. If no reports are associated, this entry will appear grayed out.
 		\item \textbf{Relate to service:} All inventory objects can be associated to an existing service. See more details in the chapter \nameref{sec:service_manager}.
-		\item \textbf{Release from Service:} Removes the association between an object(resource) and a service. If the object is not related to any service, this option will appear grayed out.
-		\item \textbf{Add to Bookmark Folder:} All inventory objects can be added to an existing Bookmark Folder. See more details in the chapter \nameref{sec:bookmarks}.
-		\item \textbf{Remove from Bookmark Folder:} Removes the association between an object (bookmark) and a Bookmark Folder. If the object is not related to any Bookmark Folder, this option appears grayed out.
+		\item \textbf{Release from Service:} Removes the association between an object(resource) and a service.
+		\item \textbf{Add to Favorites Folder:} All inventory objects can be added to an existing Favorite Folder. See more details in the chapter \nameref{sec:favorites}.
+		\item \textbf{Remove from Favorites Folder:} Removes the association between an object (favorite) and a Favorite Folder.
 		\item \textbf{Audit Trail:} This will display all the audit trail entries for the selected object, that is, all the changes made to it.
 		\item \textbf{Relate to Project:} All inventory objects can be a resource of an existing Project. See more details in the chapter \nameref{sec:projects}
-		\item \textbf{Release from Project:} Removes a selected object (resource) form a Project. If the object is not related to any Project, this option appears grayed out.
+		\item \textbf{Release from Project:} Removes a selected object (resource) form a Project.
 		\item \textbf{Relate to Contract:} All inventory objects can be associated to an existing Contract. See more details in chapter \nameref{sec:contract_manager}
-		\item \textbf{Release from Contract:} Removes the association between an object and a contract. If the object is not related to any contract, this option will appear grayed out.
+		\item \textbf{Release from Contract:} Removes the association between an object and a contract.
 		\item \textbf{Open a Navigation tree from Here:} Opens a Navigation tree whose root node will be the selected object. Useful when you want to explore an object with as many containment levels below.
 		\item \textbf{Show More Information:} Shows the database id of the selected object. Useful for troubleshooting purposes. It will also show the object's complete containment structure.
 			\begin{figure}[h!]
@@ -425,7 +445,7 @@
 						
 		\begin{figure}[h!]
 			\centering
-			\includegraphics[width=0.4\linewidth]{img/graphical_representation_relationships.png}
+			\includegraphics[width=0.8\linewidth]{img/graphical_representation_relationships.png}
 			\caption{Special relationships canvas}
 			\label{fig:graphical_representation_relationships}
 		\end{figure}
@@ -440,6 +460,8 @@
 				\includegraphics[width=0.5cm]{img/icon_export_as_image.png} & Export as image\\
 				\midrule
 				\includegraphics[width=0.5cm]{img/icon_reorganize_nodes.png} & If the nodes are overlapped, you can organize them using this button\\
+    			\midrule
+	 			\includegraphics[width=0.5cm]{img/icon_refresh_view.png} & Refresh the object special relationships\\
 				\midrule
 			\end{tabular}
 			\caption{Graphical representation of special relationships toolbar icons}
@@ -514,7 +536,7 @@
 	
 	\begin{figure}[h!]
 		\centering
-		\includegraphics[width=0.5\linewidth]{img/template_with_special_objects.png}
+		\includegraphics[width=0.8\linewidth]{img/template_with_special_objects.png}
 		\caption{Template using special object}
 		\label{fig:template_with_special_objects}
 	\end{figure}
@@ -559,7 +581,7 @@
 	 To create list type items, use the button \includegraphics[width=0.5cm]{img/icon_list_type_manager.png} or the menu option Tools $\rightarrow$ List Type Manager. This module consists of a simple navigation tree similar to the one seen in the past chapter.
 	 \begin{figure}[h!]
 	 	\centering
-	 	\includegraphics[width=0.3\linewidth]{img/list_type_list_type_items.png}
+	 	\includegraphics[width=0.4\linewidth]{img/list_type_list_type_items.png}
 	 	\caption{Custom list type items}
 	 	\label{fig:list_type_list_type_items}
 	 \end{figure}
@@ -887,9 +909,15 @@
 	\end{figure}
 				
 	\newpage
-	\section{Default and Rack Views}
-	\subsection{Physical View} \label{sec:default_view}
-		A view is a graphical representation of an object. There are many types of views, because an object has different perspectives, for example, a service object may have a view showing all the resources associated to it, a second view showing how all those resources are connected and a third showing statistics about such service. All instances (objects) of subclasses of \textbf{ViewableObject} have a Physical View that displays the direct children of the selected node. Most objects, except logical and administrative assets and a few physical ones such as slots and ports are subclasses of \textbf{ViewableObject}. To access this view, open the Physical View window (see \nameref{tab:toolbar_icons}) and select a node in the navigation tree.
+	\section{Object and Rack Views}
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width=0.6\linewidth]{img/actions_object_and_rack_views.png}
+		\caption{Shown Object View and Show Rack View actions to the selected \textbf{Rack} object}
+		\label{fig:actions_object_and_rack_views}
+	\end{figure}
+	\subsection{Object View} \label{sec:default_view}
+		A view is a graphical representation of an object. There are many types of views, because an object has different perspectives, for example, a service object may have a view showing all the resources associated to it, a second view showing how all those resources are connected and a third showing statistics about such service. All instances (objects) of subclasses of \textbf{ViewableObject} have a Object View that displays the direct children of the selected node. Most objects, except logical and administrative assets and a few physical ones such as slots and ports are subclasses of \textbf{ViewableObject}. To access this view, select a node in the navigation tree right-click on it and click on the action Show Object View.
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.9\linewidth]{img/default_view.png}
@@ -916,24 +944,25 @@
 		\begin{table}[h!]
 			\centering
 			\begin{tabular}[h!]{lp{10cm}}
+				\includegraphics[width=0.5cm]{img/icon_save.png} & Save view\\
+				\midrule
 				\includegraphics[width=0.5cm]{img/icon_add_background.png} & Add background\\
 				\midrule
 				\includegraphics[width=0.5cm]{img/icon_remove_background.png} & Remove background\\
 				\midrule
-				\includegraphics[width=0.5cm]{img/icon_format_text.png} & Format text\\
-				\midrule
 				\includegraphics[width=0.5cm]{img/icon_toggle_conn_labels.png} & Hide/show the labels next to the connections\\
 				\midrule
-				\includegraphics[width=0.5cm]{img/icon_save.png} & Save view\\
+				\includegraphics[width=0.5cm]{img/object_view_high_contrast.png} & Node labels high contrast\\
 				\midrule
 				\includegraphics[width=0.5cm]{img/icon_select_tool.png} & Select/Move tool (selected by default)\\
 				\midrule
-				\includegraphics[width=0.5cm]{img/icon_connect_tool.png} & Connect tool (See \textbf{\nameref{sec:physical_connections}} for more details on how to use it)\\
+				\includegraphics[width=0.5cm]{img/object_view_container.png} & Create connections using container (See \textbf{\nameref{sec:physical_connections}} for more details on how to use it)\\
+				\midrule
+				\includegraphics[width=0.5cm]{img/object_view_link.png} & Create connection using links (See \textbf{\nameref{sec:physical_connections}} for more details on how to use it)\\	
 				\midrule
 				\includegraphics[width=0.5cm]{img/icon_export.png} & Export to image file\\
 				\midrule
-				\includegraphics[width=0.5cm]{img/icon_refresh_view.png} & Refresh view\\
-				
+				\includegraphics[width=0.5cm]{img/icon_refresh_view.png} & Refresh view\\			
 			\end{tabular}
 		\end{table}
 		
@@ -1019,25 +1048,6 @@
 		\end{itemize}
 		In summary, you can only connect \textit{Nodes} using \textit{Containers} and \textit{Endpoints} using \textit{Connections}. To create new connections, select in the \textbf{\nameref{sec:navigation_tree}} an element and try to connect the desired children using the \nameref{sec:default_view}. For example, if you want to connect two buildings, select the city which is the parent for both. Likewise, if you want to connect a router to an ODF, you probably will have to select the room or the rack where they are located. In short, select the nearest common parent between the two elements you want to connect.
 		
-		\begin{table}[h!]
-			\centering
-			\begin{tabular}{lp{10cm}}
-				\includegraphics[width=0.5cm]{img/icon_connect_tool.png} & Select the Connection tool \\
-				\midrule
-				\includegraphics[width=0.5cm]{img/icon_wire_container.png} & Create a wire container \\
-				\midrule
-				\includegraphics[width=0.5cm]{img/icon_wireless_container.png} & Create a wireless container \\
-				\midrule
-				\includegraphics[width=0.5cm]{img/icon_electrical_link.png} & Create an electrical link \\
-				\midrule
-				\includegraphics[width=0.5cm]{img/icon_optical_link.png} & Create an optical link \\
-				\midrule
-				\includegraphics[width=0.5cm]{img/icon_wireless_link.png} & Create a wireless link \\
-				\midrule
-				\includegraphics[width=0.5cm]{img/icon_power_link.png} & Create a power link \\
-			\end{tabular}
-			\caption{Connection tools}
-		\end{table}
 		Let's put together all these concepts  with some examples. 
 		\subsection{Example 1} \label{sec:physical_connections_example_1}
 			In this example, we will create a direct connection between two routers in the same room, but in different racks using a CAT-5 patch as shown in the figure~\ref{fig:l1_example_1}.\newline
@@ -1072,26 +1082,27 @@
 					\caption{Creating the link type}
 					\label{fig:l1_example_1_electrical_link_type}
 				\end{figure}
-				\item Activating the connection tool, click on one node and hold, dragging the mouse until you reach the second node. Make sure you also select the type of connection you want to create, in this case, an \textbf{ElectricalLink} (a patch cable).
+				\item Activating the connection tool, click on one node and hold, dragging the mouse until you reach the second node. Make sure you also select the button to link connections \includegraphics[width=0.5cm]{img/object_view_link.png}.
 				\begin{figure}[h!]
 					\centering
 					\includegraphics[width=0.8\linewidth]{img/l1_example_1_new_connection.png}
 					\caption{Creating the connection}
 					\label{fig:l1_example_1_new_connection}
 				\end{figure}
-				\item This will open a wizard where you should select the endpoints of the connection (the end ports)
+				\item This will open a wizard where you have to fill in the basic information about the connection: its name and class.
+				\begin{figure}[h!]
+					\centering
+					\includegraphics[width=0.8\linewidth]{img/l1_example_1_link_wizard.png}
+					\caption{Connection wizard, step 1}
+					\label{fig:l1_example_1_new_link_wizard}
+				\end{figure}
+								
+				\item In the next step of the wizard, you should select the endpoints of the connection (the end ports)
 				\begin{figure}[h!]
 					\centering
 					\includegraphics[width=0.8\linewidth]{img/l1_example_1_endpoints.png}
-					\caption{Connection wizard, step 1}
-					\label{fig:l1_example_1_endpoints}
-				\end{figure}
-				\item In the next step of the wizard, you have to fill in the basic information about the connection: its name and type. Use the type we just created in step~\ref{item:connection_type}.
-				\begin{figure}[h!]
-					\centering
-					\includegraphics[width=0.5\linewidth]{img/l1_example_1_basic_info.png}
 					\caption{Connection wizard, step 2}
-					\label{fig:l1_example_1_basic_info}
+					\label{fig:l1_example_1_endpoints}
 				\end{figure}
 			\end{enumerate}
 			
@@ -1124,7 +1135,7 @@
 			\end{figure}
 			
 			\begin{enumerate}
-					\item First, we must make the initial arrangements. In this case, we will use a Google maps image as background for the city (the nearest common parent) and locate the buildings. We also select the connection tool and the type of connection, which will be a \textbf{WireContainer} this time.  
+					\item First, we must make the initial arrangements. In this case, we will use a Google maps image as background for the city (the nearest common parent) and locate the buildings. We also select the connection tool and the connections to container tool \includegraphics[width=0.5cm]{img/object_view_container.png}.
 					\begin{figure}[h!]
 						\centering
 						\includegraphics[width=\linewidth]{img/l1_example_2_initial_view.png}
@@ -1139,20 +1150,20 @@
 						\caption{reating a connection type}
 						\label{fig:l1_example_1_wire_container_type}
 					\end{figure}
-					\item Just like we did in the past example, let's start the connection wizard, but this time the endpoints will be the buildings instead of the ports (remember that we are creating a container here).
+					\item Just like we did in the past example, let's start the connection wizard, we fill in the basic fields name of connection and container class in this case we use a \textbf{WireContainer}.
+					\begin{figure}[h!]
+						\centering
+						\includegraphics[width=0.8\linewidth]{img/object_view_wizard_1.png}
+						\caption{Connection wizard, step 1}
+						\label{fig:l1_example_2_wizard_1}
+					\end{figure}			
+					\item In the second step just like we did in the past example, but this time the endpoints will be the buildings instead of the ports (remember that we are creating a container here).
 					\begin{figure}[h!]
 						\centering
 						\includegraphics[width=0.8\linewidth]{img/l1_example_2_endpoints.png}
-						\caption{Connection wizard, step 1}
+						\caption{Connection wizard, step 2}
 						\label{fig:l1_example_2_endpoints}
 					\end{figure}			
-					\item In the second step, we fill in the basic fields, but in addition to what we have already seen, it's also necessary to provide information about what's going to be contained inside the \textbf{WireContainer} and how many of those elements are to be created. Since this example is about connecting fibers, we select \textbf{OpticalLink} in the field \textit{Children type} and 20 in \textit{Num of children} just for the sake of the example.
-					\begin{figure}[h!]
-						\centering
-						\includegraphics[width=0.6\linewidth]{img/l1_example_2_basic_info.png}
-						\caption{Connection wizard, step 2}
-						\label{fig:l1_example_2_basic_info}
-					\end{figure}
 					\item Using the Select tool, modify the route of the connection. Now the container has been created successfully.
 					\begin{figure}[h!]
 						\centering
@@ -1170,7 +1181,13 @@
 					\item This open a window divided in three panels. The side panels let you choose what ports you want to connect to the fibers in the container. In this example, we will connect the first pair to the ports labeled as \textit{Back} in the ODFs. You can select multiple ports and fibers and connect them at the same time (use the SHIFT key for multiple selection). Note that it's not necessary to connect both sides. Push the \textit{Connect} button on the lower part of the central panel to finish the procedure.
 					\begin{figure}[h!]
 						\centering
-						\includegraphics[width=\linewidth]{img/l1_example_2_connect_links.png}
+						\includegraphics[width=0.9\linewidth]{img/l1_example_2_add_links.png}
+						\caption{Adding links in the crated container}
+						\label{fig:l1_example_2_add_links}
+					\end{figure}
+					\begin{figure}[h!]
+						\centering
+						\includegraphics[width=0.9\linewidth]{img/l1_example_2_connect_links.png}
 						\caption{Connecting links}
 						\label{fig:l1_example_2_connect_links}
 					\end{figure}
@@ -1201,7 +1218,7 @@
 						\label{fig:l1_example_2_patches}
 					\end{figure}
 					\begin{framed} {\large \textbf{Important}}\\
-							Remember to use an \textbf{OpticalLink} \includegraphics[width=0.5cm]{img/icon_optical_link.png} instead of an \textbf{ElectricalLink} \includegraphics[width=0.5cm]{img/icon_electrical_link.png}.							
+							Remember to use an \textbf{OpticalLink} instead of an \textbf{ElectricalLink}.							
 					\end{framed}
 					\item There's still one last step: The ports 1-Front and 1-Back in each ODF are not yet bridged. To do this, we just have to right-click any of the two ports on each ODF and select the option \textit{Connect Mirror Port...}. A mirror port is basically a direct connection between two ports. A cable is a separate object in Kuwaiba, a mirror connection is not even an object, it is just a relationship between a port an another with the same parent (that is, a sibling). You can see it as a backplane connection.
 					\begin{figure}[h!]
@@ -1673,8 +1690,6 @@
 				\midrule
 				\includegraphics[width=0.5cm]{img/icon_export.png} & Export topology to image file \\
 				\midrule
-				\includegraphics[width=0.5cm]{img/icon_toggle_node_labels.png} & Hide/show the labels under the nodes\\
-				\midrule
 				\includegraphics[width=0.5cm]{img/icon_toggle_conn_labels.png} & Hide/show the labels next to the connections\\
 				\midrule
 				\includegraphics[width=0.5cm]{img/icon_select_tool.png} & Select tool \\
@@ -2080,13 +2095,56 @@
 		
 		\newpage
 		\section{User and Group Management} \label{sec:user_and_group_management}
-		This feature lets you define new application users and relate/unrelate them from application groups. By default there is only one user (\textbf{admin}, password \textbf{kuwaiba}) and no groups.  You can edit everything, even its username.
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.4\linewidth]{img/user_manager_first_view.png}
+			\caption{User Manager main view}
+			\label{fig:user_manager_first_view}
+		\end{figure}
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.7\linewidth]{img/user_manager_new_group.png}
+			\caption{How create a new group}
+			\label{fig:user_manager_new_group}
+		\end{figure}
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.9\linewidth]{img/user_manager_group_properties_privileges.png}
+			\caption{New group properties and privileges}
+			\label{fig:user_manager_group_properties_privileges}
+		\end{figure}
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.7\linewidth]{img/user_manager_new_user.png}
+			\caption{How create a new user}
+			\label{fig:user_manager_new_user}
+		\end{figure}
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.9\linewidth]{img/user_manager_user_properties_privileges.png}
+			\caption{New user properties and privileges}
+			\label{fig:user_manager_user_properties_privileges}
+		\end{figure}
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.7\linewidth]{img/user_manager_relate_to_group.png}
+			\caption{Relate user to group}
+			\label{fig:user_manager_relate_to_group}
+		\end{figure}
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.5\linewidth]{img/user_manager_user_and_groups.png}
+			\caption{A same use has two groups}
+			\label{fig:user_manager_user_and_groups}
+		\end{figure}
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.7\linewidth]{img/users_and_groups_default_user.png}
 			\caption{User/Group Management main window}
 			\label{fig:users_and_groups_default_user}
 		\end{figure}
+		
+		This feature lets you define new application users and relate/unrelate them from application groups. By default there is only one user (\textbf{admin}, password \textbf{kuwaiba}) and no groups.  You can edit everything, even its username.
 		The module shows three buttons at its own toolbar:
 		\textbf{Add user:} Adds a new user. It's placed at the end of the list and its name is a composition of the string “user” and a random number between 0 and 10000.
 		\textbf{Add groups:} Adds a new group. It's placed at the end of the list and its name is a composition of the string “group” and a random number between 0 and 10000.
@@ -2213,25 +2271,25 @@
 					\end{itemize}
 				\end{framed}
 		\newpage
-		\section{Bookmarks}\label{sec:bookmarks}
+		\section{Favorites}\label{sec:favorites}
 		
-			The Bookmarks module lets you manage bookmarks. In Kuwaiba a bookmark is an object of the inventory which is pooled in a bookmark folder. To open the Bookmarks module look in the menu for Tools $\rightarrow$ Bookmarks or just click in the icon
+			The Favorites module lets you manage favorites. In Kuwaiba a favorite is an object of the inventory which is pooled in a favorite folder. To open the Favorite module look in the menu for Tools $\rightarrow$ Navigation $\rightarrow$ Favorites or just click in the icon
 			\includegraphics[width=0.5cm]{img/icon_bookmarks.png}
 			
 			\begin{figure}[h!]
 				\centering
-				\includegraphics[width=0.5\linewidth]{img/bookmarks.png}
-				\caption{Bookmarks sample}
+				\includegraphics[width=0.5\linewidth]{img/favorites_explorer.png}
+				\caption{Favorites sample}
 				\label{fig:bookmakrs}
 			\end{figure}
 			
-			To add an object from the Navigation Tree, just right click and select the option of Add to bookmark folder \textbf{figure~\ref{fig:add_to_bookmark_folder}} or Remove from Bookmark Folder to remove it.
+			To add an object from the Navigation Tree, just right click and select the option of Add to Favorites folder \textbf{figure~\ref{fig:favorites_add_to}} or Remove from Favorites Folder to remove it.
 						
 			\begin{figure}[h!]
 				\centering
-				\includegraphics[width=0.8\linewidth]{img/bm_add_to_bookmark_folder.png}
-				\caption{Add to Bookmark folder}
-				\label{fig:add_to_bookmark_folder}
+				\includegraphics[width=0.8\linewidth]{img/favorites_add_to.png}
+				\caption{Add to Favorites folder}
+				\label{fig:favorites_add_to}
 			\end{figure}
 							
 		\newpage
@@ -2252,55 +2310,41 @@
 		\newpage		
 		\section{Projects}\label{sec:projects}
 		
-			The Project module allows you to have all projects, activities and resources in a place. To open the Projects module look at the menu for Tools $\rightarrow$ Advanced $\rightarrow$ Projects
-			\newline
-			
-			\begin{figure}[h!]
-				\centering
-				\includegraphics[width=0.5\linewidth]{img/projects.png}
-				\caption{Projects sample}
-				\label{fig:projects}
-		    \end{figure}
-		    
-		    To start using the Projects module you must create a Project. Depending on the loaded data model you can create a  GeneralPurposeProject or NetworkProject or any subclass of GenericProject (see \textbf{\nameref{sec:data_model_manager}} if you need to create a different kind  of Project).
-		    \newline
+			The Project module allows you to have all projects, activities and resources in a place. To open the Projects module look at the menu for Tools $\rightarrow$ Advanced $\rightarrow$ Projects. To start using the Projects module you must create a Pool of Projects. Depending on the loaded data model you can create a  GeneralPurposeProject or NetworkProject or any subclass of GenericProject (see \textbf{\nameref{sec:data_model_manager}} if you need to create a different kind  of Project).
 		    
 		    \begin{figure}[h!]
 		    	\centering
-		    	\includegraphics[width=0.5\linewidth]{img/projects_actions.png}
+		    	\includegraphics[width=0.5\linewidth]{img/projects_new_project_pool.png}
 		    	\caption{Add Projects}	    
 		    	\label{fig:projects_actions}
 		    \end{figure}
-		    
-		    A Project can contain sub projects or activities; you can create an activity just by right clicking on a Project and selecting the kind of Activity you want to add. If you need to create a different kind of Activity (see \textbf{\nameref{sec:data_model_manager}})
-		    \newline
-		    
-		    \begin{figure}[h!]
-		    	\centering
-		    	\includegraphics[width=0.5\linewidth]{img/activity_actions.png}
-		    	\caption{Add Activity}
-		    	\label{fig:activity_actions}
-		    \end{figure}
-		    
-		    The Projects have related resources that are inventory objects in the Navigation tree. You can relate or release objects just by right clicking on an Inventory object \textbf{figure~\ref{fig:pm_relate_to_project}}.
-		    \newline
 		    		    
+		    A Project Pool may contain projects and the Projects may contain activities; you can create an activity just by right clicking on a Project and selecting the kind of Activity you want to add. If you need to create a different kind of Activity (see \textbf{\nameref{sec:data_model_manager}})
+		    
 		    \begin{figure}[h!]
 		    	\centering
-		    	\includegraphics[width=0.9\linewidth]{img/pm_relate_to_project.png}
+		    	\includegraphics[width=0.9\linewidth]{img/projects_new_project_activity.png}
+		    	\caption{Add Projects}	    
+		    	\label{fig:projects_new_project_activity}
+		    \end{figure}		    
+		    
+		    The Projects have related resources that are inventory objects in the Navigation tree. You can relate or release objects just by right clicking on an Inventory object \textbf{figure~\ref{fig:projects_relate_to}}.
+		    		    		    
+		    \begin{figure}[h!]
+		    	\centering
+		    	\includegraphics[width=0.9\linewidth]{img/projects_relate_to.png}
 		    	\caption{Relate to Project Action}
-		    	\label{fig:pm_relate_to_project}
+		    	\label{fig:projects_relate_to}
 		    \end{figure}
 		    
-		    If you have an old data base, the data model for Projects module is not available, and when you try to open the Projects explorer or relate an object to a Project,
-		    Kuwaiba will show you the message like in the \textbf{figure~\ref{fig:patch_projects}}.
-		    \newline
+		    If you have an old data base then the data model for Projects module is not available, and when you try to open the Projects explorer or relate an object to a Project,
+		    Kuwaiba will show you the message like in the \textbf{figure~\ref{fig:projects_db_outdated}}.		    
 		    
 		    \begin{figure}[h!]
 		    	\centering
-		    	\includegraphics[width=0.8\linewidth]{img/patch_projects.png}
+		    	\includegraphics[width=0.8\linewidth]{img/projects_db_outdated.png}
 		    	\caption{Projects data model error}
-		    	\label{fig:patch_projects}
+		    	\label{fig:projects_db_outdated}
 		    \end{figure}
 		\newpage
 		\begin{appendices}
