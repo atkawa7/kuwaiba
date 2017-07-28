@@ -676,15 +676,17 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         try (Transaction tx = graphDb.beginTx()) {
             Result result = graphDb.execute(cypherQuery, params);
             Iterator<Node> column = result.columnAs("parents");
-            for (Node node : IteratorUtil.asIterable(column)){
-                if (node.getProperty(Constants.PROPERTY_NAME).equals(Constants.NODE_DUMMYROOT))
-                    parents.add(new RemoteBusinessObjectLight((long)-1, Constants.NODE_DUMMYROOT, Constants.NODE_DUMMYROOT));
-                else{ 
-                    if(node.hasRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING))
-                        parents.add(Util.createRemoteObjectLightFromNode(node));
-                    else //the node has a pool as a parent
-                        parents.add(Util.createRemoteObjectLightFromPoolNode(node));
-                }   
+            for (Node node : IteratorUtil.asIterable(column)){  
+                if (node.hasProperty(Constants.PROPERTY_NAME)) {
+                    if (node.getProperty(Constants.PROPERTY_NAME).equals(Constants.NODE_DUMMYROOT)) {
+                        parents.add(new RemoteBusinessObjectLight((long)-1, Constants.NODE_DUMMYROOT, Constants.NODE_DUMMYROOT));
+                        continue;
+                    }
+                }
+                if(node.hasRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING))
+                    parents.add(Util.createRemoteObjectLightFromNode(node));
+                else //the node has a pool as a parent
+                    parents.add(Util.createRemoteObjectLightFromPoolNode(node));
             }
         }
         return parents;
@@ -1991,32 +1993,27 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 affectedProperties = attributeName + " ";
                 if (AttributeMetadata.isPrimitive(classMetadata.getType(attributeName))) { // We are changing a primitive type, such as String, or int
                     oldValues += (instance.hasProperty(attributeName) ? String.valueOf(instance.getProperty(attributeName)) : null) + " ";
-                    //If the array is empty or null, it means the attribute should be set to null
-                    if (attributes.get(attributeName) == null || attributes.get(attributeName).isEmpty()){
+                    
+                    if (attributes.get(attributeName) == null) {
                         if(classMetadata.getAttribute(attributeName).isMandatory())//if attribute is mandatory can be set empty or null
                             throw new InvalidArgumentException(String.format("The attribute %s is mandatory, can not be set null or empty", attributeName));
                         else
                             instance.removeProperty(attributeName);
-                        }
-                    else {
+                    } else {
                         newValues += attributes.get(attributeName) + " ";
                         //if attribute is mandatory string attributes can't be empty or null
-                        if(classMetadata.getAttribute(attributeName).isMandatory()){
-                            if (attributes.get(attributeName) == null || attributes.get(attributeName).isEmpty() )
+                        if (classMetadata.getAttribute(attributeName).isMandatory()){
+                            if (attributes.get(attributeName).isEmpty())
                                 throw new InvalidArgumentException(String.format("The attribute %s is mandatory, can not be set null or empty", attributeName));
                         }
-                        if (attributes.get(attributeName) == null)
-                            instance.removeProperty(attributeName);
-                        else{
-                            if(classMetadata.getAttribute(attributeName).isUnique()){
-                                if(isObjectAttributeUnique(classMetadata.getName(), attributeName, attributes.get(attributeName)))
-                                    instance.setProperty(attributeName,Util.getRealValue(attributes.get(attributeName), classMetadata.getType(attributeName)));
-                               else
-                                   throw new InvalidArgumentException(String.format("The attribute %s is unique in the objects created from this class and its subclasses, is in use in other object", attributeName));
-                            }
-                            else
+                        if (classMetadata.getAttribute(attributeName).isUnique()){
+                            if(isObjectAttributeUnique(classMetadata.getName(), attributeName, attributes.get(attributeName)))
                                 instance.setProperty(attributeName,Util.getRealValue(attributes.get(attributeName), classMetadata.getType(attributeName)));
+                            else
+                                throw new InvalidArgumentException(String.format("The attribute %s is unique in the objects created from this class and its subclasses, is in use in other object", attributeName));
                         }
+                        else
+                            instance.setProperty(attributeName,Util.getRealValue(attributes.get(attributeName), classMetadata.getType(attributeName)));
                     }
                 } else { //If the attribute is not a primitive type, then it's a list type
                     if (!cm.getClass(classMetadata.getType(attributeName)).isListType())

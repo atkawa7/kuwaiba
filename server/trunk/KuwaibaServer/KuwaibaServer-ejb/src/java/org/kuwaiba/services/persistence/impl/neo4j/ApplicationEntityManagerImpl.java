@@ -655,7 +655,18 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     Node groupNode = groupIndex.get(Constants.PROPERTY_ID, id).getSingle();
                     if(groupNode == null)
                         throw new ApplicationObjectNotFoundException(String.format("Can not find the group with id %s",id));
+                    
+                    Node adminNode = userIndex.get(Constants.PROPERTY_NAME, UserProfile.DEFAULT_ADMIN).getSingle();                                        
+                    List<Node> adminGroupNodes = new ArrayList();
 
+                    for (Relationship relationship : adminNode.getRelationships(Direction.OUTGOING, RelTypes.BELONGS_TO_GROUP))
+                        adminGroupNodes.add(relationship.getEndNode());
+                    
+                    if (adminGroupNodes.size() == 1) {
+                        if (groupNode.getId() == adminGroupNodes.get(0).getId())
+                            throw new InvalidArgumentException("User admin can no be orphan. Put it in another group before removing this group");                                                                                    
+                    }
+                    
                     for (Relationship relationship : groupNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_PRIVILEGE)) {
                         Node privilegeNode = relationship.getEndNode();
                         relationship.delete();
@@ -665,6 +676,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     for (Relationship relationship : groupNode.getRelationships(Direction.INCOMING, RelTypes.BELONGS_TO_GROUP)) {
                         Node userNode = relationship.getStartNode();
                         
+                        if (adminNode.getId() == userNode.getId())
+                            continue;
+                                                
                         relationship.delete();
                         
                         //This will delete all users associated *only* to this group. The users associated to other groups will be kept and the relationship with this group will be released
