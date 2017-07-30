@@ -16,10 +16,13 @@
 package com.neotropic.inventory.modules.ipam.nodes;
 
 import java.awt.Image;
+import java.util.Collections;
 import java.util.List;
+import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalPool;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
+import org.openide.nodes.Node;
 
 /**
  * This is the root node for all the IPAM Nodes, this is not visible
@@ -33,14 +36,27 @@ public class IPAMRootNode extends AbstractNode {
      * @param enableActions Should the context actions be available? When this tree is displayed outside the IPAM, like for example, within an ExplorablePanel,
      *                  the explorer manager lookup could conflict with the global lookup, so it's better to disable the actions
      */
-    public IPAMRootNode(List<LocalPool> subnetPools) {
-        super (new Children.Array());
-        for (LocalPool subnetPool : subnetPools)
-            getChildren().add(new SubnetPoolNode[] { new SubnetPoolNode(subnetPool) });
+    public IPAMRootNode(IpamSubnetRootPoolChildren subnetPools) {
+        super (subnetPools);
     }
-   
+    
     @Override
     public Image getOpenedIcon(int i){
         return getIcon(i);
-    }    
+    }
+    
+    public static class IpamSubnetRootPoolChildren extends Children.Keys <LocalPool> {
+
+        @Override
+        public void addNotify(){
+        List<LocalPool> pools = CommunicationsStub.getInstance().getSubnetPools(-1, null);
+        Collections.sort(pools);
+        setKeys(pools);
+    }
+
+        @Override
+        protected Node[] createNodes(LocalPool key) {
+            return new Node[] { new SubnetPoolNode((LocalPool)key) };
+        }
+    }
 }

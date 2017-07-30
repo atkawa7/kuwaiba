@@ -71,7 +71,6 @@ public class RelateSubnetToVFRAction extends GenericInventoryAction {
                 frame.setVisible(true);
             }
         }    
-
     }
 
     @Override

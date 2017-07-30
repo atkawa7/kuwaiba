@@ -47,7 +47,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionReferences(value = {@ActionReference(path = "Menu/Tools/Advanced"),
     @ActionReference(path = "Toolbars/10_Advanced", position = 3)})
 @TopComponent.OpenActionRegistration(
-        displayName = "#CTL_IPAMModuleTopComponentAction",
+        displayName = "IP Address Manager",
         preferredID = "IPAMModuleTopComponent"
 )
 @Messages({
@@ -58,8 +58,8 @@ import org.openide.util.NbBundle.Messages;
 public final class IPAMModuleTopComponent extends TopComponent implements ExplorerManager.Provider, Refreshable {
     
     private static final ExplorerManager em = new ExplorerManager();
-    private BeanTreeView treeView;
     private IPAMModuleService ipams;
+    private BeanTreeView treeView;
     
     public IPAMModuleTopComponent() {
         initComponents();
@@ -112,7 +112,7 @@ public final class IPAMModuleTopComponent extends TopComponent implements Explor
     }
 
     public void setRoot(){
-        em.setRootContext(new IPAMRootNode(ipams.getRootChildren()));
+       em.setRootContext(new IPAMRootNode(new IPAMRootNode.IpamSubnetRootPoolChildren()));
     }
     
     @Override

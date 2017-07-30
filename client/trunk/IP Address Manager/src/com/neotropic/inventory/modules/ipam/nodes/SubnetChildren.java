@@ -73,6 +73,11 @@ public class SubnetChildren extends AbstractChildren {
             return new Node[] { new SubnetNode(key) };
     }
     
+    /**
+     * Sorts the IP addresses nodes children of a subnet
+     * @param ips
+     * @return 
+     */
     private List<LocalObjectLight> sortIps(List<LocalObjectLight> ips){
         List<LocalObjectLight> sortIps = ips;
         for (int i = 0; i < sortIps.size(); i++) {
@@ -103,8 +108,6 @@ public class SubnetChildren extends AbstractChildren {
                                 sortIps.set(i, sortIps.get(j));
                                 sortIps.set(j, auxIp);
                             }
-                            else
-                                continue;
                         }
                         else    
                             break;
@@ -115,6 +118,11 @@ public class SubnetChildren extends AbstractChildren {
         return sortIps;
     }
     
+    /**
+     * Sorts the subnet nodes children of subnets
+     * @param subnets a list of subnets
+     * @return a list of subnets and IPs addresses
+     */
     private List<LocalObjectLight> sortSubnets(List<LocalObjectLight> subnets){
         
         List<LocalObjectLight> sortSubnets = subnets;
@@ -155,8 +163,6 @@ public class SubnetChildren extends AbstractChildren {
                                 sortSubnets.set(i, sortSubnets.get(j));
                                 sortSubnets.set(j, auxSubnet);
                             }
-                            else
-                                continue;
                         }
                         else    
                             break;

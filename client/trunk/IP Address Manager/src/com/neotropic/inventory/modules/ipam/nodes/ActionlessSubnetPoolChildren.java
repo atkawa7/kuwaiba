@@ -20,8 +20,8 @@ import org.inventory.communications.core.LocalPool;
 import org.openide.nodes.Node;
 
 /**
- * The same SubnetPoolChildren, but creates ActionlessSubnetPoolNodes or ActionlessSubnetNodes 
- * instead of SubnetPoolNodes or SubnetNodes
+ * The same SubnetPoolChildren, but creates ActionlessSubnetPoolNodes or 
+ * ActionlessSubnetNodes instead of SubnetPoolNodes or SubnetNodes
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ActionlessSubnetPoolChildren extends SubnetPoolChildren {

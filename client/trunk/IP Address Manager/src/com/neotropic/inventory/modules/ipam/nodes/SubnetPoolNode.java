@@ -142,7 +142,7 @@ public class SubnetPoolNode extends AbstractNode implements PropertyChangeListen
             public Transferable paste() throws IOException {
                 try {
                     LocalObjectLight obj = dropNode.getLookup().lookup(LocalObjectLight.class);
-                        //Check if the current object can contain the drop node
+                    //Check if the current object can contain the drop node
                     Node parentNode = null;
                     if (action == DnDConstants.ACTION_MOVE) {
                         String className = getSubnetPool().getClassName();

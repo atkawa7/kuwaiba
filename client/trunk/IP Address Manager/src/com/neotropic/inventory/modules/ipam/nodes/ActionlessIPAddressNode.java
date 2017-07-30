@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
@@ -19,8 +19,9 @@ import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
 
 /**
- * The same IPAddressNode, but without actions (useful in views inside wizards, where the selected nodes are not placed in the global lookup, so the the context actions,
- * that are dependant of the selected nodes won't crash)
+ * The same IPAddressNode, but without actions (useful in views inside wizards,
+ * where the selected nodes are not placed in the global lookup, so the context 
+ * actions,that are dependant of the selected nodes won't crash)
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ActionlessIPAddressNode extends IPAddressNode {

@@ -29,6 +29,14 @@ import org.openide.nodes.Node;
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class SubnetPoolChildren extends AbstractChildren {
+
+    public SubnetPoolChildren() {
+        setKeys(Collections.EMPTY_SET);
+    }
+
+    public SubnetPoolChildren(List<LocalPool> subnetPools) {
+        setKeys(subnetPools);
+    }
     
     @Override
     public void addNotify(){
@@ -48,7 +56,6 @@ public class SubnetPoolChildren extends AbstractChildren {
         }
         Collections.sort(all);
         setKeys(all);
-        
     }
     
     @Override

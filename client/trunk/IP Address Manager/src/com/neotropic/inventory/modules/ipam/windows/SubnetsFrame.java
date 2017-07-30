@@ -16,6 +16,7 @@
 package com.neotropic.inventory.modules.ipam.windows;
 
 import com.neotropic.inventory.modules.ipam.nodes.ActionlessIPAMRootNode;
+import com.neotropic.inventory.modules.ipam.nodes.SubnetPoolChildren;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -59,7 +60,7 @@ public class SubnetsFrame extends JFrame {
         pnlInstructions.setLayout(new GridLayout(1, 1));
         
         pnlSubnets.setViewportView(treeSubnets);
-        pnlSubnets.getExplorerManager().setRootContext(new ActionlessIPAMRootNode(subnets));
+        //pnlSubnets.getExplorerManager().setRootContext(new ActionlessIPAMRootNode(subnets));
         add(pnlSubnets, BorderLayout.CENTER);
         
         JPanel pnlButtons = new JPanel();

@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
@@ -20,17 +20,24 @@ import org.inventory.communications.core.LocalPool;
 import org.openide.nodes.Children;
 
 /**
- * The same IPAMRootNode, but without actions (useful in views inside wizards, where the selected nodes are not placed in the global lookup, so the the context actions,
- * that are dependant of the selected nodes won't crash)
+ * The same IPAMRootNode, but without actions (useful in views inside wizards, 
+ * where the selected nodes are not placed in the global lookup, so the 
+ * context actions, that are dependant of the selected nodes won't crash)
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ActionlessIPAMRootNode extends IPAMRootNode {
 
-    public ActionlessIPAMRootNode(List<LocalPool> subnetPools) {
+//    public ActionlessIPAMRootNode(List<LocalPool> subnetPools) {
+//        super(subnetPools);
+//        setChildren(new Children.Array());
+//        for (LocalPool subnetPool : subnetPools)
+//            getChildren().add(new ActionlessSubnetPoolNode[] { new ActionlessSubnetPoolNode(subnetPool) });
+//    }
+
+    public ActionlessIPAMRootNode(IpamSubnetRootPoolChildren subnetPools) {
         super(subnetPools);
-        setChildren(new Children.Array());
-        for (LocalPool subnetPool : subnetPools)
-            getChildren().add(new ActionlessSubnetPoolNode[] { new ActionlessSubnetPoolNode(subnetPool) });
     }
+    
+    
     
 }

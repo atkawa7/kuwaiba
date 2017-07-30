@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  * Licensed under the EPL License, Version 1.0 (the "License"); you may not use
@@ -35,7 +35,7 @@ import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
 import org.openide.util.Utilities;
 
 /**
- * Allows to relate an IP to a subnet
+ * Allows to add an IP address that belongs to a subnet
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class AddIPAddressAction extends GenericInventoryAction {

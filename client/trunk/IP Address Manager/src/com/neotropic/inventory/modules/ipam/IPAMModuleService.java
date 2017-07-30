@@ -27,12 +27,11 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
  */
 public class IPAMModuleService {
     
-    private CommunicationsStub com;
     private IPAMModuleTopComponent ipamtc;
+    private CommunicationsStub com = CommunicationsStub.getInstance();
 
     IPAMModuleService(IPAMModuleTopComponent ipamtc) {
         this.ipamtc = ipamtc;
-        com = CommunicationsStub.getInstance();
     }
     
     public List<LocalPool> getRootChildren(){
