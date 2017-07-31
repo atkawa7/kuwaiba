@@ -33,6 +33,7 @@ import javax.swing.JToolBar;
 import javax.swing.table.TableModel;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.queries.LocalResultRecord;
+import org.inventory.communications.core.queries.LocalTransientQuery;
 import org.inventory.core.services.api.export.ExportTablePanel;
 import org.inventory.core.services.api.export.ExportableTable;
 import org.inventory.core.services.api.export.filters.CSVFilter;
@@ -68,9 +69,16 @@ public class ComplexQueryResultTopComponent extends TopComponent implements Expo
      * Reference to the controller
      */
     private QueryManagerService qbs;
+    /** 
+     * To keep the query in case than the top component it been closed
+     */
+    LocalTransientQuery actualTrasientQuery;
+    
 
-    public ComplexQueryResultTopComponent(LocalResultRecord[] res, int pageSize,
-            QueryManagerService qbs) {       
+    public ComplexQueryResultTopComponent(LocalTransientQuery actualTrasientQuery, 
+            LocalResultRecord[] res, int pageSize, QueryManagerService qbs)
+    {       
+        this.actualTrasientQuery = actualTrasientQuery;
         this.qbs = qbs;
         this.pageSize = pageSize;
         this.em = new ExplorerManager();
@@ -153,7 +161,8 @@ public class ComplexQueryResultTopComponent extends TopComponent implements Expo
      * Actions listeners for buttons
      */
     public void btnNextActionPerformed(){
-        LocalResultRecord[] res = qbs.executeQuery(++currentPage);
+        actualTrasientQuery.setPage(++currentPage);
+        LocalResultRecord[] res = qbs.executeQuery(actualTrasientQuery);
         if (res != null){
             if (res.length < pageSize)
                 btnNext.setEnabled(false);
@@ -172,7 +181,8 @@ public class ComplexQueryResultTopComponent extends TopComponent implements Expo
     }
 
     public void btnPreviousActionPerformed(){
-        LocalResultRecord[] res = qbs.executeQuery(--currentPage);
+        actualTrasientQuery.setPage(--currentPage);
+        LocalResultRecord[] res = qbs.executeQuery(actualTrasientQuery);
         if (res != null){
             if (currentPage == 1)
                 btnPrevious.setEnabled(false);
@@ -183,7 +193,8 @@ public class ComplexQueryResultTopComponent extends TopComponent implements Expo
     }
 
     public void btnAllActionPerformed(){
-        LocalResultRecord[] res = qbs.executeQuery(0);
+        actualTrasientQuery.setPage(0);
+        LocalResultRecord[] res = qbs.executeQuery(actualTrasientQuery);
         if (res != null){
             btnNext.setEnabled(false);
             btnPrevious.setEnabled(false);
@@ -222,7 +233,8 @@ public class ComplexQueryResultTopComponent extends TopComponent implements Expo
         if (range == ExportableTable.Range.CURRENT_PAGE)
             res = getCurrentResults();
         else {
-            LocalResultRecord[] results = qbs.executeQuery(0);
+            actualTrasientQuery.setPage(0);
+            LocalResultRecord[] results = qbs.executeQuery(actualTrasientQuery);
             if (results == null)
                 res = null;
             else{

@@ -309,50 +309,54 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
             int logicalConnector, int limit, int page, boolean isJoin) {
         LocalTransientQuery myQuery = new LocalTransientQuery(mainClass.getClassName(),
                 logicalConnector, isJoin, limit, page);
-        Widget[] attributePins = ((ClassNodeWidget)findWidget(mainClass)).getChildren().toArray(new Widget[0]);
-        for (Widget myPin : attributePins){
-            if (myPin instanceof AttributePinWidget){
-                if (((AttributePinWidget)myPin).getIsVisible().isSelected()){
-                    myQuery.getVisibleAttributeNames().add(((AttributePinWidget)myPin).getAttribute().getName());
-                }
-                if (!((AttributePinWidget)myPin).getInsideCheck().isSelected())
-                    continue;
-                String[] myEdges = findPinEdges(((AttributePinWidget)myPin).getAttribute(), true, false).toArray(new String[0]);
-                for (String edge : myEdges){
-                    VMDConnectionWidget myEdge = (VMDConnectionWidget)findWidget(edge);
-                    VMDNodeWidget nextHop = (VMDNodeWidget) myEdge.getTargetAnchor().getRelatedWidget().getParentWidget();
-                    myQuery.getAttributeNames().add(((AttributePinWidget)myPin).getAttribute().getName());
-                    if(nextHop instanceof SimpleCriteriaNodeWidget){
-                        if (nextHop instanceof ListTypeFilter){
-                            myQuery.getConditions().add(null); //padding
-                            myQuery.getAttributeValues().add(null); //padding
-                            if (((LocalObjectListItem)((ListTypeFilter)nextHop).getValue()).equals(new LocalObjectListItem())){
-                                myQuery.getJoins().add(null);
+        try{
+            Widget[] attributePins = ((ClassNodeWidget)findWidget(mainClass)).getChildren().toArray(new Widget[0]);
+            for (Widget myPin : attributePins){
+                if (myPin instanceof AttributePinWidget){
+                    if (((AttributePinWidget)myPin).getIsVisible().isSelected()){
+                        myQuery.getVisibleAttributeNames().add(((AttributePinWidget)myPin).getAttribute().getName());
+                    }
+                    if (!((AttributePinWidget)myPin).getInsideCheck().isSelected())
+                        continue;
+                    String[] myEdges = findPinEdges(((AttributePinWidget)myPin).getAttribute(), true, false).toArray(new String[0]);
+                    for (String edge : myEdges){
+                        VMDConnectionWidget myEdge = (VMDConnectionWidget)findWidget(edge);
+                        VMDNodeWidget nextHop = (VMDNodeWidget) myEdge.getTargetAnchor().getRelatedWidget().getParentWidget();
+                        myQuery.getAttributeNames().add(((AttributePinWidget)myPin).getAttribute().getName());
+                        if(nextHop instanceof SimpleCriteriaNodeWidget){
+                            if (nextHop instanceof ListTypeFilter){
+                                myQuery.getConditions().add(null); //padding
+                                myQuery.getAttributeValues().add(null); //padding
+                                if (((LocalObjectListItem)((ListTypeFilter)nextHop).getValue()).equals(new LocalObjectListItem())){
+                                    myQuery.getJoins().add(null);
+                                }else{
+                                    LocalTransientQuery simplifiedQuery = new LocalTransientQuery(((ListTypeFilter)nextHop).getNodeName(),logicalConnector,false,0,0);
+                                    simplifiedQuery.getAttributeNames().add("id"); //NOI18N
+                                    simplifiedQuery.getAttributeValues().add(String.valueOf(((LocalObjectListItem)((ListTypeFilter)nextHop).getValue()).getOid()));
+                                    simplifiedQuery.getJoins().add(null); //padding
+                                    simplifiedQuery.getConditions().add(((ListTypeFilter)nextHop).getCondition().id());
+                                    myQuery.getJoins().add(simplifiedQuery);
+                                }
                             }else{
-                                LocalTransientQuery simplifiedQuery = new LocalTransientQuery(((ListTypeFilter)nextHop).getNodeName(),logicalConnector,false,0,0);
-                                simplifiedQuery.getAttributeNames().add("id"); //NOI18N
-                                simplifiedQuery.getAttributeValues().add(String.valueOf(((LocalObjectListItem)((ListTypeFilter)nextHop).getValue()).getOid()));
-                                simplifiedQuery.getJoins().add(null); //padding
-                                simplifiedQuery.getConditions().add(((ListTypeFilter)nextHop).getCondition().id());
-                                myQuery.getJoins().add(simplifiedQuery);
+                                myQuery.getConditions().add(((SimpleCriteriaNodeWidget)nextHop).getCondition().id());
+                                myQuery.getAttributeValues().add(String.valueOf(((SimpleCriteriaNodeWidget)nextHop).getValue()));
+                                myQuery.getJoins().add(null); //padding
                             }
                         }else{
-                            myQuery.getConditions().add(((SimpleCriteriaNodeWidget)nextHop).getCondition().id());
-                            myQuery.getAttributeValues().add(String.valueOf(((SimpleCriteriaNodeWidget)nextHop).getValue()));
-                            myQuery.getJoins().add(null); //padding
-                        }
-                    }else{
-                        if (nextHop instanceof ClassNodeWidget){
-                            myQuery.getConditions().add(null); //padding
-                            myQuery.getAttributeValues().add(null); //padding
-                            myQuery.getJoins().add(getTransientQuery(((ClassNodeWidget)nextHop).getWrappedClass(),logicalConnector,0,0,true));
+                            if (nextHop instanceof ClassNodeWidget){
+                                myQuery.getConditions().add(null); //padding
+                                myQuery.getAttributeValues().add(null); //padding
+                                myQuery.getJoins().add(getTransientQuery(((ClassNodeWidget)nextHop).getWrappedClass(),logicalConnector,0,0,true));
+                            }
                         }
                     }
                 }
             }
+            return myQuery;
+        }catch(java.lang.NullPointerException ex){
+            return null;
         }
-        return myQuery;
-    }
+    }    
 
     /**
      * The default removeNode implementation removes the provided node plus the related

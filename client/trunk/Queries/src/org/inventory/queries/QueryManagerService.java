@@ -87,14 +87,22 @@ public class QueryManagerService implements ActionListener {
         return res;
     }
 
-    public LocalResultRecord[] executeQuery(int page) {
-        currentTransientQuery = qbtc.getQueryScene().getTransientQuery(qbtc.getQueryScene().getCurrentSearchedClass(),
-                        qbtc.getChkAnd().isSelected() ? LocalTransientQuery.CONNECTOR_AND : LocalTransientQuery.CONNECTOR_OR,
-                        Integer.valueOf(qbtc.getTxtResultLimit().getText()), page, false);
-        LocalResultRecord[] res = com.executeQuery(currentTransientQuery);
+    public LocalResultRecord[] executeQuery(LocalTransientQuery oldTrasientQuery) {
+        LocalResultRecord[] res = com.executeQuery(oldTrasientQuery == null ? currentTransientQuery : oldTrasientQuery);
         if (res == null)
             qbtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         return res;
+    }
+    
+    public void createQuery(int page){
+         LocalTransientQuery temp = qbtc.getQueryScene().getTransientQuery(qbtc.getQueryScene().getCurrentSearchedClass(),
+                        qbtc.getChkAnd().isSelected() ? LocalTransientQuery.CONNECTOR_AND : LocalTransientQuery.CONNECTOR_OR,
+                        Integer.valueOf(qbtc.getTxtResultLimit().getText()), page, false);
+        //this keep the last TrasientQuery in case that the top component it been closed
+        if(temp != null)
+            currentTransientQuery = temp;
+        else
+            currentTransientQuery.setPage(page);
     }
 
     public LocalQueryLight[] getQueries(boolean showAll){

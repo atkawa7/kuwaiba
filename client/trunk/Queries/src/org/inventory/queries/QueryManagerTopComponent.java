@@ -248,13 +248,14 @@ public final class QueryManagerTopComponent extends TopComponent implements Acti
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
         if (!validateQuery())
             return;
-        LocalResultRecord[] res = qbs.executeQuery(1);
+        qbs.createQuery(1);
+        LocalResultRecord[] res = qbs.executeQuery(null);
         if (res != null){
             if (res.length == 1) //Remember: the first record is used to set the column names
                 JOptionPane.showMessageDialog(null, "No results were found",
                         "Query Results",JOptionPane.INFORMATION_MESSAGE);
             else{
-                TopComponent tc = new ComplexQueryResultTopComponent(res,
+                TopComponent tc = new ComplexQueryResultTopComponent(qbs.getCurrentTransientQuery(), res,
                         qbs.getCurrentTransientQuery().getLimit(), qbs);
                 tc.open();
                 tc.requestActive();
