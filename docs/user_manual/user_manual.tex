@@ -20,6 +20,7 @@
 \usepackage{textcomp}
 \usepackage{pdflscape}
 \usepackage{textcomp}
+\usepackage{float}
 %\usepackage{hyperref}
 
 %Modify some defaults
@@ -41,8 +42,8 @@
 	\newpage
 	
 	\tableofcontents
-
-	\newpage
+	
+	\clearpage
 	\section{Document History}
 		\begin{table}[h!]
 			\centering
@@ -87,7 +88,8 @@
 			\end{tabular}	
 				
 		\end{table}
-	\newpage
+		
+	\clearpage
 	\section{License}
 		\begin{table}[ht]
 			\centering
@@ -110,7 +112,7 @@
 			\item Kuwaiba uses third-party components with compatible open source licenses (LGPL, BSD-like, etc). You can find a complete list at the project's web page.
 		\end{itemize}
 	
-	\newpage
+	\clearpage
 	\pagenumbering{arabic}
 	\section{Introduction}
 	Kuwaiba sees an inventory system as a living entity, not growing only in terms of size, but also in structure and intelligence. The main reason being that business requirements change constantly and therefore, the application must be ready to respond to new scenarios. One of the key concepts that can help you unlock the potential of Kuwaiba is the \textbf{data model}. It provides a simplified representation of the network and the business from an operational point of view. It can be seen as the skeleton that supports the application, but a skeleton from which you can add, remove and change elements as you go. Later in this document you will be able to see what tools you can use to manage it. For now, just keep in mind that the better you design your data model and the more you get to know it, the more you will take advantage of the application.\newline
@@ -126,7 +128,7 @@
 	
 	Kuwaiba helps you model your network according to your needs, no matter if you're an ISP, a carrier or just a guy with a large (or small!) IT infrastructure to manage. It's open source, under active development and new models are added every release. You can contribute to the project by providing technical insight on a particular technology, testing, translating or just sending your feedback through forums\footnote{Forums https://sourceforge.net/p/kuwaiba/discussion/} and mailing lists\footnote{mailing lists https://sourceforge.net/p/kuwaiba/mailman/}.
 	
-	\newpage
+	\clearpage
 	\section{Connection to the Server}
 	The first thing you will see when opening the client is the window in the figure~\ref{fig:auth_window}. The default user and password are \textbf{admin/kuwaiba}.
 	 
@@ -223,8 +225,8 @@
 		\caption{Toolbar items}
 		\label{tab:toolbar_icons}
 	\end{table}
-	
-	\newpage
+		
+	\clearpage
 	\section{Data Model Manager} \label{sec:data_model_manager}
 		One of the key features of Kuwaiba is that it is completely object-oriented\footnote{Object-oriented Programming https://en.wikipedia.org/wiki/Object-oriented\_programming}. It means that every business (Router, City, Port) and application (users, types) element is represented by an \textbf{Object} in the application and these objects are in turn product of a reality abstraction called \textbf{Class}. Likewise, every attribute is a \textbf{Field} in a class. The set of classes, attributes and relationships between them is called data model. There's a default data model, but you can customize it depending on your needs by adding, removing and modifying classes. To achieve this, use the Data Model Manager module (figure~\ref{fig:data_model_manager}).
 		\begin{figure}[h!]
@@ -264,10 +266,10 @@
 				\begin{framed} {\large \textbf{Important}}
 					\begin{itemize}
 						\item All user-created classes are set In Design Stage = \textbf{\textcolor{green}{true}} by default. You won't be able to create objects of these classes until you set it to \textbf{\textcolor{blue}{false}}.
-						\item As a convention, all abstract classes have the prefix \textbf{Generic}. Note that a few core classes (like \textbf{InventoryObject} or \textbf{\textcolor{green}{true}}) are abstract and are the exception to this rule. You, however, should try to follow this convention as much as possible.
+						\item As a convention, all abstract classes have the prefix \textbf{Generic}. Note that a few core classes (like \textbf{InventoryObject} or \textbf{AdministrativeItem}) are abstract and are the exception to this rule. You, however, should try to follow this convention as much as possible.
 					\end{itemize}
 				\end{framed}
-				\item The second section  contains the class fields (attributes). In the  figure\ref{fig:properties_class_node}, class Router  has six attributes: name, state, conditions, vendor, serialNumber and creationDate. Click the button next to the attribute name to customize it (see figure~\ref{fig:class_attribute_details}).
+				\item The second section  contains the class fields (attributes). In the  figure~\ref{fig:properties_class_node}, class Router  has six attributes: name, state, conditions, vendor, serialNumber and creationDate. Click the button next to the attribute name to customize it (see figure~\ref{fig:class_attribute_details}).
 				\begin{figure}[h!]
 					\centering
 					\includegraphics[width=0.4\linewidth]{img/class_attribute_details.png}
@@ -275,7 +277,7 @@
 					\label{fig:class_attribute_details}
 				\end{figure}
 			\end{itemize}
-			In this window, you can modify the attribute's name, display name, description, type  (the drop-down list will show you primitive types -String, Integer, Float, Long, etc- and all available non-abstract list types). When you change an attribute's type, all existing instances will be	modified to reflect the change, which means that the values of the modified attribute will be converted to the new type if possible (say, from Integers to Strings). If the conversion is not possible, the new value will be set to null. You  can  also  manage  the  attribute  visibility. Attributes marked as “Administrative” will be shown in a separate tab in the object's property sheet. Sometimes, there are  attributes that are used only for administrative purposes and might confuse the end user if mixed with the regular attributes. Finally, you can choose what attributes shouldn't be transferred from one object to another in a copy operation.
+			In this window, you can modify the attribute's name, display name, description, type  (the drop-down list will show you primitive types -String, Integer, Float, Long, etc- and all available non-abstract list types). When you change an attribute's type, all existing instances will be	modified to reflect the change, which means that the values of the modified attribute will be converted to the new type if possible (say, from Integers to Strings). If the conversion is not possible, the new value will be set to null. You  can  also  manage  the  attribute  visibility. Attributes marked as \textbf{administrative} will be shown in a separate tab in the object's property sheet. Sometimes, there are  attributes that are used only for administrative purposes and might confuse the end user if mixed with the regular attributes. Finally, you can choose what attributes shouldn't be transferred from one object to another in a copy operation.
 			
 			\begin{framed} {\large \textbf{Important}}
 				\begin{itemize}
@@ -286,11 +288,11 @@
 			You can also create and delete classes and attributes by right-clicking a class node (see figure~\ref{fig:class_node_menu})
 			\begin{figure}[h!]
 				\centering
-				\includegraphics[width=0.4\linewidth]{img/class_node_menu.png}
+				\includegraphics[width=0.7\linewidth]{img/class_node_menu.png}
 				\caption{Class \textbf{Router} context menu}
 				\label{fig:class_node_menu}
 			\end{figure}
-			New subclasses inherit the parent class attributes. Classes with instances or subclasses can not be deleted (this is  a  feature to avoid unintended loss of data). Also, attribute \textbf{name} can not be deleted.
+			New subclasses inherit the parent class attributes. Classes with instances or subclasses can not be deleted (this is  a  feature to avoid unintended loss of data). Also, attributes \textbf{creationDate} and \textbf{name} can not be deleted.
 			\begin{framed} {\large \textbf{Important}}
 				It's highly recommended \textbf{\textcolor{red}{NOT}} to rename abstract core classes, as some of them are used internally to support many features and renaming them may turn the system unstable.
 			\end{framed}
@@ -326,9 +328,8 @@
 				\caption{Class node context menu}
 				\label{fig:class_hierarchy_context_menu}
 			\end{figure}
-			
-			
-	\newpage
+				
+	\clearpage
 	\section{Containment Manager} \label{sec:containment_manager}
 	Another key concept in Kuwaiba is containment. It consists of the ability to define what kind of objects can be created within others. For example, a \textbf{Country} can be inside a \textbf{Continent}, but can't be inside a \textbf{Rack}. A \textbf{Port} is usually within a \textbf{Board}, and not inside a \textbf{City}. These business rules can be defined using the Containment Manager.
 	
@@ -359,10 +360,8 @@
 			\item The changes are applied immediately, however, if you happen to not see them reflected, press the Refresh Cache button \includegraphics[width=0.5cm]{img/icon_refresh_cache.png} in the main toolbar (see table~\ref{tab:toolbar_icons}).
 		\end{itemize}
 	\end{framed}
-	
-
-	
-	\newpage
+			
+	\clearpage
 	\section{Navigation Tree} \label{sec:navigation_tree}
 	This module presents in a tree fashion the physical objects of your inventory organized according to the containment hierarchy defined with the tool described in the previous chapter (see \textbf{\nameref{sec:containment_manager}}).
 	\begin{figure}[h!]
@@ -389,7 +388,7 @@
 	\end{figure}
 	\begin{itemize}
 		\item \textbf{New:} The list of object types that can be contained for the selected element type according to the configured Containment Hierarchy. In this case, a \textbf{Rack} can contain \textbf{DDFs}, \textbf{ODFs}, \textbf{Routers}, etc.
-		\item \textbf{New (Multiple):} Creates a defined number of objects at once using a given name pattern see \textbf{\nameref{app:AppendixA}} figure~\ref{fig:new_multiple}.
+		\item \textbf{New Multiple:} Creates a defined number of objects at once using a given name pattern see \textbf{\nameref{app:AppendixA}} figure~\ref{fig:new_multiple}.
 			\begin{figure}[h!]
 				\centering
 				\includegraphics[width=0.5\linewidth]{img/new_multiple.png}
@@ -404,16 +403,19 @@
 		\item \textbf{Edit:} Opens a Property Sheet to edit the attribute values of the selected Inventory object node.
 		\item \textbf{Delete:} Deletes the object. This will fail if the object has an incoming relationship, for example, a \textbf{Port} connected to a cable.
 		\item \textbf{Reports:} The reports associated to the objects of this class. In this case, \textbf{Rack} has a report called \textbf{Rack Usage}. If no reports are associated, this entry will appear grayed out.
-		\item \textbf{Relate to service:} All inventory objects can be associated to an existing service. See more details in the chapter \nameref{sec:service_manager}.
-		\item \textbf{Release from Service:} Removes the association between an object(resource) and a service.
-		\item \textbf{Add to Favorites Folder:} All inventory objects can be added to an existing Favorite Folder. See more details in the chapter \nameref{sec:favorites}.
+		\item \textbf{Add to Favorites Folder:} All inventory objects can be added to an existing Favorite Folder. See more details in the chapter \textbf{\nameref{sec:favorites}}.
 		\item \textbf{Remove from Favorites Folder:} Removes the association between an object (favorite) and a Favorite Folder.
+		\item \textbf{Relate to service:} All inventory objects can be associated to an existing service. See more details in the chapter \textbf{\nameref{sec:service_manager}}.
+		\item \textbf{Release from Service:} Removes the association between an object(resource) and a service.
+		\item \textbf{Create Physical Connection:} Creates a physical connection between two nodes selected in the Navigation Tree. Is disabled if only one node is selected. See more details in the chapter \textbf{\nameref{sec:physical_connections}}.
+		\item \textbf{Show Object View:} Opens the Object View to the selected object. See more details in the chapter \textbf{\nameref{sec:object_view_and_rack_view}}.
+		\item \textbf{Show Rack View:} Opens the Rack view to the selected object. See more details in the chapter \textbf{\nameref{sec:object_view_and_rack_view}}.
 		\item \textbf{Audit Trail:} This will display all the audit trail entries for the selected object, that is, all the changes made to it.
-		\item \textbf{Relate to Project:} All inventory objects can be a resource of an existing Project. See more details in the chapter \nameref{sec:projects}
+		\item \textbf{Relate to Project:} All inventory objects can be a resource of an existing Project. See more details in the chapter \textbf{\nameref{sec:projects}}
 		\item \textbf{Release from Project:} Removes a selected object (resource) form a Project.
-		\item \textbf{Relate to Contract:} All inventory objects can be associated to an existing Contract. See more details in chapter \nameref{sec:contract_manager}
+		\item \textbf{Relate to Contract:} All inventory objects can be associated to an existing Contract. See more details in chapter \textbf{\nameref{sec:contract_manager}}
 		\item \textbf{Release from Contract:} Removes the association between an object and a contract.
-		\item \textbf{Open a Navigation tree from Here:} Opens a Navigation tree whose root node will be the selected object. Useful when you want to explore an object with as many containment levels below.
+		\item \textbf{Open a Explorer from Here:} Opens a Navigation tree whose root node will be the selected object. Useful when you want to explore an object with as many containment levels below.
 		\item \textbf{Show More Information:} Shows the database id of the selected object. Useful for troubleshooting purposes. It will also show the object's complete containment structure.
 			\begin{figure}[h!]
 				\centering
@@ -482,19 +484,17 @@
 		
 		\begin{itemize}
 			\item \textbf{New Special:} The list of special object types that can be contained for the selected element type according to the configured Special Containment Hierarchy.
-			\item \textbf{New Special (Multiple):} Creates a given number of special objects at once using a defined name pattern see \textbf{\nameref{app:AppendixA}}
+			\item \textbf{New Special Multiple:} Creates a given number of special objects at once using a defined name pattern see \textbf{\nameref{app:AppendixA}}
 			\begin{figure}[h!]
 				\centering
 				\includegraphics[width=0.5\linewidth]{img/new_special_multiple.png}
 				\caption{Creation of a \textbf{OpticalLink} set}
 				\label{fig:new_special_multiple}
 			\end{figure}			
-			\item \textbf{New Special from template:} Creates a containment structure. See more details in the chapter \nameref{sec:template_manager}
+			\item \textbf{New Special from template:} Creates a containment structure. See more details in the chapter \textbf{\nameref{sec:template_manager}}
 		\end{itemize}
-		
-		
-			
-	\newpage
+					
+	\clearpage
 	\section{Template Manager} \label{sec:template_manager}
 	In many scenarios there are some containment structures that are created recurrently, like Building $\rightarrow$ Floor $\rightarrow$ Room $\rightarrow$ Rack, or ODF/DDFs with the same number of ports (12/24/36/48/72/96/144), or simply equipment with the same set of attributes, for example all the routers of a certain model: The vendor, number of rack units, slots, etc will be always the same. Creating them from scratch every time is a tedious task. For this reason, Kuwaiba provides a module that allows you to create templates of objects out of actual inventory elements. Go to Tools $\rightarrow$ Template Manager to open it.
 	
@@ -567,7 +567,7 @@
 		\label{fig:template_manager_select_template}
 	\end{figure}
 	
-	\newpage
+	\clearpage
 	\section{List Type Manager} \label{sec:list_type_manager}
 	Most of the attributes are primitive types (String, Integer, Booleans, etc), however, there are some more complex that point to another object in the database. This is the case of attributes such as \textit{vendor}, which points to an object holding the information about the vendor of that equipment (support lines, account manager, etc) or \textit{state}, that refers to the current operational state of the equipment (Working, Not Working, Stored, etc) and the state itself is an object, because it may hold information about what are the next allowed states, for example. Many objects in the database will have the same \textit{vendor}, and many other will have the same \textit{state}. In short, list types are those kind of attributes that point to an element in a limited set of objects. In terms of relational databases, you can see it as a many-to-one kind of relationship. To manage the existing list types and its instances, use the \textbf{\nameref{sec:data_model_manager}} and the \textbf{\nameref{sec:list_type_manager}}. \newline
 	
@@ -578,7 +578,7 @@
 		\caption{Custom list type}
 		\label{fig:list_type_own_type}
 	\end{figure}
-	 To create list type items, use the button \includegraphics[width=0.5cm]{img/icon_list_type_manager.png} or the menu option Tools $\rightarrow$ List Type Manager. This module consists of a simple navigation tree similar to the one seen in the past chapter.
+	 To create list type items, use the button \includegraphics[width=0.5cm]{img/icon_list_type_manager.png} or the menu option Tools $\rightarrow$ Administrative $\rightarrow$ List Type Manager. This module consists of a simple navigation tree similar to the one seen in the past chapter.
 	 \begin{figure}[h!]
 	 	\centering
 	 	\includegraphics[width=0.4\linewidth]{img/list_type_list_type_items.png}
@@ -600,7 +600,7 @@
 	 	\label{fig:list_type_applied_types}
 	 \end{figure}
 	 
-	\newpage	
+	\clearpage
 	\section{Queries} \label{sec:querying}
 	\subsection{Graphical Query Editor} 
 	The query editor lets you make a search with a graphical interface, based on nodes to represent the search criteria and connections to express the relationships. Once selected, by clicking on the icon \includegraphics[width=0.5cm]{img/icon_query_manager.png} you will get a blank canvas with a toolbar on top with the following elements:
@@ -747,7 +747,7 @@
 	Resulting in a set like this:
 	\begin{figure}[h!]
 		\centering
-		\includegraphics[width=0.9\linewidth]{img/query_results_multimple_nodes.png}
+		\includegraphics[width=0.9\linewidth]{img/query_results_multiple_nodes.png}
 		\caption{Simple query showing three fields from different classes}
 		\label{fig:query_results_multiple_nodes}
 	\end{figure}
@@ -835,10 +835,10 @@
 	\textit{Description} is the query description
 	The last check box lets you make the current query public. By default, the query is private, so you don't pollute the list of available queries for the rest of the users. You can change these settings anytime using the configure button \includegraphics[width=0.5cm]{img/icon_edit_saved_query.png}.
 	To open a query, just use the open button\includegraphics[width=0.5cm]{img/icon_open.png}, then you will be asked if you want to see only your queries or both your queries and the public ones:
-	\textit{clicking on Cancel will show you both private and public, clicking on Ok will list only those owned by you}
+	\textit{clicking on \textbf{No} will show you both private and public, clicking on \textbf{Yes} will list only those owned by you}
 	\begin{figure}[h!]
 		\centering
-		\includegraphics[width=0.7\linewidth]{img/query_save_as_private.png}
+		\includegraphics[width=0.5\linewidth]{img/query_save_as_private.png}
 		\caption{Dialog to choose what queries should be listed}
 		\label{fig:query_save_as_private}
 	\end{figure}
@@ -864,7 +864,7 @@
 		\\Note 2: Every time you run a query, a new window with the results will be opened, so don't forget to close those you don't need to save memory.
 	\end{framed}
 	
-	\newpage
+	\clearpage
 	\section{Pools Manager} \label{sec:pools_manager}
 	This module enables you to manipulate pools of objects. Pools are entities where objects that can't be placed in the standard navigation tree are put. Most of them are logical or administrative elements such as VLANs or VPNs. You can see a pool like a bag where you put things you don't know where else to put. To use this module, click on the icon  \includegraphics[width=0.5cm]{img/icon_pools_manager.png} in the main toolbar or go to the menu item Tools/Pools. It will open a navigation tree similar to the one used to browse through the containment hierarchy. The first time it will be empty; you can add new pools by right-clicking the root new and selecting “New Pool”, as show in the figure below.
 	\begin{figure}[h!]
@@ -908,8 +908,8 @@
 		\label{fig:pools_pool_object_properties}
 	\end{figure}
 				
-	\newpage
-	\section{Object and Rack Views}
+	\clearpage
+	\section{Object View and Rack View} \label{sec:object_view_and_rack_view}
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.6\linewidth]{img/actions_object_and_rack_views.png}
@@ -1034,7 +1034,7 @@
 			\end{tabular}
 		\end{table}
 		
-	\newpage
+	\clearpage
 	\section{Physical Connections} \label{sec:physical_connections}
 		The Physical Connections toolkit is tightly integrated to the Physical View module. With Kuwaiba you can create physical layer connections using cables, fiber optics or radio links very easily, navigate through the connections and inspect the resources in use.\newline
 		
@@ -1089,6 +1089,12 @@
 					\caption{Creating the connection}
 					\label{fig:l1_example_1_new_connection}
 				\end{figure}
+				\begin{figure}[h!]
+					\centering
+					\includegraphics[width=0.7\linewidth]{img/actions_create_connection_link.png}
+					\caption{Creating a connection using the node action}
+					\label{fig:actions_create_connection_link}
+				\end{figure}
 				\item This will open a wizard where you have to fill in the basic information about the connection: its name and class.
 				\begin{figure}[h!]
 					\centering
@@ -1141,6 +1147,12 @@
 						\includegraphics[width=\linewidth]{img/l1_example_2_initial_view.png}
 						\caption{Buildings in the city}
 						\label{fig:l1_example_2_initial_view}
+					\end{figure}
+					\begin{figure}[h!]
+						\centering
+						\includegraphics[width=0.7\linewidth]{img/actions_create_connection_container.png}
+						\caption{Creating a connection using the node action}
+						\label{fig:actions_create_connection_container}
 					\end{figure}
 					\newpage
 					\item Since this time we are creating a \textbf{WireContainer}, the list type for it must be created under \textbf{WireContainerType}. Using the \nameref{sec:list_type_manager}, add this entry:
@@ -1276,7 +1288,8 @@
 				\label{fig:l1_example_2_physical_path_view}
 			\end{figure}
 			The Properties window will be updated as you select any of the blocks. This view can also be updated.
-	\newpage
+			
+	\clearpage
 	\section{Audit Trail} \label{sec:audit_trail}
 	Kuwaiba is capable of tracking the changes performed by the users in the database for audit purposes. These changes can be made to inventory objects (equipment, locations, etc) or application objects (pools, tasks, user properties). There are two types of events that are logged: \textbf{General events}, that is, those that are not related to any object in particular, like new logins or creation of application objects. \textbf{Object-related events}, like property changes or move operations.
 	\begin{figure}[h!]
@@ -1316,7 +1329,7 @@
 			\caption{\textbf{Router} object audit trail}
 			\label{fig:audit_trail_object_related_events}
 		\end{figure}
-	\newpage
+	\clearpage
 	\section{Topology Designer} \label{sec:topology_designer}
 		Use this module to make sketches of your network, but using the equipment already created in the inventory. Most people use applications like MS Power Point\texttrademark, MS Visio\texttrademark  or a CAD program for this, but here it is already integrated. Use the button \includegraphics[width=0.5cm]{img/icon_topology_designer.png} in the main toolbar to open the designer.
 		\begin{table}[h!]
@@ -1377,7 +1390,7 @@
 		
 		Don't forget to save the topology by pressing the Save button \includegraphics[width=0.5cm]{img/icon_save.png}. If saved, this topology can be loaded later using the Open button  \includegraphics[width=0.5cm]{img/icon_open.png}
 	
-	\newpage
+	\clearpage
     \section{Managing Software Assets} \label{sec:software_assets}
 	    
 	    With  Kuwaiba it is possible to create  software  licenses  and  associate  them  to  existing elements  or  to  keep  them  in  a  temporary  location  until  they  are  actually  used.  A  software license can only be associated to instances of subclasses of class \textbf{GenericApplicationElement}
@@ -1430,7 +1443,7 @@
 			\label{fig:software_asset_licences_not_used}
 		\end{figure}	
 		
-	\newpage
+	\clearpage
 	\section{Service Manager} \label{sec:service_manager}
 	
 	The Service Manager allows you to organize all the services in pools. These pools of services belong to customers, these customers are at the same time organized in pools. To open the Services Manager look at the menu for Tools $\rightarrow$ Service Manager or just click on the icon \includegraphics[width=0.5cm]{img/icon_service_manager.png}.   
@@ -1514,7 +1527,7 @@
 	\end{framed}
 	
 	
-	\newpage
+	\clearpage
 	\section{Contract Manager} \label{sec:contract_manager}
 		This small module allows you to organize your contracts in pools and keep track of the expiration dates and service providers. To open it, use the menu option Tools $\rightarrow$ Advanced $\rightarrow$ Contract Manager.
 		\begin{figure}[h!]
@@ -1574,7 +1587,7 @@
 			\label{fig:contract_manager_release_from_contract}
 		\end{figure}
 		
-	\newpage
+	\clearpage
 	\section{Task Manager} \label{sec:task_manager}
 		The Task Manager is the early release of a complete automation and notification module. At this stage, you can create tasks, edit a script that will be executed and execute this task either on demand or associated to a Dashboard widget that will be loaded at user login time. To open the Task Manager, select the menu option Tools $\rightarrow$ Task Manager or press the button \includegraphics[width=0.5cm]{img/icon_task_manager.png} in the main toolbar.\\
 		
@@ -1657,7 +1670,8 @@
 		\begin{framed} {\large \textbf{Important}}\\
 			The full set of methods available in a script can be found at \\ \tiny{http://kuwaiba.org/javadoc/persistence/org/kuwaiba/apis/persistence/application/ApplicationEntityManager.html}
 		\end{framed}
-	\newpage
+		
+	\clearpage
 	\section{SDH Networks}
 		This module allows to create end-to-end virtual circuits and all other logical entities required by the SDH protocol\footnote{SDH Graphical Overview http://www.cisco.com/c/en/us/support/docs/optical/synchronous-digital-hierarchy-sdh/28327-sdh-28327.html}. Let's introduce some concepts first. See figure~\ref{fig:sdh_module_description} for sample connection that illustrate the following terms.
 		\begin{enumerate}
@@ -1858,7 +1872,7 @@
 			As an exercise for the reader, create Container and TributaryLinks using the alternate STM4-based route.
 		\end{framed}	
 		
-		\newpage
+		\clearpage
 		\section{IP Address Manager}\label{sec:ip_address_manager}
 		The IP Address Manager(IPAM) lets you store and manage your subnets and their IP addresses; Kuwaiba lets you integrate your IPAM to the whole network inventory allowing to relate the created subnets to existing VLANs or services, and also allowing you to associate the IP addresses of a subnet to an existing network device or service.
 		
@@ -1967,7 +1981,7 @@
 			\label{fig:ipam_report_subnet_usage_detail}
 		\end{figure} 
 		
-		\newpage
+		\clearpage
 		\section{Reports}
 		Since version 1.0, Kuwaiba provides a set of predefined reports, but only as of version 1.1 it was possible for users to create their own reports using Groovy\footnote{Groovy Language: http://www.groovy-lang.org/} scripts. Writing a report script usually has three steps:
 		\begin{enumerate}
@@ -1986,7 +2000,7 @@
 			 These reports are tied to the instances of a particular class. An example is the built-in report "Rack Usage". All instances of class \textit{Rack} will have this report available when right-clicking on them and selecting the option \textit{Reports}.
 			\begin{figure}[h!]
 				\centering
-				\includegraphics[scale=0.7]{img/reports_rack_report.png}
+				\includegraphics[scale=0.5]{img/reports_rack_report.png}
 				\caption{Class reports depend on particular instances}
 				\label{fig:reports_rack_report}
 			\end{figure}\\
@@ -1994,7 +2008,7 @@
 			\newpage
 			\begin{figure}[h!]
 				\centering
-				\includegraphics[scale=0.8]{img/reports_abstract_class_report.png}
+				\includegraphics[scale=0.6]{img/reports_abstract_class_report.png}
 				\caption{Report can be applied to abstract classes}
 				\label{fig:reports_abstract_class_report}
 			\end{figure}
@@ -2093,88 +2107,58 @@
 			\textbf{com.neotropic.kuwaiba.modules.reporting.defaults.DefaultReports}\footnote{http://kuwaiba.org/javadoc/persistence/com/neotropic/kuwaiba/modules/reporting/defaults/DefaultReports.html} contains those hard-coded reports. The code for that class can be found in the SVN repository\footnote{DefaultReports class: http://bit.ly/2hCuCrS}.
 		\end{itemize}
 		
-		\newpage
+		\clearpage
 		\section{User and Group Management} \label{sec:user_and_group_management}
+		This feature lets you define new application users and relate/unrelate them from application groups. By default there is only one user (\textbf{admin}, password \textbf{kuwaiba}) and one default group.  You can edit everything, even its username.
 		\begin{figure}[h!]
 			\centering
-			\includegraphics[width=0.4\linewidth]{img/user_manager_first_view.png}
+			\includegraphics[width=0.3\linewidth]{img/user_manager_first_view.png}
 			\caption{User Manager main view}
 			\label{fig:user_manager_first_view}
 		\end{figure}
+		Adds a new group.
 		\begin{figure}[h!]
 			\centering
-			\includegraphics[width=0.7\linewidth]{img/user_manager_new_group.png}
+			\includegraphics[width=0.5\linewidth]{img/user_manager_new_group.png}
 			\caption{How create a new group}
 			\label{fig:user_manager_new_group}
 		\end{figure}
 		\begin{figure}[h!]
 			\centering
-			\includegraphics[width=0.9\linewidth]{img/user_manager_group_properties_privileges.png}
+			\includegraphics[width=0.7\linewidth]{img/user_manager_group_properties_privileges.png}
 			\caption{New group properties and privileges}
 			\label{fig:user_manager_group_properties_privileges}
 		\end{figure}
+		Adds a new user.
 		\begin{figure}[h!]
 			\centering
-			\includegraphics[width=0.7\linewidth]{img/user_manager_new_user.png}
+			\includegraphics[width=0.5\linewidth]{img/user_manager_new_user.png}
 			\caption{How create a new user}
 			\label{fig:user_manager_new_user}
 		\end{figure}
+		If you want to change a user's password, click the button \includegraphics[width=0.5cm]{img/icon_edit_user.png} in the “Password”.
 		\begin{figure}[h!]
 			\centering
-			\includegraphics[width=0.9\linewidth]{img/user_manager_user_properties_privileges.png}
+			\includegraphics[width=0.7\linewidth]{img/user_manager_user_properties_privileges.png}
 			\caption{New user properties and privileges}
 			\label{fig:user_manager_user_properties_privileges}
 		\end{figure}
+		Currently it is only possible to add/remove groups to/from a user (not vice versa)
 		\begin{figure}[h!]
 			\centering
-			\includegraphics[width=0.7\linewidth]{img/user_manager_relate_to_group.png}
+			\includegraphics[width=0.5\linewidth]{img/user_manager_relate_to_group.png}
 			\caption{Relate user to group}
 			\label{fig:user_manager_relate_to_group}
 		\end{figure}
 		\begin{figure}[h!]
 			\centering
-			\includegraphics[width=0.5\linewidth]{img/user_manager_user_and_groups.png}
+			\includegraphics[width=0.4\linewidth]{img/user_manager_user_and_groups.png}
 			\caption{A same use has two groups}
 			\label{fig:user_manager_user_and_groups}
 		\end{figure}
-		\begin{figure}[h!]
-			\centering
-			\includegraphics[width=0.7\linewidth]{img/users_and_groups_default_user.png}
-			\caption{User/Group Management main window}
-			\label{fig:users_and_groups_default_user}
-		\end{figure}
-		
-		This feature lets you define new application users and relate/unrelate them from application groups. By default there is only one user (\textbf{admin}, password \textbf{kuwaiba}) and no groups.  You can edit everything, even its username.
-		The module shows three buttons at its own toolbar:
-		\textbf{Add user:} Adds a new user. It's placed at the end of the list and its name is a composition of the string “user” and a random number between 0 and 10000.
-		\textbf{Add groups:} Adds a new group. It's placed at the end of the list and its name is a composition of the string “group” and a random number between 0 and 10000.
-		\textbf{Refresh:} Refreshes the selected tab (users or groups)	
-		\begin{figure}[h!]
-			\centering
-			\includegraphics[width=0.6\linewidth]{img/users_and_groups_delete.png}
-			\caption{Deleting an user}
-			\label{fig:users_and_groups_delete}
-		\end{figure}
-		
-		If you want to delete a user or a group, just right click the element and choose \textit{Delete}. Deleting a group won't delete the related users. If you want to change a user's password, click the button  \includegraphics[width=0.5cm]{img/icon_edit_user.png} in the \textit{Password} or \textit{Group} column and a custom editor will be shown.
-		\begin{figure}[h!]
-			\centering
-			\includegraphics[width=0.3\linewidth]{img/users_and_groups_change_password.png}
-			\caption{Changing a password}
-			\label{fig:users_and_groups_change_password}
-		\end{figure}
-	
-		If you want to change a user's password, click the button \includegraphics[width=0.5cm]{img/icon_edit_user.png} in the “Password” or “Group” column and a custom editor will be shown.
-		\begin{figure}[h!]
-			\centering
-			\includegraphics[width=0.2\linewidth]{img/users_and_groups_select_groups.png}
-			\caption{Changing a user group association}
-			\label{fig:users_and_groups_select_groups}
-		\end{figure}
-		
-		Currently it is only possible to add/remove groups to/from a user (not vice versa)
-				
-		\newpage
+		If you want to delete a user or a group, just right click the element and choose \textit{Delete}. Deleting a group delete the related users.
+						
+		\clearpage
 		\section{Bulk import}\label{sec:bulk_import}
 			Kuwaiba  provides a  way  to  import  objects  and  list  types  from CVS text files with a defined format.  This  module  can be  found at \textit{Tools} $\rightarrow$ \textit{Bulk Import}. Examples of these files are included in the client installer bundle under the directory \textit{Samples}.
 			\subsection{Load Objects}\label{sec:bi_load_objects}
@@ -2270,7 +2254,8 @@
 					\item If you perform changes in a file after loading it (that is, after pressing \textit{Select file}), you will have to select it again so it can take the changes. Otherwise, it will process the old file instead. To save the output messages, right-click the window.
 					\end{itemize}
 				\end{framed}
-		\newpage
+		
+		\clearpage
 		\section{Favorites}\label{sec:favorites}
 		
 			The Favorites module lets you manage favorites. In Kuwaiba a favorite is an object of the inventory which is pooled in a favorite folder. To open the Favorite module look in the menu for Tools $\rightarrow$ Navigation $\rightarrow$ Favorites or just click in the icon
@@ -2292,7 +2277,7 @@
 				\label{fig:favorites_add_to}
 			\end{figure}
 							
-		\newpage
+		\clearpage
 		\section{Update Center}\label{sec:update_center}
 		The Update Center module is used to get the latest version of Kuwaiba. Your Administrator must provided you a URL where the update center was located. To open the Update Center module look at the menu for Tools $\rightarrow$ Update Center
 		\newline
@@ -2307,7 +2292,7 @@
 			\label{fig:update_center_options}
 		\end{figure}		
 		
-		\newpage		
+		\clearpage		
 		\section{Projects}\label{sec:projects}
 		
 			The Project module allows you to have all projects, activities and resources in a place. To open the Projects module look at the menu for Tools $\rightarrow$ Advanced $\rightarrow$ Projects. To start using the Projects module you must create a Pool of Projects. Depending on the loaded data model you can create a  GeneralPurposeProject or NetworkProject or any subclass of GenericProject (see \textbf{\nameref{sec:data_model_manager}} if you need to create a different kind  of Project).
@@ -2319,7 +2304,7 @@
 		    	\label{fig:projects_actions}
 		    \end{figure}
 		    		    
-		    A Project Pool may contain projects and the Projects may contain activities; you can create an activity just by right clicking on a Project and selecting the kind of Activity you want to add. If you need to create a different kind of Activity (see \textbf{\nameref{sec:data_model_manager}})
+		    A Project Pool may contain projects and the projects may contain activities; you can create an activity just by right clicking on a project and selecting the kind of Activity you want to add. If you need to create a different kind of Activity (see \textbf{\nameref{sec:data_model_manager}})
 		    
 		    \begin{figure}[h!]
 		    	\centering
@@ -2328,7 +2313,7 @@
 		    	\label{fig:projects_new_project_activity}
 		    \end{figure}		    
 		    
-		    The Projects have related resources that are inventory objects in the Navigation tree. You can relate or release objects just by right clicking on an Inventory object \textbf{figure~\ref{fig:projects_relate_to}}.
+		    The Projects have related resources that are inventory objects. You can relate or release objects just by right clicking on an inventory object \textbf{figure~\ref{fig:projects_relate_to}}.
 		    		    		    
 		    \begin{figure}[h!]
 		    	\centering
@@ -2342,15 +2327,16 @@
 		    
 		    \begin{figure}[h!]
 		    	\centering
-		    	\includegraphics[width=0.8\linewidth]{img/projects_db_outdated.png}
+		    	\includegraphics[width=0.9\linewidth]{img/projects_db_outdated.png}
 		    	\caption{Projects data model error}
 		    	\label{fig:projects_db_outdated}
 		    \end{figure}
-		\newpage
+		    
+		\clearpage
 		\begin{appendices}
 			\appendix
 			\section{Appendix A. Name Pattern} \label{app:AppendixA}
-			A name pattern is used to dynamically create the names of new objects or new special objects using the actions New (Multiple) and New Special (Multiple) respectively.			
+			A name pattern is used to dynamically create the names of new objects or new special objects using the actions \textit{New Multiple} and \textit{New Special Multiple} respectively.			
 			
 			The name pattern is a set of static and dynamic sections. In the static section, any string of characters can be placed, with the exception of the special characters "[" and "]"; and in the dynamic section only the pre-defined functions listed below can be placed.
 			
@@ -2363,7 +2349,7 @@
 			
 			Examples of name pattern are: router-[sequence(1,3)]-[sequence(a,c)], [value(1111,name)]-[sequence(A,Z)], the first pattern generates six different names, and the second twenty six different names.
 			
-			When name patterns are defined, this can only generate a limited number of names. If in the dialog see figure~\ref{fig:new_multiple} and see figure~\ref{fig:new_special_multiple}, a number greater than the possible names is assigned, the objects or special objects are not created.
+			When name patterns are defined, this can only generate a limited number of names. If in the dialogs see figure~\ref{fig:new_multiple} and see figure~\ref{fig:new_special_multiple}, the number assigned is greater than the possible names, the objects or special objects are not created.
 
 						
 		\end{appendices}				
