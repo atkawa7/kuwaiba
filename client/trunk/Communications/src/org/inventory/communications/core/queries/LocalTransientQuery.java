@@ -160,6 +160,10 @@ public class LocalTransientQuery {
         return page;
     }
 
+    public void setPage(int page) {
+        this.page = page;
+    }
+    
     public int getLogicalConnector() {
         return logicalConnector;
     }
