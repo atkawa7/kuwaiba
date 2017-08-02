@@ -256,7 +256,7 @@
 			The properties of a class can be edited by using the \textbf{Properties} window, selecting the class from the tree (see figure~\ref{fig:properties_class_node}). 
 			\begin{figure}[h!]
 				\centering
-				\includegraphics[width=0.5\linewidth]{img/properties_class_node.png}
+				\includegraphics[width=0.5\linewidth]{img/data_model_manager_properties_class_node.png}
 				\caption{Properties of class \textbf{Router}}
 				\label{fig:properties_class_node}
 			\end{figure}
@@ -272,12 +272,18 @@
 				\item The second section  contains the class fields (attributes). In the  figure~\ref{fig:properties_class_node}, class Router  has six attributes: name, state, conditions, vendor, serialNumber and creationDate. Click the button next to the attribute name to customize it (see figure~\ref{fig:class_attribute_details}).
 				\begin{figure}[h!]
 					\centering
-					\includegraphics[width=0.4\linewidth]{img/class_attribute_details.png}
+					\includegraphics[width=0.4\linewidth]{img/data_model_manager_class_attribute_details.png}
 					\caption{Properties of attribute \textbf{name} in class \textbf{Router}}
 					\label{fig:class_attribute_details}
 				\end{figure}
 			\end{itemize}
-			In this window, you can modify the attribute's name, display name, description, type  (the drop-down list will show you primitive types -String, Integer, Float, Long, etc- and all available non-abstract list types). When you change an attribute's type, all existing instances will be	modified to reflect the change, which means that the values of the modified attribute will be converted to the new type if possible (say, from Integers to Strings). If the conversion is not possible, the new value will be set to null. You  can  also  manage  the  attribute  visibility. Attributes marked as \textbf{administrative} will be shown in a separate tab in the object's property sheet. Sometimes, there are  attributes that are used only for administrative purposes and might confuse the end user if mixed with the regular attributes. Finally, you can choose what attributes shouldn't be transferred from one object to another in a copy operation.
+			In this window, you can modify the attribute's name, display name, description, type  (the drop-down list will show you primitive types -String, Integer, Float, Long, etc- and all available non-abstract list types). When you change an attribute's type, all existing instances will be	modified to reflect the change, which means that the values of the modified attribute will be converted to the new type if possible (say, from Integers to Strings). If the conversion is not possible, the new value will be set to null.  You can also manage if the attribute is:
+			\newline \textbf{mandatory}, if is marked, it means that every new object of this class should has a value in this attribute, or if there are already created objects from this class, every object from the class need a value in this attribute, before you can mark it as mandatory.  
+			\newline \textbf{unique}, if its marked, it means that the value of this attribute can not be repeated across all the  created objects from this class or its subclasses.  Before you can set a class attribute as unique, you should check if the value of this attribute in every created object from this class or its subclases is unique.
+			\newline \textbf{visible}, this manage the attribute  visibility, if is not marked the attribute will not be shown in the property sheets of the objects created from this class.  
+			\newline \textbf{administrative}, attributes marked as “Administrative” will be shown in a separate tab in the object's property sheet. Sometimes, there are  attributes that are used only for administrative purposes and might confuse the end user if mixed with the regular attributes. 
+			\newline \textbf{noCopy}, you can choose what attributes shouldn't be transferred from one object to another in a copy operation.
+			
 			
 			\begin{framed} {\large \textbf{Important}}
 				\begin{itemize}
