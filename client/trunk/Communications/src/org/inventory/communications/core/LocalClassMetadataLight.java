@@ -128,7 +128,7 @@ public class LocalClassMetadataLight implements Transferable, Comparable<LocalCl
 
     @Override
     public String toString(){
-        return className;
+        return getDisplayName();
     }
 
     public boolean isAbstract() {
@@ -167,10 +167,7 @@ public class LocalClassMetadataLight implements Transferable, Comparable<LocalCl
     }
    
     public String getDisplayName(){
-        if (displayName == null) {
-            return className;
-        }
-        if (displayName.trim().equals("")) {
+        if (displayName == null || displayName.trim().equals("")) {
             return className;
         }
         return displayName;

@@ -32,6 +32,7 @@ import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.soap.SOAPFaultException;
 import org.inventory.communications.core.LocalApplicationLogEntry;
 import org.inventory.communications.core.LocalAttributeMetadata;
+import org.inventory.communications.core.LocalBusinessRule;
 import org.inventory.communications.core.LocalFavoritesFolder;
 import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalClassMetadataLight;
@@ -70,6 +71,7 @@ import org.inventory.communications.wsclient.PrivilegeInfo;
 import org.inventory.communications.wsclient.RemoteFavoritesFolder;
 import org.inventory.communications.wsclient.RemoteBusinessObjectLight;
 import org.inventory.communications.wsclient.RemoteBusinessObjectLightList;
+import org.inventory.communications.wsclient.RemoteBusinessRule;
 import org.inventory.communications.wsclient.RemoteObject;
 import org.inventory.communications.wsclient.RemoteObjectLight;
 import org.inventory.communications.wsclient.RemoteObjectLightArray;
@@ -4186,6 +4188,7 @@ public class CommunicationsStub {
     }
     // </editor-fold>
     
+    //<editor-fold desc="Favorites" defaultstate="collapsed">
     /**
      * Adds a list of objects to a Favorites folder
      * @param objectClass List of class names
@@ -4350,4 +4353,58 @@ public class CommunicationsStub {
             return false;
         }
     }
+    //</editor-fold>
+    
+    //<editor-fold desc="Business Rules" defaultstate="collapsed">
+    /**
+     * Creates a business rule given a set of constraints
+     * @param ruleName Rule name
+     * @param ruleDescription Rule description
+     * @param ruleType Rule type. See LocalBusinesRule.TYPE* for possible values.
+     * @param ruleScope The scope of the rule. See LocalBusinesRule.SCOPE* for possible values.
+     * @param appliesTo The class this rule applies to. Can not be null.
+     * @param ruleVersion The version of the rule. Useful to migrate it if necessary in further versions of the platform
+     * @param constraints An array with the definition of the logic to be matched with the rule. Can not be empty or null
+     * @return The newly created business rule or null is an error was returned by the server
+     */
+    public LocalBusinessRule createBusinessRule(String ruleName, String ruleDescription, int ruleType, 
+            int ruleScope, String appliesTo, String ruleVersion, List<String> constraints) {
+        try {
+            long newBussinessRuleId  = service.createBusinessRule(ruleName, ruleDescription, ruleType, ruleScope, appliesTo, ruleVersion, constraints,session.getSessionId());
+            return new LocalBusinessRule(newBussinessRuleId, ruleName, ruleDescription, appliesTo, ruleType, ruleScope, ruleVersion);
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Deletes a business rule
+     * @param businessRuleId Rule id
+     * @return true if it was possible to delete the rule or false otherwise
+     */
+    public boolean deleteBusinessRule(long businessRuleId) {
+        try {
+            service.deleteBusinessRule(businessRuleId,session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return false;
+        }
+    }
+    public List<LocalBusinessRule> getBusinessRules(int type) {
+        try {
+            List<RemoteBusinessRule> remoteBusinessRules = service.getBusinessRules(type,session.getSessionId());
+            List<LocalBusinessRule> res = new ArrayList<>();
+            for (RemoteBusinessRule remoteBusinessRule : remoteBusinessRules)
+                res.add(new LocalBusinessRule(remoteBusinessRule.getRuleId(), remoteBusinessRule.getName(), 
+                        remoteBusinessRule.getDescription(), remoteBusinessRule.getAppliesTo(), remoteBusinessRule.getType(), 
+                        remoteBusinessRule.getScope(), remoteBusinessRule.getVersion()));
+            return res;
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    //</editor-fold>
 }
