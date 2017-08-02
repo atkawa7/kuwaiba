@@ -31,6 +31,7 @@ import org.kuwaiba.ws.toserialize.application.ApplicationLogEntry;
 import org.kuwaiba.ws.toserialize.application.GroupInfo;
 import org.kuwaiba.ws.toserialize.application.GroupInfoLight;
 import org.kuwaiba.ws.toserialize.application.PrivilegeInfo;
+import org.kuwaiba.ws.toserialize.application.RemoteBusinessRule;
 import org.kuwaiba.ws.toserialize.application.RemoteFavoritesFolder;
 import org.kuwaiba.ws.toserialize.application.RemotePool;
 import org.kuwaiba.ws.toserialize.application.RemoteQuery;
@@ -529,5 +530,7 @@ public interface WebserviceBeanRemote {
     public List<RemoteFavoritesFolder> getFavoritesFoldersForObject(long userId ,String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;
     public RemoteFavoritesFolder getFavoritesFolder(long favoritesFolderId, long userId, String ipAddress, String sessionId) throws ServerSideException;
     public void updateFavoritesFolder(long favoritesFolderId, long userId, String favoritesFolderName, String ipAddress, String sessionId) throws ServerSideException;
-    
+    public long createBusinessRule(String ruleName, String ruleDescription, int ruleType, int ruleScope, String appliesTo, String ruleVersion, List<String> constraints, String ipAddress, String sessionId) throws ServerSideException;
+    public void deleteBusinessRule(long businessRuleId, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteBusinessRule> getBusinessRules(int type, String ipAddress, String sessionId) throws ServerSideException;
 }

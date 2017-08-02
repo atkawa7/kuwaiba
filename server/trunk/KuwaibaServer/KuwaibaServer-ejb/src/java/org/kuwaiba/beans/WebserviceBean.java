@@ -35,6 +35,8 @@ import javax.ejb.Singleton;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
+import org.kuwaiba.apis.persistence.application.BusinessRule;
+import org.kuwaiba.apis.persistence.application.BusinessRuleConstraint;
 import org.kuwaiba.apis.persistence.application.FavoritesFolder;
 import org.kuwaiba.apis.persistence.application.CompactQuery;
 import org.kuwaiba.apis.persistence.application.ExtendedQuery;
@@ -72,6 +74,8 @@ import org.kuwaiba.ws.toserialize.application.ApplicationLogEntry;
 import org.kuwaiba.ws.toserialize.application.GroupInfo;
 import org.kuwaiba.ws.toserialize.application.GroupInfoLight;
 import org.kuwaiba.ws.toserialize.application.PrivilegeInfo;
+import org.kuwaiba.ws.toserialize.application.RemoteBusinessRule;
+import org.kuwaiba.ws.toserialize.application.RemoteBusinessRuleConstraint;
 import org.kuwaiba.ws.toserialize.application.RemoteFavoritesFolder;
 import org.kuwaiba.ws.toserialize.application.RemotePool;
 import org.kuwaiba.ws.toserialize.application.RemoteQuery;
@@ -1323,7 +1327,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 throw new ServerSideException(String.format("Object %s already has a mirror port", bem.getObjectLight(aObjectClass, aObjectId)));
             
             if (bem.hasSpecialRelationship(bObjectClass, bObjectId, "mirror", 1))
-                throw new ServerSideException(String.format("Object %s [%s] already has a mirror port", bem.getObjectLight(bObjectClass, bObjectId)));
+                throw new ServerSideException(String.format("Object %s already has a mirror port", bem.getObjectLight(bObjectClass, bObjectId)));
             
             bem.createSpecialRelationship(aObjectClass, aObjectId, bObjectClass, bObjectId, "mirror", true);
             
@@ -3831,6 +3835,56 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateWebServiceCall("updateFavoritesFolder", ipAddress, sessionId);
             
             aem.updateFavoritesFolder(favoritesFolderId, userId, favoritesFolderName);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public long createBusinessRule(String ruleName, String ruleDescription, int ruleType, int ruleScope, 
+            String appliesTo, String ruleVersion, List<String> constraints, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("createBusinessRule", ipAddress, sessionId);
+            return aem.createBusinessRule(ruleName, ruleDescription, ruleType, ruleScope, appliesTo, ruleVersion, constraints);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void deleteBusinessRule(long businessRuleId, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("deleteBusinessRule", ipAddress, sessionId);
+            aem.deleteBusinessRule(businessRuleId);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public List<RemoteBusinessRule> getBusinessRules(int type, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("getBusinessRules", ipAddress, sessionId);
+            List<BusinessRule> businessRules = aem.getBusinessRules(type);
+            
+            List<RemoteBusinessRule> res = new ArrayList<>();
+            
+            for (BusinessRule businessRule : businessRules) {
+                RemoteBusinessRule remoteBusinessRule = new RemoteBusinessRule(businessRule.getRuleId(), businessRule.getName(), businessRule.getDescription(), 
+                        businessRule.getAppliesTo(), businessRule.getType(), businessRule.getScope(), businessRule.getVersion());
+                
+                for (BusinessRuleConstraint constraint : businessRule.getConstraints())
+                    remoteBusinessRule.getConstraints().add(new RemoteBusinessRuleConstraint(constraint.getName(), constraint.getDefinition()));
+                
+                res.add(remoteBusinessRule);
+            }
+            return res;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }

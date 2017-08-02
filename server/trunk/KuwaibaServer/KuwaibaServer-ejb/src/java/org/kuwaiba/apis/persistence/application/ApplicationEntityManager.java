@@ -1058,4 +1058,33 @@ public interface ApplicationEntityManager {
      */
     public void updateFavoritesFolder(long favoritesFolderId, long userId, String favoritesFolderName) 
         throws ApplicationObjectNotFoundException, IllegalArgumentException;
+    
+    /**
+     * Creates a business rule given a set of constraints
+     * @param ruleName Rule name
+     * @param ruleDescription Rule description
+     * @param ruleType Rule type. See BusinesRule.TYPE* for possible values.
+     * @param ruleScope The scope of the rule. See BusinesRule.SCOPE* for possible values.
+     * @param appliesTo The class this rule applies to. Can not be null.
+     * @param ruleVersion The version of the rule. Useful to migrate it if necessary in further versions of the platform
+     * @param constraints An array with the definition of the logic to be matched with the rule. Can not be empty or null
+     * @return The id of the newly created business rule
+     * @throws InvalidArgumentException If any of the parameters is null (strings) or leer than 1 or if the constraints array is null or empty
+     */
+    public long createBusinessRule(String ruleName, String ruleDescription, int ruleType, 
+            int ruleScope, String appliesTo, String ruleVersion, List<String> constraints) throws InvalidArgumentException;
+    
+    /**
+     * Deletes a business rule
+     * @param businessRuleId Rule id
+     * @throws ApplicationObjectNotFoundException If the given rule does not exist
+     */
+    public void deleteBusinessRule(long businessRuleId) throws ApplicationObjectNotFoundException;
+    
+    /**
+     * Retrieves the business rules of a particular type.
+     * @param type Rule type. See BusinesRule.TYPE* for possible values. Use -1 to retrieve all
+     * @return The list of business rules with the matching type.
+     */
+    public List<BusinessRule> getBusinessRules(int type);
 }

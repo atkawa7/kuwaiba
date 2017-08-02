@@ -49,6 +49,7 @@ import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.ConnectionManager;
 import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
+import org.kuwaiba.apis.persistence.application.BusinessRule;
 import org.kuwaiba.apis.persistence.application.CompactQuery;
 import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.FavoritesFolder;
@@ -2752,22 +2753,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         return newTemplateElementInstance;
     }
     
-    private Node getReportInstance(Node relatedNode, long reportId) throws ApplicationObjectNotFoundException {
-        Node reportNode = null;
-        for (Relationship hasReportRelationship : relatedNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_REPORT)) {
-            Node endNode = hasReportRelationship.getEndNode();
-            if (endNode.getId() == reportId) {
-                reportNode = endNode;
-                break;
-            }
-        }
-        
-        if (reportNode == null)
-            throw new ApplicationObjectNotFoundException(String.format("The report with with id %s could not be found.", reportId));
-        
-        return reportNode;
-    }
-    
     //End of Helpers  
     
     // Bookmarks
@@ -2982,11 +2967,15 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     //<editor-fold desc="Business Rules" defaultstate="collapsed">
+    @Override
     public long createBusinessRule(String ruleName, String ruleDescription, int ruleType, 
-            int ruleScope, List<String> constraints) throws InvalidArgumentException {
+            int ruleScope, String appliesTo, String ruleVersion, List<String> constraints) throws InvalidArgumentException {
         
-        if (ruleName == null || ruleDescription == null || ruleType < 1 || ruleScope < 1)
+        if (ruleName == null || ruleDescription == null || ruleVersion == null || appliesTo == null || ruleType < 1 || ruleScope < 1)
             throw new InvalidArgumentException("Parameter invalid. Make sure all parameters are not null and greater than 1");
+        
+        if (constraints == null || constraints.isEmpty())
+            throw new InvalidArgumentException("The rule must have at least one constraint");
         
         try (Transaction tx = graphDb.beginTx()) {
             Node businessRuleNode = graphDb.createNode();
@@ -2995,17 +2984,19 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             businessRuleNode.setProperty(Constants.PROPERTY_DESCRIPTION, ruleDescription);
             businessRuleNode.setProperty(Constants.PROPERTY_TYPE, ruleType);
             businessRuleNode.setProperty(Constants.PROPERTY_SCOPE, ruleScope);
+            businessRuleNode.setProperty(Constants.PROPERTY_APPLIES_TO, appliesTo);
+            businessRuleNode.setProperty(Constants.PROPERTY_VERSION, ruleVersion);
             
-            if (constraints != null) {
-                for (int i = 0; i < constraints.size(); i++)
-                    businessRuleNode.setProperty("constraint" + i, constraints.get(i)); //NOI18N
-            }
+            for (int i = 0; i < constraints.size(); i++)
+                businessRuleNode.setProperty("constraint" + (i + 1), constraints.get(i)); //NOI18N
+
             businessRulesIndex.putIfAbsent(businessRuleNode, Constants.PROPERTY_ID, businessRuleNode.getId());
             tx.success();
             return businessRuleNode.getId();
         }
     }
     
+    @Override
     public void deleteBusinessRule(long businessRuleId) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             
@@ -3018,6 +3009,20 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             businessRuleNode.delete();
             
             tx.success();
+        }
+    }
+    
+    @Override
+    public List<BusinessRule> getBusinessRules(int type) {
+        try (Transaction tx = graphDb.beginTx()) {
+            List<BusinessRule> res = new ArrayList<>();
+            IndexHits<Node> businessRules = businessRulesIndex.get(Constants.PROPERTY_ID, "*");
+            
+            for (Node businessRuleNode : businessRules) {
+                if (type == -1 || type == (int)businessRuleNode.getProperty(Constants.PROPERTY_TYPE))
+                    res.add(new BusinessRule(businessRuleNode.getId(), businessRuleNode.getAllProperties()));
+            }
+            return res;
         }
     }
     

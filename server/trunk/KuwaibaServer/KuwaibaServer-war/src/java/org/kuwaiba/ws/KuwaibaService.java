@@ -42,6 +42,7 @@ import org.kuwaiba.ws.toserialize.application.ResultRecord;
 import org.kuwaiba.ws.toserialize.application.GroupInfo;
 import org.kuwaiba.ws.toserialize.application.GroupInfoLight;
 import org.kuwaiba.ws.toserialize.application.PrivilegeInfo;
+import org.kuwaiba.ws.toserialize.application.RemoteBusinessRule;
 import org.kuwaiba.ws.toserialize.application.RemoteFavoritesFolder;
 import org.kuwaiba.ws.toserialize.application.RemotePool;
 import org.kuwaiba.ws.toserialize.application.RemoteTask;
@@ -4775,6 +4776,79 @@ public class KuwaibaService {
         }
     }
     
+    //</editor-fold>
+    
+    //<editor-fold desc="Business Rule Engine" defaultstate="collapsed">
+    /**
+     * Creates a business rule given a set of constraints
+     * @param ruleName Rule name
+     * @param ruleDescription Rule description
+     * @param ruleType Rule type. See BusinesRule.TYPE* for possible values.
+     * @param ruleScope The scope of the rule. See BusinesRule.SCOPE* for possible values.
+     * @param appliesTo The class this rule applies to. Can not be null.
+     * @param ruleVersion The version of the rule. Useful to migrate it if necessary in further versions of the platform
+     * @param constraints An array with the definition of the logic to be matched with the rule. Can not be empty or null
+     * @param sessionId Session token
+     * @return The id of the newly created business rule
+     * @throws ServerSideException If any of the parameters is null (strings) or leer than 1 or if the constraints array is null or empty
+     */
+    @WebMethod(operationName = "createBusinessRule")
+    public long createBusinessRule(@WebParam(name = "ruleName")String ruleName, @WebParam(name = "ruleDescription")String ruleDescription, 
+            @WebParam(name = "ruleType")int ruleType, @WebParam(name = "ruleScope")int ruleScope, @WebParam(name = "appliesTo")String appliesTo, 
+            @WebParam(name = "ruleVersion")String ruleVersion, @WebParam(name = "constraints")List<String> constraints, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.createBusinessRule(ruleName, ruleDescription, ruleType, ruleScope, appliesTo, ruleVersion, constraints, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createBusinessRule: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Deletes a business rule
+     * @param businessRuleId Rule id
+     * @param sessionId Session token
+     * @throws ServerSideException If the given rule does not exist
+     */
+    @WebMethod(operationName = "deleteBusinessRule")
+    public void deleteBusinessRule(@WebParam(name = "businessRuleId")long businessRuleId, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            wsBean.deleteBusinessRule(businessRuleId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteBusinessRule: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Retrieves the business rules of a particular type.
+     * @param type Rule type. See BusinesRule.TYPE* for possible values. Use -1 to retrieve all
+     * @param sessionId Session token
+     * @return The list of business rules with the matching type.
+     * @throws ServerSideException If something unexpected happens
+     */
+    @WebMethod(operationName = "getBusinessRules")
+    public List<RemoteBusinessRule> getBusinessRules(int type, String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getBusinessRules(type, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getBusinessRules: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
     //</editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Commercial modules data methods">

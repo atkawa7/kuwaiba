@@ -221,6 +221,8 @@ public class Constants {
     public static final String PROPERTY_SUPPORT_EMAIL = "supportEmail"; //NOI18N
     public static final String PROPERTY_PARAMETERS = "parameters"; //NOI18N
     public static final String PROPERTY_SCOPE = "scope"; //NOI18N
+    public static final String PROPERTY_VERSION = "version"; //NOI18N
+    public static final String PROPERTY_APPLIES_TO = "appliesTo"; //NOI18N
     
     /**
      * Root for all business classes
