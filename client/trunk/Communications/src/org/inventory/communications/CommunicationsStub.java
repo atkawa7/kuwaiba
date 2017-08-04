@@ -1118,9 +1118,9 @@ public class CommunicationsStub {
             if (includeNullValue){
                 return res;
             }
-            else{
+            else
                 return res.subList(1, res.size());
-            }
+            
         }catch(Exception ex){
             this.error = ex.getMessage();
             return null;

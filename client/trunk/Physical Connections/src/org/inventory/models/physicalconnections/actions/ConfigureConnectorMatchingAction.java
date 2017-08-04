@@ -21,7 +21,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.List;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -29,6 +28,9 @@ import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.ListModel;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListDataListener;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalBusinessRule;
 import org.inventory.communications.core.LocalClassMetadataLight;
@@ -68,7 +70,8 @@ public class ConfigureConnectorMatchingAction implements ActionListener {
                 dispose();
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             } else {
-                lstRules = new JList<>(matchingRules.toArray(new LocalBusinessRule[0]));
+                lstRules = new JList<>(new BusinessRulesListModel(matchingRules));
+                lstRules.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
                 add(lstRules);
                 btnAddRule = new JButton("Add Rule");
                 btnAddRule.addActionListener(new ActionListener() {
@@ -89,7 +92,7 @@ public class ConfigureConnectorMatchingAction implements ActionListener {
                         
                         JComboBox<LocalClassMetadataLight> cmbLinkSubclasses = new JComboBox<>(linkSubclasses.toArray(new LocalClassMetadataLight[0]));
                         cmbLinkSubclasses.setName("cmbLinkSubclasses");
-                        List<LocalObjectListItem> linkConnectorTypes = com.getList("LinkConnectorType", false, false);
+                        List<LocalObjectListItem> linkConnectorTypes = com.getList("LinkConnectorType", true, false);
                         
                         if (linkConnectorTypes == null) {
                             JOptionPane.showMessageDialog(null, "Make sure you have upgraded your database before running this action:\n" + com.getError(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -103,7 +106,7 @@ public class ConfigureConnectorMatchingAction implements ActionListener {
                          * Port information
                          */
                         List<LocalClassMetadataLight> portSubclasses = com.
-                                getLightSubclasses(Constants.CLASS_GENERICPORT, false, false);
+                                getLightSubclasses(Constants.CLASS_GENERICPORT, true, false);
                         
                         if (portSubclasses == null) {
                             JOptionPane.showMessageDialog(null, "Make sure you have upgraded your database before running this action:\n" + com.getError(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -113,7 +116,7 @@ public class ConfigureConnectorMatchingAction implements ActionListener {
                         
                         JComboBox<LocalClassMetadataLight> cmbPortSubclasses = new JComboBox<>(portSubclasses.toArray(new LocalClassMetadataLight[0]));
                         cmbPortSubclasses.setName("cmbPortSubclasses");
-                        List<LocalObjectListItem> portConnectorTypes = com.getList("PortConnectorType", false, false);
+                        List<LocalObjectListItem> portConnectorTypes = com.getList("PortConnectorType", true, false);
                         
                         if (portConnectorTypes == null) {
                             JOptionPane.showMessageDialog(null, "Make sure you have upgraded your database before running this action:\n" + com.getError(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -128,18 +131,44 @@ public class ConfigureConnectorMatchingAction implements ActionListener {
                                 new JComponent[] { cmbLinkSubclasses, cmbLinkConnectorTypes, cmbPortSubclasses, cmbPortConnectorTypes });
                         
                         if (JOptionPane.showConfirmDialog(null, pnlRuleInformation, "New Rule", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-                            LocalBusinessRule newBusinessRule = com.createBusinessRule(cmbLinkSubclasses.getSelectedItem() + " - " + cmbPortSubclasses.getSelectedItem(), 
+                            if (cmbPortSubclasses.getSelectedItem() == null || cmbLinkSubclasses.getSelectedItem() == null)
+                                JOptionPane.showMessageDialog(null, "Invalid selection", "Error", JOptionPane.ERROR_MESSAGE);
+                            else {
+                                String linkConnector = cmbLinkConnectorTypes.getSelectedItem() == null || ((LocalObjectListItem)cmbLinkConnectorTypes.getSelectedItem()).getOid() == LocalObjectListItem.NULL_ID ? "" : ((LocalObjectListItem)cmbLinkConnectorTypes.getSelectedItem()).getName();
+                                String portConnector = cmbPortConnectorTypes.getSelectedItem() == null || ((LocalObjectListItem)cmbPortConnectorTypes.getSelectedItem()).getOid() == LocalObjectListItem.NULL_ID ? "" : ((LocalObjectListItem)cmbPortConnectorTypes.getSelectedItem()).getName();
+                                
+                                LocalBusinessRule newBusinessRule = com.createBusinessRule(cmbLinkSubclasses.getSelectedItem() + " - " + cmbPortSubclasses.getSelectedItem(), 
                                     String.format("%s and %s", cmbLinkSubclasses.getSelectedItem(), cmbPortSubclasses.getSelectedItem()),
                                     LocalBusinessRule.TYPE_RELATIONSHIP_BY_ATTRIBUTE_VALUE, LocalBusinessRule.SCOPE_GLOBAL, ((LocalClassMetadataLight)cmbLinkSubclasses.getSelectedItem()).getClassName(), 
-                                    "0.1", Arrays.asList(((LocalClassMetadataLight)cmbPortSubclasses.getSelectedItem()).getClassName(), ((LocalObjectListItem)cmbLinkConnectorTypes.getSelectedItem()).getName())); //Here we tell the new rule the classes that can be connected and the connectors allowed
-                            if (newBusinessRule == null)
-                                JOptionPane.showMessageDialog(null, com.getError(), "Error", JOptionPane.ERROR_MESSAGE);
-                            else
-                                ((DefaultListModel<LocalBusinessRule>)lstRules.getModel()).addElement(newBusinessRule);
+                                    "0.1", Arrays.asList(((LocalClassMetadataLight)cmbPortSubclasses.getSelectedItem()).getClassName(), 
+                                                          linkConnector, portConnector  )); //Here we tell the new rule the classes that can be connected and the connectors allowed
+                                if (newBusinessRule == null)
+                                    JOptionPane.showMessageDialog(null, com.getError(), "Error", JOptionPane.ERROR_MESSAGE);
+                                else
+                                    ((BusinessRulesListModel)lstRules.getModel()).addElement(newBusinessRule);
+                                }
+                            
                         }
                     }
                 });
                 btnDeleteRule = new JButton("Delete Rule");
+                
+                btnDeleteRule.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        LocalBusinessRule selectedRule = lstRules.getSelectedValue();
+                        if (selectedRule == null)
+                            JOptionPane.showMessageDialog(null, "You have to select at least one rule", "Error", JOptionPane.ERROR_MESSAGE);
+                        else {
+                            if (com.deleteBusinessRule(selectedRule.getId()))
+                                ((BusinessRulesListModel)lstRules.getModel()).removeElement(selectedRule);
+                            else
+                                JOptionPane.showMessageDialog(null, com.getError(), "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                });
+                
                 JPanel pnlButtons = new JPanel();
                 pnlButtons.add(btnAddRule);
                 pnlButtons.add(btnDeleteRule);
@@ -147,9 +176,38 @@ public class ConfigureConnectorMatchingAction implements ActionListener {
                 setSize(300, 500);
                 setLocationRelativeTo(null);
             }
+        }    
+    }
+    
+    private class BusinessRulesListModel implements ListModel<LocalBusinessRule> {
+        private List<LocalBusinessRule> businessRules;
+
+        public BusinessRulesListModel(List<LocalBusinessRule> businessRules) {
+            this.businessRules = businessRules;
         }
         
+        @Override
+        public int getSize() {
+            return businessRules.size();
+        }
+
+        @Override
+        public LocalBusinessRule getElementAt(int index) {
+            return businessRules.get(index);
+        }
         
+        public void addElement(LocalBusinessRule newBusinessRule) {
+            businessRules.add(newBusinessRule);
+        }
         
+        public void removeElement(LocalBusinessRule ruleToDelete) {
+            businessRules.remove(ruleToDelete);
+        }
+
+        @Override
+        public void addListDataListener(ListDataListener l) { }
+
+        @Override
+        public void removeListDataListener(ListDataListener l) { }
     }
 }

@@ -17,6 +17,7 @@ package org.inventory.communications.core;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Local wrapper of BusinessRule
@@ -50,7 +51,7 @@ public class LocalBusinessRule {
     /**
      * Rule id
      */
-    private long ruleId;
+    private long id;
     /**
      * Rule name
     */
@@ -80,8 +81,8 @@ public class LocalBusinessRule {
      */
     private List<LocalBusinessRuleConstraint> constraints;
 
-    public LocalBusinessRule(long ruleId, String name, String description, String appliesTo, int type, int scope, String version) {
-        this.ruleId = ruleId;
+    public LocalBusinessRule(long id, String name, String description, String appliesTo, int type, int scope, String version) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.appliesTo = appliesTo;
@@ -97,6 +98,14 @@ public class LocalBusinessRule {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getDescription() {
@@ -150,5 +159,18 @@ public class LocalBusinessRule {
     @Override
     public String toString() {
         return this.name;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 41 * hash + (int) (this.id ^ (this.id >>> 32));
+        hash = 41 * hash + Objects.hashCode(this.name);
+        return hash;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof LocalBusinessRule && ((LocalBusinessRule)obj).getId() == id;
     }
 }
