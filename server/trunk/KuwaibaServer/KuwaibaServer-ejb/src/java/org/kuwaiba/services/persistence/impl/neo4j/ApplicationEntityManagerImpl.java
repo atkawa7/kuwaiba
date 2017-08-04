@@ -191,7 +191,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             this.taskIndex = graphDb.index().forNodes(Constants.INDEX_TASKS);
             this.specialNodesIndex = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES);
             this.businessRulesIndex = graphDb.index().forNodes(Constants.INDEX_BUSINESS_RULES);
-            for (Node listTypeNode : listTypeItemsIndex.query(Constants.PROPERTY_ID, "*")){
+            for (Node listTypeNode : listTypeItemsIndex.query(Constants.PROPERTY_ID, "*")) {
                 GenericObjectList aListType = Util.createGenericObjectListFromNode(listTypeNode);
                 cm.putListType(aListType);
             }
@@ -2972,7 +2972,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             int ruleScope, String appliesTo, String ruleVersion, List<String> constraints) throws InvalidArgumentException {
         
         if (ruleName == null || ruleDescription == null || ruleVersion == null || appliesTo == null || ruleType < 1 || ruleScope < 1)
-            throw new InvalidArgumentException("Parameter invalid. Make sure all parameters are not null and greater than 1");
+            throw new InvalidArgumentException("Invalid parameter. Make sure all parameters are different from null and greater than 1");
         
         if (constraints == null || constraints.isEmpty())
             throw new InvalidArgumentException("The rule must have at least one constraint");
@@ -2990,7 +2990,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             for (int i = 0; i < constraints.size(); i++)
                 businessRuleNode.setProperty("constraint" + (i + 1), constraints.get(i)); //NOI18N
 
-            businessRulesIndex.putIfAbsent(businessRuleNode, Constants.PROPERTY_ID, businessRuleNode.getId());
+            businessRulesIndex.add(businessRuleNode, Constants.PROPERTY_ID, businessRuleNode.getId());
+            
             tx.success();
             return businessRuleNode.getId();
         }
@@ -3016,14 +3017,16 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public List<BusinessRule> getBusinessRules(int type) {
         try (Transaction tx = graphDb.beginTx()) {
             List<BusinessRule> res = new ArrayList<>();
-            IndexHits<Node> businessRules = businessRulesIndex.get(Constants.PROPERTY_ID, "*");
             
-            for (Node businessRuleNode : businessRules) {
+            for (Node businessRuleNode : businessRulesIndex.query(Constants.PROPERTY_ID, "*")) {
                 if (type == -1 || type == (int)businessRuleNode.getProperty(Constants.PROPERTY_TYPE))
                     res.add(new BusinessRule(businessRuleNode.getId(), businessRuleNode.getAllProperties()));
             }
             return res;
         }
+    }
+    
+    public void checkRelationshipByAttributeValueBusinessRules(String appliesTo) throws InvalidArgumentException {
     }
     
     //</editor-fold>

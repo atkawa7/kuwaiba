@@ -17,7 +17,7 @@ package com.neotropic.kuwaiba.modules.reporting;
 
 /**
  * All report types must inherit from this abstract class. It describes the general behavior of a report. 
- * @author duckman
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public abstract class InventoryReport {
     /**

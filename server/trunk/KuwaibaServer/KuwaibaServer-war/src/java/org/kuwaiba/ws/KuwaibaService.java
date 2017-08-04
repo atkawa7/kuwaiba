@@ -107,7 +107,7 @@ public class KuwaibaService {
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "closeSession")
-    public void closeSession(@WebParam(name = "sessionId")String sessionId) throws ServerSideException{
+    public void closeSession(@WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
             String remoteAddress = getIPAddress();
             wsBean.closeSession(sessionId, remoteAddress);
