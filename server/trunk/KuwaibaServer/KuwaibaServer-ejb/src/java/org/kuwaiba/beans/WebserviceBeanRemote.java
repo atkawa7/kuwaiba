@@ -101,11 +101,7 @@ public interface WebserviceBeanRemote {
     public ClassInfo getClass(String className, String ipAddress, String sessionId) throws ServerSideException;
 
     public ClassInfo getClass(long classId, String ipAddress, String sessionId) throws ServerSideException;
-
-    public void moveClass(String classToMoveName, String targetParentName, String ipAddress, String sessionId) throws ServerSideException;
-
-    public void moveClass(long classToMoveId, long targetParentId, String ipAddress, String sessionId) throws ServerSideException;
-
+    
     public void createAttribute(String className, AttributeInfo attributeDefinition, String ipAddress, String sessionId) throws ServerSideException;
 
     public void createAttribute(long classId, AttributeInfo attributeDefinition, String ipAddress, String sessionId) throws ServerSideException;
@@ -213,9 +209,6 @@ public interface WebserviceBeanRemote {
     public void associateObjectsToService(String[] objectClass, long[] objectId, String serviceClass, long serviceId, String ipAddress, String sessionId) throws ServerSideException;
     public void releaseObjectFromService(String serviceClass, long serviceId, long otherObjectId, String ipAddress, String sessionId) throws ServerSideException;
     public RemoteObjectLight[] getServiceResources(String serviceClass, long serviceId, String ipAddress, String sessionId) throws ServerSideException;
-    public long createService(String serviceClass, String customerClass, long customerId, String[] attributes, String[] attributeValues, String ipAddress, String sessionId) throws ServerSideException;
-    public long createCustomer(String serviceClass, String[] attributes, String[] attributeValues, String ipAddress, String sessionId) throws ServerSideException;
-    public RemoteObjectLight[] getServices(String customerClass, long customerId, String ipAddress, String sessionId) throws ServerSideException;
 // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Application methods. Click on the + sign on the left to edit the code.">

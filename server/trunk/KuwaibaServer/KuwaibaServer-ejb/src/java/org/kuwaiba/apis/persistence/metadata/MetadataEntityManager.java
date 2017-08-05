@@ -22,6 +22,7 @@ import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
+import org.kuwaiba.util.ChangeDescriptor;
 
 /**
  * Manages the metadata entities
@@ -42,6 +43,7 @@ public interface MetadataEntityManager {
     /**
      * Changes a class metadata definition
      * @param newClassDefinition the new class definition 
+     * @return The summary of the changes that were made
      * @throws ApplicationObjectNotFoundException
      * @throws MetadataObjectNotFoundException If the class could no be found
      * @throws InvalidArgumentException If the name has invalid characters, the 
@@ -50,7 +52,7 @@ public interface MetadataEntityManager {
      * object, while checking if every created object of the class with an 
      * attributes marked as mandatory has value.
      */
-    public void setClassProperties(ClassMetadata newClassDefinition) 
+    public ChangeDescriptor setClassProperties(ClassMetadata newClassDefinition) 
             throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException;
 
     /**
@@ -128,23 +130,7 @@ public interface MetadataEntityManager {
      * @throws MetadataObjectNotFoundException If there is no class with such classId
      */
     public ClassMetadata getClass(long classId) throws MetadataObjectNotFoundException;
-
-    /**
-     * Moves a class from one parentClass to an other parentClass.
-     * @param classToMoveName Class to be moved
-     * @param targetParentClassName Class that will be the new parent of the class to be moved.
-     * @throws MetadataObjectNotFoundException If classToMoveName or targetParentClassName do not exist.
-     */
-    public void moveClass(String classToMoveName, String targetParentClassName) throws MetadataObjectNotFoundException;
-
-    /**
-     * Moves a class from one parentClass to an other parentClass.
-     * @param classToMoveId The id of the class to be moved.
-     * @param targetParentClassId The id of the class that will be the new parent of the class to be moved.
-     * @throws MetadataObjectNotFoundException If classToMoveId or targetParentClassId do not exist.
-     */
-    public void moveClass(long classToMoveId, long targetParentClassId) throws MetadataObjectNotFoundException;
-
+    
     /**
      * Adds an attribute to a class.
      * @param className The class the attribute will be added to.
@@ -187,21 +173,23 @@ public interface MetadataEntityManager {
      * Changes an attribute definition belonging to a class metadata using the class id as key
      * @param classId Class id.
      * @param newAttributeDefinition An object with the new attribute definition. Null values will be ignored.
+     * @return The summary of the changes that were made.
      * @throws MetadataObjectNotFoundException If the class could not be found.
      * @throws InvalidArgumentException If any of the new attribute parameters has a wrong value.
      * @throws ObjectNotFoundException If an object can't be find, while it is checking if every object of the class (or subclasses) has a value in an attribute marked as mandatory
      */
-    public void setAttributeProperties(long classId, AttributeMetadata newAttributeDefinition) throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException;
+    public ChangeDescriptor setAttributeProperties(long classId, AttributeMetadata newAttributeDefinition) throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException;
     
     /**
      * Changes an attribute definition belonging to a class metadata use the class name as id
      * @param className Class name.
      * @param newAttributeDefinition An object with the new attribute definition. Null values will be ignored.
+     * @return The summary of the changes that were made.
      * @throws MetadataObjectNotFoundException If the class could not be found.
      * @throws InvalidArgumentException If any of the new attribute parameters has a wrong value.
      * @throws ObjectNotFoundException  If an object can't be find, while it is checking if every object of the class (or subclasses) has a value in an attribute marked as mandatory
      */
-    public void setAttributeProperties(String className, AttributeMetadata newAttributeDefinition) throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException;
+    public ChangeDescriptor setAttributeProperties(String className, AttributeMetadata newAttributeDefinition) throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException;
 
     /**
      * Deletes an attribute from a class.
@@ -273,7 +261,7 @@ public interface MetadataEntityManager {
      *
      * @param parentClassId Id of the class whose instances can contain the instances of the classes in possibleChildren. Use -1 to refer to the DummyRoot
      * @param possibleSpecialChildren ids of the candidates to be contained
-     * @throws MetadataObjectNotFoundException if any of the possible children or the parent doesn't exist
+     * @throws MetadataObjectNotFoundException If any of the possible children or the parent doesn't exist
      * @throws InvalidArgumentException If any of the possible children classes already are possible special children.
      */
     public void addPossibleSpecialChildren(long parentClassId, long[] possibleSpecialChildren) throws MetadataObjectNotFoundException, InvalidArgumentException;

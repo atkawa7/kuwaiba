@@ -160,14 +160,18 @@ public class WebserviceBean implements WebserviceBeanRemote {
             cm.setInDesign(classDefinition.isInDesign());
             //TODO decode flags, set category
             //cm.setCategory(classDefinition.getCategory());
-
-            return mem.createClass(cm);
+            long newClassId = mem.createClass(cm);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
+                String.valueOf("Created Class with id " + newClassId));
+            return newClassId;
 
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
-
+    
     @Override
     public void deleteClass(String className, String ipAddress, String sessionId) throws ServerSideException{
         if (mem == null)
@@ -175,6 +179,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("deleteClass", ipAddress, sessionId);
             mem.deleteClass(className);
+                        
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_DELETE_METADATA_OBJECT, 
+                String.valueOf("Deleted Class with name " + className));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -187,6 +195,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("deleteClass", ipAddress, sessionId);
             mem.deleteClass(classId);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_DELETE_METADATA_OBJECT, 
+                String.valueOf("Deleted Class with id " + classId));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -324,31 +336,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(ex.getMessage());
         }
     }
-
-    @Override
-    public void moveClass(String classToMoveName, String targetParentName, String ipAddress, String sessionId) throws ServerSideException{
-        if (mem == null)
-            throw new ServerSideException("Can't reach the backend. Contact your administrator");
-        try {
-            aem.validateWebServiceCall("moveClass", ipAddress, sessionId);
-            mem.moveClass(classToMoveName, targetParentName);
-        } catch (InventoryException ex) {
-            throw new ServerSideException(ex.getMessage());
-        }
-    }
-
-    @Override
-    public void moveClass(long classToMoveId, long targetParentId, String ipAddress, String sessionId) throws ServerSideException {
-        if (mem == null)
-            throw new ServerSideException("Can't reach the backend. Contact your administrator");
-        try {
-            aem.validateWebServiceCall("moveClass", ipAddress, sessionId);
-            mem.moveClass(classToMoveId, targetParentId);
-        } catch (InventoryException ex) {
-            throw new ServerSideException(ex.getMessage());
-        }
-    }
-
+    
     @Override
     public void createAttribute(String className, AttributeInfo attributeDefinition, String ipAddress, String sessionId) throws ServerSideException {
         if (mem == null)
@@ -368,6 +356,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
             attributeMetadata.setNoCopy(attributeDefinition.isNoCopy());
 
             mem.createAttribute(className, attributeMetadata);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
+                String.valueOf("Created attribute to class with className " + className));
 
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -393,6 +385,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
             attributeMetadata.setNoCopy(attributeDefinition.isNoCopy());
             
             mem.createAttribute(classId, attributeMetadata);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
+                String.valueOf("Created attribute to class with id " + classId));
 
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -420,7 +416,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
             cm.setColor(newClassDefinition.getColor());
             //cm.setCategory(classDefinition.getCategory());
             
-            mem.setClassProperties(cm);
+            ChangeDescriptor changeDescriptor = mem.setClassProperties(cm);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
+                changeDescriptor);
 
          } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -493,7 +493,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
             attrMtdt.setReadOnly(newAttributeDefinition.isReadOnly());
             attrMtdt.setNoCopy(newAttributeDefinition.isNoCopy());
 
-            mem.setAttributeProperties(classId, attrMtdt);
+            ChangeDescriptor changeDescriptor = mem.setAttributeProperties(classId, attrMtdt);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
+                changeDescriptor);
 
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -521,6 +525,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
             attrMtdt.setNoCopy(newAttributeDefinition.isNoCopy());
 
             mem.setAttributeProperties(className, attrMtdt);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
+                String.valueOf("Updated property to class with className " + className));
 
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -534,6 +542,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("deleteAttribute", ipAddress, sessionId);
             mem.deleteAttribute(className, attributeName);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_DELETE_METADATA_OBJECT, 
+                String.valueOf("Deleted attribute to class with className " + className));
+            
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -546,6 +559,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("deleteAttribute", ipAddress, sessionId);
             mem.deleteAttribute(classId, attributeName);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_DELETE_METADATA_OBJECT, 
+                String.valueOf("Deleted attribute to class with classId " + classId));
 
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -674,6 +691,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("addPossibleChildren", ipAddress, sessionId);
             mem.addPossibleChildren(parentClassId, possibleChildren);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
+                "Added possible children to class with id " + parentClassId);
+            
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -686,6 +708,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("addPossibleSpecialChildren", ipAddress, sessionId);
             mem.addPossibleSpecialChildren(parentClassId, possibleSpecialChildren);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
+                "Added possible special children to class with id " + parentClassId);
+            
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -698,6 +725,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("addPossibleChildren", ipAddress, sessionId);
             mem.addPossibleChildren(parentClassName, possibleChildren);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
+                "Added possible children to class with name " + parentClassName);
+            
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -710,6 +742,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("addPossibleChildren", ipAddress, sessionId);
             mem.addPossibleSpecialChildren(parentClassName, possibleChildren);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
+                "Added possible special children to class with name " + parentClassName);
+            
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -722,6 +759,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("removePossibleChildren", ipAddress, sessionId);
             mem.removePossibleChildren(parentClassId, childrenToBeRemoved);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
+                "Removed possible children from class with id " + parentClassId);
 
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -735,6 +776,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("removePossibleSpecialChildren", ipAddress, sessionId);
             mem.removePossibleSpecialChildren(parentClassId, specialChildrenToBeRemoved);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
+                "Removed possible special children from class with id " + parentClassId);
 
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -747,7 +792,14 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("createListTypeItem", ipAddress, sessionId);
-            return aem.createListTypeItem(className, name, displayName);
+            
+            long lstTypeItemId = aem.createListTypeItem(className, name, displayName);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+                "Created list Type Item with id " + lstTypeItemId);
+            
+            return lstTypeItemId;
 
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -761,6 +813,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("deletelistTypeItem", ipAddress, sessionId);
             aem.deleteListTypeItem(className, oid, realeaseRelationships);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_DELETE_APPLICATION_OBJECT, 
+                String.format("Deleted list Type Item with id %s", oid));
 
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -1318,18 +1374,26 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("connectMirrorPort", ipAddress, sessionId);
             
-            if (!mem.isSubClass("GenericPort", aObjectClass))
+            if (!mem.isSubClass("GenericPort", aObjectClass)) //NOI18N
                 throw new ServerSideException(String.format("Object %s is not a port", bem.getObjectLight(aObjectClass, aObjectId)));
-            if (!mem.isSubClass("GenericPort", bObjectClass))
+            if (!mem.isSubClass("GenericPort", bObjectClass)) //NOI18N
                 throw new ServerSideException(String.format("Object %s is not a port", bem.getObjectLight(bObjectClass, bObjectId)));
             
-            if (bem.hasSpecialRelationship(aObjectClass, aObjectId, "mirror", 1))
+            if (bem.hasSpecialRelationship(aObjectClass, aObjectId, "mirror", 1)) //NOI18N
                 throw new ServerSideException(String.format("Object %s already has a mirror port", bem.getObjectLight(aObjectClass, aObjectId)));
             
-            if (bem.hasSpecialRelationship(bObjectClass, bObjectId, "mirror", 1))
+            if (bem.hasSpecialRelationship(bObjectClass, bObjectId, "mirror", 1)) //NOI18N
                 throw new ServerSideException(String.format("Object %s already has a mirror port", bem.getObjectLight(bObjectClass, bObjectId)));
             
-            bem.createSpecialRelationship(aObjectClass, aObjectId, bObjectClass, bObjectId, "mirror", true);
+            bem.createSpecialRelationship(aObjectClass, aObjectId, bObjectClass, bObjectId, "mirror", true); //NOI18N
+            
+            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), aObjectClass, aObjectId, 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+                "mirror", "", Long.toString(bObjectId), ""); //NOI18N
+            
+            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), bObjectClass, bObjectId, 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+                "mirror", "", Long.toString(aObjectId), ""); //NOI18N            
             
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -1343,11 +1407,25 @@ public class WebserviceBean implements WebserviceBeanRemote {
         
         try {
             aem.validateWebServiceCall("releaseMirrorPort", ipAddress, sessionId);
-            if (!mem.isSubClass("GenericPort", objectClass))
+            if (!mem.isSubClass("GenericPort", objectClass)) //NOI18N
                 throw new ServerSideException(String.format("Object %s is not a port", bem.getObjectLight(objectClass, objectId)));
                         
-            bem.releaseSpecialRelationship(objectClass, objectId, -1, "mirror");
+            RemoteBusinessObjectLight theOtherPort = null;
+            if (bem.hasSpecialRelationship(objectClass, objectId, "mirror", 1)) //NOI18N
+                theOtherPort = bem.getSpecialAttribute(objectClass, objectId, "mirror").get(0); //NOI18N
             
+            if (theOtherPort == null)
+                throw new ServerSideException(String.format("Object %s no has a mirror port", bem.getObjectLight(objectClass, objectId)));
+                
+            bem.releaseSpecialRelationship(objectClass, objectId, -1, "mirror"); //NOI18N   
+            
+            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), objectClass, objectId, 
+                ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
+                "mirror", Long.toString(theOtherPort.getId()), "", ""); //NOI18N
+            
+            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), theOtherPort.getClassName(), theOtherPort.getId(), 
+                ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
+                "mirror", Long.toString(objectId), "", ""); //NOI18N
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -1365,20 +1443,20 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("createPhysicalConnection", ipAddress, sessionId);
             
-            if (!mem.isSubClass("GenericPhysicalConnection", connectionClass))
-                throw new ServerSideException("Class %s is not subclass of GenericPhysicalConnection");
+            if (!mem.isSubClass("GenericPhysicalConnection", connectionClass)) //NOI18N
+                throw new ServerSideException("Class %s is not subclass of GenericPhysicalConnection"); //NOI18N
 
             //Check if the endpoints are already connected, but only if the connection is a link (the endpoints are ports)
-            if (mem.isSubClass("GenericPhysicalLink", connectionClass)) {
+            if (mem.isSubClass("GenericPhysicalLink", connectionClass)) { //NOI18N
                 
-                if (!mem.isSubClass("GenericPort", aObjectClass) || !mem.isSubClass("GenericPort", bObjectClass))
+                if (!mem.isSubClass("GenericPort", aObjectClass) || !mem.isSubClass("GenericPort", bObjectClass)) //NOI18N
                     throw new ServerSideException("One of the endpoints provided is not a port");
                 
-                if (!bem.getSpecialAttribute(aObjectClass, aObjectId, "endpointA").isEmpty())
+                if (!bem.getSpecialAttribute(aObjectClass, aObjectId, "endpointA").isEmpty()) //NOI18N
                     
                     throw new ServerSideException(String.format("The selected endpoint %s is already connected", bem.getObjectLight(aObjectClass, aObjectId)));
 
-                if (!bem.getSpecialAttribute(bObjectClass, bObjectId, "endpointB").isEmpty())
+                if (!bem.getSpecialAttribute(bObjectClass, bObjectId, "endpointB").isEmpty()) //NOI18N
                     throw new ServerSideException(String.format("The selected endpoint %s is already connected", bem.getObjectLight(bObjectClass, bObjectId)));
             }
 
@@ -1388,11 +1466,27 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 attributes.put(Constants.PROPERTY_NAME, name);
             
             newConnectionId = bem.createSpecialObject(connectionClass, parentClass, parentId, attributes, templateId);
-            bem.createSpecialRelationship(connectionClass, newConnectionId, aObjectClass, aObjectId, "endpointA", true);
-            bem.createSpecialRelationship(connectionClass, newConnectionId, bObjectClass, bObjectId, "endpointB", true);
+            bem.createSpecialRelationship(connectionClass, newConnectionId, aObjectClass, aObjectId, "endpointA", true); //NOI18N
+            bem.createSpecialRelationship(connectionClass, newConnectionId, bObjectClass, bObjectId, "endpointB", true); //NOI18N
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                     ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.format("%s [%s] (%s)", name, connectionClass, newConnectionId));
+            
+            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), connectionClass, newConnectionId, 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+                "endpointA", "", Long.toString(aObjectId), ""); //NOI18N
+            
+            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), aObjectClass, aObjectId, 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+                "endpointA", "", Long.toString(newConnectionId), ""); //NOI18N
+            
+            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), connectionClass, newConnectionId, 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+                "endpointB", "", Long.toString(bObjectId), ""); //NOI18N
+            
+            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), bObjectClass, bObjectId, 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+                "endpointB", "", Long.toString(newConnectionId), ""); //NOI18N
             return newConnectionId;
         } catch (InventoryException e) {
             //If the new connection was successfully created, but there's a problem creating the relationships,
@@ -1410,11 +1504,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("getConnectionEndpoints", ipAddress, sessionId);
-            if (!mem.isSubClass("GenericPhysicalConnection", connectionClass))
+            if (!mem.isSubClass("GenericPhysicalConnection", connectionClass)) //NOI18N
                 throw new ServerSideException(String.format("Class %s is not a physical connection", connectionClass));
 
-            List<RemoteBusinessObjectLight> endpointA = bem.getSpecialAttribute(connectionClass, connectionId, "endpointA");
-            List<RemoteBusinessObjectLight> endpointB = bem.getSpecialAttribute(connectionClass, connectionId, "endpointB");
+            List<RemoteBusinessObjectLight> endpointA = bem.getSpecialAttribute(connectionClass, connectionId, "endpointA"); //NOI18N
+            List<RemoteBusinessObjectLight> endpointB = bem.getSpecialAttribute(connectionClass, connectionId, "endpointB"); //NOI18N
             return new RemoteObjectLight[]{endpointA.isEmpty() ? null : new RemoteObjectLight(endpointA.get(0)), 
                                             endpointB.isEmpty() ? null : new RemoteObjectLight(endpointB.get(0))};
 
@@ -1434,18 +1528,18 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateWebServiceCall("connectPhysicalLinks", ipAddress, sessionId);
             for (int i = 0; i < sideAClassNames.length; i++){
                 
-                if (linksClassNames[i] != null && !mem.isSubClass("GenericPhysicalLink", linksClassNames[i]))
+                if (linksClassNames[i] != null && !mem.isSubClass("GenericPhysicalLink", linksClassNames[i])) //NOI18N
                     throw new ServerSideException(String.format("Class %s is not a physical link", linksClassNames[i]));
-                if (sideAClassNames[i] != null && !mem.isSubClass("GenericPort", sideAClassNames[i]))
+                if (sideAClassNames[i] != null && !mem.isSubClass("GenericPort", sideAClassNames[i])) //NOI18N
                     throw new ServerSideException(String.format("Class %s is not a port", sideAClassNames[i]));
-                if (sideBClassNames[i] != null && !mem.isSubClass("GenericPort", sideBClassNames[i]))
+                if (sideBClassNames[i] != null && !mem.isSubClass("GenericPort", sideBClassNames[i])) //NOI18N
                     throw new ServerSideException(String.format("Class %s is not a port", sideBClassNames[i]));
                 
                 if (Objects.equals(sideAIds[i], sideBIds[i]))
                     throw new ServerSideException("Can not connect a port to itself");
                 
-                List<RemoteBusinessObjectLight> aEndpointList = bem.getSpecialAttribute(linksClassNames[i], linksIds[i], "endpointA");
-                List<RemoteBusinessObjectLight> bEndpointList = bem.getSpecialAttribute(linksClassNames[i], linksIds[i], "endpointB");
+                List<RemoteBusinessObjectLight> aEndpointList = bem.getSpecialAttribute(linksClassNames[i], linksIds[i], "endpointA"); //NOI18N
+                List<RemoteBusinessObjectLight> bEndpointList = bem.getSpecialAttribute(linksClassNames[i], linksIds[i], "endpointB"); //NOI18N
                 
                 if (!aEndpointList.isEmpty()){
                     if (Objects.equals(aEndpointList.get(0).getId(), sideAIds[i]) || Objects.equals(aEndpointList.get(0).getId(), sideBIds[i]))
@@ -1458,22 +1552,36 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 }
                 
                 if (sideAIds[i] != null && sideAClassNames[i] != null) {
-                    if (!bem.getSpecialAttribute(sideAClassNames[i], sideAIds[i], "endpointA").isEmpty() || 
-                        !bem.getSpecialAttribute(sideAClassNames[i], sideAIds[i], "endpointB").isEmpty())
+                    if (!bem.getSpecialAttribute(sideAClassNames[i], sideAIds[i], "endpointA").isEmpty() || //NOI18N
+                        !bem.getSpecialAttribute(sideAClassNames[i], sideAIds[i], "endpointB").isEmpty()) //NOI18N
                         throw new ServerSideException(String.format("The selected endpoint %s is already connected", bem.getObjectLight(sideAClassNames[i], sideAIds[i])));
                     
-                    if (aEndpointList.isEmpty())
-                        bem.createSpecialRelationship(linksClassNames[i], linksIds[i], sideAClassNames[i], sideAIds[i], "endpointA", true);
+                    if (aEndpointList.isEmpty()) {
+                        bem.createSpecialRelationship(linksClassNames[i], linksIds[i], sideAClassNames[i], sideAIds[i], "endpointA", true); //NOI18N
+                        
+                        aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), sideAClassNames[i], sideAIds[i], 
+                            ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, "endpointA", "", Long.toString(linksIds[i]), ""); //NOI18N
+                        
+                        aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), linksClassNames[i], linksIds[i], 
+                            ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, "endpointA", "", Long.toString(sideAIds[i]), ""); //NOI18N
+                    }
                     else
                         throw new ServerSideException(String.format("Link %s already has an endpoint A", bem.getObjectLight(linksClassNames[i], linksIds[i])));
                 }
                 if (sideBIds[i] != null && sideBClassNames[i] != null) {
-                    if (!bem.getSpecialAttribute(sideBClassNames[i], sideBIds[i], "endpointB").isEmpty() || 
-                        !bem.getSpecialAttribute(sideBClassNames[i], sideBIds[i], "endpointA").isEmpty())
+                    if (!bem.getSpecialAttribute(sideBClassNames[i], sideBIds[i], "endpointB").isEmpty() || //NOI18N
+                        !bem.getSpecialAttribute(sideBClassNames[i], sideBIds[i], "endpointA").isEmpty()) //NOI18N
                         throw new ServerSideException(String.format("The selected endpoint %s is already connected", bem.getObjectLight(sideBClassNames[i], sideBIds[i])));
                     
-                    if (bEndpointList.isEmpty())
-                        bem.createSpecialRelationship(linksClassNames[i], linksIds[i], sideBClassNames[i], sideBIds[i], "endpointB", true);
+                    if (bEndpointList.isEmpty()) {
+                        bem.createSpecialRelationship(linksClassNames[i], linksIds[i], sideBClassNames[i], sideBIds[i], "endpointB", true); //NOI18N
+                        
+                        aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), sideBClassNames[i], sideBIds[i], 
+                            ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, "endpointB", "", Long.toString(linksIds[i]), ""); //NOI18N
+                        
+                        aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), linksClassNames[i], linksIds[i], 
+                            ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, "endpointB", "", Long.toString(sideBIds[i]), ""); //NOI18N
+                    }
                     else
                         throw new ServerSideException(String.format("Link %s already has an endpoint B", bem.getObjectLight(linksClassNames[i], linksIds[i])));
                 }
@@ -1494,28 +1602,42 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateWebServiceCall("connectPhysicalContainers", ipAddress, sessionId);
             for (int i = 0; i < sideAClassNames.length; i++){
                 
-                if (containersClassNames[i] != null && !mem.isSubClass("GenericPhysicalContainer", containersClassNames[i]))
+                if (containersClassNames[i] != null && !mem.isSubClass("GenericPhysicalContainer", containersClassNames[i])) //NOI18N
                     throw new ServerSideException(String.format("Class %s is not a physical container", containersClassNames[i]));
-                if (sideAClassNames[i] != null && mem.isSubClass("GenericPort", sideAClassNames[i]))
+                if (sideAClassNames[i] != null && mem.isSubClass("GenericPort", sideAClassNames[i])) //NOI18N
                     throw new ServerSideException(String.format("Can not connect an instance of %s to a port", containersClassNames[i]));
-                if (sideBClassNames[i] != null && mem.isSubClass("GenericPort", sideBClassNames[i]))
+                if (sideBClassNames[i] != null && mem.isSubClass("GenericPort", sideBClassNames[i])) //NOI18N
                     throw new ServerSideException(String.format("Can not connect an instance of %s to a port", containersClassNames[i]));
                 
                 if (Objects.equals(sideAIds[i], sideBIds[i]))
                     throw new ServerSideException("Can not connect an object to itself");
                 
                 if (sideAIds[i] != null && sideAClassNames[i] != null) {
-                    List<RemoteBusinessObjectLight> aEndpointList = bem.getSpecialAttribute(containersClassNames[i], containersIds[i], "endpointA");
-                    if (aEndpointList.isEmpty())
-                        bem.createSpecialRelationship(containersClassNames[i], containersIds[i], sideAClassNames[i], sideAIds[i], "endpointA", true);
+                    List<RemoteBusinessObjectLight> aEndpointList = bem.getSpecialAttribute(containersClassNames[i], containersIds[i], "endpointA"); //NOI18N
+                    if (aEndpointList.isEmpty()) {
+                        bem.createSpecialRelationship(containersClassNames[i], containersIds[i], sideAClassNames[i], sideAIds[i], "endpointA", true); //NOI18N
+                        
+                        aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), sideAClassNames[i], sideAIds[i], 
+                            ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, "endpointA", "", Long.toString(containersIds[i]), ""); //NOI18N
+                        
+                        aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), containersClassNames[i], containersIds[i], 
+                            ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, "endpointA", "", Long.toString(sideAIds[i]), ""); //NOI18N                        
+                    }
                     else
                         throw new ServerSideException(String.format("Container %s already has an endpoint A", bem.getObjectLight(containersClassNames[i], containersIds[i])));
                 }
                 
                 if (sideBIds[i] != null && sideBClassNames[i] != null) {
-                    List<RemoteBusinessObjectLight> bEndpointList = bem.getSpecialAttribute(containersClassNames[i], containersIds[i], "endpointB");
-                    if (bEndpointList.isEmpty())
-                        bem.createSpecialRelationship(containersClassNames[i], containersIds[i], sideBClassNames[i], sideBIds[i], "endpointB", true);
+                    List<RemoteBusinessObjectLight> bEndpointList = bem.getSpecialAttribute(containersClassNames[i], containersIds[i], "endpointB"); //NOI18N
+                    if (bEndpointList.isEmpty()) {
+                        bem.createSpecialRelationship(containersClassNames[i], containersIds[i], sideBClassNames[i], sideBIds[i], "endpointB", true); //NOI18N
+                        
+                        aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), sideBClassNames[i], sideBIds[i], 
+                            ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, "endpointB", "", Long.toString(containersIds[i]), ""); //NOI18N
+                        
+                        aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), containersClassNames[i], containersIds[i], 
+                            ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, "endpointB", "", Long.toString(sideBIds[i]), ""); //NOI18N
+                    }
                     else
                         throw new ServerSideException(String.format("Container %s already has a endpoint B", bem.getObjectLight(containersClassNames[i], containersIds[i])));
                 }
@@ -1533,18 +1655,54 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("disconnectPhysicalConnection", ipAddress, sessionId);
-            if (!mem.isSubClass("GenericPhysicalConnection", connectionClass))
+            if (!mem.isSubClass("GenericPhysicalConnection", connectionClass)) //NOI18N
                 throw new ServerSideException(String.format("Class %s is not a physical connection", connectionClass));
             
             switch (sideToDisconnect) {
                 case 1: //A side
-                    bem.releaseRelationships(connectionClass, connectionId, Arrays.asList("endpointA")); //NOI18N
+                    RemoteBusinessObjectLight endpointA = bem.getSpecialAttribute(connectionClass, connectionId, "endpointA").get(0); //NOI18N                    
+                    bem.releaseRelationships(connectionClass, connectionId, Arrays.asList("endpointA")); //NOI18N                    
+                    
+                    aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), connectionClass, connectionId, 
+                        ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
+                        "endpointA", Long.toString(endpointA.getId()), "", ""); //NOI18N
+
+                    aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), endpointA.getClassName(), endpointA.getId(), 
+                        ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
+                        "endpointA", Long.toString(connectionId), "", ""); //NOI18N
                     break;
                 case 2: //B side
+                    RemoteBusinessObjectLight endpointB = bem.getSpecialAttribute(connectionClass, connectionId, "endpointB").get(0); //NOI18N                    
                     bem.releaseRelationships(connectionClass, connectionId, Arrays.asList("endpointB")); //NOI18N
+                    
+                    aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), connectionClass, connectionId, 
+                        ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
+                        "endpointB", Long.toString(endpointB.getId()), "", ""); //NOI18N
+
+                    aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), endpointB.getClassName(), endpointB.getId(), 
+                        ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
+                        "endpointB", Long.toString(connectionId), "", ""); //NOI18N
                     break;
                 case 3: //Both sides
+                    endpointA = bem.getSpecialAttribute(connectionClass, connectionId, "endpointA").get(0); //NOI18N
+                    endpointB = bem.getSpecialAttribute(connectionClass, connectionId, "endpointB").get(0); //NOI18N
                     bem.releaseRelationships(connectionClass, connectionId, Arrays.asList("endpointA", "endpointB")); //NOI18N
+                    
+                    aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), connectionClass, connectionId, 
+                        ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
+                        "endpointA", Long.toString(endpointA.getId()), "", ""); //NOI18N
+
+                    aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), endpointA.getClassName(), endpointA.getId(), 
+                        ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
+                        "endpointA", Long.toString(connectionId), "", ""); //NOI18N
+                    
+                    aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), connectionClass, connectionId, 
+                        ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
+                        "endpointB", Long.toString(endpointB.getId()), "", ""); //NOI18N
+
+                    aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), endpointB.getClassName(), endpointB.getId(), 
+                        ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
+                        "endpointB", Long.toString(connectionId), "", ""); //NOI18N                    
                     break;
                 default:
                     throw new ServerSideException(String.format("Wrong side to disconnect option"));
@@ -1594,14 +1752,14 @@ public class WebserviceBean implements WebserviceBeanRemote {
             List<RemoteBusinessObjectLight> physicalPathA = null, physicalPathB = null;
             String endpointARelationshipName, endpointBRelationshipName;
             
-            if (mem.isSubClass("GenericSDHTributaryLink", linkClass)) {
-                endpointARelationshipName = "sdhTTLEndpointA";
-                endpointBRelationshipName = "sdhTTLEndpointB";
+            if (mem.isSubClass("GenericSDHTributaryLink", linkClass)) { //NOI18N
+                endpointARelationshipName = "sdhTTLEndpointA"; //NOI18N
+                endpointBRelationshipName = "sdhTTLEndpointB"; //NOI18N
                 
             } else {
-                if ("MPLSLink".equals(linkClass)) { 
-                    endpointARelationshipName = "mplsEndpointA";
-                    endpointBRelationshipName = "mplsEndpointB";
+                if ("MPLSLink".equals(linkClass)) { //NOI18N
+                    endpointARelationshipName = "mplsEndpointA"; //NOI18N
+                    endpointBRelationshipName = "mplsEndpointB"; //NOI18N
                 }
                 else
                     throw new ServerSideException(String.format("Class %s is not a supported logical link", linkClass)); //NOI18N
@@ -1651,9 +1809,18 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("associateObjectToService", ipAddress, sessionId);
-            if (!mem.isSubClass("GenericService", serviceClass))
+            if (!mem.isSubClass("GenericService", serviceClass)) //NOI18N
                 throw new ServerSideException(String.format("Class %s is not a service", serviceClass));
-            bem.createSpecialRelationship(serviceClass, serviceId, objectClass, objectId, "uses", true);
+            
+            bem.createSpecialRelationship(serviceClass, serviceId, objectClass, objectId, "uses", true); //NOI18N
+            
+            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), objectClass, objectId, 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+                "uses", "", Long.toString(serviceId), ""); //NOI18N
+            
+            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), serviceClass, serviceId, 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+                "uses", "", Long.toString(objectId), ""); //NOI18N
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -1667,11 +1834,19 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("associateObjectsToService", ipAddress, sessionId);
-            if (!mem.isSubClass("GenericService", serviceClass))
+            if (!mem.isSubClass("GenericService", serviceClass)) //NOI18N
                 throw new ServerSideException(String.format("Class %s is not a service", serviceClass));
-            for (int i = 0; i < objectId.length; i++) 
-                bem.createSpecialRelationship(serviceClass, serviceId, objectClass[i], objectId[i], "uses", true);
-            
+            for (int i = 0; i < objectId.length; i++) {
+                bem.createSpecialRelationship(serviceClass, serviceId, objectClass[i], objectId[i], "uses", true); //NOI18N
+                
+                aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), objectClass[i], objectId[i], 
+                    ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+                    "uses", "", Long.toString(serviceId), ""); //NOI18N
+
+                aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), serviceClass, serviceId, 
+                    ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+                    "uses", "", Long.toString(objectId[i]), ""); //NOI18N
+            }
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -1684,7 +1859,17 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("releaseObjectFromService", ipAddress, sessionId);
-            bem.releaseSpecialRelationship(serviceClass, serviceId, otherObjectId, "uses");
+            bem.releaseSpecialRelationship(serviceClass, serviceId, otherObjectId, "uses"); //NOI18N
+            
+            String otherObjectClass = bem.getObject(otherObjectId).getClassName();
+            
+            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), otherObjectClass, otherObjectId, 
+                ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
+                "uses", Long.toString(serviceId), "", ""); //NOI18N
+
+            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), serviceClass, serviceId, 
+                ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
+                "uses", Long.toString(otherObjectId), "", ""); //NOI18N
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -1696,57 +1881,9 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("getServiceResources", ipAddress, sessionId);
-            if (!mem.isSubClass("GenericService", serviceClass))
+            if (!mem.isSubClass("GenericService", serviceClass)) //NOI18N
                 throw new ServerSideException(String.format("Class %s is not a service", serviceClass));
-            return RemoteObjectLight.toRemoteObjectLightArray(bem.getSpecialAttribute(serviceClass, serviceId, "uses"));
-        } catch (InventoryException ex) {
-            throw new ServerSideException(ex.getMessage());
-        }
-    }
-    
-    @Override
-    public long createService(String serviceClass, String customerClass, 
-            long customerId, String[] attributes, String[] attributeValues, String ipAddress, String sessionId) throws ServerSideException{
-        if (bem == null || aem == null)
-            throw new ServerSideException("Can't reach the backend. Contact your administrator");
-        try {
-            aem.validateWebServiceCall("createService", ipAddress, sessionId);
-            if (!mem.isSubClass("GenericCustomer", customerClass))
-                throw new ServerSideException(String.format("Class %s is not a customer", customerClass));
-            if (!mem.isSubClass("GenericService", serviceClass))
-                throw new ServerSideException(String.format("Class %s is not a customer", serviceClass));
-            
-            return bem.createSpecialObject(serviceClass, customerClass, customerId, null, -1);
-        } catch (InventoryException ex) {
-            throw new ServerSideException(ex.getMessage());
-        }
-    }
-    
-    @Override
-    public long createCustomer(String customerClass, String[] attributes, 
-            String[] attributeValues, String ipAddress, String sessionId) throws ServerSideException {
-        if (bem == null || aem == null)
-            throw new ServerSideException("Can't reach the backend. Contact your administrator");
-        try {
-            aem.validateWebServiceCall("createCustomer", ipAddress, sessionId);
-            if (!mem.isSubClass("GenericCustomer", customerClass))
-                throw new ServerSideException(String.format("Class %s is not a customer", customerClass));
-            
-            return bem.createSpecialObject(customerClass, null, -1, null, -1);
-        } catch (InventoryException ex) {
-            throw new ServerSideException(ex.getMessage());
-        }
-    }
-    
-    @Override
-    public RemoteObjectLight[] getServices(String customerClass, long customerId, String ipAddress, String sessionId) throws ServerSideException{
-        if (bem == null || aem == null)
-            throw new ServerSideException("Can't reach the backend. Contact your administrator");
-        try {
-            aem.validateWebServiceCall("getServices", ipAddress, sessionId);
-            if (!mem.isSubClass("GenericCustomer", customerClass))
-                throw new ServerSideException(String.format("Class %s is not a customer", customerClass));
-            return RemoteObjectLight.toRemoteObjectLightArray(bem.getObjectSpecialChildren(customerClass, customerId));
+            return RemoteObjectLight.toRemoteObjectLightArray(bem.getSpecialAttribute(serviceClass, serviceId, "uses")); //NOI18N
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -1834,6 +1971,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("setUserProperties", ipAddress, sessionId);
             aem.setUserProperties(oid, userName, password, firstName, lastName, enabled, type);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_APPLICATION_OBJECT, 
+                String.format("Set user %s properties", userName));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -1846,6 +1987,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("addUserToGroup", ipAddress, sessionId);
             aem.addUserToGroup(userId, groupId);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_APPLICATION_OBJECT, 
+                String.format("Added user to group", groupId));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -1858,6 +2003,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("removeUserFromGroup", ipAddress, sessionId);
             aem.removeUserFromGroup(userId, groupId);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_APPLICATION_OBJECT, 
+                String.format("Removed user from group", groupId));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -1870,6 +2019,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("addPrivilegeToUser", ipAddress, sessionId);
             aem.setPrivilegeToUser(userId, featureToken, accessLevel);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_APPLICATION_OBJECT, 
+                String.format("Set privilege %s to user %s", featureToken, userId));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -1882,6 +2035,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("addPrivilegeToGroup", ipAddress, sessionId);
             aem.setPrivilegeToGroup(groupId, featureToken, accessLevel);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_APPLICATION_OBJECT, 
+                String.format("Set privilege %s to group %s", featureToken, groupId));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -1894,6 +2051,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("removePrivilegeFromUser", ipAddress, sessionId);
             aem.removePrivilegeFromUser(userId, featureToken);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_APPLICATION_OBJECT, 
+                String.format("Removed privilege %s to user %s", featureToken, userId));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -1906,6 +2067,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("removePrivilegeFromGroup", ipAddress, sessionId);
             aem.removePrivilegeFromGroup(groupId, featureToken);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_APPLICATION_OBJECT, 
+                String.format("Removed privilege %s to group %s", featureToken, groupId));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -1917,7 +2082,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("createGroup", ipAddress, sessionId);
-            return aem.createGroup(groupName, description, users);
+            
+            long groupId = aem.createGroup(groupName, description, users);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, String.format("New group %s", groupName));
+            return groupId;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }

@@ -84,7 +84,8 @@ public class KuwaibaService {
      * @param username user login name
      * @param password user password
      * @return A session object, including the session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the user does not exist
+     *                             If the password is incorrect or if the user is not enabled.
      */
     @WebMethod(operationName = "createSession")
     public RemoteSession createSession(@WebParam(name = "username") String username,
@@ -104,7 +105,7 @@ public class KuwaibaService {
     /**
      * Closes a session
      * @param sessionId Session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the session ID is Invalid or the IP does not match with the one registered for this session
      */
     @WebMethod(operationName = "closeSession")
     public void closeSession(@WebParam(name = "sessionId")String sessionId) throws ServerSideException {
@@ -125,9 +126,8 @@ public class KuwaibaService {
      * Retrieves the list of uses
      * @param sessionId session token
      * @return The list of users
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the user is not allowed to invoke the method
      */
-
     @WebMethod(operationName = "getUsers")
     public List<UserInfo> getUsers(@WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try
@@ -148,7 +148,8 @@ public class KuwaibaService {
      * @param groupId The id of the group
      * @param sessionId Session token
      * @return The list of users in the requested group
-     * @throws ServerSideException If the group does not exist or something unexpected happened.
+     * @throws ServerSideException If the user is not allowed to invoke the method
+     *                             If the group does not exist or something unexpected happened.
      */
     @WebMethod(operationName = "getUsersInGroup")
     public List<UserInfo> getUsersInGroup(@WebParam(name = "groupId")long groupId, 
@@ -170,7 +171,8 @@ public class KuwaibaService {
      * @param userId  The id of the user
      * @param sessionId Session token
      * @return The list of groups the user belongs to
-     * @throws ServerSideException If the group does not exist or something unexpected happened.
+     * @throws ServerSideException If the user is not allowed to invoke the method
+     *                             If the group does not exist or something unexpected happened.
      */
     @WebMethod(operationName = "getGroupsForUser")
     public List<GroupInfoLight> getGroupsForUser(@WebParam(name = "userId")long userId, 
@@ -191,7 +193,8 @@ public class KuwaibaService {
      * Retrieves the list of groups
      * @param sessionId Session token
      * @return A group object list
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the user is not allowed to invoke the method 
+     *                             or any possible error raised at runtime
      */
     @WebMethod(operationName = "getGroups")
     public List<GroupInfo> getGroups(@WebParam(name = "sessionId")String sessionId) throws ServerSideException {
@@ -219,7 +222,8 @@ public class KuwaibaService {
      * @param defaultGroupId Default group this user will be associated to. Users <b>always</b> belong to at least one group. Other groups can be added later.
      * @param sessionId Session token
      * @return The new user Id
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the user is not allowed to invoke the method
+     *                             If the username is null or empty or the username already exists
      */
     @WebMethod(operationName = "createUser")
     public long createUser(
@@ -254,7 +258,9 @@ public class KuwaibaService {
      * @param enabled 0 for false, 1 for true, -1 to leave it unchanged
      * @param type User type. See UserProfile.USER_TYPE* for possible values. Use -1 to leave it unchanged
      * @param sessionId Session token
-     * @throws ServerSideException Thrown if the username is null or empty or the username already exists or if the user could not be found
+     * @throws ServerSideException If the user is not allowed to invoke the method
+     *                             If the username is null or empty or 
+     *                             the username already exists or if the user could not be found
      */
     @WebMethod(operationName = "setUserProperties")
     public void setUserProperties(
@@ -283,7 +289,8 @@ public class KuwaibaService {
      * @param userId The id of the user to be added to the group
      * @param groupId Id of the group which the user will be added to
      * @param sessionId Session token
-     * @throws ServerSideException If the user is already related to that group or if the user or group can not be found.
+     * @throws ServerSideException If the user is not allowed to invoke the method
+     *                             If the user is already related to that group or if the user or group can not be found.
      */
     @WebMethod(operationName = "addUserToGroup")
     public void addUserToGroup(@WebParam(name = "userId") long userId, 
@@ -306,7 +313,8 @@ public class KuwaibaService {
      * @param userId The id of the user to be added to the group
      * @param groupId Id of the group which the user will be added to
      * @param sessionId Session token
-     * @throws ServerSideException If the user is not related to that group or if the user or the group could not be found
+     * @throws ServerSideException If the user is not allowed to invoke the method
+     *                             If the user is not related to that group or if the user or the group could not be found
      */
     @WebMethod(operationName = "removeUserFromGroup")
     public void removeUserFromGroup(@WebParam(name = "userId") long userId, 
@@ -427,7 +435,8 @@ public class KuwaibaService {
      * @param users List of user ids to be related to this group
      * @param sessionId Session token
      * @return The group id
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the user is not allowed to invoke the method
+     *                             If any of the provided users could not be found
      */
     @WebMethod(operationName = "createGroup")
     public long createGroup(
@@ -763,7 +772,8 @@ public class KuwaibaService {
      * @param displayName List type item display name
      * @param sessionId Session token
      * @return the id of the new object
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the class provided is not a list type
+     *                             If the class is abstract or marked as in design.
      */
     @WebMethod(operationName = "createListTypeItem")
     public long createListTypeItem(
@@ -791,7 +801,8 @@ public class KuwaibaService {
      * @param oid list type item id
      * @param releaseRelationships should the deletion process release the relationships attached to this object
      * @param sessionId Session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the class provided is not a list type
+     *                             If the user can't delete a list type item
      */
     @WebMethod(operationName = "deleteListTypeItem")
     public void deleteListTypeItem(
@@ -818,7 +829,8 @@ public class KuwaibaService {
      * @param className The list type class
      * @param sessionId Session token
      * @return a list of list type items
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If className is not an existing class
+     *                             If the class provided is not a list type
      */
     @WebMethod(operationName = "getListTypeItems")
     public RemoteObjectLight[] getListTypeItems(
@@ -841,7 +853,7 @@ public class KuwaibaService {
      * Retrieves all possible list types
      * @param sessionId Session token
      * @return A list of list types as ClassInfoLight instances
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the GenericObjectList class does not exist
      */
     @WebMethod(operationName = "getInstanceableListTypes")
     public ClassInfoLight[] getInstanceableListTypes(
@@ -1010,7 +1022,7 @@ public class KuwaibaService {
      * @param showAll should this method return all entity classes or only InventoryObject subclasses
      * @param sessionId session identifier
      * @return A byte array containing the class hierarchy as an XML document. See the <a href="http://neotropic.co/kuwaiba/wiki/index.php?title=XML_Documents#To_Save_Queries">wiki entry</a> for details on the document structure
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If one of the core classes could not be found
      */
     @WebMethod(operationName = "getClassHierarchy")
     public byte[] getClassHierarchy(@WebParam(name = "showAll")boolean showAll,
@@ -1658,7 +1670,7 @@ public class KuwaibaService {
      * @param maxResults Max number of children to be returned. O for all
      * @param sessionId Session token
      * @return An array of all the direct children of the provided object according with the current container hierarchy
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the class could not be found
      */
     @WebMethod(operationName = "getObjectChildrenForClassWithId")
     public RemoteObjectLight[] getObjectChildrenForClassWithId(@WebParam(name = "oid") long oid,
@@ -1685,7 +1697,7 @@ public class KuwaibaService {
      * @param maxResults Max number of children to be returned. O for all
      * @param sessionId Session token
      * @return An array of all the direct children of the provided object according with the current container hierarchy
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the class could not be found.
      */
     @WebMethod(operationName = "getObjectChildren")
     public RemoteObjectLight[] getObjectChildren(@WebParam(name = "objectClassName") String objectClassName,
@@ -1712,7 +1724,8 @@ public class KuwaibaService {
      * @param maxResults Max number of results to be returned
      * @param sessionId Session token
      * @return List of siblings
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the class does not exist
+     *                             If the object does not exist
      */
     @WebMethod(operationName = "getSiblings")
     public RemoteObjectLight[] getSiblings(@WebParam(name = "objectClassName") String objectClassName,
@@ -1740,7 +1753,9 @@ public class KuwaibaService {
      * @param maxResults Max number of children to be returned. O for all
      * @param sessionId Session token
      * @return An array with the children objects
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If any of the classes can not be found
+     *                             If parent object can not be found
+     *                             If the database objects can not be correctly mapped into serializable Java objects.
      */
     @WebMethod(operationName="getChildrenOfClass")
     public RemoteObject[] getChildrenOfClass(@WebParam(name="parentOid")long parentOid,
@@ -1769,7 +1784,8 @@ public class KuwaibaService {
      * @param maxResults Max number of children to be returned. O for all
      * @param sessionId Session token
      * @return An array with children
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If any of the classes can not be found
+     *                             If parent object can not be found
      */
     @WebMethod(operationName="getChildrenOfClassLight")
     public RemoteObjectLight[] getChildrenOfClassLight(@WebParam(name="parentOid")long parentOid,
@@ -1795,7 +1811,9 @@ public class KuwaibaService {
       * @param oid Object id
       * @param sessionId Session token
       * @return a representation of the entity as a RemoteObject
-      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+      * @throws ServerSideException If the className class can't be found
+      *                             If the requested object can't be found
+      *                             If the object id can not be found
       */
     @WebMethod(operationName = "getObject")
     public RemoteObject getObject(@WebParam(name = "objectClass") String objectClass,
@@ -1844,7 +1862,8 @@ public class KuwaibaService {
      * @param maxResults Max number of results. 0 to retriever all
      * @param sessionId Session token
      * @return A list of instances of @className
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the class can not be found
+     *                             If the class is not subclass of InventoryObject
      */
     @WebMethod(operationName = "getObjectsOfClassLight")
     public RemoteObjectLight[] getObjectsOfClassLight(@WebParam(name = "className") String className,
@@ -2054,7 +2073,8 @@ public class KuwaibaService {
      * @param objectId The id of the object to be searched.
      * @param sessionId Session token.
      * @return A list of special children.
-     * @throws ServerSideException If something goes wrong.
+     * @throws ServerSideException If the class could not be found
+     *                             If the object could not be found
      */
     @WebMethod(operationName = "getObjectSpecialChildren")
     public RemoteObjectLight[] getObjectSpecialChildren (@WebParam(name = "objectclass") String objectClass,
@@ -2079,7 +2099,10 @@ public class KuwaibaService {
      * @param  attributeNames attribute names to be changed
      * @param  attributeValues attribute values for the attributes above
      * @param sessionId Session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the object class can't be found
+     *                             If the object can't be found
+     *                             If the update can't be performed due a business rule or because the object is blocked
+     *                             If any of the names provided does not exist or can't be set using this method or of the value of any of the attributes can not be mapped correctly.
      */
     @WebMethod(operationName = "updateObject")
     public void updateObject(@WebParam(name = "className")String className,
@@ -2109,7 +2132,11 @@ public class KuwaibaService {
      * @param templateId Template id. Use -1 to not use any template
      * @param sessionId Session token
      * @return the id of the new object
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the object's class can't be found
+     *                             If the parent id is not found
+     *                             If there's a business constraint that doesn't allow to create the object.
+     *                             If any of the attribute values has an invalid value or format.
+     *                             If the specified template could not be found
      */
     @WebMethod(operationName = "createObject")
     public long createObject(@WebParam(name = "className")String className,
@@ -2143,7 +2170,11 @@ public class KuwaibaService {
      * @param templateId Template id. Use -1 to not use any template
      * @param sessionId Session token
      * @return the id of the new object
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the object's class can't be found
+     *                             If the parent id is not found
+     *                             If the update can't be performed due to a format issue
+     *                             If any of the attribute values has an invalid value or format.
+     *                             If the specified template could not be found.
      */
     @WebMethod(operationName = "createSpecialObject")
     public long createSpecialObject(@WebParam(name = "className")String className,
@@ -2171,7 +2202,9 @@ public class KuwaibaService {
      * @param oid object id from the objects to be deleted
      * @param releaseRelationships Should the deletion be forced, deleting all the relationships?
      * @param sessionId Session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the object couldn't be found
+     *                             If the class could not be found
+     *                             If the object could not be deleted because there's some business rules that avoids it or it has incoming relationships.
      */
     @WebMethod(operationName = "deleteObject")
     public void deleteObject(@WebParam(name = "className")String className,
@@ -2196,7 +2229,10 @@ public class KuwaibaService {
      * @param oids object id from the objects to be deleted
      * @param releaseRelationships Should the deletion be forced, deleting all the relationships?
      * @param sessionId Session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the requested object can't be found
+     *                             If the requested object class can't be found
+     *                             If the update can't be performed due a business rule or because the object is blocked or it has relationships and releaseRelationships is false
+     *                             If it was not possible to release the possible unique attributes
      */
     @WebMethod(operationName = "deleteObjects")
     public void deleteObjects(@WebParam(name = "classNames")String[] classNames,
@@ -2222,7 +2258,9 @@ public class KuwaibaService {
      * @param objectClasses Class names of the objects to be moved
      * @param objectOids Oids of the objects to be moved
      * @param sessionId Session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the object's or new parent's class can't be found
+     *                             If the object or its new parent can't be found
+     *                             If the update can't be performed due to a business rule
      */
     @WebMethod(operationName = "moveObjectsToPool")
     public void moveObjectsToPool(@WebParam(name = "targetClass")String targetClass,
@@ -2249,7 +2287,9 @@ public class KuwaibaService {
      * @param objectClasses Class names of the objects to be moved
      * @param objectOids Oids of the objects to be moved
      * @param sessionId Session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the object's or new parent's class can't be found
+     *                             If the object or its new parent can't be found
+     *                             If the update can't be performed due to a business rule
      */
     @WebMethod(operationName = "moveObjects")
     public void moveObjects(@WebParam(name = "targetClass")String targetClass,
@@ -2278,7 +2318,9 @@ public class KuwaibaService {
      * @param recursive should the objects be copied recursively? (themselves plus their children)
      * @param sessionId Session token
      * @return An array with the ids of the new objects
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If any of the provided classes couldn't be found
+     *                             If any of the template objects couldn't be found
+     *                             If the target parent can't contain any of the new instances
      */
     @WebMethod(operationName = "copyObjects")
     public long[] copyObjects(
@@ -2305,7 +2347,7 @@ public class KuwaibaService {
      * @param className The class name
      * @param sessionId Session token
      * @return The list of mandatory attributes in the given class
-     * @throws ServerSideException 
+     * @throws ServerSideException If the class doesn't exist
      */
     @WebMethod(operationName = "getMandatoryAttributesInClass")
     public List<AttributeInfo> getMandatoryAttributesInClass(
@@ -2328,7 +2370,9 @@ public class KuwaibaService {
      * @param className
      * @param objId
      * @param sessionId
-     * @throws ServerSideException 
+     * @throws ServerSideException If the object doesn't exist
+     *                             If the class doesn't exist
+     *                             If the mandatory attribute has no value
      */
     @WebMethod(operationName = "objectHasValuesInMandatoryAttributes")
     public void objectHasValuesInMandatoryAttributes(
@@ -2430,7 +2474,9 @@ public class KuwaibaService {
      * @param bObjectClass Port B class
      * @param bObjectId Port B id
      * @param sessionId Session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime 
+     * @throws ServerSideException If any of the objects can't be found
+     *                             If any of the objects involved can't be connected (i.e. if it's not an inventory object)
+     *                             If any of the classes provided can not be found
      */
     @WebMethod(operationName = "connectMirrorPort")
     public void connectMirrorPort(
@@ -2456,7 +2502,8 @@ public class KuwaibaService {
      * @param objectClass Object class
      * @param objectId Object id
      * @param sessionId Session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the object can not be found
+     *                             If the class can not be found
      */
     @WebMethod(operationName = "releaseMirrorPort")
     public void releaseMirrorPort(
@@ -2489,7 +2536,15 @@ public class KuwaibaService {
      * @param templateId Id of the template for class connectionClass. Use -1 if you want to create a connection without template
      * @param sessionId Session token
      * @return The new connection id
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
+     * @throws ServerSideException If the user is not allowed to invoke the method
+     *                             If the object's class can't be found
+     *                             If the parent id is not found
+     *                             If the update can't be performed due to a format issue
+     *                             If any of the attribute values has an invalid value or format.
+     *                             If the specified template could not be found.
+     *                             If any of the objects can't be found
+     *                             If any of the objects involved can't be connected (i.e. if it's not an inventory object)
+     *                             If any of the classes provided can not be found
      */
     @WebMethod(operationName = "createPhysicalConnection")
     public long createPhysicalConnection(
@@ -2522,7 +2577,9 @@ public class KuwaibaService {
      * @param connectionId Connection id
      * @param sessionId Session token
      * @return An array of two positions: the first is the A endpoint and the second is the B endpoint
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
+     * @throws ServerSideException If the user is not allowed to invoke the method
+     *                             If the object can not be found
+     *                             If either the object class or the attribute can not be found
      */
     @WebMethod(operationName = "getPhysicalConnectionEndpoints")
     public RemoteObjectLight[] getPhysicalConnectionEndpoints(@WebParam(name = "connectionClass")String connectionClass, 
@@ -2547,7 +2604,8 @@ public class KuwaibaService {
      * @param linkId The id of the connection to be evaluated
      * @param sessionId Session token
      * @return An object with the details of the connection and the physical resources associated to it
-     * @throws ServerSideException If the provided connection could not be found
+     * @throws ServerSideException If the user is not allowed to invoke the method
+     *                             If the provided connection could not be found
      */
     @WebMethod(operationName = "getLogicalLinkDetails")
     public RemoteLogicalConnectionDetails getLogicalLinkDetails(@WebParam(name = "linkClass")String linkClass, 
@@ -2571,7 +2629,8 @@ public class KuwaibaService {
      * @param objectId Object id
      * @param sessionId Session token
      * @return An array containing the sorted elements in the physical path of the given port
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
+     * @throws ServerSideException If the user is not allowed to invoke the method
+     *                             
      */
     @WebMethod(operationName = "getPhysicalPath")
     public RemoteObjectLight[] getPhysicalPath (@WebParam(name = "objectClass")String objectClass,
@@ -2598,7 +2657,12 @@ public class KuwaibaService {
      * @param sideBClassNames The list of classes of the other side of the connection
      * @param sideBIds The list of ids the objects on the other side of the connection
      * @param sessionId Session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
+     * @throws ServerSideException If the object can not be found
+     *                             If either the object class or the attribute can not be found
+     *                             If any of the objects can't be found
+     *                             If any of the objects involved can't be connected (i.e. if it's not an inventory object)
+     *                             If any of the classes provided can not be found
+     *                             If the object activity log could no be found
      */
     @WebMethod(operationName = "connectPhysicalLinks")
     public void connectPhysicalLinks (@WebParam(name = "sideAClassNames")String[] sideAClassNames, @WebParam(name = "sideAIds")Long[] sideAIds,
@@ -2657,7 +2721,11 @@ public class KuwaibaService {
      * @param connectionId Id of the connection to be edited
      * @param sideToDisconnect Side to disconnect. Use 1 to disconnect only the side a, 2 to disconnect only side b and 3 to disconnect both sides at once
      * @param sessionId Session token
-     * @throws ServerSideException If the connection could not be found, if the class provided is not subclass of GenericPhysicalConnection or if the sideToConnect has an unexpected value
+     * @throws ServerSideException If the object can not be found
+     *                             If either the object class or the attribute can not be found
+     *                             If the class provided does not exist
+     *                             If any of the relationships is now allowed according to the defined data model
+     *                             If the object activity log could no be found
      */
     @WebMethod(operationName = "disconnectPhysicalConnection")
     public void disconnectPhysicalConnection(@WebParam(name = "connectionClass")String connectionClass,
@@ -2681,7 +2749,12 @@ public class KuwaibaService {
      * @param objectClass Object class
      * @param objectId Object id
      * @param sessionId Session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the user is not allowed to invoke the method
+     *                             If the object couldn't be found
+     *                             If the class could not be found
+     *                             If the object could not be deleted because there's some 
+     *                            business rules that avoids it or it has incoming relationships.
+     *                             If the log root node could not be found
      */
     @WebMethod(operationName = "deletePhysicalConnection")
     public void deletePhysicalConnection(
@@ -2708,7 +2781,10 @@ public class KuwaibaService {
      * @param serviceClass service class
      * @param serviceId service id
      * @param sessionId Session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
+     * @throws ServerSideException If the user is not allowed to invoke the method
+     *                             If any of the objects can't be found
+     *                             If any of the objects involved can't be connected (i.e. if it's not an inventory object)
+     *                             If any of the classes provided can not be found
      */
     @WebMethod(operationName = "associateObjectToService")
     public void associateObjectToService (
@@ -2736,7 +2812,10 @@ public class KuwaibaService {
      * @param serviceClass service class
      * @param serviceId service id
      * @param sessionId Session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
+     * @throws ServerSideException If the user is not allowed to invoke the method
+     *                             If any of the objects can't be found
+     *                             If any of the objects involved can't be connected (i.e. if it's not an inventory object)
+     *                             If any of the classes provided can not be found
      */
     @WebMethod(operationName = "associateObjectsToService")
     public void associateObjectsToService (
@@ -2763,7 +2842,10 @@ public class KuwaibaService {
      * @param serviceId Service id
      * @param targetId target object id
      * @param sessionId Session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime    
+     * @throws ServerSideException If the user is not allowed to invoke the method
+     *                             If the object can not be found
+     *                             If the class can not be found
+     *                             If the object activity log could no be found
      */
     @WebMethod(operationName = "releaseObjectFromService")
     public void releaseObjectFromService (
@@ -2789,7 +2871,9 @@ public class KuwaibaService {
      * @param serviceId Service id
      * @param sessionId Session token
      * @return A list of services
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
+     * @throws ServerSideException If the user is not allowed to invoke the method
+     *                             If the object can not be found
+     *                             If either the object class or the attribute can not be found
      */
     @WebMethod(operationName = "getServiceResources")
     public RemoteObjectLight[] getServiceResources (
@@ -2803,88 +2887,6 @@ public class KuwaibaService {
                 throw e;
             else {
                 System.out.println("[KUWAIBA] An unexpected error occurred in getServiceResources: " + e.getMessage());
-                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
-            }
-        }
-    }
-    
-    /**
-     * Creates a customer (with no parent in the containment hierarchy)
-     * @param customerClass Customer class
-     * @param attributes Default attributes to be set
-     * @param attributeValues Default values to #attributes
-     * @param sessionId Session token
-     * @return The id of the newly created customer
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
-     */
-    @WebMethod(operationName = "createCustomer")
-    public long createCustomer (
-            @WebParam(name = "customerClass")String customerClass,
-            @WebParam(name = "attributes")String[] attributes,
-            @WebParam(name = "attributeValues")String[] attributeValues,
-            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
-        try{
-            return wsBean.createCustomer(customerClass, attributes, attributeValues, getIPAddress(), sessionId);
-        } catch(Exception e){
-            if (e instanceof ServerSideException)
-                throw e;
-            else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in createCustomer: " + e.getMessage());
-                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
-            }
-        }
-    }
-    
-    /**
-     * Creates a service and relates it to a customer
-     * @param serviceClass Service class
-     * @param customerClass Customer class
-     * @param customerId Customer id
-     * @param attributes Service attributes
-     * @param attributeValues Default values to #attributes
-     * @param sessionId Session token
-     * @return The id of the newly created service
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime  
-     */
-    @WebMethod(operationName = "createService")
-    public long createService (
-            @WebParam(name = "serviceClass")String serviceClass,
-            @WebParam(name = "customerClass")String customerClass,
-            @WebParam(name = "customerId")long customerId,
-            @WebParam(name = "attributes")String[] attributes,
-            @WebParam(name = "attributeValues")String[] attributeValues,
-            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
-        try{
-            return wsBean.createService(serviceClass, customerClass, customerId, attributes, attributeValues, getIPAddress(), sessionId);
-        } catch(Exception e){
-            if (e instanceof ServerSideException)
-                throw e;
-            else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in createService: " + e.getMessage());
-                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
-            }
-        }
-    }
-    
-    /**
-     * Returns the services associated to a customer
-     * @param customerClass Customer class
-     * @param customerId Customer Id
-     * @param sessionId Session token
-     * @return The list of services related to the give customer
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
-     */
-    @WebMethod(operationName = "getServices")
-    public RemoteObjectLight[] getServices(@WebParam(name = "customerClass")String customerClass, 
-            @WebParam(name = "customerId")long customerId,
-            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
-        try{
-            return wsBean.getServices(customerClass, customerId, getIPAddress(), sessionId);
-        } catch(Exception e){
-            if (e instanceof ServerSideException)
-                throw e;
-            else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in getServices: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
@@ -2988,7 +2990,9 @@ public class KuwaibaService {
      * @param sessionId Session token
      * @param color The color to be used to display the instances of this class (depends on the client used)
      * @return the id of the new class metadata object
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the specified parent class doesn't exist
+     *                             If the reference node doesn't exist
+     *                             If any of the fields of the class definition has an invalid value
      */
     @WebMethod(operationName = "createClass")
     public long createClass(@WebParam(name = "className")
@@ -3055,7 +3059,9 @@ public class KuwaibaService {
      * @param isCustom If the class is custom (see createClass).
      * @param isCountable If the class is countable (see createClass). 
      * @param sessionId Session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If there is any problem retrieving an object, 
+     *                             while checking if every created object of the 
+     *                             class with an attributes marked as mandatory has value.
      */
     @WebMethod(operationName = "setClassProperties")
     public void setClassProperties(@WebParam(name = "classId")
@@ -3112,7 +3118,8 @@ public class KuwaibaService {
      * @param attributeName
      * @param sessionId Session token
      * @return the class attribute
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime  
+     * @throws ServerSideException If there is no a class with such className
+     *                             If the attributeName does not exist
      */
     @WebMethod(operationName = "getAttribute")
     public AttributeInfo getAttribute(@WebParam(name = "className")
@@ -3137,7 +3144,8 @@ public class KuwaibaService {
      * @param attributeName Attribute name
      * @param sessionId  Session token
      * @return The attribute definition
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime 
+     * @throws ServerSideException If there is no a class with such classId
+     *                             If the attributeName does not exist
      */
     @WebMethod(operationName = "getAttributeForClassWithId")
     public AttributeInfo getAttributeForClassWithId(@WebParam(name = "classId")
@@ -3170,7 +3178,8 @@ public class KuwaibaService {
      * @param unique should this attribute be unique?
      * @param mandatory is the attribute mandatory when an object is created
      * @param sessionId session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If there is no a class with such className
+     *                             If any of the parameters to create the attribute has a wrong value
      */
     @WebMethod(operationName = "createAttribute")
     public void createAttribute(@WebParam(name = "className")
@@ -3217,7 +3226,7 @@ public class KuwaibaService {
      * @param unique should this attribute be unique?
      * @param mandatory is the attribute mandatory when an object is created
      * @param sessionId session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If any of the parameters to create the attribute has a wrong value
      */
     @WebMethod(operationName = "createAttributeForClassWithId")
     public void createAttributeForClassWithId(@WebParam(name = "classId")
@@ -3265,7 +3274,9 @@ public class KuwaibaService {
      * @param mandatory is the attribute mandatory when an object is created
      * @param noCopy can this attribute be copy in copy/paste operation?
      * @param sessionId session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If an object can't be find, while it is checking 
+     *                             if every object of the class (or subclasses) has 
+     *                             a value in an attribute marked as mandatory
      */
     @WebMethod(operationName = "setAttributeProperties")
     public void setAttributeProperties(@WebParam(name = "className")
@@ -3313,7 +3324,9 @@ public class KuwaibaService {
      * @param mandatory is the attribute mandatory when an object is created
      * @param noCopy can this attribute be copy in copy/paste operation?
      * @param sessionId session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If an object can't be find, while it is checking 
+     *                             if every object of the class (or subclasses) has 
+     *                             a value in an attribute marked as mandatory
      */
     @WebMethod(operationName = "setAttributePropertiesForClassWithId")
     public void setAttributePropertiesForClassWithId(@WebParam(name = "classId")
@@ -3351,9 +3364,9 @@ public class KuwaibaService {
      * @param className Class name
      * @param attributeName Attribute name
      * @param sessionId Session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
-     */
-    
+     * @throws ServerSideException If the class could not be found.
+     *                             If the attributes name or creationDate are to be deleted.
+     */    
     @WebMethod(operationName = "deleteAttribute")
     public void deleteAttribute(@WebParam(name = "className") 
             String className, @WebParam(name = "attributeName")
@@ -3376,7 +3389,8 @@ public class KuwaibaService {
      * @param classId Class id
      * @param attributeName Attribute name
      * @param sessionId Session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the class could not be found.
+     *                             If the attributes name or creationDate are to be deleted.
      */
     @WebMethod(operationName = "deleteAttributeForClassWithId")
     public void deleteAttributeForClassWithId(@WebParam(name = "classId") 
@@ -3400,7 +3414,7 @@ public class KuwaibaService {
      * @param className Class name
      * @param sessionId Session token
      * @return The metadata as a ClassInfo instance
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If there is no class with such className
      */
     @WebMethod(operationName = "getClass")
     public ClassInfo getClass(@WebParam(name = "className")
@@ -3424,7 +3438,7 @@ public class KuwaibaService {
      * @param classId Class metadata object id
      * @param sessionId session token
      * @return The metadata as a ClassInfo instance
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If there is no class with such classId
      */
     @WebMethod(operationName = "getClassWithId")
     public ClassInfo getClassWithId(@WebParam(name = "classId")
@@ -3449,7 +3463,7 @@ public class KuwaibaService {
      * @param includeSelf Should the list include the subclasses and the parent class?
      * @param sessionId Session token
      * @return The list of subclasses
-     * @throws ServerSideException Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the provided class is not a subclass of InventoryObject
      */
     @WebMethod(operationName = "getSubClassesLight")
     public List<ClassInfoLight> getSubClassesLight(
@@ -3478,7 +3492,7 @@ public class KuwaibaService {
      * @param includeSelf Should the list include the subclasses and the parent class?
      * @param sessionId Session token
      * @return The list of subclasses
-     * @throws ServerSideException Exception Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException Exception If the class could not be found.
      */
     @WebMethod(operationName = "getSubClassesLightNoRecursive")
     public List<ClassInfoLight> getSubClassesLightNoRecursive(
@@ -3530,7 +3544,7 @@ public class KuwaibaService {
      * @param includeListTypes boolean to indicate if the list should include the subclasses of
      * GenericObjectList
      * @return An array with the metadata for the entire class hierarchy as ClassInfoLight instances
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If GenericListType class does not exist.
      */
     @WebMethod(operationName = "getAllClassesLight")
     public List<ClassInfoLight> getAllClassesLight(
@@ -3553,8 +3567,10 @@ public class KuwaibaService {
      * Deletes a class from the data model using its name as key to find it
      * @param className Class name
      * @param sessionId Session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
-     *
+     * @throws ServerSideException If there is not a class with de ClassName
+     *                             If the class is a core class, has instances, has 
+     *                            incoming relationships or is a list type that is 
+     *                            used by another class.
      */
     @WebMethod(operationName = "deleteClass")
     public void deleteClass(@WebParam(name = "className")
@@ -3577,9 +3593,10 @@ public class KuwaibaService {
      * Deletes a class from the data model using its id as key to find it
      * @param classId Class id
      * @param sessionId Session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the class is a core class, has instances, has 
+     *                             incoming relationships or is a list type that is
+     *                             used by another class.
      */
-
     @WebMethod(operationName = "deleteClassWithId")
     public void deleteClassWithId(@WebParam(name = "classId")
     long classId, @WebParam(name = "sessionId")
@@ -3603,7 +3620,7 @@ public class KuwaibaService {
      * @param sessionId Session token
      * @return A list of possible children as ClassInfoLight instances
      * An array with the metadata for the entire class hierarchy as ClassInfoLight instances
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the class can not be found
      */
     @WebMethod(operationName = "getPossibleChildren")
     public List<ClassInfoLight> getPossibleChildren(@WebParam(name = "parentClassName")
@@ -3629,7 +3646,7 @@ public class KuwaibaService {
      * @param parentClassName Class to retrieve its possible special children
      * @param sessionId Session token
      * @return A list of possible special children as ClassInfoLight instances
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the class can not be found
      */
     @WebMethod(operationName = "getPossibleSpecialChildren")
     public List<ClassInfoLight> getPossibleSpecialChildren(
@@ -3655,7 +3672,7 @@ public class KuwaibaService {
      * @param parentClassName Class to retrieve its possible children
      * @param sessionId Session token
      * @return An array with the metadata for the entire class hierarchy as ClassInfoLight instances
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the class could not be found
      */
     @WebMethod(operationName = "getPossibleChildrenNoRecursive")
     public List<ClassInfoLight> getPossibleChildrenNoRecursive(@WebParam(name = "parentClassName")
@@ -3681,7 +3698,7 @@ public class KuwaibaService {
      * @param parentClassName Class to retrieve its possible special children
      * @param sessionId Session token
      * @return A List with the metadata for the entire class hierarchy as ClassInfoLight instances
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the class could not be found
      */
     @WebMethod(operationName = "getPossibleSpecialChildrenNoRecursive")
     public List<ClassInfoLight> getPossibleSpecialChildrenNoRecursive(
@@ -3706,7 +3723,8 @@ public class KuwaibaService {
      * @param parentClassId Class to attach the new possible children
      * @param newPossibleChildren List of new possible children. Abstract classes are de-aggregated
      * @param sessionId Session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If any of the possible children or the parent doesn't exist
+     *                             If any of the possible children classes already are possible children.
      */
     @WebMethod(operationName = "addPossibleChildrenForClassWithId")
     public void addPossibleChildrenForClassWithId(@WebParam(name = "parentClassId")
@@ -3732,7 +3750,8 @@ public class KuwaibaService {
      * @param parentClassId Class to attach the new possible special children
      * @param possibleSpecialChildren List of new possible children. Abstract classes are de-aggregated
      * @param sessionId Session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If any of the possible children or the parent doesn't exist
+     *                             If any of the possible children classes already are possible special children.
      */
     @WebMethod(operationName = "addPossibleSpecialChildrenWithId")
     public void addPossibleSpecialChildrenWithId(
@@ -3758,7 +3777,8 @@ public class KuwaibaService {
      * @param parentClassName Class to attach the new possible children
      * @param childrenToBeAdded List of new possible children. Abstract classes are de-aggregated
      * @param sessionId Session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the parent class or any of the possible children can not be found
+     *                             If any of the given possible children can not be a possible children of parentClassName
      */
     @WebMethod(operationName = "addPossibleChildren")
     public void addPossibleChildren(@WebParam(name = "parentClassName")
@@ -3784,7 +3804,8 @@ public class KuwaibaService {
      * @param parentClassName Class to attach the new possible special children
      * @param possibleSpecialChildren List of new possible special children. Abstract classes are de-aggregated
      * @param sessionId Session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException  If the parent class or any of the possible children can not be found
+     *                              If any of the given possible children can not be a possible children of parentClassName
      */
     @WebMethod(operationName = "addPossibleSpecialChildren")
     public void addPossibleSpecialChildren(
@@ -3809,7 +3830,7 @@ public class KuwaibaService {
      * @param parentClassId Class the possible children are going to be removed from
      * @param childrenToBeRemoved List of ids of classes to be removed as possible children
      * @param sessionId Session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If any of the ids provided can't be found
      */
     @WebMethod(operationName = "removePossibleChildrenForClassWithId")
     public void removePossibleChildrenForClassWithId(@WebParam(name = "parentClassId")
@@ -3833,7 +3854,7 @@ public class KuwaibaService {
      * @param parentClassId Parent Class of the possible special children are going to be removed from
      * @param specialChildrenToBeRemoved List of ids of classes to be remove as possible special children
      * @param sessionId Session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If any of the ids provided can't be found
      */
     @WebMethod(operationName = "removePossibleSpecialChildren")
     public void removePossibleSpecialChildren(
@@ -3859,7 +3880,7 @@ public class KuwaibaService {
      * @param recursive do it recursively or not
      * @param sessionId
      * @return List of classes in the upstream containment hierarchy
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If className does not correspond to any existing class
      */
     @WebMethod(operationName = "getUpstreamContainmentHierarchy")
     public List<ClassInfoLight> getUpstreamContainmentHierarchy(@WebParam(name = "className")
@@ -3885,7 +3906,7 @@ public class KuwaibaService {
      * @param recursive Do it recursively or not
      * @param sessionId Session id token
      * @return List of classes in upstream special containment hierarchy
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If className does not correspond to any existing class
      * 
      */
     @WebMethod(operationName = "getUpstreamSpecialContainmentHierarchy")

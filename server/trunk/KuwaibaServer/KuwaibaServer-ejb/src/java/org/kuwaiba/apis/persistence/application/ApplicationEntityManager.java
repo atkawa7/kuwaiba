@@ -648,8 +648,8 @@ public interface ApplicationEntityManager {
     /**
      * Closes a session
      * @param sessionId The session id
-     * @param remoteAddress
-     * @throws NotAuthorizedException 
+     * @param remoteAddress remote IP Address
+     * @throws NotAuthorizedException If the session ID is Invalid or the IP does not match with the one registered for this session
      */
     public void closeSession(String sessionId, String remoteAddress) throws NotAuthorizedException;
  
