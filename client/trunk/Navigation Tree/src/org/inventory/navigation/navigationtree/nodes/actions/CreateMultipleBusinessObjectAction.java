@@ -64,7 +64,7 @@ public final class CreateMultipleBusinessObjectAction extends GenericObjectNodeA
     public void actionPerformed(ActionEvent e) {
         JTextField txtNamePattern = new JTextField();
         txtNamePattern.setName("txtNamePattern"); //NOI18N
-        txtNamePattern.setColumns(10);
+        txtNamePattern.setColumns(20);
         
         JSpinner spinnerNumberOfObjects = new JSpinner();
         spinnerNumberOfObjects.setName("spinnerNumberOfObjects"); //NOI18N
@@ -73,7 +73,7 @@ public final class CreateMultipleBusinessObjectAction extends GenericObjectNodeA
         JComplexDialogPanel saveDialog = new JComplexDialogPanel(
             new String[] {"Name Pattern", "Number of Objects"}, new JComponent[] {txtNamePattern, spinnerNumberOfObjects});
         
-        if (JOptionPane.showConfirmDialog(null, saveDialog, "New (Multiple)", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+        if (JOptionPane.showConfirmDialog(null, saveDialog, "New Multiple", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             String namePattern = ((JTextField)saveDialog.getComponent("txtNamePattern")).getText();
             int numberOfObjects = 0;
             Object spinnerValue= ((JSpinner)saveDialog.getComponent("spinnerNumberOfObjects")).getValue();

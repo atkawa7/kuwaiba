@@ -17,6 +17,7 @@ package com.neotropic.inventory.modules.projects;
 
 import com.neotropic.inventory.modules.projects.nodes.ProjectRootNode;
 import javax.swing.JOptionPane;
+import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -89,6 +90,11 @@ public final class ProjectsModuleTopComponent extends TopComponent implements Ex
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
+        if (CommunicationsStub.getInstance().getSession() == null) {
+            close();
+            return;
+        }
+        
         if (service.isDataBaseUpdated()) {
             close();
             JOptionPane.showMessageDialog(null, "This database seems outdated. Contact your administrator to apply the necessary patches to run the Projects module", "Error", JOptionPane.ERROR_MESSAGE);

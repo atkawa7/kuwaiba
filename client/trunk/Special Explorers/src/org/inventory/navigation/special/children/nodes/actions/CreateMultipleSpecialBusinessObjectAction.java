@@ -47,7 +47,7 @@ public class CreateMultipleSpecialBusinessObjectAction extends GenericObjectNode
     private static CreateMultipleSpecialBusinessObjectAction instance;
     
     private CreateMultipleSpecialBusinessObjectAction() {
-        putValue(NAME, "New Special (Multiple)");
+        putValue(NAME, "New Special Multiple");
         com = CommunicationsStub.getInstance();
     }
         
@@ -66,7 +66,7 @@ public class CreateMultipleSpecialBusinessObjectAction extends GenericObjectNode
         
         JTextField txtNamePattern = new JTextField();
         txtNamePattern.setName("txtNamePattern"); //NOI18N
-        txtNamePattern.setColumns(10);
+        txtNamePattern.setColumns(20);
         
         JSpinner spinnerNumberOfObjects = new JSpinner();
         spinnerNumberOfObjects.setName("spinnerNumberOfObjects"); //NOI18N
@@ -75,7 +75,7 @@ public class CreateMultipleSpecialBusinessObjectAction extends GenericObjectNode
         JComplexDialogPanel saveDialog = new JComplexDialogPanel(
             new String[] {"Name Pattern", "Number of Special Objects"}, new JComponent[] {txtNamePattern, spinnerNumberOfObjects});
         
-        if (JOptionPane.showConfirmDialog(null, saveDialog, "New Special (Multiple)", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+        if (JOptionPane.showConfirmDialog(null, saveDialog, "New Special Multiple", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             String namePattern = ((JTextField)saveDialog.getComponent("txtNamePattern")).getText();
             int numberOfSpecialObjects = 0;
             Object spinnerValue= ((JSpinner)saveDialog.getComponent("spinnerNumberOfObjects")).getValue();

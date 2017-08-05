@@ -1898,45 +1898,6 @@ public class CommunicationsStub {
             return null;
         }
     }
-    
-    public LocalObjectLight createService (String serviceClass, String customerClass, long customerId, String attributes[], String attributeValues) {
-        try{
-            long newServiceId = service.createService(serviceClass, customerClass, 
-                    customerId, null, null, this.session.getSessionId());
-            return new LocalObjectLight(newServiceId, null, serviceClass);
-
-        }catch(Exception ex){
-            this.error = ex.getMessage();
-            return null;
-        }
-    }
-
-    public LocalObjectLight createCustomer (String customerClass, String attributes[], String attributeValues) {
-        try{
-            long newServiceId = service.createCustomer(customerClass, null, null, this.session.getSessionId());
-            return new LocalObjectLight(newServiceId, null, customerClass);
-
-        }catch(Exception ex){
-            this.error = ex.getMessage();
-            return null;
-        }
-    }
-    
-    public List<LocalObjectLight> getServices(String customerClass, long customerId) {
-        try {
-            List <RemoteObjectLight> instances = service.getServices(customerClass, customerId, this.session.getSessionId());
-            List<LocalObjectLight> res = new ArrayList<>();
-
-            for (RemoteObjectLight rol : instances)
-                res.add(new LocalObjectLight(rol.getOid(), rol.getName(), rol.getClassName()));
-                
-            return res;
-            
-        }catch(Exception ex){
-            this.error = ex.getMessage();
-            return null;
-        }
-    }
     //End Service Manager
     
     public List<LocalObjectLight> getObjectSpecialChildren(String objectClass, long objectId) {
@@ -2228,7 +2189,7 @@ public class CommunicationsStub {
                                                  Boolean _abstract,Boolean inDesign, Boolean countable, Boolean custom){
         try{
             service.setClassProperties(classId, className, displayName, description, smallIcon, icon, color,
-                    _abstract, inDesign, countable, custom, this.session.getSessionId());
+                    _abstract, inDesign, custom, countable, this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
             return false;
