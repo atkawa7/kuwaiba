@@ -61,16 +61,17 @@ public class ConfigureConnectorMatchingAction implements ActionListener {
         private JList<LocalBusinessRule> lstRules;
         private JButton btnAddRule;
         private JButton btnDeleteRule;
+        List<LocalBusinessRule> matchingRules;
         
         public MatchingRulesFrame() {
             setLayout(new BorderLayout());
             
-            List<LocalBusinessRule> matchingRules = com.getBusinessRules(LocalBusinessRule.TYPE_RELATIONSHIP_BY_ATTRIBUTE_VALUE);
+            matchingRules = com.getBusinessRules(LocalBusinessRule.TYPE_RELATIONSHIP_BY_ATTRIBUTE_VALUE);
             if (matchingRules == null) {
                 dispose();
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             } else {
-                lstRules = new JList<>(new BusinessRulesListModel(matchingRules));
+                lstRules = new JList<>(matchingRules.toArray(new LocalBusinessRule[0]));
                 lstRules.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
                 add(lstRules);
                 btnAddRule = new JButton("Add Rule");
@@ -144,10 +145,12 @@ public class ConfigureConnectorMatchingAction implements ActionListener {
                                                           "connectorType", "connectorType", linkConnector, portConnector  )); //Here we tell the new rule the classes that can be connected and the connectors allowed
                                 if (newBusinessRule == null)
                                     JOptionPane.showMessageDialog(null, com.getError(), "Error", JOptionPane.ERROR_MESSAGE);
-                                else
-                                    ((BusinessRulesListModel)lstRules.getModel()).addElement(newBusinessRule);
+                                else {
+                                    matchingRules.add(newBusinessRule);                                    
+                                    lstRules.setListData(matchingRules.toArray(new LocalBusinessRule[0]));
+                                    lstRules.setSelectedValue(newBusinessRule, true);
                                 }
-                            
+                            }
                         }
                     }
                 });
@@ -161,8 +164,10 @@ public class ConfigureConnectorMatchingAction implements ActionListener {
                         if (selectedRule == null)
                             JOptionPane.showMessageDialog(null, "You have to select at least one rule", "Error", JOptionPane.ERROR_MESSAGE);
                         else {
-                            if (com.deleteBusinessRule(selectedRule.getId()))
-                                ((BusinessRulesListModel)lstRules.getModel()).removeElement(selectedRule);
+                            if (com.deleteBusinessRule(selectedRule.getId())) {
+                                matchingRules.remove(selectedRule);
+                                lstRules.setListData(matchingRules.toArray(new LocalBusinessRule[0]));
+                            }
                             else
                                 JOptionPane.showMessageDialog(null, com.getError(), "Error", JOptionPane.ERROR_MESSAGE);
                         }
@@ -177,40 +182,5 @@ public class ConfigureConnectorMatchingAction implements ActionListener {
                 setLocationRelativeTo(null);
             }
         }    
-    }
-    
-    private class BusinessRulesListModel extends AbstractListModel<LocalBusinessRule> {
-        private List<LocalBusinessRule> businessRules;
-
-        public BusinessRulesListModel(List<LocalBusinessRule> businessRules) {
-            this.businessRules = businessRules;
-        }
-        
-        @Override
-        public int getSize() {
-            return businessRules.size();
-        }
-
-        @Override
-        public LocalBusinessRule getElementAt(int index) {
-            if (index >= businessRules.size())
-                return null;
-            
-            return businessRules.get(index);
-        }
-        
-        public void addElement(LocalBusinessRule newBusinessRule) {
-            businessRules.add(newBusinessRule);
-        }
-        
-        public void removeElement(LocalBusinessRule ruleToDelete) {
-            businessRules.remove(ruleToDelete);
-        }
-
-        @Override
-        public void addListDataListener(ListDataListener l) { }
-
-        @Override
-        public void removeListDataListener(ListDataListener l) { }
     }
 }

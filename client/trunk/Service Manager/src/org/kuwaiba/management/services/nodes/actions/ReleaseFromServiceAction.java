@@ -60,6 +60,7 @@ public class ReleaseFromServiceAction extends GenericObjectNodeAction implements
                 for (LocalObjectLight service : services) {
                     SubMenuItem subMenuItem = new SubMenuItem(service.toString());                    
                     subMenuItem.addProperty(Constants.PROPERTY_ID, service.getOid());
+                    subMenuItem.addProperty(Constants.PROPERTY_CLASSNAME, service.getClassName());
                     subMenuItems.add(subMenuItem);
                 }
                 SubMenuDialog.getInstance((String) getValue(NAME), this).showSubmenu(subMenuItems);
@@ -85,8 +86,11 @@ public class ReleaseFromServiceAction extends GenericObjectNodeAction implements
                 boolean success = true;
                 while (selectedNodes.hasNext()) {
                     ObjectNode selectedNode = selectedNodes.next();
-                    if (CommunicationsStub.getInstance().releaseObjectFromService(selectedNode.getObject().getClassName(), 
-                        selectedNode.getObject().getOid(), (long) ((SubMenuDialog) e.getSource()).getSelectedSubMenuItem().getProperty(Constants.PROPERTY_ID))) {
+                    if (CommunicationsStub.getInstance().releaseObjectFromService(
+                        (String) ((SubMenuDialog) e.getSource()).getSelectedSubMenuItem().getProperty(Constants.PROPERTY_CLASSNAME), 
+                        (long) ((SubMenuDialog) e.getSource()).getSelectedSubMenuItem().getProperty(Constants.PROPERTY_ID), 
+                        selectedNode.getObject().getOid())) {
+                        
                         if (selectedNode.getParentNode() instanceof ServiceNode)
                             ((ServiceChildren)selectedNode.getParentNode().getChildren()).addNotify();
                     } else {
