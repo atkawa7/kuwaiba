@@ -463,7 +463,9 @@ public class KuwaibaService {
      * @param groupName New group name (null if unchanged)
      * @param description New group description (null if unchanged)
      * @param sessionId Session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the user is not allowed to invoke the method
+                                      If any of the privileges ids is invalid.
+                                      If the group could not be found.
      */
     @WebMethod(operationName = "setGroupProperties")
     public void setGroupProperties(@WebParam(name = "oid")long oid,
@@ -487,7 +489,9 @@ public class KuwaibaService {
      * Deletes a list of users
      * @param oids List of user ids to be deleted
      * @param sessionId Session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the user is not allowed to invoke the method
+     *                             If any of the users is the default administrator, which can't be deleted
+     *                             Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "deleteUsers")
     public void deleteUsers(@WebParam(name = "oids")long[] oids,
@@ -508,7 +512,9 @@ public class KuwaibaService {
      * Deletes a list of groups
      * @param oids list of group ids to be deleted
      * @param sessionId Session token
-     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
+     * @throws ServerSideException If the user is not allowed to invoke the method
+     *                             If the group you are trying to delete contains the default administrator
+     *                             Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "deleteGroups")
     public void deleteGroups(@WebParam(name = "oids")long[] oids,

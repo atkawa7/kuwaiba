@@ -316,7 +316,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             tx.success();
             cm.removeClass(formerName);
             cm.putClass(Util.createClassMetadataFromNode(classMetadata));            
-            notes += String.format("Set class properties and/or attributes to class with id %s", String.valueOf(classMetadata.getId()));
+            notes += String.format("Set class properties and/or attributes to %s class", classMetadata.getProperty(Constants.PROPERTY_NAME));
             return new ChangeDescriptor(affectedProperties.trim(), oldValues.trim(), newValues.trim(), notes);
         }
     }
@@ -502,8 +502,12 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         List<ClassMetadataLight> classManagerResultList = new ArrayList<>();
         
         if(subclasses != null) {
-            for (ClassMetadataLight subclass : subclasses)
+            for (ClassMetadataLight subclass : subclasses) {                
+                if (!includeAbstractClasses && subclass.isAbstract())
+                    continue;
+                
                 classManagerResultList.add(subclass);
+            }
             
             if (includeSelf && (includeAbstractClasses ? true : !aClass.isAbstract()))
                 classManagerResultList.add(aClass);
@@ -555,8 +559,11 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         List<ClassMetadataLight> subclasses = cm.getSubclassesNorecursive(className);        
         List<ClassMetadataLight> classManagerResultList = new ArrayList<>();
         if(subclasses != null) {
-            for (ClassMetadataLight subclass : subclasses)
+            for (ClassMetadataLight subclass : subclasses) {
+                if (!includeAbstractClasses && subclass.isAbstract())
+                    continue;
                 classManagerResultList.add(subclass);
+            }
             
             if (includeSelf && (includeAbstractClasses ? true : !aClass.isAbstract()))
                 classManagerResultList.add(aClass);
@@ -870,7 +877,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     //Refresh cache for the affected classes
                     refreshCacheOn(classNode);
                     tx.success();                    
-                    return new ChangeDescriptor(affectedProperties.trim(), oldValues.trim(), newValues.trim(), String.format("Set attributes to class with id %s", String.valueOf(classNode.getId())));
+                    return new ChangeDescriptor(affectedProperties.trim(), oldValues.trim(), newValues.trim(), String.format("Set attributes to %s class", classNode.getProperty(Constants.PROPERTY_NAME)));
                 }
             }//end for
         } 
@@ -998,7 +1005,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     //Refresh cache for the affected classes
                     refreshCacheOn(classNode);
                     tx.success();
-                    return new ChangeDescriptor(affectedProperties.trim(), oldValues.trim(), newValues.trim(), String.format("Set attributes to class with id %s", String.valueOf(classNode.getId())));
+                    return new ChangeDescriptor(affectedProperties.trim(), oldValues.trim(), newValues.trim(), String.format("Set attributes to %s class", classNode.getProperty(Constants.PROPERTY_NAME)));
                 }
             }//end for
         }
