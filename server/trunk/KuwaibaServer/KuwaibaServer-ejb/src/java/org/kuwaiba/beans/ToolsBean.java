@@ -21,8 +21,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
@@ -248,7 +246,7 @@ public class ToolsBean implements ToolsBeanRemote {
                         long genericProjectId = mem.createClass(cm);
                         aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
                             ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
-                            String.format("Created class with id %s", genericProjectId));
+                            String.format("Created class %s", cm.getName()));
                         
                         AttributeMetadata attributeMetadata = new AttributeMetadata();
                         attributeMetadata.setName("notes"); //NOI18N
@@ -278,7 +276,7 @@ public class ToolsBean implements ToolsBeanRemote {
                         
                         aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
                             ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
-                            String.format("Added attributes to class with id %s", genericProjectId));
+                            String.format("Added attributes to class %s", "GenericProject"));
                         
                         cm.setName("GenericActivity"); //NOI18N
                         cm.setParentClassName("AdministrativeItem"); //NOI18N
@@ -286,7 +284,7 @@ public class ToolsBean implements ToolsBeanRemote {
                         long genericActivityId = mem.createClass(cm);
                         aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
                             ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
-                            String.format("Created class with id %s", genericActivityId));
+                            String.format("Created class %s", cm.getName()));
                         
                         cm.setName("ActivityType"); //NOI18N
                         cm.setParentClassName("GenericType"); //NOI18N
@@ -294,7 +292,7 @@ public class ToolsBean implements ToolsBeanRemote {
                         cm.setId(mem.createClass(cm));
                         aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
                             ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
-                            String.format("Created class with id %s", cm.getId()));
+                            String.format("Created class %s", cm.getName()));
                         
                         cm.setName("ProjectStatusType"); //NOI18N
                         cm.setParentClassName("GenericType"); //NOI18N
@@ -302,7 +300,7 @@ public class ToolsBean implements ToolsBeanRemote {
                         cm.setId(mem.createClass(cm));
                         aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
                             ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
-                            String.format("Created class with id %s", cm.getId()));
+                            String.format("Created class %s", cm.getName()));
                         
                         cm.setName("ActivityStatusType"); //NOI18N
                         cm.setParentClassName("GenericType"); //NOI18N
@@ -310,7 +308,7 @@ public class ToolsBean implements ToolsBeanRemote {
                         cm.setId(mem.createClass(cm));
                         aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
                             ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
-                            String.format("Created class with id %s", cm.getId()));
+                            String.format("Created class %s", cm.getName()));
                                                 
                         attributeMetadata.setName("notes"); //NOI18N
                         attributeMetadata.setDisplayName("notes");
@@ -369,7 +367,7 @@ public class ToolsBean implements ToolsBeanRemote {
                         
                         aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
                             ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
-                            String.format("Added attributes to class with id %s", genericActivityId));
+                            String.format("Added attributes to class %s", "Generic Activity"));
                         
                         cm.setName("GeneralPurposeActivity"); //NOI18N
                         cm.setParentClassName("GenericActivity"); //NOI18N
@@ -377,7 +375,7 @@ public class ToolsBean implements ToolsBeanRemote {
                         cm.setId(mem.createClass(cm));
                         aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
                             ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
-                            String.format("Created class with id %s", cm.getId()));
+                            String.format("Created class %s", cm.getName()));
                         
                         cm.setName("PlanningActivity"); //NOI18N
                         cm.setParentClassName("GenericActivity"); //NOI18N
@@ -385,7 +383,7 @@ public class ToolsBean implements ToolsBeanRemote {
                         cm.setId(mem.createClass(cm));
                         aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
                             ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
-                            String.format("Created class with id %s", cm.getId()));
+                            String.format("Created class %s", cm.getName()));
                         
                         cm.setName("RollOutActivity"); //NOI18N
                         cm.setParentClassName("GenericActivity"); //NOI18N
@@ -393,7 +391,7 @@ public class ToolsBean implements ToolsBeanRemote {
                         cm.setId(mem.createClass(cm));
                         aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
                             ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
-                            String.format("Created class with id %s", cm.getId()));
+                            String.format("Created class %s", cm.getName()));
                         
                         cm.setName("DesignActivity"); //NOI18N
                         cm.setParentClassName("GenericActivity"); //NOI18N
@@ -401,7 +399,7 @@ public class ToolsBean implements ToolsBeanRemote {
                         cm.setId(mem.createClass(cm));
                         aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
                             ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
-                            String.format("Created class with id %s", cm.getId()));
+                            String.format("Created class %s", cm.getName()));
                         
                         cm.setName("AuditActivity"); //NOI18N
                         cm.setParentClassName("GenericActivity"); //NOI18N
@@ -409,7 +407,7 @@ public class ToolsBean implements ToolsBeanRemote {
                         cm.setId(mem.createClass(cm));
                         aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
                             ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
-                            String.format("Created class with id %s", cm.getId()));
+                            String.format("Created class %s", cm.getName()));
                         
                         cm.setName("GeneralPurposeProject"); //NOI18N
                         cm.setParentClassName("GenericProject"); //NOI18N
@@ -417,7 +415,7 @@ public class ToolsBean implements ToolsBeanRemote {
                         cm.setId(mem.createClass(cm));
                         aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
                             ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
-                            String.format("Created class with id %s", cm.getId()));
+                            String.format("Created class ", cm.getName()));
                         
                         cm.setName("NetworkProject"); //NOI18N
                         cm.setParentClassName("GenericProject"); //NOI18N
@@ -425,7 +423,7 @@ public class ToolsBean implements ToolsBeanRemote {
                         cm.setId(mem.createClass(cm));
                         aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
                             ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
-                            String.format("Created class with id %s", cm.getId()));
+                            String.format("Created class %s", cm.getName()));
                         
                     } catch (DatabaseException | MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
                         results[i] = ex.getMessage();
@@ -447,7 +445,7 @@ public class ToolsBean implements ToolsBeanRemote {
                         mem.createAttribute("Rack", attributeMetadata); //NOI18N
                         aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
                             ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
-                            String.format("Added attributes to class with name %s", "Rack")); //NOI18N
+                            String.format("Added attributes to class %s", "Rack")); //NOI18N
                     } catch (MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
                         results[i] = ex.getMessage();
                     }
@@ -471,20 +469,20 @@ public class ToolsBean implements ToolsBeanRemote {
                         cm.setViewable(true);
                         cm.setInDesign(false);
 
-                        long linkConnectorTypeId = mem.createClass(cm);
+                        mem.createClass(cm);
 
                         aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
                             ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
-                            String.format("Created class with id %s", linkConnectorTypeId));
+                            String.format("Created class %s", cm.getName()));
 
                         cm.setName("PortConnectorType"); //NOI18N
                         cm.setParentClassName("GenericType"); //NOI18N
 
-                        long portConnectorTypeId = mem.createClass(cm);
+                        mem.createClass(cm);
 
                         aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
                             ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
-                            String.format("Created class with id %s", portConnectorTypeId));
+                            String.format("Created class %s", cm.getName()));
 
                         AttributeMetadata attributeMetadata = new AttributeMetadata();
                         attributeMetadata.setName("connectorType"); //NOI18N
@@ -500,7 +498,7 @@ public class ToolsBean implements ToolsBeanRemote {
 
                         aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
                             ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
-                            String.format("Added attributes to class with name %s", "GenericPhysicalLink")); //NOI18N
+                            String.format("Added attributes to class %s", "GenericPhysicalLink")); //NOI18N
 
                         attributeMetadata.setType("PortConnectorType"); //NOI18N
 
@@ -508,7 +506,7 @@ public class ToolsBean implements ToolsBeanRemote {
 
                         aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
                             ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
-                            String.format("Added attributes to class with name %s", "GenericPort")); //NOI18N
+                            String.format("Added attributes to class %s", "GenericPort")); //NOI18N
 
 
                     } catch (DatabaseException | MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {

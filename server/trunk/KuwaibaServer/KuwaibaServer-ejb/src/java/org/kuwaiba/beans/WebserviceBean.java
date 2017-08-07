@@ -1446,6 +1446,8 @@ public class WebserviceBean implements WebserviceBeanRemote {
             if (!mem.isSubClass("GenericPhysicalConnection", connectionClass)) //NOI18N
                 throw new ServerSideException("Class %s is not subclass of GenericPhysicalConnection"); //NOI18N
 
+            boolean isLink = false;
+            
             //Check if the endpoints are already connected, but only if the connection is a link (the endpoints are ports)
             if (mem.isSubClass("GenericPhysicalLink", connectionClass)) { //NOI18N
                 
@@ -1458,16 +1460,26 @@ public class WebserviceBean implements WebserviceBeanRemote {
 
                 if (!bem.getSpecialAttribute(bObjectClass, bObjectId, "endpointB").isEmpty()) //NOI18N
                     throw new ServerSideException(String.format("The selected endpoint %s is already connected", bem.getObjectLight(bObjectClass, bObjectId)));
+                
+                isLink = true;
             }
 
             
             HashMap<String, String> attributes = new HashMap<>();
-            if (name != null && !name.isEmpty())
-                attributes.put(Constants.PROPERTY_NAME, name);
+            if (name == null || name.isEmpty())
+                throw new ServerSideException("The name of the connection can not be empty");
+            
+            attributes.put(Constants.PROPERTY_NAME, name);
             
             newConnectionId = bem.createSpecialObject(connectionClass, parentClass, parentId, attributes, templateId);
-            bem.createSpecialRelationship(connectionClass, newConnectionId, aObjectClass, aObjectId, "endpointA", true); //NOI18N
-            bem.createSpecialRelationship(connectionClass, newConnectionId, bObjectClass, bObjectId, "endpointB", true); //NOI18N
+            
+            if (isLink) { //Check connector mappings only if it's a link
+                aem.checkRelationshipByAttributeValueBusinessRules(connectionClass, newConnectionId, aObjectClass, aObjectId);
+                aem.checkRelationshipByAttributeValueBusinessRules(connectionClass, newConnectionId, bObjectClass, bObjectId);
+            }
+            
+            bem.createSpecialRelationship(connectionClass, newConnectionId, aObjectClass, aObjectId, "endpointA", true);
+            bem.createSpecialRelationship(connectionClass, newConnectionId, bObjectClass, bObjectId, "endpointB", true);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                     ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.format("%s [%s] (%s)", name, connectionClass, newConnectionId));

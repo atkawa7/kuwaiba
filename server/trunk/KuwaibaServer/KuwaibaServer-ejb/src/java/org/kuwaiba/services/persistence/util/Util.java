@@ -214,7 +214,7 @@ public class Util {
 
     /**
      * Saves a file, receiving the file name and the contents as parameters. If the directory structure doesn't exist, it's created
-     * @param directory
+     * @param directory 
      * @param fileName
      * @param content
      * @throws FileNotFoundException
@@ -770,12 +770,12 @@ public class Util {
      * Retrieves a String with the property value of the attribute if exists as
      * attribute of the node, if the property is a date it is formating into
      * yyyy-MM-DD, if does not exists it return an empty string.
-     * @param objectNode
-     * @param attribute
-     * @return
+     * @param objectNode The object node
+     * @param attribute The name of the attribute. This works only for primitive types
+     * @return The string representation of the value of the given attribute
      */
     public static String getAttributeFromNode(Node objectNode, String attribute){
-        if(objectNode.hasProperty(attribute)){
+        if(objectNode.hasProperty(attribute)) { //It's a primitive type
             Object property = objectNode.getProperty(attribute);
             if(attribute.equals(Constants.PROPERTY_CREATION_DATE)){
                 Date creationDate = new Date((Long)property);
@@ -784,9 +784,14 @@ public class Util {
             }
             else
                 return property.toString();
-        }//end if node has no attribute yet
-        else
-           return "";
+        }
+        else {//It's a list type
+            for (Relationship listTypeRelationship : objectNode.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING)) {
+                if (listTypeRelationship.hasProperty(Constants.PROPERTY_NAME) && listTypeRelationship.getProperty(Constants.PROPERTY_NAME).equals(attribute))
+                    return (String)listTypeRelationship.getEndNode().getProperty(Constants.PROPERTY_NAME);
+            }
+        }
+        return ""; //The attribute does not exist or has been set to null
     }
 
     /**

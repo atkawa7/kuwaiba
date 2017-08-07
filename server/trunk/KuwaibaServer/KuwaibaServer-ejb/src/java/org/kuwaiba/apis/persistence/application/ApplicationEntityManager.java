@@ -26,11 +26,13 @@ import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectList;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
+import org.kuwaiba.apis.persistence.exceptions.BusinessRuleException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
+import org.kuwaiba.apis.persistence.exceptions.UnsupportedPropertyException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.util.ChangeDescriptor;
 import org.kuwaiba.ws.todeserialize.StringPair;
@@ -1087,4 +1089,15 @@ public interface ApplicationEntityManager {
      * @return The list of business rules with the matching type.
      */
     public List<BusinessRule> getBusinessRules(int type);
+    /**
+     * check if a relationship can be established between two objects with the attribute values defined in the rule
+     * @param sourceObjectClassName The class of the element that's the subject of the rule
+     * @param sourceObjectId The id of the subject of the rule
+     * @param targetObjectClassName The class of the element that's the object of the rule
+     * @param targetObjectId The id of the object of the rule
+     * @throws BusinessRuleException If the rule matches, and the involved objects don't comply with the conditions stated by the rule
+     * @throws InvalidArgumentException If the rule is malformed or can not be read.
+     */
+    public void checkRelationshipByAttributeValueBusinessRules(String sourceObjectClassName, long sourceObjectId ,
+            String targetObjectClassName, long targetObjectId) throws BusinessRuleException, InvalidArgumentException;
 }

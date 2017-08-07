@@ -68,6 +68,7 @@ import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectList;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
+import org.kuwaiba.apis.persistence.exceptions.BusinessRuleException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
@@ -1842,7 +1843,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             Node generalActivityLogNode = specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle();
 
             if (generalActivityLogNode == null)
-                throw new ApplicationObjectNotFoundException("The general activity log node can not be found. The databse could be corrupted");
+                throw new ApplicationObjectNotFoundException("The general activity log node can not be found. The database could be corrupted");
 
             Util.createActivityLogEntry(null, generalActivityLogNode, userName, type,
                     Calendar.getInstance().getTimeInMillis(), null, null, null, notes);
@@ -3026,7 +3027,69 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         }
     }
     
-    public void checkRelationshipByAttributeValueBusinessRules(String appliesTo) throws InvalidArgumentException {
+    @Override
+    public void checkRelationshipByAttributeValueBusinessRules(String sourceObjectClassName, long sourceObjectId ,
+            String targetObjectClassName, long targetObjectId) throws BusinessRuleException, InvalidArgumentException  {
+        
+//        if (!Boolean.valueOf(getConfiguration().getProperty("enforceBusinessRules", "false")))
+//            return;
+        
+        //System.out.println("Checking business rules...");
+        
+        try (Transaction tx = graphDb.beginTx()) {    
+            for (Node businessRuleNode : businessRulesIndex.query(Constants.PROPERTY_ID, "*")) {
+                
+//                for (String prop : businessRuleNode.getPropertyKeys())
+//                            System.out.println(prop + " " + businessRuleNode.getProperty(prop));
+                
+//                System.out.println("Matching " + businessRuleNode.getProperty("name"));
+                
+                if (sourceObjectClassName.equals(businessRuleNode.getProperty(Constants.PROPERTY_APPLIES_TO))) {
+                    //System.out.println("Matched source with " + sourceObjectClassName);
+                    /**
+                     * In this type of business rules:
+                     * constraint1 is the class name of the target object
+                     * constraint2 is the name of the attribute name of the source object
+                     * constraint3 is the name of the attribute name of the target object
+                     * constraint4 is the name of the attribute value of the source object
+                     * constraint5 is the name of the attribute value of the target object
+                     */
+                    if (!businessRuleNode.hasProperty("constraint1") || !businessRuleNode.hasProperty("constraint2") || !businessRuleNode.hasProperty("constraint3") 
+                            || !businessRuleNode.hasProperty("constraint4") || !businessRuleNode.hasProperty("constraint5"))
+                        throw new InvalidArgumentException("Malformed busines rule. One of the 5 required constraints is not present");
+                    
+                    if (businessRuleNode.getProperty("constraint1").equals(targetObjectClassName)) {
+                        
+                        //System.out.println("Matched target with " + targetObjectClassName);
+                        
+                        String sourceObjectAttributeConstraint = (String)businessRuleNode.getProperty("constraint4");
+                        String targetObjectAttributeConstraint = (String)businessRuleNode.getProperty("constraint5");
+                        if (sourceObjectAttributeConstraint.isEmpty() || targetObjectAttributeConstraint.isEmpty()) //This link can be connected to any object
+                            return;
+                        
+                        Node sourceInstance = graphDb.index().forNodes(Constants.INDEX_OBJECTS).get(Constants.PROPERTY_ID, sourceObjectId).getSingle();
+                        String sourceInstanceAttributeValue = Util.getAttributeFromNode(sourceInstance, (String)businessRuleNode.getProperty("constraint2"));
+                        
+                        //System.out.println("source attr value: " + sourceInstanceAttributeValue);
+                        
+                        if (sourceObjectAttributeConstraint.equals(sourceInstanceAttributeValue)) {
+                            //System.out.println("Matched source attribute");
+                            Node targetInstance = graphDb.index().forNodes(Constants.INDEX_OBJECTS).get(Constants.PROPERTY_ID, targetObjectId).getSingle();
+                            String targetInstanceAttributeValue = Util.getAttributeFromNode(targetInstance, (String)businessRuleNode.getProperty("constraint3"));
+                            
+                            if (!targetObjectAttributeConstraint.equals(targetInstanceAttributeValue))
+                                throw new BusinessRuleException(String.format("Value of %s in %s does not match %s in %s", 
+                                                                        businessRuleNode.getProperty("constraint3"),
+                                                                        targetObjectClassName, businessRuleNode.getProperty("constraint2"), sourceObjectClassName));
+                            else
+                                return; //After finding the first matching rule, return. This behavora might change in further releases
+                        }
+                    } else 
+                        throw new BusinessRuleException(String.format("Objects of class %s can not be connected to objects of class %s", sourceObjectClassName, targetObjectClassName));
+                }
+            }
+            throw new BusinessRuleException(String.format("No matching rule was found for %s and %s", sourceObjectClassName, targetObjectClassName));
+        }
     }
     
     //</editor-fold>

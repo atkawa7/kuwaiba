@@ -17,16 +17,11 @@
 package org.kuwaiba.apis.persistence.exceptions;
 
 /**
- * Thrown when a certain property is not known or currently supported
+ * This exception should be fired if a business rule is matched and as a result, the action can not be executed
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class UnsupportedPropertyException extends InventoryException{
-
-    public UnsupportedPropertyException(String propertyName, String className) {
-        super(String.format("Unsupported property %s in %s", propertyName, className));
-    }
-
-    public UnsupportedPropertyException(String propertyName) {
-        super(String.format("Usupported property %s", propertyName));
+public class BusinessRuleException extends InventoryException {
+    public BusinessRuleException(String msg) {
+        super(msg);
     }
 }
