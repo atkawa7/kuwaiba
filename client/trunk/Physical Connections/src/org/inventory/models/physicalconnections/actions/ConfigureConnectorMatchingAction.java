@@ -21,6 +21,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.List;
+import javax.swing.AbstractListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -28,7 +29,6 @@ import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListDataListener;
 import org.inventory.communications.CommunicationsStub;
@@ -137,11 +137,11 @@ public class ConfigureConnectorMatchingAction implements ActionListener {
                                 String linkConnector = cmbLinkConnectorTypes.getSelectedItem() == null || ((LocalObjectListItem)cmbLinkConnectorTypes.getSelectedItem()).getOid() == LocalObjectListItem.NULL_ID ? "" : ((LocalObjectListItem)cmbLinkConnectorTypes.getSelectedItem()).getName();
                                 String portConnector = cmbPortConnectorTypes.getSelectedItem() == null || ((LocalObjectListItem)cmbPortConnectorTypes.getSelectedItem()).getOid() == LocalObjectListItem.NULL_ID ? "" : ((LocalObjectListItem)cmbPortConnectorTypes.getSelectedItem()).getName();
                                 
-                                LocalBusinessRule newBusinessRule = com.createBusinessRule(cmbLinkSubclasses.getSelectedItem() + " - " + cmbPortSubclasses.getSelectedItem(), 
+                                LocalBusinessRule newBusinessRule = com.createBusinessRule(cmbLinkSubclasses.getSelectedItem() + ":" + linkConnector + " - " + cmbPortSubclasses.getSelectedItem() + ":" + portConnector, 
                                     String.format("%s and %s", cmbLinkSubclasses.getSelectedItem(), cmbPortSubclasses.getSelectedItem()),
                                     LocalBusinessRule.TYPE_RELATIONSHIP_BY_ATTRIBUTE_VALUE, LocalBusinessRule.SCOPE_GLOBAL, ((LocalClassMetadataLight)cmbLinkSubclasses.getSelectedItem()).getClassName(), 
                                     "0.1", Arrays.asList(((LocalClassMetadataLight)cmbPortSubclasses.getSelectedItem()).getClassName(), 
-                                                          linkConnector, portConnector  )); //Here we tell the new rule the classes that can be connected and the connectors allowed
+                                                          "connectorType", "connectorType", linkConnector, portConnector  )); //Here we tell the new rule the classes that can be connected and the connectors allowed
                                 if (newBusinessRule == null)
                                     JOptionPane.showMessageDialog(null, com.getError(), "Error", JOptionPane.ERROR_MESSAGE);
                                 else
@@ -179,7 +179,7 @@ public class ConfigureConnectorMatchingAction implements ActionListener {
         }    
     }
     
-    private class BusinessRulesListModel implements ListModel<LocalBusinessRule> {
+    private class BusinessRulesListModel extends AbstractListModel<LocalBusinessRule> {
         private List<LocalBusinessRule> businessRules;
 
         public BusinessRulesListModel(List<LocalBusinessRule> businessRules) {
@@ -193,6 +193,9 @@ public class ConfigureConnectorMatchingAction implements ActionListener {
 
         @Override
         public LocalBusinessRule getElementAt(int index) {
+            if (index >= businessRules.size())
+                return null;
+            
             return businessRules.get(index);
         }
         
