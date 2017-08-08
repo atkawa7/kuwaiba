@@ -5,7 +5,7 @@
 %Metadata
 \title{Kuwaiba Open Inventory User's Manual}
 \author{Neotropic SAS}
-\date{19.12.2016}
+\date{07.08.2017}
 
 %Imports
 \usepackage{graphicx}
@@ -21,7 +21,7 @@
 \usepackage{pdflscape}
 \usepackage{textcomp}
 \usepackage{float}
-%\usepackage{hyperref}
+\usepackage[hidelinks]{hyperref}
 
 %Modify some defaults
 \setlength{\parindent}{0pt} %don't indent new paragraphs
@@ -98,7 +98,7 @@
 				\includegraphics[]{img/cc_license_logo.jpg} & This document is published under the terms of a license Creative Commons by-nc-sa. You can find details about it at\linebreak
 				\textbf{http://creativecommons.org/licenses/by-nc-sa/2.0/ } \\
 
-				\includegraphics[width=2cm]{img/osi_logo.jpg} & Kuwaiba Server and Client are licensed under EPL v1 and GPL v2. You can find the whole text of these licenses at \linebreak
+				\includegraphics[width=2cm]{img/osi_logo.jpg} & Kuwaiba Server and Client are licensed under EPL v1 and GPL v3. You can find the entire text of these licenses at \linebreak
 				\textbf{http://www.eclipse.org/legal/epl-v10.html} \linebreak
 				\textbf{http://www.gnu.org/licenses/old-licenses/gpl-2.0.html} \\
 			\end{tabular}
@@ -109,7 +109,7 @@
 			
 			\item This document is provided “as is”, with no warranty at all. Install the software and follow the instructions included at your own risk.
 			
-			\item Kuwaiba uses third-party components with compatible open source licenses (LGPL, BSD-like, etc). You can find a complete list at the project's web page.
+			\item Kuwaiba uses third-party components with compatible open source licenses. You can find a complete list at the project's web page or in the installation bundle THIRDPARTY file.
 		\end{itemize}
 	
 	\clearpage
@@ -130,7 +130,7 @@
 	
 	\clearpage
 	\section{Connection to the Server}
-	The first thing you will see when opening the client is the window in the figure~\ref{fig:auth_window}. The default user and password are \textbf{admin/kuwaiba}.
+	The first thing you will see when opening the client is the window in the figure~\ref{fig:auth_window}. The default user/password combination is \textbf{admin/kuwaiba}.
 	 
 	\begin{figure}[h!]
 		\centering
@@ -138,7 +138,7 @@
 		\caption{Authentication window}
 		\label{fig:auth_window}
 	\end{figure}
-	The default connection settings should be enough if the server is running on the same computer the client is. If that's not the case, open the Connection Settings window (figure~\ref{fig:connection_settings}).
+	The default connection settings should be enough if the server is running on the same computer  as the client. If that's not the case, open the Connection Settings window (figure~\ref{fig:connection_settings}).
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.5\linewidth]{img/connection_settings.png}
@@ -149,8 +149,8 @@
 		\item \textbf{Server Address} Refers to the server IP address or canonical name.
 		\item \textbf{Server Port} is the port Glassfish (the application server) is listening to.
 		\item \textbf{WSDL Path} is the path within the application server the web service interface definition can be found. Usually this value should remain unchanged.
-		\item \textbf{Protocol} is the transport protocol to be used. By default is HTTP, but is highly advisable to request your administrator to setup a secure connection, otherwise your credentials will be transmitted in plain text over the network.
-		\item \textbf{Disable hostname verification} is disabled by default and applies only to HTTPS connections. If checked, the hostname in the digital certificate does not have to have to match the hostname you've typed in the "Server Address" field. This is useful if, for example, you are trying to connect to a server using its IP address, but the certificate was generated using its FQDN. You won't have to touch this checkbox in most cases.
+		\item \textbf{Protocol} is the transport protocol to be used. By default is HTTP, but is highly recommended to request your administrator to setup a secure connection, otherwise your credentials will be transmitted in plain text over the network.
+		\item \textbf{Disable hostname verification} is disabled by default and applies only to HTTPS connections. If checked, the hostname in the digital certificate does not have to have to match the hostname you've typed in the "Server Address" field. This is useful if, for example, you are trying to connect to a server using its IP address, but the certificate was generated using its FQDN. You won't have to change this option in most cases, unless you are testing.
 	\end{itemize}
 	Except for the password, the last successful settings will be saved upon clicking OK.
 	\begin{framed} {\large \textbf{Important}} \\
@@ -186,15 +186,15 @@
 			\midrule
 			\includegraphics[width=0.5cm]{img/icon_bookmarks.png} & Create and manage Favorite Folders and Favorites\\
 			\midrule
-			\includegraphics[width=0.5cm]{img/icon_pools_manager.png} & Create and manage objects that don't fit in the navigation tree\\
+			\includegraphics[width=0.5cm]{img/icon_pools_manager.png} & Create and manage objects of the same type\\
 			\midrule
-			\includegraphics[width=0.5cm]{img/icon_relationship_explorer.png} & Show objects relationships\\
+			\includegraphics[width=0.5cm]{img/icon_relationship_explorer.png} & Explore an object's relationships\\
 			\midrule
-			\includegraphics[width=0.5cm]{img/icon_special_relationship_explorer.png} & Show objects special children\\
+			\includegraphics[width=0.5cm]{img/icon_special_children_explorer.png} & Explore the containment hierarchy used in models such as the physical layer model.\\
 			\midrule
 			\includegraphics[width=0.5cm]{img/icon_topology_designer.png} & Freely design network topologies\\
 			\midrule
-			\includegraphics[width=0.5cm]{img/icon_data_model_manager.png} & Change the data model\\
+			\includegraphics[width=0.5cm]{img/icon_data_model_manager.png} & Manage the data model\\
 			\midrule
 			\includegraphics[width=0.5cm]{img/icon_containment_manager.png} & Manage how objects can be created inside others\\
 			\midrule
@@ -204,23 +204,23 @@
 			\midrule
 			\includegraphics[width=0.5cm]{img/icon_user_manager.png} & Manage users and groups\\
 			\midrule
-			\includegraphics[width=0.5cm]{img/icon_task_manager.png} & Create automation tasks (beta version)\\
+			\includegraphics[width=0.5cm]{img/icon_task_manager.png} & Create automation tasks (beta)\\
 			\midrule
 			\includegraphics[width=0.5cm]{img/icon_reports.png} & Create and manage reports\\
 			\midrule
-			\includegraphics[width=0.5cm]{img/icon_audit_trail.png} & See the changes made to inventory and application objects\\
+			\includegraphics[width=0.5cm]{img/icon_audit_trail.png} & Explore the application's log\\
 			\midrule
-			\includegraphics[width=0.5cm]{img/icon_service_manager.png} & Manage client, services and resources associated to them\\
+			\includegraphics[width=0.5cm]{img/icon_service_manager.png} & Manage customers, services and resources associated to them\\
 			\midrule
-			\includegraphics[width=0.5cm]{img/icon_contract_manager.png} & Manage client, contracts and resources associated to them\\
+			\includegraphics[width=0.5cm]{img/icon_contract_manager.png} & Manage support contracts, SLAs and more. \\
 			\midrule
-			\includegraphics[width=0.5cm]{img/icon_IPAM_manager.png} & Manage Subnets and IP Addresses\\
+			\includegraphics[width=0.5cm]{img/icon_IPAM_manager.png} & Manage IPv4/IPv6 addresses and subnets\\
 			\midrule
-			\includegraphics[width=0.5cm]{img/icon_SDH_networks.png} & Manage Synchronous Digital Hierarchy\\
+			\includegraphics[width=0.5cm]{img/icon_SDH_networks.png} & Manage Synchronous Digital Hierarchy resources\\
 			\midrule
-			\includegraphics[width=0.5cm]{img/icon_MPLS_mudule.png} & Multiprotocol Label Switching module\\
+			\includegraphics[width=0.5cm]{img/icon_MPLS_mudule.png} & Manage Multiprotocol Label Switching resources\\
 			\midrule
-			\includegraphics[width=0.5cm]{img/icon_projects.png} & Manage client, projects and resources associated to them\\
+			\includegraphics[width=0.5cm]{img/icon_projects.png} & Manage projects, activities and resources associated to them\\
 		\end{tabular}	
 		\caption{Toolbar items}
 		\label{tab:toolbar_icons}
@@ -232,7 +232,7 @@
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.4\linewidth]{img/data_model_manager.png}
-			\caption{Part of the data model tree}
+			\caption{Data model tree section}
 			\label{fig:data_model_manager}
 		\end{figure}
 		\begin{table}[h!]
@@ -242,7 +242,7 @@
 				\midrule
 				\includegraphics[width=0.7cm]{img/icon_data_model_class_hierarchy_view.png} & Opens a window with a graphical representation of the data model tree,  easier to navigate.\\
 				\midrule
-				\includegraphics[width=5cm]{img/data_model_manager_search.png} & Searches for a particular class.\\
+				\includegraphics[width=5cm]{img/data_model_manager_search.png} & A shorcut to any class in the data model.\\
 			\end{tabular}
 			\caption{Data Model manager toolbar items}
 			\label{tab:data_model_manager_toolbar_icons}
@@ -253,7 +253,7 @@
 			\begin{framed} {\large \textbf{Important}} \\
 					The \textbf{Properties} window allows you to modify the attributes of a selected object in a tree, list or view. If not already open, it's available from the Windows $\rightarrow$ Properties menu.
 			\end{framed}
-			The properties of a class can be edited by using the \textbf{Properties} window, selecting the class from the tree (see figure~\ref{fig:properties_class_node}). 
+			The properties of a class can be edited by using the \textbf{Properties} window, selecting a class from the tree (see figure~\ref{fig:properties_class_node}). 
 			\begin{figure}[h!]
 				\centering
 				\includegraphics[width=0.5\linewidth]{img/data_model_manager_properties_class_node.png}
@@ -265,8 +265,8 @@
 				\item \textbf{General:} Contains the intrinsic properties  of  the class: \textbf{name} (can contain only letters and numbers with no special characters  or  blank  spaces). The  \textbf{display name} of the class, that's how it  will be displayed everywhere else (useful  for  internationalization  purposes, for example) and can contain any kind of UTF-8 character. A \textbf{description} (useful  to  document  the  data  model). If  the class is \textbf{abstract} (abstract classes  cannot  be  instantiated, they're only used to give consistency to the  data  model). The attribute \textbf{countable} is not used currently, but it should be used to mark classes whose instances can have graphical representations, but  they're  not really  part  of  the  inventory,  such  as  \textbf{Slots}. \textbf{In Design Stage} is just a way to mark a class as part of an ongoing data model intervention, and thus, classes with that attribute set to true can not be instantiated. \textbf{Color} is the color of the default square icon used to display the object in a tree or view. This icon will be used as long as the \textbf{Small Icon} attribute is null. \textbf{Small Icon} is the icon that will be used in trees and its size can't exceed 16x16 pixels. \textbf{Icon} is the icon used in views, and has a maximum size of 32x32 pixels.
 				\begin{framed} {\large \textbf{Important}}
 					\begin{itemize}
-						\item All user-created classes are set In Design Stage = \textbf{\textcolor{green}{true}} by default. You won't be able to create objects of these classes until you set it to \textbf{\textcolor{blue}{false}}.
-						\item As a convention, all abstract classes have the prefix \textbf{Generic}. Note that a few core classes (like \textbf{InventoryObject} or \textbf{AdministrativeItem}) are abstract and are the exception to this rule. You, however, should try to follow this convention as much as possible.
+						\item All user-created classes are set In Design Stage \textbf{\textcolor{green}{true}} by default. You won't be able to create objects from these classes until you set it to \textbf{\textcolor{blue}{false}}. It's just a precaution in case you are creating many classes at once and you want to test the changes before going to production.
+						\item As a convention, all abstract classes have the prefix \textbf{Generic}. Note that a few core classes (like \textbf{InventoryObject} or \textbf{AdministrativeItem}) are abstract and are the exception to this rule. You, however, should try to follow this convention as much as possible. Unless you know what you are doing don't rename or delete core classes, mainly the abstract ones.
 					\end{itemize}
 				\end{framed}
 				\item The second section  contains the class fields (attributes). In the  figure~\ref{fig:properties_class_node}, class Router  has six attributes: name, state, conditions, vendor, serialNumber and creationDate. Click the button next to the attribute name to customize it (see figure~\ref{fig:class_attribute_details}).
@@ -278,9 +278,9 @@
 				\end{figure}
 			\end{itemize}
 			In this window, you can modify the attribute's name, display name, description, type  (the drop-down list will show you primitive types -String, Integer, Float, Long, etc- and all available non-abstract list types). When you change an attribute's type, all existing instances will be	modified to reflect the change, which means that the values of the modified attribute will be converted to the new type if possible (say, from Integers to Strings). If the conversion is not possible, the new value will be set to null.  You can also manage if the attribute is:
-			\newline \textbf{mandatory}, if is marked, it means that every new object of this class should has a value in this attribute, or if there are already created objects from this class, every object from the class need a value in this attribute, before you can mark it as mandatory.  
-			\newline \textbf{unique}, if its marked, it means that the value of this attribute can not be repeated across all the  created objects from this class or its subclasses.  Before you can set a class attribute as unique, you should check if the value of this attribute in every created object from this class or its subclases is unique.
-			\newline \textbf{visible}, this manage the attribute  visibility, if is not marked the attribute will not be shown in the property sheets of the objects created from this class.  
+			\newline \textbf{mandatory}, selecting this option, every object of this class must have a value for this attribute. If you enable this option, and there are already created objects of this class without a non-null value for this attribute, you'll get an error.  
+			\newline \textbf{unique}, if its marked, it means that the value of this attribute can not be repeated across all the  created objects from this class or its subclasses.  Before you can set a class attribute as unique, you must check if the value of this attribute in every created object from this class or its subclases is unique.
+			\newline \textbf{visible}, this enables/disables the attribute's visibility, if is not marked the attribute will not be displayed in the property sheets of the objects created from this class.  
 			\newline \textbf{administrative}, attributes marked as “Administrative” will be shown in a separate tab in the object's property sheet. Sometimes, there are  attributes that are used only for administrative purposes and might confuse the end user if mixed with the regular attributes. 
 			\newline \textbf{noCopy}, you can choose what attributes shouldn't be transferred from one object to another in a copy operation.
 			
@@ -289,6 +289,7 @@
 				\begin{itemize}
 					\item You may lose information when changing an attribute's type. Make sure the conversion to the new type is possible before you do it.
 					\item Although there's a Cancel button at the bottom of the window, it does not	really work. When you perform a change, it's saved immediately.
+					\item If you add, remove or rename attributes, the changes will only be reflected in the properties sheets of the inventory objects that have previously open once you launch the "Update" option from the context menu of the node representing such object.
 				\end{itemize}
 			\end{framed}
 			You can also create and delete classes and attributes by right-clicking a class node (see figure~\ref{fig:class_node_menu})
@@ -350,7 +351,7 @@
 	\end{figure}
 	
 	\subsection{Special Containment Hierarchy} \label{sec:special_containment_hierarchy}
-	The special containment hierarchy (see figure~\ref{fig:special_containment_manager}) is used to define the business rules for special children see \textbf{\nameref{sec:extra_explorers_children_explorer}}. For example a cable inside a conduit connecting two buildings: in this scenario to configure the hierarchy for a wire container drag links like (ElectricalLink, OpticalLink, PowerLink, RadioLink or for simply used the GenericPhysicalLink) from the right panel to the WireContainer class in the left panel, and in this way using the \textbf{\nameref{sec:extra_explorers_children_explorer}} you can create special children for a conduit.
+	The special containment hierarchy (see figure~\ref{fig:special_containment_manager}) is used to define containment rules for complex models. Most of the times you won't have to touch this, unless you are modeling new technologies and want to use containment relationships in your model. Unlike the standard containment hierarchy, special children can only be explored using the \textbf{\nameref{sec:extra_explorers_children_explorer}}. The Physical Layer model is a good example of how this feature can be used: A cable inside a conduit connecting two buildings: in this scenario to configure the hierarchy for a wire container, drag links like (ElectricalLink, OpticalLink, PowerLink, RadioLink or for simply used the GenericPhysicalLink) from the right panel to the WireContainer class in the left panel, and in this way using the \textbf{\nameref{sec:extra_explorers_children_explorer}} you can create special children for a conduit. This is preconfigured in new databases so you don't have to worry about it.
 	
 	\begin{figure}[h!]
 		\centering
@@ -369,7 +370,7 @@
 			
 	\clearpage
 	\section{Navigation Tree} \label{sec:navigation_tree}
-	This module presents in a tree fashion the physical objects of your inventory organized according to the containment hierarchy defined with the tool described in the previous chapter (see \textbf{\nameref{sec:containment_manager}}).
+	This module presents in a tree fashion the physical objects of your inventory organized according to the standard containment hierarchy defined presented in the previous chapter (see \textbf{\nameref{sec:containment_manager}}).
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.4\linewidth]{img/navigation_tree.png}
@@ -394,35 +395,35 @@
 	\end{figure}
 	\begin{itemize}
 		\item \textbf{New:} The list of object types that can be contained for the selected element type according to the configured Containment Hierarchy. In this case, a \textbf{Rack} can contain \textbf{DDFs}, \textbf{ODFs}, \textbf{Routers}, etc.
-		\item \textbf{New Multiple:} Creates a defined number of objects at once using a given name pattern see \textbf{\nameref{app:AppendixA}} figure~\ref{fig:new_multiple}.
+		\item \textbf{New Multiple:} Creates a defined number of objects at once using a given name pattern (see \textbf{\nameref{app:AppendixA}} for details) figure~\ref{fig:new_multiple}.
 			\begin{figure}[h!]
 				\centering
 				\includegraphics[width=0.5\linewidth]{img/new_multiple.png}
 				\caption{Creation of a \textbf{Router} set}
 				\label{fig:new_multiple}
 			\end{figure}
-		\item \textbf{New from template:} Creates a containment structure. See more details in the chapter \nameref{sec:template_manager}
+		\item \textbf{New from template:} Creates an object (an possibly a complex containment structure under it) from a template defined previously. See more details in the chapter \nameref{sec:template_manager}.
 		\item \textbf{Copy:} A plain copy operation.
 		\item \textbf{Cut:} A plain cut operation.
-		\item \textbf{Paste:} A plain paste operation. You can only paste objects where it is allowed according to the configured Containment Hierarchy.
-		\item \textbf{Update:} Updates the node information. Useful when a change has been made to the object from an external source (e.g. another user) or if you create a new list type affecting one of the attributes of the selected element. In this case, if you, for example, create an instance of \textbf{EquipmentVendor} (this will add a new entry to the \textbf{vendor} attribute list)
-		\item \textbf{Edit:} Opens a Property Sheet to edit the attribute values of the selected Inventory object node.
+		\item \textbf{Paste:} A plain paste operation. You can only paste objects where it is allowed according to the configured Standard Containment Hierarchy.
+		\item \textbf{Update:} Updates the node information. Useful when a change has been made to the object from an external source (e.g. another user) or if you create a new list type affecting one of the attributes of the selected element. In this case, if you, for example, create an instance of \textbf{EquipmentVendor} (this will add a new entry to the \textbf{vendor} attribute list). Also use this action if you change the data model properties associated to the object class and want to see reflected in the property sheet (new attributes, renamed attributes, etc).
+		\item \textbf{Edit:} Opens a Property Sheet to edit the attributes of the selected inventory object.
 		\item \textbf{Delete:} Deletes the object. This will fail if the object has an incoming relationship, for example, a \textbf{Port} connected to a cable.
 		\item \textbf{Reports:} The reports associated to the objects of this class. In this case, \textbf{Rack} has a report called \textbf{Rack Usage}. If no reports are associated, this entry will appear grayed out.
 		\item \textbf{Add to Favorites Folder:} All inventory objects can be added to an existing Favorite Folder. See more details in the chapter \textbf{\nameref{sec:favorites}}.
 		\item \textbf{Remove from Favorites Folder:} Removes the association between an object (favorite) and a Favorite Folder.
 		\item \textbf{Relate to service:} All inventory objects can be associated to an existing service. See more details in the chapter \textbf{\nameref{sec:service_manager}}.
 		\item \textbf{Release from Service:} Removes the association between an object(resource) and a service.
-		\item \textbf{Create Physical Connection:} Creates a physical connection between two nodes selected in the Navigation Tree. Is disabled if only one node is selected. See more details in the chapter \textbf{\nameref{sec:physical_connections}}.
+		\item \textbf{Create Physical Connection:} Creates a physical connection between two nodes selected in the Navigation Tree. This action will be disabled unless only two nodes are selected. See more details in the chapter \textbf{\nameref{sec:physical_connections}}.
 		\item \textbf{Show Object View:} Opens the Object View to the selected object. See more details in the chapter \textbf{\nameref{sec:object_view_and_rack_view}}.
-		\item \textbf{Show Rack View:} Opens the Rack view to the selected object. See more details in the chapter \textbf{\nameref{sec:object_view_and_rack_view}}.
+		\item \textbf{Show Rack View:} Opens the Rack view of the selected object. This action is only available for racks. See more details in the chapter \textbf{\nameref{sec:object_view_and_rack_view}}.
 		\item \textbf{Audit Trail:} This will display all the audit trail entries for the selected object, that is, all the changes made to it.
-		\item \textbf{Relate to Project:} All inventory objects can be a resource of an existing Project. See more details in the chapter \textbf{\nameref{sec:projects}}
-		\item \textbf{Release from Project:} Removes a selected object (resource) form a Project.
+		\item \textbf{Relate to Project:} All inventory objects can be a resource to an existing Project. See more details in the chapter \textbf{\nameref{sec:projects}}
+		\item \textbf{Release from Project:} Removes a selected object (resource) from a Project.
 		\item \textbf{Relate to Contract:} All inventory objects can be associated to an existing Contract. See more details in chapter \textbf{\nameref{sec:contract_manager}}
 		\item \textbf{Release from Contract:} Removes the association between an object and a contract.
 		\item \textbf{Open a Explorer from Here:} Opens a Navigation tree whose root node will be the selected object. Useful when you want to explore an object with as many containment levels below.
-		\item \textbf{Show More Information:} Shows the database id of the selected object. Useful for troubleshooting purposes. It will also show the object's complete containment structure.
+		\item \textbf{Show More Information:} Shows the database id of the selected object. Useful for troubleshooting purposes. It will also show the object's complete containment structure. Note that the id can be copied and used in the \textbf{\nameref{sec:querying}} to create queries.
 			\begin{figure}[h!]
 				\centering
 				\includegraphics[width=\linewidth]{img/action_show_object_id.png}
@@ -436,11 +437,11 @@
 			\item You can change the name of an object in-line by pressing F2 on a selected node.
 		\end{itemize}
 	\end{framed}
-	\subsection{Relationship and Special Children Explorer} \label{sec:extra_explorers}
-	Apart from the main navigation tree, there are also two explorers that are very useful to navigate through domain-specific models. Both explorers are located in the Tools $\rightarrow$ Navigation menu.
+	\subsection{Relationships and Special Children Explorer} \label{sec:extra_explorers}
+	Apart from the main navigation tree, there are also two explorers that are very useful to navigate through domain-specific models. Both explorers can be launched from the Tools $\rightarrow$ Navigation menu or using the icons \includegraphics[width=0.5cm]{img/icon_relationship_explorer.png} and \includegraphics[width=0.5cm]{img/icon_special_children_explorer.png}.
 
 	\subsubsection{Relationship Explorer} \label{sec:extra_explorers_relationship_explorer}
-		Allows to see the special relationships of the selected object. When an object makes part of a domain-specific model (SDH, Physical Connections, MPLS, Software Licensing, etc) there are special bounds to other objects called \textbf{relationships}. They have names documented on model-basis, and they can be seen using this explorer. In the figure~\ref{fig:navigation_tree_relationship_explorer}, it is depicted an \textbf{OpticalPort} with three relationships, one called \textbf{parent}, which all inventory objects has and is used to navigate in the containment structure, the \textbf{endpointA} used in the Physical Connections model and it indicates that this port is the endpoint to a physical connection, probably a fiber optic. It also has a relationship called \textbf{uses}, which makes part of the Service management model. It indicates that the service called PDH Service-01 uses that port as a resource.
+		Allows to see the special relationships of the selected object. When an object makes part of a domain-specific model (SDH, Physical Connections, MPLS, Services, etc) there are special bounds to other objects called \textbf{relationships}. They have names documented on model-basis, and they can be seen using this explorer. In the figure~\ref{fig:navigation_tree_relationship_explorer}, it is depicted an \textbf{OpticalPort} with three relationships, one called \textbf{parent}, which all inventory objects has and is used to navigate upwards in the containment structure, the \textbf{endpointA} used in the Physical Connections model and it indicates that this port is the endpoint to a physical connection, probably a fiber optic. It also has a relationship called \textbf{uses}, which makes part of the Service management model. It indicates that the service called PDH Service-01 uses that port as a resource.
 		
 		\begin{figure}[h!]
 			\centering
@@ -449,7 +450,7 @@
 			\label{fig:navigation_tree_relationship_explorer}
 		\end{figure}
 		
-		In the Relationship Explorer you have a toolbar with one button which allows you to navigate through the special relationships by means of a graphical representation. You can open the canvas figure~\ref{fig:graphical_representation_relationships} just right click in the icon \includegraphics[width=0.5cm]{img/icon_graphical_representation_relationships.png}		
+		In the Relationship Explorer you have a toolbar with a button that allows you to navigate through the special relationships using a graphical view. You can open the canvas figure~\ref{fig:graphical_representation_relationships} just right click in the icon \includegraphics[width=0.5cm]{img/icon_graphical_representation_relationships.png}		
 						
 		\begin{figure}[h!]
 			\centering
@@ -458,21 +459,21 @@
 			\label{fig:graphical_representation_relationships}
 		\end{figure}
 			
-		In the canvas figure~\ref{fig:graphical_representation_relationships} you have a toolbar with a set of options listed in the Table~\ref{tab:graphical_representation_relationships_toolbar_icons}.
+		In the Figure~\ref{fig:graphical_representation_relationships} there's a toolbar with a set of options listed in the Table~\ref{tab:graphical_representation_relationships_toolbar_icons}.
 			
 		\begin{table}[h!]
 			\centering
 			\begin{tabular}{cl}
-				\includegraphics[width=0.5cm]{img/icon_collapse_all.png} & Hide all special relationships\\
+				\includegraphics[width=0.5cm]{img/icon_collapse_all.png} & Collapse the tree\\
 				\midrule
 				\includegraphics[width=0.5cm]{img/icon_export_as_image.png} & Export as image\\
 				\midrule
 				\includegraphics[width=0.5cm]{img/icon_reorganize_nodes.png} & If the nodes are overlapped, you can organize them using this button\\
     			\midrule
-	 			\includegraphics[width=0.5cm]{img/icon_refresh_view.png} & Refresh the object special relationships\\
+	 			\includegraphics[width=0.5cm]{img/icon_refresh_view.png} & Refresh the tree.\\
 				\midrule
 			\end{tabular}
-			\caption{Graphical representation of special relationships toolbar icons}
+			\caption{Toolbar options in the Special Relationships view}
 			\label{tab:graphical_representation_relationships_toolbar_icons}
 		\end{table}
 			
@@ -486,11 +487,11 @@
 			\label{fig:navigation_tree_special_children_explorer}
 		\end{figure}
 		
-		Every node in the special children explorer has a set of actions, some will be active for all objects, some depend on the type of element that is selected. In the figure~\ref{fig:navigation_tree_special_children_explorer} you can see the actions enabled for a WireContainer object. The actions are the same as in the Navigation Tree with the following exceptions:
+		Every node in the special children explorer has a set of actions, some will be active for all objects, some depend on the type of element that is selected. In the figure~\ref{fig:navigation_tree_special_children_explorer} you can see the actions enabled for a WireContainer object. The actions are mostly the same as in the Navigation Tree with the following exceptions:
 		
 		\begin{itemize}
-			\item \textbf{New Special:} The list of special object types that can be contained for the selected element type according to the configured Special Containment Hierarchy.
-			\item \textbf{New Special Multiple:} Creates a given number of special objects at once using a defined name pattern see \textbf{\nameref{app:AppendixA}}
+			\item \textbf{New Special:} The list of special object types that can be contained inside the selected element type as configured in the Special Containment Hierarchy.
+			\item \textbf{New Special Multiple:} Creates a given number of special objects at once using a naming pattern see \textbf{\nameref{app:AppendixA}}
 			\begin{figure}[h!]
 				\centering
 				\includegraphics[width=0.5\linewidth]{img/new_special_multiple.png}
@@ -506,7 +507,7 @@
 	
 	\begin{figure}[h!]
 		\centering
-		\includegraphics[width=0.7\linewidth]{img/template_manager_intro.png}
+		\includegraphics[width=0.4\linewidth]{img/template_manager_intro.png}
 		\caption{Template Manager explorer}
 		\label{fig:template_manager_intro}
 	\end{figure}
@@ -515,12 +516,12 @@
 	
 	\begin{figure}[h!]
 		\centering
-		\includegraphics[width=0.4\linewidth]{img/template_manager_new_template.png}
+		\includegraphics[width=0.3\linewidth]{img/template_manager_new_template.png}
 		\caption{New Template}
 		\label{fig:template_manager_new_template}
 	\end{figure}
 	
-	Enter the name of the template and that's all. Choose a descriptive name, because that's the name you will see in the list of available templates for a particular class (e.g. "96-port ODF" or "Cisco ASR 1000")
+	Enter the name of the template and that's all. Choose a descriptive name, because that is the name you will see in the list of available templates for a particular class (e.g. "96-port ODF" or "Cisco ASR 1000")
 	
 	\begin{figure}[h!]
 		\centering
@@ -529,7 +530,7 @@
 		\label{fig:template_manager_name}
 	\end{figure}
 	
-	Template elements properties can be edited the same way as the inventory objects. The values in the template (except for the creation date) will be copied onto the new objects created from them.
+	Template elements properties can be edited the same way as the inventory objects. The values in the template (except for the creation date) will be copied onto the new objects created from them. The name of template objects for physical connections (links and containers) will be overriden with the one provided in the wizard.
 	\newpage
 	\begin{figure}[h!]
 		\centering
@@ -538,25 +539,25 @@
 		\label{fig:template_manager_template_properties}
 	\end{figure}
 	
-	You can also create templates from special objects (see \textbf{\nameref{sec:extra_explorers_children_explorer}}). The Figure \ref{fig:template_with_special_objects} shows the template for a Non-Armored Loose Tube Cable. 
+	You can also create templates from special objects. Note that the templates you create for classes \textit{GenericPhysicalContainer} and \textit{GenericPhysicalLink} will be used in the Physical Connections Wizard (see \textbf{\nameref{sec:physical_connections}}). The Figure \ref{fig:template_with_special_objects} shows the template for a Non-Armored Loose Tube Cable. 
 	
 	\begin{figure}[h!]
 		\centering
-		\includegraphics[width=0.8\linewidth]{img/template_with_special_objects.png}
+		\includegraphics[width=0.6\linewidth]{img/template_with_special_objects.png}
 		\caption{Template using special object}
 		\label{fig:template_with_special_objects}
 	\end{figure}
 	
-	Now you can create a containment structure as complex as you want.\\
+	Now you can create containment structures as complex as you want.\\
 	
 	\begin{figure}[h!]
 		\centering
-		\includegraphics[width=0.6\linewidth]{img/template_manager_template_containment.png}
+		\includegraphics[width=0.4\linewidth]{img/template_manager_template_containment.png}
 		\caption{Template with a complex containment structure}
 		\label{fig:template_manager_template_containment}
 	\end{figure}
-	Copy, paste and rename operations work as they do with normal inventory objects and you can use them to construct your templates. Remember that you have to correctly configure the standard (see \ref{fig:standard_containment_manager}) and special (see \ref{fig:special_containment_manager}) containment hierarchy  before creating templates.\\
-	Now you can create objects from templates. Just right-click on the parent object and select the \textbf{New from Template...} action.\\
+	Copy, paste and rename operations work as they do with normal inventory objects and you can use them to build your templates. Remember that you have to correctly configure the standard (see \ref{fig:standard_containment_manager}) and special (see \ref{fig:special_containment_manager}) containment hierarchy before creating templates.\\
+	Now you can create objects from templates. Simply right-click on the parent object and select the \textbf{New from Template...} action.\\
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.6\linewidth]{img/template_manager_new_from_template.png}
@@ -565,17 +566,17 @@
 	\end{figure}
 	
 	\newpage
-	Now select the desired template and press \textbf{Create Object}. Note that the window won't close automatically, so you can create more objects.
+	Now select the desired template and select \textbf{Create Object}. Note that the window won't close automatically, so you can create more objects.
 	\begin{figure}[h!]
 		\centering
-		\includegraphics[width=0.6\linewidth]{img/template_manager_select_template.png}
+		\includegraphics[width=0.5\linewidth]{img/template_manager_select_template.png}
 		\caption{Selecting a template}
 		\label{fig:template_manager_select_template}
 	\end{figure}
 	
 	\clearpage
 	\section{List Type Manager} \label{sec:list_type_manager}
-	Most of the attributes are primitive types (String, Integer, Booleans, etc), however, there are some more complex that point to another object in the database. This is the case of attributes such as \textit{vendor}, which points to an object holding the information about the vendor of that equipment (support lines, account manager, etc) or \textit{state}, that refers to the current operational state of the equipment (Working, Not Working, Stored, etc) and the state itself is an object, because it may hold information about what are the next allowed states, for example. Many objects in the database will have the same \textit{vendor}, and many other will have the same \textit{state}. In short, list types are those kind of attributes that point to an element in a limited set of objects. In terms of relational databases, you can see it as a many-to-one kind of relationship. To manage the existing list types and its instances, use the \textbf{\nameref{sec:data_model_manager}} and the \textbf{\nameref{sec:list_type_manager}}. \newline
+	Most of the attributes are primitive types (String, Integer, Booleans, etc), however, there are some more complex that are actually another object in the database. This is the case of attributes such as \textit{vendor}, which points to an object holding the information about the vendor of that equipment (support lines, account manager, etc) or \textit{state}, that refers to the current operational state of the equipment (Working, Not Working, Stored, etc) and the state itself is an object, because it may hold information about what are the next allowed states, for example. Many objects in the database will have the same \textit{vendor}, and many other will have the same \textit{state}. In short, list types are those kind of attributes that point to an element in a limited set of objects. In terms of relational databases, you can see it as a many-to-one kind of relationship. To manage the existing list types and its instances, use the \textbf{\nameref{sec:data_model_manager}} and the \textbf{\nameref{sec:list_type_manager}}. \newline
 	
 	To add new list types, add a subclass under GenericObjectList directly or any of its utility subclasses. List types are like any other class, you can customize them as needed.
 	\begin{figure}[h!]
@@ -607,7 +608,7 @@
 	 \end{figure}
 	 
 	\clearpage
-	\section{Queries} \label{sec:querying}
+	\section{Query Manager} \label{sec:querying}
 	\subsection{Graphical Query Editor} 
 	The query editor lets you make a search with a graphical interface, based on nodes to represent the search criteria and connections to express the relationships. Once selected, by clicking on the icon \includegraphics[width=0.5cm]{img/icon_query_manager.png} you will get a blank canvas with a toolbar on top with the following elements:
 	\begin{figure}[h!]
@@ -701,7 +702,7 @@
 	
 	\begin{figure}[h!]
 		\centering
-		\includegraphics[width=0.9\linewidth]{img/query_results_attributes_selected.png}
+		\includegraphics[width=0.6\linewidth]{img/query_results_attributes_selected.png}
 		\caption{Result set showing some fields}
 		\label{fig:query_results_attributes_selected}
 	\end{figure}
@@ -804,7 +805,7 @@
 	If you hit the “Next Page” button \includegraphics[width=0.5cm]{img/icon_next_page.png} you will get the second page of results if there is one and so on. The “Show all” button \includegraphics[width=0.5cm]{img/icon_retrieve_all.png} will retrieve the full list of results.
 	
 	\subsection{Exporting results}
-	You can export the results in four formats: CSV, XML, Microsoft Word (DOC) and Open Document Text (ODT). So far it is only possible to export to CSV and XML. This is done by pressing the Export icon \includegraphics[width=0.5cm]{img/icon_export.png}, which will open a window to choose the location of the output file and the format:
+	Currently can export the results to plain text formats: CSV and XML. To export the results, press the Export icon \includegraphics[width=0.5cm]{img/icon_export.png}, which will open a window to choose the location of the output file and its format:
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.5\linewidth]{img/query_result_exportmenu.png}
@@ -826,7 +827,7 @@
 	
 	Finally \textbf{Range} is used to specify whether whole results should be exported or only the current page.
 	
-	Note: The XML structure used to export the results can be checked in kuwaiba's wiki\footnote{kuwaiba queries in xml format \detokenize{http://neotropic.co/kuwaiba/wiki/index.php?title=XML_Documents#To_Save_Queries/}}.
+	Note: The XML structure used to export the results can be checked in kuwaiba's wiki\footnote{Kuwaiba queries in XML format \detokenize{http://neotropic.co/kuwaiba/wiki/index.php?title=XML_Documents#To_Save_Queries}}.
 	
 	\subsection{Saving and restoring queries}
 	The queries can be saved as public or private. It's probable that someone wants to execute the same query on a regular basis and if that's the case for many users, he/she would want to let other users use such query. After you design a query, you can save it and this small window will prompt for some basic information:
@@ -871,8 +872,8 @@
 	\end{framed}
 	
 	\clearpage
-	\section{Pools Manager} \label{sec:pools_manager}
-	This module enables you to manipulate pools of objects. Pools are entities where objects that can't be placed in the standard navigation tree are put. Most of them are logical or administrative elements such as VLANs or VPNs. You can see a pool like a bag where you put things you don't know where else to put. To use this module, click on the icon  \includegraphics[width=0.5cm]{img/icon_pools_manager.png} in the main toolbar or go to the menu item Tools/Pools. It will open a navigation tree similar to the one used to browse through the containment hierarchy. The first time it will be empty; you can add new pools by right-clicking the root new and selecting “New Pool”, as show in the figure below.
+	\section{Pools} \label{sec:pools_manager}
+	This module enables you to create pools of objects. Pools are general purpose buckets where objects that can't be placed in the standard navigation tree are put. Most of them are logical or administrative elements such as VLANs or VPNs. You can see a pool like a bag where you put things you don't know where else to put. To use this module, click on the icon  \includegraphics[width=0.5cm]{img/icon_pools_manager.png} in the main toolbar or go to the menu item Tools/Pools. It will open a navigation tree similar to the one used to browse through the containment hierarchy. The first time it will be empty; you can add new pools by right-clicking the root new and selecting "New Pool", as show in the figure below.
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.5\linewidth]{img/pools_actions.png}
@@ -880,7 +881,7 @@
 		\label{fig:pools_actions}
 	\end{figure}
 	
-	The dialog box will prompt you for the newly created pool name, its description and the kind of objects  you want to store inside. If you choose, let's say, “Router”, it will let you store only instances of Router. On the other hand, if you choose an abstract class (this is any starting with “Generic” or one of the core classes like InventoryObject or ViewableObject) you will be able to place instances of any subclasses of theirs. 
+	The dialog box will prompt you for the newly created pool name, its description and the kind of objects  you want to store inside. If you choose, let's say, "Router", it will let you store only instances of Router. On the other hand, if you choose an abstract class (this is any starting with “Generic” or one of the core classes like InventoryObject or ViewableObject) you will be able to place instances of any subclasses of theirs. 
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.5\linewidth]{img/pools_create_new_pool.png}
@@ -919,7 +920,7 @@
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.6\linewidth]{img/actions_object_and_rack_views.png}
-		\caption{Shown Object View and Show Rack View actions to the selected \textbf{Rack} object}
+		\caption{Object View and Rack View actions in an object's context menu}
 		\label{fig:actions_object_and_rack_views}
 	\end{figure}
 	\subsection{Object View} \label{sec:default_view}
