@@ -37,7 +37,7 @@ public class ObjectViewService {
     }
         
     public void renderView() {
-        ObjectViewConfigurationObject configObject = Lookup.getDefault().lookup(ObjectViewConfigurationObject.class);
+        ObjectViewConfigurationObject configObject = scene.getConfigObject();
         LocalObjectLight object = (LocalObjectLight) configObject.getProperty("currentObject");
         
         List<LocalObjectViewLight> views = CommunicationsStub.getInstance().getObjectRelatedViews(object.getOid(), object.getClassName());

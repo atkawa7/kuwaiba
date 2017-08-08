@@ -39,7 +39,6 @@ import org.openide.explorer.ExplorerManager;
 import org.openide.windows.TopComponent;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
-import org.openide.util.Lookup;
 
 /**
  * This component renders the views associated to an currentObject
@@ -79,7 +78,13 @@ public final class ObjectViewTopComponent extends TopComponent
     }
     
     public final void initCustomComponents(){
-        scene = new ChildrenViewScene();
+        configObject = new ObjectViewConfigurationObject();
+        configObject.setProperty("saved", true);
+        configObject.setProperty("currentObject", currentObject);
+        configObject.setProperty("currentView", null);
+        configObject.setProperty("connectContainer", true);
+
+        scene = new ChildrenViewScene(configObject);
         service = new ObjectViewService(scene);
         associateLookup(scene.getLookup());
         
@@ -91,12 +96,6 @@ public final class ObjectViewTopComponent extends TopComponent
         buttonGroupTools.add(btnLink);
         
         btnSelect.setSelected(true);
-        
-        configObject = Lookup.getDefault().lookup(ObjectViewConfigurationObject.class);
-        configObject.setProperty("saved", true);
-        configObject.setProperty("currentObject", currentObject);
-        configObject.setProperty("currentView", null);
-        configObject.setProperty("connectContainer", true);
     }
 
     /** This method is called from within the constructor to

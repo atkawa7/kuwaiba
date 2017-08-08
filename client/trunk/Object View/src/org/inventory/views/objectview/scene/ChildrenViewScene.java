@@ -57,7 +57,6 @@ import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Exceptions;
-import org.openide.util.Lookup;
 
 /**
  * This is the main scene for an object's view
@@ -88,14 +87,19 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
      * Popup provider for all nodes and connections
      */
     private PopupMenuProvider defaultPopupMenuProvider;
+    /**
+     * Configuration Object, to keep the object, the object view, the state of the view if is saved or not
+     */
+    ObjectViewConfigurationObject configObject;
     
-    public ChildrenViewScene () {
+    public ChildrenViewScene (ObjectViewConfigurationObject configObject) {
         interactionLayer = new LayerWidget(this);
         backgroundLayer = new LayerWidget(this);
         nodeLayer = new LayerWidget(this);
         edgeLayer = new LayerWidget(this);
         labelsLayer = new LayerWidget(this);
         myConnectionProvider = new PhysicalConnectionProvider(this);
+        this.configObject = configObject;
         
         addChild(backgroundLayer);
         addChild(edgeLayer);
@@ -126,7 +130,6 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
             widget = new ObjectNodeWidget(this, node);
         else
             widget = new ObjectNodeWidget(this, node, classMetadata.getIcon());
-        
         
         //The order the actions are added to a widget matters, if Select goes
         //after Move, you will need a double click to select the widget
@@ -239,7 +242,6 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
                 QName qnameEdge = new QName("edge");
                 xmlew.add(xmlef.createStartElement(qnameEdge, null, null));
                 
-                
                 LocalObjectLight lolEdge = (LocalObjectLight) findObject(acwEdge);
                 xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(lolEdge.getOid())));
                 xmlew.add(xmlef.createAttribute(new QName("class"), lolEdge.getClassName()));
@@ -271,7 +273,6 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
     public void render(byte[] structure) throws IllegalArgumentException {
         CommunicationsStub com = CommunicationsStub.getInstance();
         
-        ObjectViewConfigurationObject configObject = Lookup.getDefault().lookup(ObjectViewConfigurationObject.class);
         LocalObjectLight object = (LocalObjectLight) configObject.getProperty("currentObject");
         LocalObjectView currentView = (LocalObjectView) configObject.getProperty("currentView");
         
@@ -292,9 +293,10 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
         if (myConnections == null)
             throw new IllegalArgumentException();
         
-        if (structure == null) {
+        if (structure == null) 
             renderDefaultView(object, myChildren, myConnections);
-        } else {
+        
+        else {
             try {
                 XMLInputFactory inputFactory = XMLInputFactory.newInstance();
                 QName qZoom = new QName("zoom"); //NOI18N
@@ -533,5 +535,9 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
             ((ObjectConnectionWidget)aConnection).setHighContrast(enable);
         
         validate();
+    }
+
+    public ObjectViewConfigurationObject getConfigObject() {
+        return configObject;
     }
 }
