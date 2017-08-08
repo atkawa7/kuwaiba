@@ -662,7 +662,7 @@ public class CommunicationsStub {
             resAsLocal = cache.getPossibleSpecialChildrenCached(className);
         
         if (resAsLocal == null) {
-                resAsLocal = new ArrayList();
+                resAsLocal = new ArrayList<>();
                 List<ClassInfoLight> resAsRemote = service.getPossibleSpecialChildren(className, session.getSessionId());
 
                 for (ClassInfoLight cil : resAsRemote){
@@ -696,7 +696,7 @@ public class CommunicationsStub {
     public List<LocalClassMetadataLight> getPossibleSpecialChildrenNoRecursive(String className) {
         try {
             List<ClassInfoLight> resAsRemote = service.getPossibleSpecialChildrenNoRecursive(className, session.getSessionId());
-            List<LocalClassMetadataLight> resAsLocal = new ArrayList();
+            List<LocalClassMetadataLight> resAsLocal = new ArrayList<>();
             
             for (ClassInfoLight cil : resAsRemote){
                 HashMap<String, Integer> validators = new HashMap<>();
@@ -758,7 +758,7 @@ public class CommunicationsStub {
      */
     public List<LocalClassMetadataLight> getUpstreamSpecialContainmentHierarchy(String className, boolean recursive) {
         try {
-            List<LocalClassMetadataLight> res = new ArrayList();
+            List<LocalClassMetadataLight> res = new ArrayList<>();
             for (ClassInfoLight cil : service.getUpstreamSpecialContainmentHierarchy(className, recursive, session.getSessionId())) {
                 HashMap<String, Integer> validators = new HashMap<>();
                 for (Validator validator : cil.getValidators())
@@ -1492,7 +1492,7 @@ public class CommunicationsStub {
      */
     public boolean addPossibleSpecialChildren(long parentClassId, long[] possibleSpecialChildren) {
         try {
-            List<Long> psChildren = new ArrayList();
+            List<Long> psChildren = new ArrayList<>();
             for (long psChild : possibleSpecialChildren) {
                 psChildren.add(psChild);
             }
@@ -1532,7 +1532,7 @@ public class CommunicationsStub {
      */
     public boolean removePossibleSpecialChildren(long parentClassId, long [] specialChildrenToBeDeleted) {
         try {
-            List<Long> psChildren = new ArrayList();
+            List<Long> psChildren = new ArrayList<>();
             for (long psChild : specialChildrenToBeDeleted)
                 psChildren.add(psChild);
             service.removePossibleSpecialChildren(parentClassId, psChildren, session.getSessionId());
@@ -1677,7 +1677,7 @@ public class CommunicationsStub {
         try {
             List<Long> ids = service.createBulkObjects(className, parentClassName, parentOid, numberOfObjects, namePattern, session.getSessionId());
             
-            List<LocalObjectLight> newObjects = new ArrayList();
+            List<LocalObjectLight> newObjects = new ArrayList<>();
             
             for (Long id : ids) {
                 newObjects.add(getObjectInfoLight(className, id));
@@ -1703,7 +1703,7 @@ public class CommunicationsStub {
         try {
             List<Long> ids = service.createBulkSpecialObjects(className, parentClassName, parentId, numberOfSpecialObjects, namePattern, session.getSessionId());
             
-            List<LocalObjectLight> newSpecialObjects = new ArrayList();
+            List<LocalObjectLight> newSpecialObjects = new ArrayList<>();
             
             for (Long id : ids) {
                 newSpecialObjects.add(getObjectInfoLight(className, id));
@@ -3363,7 +3363,7 @@ public class CommunicationsStub {
             service.copyTemplateSpecialElements(sourceObjectsClassNames, 
                 sourceObjectsIds, newParentClassName, newParentId, session.getSessionId());
             
-            List<LocalObjectLight> localTemplateSpecialElements = new ArrayList();
+            List<LocalObjectLight> localTemplateSpecialElements = new ArrayList<>();
             
             for (int i = 0; i < sourceObjectsClassNames.size(); i += 1)
                 localTemplateSpecialElements.add(new LocalObjectLight(sourceObjectsIds.get(i), "", sourceObjectsClassNames.get(i)));
@@ -3892,7 +3892,7 @@ public class CommunicationsStub {
         try {
             List<RemotePool> remotePools = service.getProjectPools(session.getSessionId());
 
-            List<LocalPool> localPools = new ArrayList();
+            List<LocalPool> localPools = new ArrayList<>();
             
             for (RemotePool remotePool : remotePools) {
                 localPools.add(new LocalPool(remotePool.getId(), remotePool.getName(), 
@@ -3983,7 +3983,7 @@ public class CommunicationsStub {
         try {
             List<RemoteObjectLight> remoteProjects = service.getProjectsInProjectPool(poolId, limit, session.getSessionId());
             
-            List<LocalObjectLight> projects = new ArrayList();
+            List<LocalObjectLight> projects = new ArrayList<>();
             
             for (RemoteObjectLight remoteProject : remoteProjects)
                 projects.add(new LocalObjectLight(remoteProject.getOid(), remoteProject.getName(), remoteProject.getClassName()));
@@ -4100,7 +4100,7 @@ public class CommunicationsStub {
         try {
             List<RemoteObjectLight> remoteProjects = service.getProjectsAssociateToObject(objectClass, objectId, session.getSessionId());
             
-            List<LocalObjectLight> projects = new ArrayList();
+            List<LocalObjectLight> projects = new ArrayList<>();
             
             for (RemoteObjectLight remoteProject : remoteProjects)
                 projects.add(new LocalObjectLight(remoteProject.getOid(), remoteProject.getName(), remoteProject.getClassName()));
@@ -4248,7 +4248,7 @@ public class CommunicationsStub {
         try {
             List<RemoteFavoritesFolder> remotefavoritesFolders = service.getFavoritesFoldersForUser(session.getUserId(), session.getSessionId());
             
-            List<LocalFavoritesFolder> localBookmarks = new ArrayList();
+            List<LocalFavoritesFolder> localBookmarks = new ArrayList<>();
             
             for (RemoteFavoritesFolder remoteFavorite : remotefavoritesFolders)
                 localBookmarks.add(new LocalFavoritesFolder(remoteFavorite.getId(), 
@@ -4271,7 +4271,7 @@ public class CommunicationsStub {
         try {
             List<RemoteFavoritesFolder> remotefavoritesFolders = service.getFavoritesFoldersForObject(session.getUserId(), objectClass, objectId, session.getSessionId());
             
-            List<LocalFavoritesFolder> localBookmarks = new ArrayList();
+            List<LocalFavoritesFolder> localBookmarks = new ArrayList<>();
             
             for (RemoteFavoritesFolder remoteFavorite : remotefavoritesFolders)
                 localBookmarks.add(new LocalFavoritesFolder(remoteFavorite.getId(), 
