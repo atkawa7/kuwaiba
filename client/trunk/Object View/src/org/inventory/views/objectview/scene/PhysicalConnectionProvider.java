@@ -31,7 +31,6 @@ import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
-import org.openide.util.Lookup;
 
 /**
  * This class controls the physical connections behavior
@@ -70,7 +69,7 @@ public class PhysicalConnectionProvider implements ConnectProvider {
 
     @Override
     public void createConnection(Widget sourceWidget, Widget targetWidget) {
-        ObjectViewConfigurationObject configObject = Lookup.getDefault().lookup(ObjectViewConfigurationObject.class);
+        ObjectViewConfigurationObject configObject = scene.getConfigObject();
         LocalObjectLight newConnection;
         
         if ((boolean)configObject.getProperty("connectContainer")) {

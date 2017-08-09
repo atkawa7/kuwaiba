@@ -21,6 +21,7 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -90,7 +91,7 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
     /**
      * Configuration Object, to keep the object, the object view, the state of the view if is saved or not
      */
-    ObjectViewConfigurationObject configObject;
+    private ObjectViewConfigurationObject configObject;
     
     public ChildrenViewScene (ObjectViewConfigurationObject configObject) {
         interactionLayer = new LayerWidget(this);
@@ -276,14 +277,13 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
         LocalObjectLight object = (LocalObjectLight) configObject.getProperty("currentObject");
         LocalObjectView currentView = (LocalObjectView) configObject.getProperty("currentView");
         
-        /* Comment this out for debugging purposes
+        /*Comment this out for debugging purposes*/
         try {
             FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_"+currentView.getId()+".xml");
             fos.write(currentView.getStructure());
             fos.close();
         } catch(Exception e) {
         }
-        */
         
         List<LocalObjectLight> myChildren = com.getObjectChildren(object.getOid(), com.getMetaForClass(object.getClassName(),false).getOid());
         if (myChildren == null)
@@ -350,21 +350,14 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
                                 if (container != null) { // if the connection exist
                                     HashMap<String, LocalObjectLight[]> specialAttributes = com.getSpecialAttributes(className, objectId);
 
-                                    if (specialAttributes.containsKey("endpointA")) {
+                                    if (specialAttributes.containsKey("endpointA")) 
                                         endpointA = specialAttributes.get("endpointA")[0];
-
-                                        if (endpointA.getOid() != aSide)
-                                            endpointA = null;                                        
-                                    }
-                                    if (specialAttributes.containsKey("endpointB")) {
+                                    
+                                    if (specialAttributes.containsKey("endpointB")) 
                                         endpointB = specialAttributes.get("endpointB")[0];
-
-                                        if (endpointB.getOid() != bSide)
-                                            endpointB = null;
-                                    }
                                 }
                                 
-                                if (container != null && endpointA != null && endpointB != null) {
+                                if (endpointA != null && endpointB != null) {
                                     myConnections.remove(container);
 
                                     LocalObjectLight aSideObject = new LocalObjectLight(aSide, null, null);

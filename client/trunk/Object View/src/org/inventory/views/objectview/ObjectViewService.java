@@ -22,7 +22,6 @@ import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.views.objectview.scene.ChildrenViewScene;
-import org.openide.util.Lookup;
 
 /**
  * Implements the logic necessary to control what's shown in the associated TC
@@ -43,7 +42,6 @@ public class ObjectViewService {
         List<LocalObjectViewLight> views = CommunicationsStub.getInstance().getObjectRelatedViews(object.getOid(), object.getClassName());
         
         if (views != null) {
-        
             if (views.isEmpty()) {
                 currentView = null;
                 configObject.setProperty("currentView", currentView);
@@ -58,7 +56,7 @@ public class ObjectViewService {
     }
     
     public void saveView() {
-        ObjectViewConfigurationObject configObject = Lookup.getDefault().lookup(ObjectViewConfigurationObject.class);
+        ObjectViewConfigurationObject configObject = scene.getConfigObject();
         LocalObjectLight currentObject = (LocalObjectLight) configObject.getProperty("currentObject");
         
         if (currentObject != null) {
