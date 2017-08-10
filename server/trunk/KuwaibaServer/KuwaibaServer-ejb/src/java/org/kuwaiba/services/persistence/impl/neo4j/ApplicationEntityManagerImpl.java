@@ -3031,21 +3031,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public void checkRelationshipByAttributeValueBusinessRules(String sourceObjectClassName, long sourceObjectId ,
             String targetObjectClassName, long targetObjectId) throws BusinessRuleException, InvalidArgumentException  {
         
-//        if (!Boolean.valueOf(getConfiguration().getProperty("enforceBusinessRules", "false")))
-//            return;
-        
-        //System.out.println("Checking business rules...");
+        if (!Boolean.valueOf(getConfiguration().getProperty("enforceBusinessRules", "false")))
+            return;
         
         try (Transaction tx = graphDb.beginTx()) {    
             for (Node businessRuleNode : businessRulesIndex.query(Constants.PROPERTY_ID, "*")) {
-                
-//                for (String prop : businessRuleNode.getPropertyKeys())
-//                            System.out.println(prop + " " + businessRuleNode.getProperty(prop));
-                
-//                System.out.println("Matching " + businessRuleNode.getProperty("name"));
-                
+                                
                 if (sourceObjectClassName.equals(businessRuleNode.getProperty(Constants.PROPERTY_APPLIES_TO))) {
-                    //System.out.println("Matched source with " + sourceObjectClassName);
                     /**
                      * In this type of business rules:
                      * constraint1 is the class name of the target object
@@ -3060,8 +3052,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     
                     if (businessRuleNode.getProperty("constraint1").equals(targetObjectClassName)) {
                         
-                        //System.out.println("Matched target with " + targetObjectClassName);
-                        
                         String sourceObjectAttributeConstraint = (String)businessRuleNode.getProperty("constraint4");
                         String targetObjectAttributeConstraint = (String)businessRuleNode.getProperty("constraint5");
                         if (sourceObjectAttributeConstraint.isEmpty() || targetObjectAttributeConstraint.isEmpty()) //This link can be connected to any object
@@ -3070,10 +3060,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                         Node sourceInstance = graphDb.index().forNodes(Constants.INDEX_OBJECTS).get(Constants.PROPERTY_ID, sourceObjectId).getSingle();
                         String sourceInstanceAttributeValue = Util.getAttributeFromNode(sourceInstance, (String)businessRuleNode.getProperty("constraint2"));
                         
-                        //System.out.println("source attr value: " + sourceInstanceAttributeValue);
-                        
                         if (sourceObjectAttributeConstraint.equals(sourceInstanceAttributeValue)) {
-                            //System.out.println("Matched source attribute");
                             Node targetInstance = graphDb.index().forNodes(Constants.INDEX_OBJECTS).get(Constants.PROPERTY_ID, targetObjectId).getSingle();
                             String targetInstanceAttributeValue = Util.getAttributeFromNode(targetInstance, (String)businessRuleNode.getProperty("constraint3"));
                             

@@ -47,7 +47,7 @@ import org.kuwaiba.util.ChangeDescriptor;
 public class ToolsBean implements ToolsBeanRemote {
         
     @Override
-    public void resetAdmin()  throws ServerSideException, NotAuthorizedException{
+    public void resetAdmin()  throws ServerSideException, NotAuthorizedException {
         
         try {
             PersistenceService.getInstance().getApplicationEntityManager().setUserProperties(UserProfile.DEFAULT_ADMIN,null, "kuwaiba", null, null, 1, UserProfile.USER_TYPE_GUI);
