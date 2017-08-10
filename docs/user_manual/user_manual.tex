@@ -450,7 +450,7 @@
 			\label{fig:navigation_tree_relationship_explorer}
 		\end{figure}
 		
-		In the Relationship Explorer you have a toolbar with a button that allows you to navigate through the special relationships using a graphical view. You can open the canvas figure~\ref{fig:graphical_representation_relationships} just right click in the icon \includegraphics[width=0.5cm]{img/icon_graphical_representation_relationships.png}		
+		In the Relationships Explorer you have a toolbar with a button that allows you to navigate through the special relationships using a graphical view. You can open the canvas figure~\ref{fig:graphical_representation_relationships} just right click on the icon \includegraphics[width=0.5cm]{img/icon_graphical_representation_relationships.png}		
 						
 		\begin{figure}[h!]
 			\centering
@@ -468,7 +468,7 @@
 				\midrule
 				\includegraphics[width=0.5cm]{img/icon_export_as_image.png} & Export as image\\
 				\midrule
-				\includegraphics[width=0.5cm]{img/icon_reorganize_nodes.png} & If the nodes are overlapped, you can organize them using this button\\
+				\includegraphics[width=0.5cm]{img/icon_reorganize_nodes.png} & If the nodes are overlapped, you can re-organize them using this button\\
     			\midrule
 	 			\includegraphics[width=0.5cm]{img/icon_refresh_view.png} & Refresh the tree.\\
 				\midrule
@@ -487,7 +487,7 @@
 			\label{fig:navigation_tree_special_children_explorer}
 		\end{figure}
 		
-		Every node in the special children explorer has a set of actions, some will be active for all objects, some depend on the type of element that is selected. In the figure~\ref{fig:navigation_tree_special_children_explorer} you can see the actions enabled for a WireContainer object. The actions are mostly the same as in the Navigation Tree with the following exceptions:
+		Every node in the special children explorer has a set of actions. Some will be active for all objects, some depend on the type of element that is selected. In the figure~\ref{fig:navigation_tree_special_children_explorer} you can see the actions enabled for a WireContainer object. The actions are mostly the same as in the Navigation Tree with the following exceptions:
 		
 		\begin{itemize}
 			\item \textbf{New Special:} The list of special object types that can be contained inside the selected element type as configured in the Special Containment Hierarchy.
@@ -924,7 +924,7 @@
 		\label{fig:actions_object_and_rack_views}
 	\end{figure}
 	\subsection{Object View} \label{sec:default_view}
-		A view is a graphical representation of an object. There are many types of views, because an object has different perspectives, for example, a service object may have a view showing all the resources associated to it, a second view showing how all those resources are connected and a third showing statistics about such service. All instances (objects) of subclasses of \textbf{ViewableObject} have a Object View that displays the direct children of the selected node. Most objects, except logical and administrative assets and a few physical ones such as slots and ports are subclasses of \textbf{ViewableObject}. To access this view, select a node in the navigation tree right-click on it and click on the action Show Object View.
+		A view is a graphical representation of what's inside an object. All instances (objects) of subclasses of \textbf{ViewableObject} have an Object View that displays the direct children of the selected node. Most objects, except logical and administrative assets and a few physical ones such as slots and ports are subclasses of \textbf{ViewableObject}. To access this view, select a node in the navigation tree right-click on it and click on the action Show Object View. You may open as many object views as you want (prior to version 1.5, you had only one Object View window that was updated everytime you selected an object).
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.9\linewidth]{img/default_view.png}
@@ -953,19 +953,19 @@
 			\begin{tabular}[h!]{lp{10cm}}
 				\includegraphics[width=0.5cm]{img/icon_save.png} & Save view\\
 				\midrule
-				\includegraphics[width=0.5cm]{img/icon_add_background.png} & Add background\\
+				\includegraphics[width=0.5cm]{img/icon_add_background.png} & Add a background image\\
 				\midrule
-				\includegraphics[width=0.5cm]{img/icon_remove_background.png} & Remove background\\
+				\includegraphics[width=0.5cm]{img/icon_remove_background.png} & Remove the background image\\
 				\midrule
 				\includegraphics[width=0.5cm]{img/icon_toggle_conn_labels.png} & Hide/show the labels next to the connections\\
 				\midrule
-				\includegraphics[width=0.5cm]{img/object_view_high_contrast.png} & Node labels high contrast\\
+				\includegraphics[width=0.5cm]{img/object_view_high_contrast.png} & Show high contrast node labels (useful when the background is dark)\\
 				\midrule
 				\includegraphics[width=0.5cm]{img/icon_select_tool.png} & Select/Move tool (selected by default)\\
 				\midrule
-				\includegraphics[width=0.5cm]{img/object_view_container.png} & Create connections using container (See \textbf{\nameref{sec:physical_connections}} for more details on how to use it)\\
+				\includegraphics[width=0.5cm]{img/object_view_container.png} & Connect two nodes using a container (See \textbf{\nameref{sec:physical_connections}} for more details on how to use it)\\
 				\midrule
-				\includegraphics[width=0.5cm]{img/object_view_link.png} & Create connection using links (See \textbf{\nameref{sec:physical_connections}} for more details on how to use it)\\	
+				\includegraphics[width=0.5cm]{img/object_view_link.png} & Connect two ports using links (See \textbf{\nameref{sec:physical_connections}} for more details on how to use it)\\	
 				\midrule
 				\includegraphics[width=0.5cm]{img/icon_export.png} & Export to image file\\
 				\midrule
@@ -974,7 +974,7 @@
 		\end{table}
 		
 		\subsection{Rack View} \label{sec:rack_view}
-		This view works only with objects of class \textbf{Rack} or its subclasses. It shows how the elements contained within the selected object are organized, based on their positions and number of rack units used. 
+		This view works only with objects of class \textbf{Rack} or its subclasses. It shows how the elements contained within the selected object are organized, based on their positions and number of rack units used. It can be launched by selecting the option \textit{Show Rack View} in the object's context menu.
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.5\linewidth]{img/show_rack_view.png}
@@ -991,14 +991,14 @@
 				\caption{Error displayed when the rack does not have a valid value of rack units}
 				\label{fig:error_rack_view_not_rackunits}
 			\end{figure}
-			\item The attribute \textbf{rackUnitsNumberingDescending} must exist, if the rack unit sorting has not been set numbering ascending is assumed
+			\item The attribute \textbf{rackUnitsNumberingDescending} must exist, if the rack unit sorting has not been set numbering ascending is assumed. This attribute tells the view to render the rack units in ascending order (if \textbf{false}) or descending order (if \textbf{true}).
 			\begin{figure}
 				\centering
 				\includegraphics[width=0.4\linewidth]{img/rack_units_numbering_descending_attribute.png}
 				\caption{Attribute correctly set in a Rack}
 				\label{fig:rack_units_numbering_descending_attribute}
 			\end{figure}
-			\item The attributes \textbf{rackUnits} and \textbf{position} must exist and be set to valid values in the elements contained inside the rack. \textbf{rackUnits} in this case, makes reference to the number of rack units occupied by the contained element, while \textbf{position} is the start position of the contained element, 1-based, numbered from top to bottom. Your equipment vendor usually provides this value.
+			\item The attributes \textbf{rackUnits} and \textbf{position} must exist and be set to valid values in the elements contained inside the rack. \textbf{rackUnits} in this case, makes reference to the number of rack units occupied by the contained element, while \textbf{position} is the start position of the contained element, 1-based, numbered from top to bottom. Your equipment vendor usually provides this value. If the value of rackUnits is 0, the element won't be dislayed in the view (useful for elements like grounding bars, for example).
 			\begin{figure}[h!]
 				\centering
 				\includegraphics[width=0.4\linewidth]{img/rack_view_attributes_contained_element.png}
@@ -1008,7 +1008,7 @@
 		\end{itemize}
 		\begin{framed} {\large \textbf{Important}}
 			\begin{itemize}
-				\item The attributes name \textbf{rackUnitsNumberingDescending} are case sensitive and must be Boolean.
+				\item The attribute name \textbf{rackUnitsNumberingDescending} is case-sensitive and must be Boolean.
 				\item The attribute names (\textbf{rackUnits}, \textbf{position}) are case sensitive and must be integers.
 				\item Some elements you want to create inside a rack \textbf{might not} have those attributes by default, so you will need to create them using the \nameref{sec:data_model_manager}.			
 			\end{itemize}
@@ -1047,15 +1047,15 @@
 		
 		Before presenting the tools provided by the application, let's first clarify and introduce some concepts. This module deals solely with L1 topologies. It's only about cables, ports, etc. The data model provides four types of entities to represent physical layer elements:
 		\begin{itemize}
-			\item \textbf{Connections:} These are all point-to-point physical links. In the current data model, there are three	types of connections: \textbf{ElectricalLink} (for electrical connections like coaxial, twisted
-			pairs and the like), \textbf{OpticalLink} (for fiber optics), \textbf{RadioLink} (for radio links -Microwave links, mostly-) and \textbf{PowerLink} (for electrical power connections AC/DC).
-			\item \textbf{Containers:} All objects that can be used to contain, wrap and protect connections (understanding \textit{Connection} as defined above). There are two types of containers: \textbf{WireContainer} (used to contain all kind of cables -wires and fibers-, like pipes, conduits, ditches, etc) and \textbf{WirelessContainer} (used to contain radio channels or carriers).
-			\item \textbf{Nodes:} These objects are endpoints to \textit{Containers}. In the default data model you will find classes like: \textbf{Tower}, \textbf{Warehouse}, \textbf{Facility}, \textbf{Shelter}, \textbf{Building}, \textbf{Floor} and \textbf{Room}, but in general, any subclass of \textbf{GenericPhysicalNode} can be a so called \textit{Node}.
-			\textbf{Endpoints:} These objects are endpoints to \textit{Connections}. In practice, they're always some kind of \textbf{Port} (in the data model context, this means all subclasses of \textbf{GenericPort}).
+			\item \textbf{Links:} These are all physical connections that connect two ports. In the current data model, there are three	types of connections: \textbf{ElectricalLink} (for electrical connections like coaxial, twisted
+			pairs and the like), \textbf{OpticalLink} (for fiber optics), \textbf{RadioLink} (for radio links -Microwave links, mostly-) and \textbf{PowerLink} (for electrical power connections AC/DC). You can create new types by adding subclasses to the abstract class \textit{GenericPhysicalLink}
+			\item \textbf{Containers:} All objects that can be used to contain, wrap and protect links (understanding \textit{Link} as defined above). There are two types of containers: \textbf{WireContainer} (used to contain all kind of cables -wires and fibers-, like pipes, conduits, ditches, etc) and \textbf{WirelessContainer} (used to contain radio channels or carriers). You can create new types by adding subclasses to the abstract class \textit{GenericPhysicalContainer}.
+			\item \textbf{Nodes:} These objects are endpoints to \textit{Containers}. In the default data model you will find classes like: \textbf{Tower}, \textbf{Warehouse}, \textbf{Facility}, \textbf{Shelter}, \textbf{Building}, \textbf{Floor} and \textbf{Room}, but in general, any inventory object can be a \textit{Node}. In versions prior to 1.5, only subclasses of \textbf{GenericPhysicalNode} could be nodes.
+			\textbf{Endpoints:} These objects are endpoints to \textit{Links}. In practice, they're always some kind of \textbf{Port} (in the data model context, this means all subclasses of \textbf{GenericPort}).
 		\end{itemize}
-		In summary, you can only connect \textit{Nodes} using \textit{Containers} and \textit{Endpoints} using \textit{Connections}. To create new connections, select in the \textbf{\nameref{sec:navigation_tree}} an element and try to connect the desired children using the \nameref{sec:default_view}. For example, if you want to connect two buildings, select the city which is the parent for both. Likewise, if you want to connect a router to an ODF, you probably will have to select the room or the rack where they are located. In short, select the nearest common parent between the two elements you want to connect.
+		In summary, you can only connect \textit{Nodes} using \textit{Containers} and \textit{Endpoints} using \textit{Links}. To create new connections, open the Object View of an element and try to connect the desired nodes. For example, if you want to connect two buildings, select the city which is the parent for both. Likewise, if you want to connect a router to an ODF, you probably will have to select the room or the rack where they are located. In short, select the nearest common parent between the two elements you want to connect. Alternatively, you can just select two objects in the \ref{sec:navigation_tree} and execute the action \textit{Create Physical Connection}.
 		
-		Let's put together all these concepts  with some examples. 
+		Let's put together all these concepts with some examples. 
 		\subsection{Example 1} \label{sec:physical_connections_example_1}
 			In this example, we will create a direct connection between two routers in the same room, but in different racks using a CAT-5 patch as shown in the figure~\ref{fig:l1_example_1}.\newline
 			\begin{figure}[h!]
@@ -1190,14 +1190,14 @@
 						\caption{Final result}
 						\label{fig:l1_example_2_final}
 					\end{figure}
-					\item Once the container has been created, we can now connect a pair of fibers to each side's ODF back port (note the naming used for the ODF ports in the figure~\ref{fig:l1_example_2_layout}). To start a wizard to perform this operation, right-click on the container and select the option \textit{Connect links...}
+					\item Once the container has been created, you can now connect/disconnect the links or containers inside the newly created connection. In this example, we will connect a fiber strand (OpticalLink) to each side's ODF back port (note the naming used for the ODF ports in the figure~\ref{fig:l1_example_2_layout}). To start a wizard to perform this operation, right-click on the container and select the option \textit{Connect links...}
 					\begin{figure}[h!]
 						\centering
 						\includegraphics[width=0.3\linewidth]{img/l1_example_2_container_context_menu.png}
 						\caption{Container's contextual menu}
 						\label{fig:l1_example_2_container_context_menu}
 					\end{figure}
-					\item This open a window divided in three panels. The side panels let you choose what ports you want to connect to the fibers in the container. In this example, we will connect the first pair to the ports labeled as \textit{Back} in the ODFs. You can select multiple ports and fibers and connect them at the same time (use the SHIFT key for multiple selection). Note that it's not necessary to connect both sides. Push the \textit{Connect} button on the lower part of the central panel to finish the procedure.
+					\item This opens a window divided in three panels. The side panels let you choose what ports you want to connect to the fibers in the container. In this example, we will connect the first pair to the ports labeled as \textit{Back} in the ODFs. You can select multiple ports and fibers and connect them at the same time (use the SHIFT key for multiple selection). Note that it's not necessary to connect both sides. Push the \textit{Connect} button on the lower part of the central panel to finish the procedure.
 					\begin{figure}[h!]
 						\centering
 						\includegraphics[width=0.9\linewidth]{img/l1_example_2_add_links.png}
@@ -1212,7 +1212,7 @@
 					\end{figure}
 					\begin{framed} {\large \textbf{Important}}
 						\begin{itemize}
-							\item In optical connections, Rx and Tx ports are treated as a single port and a pair of fibers, actually represented as a single \textbf{OpticalLink}.							
+							\item In optical connections, Rx and Tx ports are treated as a single port and a pair of strands, is actually represented as a single \textbf{OpticalLink}.							
 						\end{itemize}
 					\end{framed}
 					It's possible to explore the contents of a container and see to what fiber the ports are connected by using the explorers in the menu Tools $\rightarrow$ Navigation. In the figure~\ref{fig:l1_example_2_links_in_container} you will see the Special Children explorer when the container is selected in the view. In the figure~\ref{fig:l1_example_2_container_relationships}, the relationship explorer shows the connections of one of the ports in the ODF when selected in the \nameref{sec:navigation_tree}.
@@ -1912,8 +1912,8 @@
 		\end{figure}
 	
 		There are two main roots in the IPAM, one for IPv4 subnets and another one for IPV6 subnets; we don't want you to mix between IPv4 and IPv6 subnets, that's why we made this separation.  To add a new subnet (IPv4 or IPv6), right click on a folder, then select \textit{Create subnet}. After this, Kuwaiba will show you a form where you should type your new subnet in Classless Inter-Domain Routing (CIDR) Format\footnote{CIDR Format http://ip2cidr.com/cidr.php}.
-		\newline i.e. For an IPv4 address you could use 182.5.13.0/26 and it will be accepted, remember de CIDR Format. 
-		\newline i.e. For an IPv6 address you could use a compress or an expand notation. For example, you could use 2000::/3 or 2000:0000:0000:0000:0000:0000:0000:0000/3 both will be accepted.
+		\newline e.g. For an IPv4 address you could use 182.5.13.0/26 and it will be accepted, remember the CIDR Format. 
+		\newline e.g. For an IPv6 address you could use a compress or an expand notation. For example, you could use 2000::/3 or 2000:0000:0000:0000:0000:0000:0000:0000/3 both will be accepted.
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.5\linewidth]{img/ipam_add_subnet.png}
@@ -1923,7 +1923,7 @@
 		
 		\subsection{Adding IPs}
 		
-		Once you have created a subnet you can an add an IP address or a range of IP addresses; by right clicking on the subnet and then selecting \textit{add IP address}, Kuwaiba will show you a form to add IPs.
+		Once you have created a subnet you can an add an IP address or a range of IP addresses by right clicking on the subnet and then selecting \textit{add IP address}, Kuwaiba will show you a form to add IPs.
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.4\linewidth]{img/ipam_subnet_actions.png}
@@ -1931,7 +1931,7 @@
 			\label{fig:ipam_subnet_actions}
 		\end{figure}
 		
-		By default, Kuwaiba will put in the text box the next not used IP address of the subnet, but you could type any IP address that belongs to the subnet range. Kuwaiba will let you add the network IP or the broadcast IP, but you should type them manually. To add a range of IPs you shall type [the first IP] - [the last IP] Kuwaiba will create every IP of the given range. 
+		By default, Kuwaiba will put in the text box the next unused IP address of the subnet, but you could type any IP address that belongs to the subnet range. Kuwaiba will let you add the network IP or the broadcast IP, but you should type them manually. To add a range of IPs you shall type [the first IP] - [the last IP] Kuwaiba will create every IP of the given range. 
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.5\linewidth]{img/ipam_add_ip_address.png}
@@ -1941,7 +1941,7 @@
 	
 	   	\subsection{Creating nested Subnets}
 	   	
-		Subnets can be nested inside other subnets as long as the limits of the subnet you are trying to nest belong completely to the bigger subnet. To nest a a subnet inside another subnet, right click on the wished subnet and then select \textit{Create subnet}. Kuwaiba will show you the form to create a subnet; by default the subnet field will be filled with the bigger subnet Network IP address, so you shall complete the CIDR format with the number of bits for the mask.
+		Subnets can be nested inside other subnets as long as the limits of the subnet you are trying to nest belong completely to the bigger subnet. To nest a subnet inside another subnet, right click on the subnet you want to edit and then select \textit{Create subnet}. Kuwaiba will show you the form to create a subnet. By default the subnet field will be filled with the bigger subnet Network IP address, so you shall complete the CIDR format with the number of bits for the mask.
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.5\linewidth]{img/ipam_add_subsubnet.png}
@@ -1949,8 +1949,7 @@
 			\label{fig:ipam_add_subsubnet}
 		\end{figure}
 		
-		
-		The subnets can be associated to VLANs o VFR instances, just right-click on the subnet and select \textit{Relate to a VLAN} or \textit{Relate to a VFRs}, then Kuwaiba will display a text dialog with a list of all the existing VLANs or VFRs.
+		The subnets can be associated to VLANs o VRF (Virtual Routing and Formatting) instances, just right-click on the subnet and select \textit{Relate to a VLAN} or \textit{Relate to a VRF}, then Kuwaiba will display a text dialog with a list of all the existing VLANs or VRF intances.
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.3\linewidth]{img/ipam_available_vlans.png}
@@ -1958,7 +1957,7 @@
 			\label{fig:ipam_available_vlans}
 		\end{figure}
 		
-		Both subnets and IP addresses can be associated to services, you can associate them to a service one by one or you can select all the subnets or IP addresses at once and then right-click on the selected item(s) and choose \textit{Relate to a service}. Kuwaiba will then display a dialog with a list of all the existing services  (see \textbf{\nameref{sec:service_manager}})
+		Both subnets and IP addresses can be associated to services, you can associate them to a service one by one or you can select all the subnets or IP addresses at once and then right-click on the selected item(s) and choose \textit{Relate to Service}. Kuwaiba will then display a dialog with a list of all the existing services (see \textbf{\nameref{sec:service_manager}})
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.4\linewidth]{img/ipam_available_services.png}
@@ -1968,7 +1967,6 @@
 		\begin{framed} {\large \textbf{Note}}
 			It won't be possible to delete a subnet or an IP address if they are associated to something else like a VLAN a service or a network device.
 		\end{framed}		 		 
-		
 
 		\newpage
 		An IP address can be associated to network devices, just right-click on the IP address, select \textit{Relate to a device} and then Kuwaiba will display a text dialog with a list of all the existing network devices that have been created.
@@ -2356,8 +2354,9 @@
 			
 			Examples of name pattern are: router-[sequence(1,3)]-[sequence(a,c)], [value(1111,name)]-[sequence(A,Z)], the first pattern generates six different names, and the second twenty six different names.
 			
-			When name patterns are defined, this can only generate a limited number of names. If in the dialogs see figure~\ref{fig:new_multiple} and see figure~\ref{fig:new_special_multiple}, the number assigned is greater than the possible names, the objects or special objects are not created.
-
-						
+			Depending on the combination of patterns, only a limited number of names can be generated. If the number of possible names is lesser than the number of objects to be created provided by the user, the objects or special objects will not be created.
+			\appendix
+			\section{Appendix B. Connector Matching} \label{app:AppendixB}
+			It's possible to define matching rules for physical connections. These rules are based on the type of connectors of both the links and the ports. To add and re
 		\end{appendices}				
 \end{document}
