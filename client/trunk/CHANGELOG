@@ -127,7 +127,7 @@
 * Rack views are now accessed via object's context menu
 * A simple support for projects was added
 * Support for updates using an Update Center was added
-* Removed "Show/Hide Node Laels" button
+* Removed "Show/Hide Node Labels" button
 * Changed license from GPLv2 to GPLv3
 * Added JTattoo's Fast as default look and feel
 * Added a warning in the window title if the connection is not secure
@@ -137,6 +137,8 @@
 * It is possible to create multiple normal and special objects at once and name them using a dynamic expression
 * It is possible to edit the connections inside a container (changing or disconnecting endpoints)
 * The icons were rearranged to make easier to open modules
-* Multiple bugfixes and improvements
 * It is now possible to select to arbitrary nodes from any tree and start the physical connections wizard
 * Except for the "New Object" actions, all other node actions with submenus have changed the submenus for separate windows to optimized the load of the node menus 
+* Added support to create physical connector mappings 
+* End-to-end view for services with logical segments added
+* Multiple bugfixes and improvements
