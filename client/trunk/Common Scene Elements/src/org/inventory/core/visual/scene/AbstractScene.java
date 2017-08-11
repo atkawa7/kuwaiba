@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
@@ -27,6 +27,7 @@ import java.util.Set;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.communications.util.Utils;
+import org.inventory.core.visual.configuration.ObjectViewConfigurationObject;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.model.ObjectSceneEvent;
@@ -99,6 +100,10 @@ public abstract class AbstractScene<N, E> extends GraphScene<N, E> {
      * Change listeners
      */
     protected ArrayList<ActionListener> changeListeners = new ArrayList<>();
+    /**
+     * Configuration Object, to keep the object, the object view, the state of the view if is saved or not
+     */
+    protected ObjectViewConfigurationObject configObject;
 
     public AbstractScene() {
         this.lookup = new SceneLookup();
@@ -278,7 +283,6 @@ public abstract class AbstractScene<N, E> extends GraphScene<N, E> {
      */
     public abstract boolean supportsBackgrounds();
     
-    
     /**
      * This lookup lets us launch a lookup event every time a widget is selected
      */
@@ -287,5 +291,13 @@ public abstract class AbstractScene<N, E> extends GraphScene<N, E> {
         public final void updateLookup(Widget aWidget){
             this.setLookups(aWidget.getLookup());
         }
+    }
+
+    public ObjectViewConfigurationObject getConfigObject() {
+        return configObject;
+    }
+
+    public void setConfigObject(ObjectViewConfigurationObject configObject) {
+        this.configObject = configObject;
     }
 }

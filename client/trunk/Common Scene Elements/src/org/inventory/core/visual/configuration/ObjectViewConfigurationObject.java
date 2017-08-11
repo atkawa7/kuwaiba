@@ -12,7 +12,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.inventory.views.objectview;
+package org.inventory.core.visual.configuration;
 
 import org.inventory.core.services.api.behaviors.ConfigurationObject;
 
