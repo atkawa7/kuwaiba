@@ -21,7 +21,6 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,7 +46,7 @@ import org.inventory.core.visual.scene.ObjectConnectionWidget;
 import org.inventory.core.visual.scene.ObjectNodeWidget;
 import org.inventory.core.visual.actions.CustomAddRemoveControlPointAction;
 import org.inventory.core.visual.actions.CustomMoveAction;
-import org.inventory.views.objectview.ObjectViewConfigurationObject;
+import org.inventory.core.visual.configuration.ObjectViewConfigurationObject;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.PopupMenuProvider;
@@ -88,10 +87,6 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
      * Popup provider for all nodes and connections
      */
     private PopupMenuProvider defaultPopupMenuProvider;
-    /**
-     * Configuration Object, to keep the object, the object view, the state of the view if is saved or not
-     */
-    private ObjectViewConfigurationObject configObject;
     
     public ChildrenViewScene (ObjectViewConfigurationObject configObject) {
         interactionLayer = new LayerWidget(this);
@@ -277,13 +272,13 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
         LocalObjectLight object = (LocalObjectLight) configObject.getProperty("currentObject");
         LocalObjectView currentView = (LocalObjectView) configObject.getProperty("currentView");
         
-        /*Comment this out for debugging purposes*/
-        try {
-            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_"+currentView.getId()+".xml");
-            fos.write(currentView.getStructure());
-            fos.close();
-        } catch(Exception e) {
-        }
+       //<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
+//        try {
+//            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_"+currentView.getId()+".xml");
+//            fos.write(currentView.getStructure());
+//            fos.close();
+//        } catch(Exception e) {}
+        //</editor-fold>
         
         List<LocalObjectLight> myChildren = com.getObjectChildren(object.getOid(), com.getMetaForClass(object.getClassName(),false).getOid());
         if (myChildren == null)
@@ -528,9 +523,5 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
             ((ObjectConnectionWidget)aConnection).setHighContrast(enable);
         
         validate();
-    }
-
-    public ObjectViewConfigurationObject getConfigObject() {
-        return configObject;
     }
 }

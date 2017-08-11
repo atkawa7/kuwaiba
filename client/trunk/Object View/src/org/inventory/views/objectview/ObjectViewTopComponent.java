@@ -34,6 +34,7 @@ import org.inventory.core.visual.export.ExportScenePanel;
 import org.inventory.core.visual.export.filters.ImageFilter;
 import org.inventory.core.visual.export.filters.SceneExportFilter;
 import org.inventory.core.visual.scene.AbstractScene;
+import org.inventory.core.visual.configuration.ObjectViewConfigurationObject;
 import org.inventory.views.objectview.scene.ChildrenViewScene;
 import org.openide.explorer.ExplorerManager;
 import org.openide.windows.TopComponent;

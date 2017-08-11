@@ -24,7 +24,7 @@ import org.inventory.core.visual.scene.ObjectNodeWidget;
 import org.inventory.models.physicalconnections.wizards.NewContainerWizard;
 import org.inventory.models.physicalconnections.wizards.NewLinkWizard;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
-import org.inventory.views.objectview.ObjectViewConfigurationObject;
+import org.inventory.core.visual.configuration.ObjectViewConfigurationObject;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.ConnectorState;
 import org.netbeans.api.visual.anchor.AnchorFactory;

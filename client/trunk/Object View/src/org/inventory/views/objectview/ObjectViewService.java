@@ -15,6 +15,7 @@
  */
 package org.inventory.views.objectview;
 
+import org.inventory.core.visual.configuration.ObjectViewConfigurationObject;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
