@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+OpenIDE-Module: org.inventory.core.visual/1
+OpenIDE-Module-Implementation-Version: 1
+OpenIDE-Module-Localizing-Bundle: org/inventory/core/visual/Bundle.properties
+
