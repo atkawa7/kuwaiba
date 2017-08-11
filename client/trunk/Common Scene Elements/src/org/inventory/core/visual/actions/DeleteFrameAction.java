@@ -13,7 +13,7 @@
  *   limitations under the License.
  * 
  */
-package org.inventory.design.topology.actions;
+package org.inventory.core.visual.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.Set;
@@ -21,7 +21,6 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.visual.scene.AbstractScene;
-import org.inventory.design.topology.scene.TopologyViewScene;
 
 /**
  * Action to delete a frame from topology designer scene
@@ -29,14 +28,14 @@ import org.inventory.design.topology.scene.TopologyViewScene;
  */
 public class DeleteFrameAction extends GenericInventoryAction {
     private static DeleteFrameAction instance;
-    private final TopologyViewScene scene;
+    private final AbstractScene scene;
     
-    private DeleteFrameAction(TopologyViewScene scene) {
+    private DeleteFrameAction(AbstractScene scene) {
         putValue(NAME, "Delete Frame");
         this.scene = scene;
     }
     
-    public static DeleteFrameAction getInstance(TopologyViewScene scene) {
+    public static DeleteFrameAction getInstance(AbstractScene scene) {
         if (scene == null)
             return null;
         
@@ -48,7 +47,7 @@ public class DeleteFrameAction extends GenericInventoryAction {
         Set<?> selectedObjects = scene.getSelectedObjects();
         for (Object selectedObject : selectedObjects) {
             LocalObjectLight lol = (LocalObjectLight)selectedObject;
-            if (lol.getName().contains(TopologyViewScene.FREE_FRAME))
+            if (lol.getName().contains(AbstractScene.FREE_FRAME))
                 scene.removeNodeWithEdges(lol);
             scene.fireChangeEvent(new ActionEvent(selectedObject, AbstractScene.SCENE_CHANGE, "manualDelete"));
         }

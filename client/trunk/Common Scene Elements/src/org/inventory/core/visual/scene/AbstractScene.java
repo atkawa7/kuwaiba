@@ -57,6 +57,10 @@ public abstract class AbstractScene<N, E> extends GraphScene<N, E> {
      */
     public final static String ACTION_CONNECT = "connect"; //NOI18
     /**
+     * Constant to represent the free frames that can be added to some views
+     */
+    public final static String FREE_FRAME = "freeFrame";
+    /**
      * Event ID to indicate a change in the scene (saving is not mandatory)
      */
     public final static int SCENE_CHANGE = 1;

@@ -13,12 +13,12 @@
  *   limitations under the License.
  * 
  */
-package org.inventory.design.topology.menus;
+package org.inventory.core.visual.menu;
 
 import java.awt.Point;
 import javax.swing.JPopupMenu;
-import org.inventory.design.topology.actions.DeleteFrameAction;
-import org.inventory.design.topology.scene.TopologyViewScene;
+import org.inventory.core.visual.actions.DeleteFrameAction;
+import org.inventory.core.visual.scene.AbstractScene;
 import org.netbeans.api.visual.action.PopupMenuProvider;
 import org.netbeans.api.visual.widget.Widget;
 
@@ -41,7 +41,7 @@ public class FrameMenu implements PopupMenuProvider {
     public JPopupMenu getPopupMenu(Widget widget, Point localLocation) {
         if (theMenu == null) {
             theMenu = new JPopupMenu("Frame Menu");
-            theMenu.add(DeleteFrameAction.getInstance((TopologyViewScene) widget.getScene()));
+            theMenu.add(DeleteFrameAction.getInstance((AbstractScene) widget.getScene()));
         }
         return theMenu;
     }
