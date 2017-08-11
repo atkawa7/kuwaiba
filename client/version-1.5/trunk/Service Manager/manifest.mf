@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+OpenIDE-Module: org.kuwaiba.management.services/1
+OpenIDE-Module-Implementation-Version: 1
+OpenIDE-Module-Localizing-Bundle: org/kuwaiba/management/services/Bundle.properties
+OpenIDE-Module-Requires: org.openide.windows.WindowManager
+
