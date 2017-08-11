@@ -45,8 +45,8 @@ public class ServiceNode extends ObjectNode {
             ServiceManagerActionFactory.getDeleteServiceAction(),
             null,
             Lookup.getDefault().lookup(ShowEndToEndSimpleViewAction.class),
-            Lookup.getDefault().lookup(ShowEndToEndViewAction.class),
-            Lookup.getDefault().lookup(ShowEndToEndDetailedViewAction.class),
+            //Lookup.getDefault().lookup(ShowEndToEndViewAction.class),
+            //Lookup.getDefault().lookup(ShowEndToEndDetailedViewAction.class),
             Lookup.getDefault().lookup(AddObjectToFavoritesFolderAction.class),
             null,
             ShowMoreInformationAction.getInstance(getObject().getOid(), getObject().getClassName())
