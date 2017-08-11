@@ -26,6 +26,7 @@
                     <f:selectItem itemEscaped="false" itemLabel="&lt;b&gt;[1.1.x &#8594; 1.5] Projects Module support.&lt;/b&gt; This action adds the abstract classes GenericProject, GenericActivity and some sample subclasses to allow that the Projects Module to work correctly." itemValue="4" />
                     <f:selectItem itemEscaped="false" itemLabel="&lt;b&gt;[1.1.x &#8594; 1.5] Rack Views.&lt;/b&gt; This action adds the attribute rackUnitsNumberingDescending to the Rack class, adding support for ascending and descending rack unit numbering." itemValue="5" />
                     <f:selectItem itemEscaped="false" itemLabel="&lt;b&gt;[1.1.x &#8594; 1.5] Connector Matching.&lt;/b&gt; This action adds the classes and attributes in the data model to allow that the connector matching rules can be configured." itemValue="6" />                    
+                    <f:selectItem itemEscaped="false" itemLabel="&lt;b&gt;[1.1.x &#8594; 1.5] Port Type Update.&lt;/b&gt; This action update the classes changing the type of the &lt;b&gt;type&lt;/b&gt; attribute in the ElectricalPort to ElectricalPortType and OpticalPort to OpticalPortType. &lt;b&gt;Warning this action set null the values of the type attribute&lt;/b&gt;" itemValue="7" />                    
                 </h:selectManyCheckbox>
                 <br />
                 <h:commandButton class="button" action="#{Tools.applyPatches}" value="#{bundle.ApplyPatchesApply}" />
