@@ -77,6 +77,7 @@
             <public-packages>
                 <package>org.inventory.core.visual.actions</package>
                 <package>org.inventory.core.visual.actions.providers</package>
+                <package>org.inventory.core.visual.configuration</package>
                 <package>org.inventory.core.visual.decorators</package>
                 <package>org.inventory.core.visual.export</package>
                 <package>org.inventory.core.visual.export.filters</package>
