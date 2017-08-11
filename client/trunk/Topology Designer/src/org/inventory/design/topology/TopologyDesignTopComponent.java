@@ -433,10 +433,10 @@ public final class TopologyDesignTopComponent extends TopComponent implements Ex
                 scene.setBackgroundImage(myBackgroundImage);
                 scene.fireChangeEvent(new ActionEvent(scene, TopologyViewScene.SCENE_CHANGE, "Add Background"));
                 btnRemoveBackground.setEnabled(true);
-                } catch (IOException ex) {
-                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());
-                }
+            } catch (IOException ex) {
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());
             }
+        }
     }//GEN-LAST:event_btnAddBackgroundImageActionPerformed
 
     private void btnRemoveBackgroundActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveBackgroundActionPerformed

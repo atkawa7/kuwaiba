@@ -353,8 +353,8 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
                                     }
                                 }
                             }// edges endign 
-                            else{
-                                if (reader.getName().equals(qPolygon)) { // FREE FRAMES
+                            else{ // FREE FRAMES
+                                if (reader.getName().equals(qPolygon)) { 
                                     long oid = randomGenerator.nextInt(1000);
                                     LocalObjectLight lol = new LocalObjectLight(oid, oid + FREE_FRAME + reader.getAttributeValue(null, "title"), null);
                                     Widget myPolygon = addNode(lol);
