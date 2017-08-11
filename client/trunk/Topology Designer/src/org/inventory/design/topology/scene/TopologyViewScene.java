@@ -47,9 +47,9 @@ import org.inventory.core.visual.actions.providers.CustomAcceptActionProvider;
 import org.inventory.core.visual.actions.providers.CustomMoveProvider;
 import org.inventory.core.visual.actions.providers.CustomResizeProvider;
 import org.inventory.core.visual.actions.providers.CustomSelectProvider;
+import org.inventory.core.visual.menu.FrameMenu;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.core.visual.scene.ObjectNodeWidget;
-import org.inventory.design.topology.menus.FrameMenu;
 import org.inventory.design.topology.menus.ObjectConnectionWidgetMenu;
 import org.inventory.design.topology.menus.ObjectNodeWidgetMenu;
 import org.netbeans.api.visual.action.ActionFactory;
@@ -81,7 +81,6 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
     private final static String FORMAT_VERSION = "1.0";
     private final String CLOUD_ICON_PATH = "org/inventory/design/topology/res/cloudBig.png"; // NOI18
     public final static String CLOUD_ICON = "cloudIcon";
-    public final static String FREE_FRAME = "freeFrame";
     private final Image cloudIcon = ImageUtilities.loadImage(CLOUD_ICON_PATH);
     
     private final LayerWidget iconsLayer;
