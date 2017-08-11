@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+    <ui:composition template="/app/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.GeneralTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="pageTitle">
+            <h:outputText value="#{bundle.ApplyPatchesTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h1>#{bundle.ApplyPatchesTitle}</h1>
+            <p>
+               #{bundle.ApplyPatchesDescription}
+            </p>
+            <h:form id="form">
+                <h:selectManyCheckbox value="#{Tools.patches}" layout="pageDirection">
+                    <!-- These options should be dynamic in the future -->
+                    <f:selectItem itemEscaped="false" itemLabel="&lt;b&gt;[1.0 &#8594; 1.1.x] Reset passwords.&lt;/b&gt; All users in the database will have their passwords reset to the same &quot;username&quot; value. The passwords were stored as unsalted MD5 hashes until version 1.0 and in version 1.1 BCrypt is used instead." itemValue="1" />
+                    <f:selectItem itemEscaped="false" itemLabel="&lt;b&gt;[1.0 &#8594; 1.1.x] Migrate hard-coded reports.&lt;/b&gt; This action creates wrapper dynamic reports for the old hard-coded ones. In future releases, the hard-coded reports will disappear completely. Class GenericMPLService will be renamed to GenericMPLSService as well." itemValue="2" />
+                    <f:selectItem itemEscaped="false" itemLabel="&lt;b&gt;[1.1.x &#8594; 1.5] Migrate group-less users.&lt;/b&gt; All users without group will be moved to a default group so the new user management policies can be applied." itemValue="3" />
+                    <f:selectItem itemEscaped="false" itemLabel="&lt;b&gt;[1.1.x &#8594; 1.5] Projects Module support.&lt;/b&gt; This action adds the abstract classes GenericProject, GenericActivity and some sample subclasses to allow that the Projects Module to work correctly." itemValue="4" />
+                    <f:selectItem itemEscaped="false" itemLabel="&lt;b&gt;[1.1.x &#8594; 1.5] Rack Views.&lt;/b&gt; This action adds the attribute rackUnitsNumberingDescending to the Rack class, adding support for ascending and descending rack unit numbering." itemValue="5" />
+                    <f:selectItem itemEscaped="false" itemLabel="&lt;b&gt;[1.1.x &#8594; 1.5] Connector Matching.&lt;/b&gt; This action adds the classes and attributes in the data model to allow that the connector matching rules can be configured." itemValue="6" />                    
+                </h:selectManyCheckbox>
+                <br />
+                <h:commandButton class="button" action="#{Tools.applyPatches}" value="#{bundle.ApplyPatchesApply}" />
+            </h:form>
+            <br />
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" class="infoBox" layout="list"/>
+            </h:panelGroup>
+        </ui:define>
+    </ui:composition>
+</html>
