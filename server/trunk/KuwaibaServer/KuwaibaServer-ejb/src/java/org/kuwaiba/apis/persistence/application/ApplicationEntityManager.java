@@ -415,9 +415,10 @@ public interface ApplicationEntityManager {
      * @param ownerOid The id of the user that owns this query. Use -1 to keep the old value.
      * @param queryStructure The structure of the query as an XML document. Leave null to keep the old value.
      * @param description The description of the query. Leave null to keep the old value.
+     * @return The summary of the changes.
      * @throws ApplicationObjectNotFoundException If the query can not be found.
      */
-    public void saveQuery(long queryOid, String queryName, long ownerOid, byte[] queryStructure, String description)
+    public ChangeDescriptor saveQuery(long queryOid, String queryName, long ownerOid, byte[] queryStructure, String description)
             throws ApplicationObjectNotFoundException;
 
     /**
@@ -449,12 +450,9 @@ public interface ApplicationEntityManager {
      * will have at least one record.
      * @param query The code-friendly representation of the query made using the graphical query builder
      * @return a set of objects matching the specified criteria as ResultRecord array
-     * @throws MetadataObjectNotFoundException
-     * @throws InvalidArgumentException 
-     * @throws NotAuthorizedException 
+     * @throws MetadataObjectNotFoundException If the class to be search is cannot be found
      */
-    public List<ResultRecord> executeQuery(ExtendedQuery query)
-            throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException;
+    public List<ResultRecord> executeQuery(ExtendedQuery query) throws MetadataObjectNotFoundException;
 
     /**
      * Get the data model class hierarchy as an XML document
@@ -507,15 +505,7 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException If the parent object can not be found
      */
     public long createPoolInPool(long parentId, String name, String description, String instancesOfClass, int type)
-            throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException;
-    
-    /**
-     * Deletes a single pool
-     * @param id The pool id
-     * @throws ApplicationObjectNotFoundException If the pool could not be found
-     * @throws OperationNotPermittedException If any of the pool children had relationships
-     */
-    public void deletePool(long id) throws ApplicationObjectNotFoundException, OperationNotPermittedException;
+            throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException;    
     
     /**
      * Deletes a set of pools. Note that this method will delete and commit the changes until it finds an error, so if deleting any of the pools fails, don't try to delete those that were already processed
@@ -530,8 +520,9 @@ public interface ApplicationEntityManager {
      * @param poolId Pool Id
      * @param name Pool name. If null, this field will remain unchanged
      * @param description Pool description. If null, this field will remain unchanged
+     * @return The summary of the changes.
      */
-    public void setPoolProperties(long poolId, String name, String description);
+    public ChangeDescriptor setPoolProperties(long poolId, String name, String description);
     
     /**
      * Retrieves the pools that don't have any parent and are normally intended to be managed by the Pool Manager
@@ -760,31 +751,35 @@ public interface ApplicationEntityManager {
      * @param taskId Task id
      * @param propertyName Property name. Possible values: "name", "description", "enabled" and "script"
      * @param propertyValue The value of the property. For the property "enabled", the allowed values are "true" and "false"
+     * @return The summary of the changes
      * @throws ApplicationObjectNotFoundException If the task could not be found
      * @throws InvalidArgumentException If the property name has an invalid value
      */
-    public void updateTaskProperties(long taskId, String propertyName, String propertyValue) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    public ChangeDescriptor updateTaskProperties(long taskId, String propertyName, String propertyValue) throws ApplicationObjectNotFoundException, InvalidArgumentException;
     /**
      * Updates the parameters of a task. If any of the values is null, that parameter will be deleted, if the parameter does not exist, it will be created
      * @param taskId Task id
      * @param parameters The parameters to be modified as pairs paramName/paramValue
+     * @return The summary of the changes
      * @throws ApplicationObjectNotFoundException If the task could not be found
      */
-    public void updateTaskParameters(long taskId, List<StringPair> parameters) throws ApplicationObjectNotFoundException;
+    public ChangeDescriptor updateTaskParameters(long taskId, List<StringPair> parameters) throws ApplicationObjectNotFoundException;
     /**
      * Updates a task schedule
      * @param taskId Task id
      * @param schedule New schedule
+     * @return The summary of the changes
      * @throws ApplicationObjectNotFoundException If the task could not be found
      */
-    public void updateTaskSchedule(long taskId, TaskScheduleDescriptor schedule) throws ApplicationObjectNotFoundException;
+    public ChangeDescriptor updateTaskSchedule(long taskId, TaskScheduleDescriptor schedule) throws ApplicationObjectNotFoundException;
     /**
      * Updates a task notification type
      * @param taskId Task id
      * @param notificationType New notification type
+     * @return The summary of the changes
      * @throws ApplicationObjectNotFoundException If the task could not be found
      */
-    public void updateTaskNotificationType(long taskId, TaskNotificationDescriptor notificationType) throws ApplicationObjectNotFoundException;
+    public ChangeDescriptor updateTaskNotificationType(long taskId, TaskNotificationDescriptor notificationType) throws ApplicationObjectNotFoundException;
     /**
      * Deletes a task and unsubscribes all users from it
      * @param taskId Task id
@@ -795,17 +790,19 @@ public interface ApplicationEntityManager {
      * Subscribes a user to a task, so it will be notified of the result of its execution
      * @param taskId Id of the task
      * @param userId Id of the user
+     * @return The summary of the changes
      * @throws ApplicationObjectNotFoundException If the task or the user could not be found
      * @throws InvalidArgumentException If the user is already subscribed to the task
      */
-    public void subscribeUserToTask(long userId, long taskId) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    public ChangeDescriptor subscribeUserToTask(long userId, long taskId) throws ApplicationObjectNotFoundException, InvalidArgumentException;
     /**
      * Unsubscribes a user from a task, so it will no longer be notified about the result of its execution
      * @param taskId Id of the task
      * @param userId Id of the user
+     * @return The summary of the changes
      * @throws ApplicationObjectNotFoundException If the task or the user could not be found
      */
-    public void unsubscribeUserFromTask(long userId, long taskId) throws ApplicationObjectNotFoundException;
+    public ChangeDescriptor unsubscribeUserFromTask(long userId, long taskId) throws ApplicationObjectNotFoundException;
     /**
      * Retrieves the information about a particular task
      * @param taskId Id of the task
@@ -847,9 +844,8 @@ public interface ApplicationEntityManager {
      * @return The id of the newly created template.
      * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException If the provided class does not exist
      * @throws org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException If the template class is abstract.
-     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException
      */
-    public long createTemplate(String templateClass, String templateName) throws MetadataObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException;
+    public long createTemplate(String templateClass, String templateName) throws MetadataObjectNotFoundException, OperationNotPermittedException;
     /**
      * Creates an object inside a template.
      * @param templateElementClass Class of the object you want to create.
@@ -885,20 +881,22 @@ public interface ApplicationEntityManager {
      * @param templateElementId Id of the element you want to update.
      * @param attributeNames Names of the attributes that you want to be updated as an array of strings.
      * @param attributeValues The values of the attributes you want to upfate. For list types, it's the id of the related type
+     * @return The summary of the changes
      * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException If any of the classes provided as arguments do not exist
      * @throws org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException If the template element could not be found
      * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If the arrays attributeNames and attributeValues have different sizes
      */
-    public void updateTemplateElement(String templateElementClass, long templateElementId, 
+    public ChangeDescriptor updateTemplateElement(String templateElementClass, long templateElementId, 
             String[] attributeNames, String[] attributeValues) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException;
     /**
      * Deletes an element within a template or a template itself.
      * @param templateElementClass The template element class.
      * @param templateElementId The template element id.
+     * @return The summary of the changes
      * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException If the element's class could not be found.
      * @throws org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException If the element could not be found.
      */
-    public void deleteTemplateElement(String templateElementClass, long templateElementId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException;
+    public ChangeDescriptor deleteTemplateElement(String templateElementClass, long templateElementId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException;
     /**
      * Gets the templates available for a given class
      * @param className Class whose templates we need
@@ -927,7 +925,7 @@ public interface ApplicationEntityManager {
      * @return The template element information
      * @throws MetadataObjectNotFoundException If the template class does not exist
      * @throws ApplicationObjectNotFoundException If the template element could not be found.
-     * @throws InvalidArgumentException If the information stored 
+     * @throws InvalidArgumentException If an attribute value can't be mapped into value.
      */
     public RemoteBusinessObject getTemplateElement(String templateElementClass, long templateElementId)
         throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException;
@@ -969,7 +967,7 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException If the favorites folder can not be found
      * @throws MetadataObjectNotFoundException If the object can not be found
      * @throws ObjectNotFoundException If the object can not be found
-     * @throws OperationNotPermittedException If the object have a relationship with the bookmark
+     * @throws OperationNotPermittedException If the object have a relationship with the favorite folder
      */
     public void addObjectTofavoritesFolder(String objectClass, long objectId, long favoritesFolderId, long userId) 
         throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException;
@@ -1031,9 +1029,9 @@ public interface ApplicationEntityManager {
      * @param userId User id
      * @param objectClass Object class
      * @param objectId Object id
+     * @return list of favorites folders where an object are an item
      * @throws MetadataObjectNotFoundException If the object can not be found
      * @throws ObjectNotFoundException If the object can not be found
-     * @return list of bookmarks where an object are an item
      * @throws ApplicationObjectNotFoundException If the object is associated to a bookmark folder but 
      *                                            The favorites folder is not associated to the current user
      */
@@ -1045,7 +1043,7 @@ public interface ApplicationEntityManager {
      * @param favoritesFolderId favorites folder id
      * @param userId User id
      * @throws ApplicationObjectNotFoundException If the favorites folder can not be found
-     * @return The bookmark with id
+     * @return The favorite folder with id
      */
     public FavoritesFolder getFavoritesFolder(long favoritesFolderId, long userId) 
         throws ApplicationObjectNotFoundException;

@@ -2125,8 +2125,14 @@ public class WebserviceBean implements WebserviceBeanRemote {
         if (aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
-            aem.validateWebServiceCall("createObjectRelatedView", ipAddress, sessionId);
-            return aem.createObjectRelatedView(objectId, objectClass, name, description, viewClassName, structure, background);
+            aem.validateWebServiceCall("createObjectRelatedView", ipAddress, sessionId);            
+            
+            long viewId = aem.createObjectRelatedView(objectId, objectClass, name, description, viewClassName, structure, background);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+                String.format("Created %s [%s] object related view %s [%s] with id %s", objectId, objectClass, name, viewClassName, viewId));
+            return viewId;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2138,7 +2144,14 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("createGeneralView", ipAddress, sessionId);
-            return aem.createGeneralView(viewClass, name, description, structure, background);
+                        
+            long viewId = aem.createGeneralView(viewClass, name, description, structure, background);
+                        
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+                String.format("Created general view %s [%s] with id %s", name, viewClass, viewId));
+            
+            return viewId;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2213,20 +2226,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(e.getMessage());
         }
     }
-
-    /**
-     * Updates a view directly related to an object
-     * @param objectOid
-     * @param objectClass
-     * @param viewId
-     * @param viewName
-     * @param viewDescription
-     * @param structure
-     * @param background If null, the background is removed. If a 0-sized array, it's unmodified
-     * @param ipAddress
-     * @param sessionId
-     * @throws ServerSideException 
-     */
+    
     @Override
     public void updateObjectRelatedView(long objectOid, String objectClass, 
         long viewId, String viewName, String viewDescription, byte[] structure, byte[] background, String ipAddress, String sessionId) throws ServerSideException {
@@ -2234,7 +2234,9 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("updateObjectRelatedView", ipAddress, sessionId);
+            
             ChangeDescriptor theChange = aem.updateObjectRelatedView(objectOid, objectClass, viewId, viewName, viewDescription, structure, background);
+            
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                     ActivityLogEntry.ACTIVITY_TYPE_UPDATE_VIEW, theChange);
         }catch(InventoryException ie){
@@ -2249,6 +2251,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("updateGeneralView", ipAddress, sessionId);
+            
             ChangeDescriptor theChange = aem.updateGeneralView(viewId, viewName, viewDescription, structure, background);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
@@ -2265,6 +2268,9 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("deleteGeneralView", ipAddress, sessionId);
             aem.deleteGeneralViews(oids);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_DELETE_APPLICATION_OBJECT, 
+                String.format("%s general views deleted", oids.length));            
         } catch(InventoryException ie) {
             throw new ServerSideException(ie.getMessage());
         }
@@ -2277,7 +2283,13 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("createQuery", ipAddress, sessionId);
-            return aem.createQuery(queryName, ownerOid, queryStructure, description);
+            
+            long queryId = aem.createQuery(queryName, ownerOid, queryStructure, description);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+                String.format("Create query %s with id %s", queryName, queryId));             
+            return queryId;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2290,7 +2302,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("saveQuery", ipAddress, sessionId);
-            aem.saveQuery(queryOid, queryName, ownerOid, queryStructure, description);
+            
+            ChangeDescriptor changeDescriptor = aem.saveQuery(queryOid, queryName, ownerOid, queryStructure, description);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_APPLICATION_OBJECT, 
+                changeDescriptor);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2304,6 +2321,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("deleteQuery", ipAddress, sessionId);
             aem.deleteQuery(queryOid);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_DELETE_APPLICATION_OBJECT, 
+                String.format("Deleted query with id %s", queryOid));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2373,7 +2394,13 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("createRootPool", ipAddress, sessionId);
-            return aem.createRootPool(name, description, instancesOfClass, type);
+            
+            long poolId = aem.createRootPool(name, description, instancesOfClass, type);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+                String.format("Created %s Root Pool", name));
+            return poolId;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2386,7 +2413,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("createPoolInObject", ipAddress, sessionId);
-            return aem.createPoolInObject(parentClassname, parentId, name, description, instancesOfClass, type);
+            long poolId = aem.createPoolInObject(parentClassname, parentId, name, description, instancesOfClass, type);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+                String.format("Created %s pool in %s object with id %s", name, parentClassname, parentId));            
+            return poolId;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2399,7 +2431,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("createPoolInPool", ipAddress, sessionId);
-            return aem.createPoolInPool(parentId, name, description, instancesOfClass, type);
+            long poolId = aem.createPoolInPool(parentId, name, description, instancesOfClass, type);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+                String.format("Created %s Pool In Pool with id %s ", name, parentId));  
+            return poolId;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2410,26 +2447,19 @@ public class WebserviceBean implements WebserviceBeanRemote {
         if (aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
-            return bem.createPoolItem(poolId, className, attributeNames, attributeValues, templateId);
+            aem.validateWebServiceCall("createPoolItem", ipAddress, sessionId);
+            long objectId = bem.createPoolItem(poolId, className, attributeNames, attributeValues, templateId);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+                String.format("Created pool item with id", objectId));
+            
+            return objectId;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
-
-    @Override
-    public void deletePool(long id, String ipAddress, String sessionId) throws ServerSideException {
-        if (aem == null)
-            throw new ServerSideException("Can't reach the backend. Contact your administrator");
-        try {
-            aem.validateWebServiceCall("deletePool", ipAddress, sessionId);
-            aem.deletePool(id);
-            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), ActivityLogEntry.ACTIVITY_TYPE_DELETE_APPLICATION_OBJECT, 
-                    String.format("Deleted pool with id %s ", id));
-        } catch (InventoryException ex) {
-            throw new ServerSideException(ex.getMessage());
-        }
-    }
-    
+   
     @Override
     public void deletePools(long[] ids, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
@@ -2437,8 +2467,9 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("deletePools", ipAddress, sessionId);
             aem.deletePools(ids);
-            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), ActivityLogEntry.ACTIVITY_TYPE_DELETE_APPLICATION_OBJECT, 
-                    String.format("%s pools deleted", ids.length));
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_DELETE_APPLICATION_OBJECT, 
+                String.format("%s pools deleted", ids.length));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2449,8 +2480,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
         if (aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
-            aem.validateWebServiceCall("getObject", ipAddress, sessionId);
-            aem.setPoolProperties(poolId, name, description);
+            aem.validateWebServiceCall("setPoolProperties", ipAddress, sessionId);
+            ChangeDescriptor changeDescriptor = aem.setPoolProperties(poolId, name, description);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_APPLICATION_OBJECT, 
+                changeDescriptor);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2527,7 +2562,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
         if (aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
-            aem.validateWebServiceCall("getPoolItem", ipAddress, sessionId);
+            aem.validateWebServiceCall("getPoolItems", ipAddress, sessionId);
             return RemoteObjectLight.toRemoteObjectLightArray(aem.getPoolItems(poolId, limit));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -2550,18 +2585,13 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(ex.getMessage());
         }
     }
-
-    @Override
-    public ApplicationLogEntry[] getApplicationObjectAuditTrail(String objectClass, long objectId, int limit, String ipAddress, String sessionId) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
     
     @Override
     public ApplicationLogEntry[] getGeneralActivityAuditTrail(int page, int limit, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
-            aem.validateWebServiceCall("getActivityAuditTrail", ipAddress, sessionId);
+            aem.validateWebServiceCall("getGeneralActivityAuditTrail", ipAddress, sessionId);
             List<ActivityLogEntry> entries = aem.getGeneralActivityAuditTrail(page, limit);
             ApplicationLogEntry[] res = new ApplicationLogEntry[entries.size()];
             for (int i = 0; i< entries.size(); i++)
@@ -2582,8 +2612,9 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("createTask", ipAddress, sessionId);
             long res = aem.createTask(name, description, enabled, script, parameters, schedule, notificationType);
-            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
-                    String.format("Created task %s with id %s", name, res));
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+                String.format("Created task %s with id %s", name, res));
             return res;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -2596,8 +2627,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("updateTaskProperties", ipAddress, sessionId);
-            aem.updateTaskProperties(taskId, propertyName, propertyValue);
+            ChangeDescriptor changeDescriptor = aem.updateTaskProperties(taskId, propertyName, propertyValue);
             
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_APPLICATION_OBJECT, 
+                changeDescriptor);            
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2609,7 +2643,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("updateTaskParameters", ipAddress, sessionId);
-            aem.updateTaskParameters(taskId, parameters);
+            ChangeDescriptor changeDescriptor = aem.updateTaskParameters(taskId, parameters);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_APPLICATION_OBJECT, 
+                changeDescriptor);  
             
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -2622,7 +2660,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("updateTaskSchedule", ipAddress, sessionId);
-            aem.updateTaskSchedule(taskId, schedule);
+            ChangeDescriptor changeDescriptor = aem.updateTaskSchedule(taskId, schedule);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_APPLICATION_OBJECT, 
+                changeDescriptor); 
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2634,7 +2676,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("updateTaskNotificationType", ipAddress, sessionId);
-            aem.updateTaskNotificationType(taskId, notificationType);
+            ChangeDescriptor changeDescriptor = aem.updateTaskNotificationType(taskId, notificationType);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_APPLICATION_OBJECT, 
+                changeDescriptor); 
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2742,7 +2788,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("subscribeUserToTask", ipAddress, sessionId);
-            aem.subscribeUserToTask(userId, taskId);
+            ChangeDescriptor changeDescriptor = aem.subscribeUserToTask(userId, taskId);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_APPLICATION_OBJECT, 
+                changeDescriptor);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2754,7 +2803,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("unsubscribeUserFromTask", ipAddress, sessionId);
-            aem.unsubscribeUserFromTask(userId, taskId);
+            ChangeDescriptor changeDescriptor = aem.unsubscribeUserFromTask(userId, taskId);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_APPLICATION_OBJECT, 
+                changeDescriptor);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2802,7 +2854,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
 
     @Override
     public boolean isSubclassOf(String className, String subclassOf, String remoteAddress, String sessionId) {
-            return mem.isSubClass(subclassOf, className);
+        return mem.isSubClass(subclassOf, className);
     }
     
     
@@ -2815,7 +2867,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("createTemplate", ipAddress, sessionId);
-            return aem.createTemplate(templateClass, templateName);
+            long templateId = aem.createTemplate(templateClass, templateName);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+                String.format("Created template %s", templateName));
+            return templateId;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2828,8 +2885,13 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("createTemplateElement", ipAddress, sessionId);
-            return aem.createTemplateElement(templateElementClass, templateElementParentClassName, 
+            long templateElementId = aem.createTemplateElement(templateElementClass, templateElementParentClassName, 
                     templateElementParentId, templateElementName);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+                String.format("Create template element %s [%s] with id %s", templateElementName, templateElementClass, templateElementId));            
+            return templateElementId;            
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2843,8 +2905,13 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("createTemplateElement", ipAddress, sessionId);
-            return aem.createTemplateSpecialElement(tsElementClass, tsElementParentClassName, 
+            long templateSpecialElementId = aem.createTemplateSpecialElement(tsElementClass, tsElementParentClassName, 
                     tsElementParentId, tsElementName);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+                String.format("Create special template element %s [%s] with id %s", tsElementName, tsElementClass, templateSpecialElementId));
+            return templateSpecialElementId;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2856,7 +2923,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("updateTemplateElement", ipAddress, sessionId);
-            aem.updateTemplateElement(templateElementClass, templateElementId, attributeNames, attributeValues);
+            ChangeDescriptor changeDescriptor = aem.updateTemplateElement(templateElementClass, templateElementId, attributeNames, attributeValues);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_APPLICATION_OBJECT,
+                changeDescriptor);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2868,7 +2939,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("deleteTemplateElement", ipAddress, sessionId);
-            aem.deleteTemplateElement(templateElementClass, templateElementId);
+            ChangeDescriptor changeDescriptor = aem.deleteTemplateElement(templateElementClass, templateElementId);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_DELETE_APPLICATION_OBJECT,
+                changeDescriptor);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2950,7 +3025,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("copyTemplateElements", ipAddress, sessionId);
-            return aem.copyTemplateElements(sourceObjectsClassNames, sourceObjectsIds, newParentClassName, newParentId);
+            long [] templateElementsIds = aem.copyTemplateElements(sourceObjectsClassNames, sourceObjectsIds, newParentClassName, newParentId);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT,
+                String.format("Copied %s template elements", templateElementsIds.length));
+            return templateElementsIds;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2964,7 +3044,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("copyTemplateSpecialElements", ipAddress, sessionId);
-            return aem.copyTemplateSpecialElement(sourceObjectsClassNames, sourceObjectsIds, newParentClassName, newParentId);
+            long [] templateSpecialElements = aem.copyTemplateSpecialElement(sourceObjectsClassNames, sourceObjectsIds, newParentClassName, newParentId);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT,
+                String.format("Copied %s template special elements", templateSpecialElements.length));
+            return templateSpecialElements;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2979,7 +3063,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("createClassLevelReport", ipAddress, sessionId);
-            return bem.createClassLevelReport(className, reportName, reportDescription, script, outputType, enabled);
+            long reportId = bem.createClassLevelReport(className, reportName, reportDescription, script, outputType, enabled);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+                String.format("Created class level report %s", reportName));
+            return reportId;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2992,7 +3081,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("createInventoryLevelReport", ipAddress, sessionId);
-            return bem.createInventoryLevelReport(reportName, reportDescription, script, outputType, enabled, parameters);
+            long reportId = bem.createInventoryLevelReport(reportName, reportDescription, script, outputType, enabled, parameters);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+                String.format("Created inventory level report %s", reportName));
+            return reportId;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3004,7 +3098,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("deleteReport", ipAddress, sessionId);
-            bem.deleteReport(reportId);
+            ChangeDescriptor changeDescriptor = bem.deleteReport(reportId);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_DELETE_APPLICATION_OBJECT, 
+                changeDescriptor);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3017,7 +3115,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("updateReport", ipAddress, sessionId);
-            bem.updateReport(reportId, reportName, reportDescription, enabled, type, script);
+            ChangeDescriptor changeDescriptor = bem.updateReport(reportId, reportName, reportDescription, enabled, type, script);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_APPLICATION_OBJECT, 
+                changeDescriptor);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3029,7 +3131,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("updateReportParameters", ipAddress, sessionId);
-            bem.updateReportParameters(reportId, parameters);
+            ChangeDescriptor changeDescriptor = bem.updateReportParameters(reportId, parameters);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_APPLICATION_OBJECT, 
+                changeDescriptor);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3100,13 +3206,18 @@ public class WebserviceBean implements WebserviceBeanRemote {
 
     //</editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Commercial modules data methods">
-    // <editor-fold defaultstate="collapsed" desc="SDH Networks Module">
+        // <editor-fold defaultstate="collapsed" desc="SDH Networks Module">
     @Override
     public long createSDHTransportLink(String classNameEndpointA, long idEndpointA, String classNameEndpointB, long idEndpointB, String linkType, String defaultName, String ipAddress, String sessionId) throws ServerSideException {
         try {
             aem.validateWebServiceCall("createSDHTransportLink", ipAddress, sessionId);
             SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
-            return sdhModule.createSDHTransportLink(classNameEndpointA, idEndpointA, classNameEndpointB, idEndpointB, linkType, defaultName);
+            long SDHTransportLinkId = sdhModule.createSDHTransportLink(classNameEndpointA, idEndpointA, classNameEndpointB, idEndpointB, linkType, defaultName);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
+                String.format("Created SDH Transport Link %s [%s]", defaultName, linkType));
+            return SDHTransportLinkId;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3118,7 +3229,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("createSDHContainerLink", ipAddress, sessionId);
             SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
-            return sdhModule.createSDHContainerLink(classNameEndpointA, idEndpointA, classNameEndpointB, idEndpointB, linkType, positions, defaultName);
+            long SDHContainerLinkId = sdhModule.createSDHContainerLink(classNameEndpointA, idEndpointA, classNameEndpointB, idEndpointB, linkType, positions, defaultName);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
+                String.format("Created SDH Container Link %s [%s]", defaultName, linkType));
+            return SDHContainerLinkId;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3130,7 +3246,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("createSDHTributaryLink", ipAddress, sessionId);
             SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
-            return sdhModule.createSDHTributaryLink(classNameEndpointA, idEndpointA, classNameEndpointB, idEndpointB, linkType, positions, defaultName);
+            long SDHTributaryLinkId = sdhModule.createSDHTributaryLink(classNameEndpointA, idEndpointA, classNameEndpointB, idEndpointB, linkType, positions, defaultName);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
+                String.format("Created SDH Tributary Link %s [%s]", defaultName, linkType));
+            return SDHTributaryLinkId;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3141,7 +3262,13 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("deleteSDHTransportLink", ipAddress, sessionId);
             SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
+            
+            String transportLinkName = bem.getObject(transportLinkClass, transportLinkId).getName();
             sdhModule.deleteSDHTransportLink(transportLinkClass, transportLinkId, forceDelete);
+                                    
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_DELETE_INVENTORY_OBJECT, 
+                String.format("Deleted SDH Transport Link %s [%s]", transportLinkName, transportLinkClass));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3152,7 +3279,13 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("deleteSDHContainerLink", ipAddress, sessionId);
             SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
+            
+            String containerLinkName = bem.getObject(containerLinkClass, containerLinkId).getName();
             sdhModule.deleteSDHContainerLink(containerLinkClass, containerLinkId, forceDelete);
+                        
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_DELETE_INVENTORY_OBJECT, 
+                String.format("Deleted SDH Container Link %s [%s]", containerLinkName, containerLinkClass));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3163,7 +3296,13 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("deleteSDHTributaryLink", ipAddress, sessionId);
             SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
+            
+            String tributaryLinkName = bem.getObject(tributaryLinkClass, tributaryLinkId).getName();
             sdhModule.deleteSDHTributaryLink(tributaryLinkClass, tributaryLinkId, forceDelete);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_DELETE_INVENTORY_OBJECT, 
+                String.format("Deleted SDH Tributary Link %s [%s]", tributaryLinkName, tributaryLinkClass));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3219,7 +3358,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
         }
     }
         // </editor-fold>    
-    
         // <editor-fold defaultstate="collapsed" desc="IP Administration Manager Module">
     @Override
     public RemoteObject getSubnet(long id, String className, String ipAddress, String sessionId) throws ServerSideException{
@@ -3274,8 +3412,13 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("createSubnetPool", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            return ipamModule.createSubnetsPool(parentId, subnetPoolName, subnetPoolDescription, className);
+            long subnetPoolId = ipamModule.createSubnetsPool(parentId, subnetPoolName, subnetPoolDescription, className);
             
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+                String.format("Created Subnet Pool %s [%s]", subnetPoolName, className));
+            
+            return subnetPoolId;            
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3287,7 +3430,14 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("createSubnet", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            return ipamModule.createSubnet(id, className, attributeNames, attributeValues);
+            long subnetId = ipamModule.createSubnet(id, className, attributeNames, attributeValues);
+            
+            String subnameName = bem.getObjectLight(className, subnetId).getName();
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+                String.format("Created subnet %s", subnameName));
+            return subnetId;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3299,6 +3449,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateWebServiceCall("deleteSubnets", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
             ipamModule.deleteSubnets(className, ids, releaseRelationships);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_DELETE_APPLICATION_OBJECT, 
+                String.format("Deleted %s subnets", ids.size()));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3310,6 +3464,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateWebServiceCall("deleteSubnetPools", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
             ipamModule.deleteSubnetPools(ids);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_DELETE_APPLICATION_OBJECT, 
+                String.format("Deleted %s subnet pools", ids.length));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3326,7 +3484,14 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 attributes.put(attributeNames[i], attributeValues[i]);
             
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            return ipamModule.addIP(id, parentClassName, attributes);
+            long ipAddressId = ipamModule.addIP(id, parentClassName, attributes);
+                        
+            String ipAddressName = bem.getObjectLight(Constants.CLASS_IP_ADDRESS, ipAddressId).getName();
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+                String.format("Created IP Address %s", ipAddressName));
+            return ipAddressId;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3337,8 +3502,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
             String sessionId) throws ServerSideException{
         try{
             aem.validateWebServiceCall("removeIP", ipAddress, sessionId);
-            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N            
             ipamModule.removeIP(ids, releaseRelationships);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+                String.format("Removed %s IP Addresses", ids.length));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3350,6 +3519,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateWebServiceCall("relateIPtoDevice", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
             ipamModule.relateIPtoPort(ipId, portClassName, portId);
+            
+            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), portClassName, portId,
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+                IPAMModule.RELATIONSHIP_IPAMHASADDRESS, "", Long.toString(ipId), "");
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3361,6 +3534,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateWebServiceCall("relateSubnetToVLAN", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
             ipamModule.relateSubnetToVLAN(id, className, vlanId);
+            
+            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), Constants.CLASS_VLAN, vlanId, 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+                IPAMModule.RELATIONSHIP_IPAMBELONGSTOVLAN, "", Long.toString(id), "");
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3372,6 +3549,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateWebServiceCall("relateSubnetToVRF", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
             ipamModule.relateSubnetToVRF(id, className, vrfId);
+            
+            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), Constants.CLASS_VRF_INSTANCE, vrfId, 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+                IPAMModule.RELATIONSHIP_IPAMBELONGSTOVRFINSTACE, "", Long.toString(id), "");
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3383,6 +3564,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateWebServiceCall("releasePortFromIP", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
             ipamModule.releasePortFromIP(deviceClassName, deviceId, id);
+            
+            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), deviceClassName, deviceId,
+                ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
+                IPAMModule.RELATIONSHIP_IPAMHASADDRESS, Long.toString(id), "", "");
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3394,6 +3579,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateWebServiceCall("releaseSubnetFromVLAN", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
             ipamModule.releaseSubnetFromVLAN(vlanId, id);
+            
+            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), Constants.CLASS_VLAN, vlanId, 
+                ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
+                IPAMModule.RELATIONSHIP_IPAMBELONGSTOVLAN, Long.toString(id), "", "");
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3405,6 +3594,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateWebServiceCall("releaseSubnetFromVRF", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
             ipamModule.releaseSubnetFromVRF(subnetId, vrfId);
+            
+            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), Constants.CLASS_VRF_INSTANCE, vrfId, 
+                ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
+                IPAMModule.RELATIONSHIP_IPAMBELONGSTOVRFINSTACE, Long.toString(subnetId), "", "");
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3438,6 +3631,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateWebServiceCall("relatePortToInterface", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
             ipamModule.relatePortToInterface(portId, portClassName, interfaceClassName, interfaceId);
+            
+            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), interfaceClassName, interfaceId, 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+                IPAMModule.RELATIONSHIP_IPAMPORTRELATEDTOINTERFACE, "", Long.toString(portId), "");            
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3449,6 +3646,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateWebServiceCall("releasePortFromInterface", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
             ipamModule.releasePortFromInterface(interfaceClassName, interfaceId, portId);
+            
+            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), interfaceClassName, interfaceId, 
+                ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
+                IPAMModule.RELATIONSHIP_IPAMPORTRELATEDTOINTERFACE, Long.toString(portId), "", ""); 
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3465,6 +3666,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
         return true;
     }
         // </editor-fold>
+        // <editor-fold defaultstate="collapsed" desc="Contract Manager">
     @Override
     public void associateObjectsToContract(String[] objectClass, long[] objectId, String contractClass, long contractId, 
             String ipAddress, String sessionId) throws ServerSideException {
@@ -3485,8 +3687,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 if (!mem.isSubClass(Constants.CLASS_INVENTORYOBJECT, objectClass[i]))
                     allEquipmentANetworkElement = false;
                 else
-                    bem.createSpecialRelationship(objectClass[i], objectId[i], contractClass, contractId, "contractHas", true);
+                    bem.createSpecialRelationship(objectClass[i], objectId[i], contractClass, contractId, "contractHas", true); //NOI18N
             }
+            String contractName = bem.getObjectLight(contractClass, contractId).getName();
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+                String.format("Associated %s objects to contract %s [%s]", objectId.length, contractName, contractClass));
             
             if (!allEquipmentANetworkElement)
                 throw new InvalidArgumentException("All non-inventory elements were ignored");
@@ -3495,8 +3701,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(ex.getMessage());
         }
     }
-
-    // <editor-fold defaultstate="collapsed" desc="Contract Manager">
+    
     @Override
     public void releaseObjectFromContract(String objectClass, long objectId, long contractId,
             String ipAddress, String sessionId) throws ServerSideException {
@@ -3504,22 +3709,29 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("releaseObjectFromContract", ipAddress, sessionId);
-            bem.releaseSpecialRelationship(objectClass, objectId, contractId, "contractHas");
+            bem.releaseSpecialRelationship(objectClass, objectId, contractId, "contractHas"); //NOI18N
+            
+            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), 
+                objectClass, objectId, ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
+                "contractHas", Long.toString(objectId), "", ""); //NOI18N
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
 
-    // </editor-fold>
-    
-    // <editor-fold defaultstate="collapsed" desc="MPLS Module">
+    // </editor-fold>    
+        // <editor-fold defaultstate="collapsed" desc="MPLS Module">
     @Override
     public long createMPLSLink(String classNameEndpointA, long idEndpointA, 
             String classNameEndpointB, long idEndpointB, String linkType, String defaultName, String ipAddress, String sessionId) throws ServerSideException{
         try {
             aem.validateWebServiceCall("createMPLSLink", ipAddress, sessionId);
             MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
-            return mplsModule.createMPLSLink(classNameEndpointA, idEndpointA, classNameEndpointB, idEndpointB, linkType, defaultName);
+            long MPLSLinkId = mplsModule.createMPLSLink(classNameEndpointA, idEndpointA, classNameEndpointB, idEndpointB, linkType, defaultName);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
+                String.format("Created MPLS Link %s [%s]", defaultName, linkType));
+            return MPLSLinkId;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3530,13 +3742,17 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("deleteMPLSLink", ipAddress, sessionId);
             MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
+            String linkName = bem.getObjectLight(linkClass, linkId).getName();
             mplsModule.deleteMPLSLink(linkClass, linkId, forceDelete);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
+                String.format("Deleted MPLS Link %s [%s]", linkName, linkClass));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
-    // </editor-fold>
-    
+    // </editor-fold>    
         // <editor-fold defaultstate="collapsed" desc="Project Manager">
     @Override
     public List<RemotePool> getProjectPools(String ipAddress, String sessionId) throws ServerSideException {
@@ -3561,9 +3777,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
             ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N
             
             long projectId = projectsModule.addProject(parentId, parentClassName, className, attributeNames, attributeValues);
+            String projectName = bem.getObjectLight(className, projectId).getName();
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
-                String.format("Create object with id %s", projectId));
+                String.format("Created Project %s [%s]", projectName, className));
             
             return projectId;
         } catch (InventoryException ex) {
@@ -3577,13 +3794,14 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         
         try {
+            String projectName = bem.getObjectLight(className, oid).getName();
             aem.validateWebServiceCall("deleteProject", ipAddress, sessionId);
             
             ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N
-            projectsModule.deleteActivity(className, oid, releaseRelationships);
+            projectsModule.deleteProject(className, oid, releaseRelationships);
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_DELETE_INVENTORY_OBJECT, 
-                String.format("Delete object with id %s", oid));
+                String.format("Deleted Project %s [%s]", projectName, className));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3599,9 +3817,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
             ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N
             
             long activityId = projectsModule.addActivity(parentId, parentClassName, className, attributeNames, attributeValues);
+            String activityName = bem.getObjectLight(className, activityId).getName();
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
-                String.format("Create object with id %s", activityId));
+                String.format("Created Activity %s [%s]", activityName, className));
             
             return activityId;
         } catch (InventoryException ex) {
@@ -3616,12 +3835,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
         
         try {
             aem.validateWebServiceCall("deleteActivity", ipAddress, sessionId);
-            
+            String activityName = bem.getObjectLight(className, oid).getName();
             ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N                        
             projectsModule.deleteActivity(className, oid, releaseRelationships);
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_DELETE_INVENTORY_OBJECT, 
-                String.format("Delete object with id %s", oid));
+                String.format("Deleted Activity %s [%s]", activityName, className));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3681,13 +3900,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateWebServiceCall("associateObjectsToProject", ipAddress, sessionId);
             
             ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N
-            projectsModule.associateObjectsToProject(projectClass, projectId, objectClass, objectId);   
+            projectsModule.associateObjectsToProject(projectClass, projectId, objectClass, objectId);               
             
-            for (long objId : objectId) {
-                aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
-                    ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
-                    String.format("Relate object with id %s to project with id %s", objId, projectId));
-            }
+            String projectName = bem.getObjectLight(projectClass, projectId).getClassName();
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+                String.format("Associated %s objects to project %s [%s]", objectId.length, projectName, projectClass));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3704,9 +3922,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
             ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N                        
             projectsModule.associateObjectToProject(projectClass, projectId, objectClass, objectId);
             
-            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), 
+                objectClass, objectId,
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
-                String.format("Relate object with id %s to project with id %s", objectId, projectId));
+                ProjectsModule.RELATIONSHIP_PROJECTSPROJECTUSES, "", Long.toString(projectId), "");
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3723,9 +3942,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
             ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N                        
             projectsModule.releaseObjectFromProject(objectClass, objectId, projectClass, projectId);
             
-            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), 
+                objectClass, objectId,
                 ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
-                String.format("Release object with id %s from project with id %s", objectId, projectId));
+                ProjectsModule.RELATIONSHIP_PROJECTSPROJECTUSES, Long.toString(projectId), "", "");
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3765,8 +3985,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(ex.getMessage());
         }
     }
-        // </editor-fold>
-    
+        // </editor-fold>    
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Helper methods. Click on the + sign on the left to edit the code.">
@@ -3824,8 +4043,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
         return aSession.getUser().getUserName();
     }
     // </editor-fold>
-    
-    // Bookmarks
+    // <editor-fold defaultstate="collapsed" desc="Favorites">    
     @Override
     public long createFavoritesFolderForUser(String favoritesFolderName, long userId, String ipAddress, String sessionId) throws ServerSideException {
         
@@ -3833,8 +4051,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("createFavoritesFolderForUser", ipAddress, sessionId);
+            long favoritesFolderId = aem.createFavoritesFolderForUser(favoritesFolderName, userId);
             
-            return aem.createFavoritesFolderForUser(favoritesFolderName, userId);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+                String.format("Create Favorites Folder %s For User %s", favoritesFolderName, getUserNameFromSession(sessionId)));
+            return favoritesFolderId;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3848,6 +4070,9 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateWebServiceCall("deleteFavoritesFolders ", ipAddress, sessionId);
             
             aem.deleteFavoritesFolders (favoritesFolderId, userId);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_DELETE_APPLICATION_OBJECT, 
+                String.format("Deleted %s Favorites Folders", favoritesFolderId.length));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3886,6 +4111,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
             for (int i = 0; i < objectId.length; i += 1)
                 aem.addObjectTofavoritesFolder(objectClass[i], objectId[i], favoritesFolderId, userId);
             
+            String favoritesFolderName = aem.getFavoritesFolder(favoritesFolderId, userId).getName();
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+                String.format("Added %s objects to favorites folder %s", objectId.length, favoritesFolderName));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3904,7 +4133,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
             
             for (int i = 0; i < objectId.length; i += 1)
                 aem.removeObjectFromfavoritesFolder(objectClass[i], objectId[i], favoritesFolderId, userId);
-                        
+            
+            String favoritesFolderName = aem.getFavoritesFolder(favoritesFolderId, userId).getName();
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
+                String.format("Remove %s objects from favorites folder %s", objectId.length, favoritesFolderName));                        
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3962,12 +4195,18 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("updateFavoritesFolder", ipAddress, sessionId);
             
+            String oldFavoritesFolderName = aem.getFavoritesFolder(favoritesFolderId, userId).getName();
             aem.updateFavoritesFolder(favoritesFolderId, userId, favoritesFolderName);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_APPLICATION_OBJECT,
+                new ChangeDescriptor(Constants.PROPERTY_NAME, oldFavoritesFolderName, favoritesFolderName, "Updated favorites folder"));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Business Rules. Click on the + sign on the left to edit the code.">    
     @Override
     public long createBusinessRule(String ruleName, String ruleDescription, int ruleType, int ruleScope, 
             String appliesTo, String ruleVersion, List<String> constraints, String ipAddress, String sessionId) throws ServerSideException {
@@ -3975,7 +4214,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("createBusinessRule", ipAddress, sessionId);
-            return aem.createBusinessRule(ruleName, ruleDescription, ruleType, ruleScope, appliesTo, ruleVersion, constraints);
+            long businessRuleId = aem.createBusinessRule(ruleName, ruleDescription, ruleType, ruleScope, appliesTo, ruleVersion, constraints);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+                String.format("Created business rule %s", ruleName));
+            return businessRuleId;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3988,6 +4231,9 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("deleteBusinessRule", ipAddress, sessionId);
             aem.deleteBusinessRule(businessRuleId);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_DELETE_APPLICATION_OBJECT, 
+                String.format("Deleted business rule %s", businessRuleId));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -4017,4 +4263,5 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(ex.getMessage());
         }
     }
+    // </editor-fold>
 }

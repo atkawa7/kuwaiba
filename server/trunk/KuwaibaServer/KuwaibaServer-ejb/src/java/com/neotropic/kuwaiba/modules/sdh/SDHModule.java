@@ -452,7 +452,7 @@ public class SDHModule implements GenericCommercialModule {
      * @return A sorted list of RemoteObjectLights containing the route. This list includes the transport links and the nodes in between, including the very endpoints
      * @throws org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException
      * @throws org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException
-     * 
+     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If the given communication equipment is no subclass of GenericCommunicationsEquipment 
      */
     public List<RemoteBusinessObjectLightList> findSDHRoutesUsingTransportLinks(String communicationsEquipmentClassA, 
                                             long  communicationsEquipmentIdA, String communicationsEquipmentClassB, 
@@ -476,7 +476,7 @@ public class SDHModule implements GenericCommercialModule {
      * @return A sorted list of RemoteObjectLights containing the route. This list includes the transport links and the nodes in between, including the very endpoints
      * @throws org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException
      * @throws org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException
-     * 
+     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If the given communication equipment is no subclass of GenericCommunicationsEquipment 
      */
     public List<RemoteBusinessObjectLightList> findSDHRoutesUsingContainerLinks(String communicationsEquipmentClassA, 
                                             long  communicationsEquipmentIdA, String communicationsEquipmentClassB, 
@@ -498,7 +498,7 @@ public class SDHModule implements GenericCommercialModule {
      * @param transportLinkId Transportlink's id
      * @return The list of the containers that go through that transport link
      * @throws NotAuthorizedException if the user is nt authorized to inquire about the structure of a transport link
-     * @throws InvalidArgumentException I
+     * @throws InvalidArgumentException If the given transport link is no subclass of GenericSDHTransportLink
      * @throws ObjectNotFoundException
      * @throws MetadataObjectNotFoundException 
      */
@@ -517,13 +517,13 @@ public class SDHModule implements GenericCommercialModule {
             List<RemoteBusinessObjectLight> relatedLinks = bem.getSpecialAttribute(container.getObject().getClassName(), 
                     container.getObject().getId(), RELATIONSHIP_SDHDELIVERS);
                                    
-            if (!container.getProperties().containsKey("sdhPosition"))
+            if (!container.getProperties().containsKey("sdhPosition")) //NOI18N
                 throw new MetadataObjectNotFoundException(String.
                         format("The container %s (id %s) is related to the transport link with id %s, but no position is specified", 
                                 container.getObject().getName(), container.getObject().getId(), transportLinkId));
             
             List<SDHPosition> position = new ArrayList<>();
-            position.add(new SDHPosition(transportLinkClass, transportLinkId, (Integer)container.getProperties().get("sdhPosition")));
+            position.add(new SDHPosition(transportLinkClass, transportLinkId, (Integer)container.getProperties().get("sdhPosition"))); //NOI18N
             
             containers.add(new SDHContainerLinkDefinition(container.getObject(), relatedLinks.isEmpty(), position)); //an unstructured container would have just one SDHDELIVERS relationship
                                                                                                                       //Note that the "positions" array here is filled ONLY with the position used in this particular transport link and does not represents the whole path

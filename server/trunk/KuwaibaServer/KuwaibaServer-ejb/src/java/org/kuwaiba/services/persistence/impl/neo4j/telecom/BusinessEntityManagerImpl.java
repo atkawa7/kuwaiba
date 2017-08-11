@@ -1606,7 +1606,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public void deleteReport(long reportId) throws ApplicationObjectNotFoundException {
+    public ChangeDescriptor deleteReport(long reportId) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()){
             
             Node reportNode = reportsIndex.get(Constants.PROPERTY_ID, reportId).getSingle();
@@ -1616,45 +1616,80 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             
             for (Relationship rel : reportNode.getRelationships())
                 rel.delete();
+            
+            String reportName = reportNode.hasProperty(Constants.PROPERTY_NAME) ? (String) reportNode.getProperty(Constants.PROPERTY_NAME) : "";
 
             reportsIndex.remove(reportNode, Constants.PROPERTY_ID, reportNode.getId());
             reportNode.delete();
             
             tx.success();
+            return new ChangeDescriptor("","","", String.format("Deleted report %s", reportName));
         }
     }
 
     @Override
-    public void updateReport(long reportId, String reportName, String reportDescription, Boolean enabled,
+    public ChangeDescriptor updateReport(long reportId, String reportName, String reportDescription, Boolean enabled,
             Integer type, String script) throws ApplicationObjectNotFoundException, InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
             Node reportNode = reportsIndex.get(Constants.PROPERTY_ID, reportId).getSingle();
             
             if (reportNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("The report with id %s could not be found", reportId));
+            String affectedProperties = "", oldValues = "", newValues = "";
             
-            if (reportName != null)
-               reportNode.setProperty(Constants.PROPERTY_NAME, reportName);
-            if (reportDescription != null)
-               reportNode.setProperty(Constants.PROPERTY_DESCRIPTION, reportDescription);
-            if (enabled != null)
-               reportNode.setProperty(Constants.PROPERTY_ENABLED, enabled);
-            if (type != null)
-               reportNode.setProperty(Constants.PROPERTY_TYPE, type);
-            if (script != null)
-               reportNode.setProperty(Constants.PROPERTY_SCRIPT, script);
+            if (reportName != null) {
+                affectedProperties += " " + Constants.PROPERTY_NAME;
+                oldValues += " " + (reportNode.hasProperty(Constants.PROPERTY_NAME) ? reportNode.getProperty(Constants.PROPERTY_NAME) : "null");                
+                newValues += " " + reportName;
+                
+                reportNode.setProperty(Constants.PROPERTY_NAME, reportName);
+            }
+            else
+                reportName = reportNode.hasProperty(Constants.PROPERTY_NAME) ? (String) reportNode.getProperty(Constants.PROPERTY_NAME) : "";
+            
+            if (reportDescription != null) {
+                affectedProperties += " " + Constants.PROPERTY_DESCRIPTION;
+                oldValues += " " + (reportNode.hasProperty(Constants.PROPERTY_DESCRIPTION) ? reportNode.getProperty(Constants.PROPERTY_DESCRIPTION) : "null");
+                newValues += " " + reportDescription;
+                
+                reportNode.setProperty(Constants.PROPERTY_DESCRIPTION, reportDescription);
+            }
+            if (enabled != null) {
+                affectedProperties += " " + Constants.PROPERTY_ENABLED;
+                oldValues += " " + (reportNode.hasProperty(Constants.PROPERTY_ENABLED) ? reportNode.getProperty(Constants.PROPERTY_ENABLED) : "null");
+                newValues += " " + enabled;
+                
+                reportNode.setProperty(Constants.PROPERTY_ENABLED, enabled);
+            }
+            if (type != null) {
+                affectedProperties += " " + Constants.PROPERTY_TYPE;
+                oldValues += " " + (reportNode.hasProperty(Constants.PROPERTY_TYPE) ? reportNode.getProperty(Constants.PROPERTY_TYPE) : "null");
+                newValues += " " + type;
+                
+                reportNode.setProperty(Constants.PROPERTY_TYPE, type);
+            }
+            if (script != null) {
+                affectedProperties += " " + Constants.PROPERTY_SCRIPT;
+                oldValues += " " + (reportNode.hasProperty(Constants.PROPERTY_SCRIPT) ? reportNode.getProperty(Constants.PROPERTY_SCRIPT) : "null");
+                newValues += " " + script;
+                
+                reportNode.setProperty(Constants.PROPERTY_SCRIPT, script);
+            }
 
             tx.success();
+            return new ChangeDescriptor(affectedProperties.trim(), oldValues.trim(), 
+                newValues.trim(), String.format("Updated Report %s", reportName));
         }
     }
     
     @Override
-    public void updateReportParameters(long reportId, List<StringPair> parameters) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+    public ChangeDescriptor updateReportParameters(long reportId, List<StringPair> parameters) throws ApplicationObjectNotFoundException, InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
             Node reportNode = reportsIndex.get(Constants.PROPERTY_ID, reportId).getSingle();
             if (reportNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("A report with id %s could not be found", reportId));
-
+            String affectedProperties = "", oldValues = "", newValues = "";
+            
             for (StringPair parameter : parameters) {
                 
                 if (parameter.getKey() == null || parameter.getKey().trim().isEmpty())
@@ -1663,13 +1698,22 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 String actualParameterName = "PARAM_" + parameter.getKey();
                 //The parameters are stored with a prefix PARAM_
                 //params set to null, must be deleted
-                if (reportNode.hasProperty(actualParameterName) && parameter.getValue() == null)
+                if (reportNode.hasProperty(actualParameterName) && parameter.getValue() == null) {
+                    affectedProperties += " " + parameter.getKey();
                     reportNode.removeProperty(actualParameterName);
-                else
+                }
+                else {
+                    affectedProperties += " " + parameter.getKey();
+                    oldValues += " " + (reportNode.hasProperty(actualParameterName) ? reportNode.getProperty(actualParameterName) : "null");
+                    newValues += " " + parameter.getValue();
+                    
                     reportNode.setProperty(actualParameterName, parameter.getValue());
+                }
             }
-            
+            String reportName = reportNode.hasProperty(Constants.PROPERTY_NAME) ? (String) reportNode.getProperty(Constants.PROPERTY_NAME) : "";
             tx.success();
+            return new ChangeDescriptor(affectedProperties.trim(), oldValues.trim(), 
+                newValues.trim(), String.format("Updated %s report parameters", reportName));
         }
     }
 

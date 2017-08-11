@@ -21,6 +21,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
@@ -227,212 +229,347 @@ public class ToolsBean implements ToolsBeanRemote {
                     }
                 break;
                 case "4": //This action adds the abstract classes GenericProject, GenericActivity and some project and activities subclasses for the Projects Module.
+                    ClassMetadata cm = new ClassMetadata();
+                    cm.setDisplayName("");
+                    cm.setDescription("");
+                    cm.setColor(0);
+                    cm.setCountable(true);
+                    cm.setCreationDate(Calendar.getInstance().getTimeInMillis());
+                    cm.setIcon(null);
+                    cm.setSmallIcon(null);
+                    cm.setCustom(true);
+                    cm.setViewable(true);
+                    cm.setInDesign(false);
+                    
+                    AttributeMetadata attributeMetadata = new AttributeMetadata();
+                    attributeMetadata.setDescription("");
+                    attributeMetadata.setReadOnly(false);
+                    attributeMetadata.setUnique(false);
+                    attributeMetadata.setVisible(true);
+                    attributeMetadata.setNoCopy(false);
+                    
+                    long genericProjectId = -1;                    
                     try {
-                        ClassMetadata cm = new ClassMetadata();
                         cm.setName("GenericProject"); //NOI18N
-                        cm.setDisplayName("");
-                        cm.setDescription("");
                         cm.setParentClassName("AdministrativeItem"); //NOI18N
                         cm.setAbstract(true);
-                        cm.setColor(0);
-                        cm.setCountable(true);
-                        cm.setCreationDate(Calendar.getInstance().getTimeInMillis());
-                        cm.setIcon(null);
-                        cm.setSmallIcon(null);
-                        cm.setCustom(true);
-                        cm.setViewable(true);
-                        cm.setInDesign(false);
                         
-                        long genericProjectId = mem.createClass(cm);
-                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
-                            ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
-                            String.format("Created class %s", cm.getName()));
-                        
-                        AttributeMetadata attributeMetadata = new AttributeMetadata();
-                        attributeMetadata.setName("notes"); //NOI18N
-                        attributeMetadata.setDisplayName("notes"); 
-                        attributeMetadata.setDescription("");
-                        attributeMetadata.setReadOnly(false);
-                        attributeMetadata.setType("String"); //NOI18N
-                        attributeMetadata.setUnique(false);
-                        attributeMetadata.setVisible(true);
-                        attributeMetadata.setNoCopy(false);                        
-                        mem.createAttribute(genericProjectId, attributeMetadata);
-                        
-                        attributeMetadata.setName("projectManager"); //NOI18N
-                        attributeMetadata.setDisplayName("projectManager");
-                        attributeMetadata.setType("Employee"); //NOI18N
-                        mem.createAttribute(genericProjectId, attributeMetadata);
-                        
-                        attributeMetadata.setName("startDate"); //NOI18N
-                        attributeMetadata.setDisplayName("startDate");
-                        attributeMetadata.setType("Date"); //NOI18N
-                        mem.createAttribute(genericProjectId, attributeMetadata);
-                        
-                        attributeMetadata.setName("status"); //NOI18N
-                        attributeMetadata.setDisplayName("status");
-                        attributeMetadata.setType("ProjectStatusType"); //NOI18N
-                        mem.createAttribute(genericProjectId, attributeMetadata);
-                        
-                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
-                            ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
-                            String.format("Added attributes to class %s", "GenericProject"));
-                        
-                        cm.setName("GenericActivity"); //NOI18N
-                        cm.setParentClassName("AdministrativeItem"); //NOI18N
-                        cm.setAbstract(true);
-                        long genericActivityId = mem.createClass(cm);
-                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
-                            ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
-                            String.format("Created class %s", cm.getName()));
-                        
-                        cm.setName("ActivityType"); //NOI18N
-                        cm.setParentClassName("GenericType"); //NOI18N
-                        cm.setAbstract(false);
-                        cm.setId(mem.createClass(cm));
-                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
-                            ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
-                            String.format("Created class %s", cm.getName()));
-                        
-                        cm.setName("ProjectStatusType"); //NOI18N
-                        cm.setParentClassName("GenericType"); //NOI18N
-                        cm.setAbstract(false);
-                        cm.setId(mem.createClass(cm));
-                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
-                            ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
-                            String.format("Created class %s", cm.getName()));
-                        
-                        cm.setName("ActivityStatusType"); //NOI18N
-                        cm.setParentClassName("GenericType"); //NOI18N
-                        cm.setAbstract(false);
-                        cm.setId(mem.createClass(cm));
+                        genericProjectId = mem.createClass(cm);
+
                         aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
                             ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
                             String.format("Created class %s", cm.getName()));
                                                 
-                        attributeMetadata.setName("notes"); //NOI18N
-                        attributeMetadata.setDisplayName("notes");
-                        attributeMetadata.setType("String"); //NOI18N
-                        mem.createAttribute(genericActivityId, attributeMetadata);
-                        
-                        attributeMetadata.setName("startDate"); //NOI18N
-                        attributeMetadata.setDisplayName("startDate");
-                        attributeMetadata.setType("Date"); //NOI18N
-                        mem.createAttribute(genericActivityId, attributeMetadata);
-                        
-                        attributeMetadata.setName("endDate"); //NOI18N
-                        attributeMetadata.setDisplayName("endDate");
-                        attributeMetadata.setType("Date"); //NOI18N
-                        mem.createAttribute(genericActivityId, attributeMetadata);
-                        
-                        attributeMetadata.setName("lastUpdate"); //NOI18N
-                        attributeMetadata.setDisplayName("lastUpdate");
-                        attributeMetadata.setType("Date"); //NOI18N
-                        mem.createAttribute(genericActivityId, attributeMetadata);
-                        
-                        attributeMetadata.setName("status"); //NOI18N
-                        attributeMetadata.setDisplayName("status");
-                        attributeMetadata.setType("ActivityStatusType"); //NOI18N
-                        mem.createAttribute(genericActivityId, attributeMetadata);
-                        
-                        attributeMetadata.setName("duration"); //NOI18N
-                        attributeMetadata.setDisplayName("duration");
-                        attributeMetadata.setType("Float"); //NOI18N
-                        mem.createAttribute(genericActivityId, attributeMetadata);
-                        
-                        attributeMetadata.setName("cost"); //NOI18N
-                        attributeMetadata.setDisplayName("cost");
-                        attributeMetadata.setType("Float"); //NOI18N
-                        mem.createAttribute(genericActivityId, attributeMetadata);
-                        
-                        attributeMetadata.setName("owner"); //NOI18N
-                        attributeMetadata.setDisplayName("owner");
-                        attributeMetadata.setType("Employee"); //NOI18N
-                        mem.createAttribute(genericActivityId, attributeMetadata);
-                        
-                        attributeMetadata.setName("risk"); //NOI18N
-                        attributeMetadata.setDisplayName("risk");
-                        attributeMetadata.setType("Integer"); //NOI18N
-                        mem.createAttribute(genericActivityId, attributeMetadata);
-                        
-                        attributeMetadata.setName("activityType"); //NOI18N
-                        attributeMetadata.setDisplayName("activityType");
-                        attributeMetadata.setType("ActivityType"); //NOI18N
-                        mem.createAttribute(genericActivityId, attributeMetadata);
-                        
-                        attributeMetadata.setName("sequecing"); //NOI18N
-                        attributeMetadata.setDisplayName("sequecing");
-                        attributeMetadata.setType("ActivityType"); //NOI18N
-                        mem.createAttribute(genericActivityId, attributeMetadata);
-                        
-                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
-                            ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
-                            String.format("Added attributes to class %s", "Generic Activity"));
-                        
-                        cm.setName("GeneralPurposeActivity"); //NOI18N
-                        cm.setParentClassName("GenericActivity"); //NOI18N
-                        cm.setAbstract(false);
-                        cm.setId(mem.createClass(cm));
-                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
-                            ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
-                            String.format("Created class %s", cm.getName()));
-                        
-                        cm.setName("PlanningActivity"); //NOI18N
-                        cm.setParentClassName("GenericActivity"); //NOI18N
-                        cm.setAbstract(false);
-                        cm.setId(mem.createClass(cm));
-                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
-                            ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
-                            String.format("Created class %s", cm.getName()));
-                        
-                        cm.setName("RollOutActivity"); //NOI18N
-                        cm.setParentClassName("GenericActivity"); //NOI18N
-                        cm.setAbstract(false);
-                        cm.setId(mem.createClass(cm));
-                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
-                            ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
-                            String.format("Created class %s", cm.getName()));
-                        
-                        cm.setName("DesignActivity"); //NOI18N
-                        cm.setParentClassName("GenericActivity"); //NOI18N
-                        cm.setAbstract(false);
-                        cm.setId(mem.createClass(cm));
-                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
-                            ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
-                            String.format("Created class %s", cm.getName()));
-                        
-                        cm.setName("AuditActivity"); //NOI18N
-                        cm.setParentClassName("GenericActivity"); //NOI18N
-                        cm.setAbstract(false);
-                        cm.setId(mem.createClass(cm));
-                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
-                            ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
-                            String.format("Created class %s", cm.getName()));
-                        
-                        cm.setName("GeneralPurposeProject"); //NOI18N
-                        cm.setParentClassName("GenericProject"); //NOI18N
-                        cm.setAbstract(false);
-                        cm.setId(mem.createClass(cm));
-                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
-                            ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
-                            String.format("Created class ", cm.getName()));
-                        
-                        cm.setName("NetworkProject"); //NOI18N
-                        cm.setParentClassName("GenericProject"); //NOI18N
-                        cm.setAbstract(false);
-                        cm.setId(mem.createClass(cm));
+                    } catch (DatabaseException | MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
+                        results[i] = ex.getMessage();
+                    }
+                    if (genericProjectId != -1) {
+                        try {
+                            attributeMetadata.setName("notes"); //NOI18N
+                            attributeMetadata.setDisplayName("notes"); 
+                            attributeMetadata.setType("String"); //NOI18N
+                            mem.createAttribute(genericProjectId, attributeMetadata);
+                            
+                        } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
+                            results[i] += ", " + ex.getMessage();
+                        }                        
+                        try {
+                            attributeMetadata.setName("projectManager"); //NOI18N
+                            attributeMetadata.setDisplayName("projectManager");
+                            attributeMetadata.setType("Employee"); //NOI18N
+                            mem.createAttribute(genericProjectId, attributeMetadata);
+                            
+                        } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
+                            results[i] += ", " + ex.getMessage();
+                        }                        
+                        try {
+                            attributeMetadata.setName("startDate"); //NOI18N
+                            attributeMetadata.setDisplayName("startDate");
+                            attributeMetadata.setType("Date"); //NOI18N
+                            mem.createAttribute(genericProjectId, attributeMetadata);
+                            
+                        } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
+                            results[i] += ", " + ex.getMessage();
+                        }                        
+                        try {
+                            cm.setName("ProjectStatusType"); //NOI18N
+                            cm.setParentClassName("GenericType"); //NOI18N
+                            cm.setAbstract(false);
+                            
+                            cm.setId(mem.createClass(cm));
+
+                            aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
+                                ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
+                                String.format("Created class %s", cm.getName()));
+                            
+                        } catch (DatabaseException | MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
+                            results[i] += ", " + ex.getMessage();
+                        }
+                        try {
+                            attributeMetadata.setName("status"); //NOI18N
+                            attributeMetadata.setDisplayName("status");
+                            attributeMetadata.setType("ProjectStatusType"); //NOI18N                        
+                            mem.createAttribute(genericProjectId, attributeMetadata);
+                            
+                        } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
+                            results[i] += ", " + ex.getMessage();
+                        }                        
+                        try {
+                            aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
+                                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
+                                String.format("Added attributes to class %s", "GenericProject"));
+                            
+                        } catch (ApplicationObjectNotFoundException ex) {
+                            results[i] += ", " + ex.getMessage();
+                        }
+                    }
+                    
+                    long genericActivityId = -1;
+                    try {
+                        cm.setName("GenericActivity"); //NOI18N
+                        cm.setParentClassName("AdministrativeItem"); //NOI18N
+                        cm.setAbstract(true);
+                    
+                        genericActivityId = mem.createClass(cm);
                         aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
                             ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
                             String.format("Created class %s", cm.getName()));
                         
                     } catch (DatabaseException | MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
-                        results[i] = ex.getMessage();
+                        results[i] += ", " + ex.getMessage();
+                    }
+                    if (genericActivityId != -1) {
+                        try {
+                            cm.setName("ActivityType"); //NOI18N
+                            cm.setParentClassName("GenericType"); //NOI18N
+                            cm.setAbstract(false);
+
+                            cm.setId(mem.createClass(cm));
+
+                            aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
+                                ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
+                                String.format("Created class %s", cm.getName()));
+                            
+                        } catch (DatabaseException | MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
+                            results[i] += ", " + ex.getMessage();
+                        }
+                        try {
+                            attributeMetadata.setName("activityType"); //NOI18N
+                            attributeMetadata.setDisplayName("activityType");
+                            attributeMetadata.setType("ActivityType"); //NOI18N
+                            mem.createAttribute(genericActivityId, attributeMetadata);
+                            
+                        } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
+                            results[i] += ", " + ex.getMessage();
+                        }
+                        try {
+                            attributeMetadata.setName("sequecing"); //NOI18N
+                            attributeMetadata.setDisplayName("sequecing");
+                            attributeMetadata.setType("ActivityType"); //NOI18N
+                            mem.createAttribute(genericActivityId, attributeMetadata);
+                            
+                        } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
+                            results[i] += ", " + ex.getMessage();
+                        }                        
+                        try {
+                            cm.setName("ActivityStatusType"); //NOI18N
+                            cm.setParentClassName("GenericType"); //NOI18N
+                            cm.setAbstract(false);
+                            
+                            cm.setId(mem.createClass(cm));
+                            
+                            aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
+                                ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
+                                String.format("Created class %s", cm.getName()));
+                            
+                        } catch (DatabaseException | MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
+                            results[i] += ", " + ex.getMessage();
+                        }
+                        try {
+                            attributeMetadata.setName("status"); //NOI18N
+                            attributeMetadata.setDisplayName("status");
+                            attributeMetadata.setType("ActivityStatusType"); //NOI18N
+                            mem.createAttribute(genericActivityId, attributeMetadata);
+                            
+                        } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
+                            results[i] += ", " + ex.getMessage();
+                        }                        
+                        try {
+                            attributeMetadata.setName("notes"); //NOI18N
+                            attributeMetadata.setDisplayName("notes");
+                            attributeMetadata.setType("String"); //NOI18N
+                            mem.createAttribute(genericActivityId, attributeMetadata);
+                            
+                        } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
+                            results[i] += ", " + ex.getMessage();
+                        }
+                        try {
+                            attributeMetadata.setName("startDate"); //NOI18N
+                            attributeMetadata.setDisplayName("startDate");
+                            attributeMetadata.setType("Date"); //NOI18N
+                            mem.createAttribute(genericActivityId, attributeMetadata);
+                            
+                        } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
+                            results[i] += ", " + ex.getMessage();
+                        }
+                        try {
+                            attributeMetadata.setName("endDate"); //NOI18N
+                            attributeMetadata.setDisplayName("endDate");
+                            attributeMetadata.setType("Date"); //NOI18N
+                            mem.createAttribute(genericActivityId, attributeMetadata);
+                            
+                        } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
+                            results[i] += ", " + ex.getMessage();
+                        }
+                        try {
+                            attributeMetadata.setName("lastUpdate"); //NOI18N
+                            attributeMetadata.setDisplayName("lastUpdate");
+                            attributeMetadata.setType("Date"); //NOI18N
+                            mem.createAttribute(genericActivityId, attributeMetadata);
+                            
+                        } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
+                            results[i] += ", " + ex.getMessage();
+                        }
+                        try {
+                            attributeMetadata.setName("duration"); //NOI18N
+                            attributeMetadata.setDisplayName("duration");
+                            attributeMetadata.setType("Float"); //NOI18N
+                            mem.createAttribute(genericActivityId, attributeMetadata);
+                            
+                        } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
+                            results[i] += ", " + ex.getMessage();
+                        }
+                        try {
+                            attributeMetadata.setName("cost"); //NOI18N
+                            attributeMetadata.setDisplayName("cost");
+                            attributeMetadata.setType("Float"); //NOI18N
+                            mem.createAttribute(genericActivityId, attributeMetadata);
+                            
+                        } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
+                            results[i] += ", " + ex.getMessage();
+                        }
+                        try {
+                            attributeMetadata.setName("owner"); //NOI18N
+                            attributeMetadata.setDisplayName("owner");
+                            attributeMetadata.setType("Employee"); //NOI18N
+                            mem.createAttribute(genericActivityId, attributeMetadata);
+                            
+                        } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
+                            results[i] += ", " + ex.getMessage();
+                        }                    
+                        try {
+                            attributeMetadata.setName("risk"); //NOI18N
+                            attributeMetadata.setDisplayName("risk");
+                            attributeMetadata.setType("Integer"); //NOI18N
+                            mem.createAttribute(genericActivityId, attributeMetadata);
+                            
+                        } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
+                            results[i] += ", " + ex.getMessage();
+                        }
+                        try {
+                            aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
+                                    ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT,
+                                    String.format("Added attributes to class %s", "Generic Activity"));
+                        } catch (ApplicationObjectNotFoundException ex) {
+                            results[i] += ", " + ex.getMessage();
+                        }
+                    }                    
+                    try {
+                        cm.setName("GeneralPurposeActivity"); //NOI18N
+                        cm.setParentClassName("GenericActivity"); //NOI18N
+                        cm.setAbstract(false);
+                        
+                        cm.setId(mem.createClass(cm));
+                        
+                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
+                            ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
+                            String.format("Created class %s", cm.getName()));
+                    } catch (DatabaseException | MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
+                        results[i] += ", " + ex.getMessage();
+                    }                    
+                    try {                        
+                        cm.setName("PlanningActivity"); //NOI18N
+                        cm.setParentClassName("GenericActivity"); //NOI18N
+                        cm.setAbstract(false);
+                        
+                        cm.setId(mem.createClass(cm));
+                        
+                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
+                            ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
+                            String.format("Created class %s", cm.getName()));
+                    } catch (DatabaseException | MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
+                        results[i] += ", " + ex.getMessage();
+                    }                    
+                    try {                        
+                        cm.setName("RollOutActivity"); //NOI18N
+                        cm.setParentClassName("GenericActivity"); //NOI18N
+                        cm.setAbstract(false);
+                        
+                        cm.setId(mem.createClass(cm));
+                        
+                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
+                            ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
+                            String.format("Created class %s", cm.getName()));
+                    } catch (DatabaseException | MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
+                        results[i] += ", " + ex.getMessage();
+                    }                    
+                    try {                        
+                        cm.setName("DesignActivity"); //NOI18N
+                        cm.setParentClassName("GenericActivity"); //NOI18N
+                        cm.setAbstract(false);
+                        
+                        cm.setId(mem.createClass(cm));
+                        
+                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
+                            ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
+                            String.format("Created class %s", cm.getName()));
+                    } catch (DatabaseException | MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
+                        results[i] += ", " + ex.getMessage();
+                    }                    
+                    try {
+                        cm.setName("AuditActivity"); //NOI18N
+                        cm.setParentClassName("GenericActivity"); //NOI18N
+                        cm.setAbstract(false);
+                        
+                        cm.setId(mem.createClass(cm));
+                        
+                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
+                            ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
+                            String.format("Created class %s", cm.getName()));
+                    } catch (DatabaseException | MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
+                        results[i] += ", " + ex.getMessage();
+                    }                    
+                    try {
+                        cm.setName("GeneralPurposeProject"); //NOI18N
+                        cm.setParentClassName("GenericProject"); //NOI18N
+                        cm.setAbstract(false);
+                        
+                        cm.setId(mem.createClass(cm));
+                        
+                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
+                            ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
+                            String.format("Created class ", cm.getName()));
+                    } catch (DatabaseException | MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
+                        results[i] += ", " + ex.getMessage();
+                    }                    
+                    try {
+                        cm.setName("NetworkProject"); //NOI18N
+                        cm.setParentClassName("GenericProject"); //NOI18N
+                        cm.setAbstract(false);
+                        
+                        cm.setId(mem.createClass(cm));
+                        
+                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
+                            ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
+                            String.format("Created class %s", cm.getName()));
+                    } catch (DatabaseException | MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
+                        results[i] += ", " + ex.getMessage();
                     }
                 break;
                 case "5":
                 {
                     try {
-                        AttributeMetadata attributeMetadata = new AttributeMetadata();
+                        attributeMetadata = new AttributeMetadata();
                         attributeMetadata.setName("rackUnitsNumberingDescending"); //NOI18N
                         attributeMetadata.setDisplayName("rackUnitsNumberingDescending"); //NOI18N
                         attributeMetadata.setDescription("");
@@ -443,6 +580,7 @@ public class ToolsBean implements ToolsBeanRemote {
                         attributeMetadata.setNoCopy(false); 
                         
                         mem.createAttribute("Rack", attributeMetadata); //NOI18N
+                        
                         aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
                             ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
                             String.format("Added attributes to class %s", "Rack")); //NOI18N
@@ -453,65 +591,151 @@ public class ToolsBean implements ToolsBeanRemote {
                 break;
                 case "6":
                 {
+                    cm = new ClassMetadata();                    
+                    cm.setDisplayName("");
+                    cm.setDescription("");                    
+                    cm.setAbstract(false);
+                    cm.setColor(0);
+                    cm.setCountable(false);
+                    cm.setCreationDate(Calendar.getInstance().getTimeInMillis());
+                    cm.setIcon(null);
+                    cm.setSmallIcon(null);
+                    cm.setCustom(false);
+                    cm.setViewable(true);
+                    cm.setInDesign(false);
+                    
+                    attributeMetadata = new AttributeMetadata();
+                    attributeMetadata.setDescription("");
+                    attributeMetadata.setReadOnly(false);                    
+                    attributeMetadata.setUnique(false);
+                    attributeMetadata.setVisible(true);
+                    attributeMetadata.setNoCopy(false);
+                    
+                    attributeMetadata.setName("connectorType"); //NOI18N
+                    attributeMetadata.setDisplayName("connectorType"); //NOI18N
+                    
                     try {
-                        ClassMetadata cm = new ClassMetadata();
                         cm.setName("LinkConnectorType"); //NOI18N
-                        cm.setDisplayName("");
-                        cm.setDescription("");
                         cm.setParentClassName("GenericType"); //NOI18N
-                        cm.setAbstract(false);
-                        cm.setColor(0);
-                        cm.setCountable(false);
-                        cm.setCreationDate(Calendar.getInstance().getTimeInMillis());
-                        cm.setIcon(null);
-                        cm.setSmallIcon(null);
-                        cm.setCustom(false);
-                        cm.setViewable(true);
-                        cm.setInDesign(false);
-
                         mem.createClass(cm);
-
+                        
                         aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
-                            ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
+                            ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT,
                             String.format("Created class %s", cm.getName()));
-
-                        cm.setName("PortConnectorType"); //NOI18N
-                        cm.setParentClassName("GenericType"); //NOI18N
-
-                        mem.createClass(cm);
-
-                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
-                            ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
-                            String.format("Created class %s", cm.getName()));
-
-                        AttributeMetadata attributeMetadata = new AttributeMetadata();
-                        attributeMetadata.setName("connectorType"); //NOI18N
-                        attributeMetadata.setDisplayName("connectorType"); //NOI18N
-                        attributeMetadata.setDescription("");
-                        attributeMetadata.setReadOnly(false);
+                        
+                    } catch (DatabaseException | MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
+                        results[i] = ex.getMessage();
+                    }                        
+                    try {
                         attributeMetadata.setType("LinkConnectorType"); //NOI18N
-                        attributeMetadata.setUnique(false);
-                        attributeMetadata.setVisible(true);
-                        attributeMetadata.setNoCopy(false);                    
-
                         mem.createAttribute("GenericPhysicalLink", attributeMetadata); //NOI18N
-
+                        
                         aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
                             ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
                             String.format("Added attributes to class %s", "GenericPhysicalLink")); //NOI18N
-
+                        
+                    } catch (MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
+                        results[i] += ", " + ex.getMessage();
+                    }
+                    try {
+                        cm.setName("PortConnectorType"); //NOI18N
+                        cm.setParentClassName("GenericType"); //NOI18N
+                        
+                        mem.createClass(cm);
+                        
+                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
+                            ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
+                            String.format("Created class %s", cm.getName()));
+                    } catch (DatabaseException | MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
+                        results[i] += ", " + ex.getMessage();
+                    } 
+                    try {
                         attributeMetadata.setType("PortConnectorType"); //NOI18N
-
                         mem.createAttribute("GenericPort", attributeMetadata); //NOI18N
 
                         aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
                             ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
                             String.format("Added attributes to class %s", "GenericPort")); //NOI18N
-
-
-                    } catch (DatabaseException | MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
-                        results[i] = ex.getMessage();
+                    } catch (MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
+                        results[i] += ", " + ex.getMessage();
                     }
+                }
+                break;
+                case "7":
+                {
+                try {
+                    // If not exist the ElectricalLinkPort and the OpticalLinkPort create them, value of the attribute type are loose
+                    // Get all instances of ELP and OLP and if the type is a CommunicationsPortType set to null
+                    ClassMetadata electricalLinkPort = mem.getClass("ElectricalPort"); //NOI18N
+                    
+                    if (electricalLinkPort.hasAttribute("type")) { //NOI18N
+                        AttributeMetadata oldAttr = electricalLinkPort.getAttribute("type"); //NOI18N
+
+                        String typeType = oldAttr.getType();
+//                        if (!"ElectricalPortType".equals(typeType)) { //NOI18N
+                            try {
+                                AttributeMetadata newAttr = new AttributeMetadata();
+                                newAttr.setId(oldAttr.getId());
+                                newAttr.setName(null);
+                                newAttr.setDisplayName(null);
+                                newAttr.setDescription(null);
+                                newAttr.setType("ElectricalPortType"); //NOI18N
+                                newAttr.setAdministrative(null);
+                                newAttr.setUnique(null);
+                                newAttr.setMandatory(null);
+                                newAttr.setVisible(null);
+                                newAttr.setReadOnly(null);
+                                newAttr.setNoCopy(null);
+
+                                ChangeDescriptor changeDescriptor = mem.setAttributeProperties(electricalLinkPort.getId(), newAttr);
+
+                                aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN,
+                                    ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT,
+                                    changeDescriptor);
+                            } catch (InvalidArgumentException | ObjectNotFoundException | ApplicationObjectNotFoundException ex) {
+                                Logger.getLogger(ToolsBean.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+//                        }
+                    }
+                } catch (MetadataObjectNotFoundException ex) {
+                    results[i] += ", " + ex.getMessage();
+                }
+
+
+                try {
+                    ClassMetadata opticalLinkPort = mem.getClass("OpticalPort"); //NOI18N
+                    if (opticalLinkPort.hasAttribute("type")) { //NOI18N
+                        AttributeMetadata oldAttr = opticalLinkPort.getAttribute("type"); //NOI18N
+
+                        String typeType = oldAttr.getType();
+//                        if (!"OpticalPortType".equals(typeType)) { //NOI18N
+                            try {
+                                AttributeMetadata newAttr = new AttributeMetadata();
+                                newAttr.setId(oldAttr.getId());
+                                newAttr.setName(null);
+                                newAttr.setDisplayName(null);
+                                newAttr.setDescription(null);
+                                newAttr.setType("OpticalPortType"); //NOI18N
+                                newAttr.setAdministrative(null);
+                                newAttr.setUnique(null);
+                                newAttr.setMandatory(null);
+                                newAttr.setVisible(null);
+                                newAttr.setReadOnly(null);
+                                newAttr.setNoCopy(null);
+                                ChangeDescriptor changeDescriptor = mem.setAttributeProperties(opticalLinkPort.getId(), newAttr);
+                                
+                                aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN,
+                                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT,
+                                changeDescriptor);
+                            } catch (InvalidArgumentException | ObjectNotFoundException | ApplicationObjectNotFoundException ex) {
+                                results[i] += ", " + ex.getMessage();
+                            }
+//                        }
+                    }
+                } catch (MetadataObjectNotFoundException ex) {
+                    Logger.getLogger(ToolsBean.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
                 }
                 break;
                 default:

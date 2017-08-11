@@ -288,8 +288,6 @@ public interface WebserviceBeanRemote {
             throws ServerSideException;
     
     public long createPoolItem(long poolId, String className, String[] attributeNames, String[] attributeValues, long templateId, String ipAddress, String sessionId) throws ServerSideException;
-
-    public void deletePool(long id, String ipAddress, String sessionId) throws ServerSideException;
     
     public void deletePools(long[] ids, String ipAddress, String sessionId) throws ServerSideException;
     public void setPoolProperties(long poolId, String name, String description, String ipAddress, String sessionId) throws ServerSideException;
@@ -305,8 +303,6 @@ public interface WebserviceBeanRemote {
     public RemoteObjectLight[] getPoolItems(long poolId, int limit, String ipAddress, String sessionId) throws ServerSideException;
     
     public ApplicationLogEntry[] getBusinessObjectAuditTrail(String objectClass, long objectId, int limit, String ipAddress, String sessionId) throws ServerSideException;
-
-    public ApplicationLogEntry[] getApplicationObjectAuditTrail(String objectClass, long objectId, int limit, String ipAddress, String sessionId) throws ServerSideException;
     
     public ApplicationLogEntry[] getGeneralActivityAuditTrail(int page, int limit, String ipAddress, String sessionId) throws ServerSideException;
     

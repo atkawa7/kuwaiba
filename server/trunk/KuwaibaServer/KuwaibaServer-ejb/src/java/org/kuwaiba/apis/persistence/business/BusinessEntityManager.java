@@ -648,9 +648,10 @@ public interface BusinessEntityManager {
     /**
      * Deletes a report
      * @param reportId The id of the report.
+     * @return The summary of the changes
      * @throws ApplicationObjectNotFoundException If the report could not be found.
      */
-    public void deleteReport(long reportId) throws ApplicationObjectNotFoundException;
+    public ChangeDescriptor deleteReport(long reportId) throws ApplicationObjectNotFoundException;
     
     /**
      * Updates the properties of an existing class level report.
@@ -660,10 +661,11 @@ public interface BusinessEntityManager {
      * @param enabled Is the report enabled? . Null to leave it unchanged.
      * @param type Type of the output of the report. See LocalReportLight for possible values
      * @param script Text of the script. 
+     * @return The summary of the changes
      * @throws ApplicationObjectNotFoundException If the report could not be found.
      * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If any of the report properties has a wrong or unexpected format.
      */
-    public void updateReport(long reportId, String reportName, String reportDescription, Boolean enabled,
+    public ChangeDescriptor updateReport(long reportId, String reportName, String reportDescription, Boolean enabled,
             Integer type, String script) 
             throws ApplicationObjectNotFoundException, InvalidArgumentException;
     
@@ -671,10 +673,11 @@ public interface BusinessEntityManager {
      * Updates the parameters of a report
      * @param reportId The id of the report
      * @param parameters The list of parameters and optional default values. Those with null values will be deleted and the ones that didn't exist previously will be created.
+     * @return The summary of the changes
      * @throws ApplicationObjectNotFoundException If the report was not found.
      * @throws InvalidArgumentException If the any of the parameters has an invalid name.
      */
-    public void updateReportParameters(long reportId, List<StringPair> parameters) 
+    public ChangeDescriptor updateReportParameters(long reportId, List<StringPair> parameters) 
             throws ApplicationObjectNotFoundException, InvalidArgumentException;
     
     /**

@@ -220,9 +220,9 @@ public class ProjectsModule implements GenericCommercialModule {
      * @param projectClass Project class
      * @param projectId Project Id
      * @return The list of Activities
-     * @throws InvalidArgumentException
-     * @throws MetadataObjectNotFoundException
-     * @throws ObjectNotFoundException
+     * @throws InvalidArgumentException If the project is not subclass of GenericProject
+     * @throws MetadataObjectNotFoundException If the project class is not found
+     * @throws ObjectNotFoundException If the project is not found
      */
     public List<RemoteBusinessObjectLight> getProjectActivities(String projectClass, long projectId) 
         throws InvalidArgumentException, MetadataObjectNotFoundException, ObjectNotFoundException {
@@ -312,8 +312,8 @@ public class ProjectsModule implements GenericCommercialModule {
      * @param objectClass Object class
      * @param objectId Object Id
      * @return The list of projects
-     * @throws ObjectNotFoundException
-     * @throws MetadataObjectNotFoundException
+     * @throws ObjectNotFoundException If the project is no found
+     * @throws MetadataObjectNotFoundException If the project class is no found
      */
     public List<RemoteBusinessObjectLight> getProjectsAssociateToObject(String objectClass, long objectId) throws ObjectNotFoundException, MetadataObjectNotFoundException {
         return bem.getSpecialAttribute(objectClass, objectId, RELATIONSHIP_PROJECTSPROJECTUSES);
@@ -325,7 +325,7 @@ public class ProjectsModule implements GenericCommercialModule {
      * @param description Project Pool description
      * @param instanceOfClass Project Pool class
      * @return The new Project Pool id
-     * @throws MetadataObjectNotFoundException
+     * @throws MetadataObjectNotFoundException If he project pool class is no found
      */
     public long createProjectPool(String name, String description, String instanceOfClass) throws MetadataObjectNotFoundException {
         return aem.createRootPool(name, description, instanceOfClass, ApplicationEntityManager.POOL_TYPE_MODULE_COMPONENT);

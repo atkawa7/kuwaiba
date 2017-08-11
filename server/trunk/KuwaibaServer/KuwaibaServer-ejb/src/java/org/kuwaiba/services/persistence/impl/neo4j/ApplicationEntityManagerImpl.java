@@ -991,9 +991,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 throw new ApplicationObjectNotFoundException(String.format("View with id %s could not be found", oid));
             if (name != null) {
                 affectedProperty += Constants.PROPERTY_NAME;
-                oldValue = String.valueOf(gView.getProperty(Constants.PROPERTY_NAME));
+                oldValue += String.valueOf(gView.getProperty(Constants.PROPERTY_NAME));
                 gView.setProperty(Constants.PROPERTY_NAME, name);
-                newValue = name;
+                newValue += name;
             }
             if (description != null) {
                 affectedProperty += " " + Constants.PROPERTY_DESCRIPTION;
@@ -1191,22 +1191,34 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public void saveQuery(long queryOid, String queryName, long ownerOid,
+    public ChangeDescriptor saveQuery(long queryOid, String queryName, long ownerOid,
             byte[] queryStructure, String description) throws ApplicationObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx()) {
             Node queryNode =  queryIndex.get(CompactQuery.PROPERTY_ID, queryOid).getSingle();
             if(queryNode == null)
                 throw new ApplicationObjectNotFoundException(String.format(
                         "Can not find the query with id %s", queryOid));
+            String affectedProperties = "", oldValues = "", newValues = "", notes = "";
 
             queryNode.setProperty(CompactQuery.PROPERTY_QUERYNAME, queryName);
-            if(description != null)
+            affectedProperties += CompactQuery.PROPERTY_QUERYNAME;
+            newValues += queryName;
+            
+            if(description != null) {
                 queryNode.setProperty(CompactQuery.PROPERTY_DESCRIPTION, description);
+                affectedProperties += " " + CompactQuery.PROPERTY_DESCRIPTION;
+                newValues += " " + description;
+            }
             
             queryNode.setProperty(CompactQuery.PROPERTY_QUERYSTRUCTURE, queryStructure);
+            affectedProperties += " " + CompactQuery.PROPERTY_QUERYSTRUCTURE;
             
             if(ownerOid != -1) {
                 queryNode.setProperty(CompactQuery.PROPERTY_IS_PUBLIC, false);
+                
+                affectedProperties += " " + CompactQuery.PROPERTY_IS_PUBLIC;
+                newValues += " " + "false";
+                
                 Node userNode = userIndex.get(Constants.PROPERTY_ID, ownerOid).getSingle();
                 if(userNode == null)
                     throw new ApplicationObjectNotFoundException(String.format(
@@ -1217,9 +1229,14 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 if(singleRelationship == null)
                     userNode.createRelationshipTo(queryNode, RelTypes.OWNS_QUERY);
             }
-            else
+            else {
                 queryNode.setProperty(CompactQuery.PROPERTY_IS_PUBLIC, true);
+                
+                affectedProperties += " " + CompactQuery.PROPERTY_IS_PUBLIC;
+                newValues += " " + "true";
+            }
             tx.success();
+            return new ChangeDescriptor(affectedProperties, oldValues, newValues, notes);
         }
     }
 
@@ -1301,8 +1318,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public List<ResultRecord> executeQuery(ExtendedQuery query) 
-            throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
+    public List<ResultRecord> executeQuery(ExtendedQuery query) throws MetadataObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx()) {
             CypherQueryBuilder cqb = new CypherQueryBuilder();
             cqb.setClassNodes(getNodesFromQuery(query));
@@ -1444,9 +1460,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             return poolNode.getId();
         }
     }
-    
-    @Override
-    public void deletePool(long id) throws ApplicationObjectNotFoundException, OperationNotPermittedException {
+        
+    private void deletePool(long id) throws ApplicationObjectNotFoundException, OperationNotPermittedException {
         try(Transaction tx = graphDb.beginTx()) {
             Node poolNode = poolsIndex.get(Constants.PROPERTY_ID, id).getSingle();
             if (poolNode == null)
@@ -1465,14 +1480,26 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public void setPoolProperties(long poolId, String name, String description) {
+    public ChangeDescriptor setPoolProperties(long poolId, String name, String description) {
         try (Transaction tx = graphDb.beginTx()) {
             Node poolNode = poolsIndex.get(Constants.PROPERTY_ID, poolId).getSingle();
-            if(name != null)
+            String affectedProperties = "", oldValues = "", newValues = "";
+            
+            if(name != null) {
+                oldValues += " " + (poolNode.hasProperty(Constants.PROPERTY_NAME) ? poolNode.getProperty(Constants.PROPERTY_NAME) : " ");
                 poolNode.setProperty(Constants.PROPERTY_NAME, name);
-            if(description != null)
+                affectedProperties += " " + Constants.PROPERTY_NAME;                
+                newValues += " " + name;   
+            }
+            if(description != null) {
+                oldValues += " " + (poolNode.hasProperty(Constants.PROPERTY_DESCRIPTION) ? poolNode.getProperty(Constants.PROPERTY_DESCRIPTION) : " ");
                 poolNode.setProperty(Constants.PROPERTY_DESCRIPTION, description);
+                affectedProperties += " " + Constants.PROPERTY_DESCRIPTION;                
+                newValues += " " + description;                
+            }
+            
             tx.success();
+            return new ChangeDescriptor(affectedProperties, oldValues, newValues, String.format("Set %s pool properties", name));
         }
     }
        
@@ -1926,35 +1953,50 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public void updateTaskProperties(long taskId, String propertyName, String propertyValue) 
+    public ChangeDescriptor updateTaskProperties(long taskId, String propertyName, String propertyValue) 
             throws ApplicationObjectNotFoundException, InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
             Node taskNode = taskIndex.get(Constants.PROPERTY_ID, taskId).getSingle();
             if (taskNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", taskId));
+            String affectedProperties = "", oldValues = "", newValues = "";
 
             switch (propertyName) {
                 case Constants.PROPERTY_NAME:
                 case Constants.PROPERTY_DESCRIPTION:
                 case Constants.PROPERTY_SCRIPT:
+                    oldValues += " " + (taskNode.hasProperty(propertyName) ? taskNode.getProperty(propertyName) : " ");
+                    
                     taskNode.setProperty(propertyName, propertyValue);
+                    
+                    affectedProperties += " " + Constants.PROPERTY_SCRIPT;
+                    newValues += " " + propertyValue;
                     break;
                 case Constants.PROPERTY_ENABLED:
+                    oldValues += " " + (taskNode.hasProperty(propertyName) ? taskNode.getProperty(propertyName) : " ");
+                    
                     taskNode.setProperty(propertyName, Boolean.valueOf(propertyValue));
+                    
+                    affectedProperties += " " + Constants.PROPERTY_ENABLED;
+                    newValues += " " + propertyValue;
                     break;
                 default:
                     throw new InvalidArgumentException(String.format("%s is not a valid task property", propertyName));
             }
+            String taskName = taskNode.hasProperty(Constants.PROPERTY_NAME) ? (String) taskNode.getProperty(Constants.PROPERTY_NAME) : " ";
             tx.success();
+            return new ChangeDescriptor(affectedProperties, oldValues, newValues, 
+                String.format("Updated properties in Task with name %s and id %s ", taskName, taskId));
         }
     }
 
     @Override
-    public void updateTaskParameters(long taskId, List<StringPair> parameters) throws ApplicationObjectNotFoundException {
+    public ChangeDescriptor updateTaskParameters(long taskId, List<StringPair> parameters) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             Node taskNode = taskIndex.get(Constants.PROPERTY_ID, taskId).getSingle();
             if (taskNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", taskId));
+            String affectedProperties = "", oldValues = "", newValues = "";
 
             for (StringPair parameter : parameters) {
                 String actualParameterName = "PARAM_" + parameter.getKey();
@@ -1962,40 +2004,74 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 //params set to null, must be deleted
                 if (taskNode.hasProperty(actualParameterName) && parameter.getValue() == null)
                     taskNode.removeProperty(actualParameterName);
-                else
+                else {                    
+                    oldValues += " " + (taskNode.hasProperty(actualParameterName) ? taskNode.getProperty(actualParameterName) : " ");
+                    
                     taskNode.setProperty(actualParameterName, parameter.getValue());
+                    
+                    affectedProperties += " " + parameter.getKey();
+                    newValues += " " + parameter.getValue();
+                }
             }
-            
+            String taskName = taskNode.hasProperty(Constants.PROPERTY_NAME) ? (String) taskNode.getProperty(Constants.PROPERTY_NAME) : " ";
             tx.success();
+            return new ChangeDescriptor(affectedProperties, oldValues, newValues, 
+                String.format("Updated parameters in Task with name %s and id %s ", taskName, taskId));
         }
     }
 
     @Override
-    public void updateTaskSchedule(long taskId, TaskScheduleDescriptor schedule) throws ApplicationObjectNotFoundException {
+    public ChangeDescriptor updateTaskSchedule(long taskId, TaskScheduleDescriptor schedule) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             Node taskNode = taskIndex.get(Constants.PROPERTY_ID, taskId).getSingle();
             if (taskNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", taskId));
-
+            String affectedProperties = "", oldValues = "", newValues = "";
+            
+            affectedProperties += " " + Constants.PROPERTY_EXECUTION_TYPE;
+            oldValues += " " + (taskNode.hasProperty(Constants.PROPERTY_EXECUTION_TYPE) ? taskNode.getProperty(Constants.PROPERTY_EXECUTION_TYPE) : " ");
             taskNode.setProperty(Constants.PROPERTY_EXECUTION_TYPE, schedule.getExecutionType());
-            taskNode.setProperty(Constants.PROPERTY_EVERY_X_MINUTES, schedule.getEveryXMinutes());
-            taskNode.setProperty(Constants.PROPERTY_START_TIME, schedule.getStartTime());
+            newValues += " " + schedule.getExecutionType();
             
+            affectedProperties += " " + Constants.PROPERTY_EVERY_X_MINUTES;
+            oldValues += " " + (taskNode.hasProperty(Constants.PROPERTY_EVERY_X_MINUTES) ? taskNode.getProperty(Constants.PROPERTY_EVERY_X_MINUTES) : " ");
+            taskNode.setProperty(Constants.PROPERTY_EVERY_X_MINUTES, schedule.getEveryXMinutes());
+            newValues += " " + schedule.getEveryXMinutes();
+            
+            affectedProperties += " " + Constants.PROPERTY_START_TIME;
+            oldValues += " " + (taskNode.hasProperty(Constants.PROPERTY_START_TIME) ? taskNode.getProperty(Constants.PROPERTY_START_TIME) : " ");
+            taskNode.setProperty(Constants.PROPERTY_START_TIME, schedule.getStartTime());
+            newValues += " " + schedule.getStartTime();
+            
+            String taskName = taskNode.hasProperty(Constants.PROPERTY_NAME) ? (String) taskNode.getProperty(Constants.PROPERTY_NAME) : " ";
             tx.success();
+            return new ChangeDescriptor(affectedProperties, oldValues, newValues, 
+                String.format("Updated schedule in Task with name %s and id %s ", taskName, taskId));
         }
     }
 
     @Override
-    public void updateTaskNotificationType(long taskId, TaskNotificationDescriptor notificationType) throws ApplicationObjectNotFoundException {
+    public ChangeDescriptor updateTaskNotificationType(long taskId, TaskNotificationDescriptor notificationType) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             Node taskNode = taskIndex.get(Constants.PROPERTY_ID, taskId).getSingle();
             if (taskNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", taskId));
-
-            taskNode.setProperty(Constants.PROPERTY_NOTIFICATION_TYPE, notificationType.getNotificationType());
-            taskNode.setProperty(Constants.PROPERTY_EMAIL, notificationType.getEmail() == null ? "" : notificationType.getEmail());
+            String affectedProperties = "", oldValues = "", newValues = "";
             
+            affectedProperties += " " + Constants.PROPERTY_NOTIFICATION_TYPE;
+            oldValues += " " + (taskNode.hasProperty(Constants.PROPERTY_NOTIFICATION_TYPE) ? taskNode.getProperty(Constants.PROPERTY_NOTIFICATION_TYPE) : " ");
+            taskNode.setProperty(Constants.PROPERTY_NOTIFICATION_TYPE, notificationType.getNotificationType());
+            newValues += " " + notificationType.getNotificationType();
+            
+            affectedProperties += " " + Constants.PROPERTY_EMAIL;
+            oldValues += " " + (taskNode.hasProperty(Constants.PROPERTY_EMAIL) ? taskNode.getProperty(Constants.PROPERTY_EMAIL) : " ");
+            taskNode.setProperty(Constants.PROPERTY_EMAIL, notificationType.getEmail() == null ? "" : notificationType.getEmail());
+            newValues += " " + notificationType.getEmail() == null ? "" : notificationType.getEmail();
+            
+            String taskName = taskNode.hasProperty(Constants.PROPERTY_NAME) ? (String) taskNode.getProperty(Constants.PROPERTY_NAME) : " ";
             tx.success();
+            return new ChangeDescriptor(affectedProperties, oldValues, newValues, 
+                String.format("Updated notification type in Task with name %s and id %s ", taskName, taskId));
         }
     }
 
@@ -2018,7 +2094,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public void subscribeUserToTask(long userId, long taskId) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+    public ChangeDescriptor subscribeUserToTask(long userId, long taskId) throws ApplicationObjectNotFoundException, InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
             Node taskNode = taskIndex.get(Constants.PROPERTY_ID, taskId).getSingle();
             if (taskNode == null)
@@ -2043,21 +2119,26 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             Relationship rel = userNode.createRelationshipTo(taskNode, RelTypes.SUBSCRIBED_TO);
             rel.setProperty(Constants.PROPERTY_NAME, "task"); //NOI18N
             
+            String taskName = taskNode.hasProperty(Constants.PROPERTY_NAME) ? (String) taskNode.getProperty(Constants.PROPERTY_NAME) : "";
+            String userName = userNode.hasProperty(Constants.PROPERTY_NAME) ? (String) userNode.getProperty(Constants.PROPERTY_NAME) : "";
             tx.success();
+            return new ChangeDescriptor("", "", "", String.format("Subscribed user %s to task %s", userName, taskName));
         }
     }
 
     @Override
-    public void unsubscribeUserFromTask(long userId, long taskId) throws ApplicationObjectNotFoundException {
+    public ChangeDescriptor unsubscribeUserFromTask(long userId, long taskId) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             Node taskNode = taskIndex.get(Constants.PROPERTY_ID, taskId).getSingle();
             if (taskNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", taskId));
             
             boolean found = false;
+            String userName = null;
             
             for (Relationship rel : taskNode.getRelationships(Direction.INCOMING, RelTypes.SUBSCRIBED_TO)) {
                 if (rel.getStartNode().getId() == userId) {
+                    userName = rel.getStartNode().hasProperty(Constants.PROPERTY_NAME) ? (String) rel.getStartNode().getProperty(Constants.PROPERTY_NAME) : "";
                     rel.delete();
                     found = true;
                     break;
@@ -2066,8 +2147,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             if (!found)
                 throw new ApplicationObjectNotFoundException(String.format("A user with id %s could not be found", taskId));
-
+            String taskName = taskNode.hasProperty(Constants.PROPERTY_NAME) ? (String) taskNode.getProperty(Constants.PROPERTY_NAME) : "";            
             tx.success();
+            return new ChangeDescriptor("", "", "", String.format("Unsubscribed user %s from task %s", userName, taskName));
         }
     }
 
@@ -2289,7 +2371,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public void updateTemplateElement(String templateElementClass, long templateElementId, String[] attributeNames, 
+    public ChangeDescriptor updateTemplateElement(String templateElementClass, long templateElementId, String[] attributeNames, 
             String[] attributeValues) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException {
         
         if (attributeNames.length != attributeValues.length)
@@ -2311,23 +2393,31 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             if (objectNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Template object %s of class %s could not be found", templateElementId, templateElementClass));
-
+            
+            String affectedProperties = "", oldValues = "", newValues = "", notes = "";
             ClassMetadata classMetadata = cm.getClass(templateElementClass);
             
             for (int i = 0; i < attributeNames.length; i++) {
                 if (!classMetadata.hasAttribute(attributeNames[i]))
                     throw new MetadataObjectNotFoundException(String.format("Class %s does not have any attribute named %s", templateElementClass, attributeNames[i]));
                 
+                affectedProperties += " " + attributeNames[i];
+                
                 String attributeType = classMetadata.getType(attributeNames[i]);
                 if (AttributeMetadata.isPrimitive(attributeType)) {
+                    oldValues += " " + (objectNode.hasProperty(attributeNames[i]) ? objectNode.getProperty(attributeNames[i]) : "null");
+                    
                     if (attributeValues[i] == null) {
                         if (objectNode.hasProperty(attributeNames[i]))
                             objectNode.removeProperty(attributeNames[i]);
-                    } else 
+                    } else {                        
                         objectNode.setProperty(attributeNames[i], Util.getRealValue(attributeValues[i], attributeType));
+                        newValues += " " + objectNode.getProperty(attributeNames[i]);
+                    }
                 } else { //It's a list type
                     for (Relationship relatedToRelationship : objectNode.getRelationships(Direction.OUTGOING, RelTypes.RELATED_TO)) {
                         if (relatedToRelationship.hasProperty(Constants.PROPERTY_NAME) && relatedToRelationship.getProperty(Constants.PROPERTY_NAME).equals(attributeNames[i])) {
+                            oldValues += " " + (relatedToRelationship.getEndNode().hasProperty(Constants.PROPERTY_NAME) ? relatedToRelationship.getEndNode().getProperty(Constants.PROPERTY_NAME) : "null");
                             relatedToRelationship.delete();
                             break;
                         }
@@ -2341,16 +2431,19 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                         
                         Relationship relatedToRelationship = objectNode.createRelationshipTo(listTypeItemNode, RelTypes.RELATED_TO);
                         relatedToRelationship.setProperty(Constants.PROPERTY_NAME, attributeNames[i]);
+                        
+                        newValues += " " + (listTypeItemNode.hasProperty(Constants.PROPERTY_NAME) ? listTypeItemNode.getProperty(Constants.PROPERTY_NAME) : "null");
                     } 
                 }
             }
-            
+            String templateElementName = objectNode.hasProperty(Constants.PROPERTY_NAME) ? (String) objectNode.getProperty(Constants.PROPERTY_NAME) : "null";
             tx.success();
+            return new ChangeDescriptor(affectedProperties, oldValues, newValues, String.format("Updated template element %s [%s]", templateElementName, templateElementClass));
         }
     }
 
     @Override
-    public void deleteTemplateElement(String templateElementClass, long templateElementId) 
+    public ChangeDescriptor deleteTemplateElement(String templateElementClass, long templateElementId) 
             throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             Node classNode = classIndex.get(Constants.PROPERTY_NAME, templateElementClass).getSingle();
@@ -2371,10 +2464,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (templateObjectNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Template object %s of class %s could not be found", templateElementId, templateElementClass));
             
+            String templateObjectName = templateObjectNode.hasProperty(Constants.PROPERTY_NAME) ? (String) templateObjectNode.getProperty(Constants.PROPERTY_NAME) : "null";
             //Delete the template element recursively
             Util.deleteTemplateObject(templateObjectNode);
             
             tx.success();
+            return new ChangeDescriptor("", "", "", String.format("Deleted template element %s [%s]", templateObjectName, templateElementClass));
         }
     }
 

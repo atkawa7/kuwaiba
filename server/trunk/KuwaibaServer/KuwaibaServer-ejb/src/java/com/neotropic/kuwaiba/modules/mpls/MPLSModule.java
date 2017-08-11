@@ -102,7 +102,21 @@ public class MPLSModule implements GenericCommercialModule {
         this.bem = bem;
     }
     
-    //The actual methods
+    /**
+     * Creates a MPLS Link
+     * 
+     * @param classNameEndpointA
+     * @param idEndpointA
+     * @param classNameEndpointB
+     * @param idEndpointB
+     * @param linkType
+     * @param defaultName
+     * @return 
+     * @throws ServerSideException If the given linkType is no subclass of GenericLogicalConnection
+     *                             If any of the requested objects can't be found
+     *                             If any of the classes provided can not be found
+     *                             If any of the objects involved can't be connected
+     */
     public long createMPLSLink(String classNameEndpointA, long idEndpointA, 
             String classNameEndpointB, long idEndpointB, String linkType, String defaultName) throws ServerSideException {
         if (bem == null || mem == null)
@@ -154,7 +168,19 @@ public class MPLSModule implements GenericCommercialModule {
         }
     }
     
-    //The actual methods
+    /**
+     * Deletes a MPLS Link
+     * 
+     * @param linkClass
+     * @param linkId
+     * @param forceDelete
+     * @throws ServerSideException
+     * @throws InventoryException If the object can not be found
+     *                            If either the object class or the attribute can not be found
+     *                            If the class could not be found
+     *                            If the object could not be deleted because there's some business rules that avoids it or it has incoming relationships.
+     * @throws NotAuthorizedException
+     */
     public void deleteMPLSLink(String linkClass, long linkId, boolean forceDelete) 
             throws ServerSideException, InventoryException, NotAuthorizedException {
         if (bem == null || mem == null)
