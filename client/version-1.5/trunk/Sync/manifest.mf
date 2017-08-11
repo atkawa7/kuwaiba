@@ -1,8 +1,0 @@
-Manifest-Version: 1.0
-OpenIDE-Module: org.inventory.sync/1
-OpenIDE-Module-Implementation-Version: 1
-OpenIDE-Module-Localizing-Bundle: org/inventory/sync/Bundle.properties
-OpenIDE-Module-Requires: 
-  org.openide.windows.IOProvider,
-  org.openide.windows.WindowManager
-
