@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
@@ -25,8 +25,8 @@ import org.openide.util.lookup.ServiceProvider;
 import org.openide.windows.TopComponent;
 
 /**
- * Opens an end-to-end view of the service, by trying to match the endpoints of the 
- * logical circuits directly associated to the selected instance
+ * Opens an end-to-end view of the service, by trying to match the endpoints of 
+ * the logical circuits directly associated to the selected instance
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @ServiceProvider(service = GenericObjectNodeAction.class)

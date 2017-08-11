@@ -31,7 +31,7 @@ import org.openide.nodes.Node;
  */
 public class CustomerChildren extends Children.Keys<LocalPool> {
     
-      @Override
+    @Override
     public void addNotify() {
         LocalObjectLight customer = ((CustomerNode)this.getNode()).getObject();
         

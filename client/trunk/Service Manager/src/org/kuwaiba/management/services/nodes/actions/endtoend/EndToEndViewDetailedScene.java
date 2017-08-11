@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
@@ -33,8 +33,9 @@ import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
- * Shows an end-to-end view of a service by trying to match the endpoints of the logical circuits
- * directly associated to the selected instance. The view looks a lot like the Physical Path view, but they're totally different
+ * Shows an end-to-end view of a service by trying to match the endpoints of the 
+ * logical circuits directly associated to the selected instance. 
+ * The view looks a lot like the Physical Path view, but they're totally different
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class EndToEndViewDetailedScene extends AbstractScene<LocalObjectLight, LocalObjectLight>{

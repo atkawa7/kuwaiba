@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
@@ -17,12 +17,14 @@
 package org.kuwaiba.management.services.nodes.actions;
 
 import java.awt.event.ActionEvent;
+import javax.swing.JOptionPane;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.kuwaiba.management.services.nodes.actions.endtoend.EndToEndViewSimpleScene;
 import org.kuwaiba.management.services.nodes.actions.endtoend.EndToEndViewTopComponent;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.windows.TopComponent;
+import org.openide.windows.WindowManager;
 
 /**
  * Opens an end-to-end view of the service, by trying to match the endpoints of the 
@@ -38,9 +40,16 @@ public class ShowEndToEndSimpleViewAction extends GenericObjectNodeAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        TopComponent endToEndTC = new EndToEndViewTopComponent(selectedObjects.get(0), new EndToEndViewSimpleScene());
-        endToEndTC.open();
-        endToEndTC.requestActive();
+        if (selectedObjects.size() != 1)
+            JOptionPane.showMessageDialog(null, "Select only one node service.", "Error", JOptionPane.ERROR_MESSAGE);
+        else{
+            //TopComponent endToEndTC = ((EndToEndViewTopComponent)WindowManager.getDefault().
+              //  findTopComponent("ObjectViewTopComponent_" + selectedObjects.get(0).getOid()));
+            
+            TopComponent endToEndTC = new EndToEndViewTopComponent(selectedObjects.get(0), new EndToEndViewSimpleScene());
+            endToEndTC.open();
+            endToEndTC.requestActive();
+        }
     }
     
     @Override
