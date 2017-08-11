@@ -21,7 +21,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.List;
-import javax.swing.AbstractListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -30,7 +29,6 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.ListDataListener;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalBusinessRule;
 import org.inventory.communications.core.LocalClassMetadataLight;
@@ -107,7 +105,7 @@ public class ConfigureConnectorMatchingAction implements ActionListener {
                          * Port information
                          */
                         List<LocalClassMetadataLight> portSubclasses = com.
-                                getLightSubclasses(Constants.CLASS_GENERICPORT, true, false);
+                                getLightSubclasses(Constants.CLASS_GENERICPORT, false, false);
                         
                         if (portSubclasses == null) {
                             JOptionPane.showMessageDialog(null, "Make sure you have upgraded your database before running this action:\n" + com.getError(), "Error", JOptionPane.ERROR_MESSAGE);

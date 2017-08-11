@@ -25,12 +25,15 @@ import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
+import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalApplicationLogEntry;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.export.ExportTablePanel;
 import org.inventory.core.services.api.export.ExportableTable;
 import org.inventory.core.services.api.export.filters.CSVFilter;
 import org.inventory.core.services.api.export.filters.TextExportFilter;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.netbeans.swing.etable.ETable;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
@@ -42,14 +45,21 @@ import org.openide.windows.WindowManager;
  * Show the activity log associated to an object
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ObjectAuditTrailTopComponent extends TopComponent implements ExportableTable {
+public class ObjectAuditTrailTopComponent extends TopComponent implements ExportableTable, Refreshable {
     private JToolBar barMain;
     private JButton btnExport;
     private JScrollPane pnlScrollMain;
     private ETable aTable;
     private String columnNames[];
+    private LocalObjectLight object;
 
-    public ObjectAuditTrailTopComponent(LocalObjectLight object, final LocalApplicationLogEntry[] logEntries) {
+    public ObjectAuditTrailTopComponent(LocalObjectLight object) {
+        LocalApplicationLogEntry[] entries = CommunicationsStub.getInstance().getBusinessObjectAuditTrail(object.getClassName(), object.getOid());
+        if (entries == null) {
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            return;
+        }
+        this.object = object;
         this.columnNames =  new String[]{"Timestamp", "Type", "User", "Property", "Old value", "New value"};
         setLayout(new BorderLayout());
         barMain = new JToolBar();
@@ -66,7 +76,24 @@ public class ObjectAuditTrailTopComponent extends TopComponent implements Export
             }
         });
         setName(String.format("Audit trail for %s", object));
-        aTable = new ETable(new TableModel() {
+        
+        aTable = new ETable(buildTableModel(entries));
+        
+        pnlScrollMain = new JScrollPane();
+        pnlScrollMain.setViewportView(aTable);
+        add(pnlScrollMain, BorderLayout.CENTER);
+        Mode myMode = WindowManager.getDefault().findMode("bottomSlidingSide"); //NOI18N
+        myMode.dockInto(this);
+    }
+    
+    @Override
+    protected String preferredID() {
+        return "ObjectAuditTrailTopComponent_" + object.getOid(); //NOI18N
+    }
+    
+    private TableModel buildTableModel(final LocalApplicationLogEntry[] logEntries) {
+        
+        return new TableModel() {
             final LocalApplicationLogEntry entries[] = logEntries;
             @Override
             public int getRowCount() {
@@ -125,12 +152,8 @@ public class ObjectAuditTrailTopComponent extends TopComponent implements Export
             @Override
             public void removeTableModelListener(TableModelListener l) {
             }
-        });
-        pnlScrollMain = new JScrollPane();
-        pnlScrollMain.setViewportView(aTable);
-        add(pnlScrollMain, BorderLayout.CENTER);
-        Mode myMode = WindowManager.getDefault().findMode("bottomSlidingSide"); //NOI18N
-        myMode.dockInto(this);
+        };
+        
     }
     
     @Override
@@ -157,5 +180,16 @@ public class ObjectAuditTrailTopComponent extends TopComponent implements Export
             for (int j = 0; j < aTable.getModel().getColumnCount(); j++)
                 res[i + 1][j] = aTable.getModel().getValueAt(i, j);
         return res;
+    }
+
+    @Override
+    public void refresh() {
+        setName(String.format("Audit trail for %s", object));
+        LocalApplicationLogEntry[] entries = CommunicationsStub.getInstance().getBusinessObjectAuditTrail(object.getClassName(), object.getOid());
+        if (entries == null) {
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            return;
+        }
+        aTable.setModel(buildTableModel(entries));
     }
 }

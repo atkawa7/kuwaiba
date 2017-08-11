@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.inventory.navigation.navigationtree.nodes.properties;
+package org.inventory.core.templates.nodes.properties;
 
 import java.awt.Component;
 import java.awt.event.ComponentEvent;
@@ -35,15 +35,11 @@ public class ItemListPropertyEditor extends PropertyEditorSupport {
     private ListTypeProperty parentProperty;
     private List<LocalObjectListItem> list;
 
-    public ItemListPropertyEditor(List<LocalObjectListItem> list){        
-        this.list = list;
-    }
-    
     public ItemListPropertyEditor(List<LocalObjectListItem> list, ListTypeProperty parentProperty){        
         this.list = list;
         this.parentProperty = parentProperty;
     }
-
+    
     @Override
     public String getAsText(){
         return getValue() == null ? list.get(0).toString() : getValue().toString();

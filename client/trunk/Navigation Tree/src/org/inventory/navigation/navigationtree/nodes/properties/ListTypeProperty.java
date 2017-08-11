@@ -37,7 +37,7 @@ public class ListTypeProperty extends PropertySupport.ReadWrite<LocalObjectListI
     public ListTypeProperty(String name, String displayName, String toolTextTip, 
             List<LocalObjectListItem> list, ObjectNode node, LocalObjectListItem value) {
         super(name, LocalObjectListItem.class, displayName, toolTextTip);
-        this.propertyEditor = new ItemListPropertyEditor(list);
+        this.propertyEditor = new ItemListPropertyEditor(list, this);
         this.value = value == null ? new LocalObjectListItem() : value;
         this.node = node;
     }

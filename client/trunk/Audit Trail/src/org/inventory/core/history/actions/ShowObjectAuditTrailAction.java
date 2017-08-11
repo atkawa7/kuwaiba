@@ -18,12 +18,13 @@ package org.inventory.core.history.actions;
 import java.awt.event.ActionEvent;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalApplicationLogEntry;
+import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.history.windows.ObjectAuditTrailTopComponent;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.openide.util.lookup.ServiceProvider;
-import org.openide.windows.TopComponent;
+import org.openide.windows.WindowManager;
 
 /**
  * Retrieves the activity log related to an object
@@ -40,12 +41,26 @@ public final class ShowObjectAuditTrailAction extends GenericObjectNodeAction {
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        LocalApplicationLogEntry[] entries = com.getBusinessObjectAuditTrail(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getOid());
+        LocalObjectLight selectedObject = selectedObjects.get(0);
+        LocalApplicationLogEntry[] entries = com.getBusinessObjectAuditTrail(selectedObject.getClassName(), selectedObject.getOid());
         if (entries == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else{
-            TopComponent tc = new ObjectAuditTrailTopComponent(selectedObjects.get(0), entries);
-            tc.open();
+            ObjectAuditTrailTopComponent tc = (ObjectAuditTrailTopComponent) WindowManager.getDefault()
+                .findTopComponent("ObjectAuditTrailTopComponent_" + selectedObject.getOid());
+            
+            if (tc == null) {
+                tc = new ObjectAuditTrailTopComponent(selectedObject);
+                tc.open();
+            } else {
+                if (tc.isOpened())
+                    tc.requestAttention(true);
+                else { //Even after closed, the TCs (even the no-singletons) continue to exist in the NBP's PersistenceManager registry, 
+                       //so we will reuse the instance, refreshing the vierw first
+                    tc.refresh();
+                    tc.open();
+                }
+            }
             tc.requestActive();
         }
     }

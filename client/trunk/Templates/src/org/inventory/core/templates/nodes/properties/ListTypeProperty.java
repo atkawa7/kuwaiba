@@ -20,7 +20,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectListItem;
-import org.inventory.navigation.navigationtree.nodes.properties.ItemListPropertyEditor;
 import org.openide.nodes.PropertySupport;
 
 /**
@@ -34,7 +33,7 @@ public class ListTypeProperty extends PropertySupport.ReadWrite<LocalObjectListI
     public ListTypeProperty(String name, String displayName, String shortDescription, 
             List<LocalObjectListItem> list, LocalObject businessObject) {
         super(name, LocalObjectListItem.class, displayName, shortDescription);
-        this.propertyEditor = new ItemListPropertyEditor(list);
+        this.propertyEditor = new ItemListPropertyEditor(list, this);
         this.businessObject = businessObject;
     }
 
