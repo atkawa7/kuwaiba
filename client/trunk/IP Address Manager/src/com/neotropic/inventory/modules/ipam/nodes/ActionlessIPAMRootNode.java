@@ -15,9 +15,13 @@
  */
 package com.neotropic.inventory.modules.ipam.nodes;
 
+import java.util.Collections;
 import java.util.List;
+import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalPool;
+import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
+import org.openide.nodes.Node;
 
 /**
  * The same IPAMRootNode, but without actions (useful in views inside wizards, 
@@ -25,19 +29,25 @@ import org.openide.nodes.Children;
  * context actions, that are dependant of the selected nodes won't crash)
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ActionlessIPAMRootNode extends IPAMRootNode {
+public class ActionlessIPAMRootNode extends AbstractNode {
 
-//    public ActionlessIPAMRootNode(List<LocalPool> subnetPools) {
-//        super(subnetPools);
-//        setChildren(new Children.Array());
-//        for (LocalPool subnetPool : subnetPools)
-//            getChildren().add(new ActionlessSubnetPoolNode[] { new ActionlessSubnetPoolNode(subnetPool) });
-//    }
-
-    public ActionlessIPAMRootNode(IpamSubnetRootPoolChildren subnetPools) {
+    public ActionlessIPAMRootNode(actionlessIpamSubnetRootPoolChildren subnetPools) {
         super(subnetPools);
     }
     
-    
+    public static class actionlessIpamSubnetRootPoolChildren extends Children.Keys <LocalPool> {
+
+        @Override
+        public void addNotify(){
+        List<LocalPool> pools = CommunicationsStub.getInstance().getSubnetPools(-1, null);
+        Collections.sort(pools);
+        setKeys(pools);
+    }
+
+        @Override
+        protected Node[] createNodes(LocalPool key) {
+            return new Node[] { new ActionlessSubnetPoolNode((LocalPool)key) };
+        }
+    }
     
 }

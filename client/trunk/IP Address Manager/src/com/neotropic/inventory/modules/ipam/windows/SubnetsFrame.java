@@ -48,7 +48,7 @@ public class SubnetsFrame extends JFrame {
         this.selectedPorts = selectedPorts;
         setLayout(new BorderLayout());
         setTitle(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_TITLE_AVAILABLE_SUBNETS"));
-        setSize(410, 600);
+        setSize(450, 600);
         setLocationRelativeTo(null);
         JLabel lblInstructions = new JLabel(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_INSTRUCTIONS_SELECT_AN_IPADDRESS"));
         lblInstructions.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -60,7 +60,7 @@ public class SubnetsFrame extends JFrame {
         pnlInstructions.setLayout(new GridLayout(1, 1));
         
         pnlSubnets.setViewportView(treeSubnets);
-        //pnlSubnets.getExplorerManager().setRootContext(new ActionlessIPAMRootNode(subnets));
+        pnlSubnets.getExplorerManager().setRootContext(new ActionlessIPAMRootNode(new ActionlessIPAMRootNode.actionlessIpamSubnetRootPoolChildren()));
         add(pnlSubnets, BorderLayout.CENTER);
         
         JPanel pnlButtons = new JPanel();

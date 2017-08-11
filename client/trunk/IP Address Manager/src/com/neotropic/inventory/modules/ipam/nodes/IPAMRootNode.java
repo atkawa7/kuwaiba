@@ -33,8 +33,6 @@ public class IPAMRootNode extends AbstractNode {
     /**
      * Main constructor
      * @param subnetPools The list of subnet pools to be displayed as roots of the tree
-     * @param enableActions Should the context actions be available? When this tree is displayed outside the IPAM, like for example, within an ExplorablePanel,
-     *                  the explorer manager lookup could conflict with the global lookup, so it's better to disable the actions
      */
     public IPAMRootNode(IpamSubnetRootPoolChildren subnetPools) {
         super (subnetPools);
