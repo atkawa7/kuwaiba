@@ -16,9 +16,11 @@
 package org.inventory.core.history;
 
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalApplicationLogEntry;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.netbeans.swing.etable.ETable;
 
 /**
  * Audit Trail module TC service
@@ -71,10 +73,20 @@ public class AuditTrailService {
         if (records == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else{
-            if (component.getTable().getModel() instanceof DefaultTableModel)
-                component.getTable().setModel(new AuditTrailTableModel(records));
+            AuditTrailTableModel tableModel = new AuditTrailTableModel(records);
+            ETable table = component.getTable();
+            
+            if (table.getModel() instanceof DefaultTableModel)
+                table.setModel(tableModel);
             else
-                component.getTable().setModel(new AuditTrailTableModel(records));
+                table.setModel(tableModel);
+            
+            TableColumnModel columnModel = table.getColumnModel();
+            
+            for (int i = 0; i < tableModel.getColumnCount(); i += 1) {
+                if ("Old value".equals(tableModel.getColumnName(i)) || "New value".equals(tableModel.getColumnName(i)))                
+                    columnModel.getColumn(i).setPreferredWidth(81);
+            }
         }
     }
 }
