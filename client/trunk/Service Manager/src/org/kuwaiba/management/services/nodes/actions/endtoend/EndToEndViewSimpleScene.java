@@ -49,10 +49,7 @@ import org.inventory.core.visual.actions.CustomAddRemoveControlPointAction;
 import org.inventory.core.visual.actions.CustomMoveAction;
 import org.inventory.core.visual.actions.CustomMoveControlPointAction;
 import org.inventory.core.visual.actions.providers.CustomResizeProvider;
-import org.inventory.core.visual.menu.FrameMenu;
 import org.inventory.core.visual.scene.AbstractScene;
-import static org.inventory.core.visual.scene.AbstractScene.ACTION_SELECT;
-import static org.inventory.core.visual.scene.AbstractScene.SCENE_CHANGE;
 import org.inventory.core.visual.scene.ObjectConnectionWidget;
 import org.inventory.core.visual.scene.ObjectNodeWidget;
 import org.netbeans.api.visual.action.ActionFactory;
@@ -77,7 +74,6 @@ import org.openide.util.ImageUtilities;
 public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, LocalObjectLight>{
     
     private CommunicationsStub com = CommunicationsStub.getInstance();
-    public final static String FREE_FRAME = "freeFrame";
     private final LayerWidget imagesLayer;
     private final LayerWidget framesLayer;
     private final CustomResizeProvider resizeProvider;
@@ -518,7 +514,7 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
             frameWidget.getActions(ACTION_SELECT).addAction(createSelectAction());
             frameWidget.getActions(ACTION_SELECT).addAction(ActionFactory.createResizeAction(resizeProvider, resizeProvider));
             frameWidget.getActions(ACTION_SELECT).addAction(moveAction);
-            frameWidget.getActions().addAction(ActionFactory.createPopupMenuAction(FrameMenu.getInstance()));
+            //frameWidget.getActions().addAction(ActionFactory.createPopupMenuAction(FrameMenu.getInstance()));
             frameWidget.getActions().addAction(ActionFactory.createInplaceEditorAction(new TextFieldInplaceEditor() {
 
                 @Override

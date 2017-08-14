@@ -141,4 +141,5 @@
 * Except for the "New Object" actions, all other node actions with submenus have changed the submenus for separate windows to optimized the load of the node menus 
 * Added support to create physical connector mappings 
 * End-to-end view for services with logical segments added
+* Now you can access the details of a list type directly (that is without having to open the List Type Manager)by clicking on the "..." button next to the list type value in the Properties window.
 * Multiple bugfixes and improvements
