@@ -17,8 +17,7 @@
 \usepackage{verbatimbox}
 \usepackage[toc,page]{appendix}
 \usepackage{nameref}
-
-%\usepackage{hyperref}
+\usepackage[hidelinks]{hyperref}
 
 %Modify some defaults
 \setlength{\parindent}{0pt} %don't indent new paragraphs
@@ -68,7 +67,7 @@
 				\midrule
 				March 24th 2017 & Added notes about configuring Glassfish to support HTTP compression. \\
 				\midrule
-				June 1st 2017 & Added Appendix E Configuring Update Center\\
+				June 1st 2017 & Added Appendix E and some remarks in the "How to Configure a Secure Connection"\\
 				\bottomrule
 			\end{tabular}	
 				
@@ -107,7 +106,7 @@
 			\caption{Simplified server architecture}
 		\end{figure}
 		
-		We won't go into technical details here, suffice to say that there are three main blocks that are important to keep in mind, as all the troubleshooting procedures will revolve around them. The lower level component is the database. Kuwaiba uses a graph-oriented database called Neo4J. After a few releases using a conventional relational database, we realized that the best way to model a telecommunications network is not a set of related tables, but a graph. Neo4J may work in two modes: as a server responding JSON requests on a TCP port or as an embedded database, when the application access the database files directly without any service mediating between the application and the data. Kuwaiba uses the latter. This means that you can't access the database while Kuwaiba is running, because it will be locked. Running Neo4J in embedded mode increases the performance, sacrificing accessibility to the data.\newline
+		We won't get into technical details here, suffice to say that there are three main blocks that are important to keep in mind, as all the troubleshooting procedures will revolve around them. The lower level component is the database. Kuwaiba uses a graph-oriented database called Neo4J. After a few releases using a conventional relational database, we realized that the best way to model a telecommunications network is not a set of related tables, but a graph. Neo4J may work in two modes: as a server responding JSON requests on a TCP port or as an embedded database, when the application access the database files directly without any service mediating between the application and the data. Kuwaiba uses the latter. This means that you can't access the database while Kuwaiba is running, because it will be locked. Running Neo4J in embedded mode increases the performance, sacrificing accessibility to the data.\newline
 		
 		The middle layer is called the Persistence Service. This is one of the most important components, and it's responsible for accessing the information stored in the database in a safe way, isolating that logic from the rest of the application. Other layers of the application will never know that the backend is Neo4J thanks to this module, and this enables the development of implementations using other DBMS like Oracle, for example. It's called a service for historic reasons: Prior to version 1.0 this component was a standalone application that ran in a different JVM than the one used by the application server. This was complicated to setup, so it was merged with the application running on the application server. However, It still runs when the application is deployed or at application server (AS) startup. You should check the AS log files to see if the Persistence Service is running correctly, or nothing else will work.\newline
 		
@@ -126,9 +125,6 @@
 				\end{framed}
 				\item An application server. The instructions presented in this document apply to Glassfish version 3 or above, however, Glassfish 4.1 is highly recommended. You can find details on its installation process here\footnote{Glassfish Quick Start Guide https://glassfish.java.net/docs/4.0/quick-start-guide.pdf}. In short, just download the .exe/.bin installer from its official site\footnote{Glassfish Official Web Site https://glassfish.java.net/} and execute it choosing the default options. Make sure you secure and tune it in your production environment. You can also use any other Java EE 7 compliant application server, but this document will use Glassfish.
 				\item Neo4J 2.3.x Community Edition. We just need some libraries included in its installation package, but it's good to have it all installed so we can use it for troubleshooting problems in the future. You can get the installer from here\footnote {Neo4J 2.3.2 Community Edition Downloads https://neo4j.com/download-thanks/?edition=community\&flavour=unix\&release=2.3.2}.
-				\begin{framed} {\large \textbf{Important}} \\
-					Neo4J libraries are no longer distributed in the server installation package due to open source licenses conflicts.
-				\end{framed}
 				\item The latest Kuwaiba Server installation package. You can get it from here\footnote {Kuwaiba Installation Packages http://sourceforge.net/projects/kuwaiba/files/}. As of version 1.0, both client and server are in the same file, whose name must look like this 
 		
 				\begin{verbatim}
@@ -155,7 +151,7 @@
 						
 					\end{itemize} \\
 					\midrule
-					updates.zip & This file contains a updates.xml file and the set of Netbeans module file (.NBM) for the current Kuwaiba version. See \textbf{\nameref{app:AppendixE}}\\
+					updates.zip & This file contains a sample \textit{updates.xml} file that can be use to set up an Update Center to distribute updates. See \textbf{\nameref{app:AppendixE}}\\
 					\midrule
 					KuwaibaServer.ear & The enterprise application to be deployed on the application server \\
 					\midrule
@@ -165,7 +161,7 @@
 					\midrule
 					LICENSE.EPL & Text of the EPLv1 license \\
 					\midrule
-					LICENSE.GPLv2 & Text of the GPLv2 license \\
+					LICENSE.GPLv3 & Text of the GPLv3 license \\
 					\midrule
 					CHANGELOG & List of changes since the first version \\
 					\midrule
@@ -201,12 +197,16 @@
 						\midrule
 						corporateLogo & The URL of the logo that will be displayed in the reports.  \newline \textbf{Default value:} http://neotropic.co/img/logo\_small.png\\
 						\midrule
+						locale & Not used.  \newline \textbf{Default value:} en-US\\
+						\midrule
+						enforceBusinessRules & Check defined business rules before performing any action. So far, these business rules are only applied in connector matchings when creating physical connections.\newline \textbf{Default value:} false\\
+						\midrule
 						enableSecurityManager & Enables the JVM security manager. This could be used to restrict the kind of code that can be executed. See \textbf{\nameref{app:AppendixA}} for details.  \newline \textbf{Default value:} false\\
 						\bottomrule
 					\end{tabular}
 				\end{table}
 				
-				Set the paths to appropriate values and compress the .ear and jar files if your archiving utility doesn't do it automatically. \textbf{Note:} You can also leave the default values, skip this step, and then modify the file once the whole bundle has been deployed on the application server. It will most likely be in the path:
+				Set the paths to appropriate values and compress the .ear and jar files if your archiving utility does not do it automatically. \textbf{Note:} You can also leave the default values, skip this step, and then modify the file once the whole bundle has been deployed on the application server. It will most likely be in the path:
 				\begin{verbbox}
 					[GLASSFISH_DIR]/glassfish/domains/domain1/[INSTALLER_FILE_NAME]
 				\end{verbbox}
@@ -296,16 +296,16 @@
 						\item Extract the client files.
 						\item Execute the binary suitable for your platform located at
 						\begin{verbbox}
-							[EXTRACTION_DIR]/kuwaibainventory/bin
+							[INSTALL_DIR]/bin
 						\end{verbbox}
 						\begin{figure}[ht]
 							\centering	
 							\theverbbox
 						\end{figure}
-						The file is called \textbf{kuwaibainventory.exe} for Windows platforms and \textbf{kuwaibainventory} for Unix-like systems. \textbf{[EXTRACTION\_DIR]} is the directory from where you extracted the files.
-						\item You may need to change the file permissions to make the binary executable under Unix-like OS using the command
+						The file is called \textbf{kuwaiba.exe} for Windows platforms and \textbf{kuwaiba} for Unix-like systems. \textbf{[INSTALL\_DIR]} is the directory where you extracted the files to.
+						\item You may need to change the file permissions to make the script executable under Unix-like OS using the command
 						\begin{verbbox}
-							chmod 755 [EXTRACTION_DIR]/kuwaibainventory/bin/kuwaibainventory
+							chmod 755 [INSTALL_DIR]/bin/kuwaiba
 						\end{verbbox}
 						\begin{figure}[ht]
 							\centering	
@@ -315,7 +315,15 @@
 					\end{enumerate}
 				\subsection{Client Side Troubleshooting}
 				\begin{enumerate}
-					\item You are getting an \textit{Unexpected end of file from server} error at login time. You are trying to use HTTP connect to an HTTPS port. Check the connection settings and select "HTTPS".
+					\item If you get an error about not being able to find your Java installation, run the client using the following parameter:
+					\begin{verbbox}
+						[INSTALL_DIR]/kuwaiba/bin/kuwaiba --jdkhome [JRE_INSTALL_PATH]
+					\end{verbbox}
+					\begin{figure}[ht]
+						\centering	
+						\theverbbox
+					\end{figure}
+					\item You are getting an \textit{Unexpected end of file from server} error at login time. You are trying to use HTTP to connect to an HTTPS port. Check the connection settings and select "HTTPS".
 				\end{enumerate}
 		\newpage
 		\begin{appendices}
@@ -363,6 +371,12 @@
 						\label{fig:certificate_generation}
 					\end{figure}
 					
+					\textbf{Important:} If your server doesn't have a formal canonical name, and instead you reach it directky usin its IP address, the command needs and extra parameter:\\
+					
+					\small keytool -genkey -keyalg RSA -alias [alias] -keystore [keystore\_filename] -validity 3600 -keysize 2048 -ext san=ip:[server\_ip\_address]\\
+					
+					Where server\_ip\_address is the IP address of the server.
+					
 					\item If you plan to use more than one certificate in your server or if your certificate was issued by a CA, you need to import it into a keystore that Glassfish can read, otherwise, you can skip this step.  To do that, execute the following command: \\
 					
 					keytool -import -alias [alias] -keystore [keystore\_filename] -file [CERTIFICATE\_FILE\_NAME]\\
@@ -397,7 +411,7 @@
 					
 					keytool -import -alias [alias] -keystore kuwaiba\_keystore.jks -file [DER\_CERTIFICATE\_FILE\_NAME]\\
 					
-					Make sure to use as keystore name \textbf{kuwaiba\_keystore.jks}. Copy the resulting file in the directory \textbf{etc} of your client installation.\\
+					Make sure to use as keystore name \textbf{kuwaiba\_keystore.jks}. Copy the resulting file into the same directory the executable is located (\textbf{bin}) and also the root of your client installation. The reason why you need to duplicate the file is that Unix-like operating systems expect the file to be located in \textbf{bin}, while Windows expects it to be in the root folder.\\
 					
 					\begin{figure}[h!]
 						\centering
@@ -530,7 +544,7 @@
 				\end{enumerate}
 			\newpage
 			\section{Appendix E. Configuring Update Center} \label{app:AppendixE}
-			Since version 1.5, the Kuwaiba client can be updated using an update center. An \textbf{Update Center} is a set of files which are put in a server to be download by client application. The server can be anyone; e.g., GlassFish, Apache, Apache Tomcat. Once the server is selected, unzip the updates.zip, locate the files in the server and find the URL for the \textbf{updates.xml} file; this URL is used to configure the Kuwaiba client to get the latest version \textbf{figure~\ref{fig:update_center_options}}.
+			Since version 1.5, the Kuwaiba client can be updated using an update center. An \textbf{Update Center} is a set of files which are put in a server to be downloaded by the client application when an update is available. To deploy the updates, unzip the updates.zip (included in the installation bundle), copy the files to a location in the server serving the updates that can be reached via HTTP/HTTPS and identify the URL to retrieve the \textbf{updates.xml} file; this URL must be used to configure the client, so it can sync the updates at startup as seen on \textbf{Figure~\ref{fig:update_center_options}}.
 			
 			\begin{figure}[h!]
 				\centering
@@ -539,10 +553,10 @@
 				\label{fig:update_center_options}
 			\end{figure}
 						
-			 You must configure the update center in the Kuwaiba client. Open the Update Center module look in the menu for Tools $\rightarrow$ Update Center. Once the Update Center URL was assigned, the update must begin right away. For the next Kuwaiba run, if there are updates, the update will be automatical, and if it is necessary to restart the application, it will show a notification to restart.
+			 To configure the client, open the Update Center module in the menu for Tools $\rightarrow$ Update Center. Once the Update Center URL has been set, the update will begin right away. The next time the client starts, provided new updates are found, they will be installed automatically and the user will be prompted to restart the application.
 			\newline
 			\newline
-			You can decide not to configure a server for the update center. In this case, there is the option to hide the warnings generated in the Kuwaiba client when the update is not found update.xml resource  \textbf{figure~\ref{fig:update_center_options}}.					
+			The client will always try to see if there are updates at startup, however you can hide the warnings if the Update Center hasn't been configured at server side (that's the default behavior).
 			
 		\end{appendices}			
 \end{document}
