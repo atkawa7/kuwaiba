@@ -2343,20 +2343,63 @@
 			\section{Appendix A. Name Pattern} \label{app:AppendixA}
 			A name pattern is used to dynamically create the names of new objects or new special objects using the actions \textit{New Multiple} and \textit{New Special Multiple} respectively.			
 			
-			The name pattern is a set of static and dynamic sections. In the static section, any string of characters can be placed, with the exception of the special characters "[" and "]"; and in the dynamic section only the pre-defined functions listed below can be placed.
+			The name pattern is a set of static and dynamic sections. In the static section, any string of characters can be placed, with the exception of the special characters "[" and "]", and in the dynamic section only the pre-defined functions listed below can be placed.
 			
 			\begin{itemize}
-				\item \textbf{[sequence(a,z)]:} Function that generates an alphabetic ascending lowercase inclusive sequence that begin in the parameter a (a-z) to the parameter z (a-z)
-				\item \textbf{[sequence(A,Z)]:} Function that generates an alphabetic ascending uppercase inclusive sequence that begin in the parameter A (A-Z) to the parameter Z (A-Z)
-				\item \textbf{[sequence(n,m)]:} Function that generates a numeric ascending inclusive sequence that begin in the parameter n (0...) to the parameter m (0...)
-				\item \textbf{[value(object id,attribute name)]:} Function to get the value of an attribute value given to the object id and attribute name. For example if there is an object with id 1000, attribute name "name" and attribute value "Colombia" the function would remain [value(1000,name)] and return Colombia.
+				\item \textbf{[sequence(a,z)]:} Generates an alphabetic ascending lowercase  sequence that begins in the parameter a (a-z) to the parameter z (a-z)
+				\item \textbf{[sequence(A,Z)]:} Generates an alphabetic ascending uppercase sequence that begins in the parameter A (A-Z) to the parameter Z (A-Z)
+				\item \textbf{[sequence(n,m)]:} Function that generates a numeric ascending sequence that begin ins the parameter n (0...) to the parameter m (0...)
+				\item \textbf{[value(object\_id,attribute\_name)]:} Places the value of an object's attribute, given the object id and the attribute name.
 			\end{itemize}
 			
-			Examples of name pattern are: router-[sequence(1,3)]-[sequence(a,c)], [value(1111,name)]-[sequence(A,Z)], the first pattern generates six different names, and the second twenty six different names.
+			Examples of name pattern are: router-[sequence(1,3)]-[sequence(a,c)], [value(1111,name)]-[sequence(A,Z)], the first pattern generates six (2*3) different names, while the second, twenty six (1*26) different names.
 			
-			Depending on the combination of patterns, only a limited number of names can be generated. If the number of possible names is lesser than the number of objects to be created provided by the user, the objects or special objects will not be created.
+			Depending on the combination of patterns, only a limited number of names can be generated. If the number of possible names is less than the number of objects to be created provided by the user, the objects or special objects will not be created.
+			\newpage
 			\appendix
 			\section{Appendix B. Connector Matching} \label{app:AppendixB}
-			It's possible to define matching rules for physical connections. These rules are based on the type of connectors of both the links and the ports. To add and re
+			It is possible to define matching rules for physical connections. These rules are based on the type of connectors of both the links and the ports and will allow you to define constraints like "OpticalPorts can only be connected to OpticalLinks" or "ElectricalPorts of with connectros USB-C Female can be connected only to ElectricalLinks of with connectors USB-C Male". Although currentky this feature is pretty basic, it's expected to be improved in coming versions to create more complex rules.\\
+			To create new rules, go to the menu Tools $\rightarrow$ Advanced $\rightarrow$ Configure Connection Rules.\\
+			\begin{figure}[h!]
+				\centering
+				\includegraphics[width=0.6\linewidth]{img/appendix_b_connector_matching_menu.png}
+				\caption{Projects data model error}
+				\label{fig:connector_rules_menu}
+			\end{figure}
+			When you click on \textit{Add Rule}, a form will be displayed, with the following options:
+			
+			\begin{table}[h!]
+				\begin{tabular}{p{5cm}p{10cm}}
+					\toprule
+					Link Type & 
+					In this directory you will find default databases you can use to get started with Kuwaiba. \\
+					\midrule
+					updates.zip & This file contains a sample \textit{updates.xml} file that can be use to set up an Update Center to distribute updates. See \textbf{\nameref{app:AppendixE}}\\
+					\midrule
+					KuwaibaServer.ear & The enterprise application to be deployed on the application server \\
+					\midrule
+					README & A simple README file with useful information about where to get resources. \\
+					\midrule
+					THIRDPARTY & The list of open source, third-party components used in the server, as well of their respective licenses and links to the original projects. \\
+					\midrule
+					LICENSE.EPL & Text of the EPLv1 license \\
+					\midrule
+					LICENSE.GPLv3 & Text of the GPLv3 license \\
+					\midrule
+					CHANGELOG & List of changes since the first version \\
+					\midrule
+					class\_hierarchy.xml & A default database schema that can be uploaded instead of using one of the default databases. Only for experimented users. \\
+					\bottomrule	
+				\end{tabular}
+			\end{table}
+			
+			\begin{framed} {\large \textbf{Important}}
+				\begin{itemize}
+					\item For these rules to be correctly checked, the configuration option \textit{enforceBusinessRules} must be set to \textbf{true} on the server. By default, its value is \textbf{false} (See the Administrator's Manual for details).
+					\item In this version, only the first matching rule will be applied.
+					\item If no rule matches, the connection won't be created and an error will be displayed.
+				\end{itemize}
+			\end{framed}
+			
 		\end{appendices}				
 \end{document}
