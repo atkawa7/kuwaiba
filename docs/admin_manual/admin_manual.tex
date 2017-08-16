@@ -81,9 +81,9 @@
 				\includegraphics[]{img/cc_license_logo.jpg} & This document is published under the terms of a license Creative Commons by-nc-sa. You can find details about it at\linebreak
 				\textbf{http://creativecommons.org/licenses/by-nc-sa/2.0/ } \\
 
-				\includegraphics[width=2cm]{img/osi_logo.jpg} & Kuwaiba Server and Client are licensed under EPL v1 and GPL v2. You can find the whole text of these licenses at \linebreak
+				\includegraphics[width=2cm]{img/osi_logo.jpg} & Kuwaiba Server and Client are licensed under EPL v1 and GPL v3. You can find the whole text of these licenses at \linebreak
 				\textbf{http://www.eclipse.org/legal/epl-v10.html} \linebreak
-				\textbf{http://www.gnu.org/licenses/old-licenses/gpl-2.0.html} \\
+				\textbf{https://www.gnu.org/licenses/gpl.html} \\
 			\end{tabular}
 		\end{table}
 		\paragraph{Disclaimer} \hspace{0pt}
@@ -415,12 +415,20 @@
 					
 					\begin{figure}[h!]
 						\centering
-						\includegraphics[width=0.2\linewidth]{img/etc_contents.png} 	
-						\caption{Contents of \textbf{etc} directory}
+						\includegraphics[width=0.5\linewidth]{img/etc_contents.png} 	
+						\caption{Contents of the root and \textbf{bin} directories}
 						\label{fig:etc-contents}
 					\end{figure}
-					In the file \textbf{kuwaiba.conf} you can configure the name of the keystore file. The same file can be used for as many clients as you need.
+					The same file can be used for as many clients as you need. \textbf{Important:} If you get the error "InvalidAlgorithmParameterException: the trustAnchors parameter must be non-empty", it means that the system is not able to file the \textit{kuwaiba\_keystore.jks} file. Go to the file \textbf{etc/kuwaiba.conf} and edit the \textit{default\_options} variable value, adding the absolute path to the keystore at the end of the line, for example:
+					\begin{verbbox}
+						default_options="... -J-Djavax.net.ssl.trustStore=/home/myuser/kuwaiba_keystore.jks"
+					\end{verbbox}
+					\begin{figure}[ht]
+						\centering	
+						\theverbbox
+					\end{figure}
 				\end{enumerate}
+		    \clearpage
 			\section{Appendix C. Starting Glassfish on Boot} \label{app:AppendixC}
 				\subsection{Systemd}
 				\begin{enumerate}
@@ -534,7 +542,7 @@
 						\caption{HTTP tab}
 						\label{fig:http-tab}
 					\end{figure}
-					\item Enable compression, make sure "text/xml" is included in the list of compressible MIME types and set the value, in bytes, over which the content is going to be compressed. 2048 is a good default number, but you should change it depending on the size of your views.
+					\item Enable compression, make sure "text/xml" is included in the list of compressible MIME types and set the value, in bytes, over which the content is going to be compressed. 2048 is a good default value, but you should change it depending on the size of your views.
 					\begin{figure}[h!]
 						\centering
 						\includegraphics[width=0.7\linewidth]{img/gf_enable_compression.png} 	
@@ -544,7 +552,7 @@
 				\end{enumerate}
 			\newpage
 			\section{Appendix E. Configuring Update Center} \label{app:AppendixE}
-			Since version 1.5, the Kuwaiba client can be updated using an update center. An \textbf{Update Center} is a set of files which are put in a server to be downloaded by the client application when an update is available. To deploy the updates, unzip the updates.zip (included in the installation bundle), copy the files to a location in the server serving the updates that can be reached via HTTP/HTTPS and identify the URL to retrieve the \textbf{updates.xml} file; this URL must be used to configure the client, so it can sync the updates at startup as seen on \textbf{Figure~\ref{fig:update_center_options}}.
+			Since version 1.5, the desktop client can be updated using an update center. An \textbf{Update Center} is a set of files that are placed in a server to be downloaded by the client application when an update is available. To deploy the updates, unzip the updates.zip (included in the installation bundle), copy the files to a location in the server serving the updates that can be reached via HTTP/HTTPS and identify the URL to retrieve the \textbf{updates.xml} file; this URL must be used to configure the client, so it can sync the updates at startup as shown in \textbf{Figure~\ref{fig:update_center_options}}.
 			
 			\begin{figure}[h!]
 				\centering
