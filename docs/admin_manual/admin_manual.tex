@@ -3,9 +3,9 @@
 \setcounter{secnumdepth}{0}
 
 %Metadata
-\title{Kuwaiba Open Inventory Administrator's Manual}
+\title{Kuwaiba Open Network Inventory Administrator's Manual}
 \author{Neotropic SAS}
-\date{24.03.2017}
+\date{21.08.2017}
 
 %Imports
 \usepackage{graphicx}
@@ -31,7 +31,7 @@
 	\begin{figure}[b]
 		\centering System Version \textbf{1.5}
 			
-		Visit \textbf{kuwaiba.org} for documentation, latest updates and upcoming events
+		Visit \url{http://www.kuwaiba.org} for documentation, latest updates and upcoming events
 	\end{figure}
 	
 	
@@ -551,8 +551,8 @@
 					\end{figure}
 				\end{enumerate}
 			\newpage
-			\section{Appendix E. Configuring Update Center} \label{app:AppendixE}
-			Since version 1.5, the desktop client can be updated using an update center. An \textbf{Update Center} is a set of files that are placed in a server to be downloaded by the client application when an update is available. To deploy the updates, unzip the updates.zip (included in the installation bundle), copy the files to a location in the server serving the updates that can be reached via HTTP/HTTPS and identify the URL to retrieve the \textbf{updates.xml} file; this URL must be used to configure the client, so it can sync the updates at startup as shown in \textbf{Figure~\ref{fig:update_center_options}}.
+			\section{Appendix E. Configuring the Update Center} \label{app:AppendixE}
+			Since version 1.5, the desktop client can be updated using an update center. An \textbf{Update Center} is a set of files that are placed in a server to be downloaded by the client application when an update is available. To deploy the updates, unzip the file \textbf{updates.zip} (included in the installation bundle), copy the files to a location in the server serving the updates that can be reached via HTTP/HTTPS and identify the URL to retrieve the \textbf{updates.xml} file; this URL must be used to configure the client, so it can sync the updates at startup as shown in \textbf{Figure~\ref{fig:update_center_options}}.
 			
 			\begin{figure}[h!]
 				\centering
@@ -561,7 +561,7 @@
 				\label{fig:update_center_options}
 			\end{figure}
 						
-			 To configure the client, open the Update Center module in the menu for Tools $\rightarrow$ Update Center. Once the Update Center URL has been set, the update will begin right away. The next time the client starts, provided new updates are found, they will be installed automatically and the user will be prompted to restart the application.
+			 To configure the client, open the Update Center module in the menu for Tools $\rightarrow$ Update Center. Once the Update Center URL has been set, the update process will begin right away. The next time the client starts, provided new updates are found, they will be installed automatically and the user will be prompted to restart the application.
 			\newline
 			\newline
 			The client will always try to see if there are updates at startup, however you can hide the warnings if the Update Center hasn't been configured at server side (that's the default behavior).

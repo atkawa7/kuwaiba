@@ -3,9 +3,9 @@
 \setcounter{secnumdepth}{0}
 
 %Metadata
-\title{Kuwaiba Open Inventory User's Manual}
+\title{Kuwaiba Open Network Inventory User's Manual}
 \author{Neotropic SAS}
-\date{07.08.2017}
+\date{21.08.2017}
 
 %Imports
 \usepackage{graphicx}
@@ -35,7 +35,7 @@
 	\begin{figure}[b]
 		\centering System Version \textbf{1.5}
 			
-		Visit \textbf{kuwaiba.org} for documentation, latest updates and upcoming events
+		Visit \url{http://www.kuwaiba.org} for documentation, latest updates and upcoming events
 	\end{figure}
 	
 	
@@ -100,7 +100,7 @@
 
 				\includegraphics[width=2cm]{img/osi_logo.jpg} & Kuwaiba Server and Client are licensed under EPL v1 and GPL v3. You can find the entire text of these licenses at \linebreak
 				\textbf{http://www.eclipse.org/legal/epl-v10.html} \linebreak
-				\textbf{http://www.gnu.org/licenses/old-licenses/gpl-2.0.html} \\
+				\textbf{https://www.gnu.org/licenses/gpl.html} \\
 			\end{tabular}
 		\end{table}
 		\paragraph{Disclaimer} \hspace{0pt}
@@ -422,7 +422,7 @@
 		\item \textbf{Release from Project:} Removes a selected object (resource) from a Project.
 		\item \textbf{Relate to Contract:} All inventory objects can be associated to an existing Contract. See more details in chapter \textbf{\nameref{sec:contract_manager}}
 		\item \textbf{Release from Contract:} Removes the association between an object and a contract.
-		\item \textbf{Open a Explorer from Here:} Opens a Navigation tree whose root node will be the selected object. Useful when you want to explore an object with as many containment levels below.
+		\item \textbf{Open an Explorer from Here:} Opens a Navigation tree whose root node will be the selected object. Useful when you want to explore an object with as many containment levels below.
 		\item \textbf{Show More Information:} Shows the database id of the selected object. Useful for troubleshooting purposes. It will also show the object's complete containment structure. Note that the id can be copied and used in the \textbf{\nameref{sec:querying}} to create queries.
 			\begin{figure}[h!]
 				\centering
@@ -581,14 +581,14 @@
 	To add new list types, add a subclass under GenericObjectList directly or any of its utility subclasses. List types are like any other class, you can customize them as needed.
 	\begin{figure}[h!]
 		\centering
-		\includegraphics[width=0.3\linewidth]{img/list_type_own_type.png}
+		\includegraphics[width=0.5\linewidth]{img/list_type_own_type.png}
 		\caption{Custom list type}
 		\label{fig:list_type_own_type}
 	\end{figure}
 	 To create list type items, use the button \includegraphics[width=0.5cm]{img/icon_list_type_manager.png} or the menu option Tools $\rightarrow$ Administrative $\rightarrow$ List Type Manager. This module consists of a simple navigation tree similar to the one seen in the past chapter.
 	 \begin{figure}[h!]
 	 	\centering
-	 	\includegraphics[width=0.4\linewidth]{img/list_type_list_type_items.png}
+	 	\includegraphics[width=0.3\linewidth]{img/list_type_list_type_items.png}
 	 	\caption{Custom list type items}
 	 	\label{fig:list_type_list_type_items}
 	 \end{figure}
@@ -769,7 +769,6 @@
 		\caption{Filter for String values}
 		\label{fig:query_string_filter}
 	\end{figure}
-	\newpage
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.4\linewidth]{img/query_filter_numeric.png}
@@ -782,12 +781,14 @@
 		\caption{Filter for Date values}
 		\label{fig:query_date_filter}
 	\end{figure}
+	\newpage
 	\begin{framed} {\large \textbf{Example 2:}}
 		\begin{itemize}
 			\item We're going to search for Routers whose \textbf{name} contains the string \textit{AS} and the operational \textbf{state} is equal to \textit{Working} and have \textit{Cisco} as \textbf{vendor}. The fields to be shown must be \textbf{creationDate} and \textbf{operationalState}. Note that the result limit is set to 1 per page.
 			The query would look like this:
 		\end{itemize}
 	\end{framed}
+	
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=1.1\linewidth]{img/query_example_2.png}
@@ -803,8 +804,8 @@
 		\label{fig:query_example_2_results}
 	\end{figure}
 	If you hit the “Next Page” button \includegraphics[width=0.5cm]{img/icon_next_page.png} you will get the second page of results if there is one and so on. The “Show all” button \includegraphics[width=0.5cm]{img/icon_retrieve_all.png} will retrieve the full list of results.
-	
-	\subsection{Exporting results}
+	\newpage
+	\subsection{Exporting Results}
 	Currently can export the results to plain text formats: CSV and XML. To export the results, press the Export icon \includegraphics[width=0.5cm]{img/icon_export.png}, which will open a window to choose the location of the output file and its format:
 	\begin{figure}[h!]
 		\centering
@@ -865,7 +866,7 @@
 		\label{fig:query_filter_value_not_saved}
 	\end{figure}
 	
-	\begin{framed} {\large \textbf{Important}}
+	\begin{framed} {\large \textbf{Important}}\\
 		Please note that when a query is saved the values used to filter won't be saved, since the filter nodes are used as open parameters. For example: in figure~\ref{fig:query_filter_value_not_saved}, the value \textit{Manchester} won't be saved anywhere. Just the structure and the condition (\textbf{like}, in this case). The blue box is a parameter. It's supposed that you will fill it with the value you need depending on what you're looking for.
 		\\Note 1: Expanding a list type and not selecting anything from it has the same effect as selecting the value \textbf{None (null)} in the compact view of the filter.
 		\\Note 2: Every time you run a query, a new window with the results will be opened, so don't forget to close those you don't need to save memory.
@@ -906,7 +907,6 @@
 		\label{fig:pools_pool_action}
 	\end{figure}
 	
-	\newpage
 	From that moment on, it behaves exactly like the Navigation Tree and you may have multiple containment levels as shown in the figure below in the figure~\ref{fig:pools_pool_object_properties}.	
 	\begin{figure}[h!]
 		\centering
@@ -923,6 +923,7 @@
 		\caption{Object View and Rack View actions in an object's context menu}
 		\label{fig:actions_object_and_rack_views}
 	\end{figure}
+	\newpage
 	\subsection{Object View} \label{sec:default_view}
 		A view is a graphical representation of what's inside an object. All instances (objects) of subclasses of \textbf{ViewableObject} have an Object View that displays the direct children of the selected node. Most objects, except logical and administrative assets and a few physical ones such as slots and ports are subclasses of \textbf{ViewableObject}. To access this view, select a node in the navigation tree right-click on it and click on the action Show Object View. You may open as many object views as you want (prior to version 1.5, you had only one Object View window that was updated everytime you selected an object).
 		\begin{figure}[h!]
@@ -933,6 +934,7 @@
 		\end{figure}
 		
 		In the Physical View, you can move and connect the nodes, add a background and export the view. It is particularly useful at Room and City levels, because it will allow you to see how the children elements are located geographically (e.g. buildings) or in an enclosed space (racks in a data center as seen in figure~\ref{fig:room_plan}).	
+		
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.8\linewidth]{img/room_plan.png}
@@ -940,7 +942,8 @@
 			\label{fig:room_plan}
 		\end{figure}
 		
-		The figure~\ref{fig:default_view_toolbar} shows all general purpose tools available in this window.
+		\newpage
+		Figure~\ref{fig:default_view_toolbar} shows all general purpose tools available in this window.
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.6\linewidth]{img/default_view_toolbar.png}
@@ -973,6 +976,7 @@
 			\end{tabular}
 		\end{table}
 		
+		\clearpage
 		\subsection{Rack View} \label{sec:rack_view}
 		This view works only with objects of class \textbf{Rack} or its subclasses. It shows how the elements contained within the selected object are organized, based on their positions and number of rack units used. It can be launched by selecting the option \textit{Show Rack View} in the object's context menu.
 		\begin{figure}[h!]
@@ -1006,6 +1010,7 @@
 				\label{fig:rack_view_attributes_contained_element}
 			\end{figure}
 		\end{itemize}
+		\newpage
 		\begin{framed} {\large \textbf{Important}}
 			\begin{itemize}
 				\item The attribute name \textbf{rackUnitsNumberingDescending} is case-sensitive and must be Boolean.
@@ -2114,54 +2119,61 @@
 		
 		\clearpage
 		\section{User and Group Management} \label{sec:user_and_group_management}
-		This feature lets you define new application users and relate/unrelate them from application groups. By default there is only one user (\textbf{admin}, password \textbf{kuwaiba}) and one default group.  You can edit everything, even its username.
+		This feature lets you define new application users and relate/unrelate them from application groups. By default there is only one user (\textbf{admin}, password \textbf{kuwaiba}) and one default group.  You can edit everything, even its username.\\
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.3\linewidth]{img/user_manager_first_view.png}
 			\caption{User Manager main view}
 			\label{fig:user_manager_first_view}
 		\end{figure}
-		Adds a new group.
+		
+		To add a group:
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.5\linewidth]{img/user_manager_new_group.png}
-			\caption{How create a new group}
+			\caption{How create a group}
 			\label{fig:user_manager_new_group}
 		\end{figure}
+		
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.7\linewidth]{img/user_manager_group_properties_privileges.png}
 			\caption{New group properties and privileges}
 			\label{fig:user_manager_group_properties_privileges}
 		\end{figure}
-		Adds a new user.
+		
+		To add a user:
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.5\linewidth]{img/user_manager_new_user.png}
-			\caption{How create a new user}
+			\caption{How to create a user}
 			\label{fig:user_manager_new_user}
 		\end{figure}
-		If you want to change a user's password, click the button \includegraphics[width=0.5cm]{img/icon_edit_user.png} in the “Password”.
+		
+		If you want to change a user's password, click the button \includegraphics[width=0.5cm]{img/icon_edit_user.png} next to the field “Password”.
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.7\linewidth]{img/user_manager_user_properties_privileges.png}
 			\caption{New user properties and privileges}
 			\label{fig:user_manager_user_properties_privileges}
 		\end{figure}
-		Currently it is only possible to add/remove groups to/from a user (not vice versa)
+		
+		Currently it is only possible to add/remove groups to/from a user (not vice versa).\\
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.5\linewidth]{img/user_manager_relate_to_group.png}
 			\caption{Relate user to group}
 			\label{fig:user_manager_relate_to_group}
 		\end{figure}
+		
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.4\linewidth]{img/user_manager_user_and_groups.png}
-			\caption{A same use has two groups}
+			\caption{The same user can belong on two different groups}
 			\label{fig:user_manager_user_and_groups}
 		\end{figure}
-		If you want to delete a user or a group, just right click the element and choose \textit{Delete}. Deleting a group delete the related users.
+		
+		If you want to delete a user or a group, just right click the element and choose \textit{Delete}. Deleting a group will delete the users within (unless related to another group).
 						
 		\clearpage
 		\section{Bulk import}\label{sec:bulk_import}
@@ -2263,17 +2275,17 @@
 		\clearpage
 		\section{Favorites}\label{sec:favorites}
 		
-			The Favorites module lets you manage favorites. In Kuwaiba a favorite is an object of the inventory which is pooled in a favorite folder. To open the Favorite module look in the menu for Tools $\rightarrow$ Navigation $\rightarrow$ Favorites or just click in the icon
-			\includegraphics[width=0.5cm]{img/icon_bookmarks.png}
+			The Favorites module allows you to organize the objects you commonly access without having to dig down into the Navigation Tree. To open the Favorites module, go to the Tools $\rightarrow$ Navigation $\rightarrow$ Favorites or just click on the icon
+			\includegraphics[width=0.5cm]{img/icon_bookmarks.png} in the main toolbar.
 			
 			\begin{figure}[h!]
 				\centering
-				\includegraphics[width=0.5\linewidth]{img/favorites_explorer.png}
+				\includegraphics[width=0.4\linewidth]{img/favorites_explorer.png}
 				\caption{Favorites sample}
 				\label{fig:bookmakrs}
 			\end{figure}
 			
-			To add an object from the Navigation Tree, just right click and select the option of Add to Favorites folder \textbf{figure~\ref{fig:favorites_add_to}} or Remove from Favorites Folder to remove it.
+			To add an object from the Navigation Tree, right click and select the option of Add to Favorites Folder (\textbf{Figure~\ref{fig:favorites_add_to}}) or Remove from Favorites Folder to remove it.
 						
 			\begin{figure}[h!]
 				\centering
@@ -2300,7 +2312,8 @@
 		\clearpage		
 		\section{Projects}\label{sec:projects}
 		
-			The Project module allows you to have all projects, activities and resources in a place. To open the Projects module look at the menu for Tools $\rightarrow$ Advanced $\rightarrow$ Projects. To start using the Projects module you must create a Pool of Projects. Depending on the loaded data model you can create a  GeneralPurposeProject or NetworkProject or any subclass of GenericProject (see \textbf{\nameref{sec:data_model_manager}} if you need to create a different kind  of Project).
+			The Project module allows you to manage all your projects (planning, maintenance, roll-out, etc), their activities and associated resources in a single place. It's the first version of this module, so you can expect (and sugggest!) improvements in coming versions. To open the module, go to Tools $\rightarrow$ Advanced $\rightarrow$ Projects or simply click on the icon with the label "PRJ" in the main toolbar.\\
+			To start using the Projects module you must create a Pool of Projects. By default, you can create instances of \textit{GeneralPurposeProject} or \textit{NetworkProject}, but you can add subclasses to \textit{GenericProject} to extend the model (see \textbf{\nameref{sec:data_model_manager}}).
 		    
 		    \begin{figure}[h!]
 		    	\centering
@@ -2309,7 +2322,7 @@
 		    	\label{fig:projects_actions}
 		    \end{figure}
 		    		    
-		    A Project Pool may contain projects and the projects may contain activities; you can create an activity just by right clicking on a project and selecting the kind of Activity you want to add. If you need to create a different kind of Activity (see \textbf{\nameref{sec:data_model_manager}})
+		    A Project Pool may contain projects and the projects may contain activities; you can create an activity by right clicking on a project and selecting the one from the list (creating subclasses of \textit{GenericActivity} will allow you to have more types of activities).
 		    
 		    \begin{figure}[h!]
 		    	\centering
@@ -2318,32 +2331,31 @@
 		    	\label{fig:projects_new_project_activity}
 		    \end{figure}		    
 		    
-		    The Projects have related resources that are inventory objects. You can relate or release objects just by right clicking on an inventory object \textbf{figure~\ref{fig:projects_relate_to}}.
+		    You can relate/release inventory assets to existing projects. To do so, right-click on an inventory object:
 		    		    		    
 		    \begin{figure}[h!]
 		    	\centering
-		    	\includegraphics[width=0.9\linewidth]{img/projects_relate_to.png}
+		    	\includegraphics[width=0.6\linewidth]{img/projects_relate_to.png}
 		    	\caption{Relate to Project Action}
 		    	\label{fig:projects_relate_to}
 		    \end{figure}
 		    
-		    If you have an old data base then the data model for Projects module is not available, and when you try to open the Projects explorer or relate an object to a Project,
-		    Kuwaiba will show you the message like in the \textbf{figure~\ref{fig:projects_db_outdated}}.		    
-		    
+		    If you have a database from a version older than 1.5, make sure your administrator has applied to necessary patches to migrate the data model, otherwise you will get an error (see \textbf{Figure~\ref{fig:projects_db_outdated}}) if you try to open the module explorer or relate objects to projects.		    
+		    \newpage
 		    \begin{figure}[h!]
 		    	\centering
 		    	\includegraphics[width=0.9\linewidth]{img/projects_db_outdated.png}
-		    	\caption{Projects data model error}
+		    	\caption{Outdated data model error}
 		    	\label{fig:projects_db_outdated}
 		    \end{figure}
 		    
 		\clearpage
 		\begin{appendices}
 			\appendix
-			\section{Appendix A. Name Pattern} \label{app:AppendixA}
-			A name pattern is used to dynamically create the names of new objects or new special objects using the actions \textit{New Multiple} and \textit{New Special Multiple} respectively.			
+			\section{Appendix A. Multiple Object Naming} \label{app:AppendixA}
+			A naming pattern is used to dynamically create the names of new objects or new special objects using the actions \textit{New Multiple} and \textit{New Special Multiple} respectively based on a simple syntaxis.			
 			
-			The name pattern is a set of static and dynamic sections. In the static section, any string of characters can be placed, with the exception of the special characters "[" and "]", and in the dynamic section only the pre-defined functions listed below can be placed.
+			The naming pattern is composed by static and dynamic sections. In the static section, any string of characters can be placed, with the exception of the characters "[" and "]", and in the dynamic section only the pre-defined functions listed below can be placed.
 			
 			\begin{itemize}
 				\item \textbf{[sequence(a,z)]:} Generates an alphabetic ascending lowercase  sequence that begins in the parameter a (a-z) to the parameter z (a-z)
@@ -2352,7 +2364,7 @@
 				\item \textbf{[value(object\_id,attribute\_name)]:} Places the value of an object's attribute, given the object id and the attribute name.
 			\end{itemize}
 			
-			Examples of name pattern are: router-[sequence(1,3)]-[sequence(a,c)], [value(1111,name)]-[sequence(A,Z)], the first pattern generates six (2*3) different names, while the second, twenty six (1*26) different names.
+			Examples of naming patterns are: router-[sequence(1,3)]-[sequence(a,c)], [value(1111,name)]-[sequence(A,Z)], the first pattern generates six (2*3) different names, while the second, twenty six (1*26) different names.
 			
 			Depending on the combination of patterns, only a limited number of names can be generated. If the number of possible names is less than the number of objects to be created provided by the user, the objects or special objects will not be created.
 			\newpage
@@ -2366,31 +2378,29 @@
 				\caption{Projects data model error}
 				\label{fig:connector_rules_menu}
 			\end{figure}
-			When you click on \textit{Add Rule}, a form will be displayed, with the following options:
+			
+			When you click on \textit{Add Rule}, a form will be displayed, with the following fields:
+			\begin{figure}[h!]
+				\centering
+				\includegraphics[width=0.6\linewidth]{img/appendix_b_connector_matching_configuration.png}
+				\caption{Projects data model error}
+				\label{fig:connector_rules_config}
+			\end{figure}
 			
 			\begin{table}[h!]
 				\begin{tabular}{p{5cm}p{10cm}}
 					\toprule
 					Link Type & 
-					In this directory you will find default databases you can use to get started with Kuwaiba. \\
+					The kind of object (class) representing a link that this rule will be applied to. All subclasses of \textit{GenericPhysicalLink} will be included here.\\
 					\midrule
-					updates.zip & This file contains a sample \textit{updates.xml} file that can be use to set up an Update Center to distribute updates. See \textbf{\nameref{app:AppendixE}}\\
+					Link Connector Type & The connector type (see attribute \textbf{connectorType} in the link object) used in both ends of the link. Use "None" if no matter what type of connector the link has, it can be connected to the port type specified in the next field. \textbf{Example:} "LC/PC"\\
 					\midrule
-					KuwaibaServer.ear & The enterprise application to be deployed on the application server \\
+					Port Type & The type of port the link type specified in the first field can be connected to. All subclasses of GenericCommunicationsPort will be included here. \\
 					\midrule
-					README & A simple README file with useful information about where to get resources. \\
-					\midrule
-					THIRDPARTY & The list of open source, third-party components used in the server, as well of their respective licenses and links to the original projects. \\
-					\midrule
-					LICENSE.EPL & Text of the EPLv1 license \\
-					\midrule
-					LICENSE.GPLv3 & Text of the GPLv3 license \\
-					\midrule
-					CHANGELOG & List of changes since the first version \\
-					\midrule
-					class\_hierarchy.xml & A default database schema that can be uploaded instead of using one of the default databases. Only for experimented users. \\
+					Port Connector Type & The port connector compatible with the combination Link Type/Link Connector Type. Choose "None" if any link/link connector type can be connected to the Port Type specified in the field above.\\
 					\bottomrule	
 				\end{tabular}
+				
 			\end{table}
 			
 			\begin{framed} {\large \textbf{Important}}
