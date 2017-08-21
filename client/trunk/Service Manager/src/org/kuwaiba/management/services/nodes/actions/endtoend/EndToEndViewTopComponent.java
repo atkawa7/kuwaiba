@@ -17,19 +17,13 @@
 package org.kuwaiba.management.services.nodes.actions.endtoend;
 
 import java.awt.BorderLayout;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -133,20 +127,6 @@ public class EndToEndViewTopComponent extends TopComponent implements
     
     private void btnAddFrameActionPerformed(java.awt.event.ActionEvent evt) {
         ((EndToEndViewSimpleScene)scene).addFreeFrame();
-    }
-    
-    private void btnAddImageActionPerformed(java.awt.event.ActionEvent evt) {
-        JFileChooser fChooser = new JFileChooser();
-        fChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        fChooser.setFileFilter(new FileNameExtensionFilter("Image files", "gif","jpg", "png"));
-        if (fChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION){
-            try {
-                Image myBackgroundImage = ImageIO.read(new File(fChooser.getSelectedFile().getAbsolutePath()));
-                //((EndToEndViewSimpleScene)scene).addImage(myBackgroundImage);
-            } catch (IOException ex) {
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());
-            }
-        }
     }
     
     @Override

@@ -24,7 +24,6 @@ import org.kuwaiba.management.services.nodes.actions.endtoend.EndToEndViewSimple
 import org.kuwaiba.management.services.nodes.actions.endtoend.EndToEndViewTopComponent;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.windows.TopComponent;
-import org.openide.windows.WindowManager;
 
 /**
  * Opens an end-to-end view of the service, by trying to match the endpoints of the 
@@ -44,7 +43,7 @@ public class ShowEndToEndSimpleViewAction extends GenericObjectNodeAction {
             JOptionPane.showMessageDialog(null, "Select only one node service.", "Error", JOptionPane.ERROR_MESSAGE);
         else{
             //TopComponent endToEndTC = ((EndToEndViewTopComponent)WindowManager.getDefault().
-              //  findTopComponent("ObjectViewTopComponent_" + selectedObjects.get(0).getOid()));
+            //  findTopComponent("ObjectViewTopComponent_" + selectedObjects.get(0).getOid()));
             
             TopComponent endToEndTC = new EndToEndViewTopComponent(selectedObjects.get(0), new EndToEndViewSimpleScene());
             endToEndTC.open();

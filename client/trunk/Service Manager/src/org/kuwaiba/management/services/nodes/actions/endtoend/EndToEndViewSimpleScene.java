@@ -242,13 +242,13 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
         LocalObjectLight object = (LocalObjectLight) configObject.getProperty("currentObject");
         LocalObjectView currentView = (LocalObjectView) configObject.getProperty("currentView");
         
-        /*Comment this out for debugging purposes*/
-        try {
-            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_"+currentView.getId()+".xml");
-            fos.write(currentView.getStructure());
-            fos.close();
-        } catch(Exception e) {
-        }
+       //<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
+//        try {
+//            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_"+currentView.getId()+".xml");
+//            fos.write(currentView.getStructure());
+//            fos.close();
+//        } catch(Exception e) {}
+        //</editor-fold>
         
         List<LocalObjectLight> myChildren = com.getObjectChildren(object.getOid(), com.getMetaForClass(object.getClassName(),false).getOid());
         if (myChildren == null)
