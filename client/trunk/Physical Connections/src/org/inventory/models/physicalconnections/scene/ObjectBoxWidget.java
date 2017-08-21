@@ -19,6 +19,7 @@ import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.core.visual.scene.SelectableNodeWidget;
 import org.netbeans.api.visual.layout.LayoutFactory;
 import org.netbeans.api.visual.model.ObjectState;
@@ -40,7 +41,7 @@ public class ObjectBoxWidget extends SelectableNodeWidget {
     private LabelWidget labelWidget;
     private Widget childrenWidget;
     
-    public ObjectBoxWidget(PhysicalPathScene scene, LocalObjectLight object) {
+    public ObjectBoxWidget(AbstractScene scene, LocalObjectLight object) {
         super(scene, object);
         setOpaque(true);
         setLayout(LayoutFactory.createVerticalFlowLayout());
@@ -52,12 +53,12 @@ public class ObjectBoxWidget extends SelectableNodeWidget {
         this.childrenWidget.setBorder(emptyBorder);
         addChild(childrenWidget);
     }
-    public ObjectBoxWidget(PhysicalPathScene scene, LocalObjectLight object, Color originalColor) {
+    
+    public ObjectBoxWidget(AbstractScene scene, LocalObjectLight object, Color originalColor) {
         this (scene, object);
         this.originalColor = originalColor;
         setBackground(originalColor);
     }
-    
     
     public void addBox(Widget child){
         childrenWidget.addChild(child);
