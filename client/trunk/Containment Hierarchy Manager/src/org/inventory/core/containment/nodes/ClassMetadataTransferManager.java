@@ -41,6 +41,7 @@ public class ClassMetadataTransferManager extends TransferHandler implements Dra
         this.list = _list;
     }
 
+    @Override
     public void dragGestureRecognized(DragGestureEvent dge) {
         //To avoid bogus drag and drop events trigger this behavior
         if (dge == null)
