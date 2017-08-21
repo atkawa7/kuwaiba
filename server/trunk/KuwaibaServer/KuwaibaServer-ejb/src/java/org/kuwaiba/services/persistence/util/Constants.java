@@ -257,6 +257,10 @@ public class Constants {
      */
     public static final String CLASS_SERVICEPROVIDER = "ServiceProvider"; //NOI18N
     /**
+     * Class Generic physical connections
+     */
+    public static final String CLASS_PHYSICALCONNECTION= "GenericPhysicalConnection"; //NOI18N
+    /**
      * IP Address
      */
     public static final String CLASS_IP_ADDRESS = "IPAddress"; //NOI18N

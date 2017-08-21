@@ -1511,26 +1511,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         return paths;
         
     }
-    
-    @Override
-    public void objectHasValuesInMandatoryAttributes(String className, 
-            long objId) throws ObjectNotFoundException, 
-            MetadataObjectNotFoundException, InvalidArgumentException
-    {
-        RemoteBusinessObject obj = getObject(className, objId);
-        HashMap<String, List<String>> objectAttributes = obj.getAttributes();
-        
-        ClassMetadata aClass = mem.getClass(className);
-        Set<AttributeMetadata> classAttributes = aClass.getAttributes();
-        for (AttributeMetadata mandatoryAttribute : classAttributes) {
-            if(mandatoryAttribute.isMandatory()){
-                if(objectAttributes.get(mandatoryAttribute.getName()) == null)
-                    throw new InvalidArgumentException(String.format(
-                            "The object with oid %s has no value in the mandatory attribute %s",objId, mandatoryAttribute.getName()));
-            }
-        }
-    }
-    
+   
     @Override
     public List<AttributeMetadata> getMandatoryAttributesInClass(String className) 
             throws MetadataObjectNotFoundException
@@ -1543,6 +1524,44 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                  mandatoryAttributes.add(mandatoryAttribute);
         }
         return mandatoryAttributes;
+    }
+    
+    @Override
+    public List<RemoteBusinessObjectLightList> getPhysicalConnectionsInsideObject(long objectId, String className) 
+            throws InvalidArgumentException, ObjectNotFoundException, MetadataObjectNotFoundException
+    {
+        List<RemoteBusinessObjectLightList> connections = new ArrayList<>();
+        //get all the connections(optical, electrical, etc) inside the object
+        String cypherQuery = String.format("MATCH(n)<-[%s]-(connection)-[%s]->(subclass)-[r:%s*]->(class)  " +
+                             "WHERE ID(n)=%s AND class.name='%s' " +
+                             "RETURN connection", RelTypes.CHILD_OF_SPECIAL, 
+                             RelTypes.INSTANCE_OF, RelTypes.EXTENDS,
+                             objectId, Constants.CLASS_PHYSICALCONNECTION);
+
+        try (Transaction tx = graphDb.beginTx()){
+
+            Result result = graphDb.execute(cypherQuery);
+            Iterator<Node> column = result.columnAs("connection");
+
+            for (Node node : IteratorUtil.asIterable(column)){
+                RemoteBusinessObjectLightList path = new RemoteBusinessObjectLightList();
+                Iterable<Relationship> relationships = node.getRelationships(Direction.OUTGOING, RelTypes.RELATED_TO_SPECIAL);
+                
+                for (Relationship relationship : relationships) {
+                    if(relationship.hasProperty(Constants.PROPERTY_NAME)){
+                        if(((String)relationship.getProperty(Constants.PROPERTY_NAME)).contains("endpoint")){
+                            RemoteBusinessObject aConnectionSide = Util.createRemoteObjectFromNode(relationship.getEndNode());
+                            List<RemoteBusinessObjectLight> parentsSide = new ArrayList<>();
+                            parentsSide.add(aConnectionSide); //Add the port
+                            path.addAll(parentsSide); //Add the parents
+                        }
+                    }
+                }
+                path.add(Util.createRemoteObjectFromNode(node)); //Add the connection to the path
+                connections.add(path);
+            }
+        }
+        return connections;
     }
     
     //<editor-fold desc="Reporting API implementation" defaultstate="collapsed">
@@ -1884,9 +1903,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         }
     }
     //</editor-fold>
-    /**
-     * Helpers
-     */
+    
+    //<editor-fold desc="Helpers" defaultstate="collapsed">
     /**
      * Boiler-plate code. Gets a particular instance given the class name and the oid. Callers must handle associated transactions
      * @param className object class name
@@ -2202,4 +2220,5 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         cm.putUniqueAttributeValueIndex(className, attributeName, attributeValue);
         return true;
     }
+    //</editor-fold>
 }

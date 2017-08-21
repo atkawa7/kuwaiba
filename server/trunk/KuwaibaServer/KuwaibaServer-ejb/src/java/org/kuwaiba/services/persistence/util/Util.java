@@ -214,10 +214,10 @@ public class Util {
 
     /**
      * Saves a file, receiving the file name and the contents as parameters. If the directory structure doesn't exist, it's created
-     * @param directory 
-     * @param fileName
-     * @param content
-     * @throws FileNotFoundException
+     * @param directory path to the directory
+     * @param fileName the file name
+     * @param content the file content
+     * @throws FileNotFoundException 
      * @throws IOException
      */
     public static void saveFile(String directory, String fileName, byte[] content) throws FileNotFoundException, IOException {
@@ -277,8 +277,8 @@ public class Util {
 
     /**
      * Converts a class metadata node into a ClassMetadataLight object
-     * @param classNode
-     * @return
+     * @param classNode the class Node
+     * @return a class metadata light object
      */
     public static ClassMetadataLight createClassMetadataLightFromNode(Node classNode)
     {
@@ -305,8 +305,8 @@ public class Util {
 
     /**
      * Converts a class metadata node into a ClassMetadata object
-     * @param classNode
-     * @return
+     * @param classNode a class metadata node
+     * @return a class metadata object
      */
     public static ClassMetadata createClassMetadataFromNode(Node classNode)
     {

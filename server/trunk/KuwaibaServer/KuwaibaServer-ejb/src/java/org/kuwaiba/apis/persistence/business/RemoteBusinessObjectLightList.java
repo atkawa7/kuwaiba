@@ -17,6 +17,7 @@ package org.kuwaiba.apis.persistence.business;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -37,6 +38,10 @@ public class RemoteBusinessObjectLightList implements  Serializable {
     
     public boolean add(RemoteBusinessObjectLight element) {
         return list.add(element);
+    }
+    
+    public boolean addAll(Collection<? extends RemoteBusinessObjectLight> elements) {
+        return list.addAll(elements);
     }
     
     public boolean remove(RemoteBusinessObjectLight element) {

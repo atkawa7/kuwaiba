@@ -590,19 +590,18 @@ public interface BusinessEntityManager {
      */
     public List<AttributeMetadata> getMandatoryAttributesInClass(String className) throws 
             MetadataObjectNotFoundException;
-             
-    /**
-     * Retrieves if an object has values in its attributes marked as mandatory
-     * @param className the object's class name
-     * @param objId object given id
-     * @throws ObjectNotFoundException if the object doesn't exist
-     * @throws MetadataObjectNotFoundException if the class doesn't exist
-     * @throws InvalidArgumentException if the mandatory attribute has no value
-     */         
-    public void objectHasValuesInMandatoryAttributes(String className, 
-            long objId) throws ObjectNotFoundException, 
-            MetadataObjectNotFoundException, InvalidArgumentException;
     
+    /**
+     * Retrieves the list of the attributes marked as mandatory
+     * @param objectId the object id
+     * @param className the class name
+     * @return a list with all the paths between connections
+     * @throws InvalidArgumentException if can't create the remoteObjectLight(the connection) from the node
+     * @throws ObjectNotFoundException can't find the object
+     * @throws MetadataObjectNotFoundException can't the class name
+     */
+    public List<RemoteBusinessObjectLightList> getPhysicalConnectionsInsideObject(long objectId, String className) 
+            throws InvalidArgumentException, ObjectNotFoundException, MetadataObjectNotFoundException;
     /**
      * Finds the physical path from one port to another
      * @param objectClass The source port class.

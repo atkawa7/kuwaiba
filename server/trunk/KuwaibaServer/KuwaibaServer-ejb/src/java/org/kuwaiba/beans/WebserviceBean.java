@@ -1319,19 +1319,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
     
     @Override
-    public void objectHasValuesInMandatoryAttributes(String className, long objId, String ipAddress, String sessionId)  throws ServerSideException{
-        if (bem == null || aem == null)
-            throw new ServerSideException("Can't reach the backend. Contact your administrator");
-        
-        try {
-                aem.validateWebServiceCall("objectHasValuesInMandatoryAttributes", ipAddress, sessionId);
-                bem.objectHasValuesInMandatoryAttributes(className, objId);
-            } catch (InventoryException ex) {
-            throw new ServerSideException(ex.getMessage());
-        }
-    }
-    
-    @Override
     public long [] createBulkObjects(String className, String parentClassName, long parentOid, int numberOfObjects, String namePattern, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
@@ -1694,6 +1681,22 @@ public class WebserviceBean implements WebserviceBeanRemote {
             }
             
             return res;
+
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public List<RemoteBusinessObjectLightList> getPhysicalConnectionsInsideObject(long objectId, 
+            String className, String ipAddress, String sessionId) throws ServerSideException
+    {
+        if (bem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+        
+            aem.validateWebServiceCall("getPhysicalConnectionsInsideObject", ipAddress, sessionId);
+            return bem.getPhysicalConnectionsInsideObject(objectId, className); 
 
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
