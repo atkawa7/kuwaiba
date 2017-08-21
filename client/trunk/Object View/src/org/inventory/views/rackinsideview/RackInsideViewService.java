@@ -12,27 +12,31 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.inventory.views.rackview;
+package org.inventory.views.rackinsideview;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalObjectLightList;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.views.rackview.scene.RackViewScene;
+import org.inventory.views.rackview.scene.RackInsideViewScene;
+import org.netbeans.api.visual.anchor.AnchorFactory;
+import org.netbeans.api.visual.widget.Widget;
 
 /**
  * Service for Rack view
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class RackViewService {
+public class RackInsideViewService {
     private final LocalObjectLight rackLight;
-    private final RackViewScene scene;
+    private final RackInsideViewScene scene;
     
-    public RackViewService(RackViewScene scene, LocalObjectLight rackLight) {
+    public RackInsideViewService(RackInsideViewScene scene, LocalObjectLight rackLight) {
         this.rackLight = rackLight;
         this.scene = scene;
     }
@@ -41,7 +45,8 @@ public class RackViewService {
         return rackLight;        
     }
     
-    public void buildRackView() throws Exception {
+    public void buildRackInsideView() throws Exception {
+        scene.clear();
         LocalObject rack = CommunicationsStub.getInstance().getObjectInfo(rackLight.getClassName(), rackLight.getOid());
         
         if (rack == null)
@@ -141,29 +146,72 @@ public class RackViewService {
             
             if (scene.findWidget(device) != null)
                 scene.removeNode(device);
+            Widget deviceNode = scene.addNode(device);
+            ((NestedDeviceWidget)deviceNode).setBackgroundColor(new Color(213, 216, 221, 240));
             
-            scene.addNode(device);
+            addSubdevices(deviceNode, device);
+            scene.addRootWidget(deviceNode, U, position);
         }
-        String lblName = ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_RACK_NAME"); //NOI18N
-        String lblSerialNumber = ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_RACK_SERIAL_NUMBER"); //NOI18N
-        String lblVendor = ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_RACK_VENDOR"); //NOI18N
-        String lblRackNumbering = ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_RACK_NUMBERING"); //NOI18N
-        
-        String lblAscending = ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_RACK_NUMBERING_ASCENDING"); //NOI18N
-        String lblDescending = ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_RACK_NUMBERING_DESCENDING"); //NOI18N
-        
-        String lblUsagePercentage = ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_RACK_USAGE_PERCENTAGE"); //NOI18N
-        
-        String name = rack.getName();
-        String serialNumber = rack.getAttribute("serialNumber") == null ? "" : rack.getAttribute("serialNumber").toString(); //NOI18N
-        String vendor = rack.getAttribute("vendor") == null ? "" : rack.getAttribute("vendor").toString(); //NOI18N
-        String rackNumbering = ascending ? lblAscending : lblDescending;
-        String usagePercentage = "" + Math.round((float)rackUnitsCounter * 100/rackUnits) +"% (" + rackUnitsCounter + "U/" + rackUnits + "U)";
-        
-        scene.addRackInfoLabel(String.format("%s: %s", lblName, name), false);
-        scene.addRackInfoLabel(String.format("%s: %s", lblSerialNumber, serialNumber), false);
-        scene.addRackInfoLabel(String.format("%s: %s", lblVendor, vendor), false);
-        scene.addRackInfoLabel(String.format("%s: %s", lblRackNumbering, rackNumbering), false);
-        scene.addRackInfoLabel(String.format("%s: %s", lblUsagePercentage, usagePercentage), true);
+        createConnections(CommunicationsStub.getInstance().getPhysicalConnectionsInsideObject(rack.getOid(), rack.getClassName()));
+    }
+    
+    public void addSubdevices(Widget deviceNode, LocalObjectLight device){
+        List<LocalObjectLight> objectChildren = CommunicationsStub.getInstance().getObjectChildren(device.getOid(),device.getClassName());
+        Color childrenColor = randomColor();
+        if(!objectChildren.isEmpty()){
+            for (LocalObjectLight objectChild : objectChildren) {
+                Widget subDevice = scene.addNode(objectChild);
+                //if is a port the backgorund color is set to green by default
+                if(CommunicationsStub.getInstance().isSubclassOf(objectChild.getClassName(), Constants.CLASS_GENERICPORT))
+                    ((NestedDeviceWidget)subDevice).setBackgroundColor(new Color(144, 245, 0));
+                else
+                    ((NestedDeviceWidget)subDevice).setBackgroundColor(childrenColor);
+                ((NestedDeviceWidget)deviceNode).addBox(subDevice);
+                addSubdevices(subDevice, objectChild);
+            }
+        }
+    }
+    
+    /**
+     * Iterates over the connections inside the rack and add the edges to the scene
+     * @param connections all the connections inside the rack, there is a list 
+     * with a path(aSide, bSide, connection)for every connection 
+     */
+    public void createConnections(List<LocalObjectLightList> connections){
+        for (LocalObjectLightList connection : connections) {
+            SimpleConnectionWidget lastConnectionWidget = null;
+            LocalObjectLight aSide = null;
+            LocalObjectLight bSide = null;        
+            LocalObjectLight linkLight = null;
+            for (LocalObjectLight object : connection) {
+                if(CommunicationsStub.getInstance().isSubclassOf(object.getClassName(), Constants.CLASS_GENERICPORT)){
+                    if(aSide == null)
+                        aSide = object;
+                    else
+                        bSide = object;
+                }
+                else
+                    linkLight = object;
+            }
+            //The background of the ports with connections is set to red.
+            Widget aSideNode = scene.findWidget(aSide);
+            ((NestedDeviceWidget)aSideNode).setBackgroundColor(new Color(255, 62, 51));
+            Widget bSideNode = scene.findWidget(bSide);
+            ((NestedDeviceWidget)bSideNode).setBackgroundColor(new Color(255, 62, 51));
+            
+            LocalObject link = CommunicationsStub.getInstance().getObjectInfo(linkLight.getClassName(), linkLight.getOid());
+            
+            lastConnectionWidget = (SimpleConnectionWidget)scene.addEdge(link);
+            lastConnectionWidget.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideNode));
+            lastConnectionWidget.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideNode));
+        }
+    }
+    
+    private static int rand(double min, double max) {
+        return (int)(min + (Math.random()) * (max - min));
+    }
+    
+    protected static Color randomColor(){
+        return new Color(rand(0, 255), rand(0, 255), rand(0, 255), 240);
     }
 }

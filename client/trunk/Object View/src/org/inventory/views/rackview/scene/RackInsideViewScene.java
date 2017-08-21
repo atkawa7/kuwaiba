@@ -14,54 +14,62 @@
  */
 package org.inventory.views.rackview.scene;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.communications.util.Constants;
 import org.inventory.core.visual.scene.AbstractScene;
+import static org.inventory.core.visual.scene.AbstractScene.ACTION_SELECT;
 import org.inventory.core.visual.scene.SelectableNodeWidget;
+import org.inventory.views.rackinsideview.NestedDeviceWidget;
+import org.inventory.views.rackinsideview.SimpleConnectionWidget;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
-import org.netbeans.api.visual.border.BorderFactory;
 import org.netbeans.api.visual.layout.LayoutFactory;
 import org.netbeans.api.visual.model.ObjectState;
+import org.netbeans.api.visual.router.Router;
+import org.netbeans.api.visual.router.RouterFactory;
 import org.netbeans.api.visual.widget.LabelWidget;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
- * Scene for Rack view, shows the front view of the rack
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * Scene for Rack view, the inside view of the rack.
+ * @author Adrian MArtinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class RackViewScene extends AbstractScene<LocalObject, LocalObject> {
-    public static final int STANDARD_RACK_WIDTH = 300;
-    public static final int RACK_UNIT_IN_PX = 35;
+public class RackInsideViewScene extends AbstractScene<LocalObjectLight, LocalObjectLight> {
+    public static final int STANDARD_RACK_WIDTH = 800;
+    public static final int RACK_UNIT_IN_PX = 150;
     
     public static final int RACK_Y_OFFSET = 5;
     
     private LayerWidget numberingInRackLayer;
     private LayerWidget rackLayer;
     private LayerWidget deviceLayer;
-    private LayerWidget infoLayer;
     
     private boolean ascending = true;
     private int rackUnits;
     
-    private final Color boxColor = new Color(128, 128, 128);
+    private Router router;
     
-    public RackViewScene() {
+    private final Color boxColor = new Color(153, 153, 153);
+    private final Color boxSeparationColor = new Color(153, 153, 153, 230);
+    private final Color emptyColor = new Color(51, 51, 51, 230);
+    
+    public RackInsideViewScene() {
         getActions().addAction(ActionFactory.createZoomAction());
         getInputBindings ().setZoomActionModifiers(0); //No keystroke combinations
         getActions().addAction(ActionFactory.createPanAction());
                 
         setActiveTool(ACTION_SELECT);
         initSelectionListener();
+        router = RouterFactory.createDirectRouter();
     }
         
-    private void buildScene(LocalObject rack) {
+    private void buildScene(LocalObjectLight rack) {
         int margin = 50;
         
         Widget topWidget = new Widget(this);        
@@ -95,12 +103,11 @@ public class RackViewScene extends AbstractScene<LocalObject, LocalObject> {
         infoWidget.setLayout(LayoutFactory.createVerticalFlowLayout());
                 
         centerWidget.addChild(infoWidget);
-        infoWidget.addChild(infoLayer);
         
         validate();
     }
     
-    private void buildBox(LocalObject rack, Widget centerWidget) {
+    private void buildBox(LocalObjectLight rack, Widget centerWidget) {
         Widget verticalBoxWidget = new Widget(this);
         verticalBoxWidget.setLayout(LayoutFactory.createVerticalFlowLayout());
         
@@ -113,7 +120,7 @@ public class RackViewScene extends AbstractScene<LocalObject, LocalObject> {
         topBoxWidget.setLayout(LayoutFactory.createVerticalFlowLayout(LayoutFactory.SerialAlignment.CENTER, 0));
         
         LabelWidget lblDeviceName = new LabelWidget(this, rack.toString());
-        lblDeviceName.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+        lblDeviceName.setBorder(org.netbeans.api.visual.border.BorderFactory.createEmptyBorder(10, 0, 0, 0));
         lblDeviceName.setForeground(new Color(245, 245, 245));
         
         topBoxWidget.addChild(lblDeviceName);
@@ -135,16 +142,17 @@ public class RackViewScene extends AbstractScene<LocalObject, LocalObject> {
         
         Widget rackWidget = new Widget(this);
         rackWidget.setLayout(LayoutFactory.createAbsoluteLayout());
-        rackWidget.setBackground(boxColor);
+        rackWidget.setBackground(boxSeparationColor);
         rackWidget.setOpaque(true);
                 
         rackWidget.addChild(rackLayer);
         rackWidget.addChild(deviceLayer);
+        rackWidget.addChild(edgeLayer);
         
         horizontalBoxWidget.addChild(rackWidget);
                 
         Widget rightSideBoxWidget = new Widget(this);
-        rightSideBoxWidget.setPreferredSize(new Dimension(39, 39));
+        rightSideBoxWidget.setPreferredSize(new Dimension(15, 39));
         rightSideBoxWidget.setBackground(boxColor);
         rightSideBoxWidget.setOpaque(true);
         horizontalBoxWidget.addChild(rightSideBoxWidget);
@@ -171,13 +179,13 @@ public class RackViewScene extends AbstractScene<LocalObject, LocalObject> {
         while (ascending ? U <= rackUnits : U >= 1) {
             
             Widget widget = new Widget(this);
-            widget.setPreferredSize(new Dimension(39, RackViewScene.RACK_UNIT_IN_PX));
+            widget.setPreferredSize(new Dimension(25, RackInsideViewScene.RACK_UNIT_IN_PX));
                         
             widget.setLayout(LayoutFactory.createVerticalFlowLayout(LayoutFactory.SerialAlignment.CENTER, 0));
             
             LabelWidget lblU = new LabelWidget(this, Integer.toString(U));
             lblU.setForeground(new Color(245, 245, 245));
-            lblU.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+            lblU.setBorder(org.netbeans.api.visual.border.BorderFactory.createEmptyBorder(10, 0, 0, 0));
             
             widget.addChild(lblU);
             
@@ -185,17 +193,6 @@ public class RackViewScene extends AbstractScene<LocalObject, LocalObject> {
                         
             U = ascending ? U + 1 : U - 1;                        
         }
-        validate();
-    }
-    
-    public void addRackInfoLabel(String infoLabel, boolean emphasis) {
-        LabelWidget infoLblWidget = new LabelWidget(this, infoLabel);
-        infoLblWidget.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 0));
-        
-        if (emphasis)
-            infoLblWidget.setForeground(Color.RED);
-        
-        infoLayer.addChild(infoLblWidget);
         validate();
     }
     
@@ -229,7 +226,7 @@ public class RackViewScene extends AbstractScene<LocalObject, LocalObject> {
     }
 
     @Override
-    public void render(LocalObject root) {
+    public void render(LocalObjectLight root) {
         setLayout(LayoutFactory.createVerticalFlowLayout(LayoutFactory.SerialAlignment.CENTER, 0));
         
         rackLayer = new LayerWidget(this);
@@ -238,85 +235,74 @@ public class RackViewScene extends AbstractScene<LocalObject, LocalObject> {
         deviceLayer = new LayerWidget(this);
         deviceLayer.setLayout(LayoutFactory.createAbsoluteLayout());
         
-        infoLayer = new LayerWidget(this);
-        infoLayer.setLayout(LayoutFactory.createVerticalFlowLayout(LayoutFactory.SerialAlignment.LEFT_TOP, 10));
+        edgeLayer = new LayerWidget(this);
         
         numberingInRackLayer = new LayerWidget(this);
         numberingInRackLayer.setLayout(LayoutFactory.createVerticalFlowLayout(LayoutFactory.SerialAlignment.CENTER, RACK_Y_OFFSET));
         buildScene(root);
     }
 
+    public void addRootWidget (Widget deviceWidget, Integer U, Integer position){
+        deviceWidget.createActions(AbstractScene.ACTION_SELECT);
+        deviceWidget.getActions(ACTION_SELECT).addAction(createSelectAction());
+        
+        int width = STANDARD_RACK_WIDTH;
+        int height = RACK_UNIT_IN_PX * U + RACK_Y_OFFSET * (U - 1);
+        
+        deviceWidget.setMinimumSize(new Dimension(width, height));
+        deviceWidget.setOpaque(true);
+
+        deviceWidget.setLayout(LayoutFactory.createVerticalFlowLayout(LayoutFactory.SerialAlignment.JUSTIFY, 0));
+
+        int drawPosition = position;
+        if (ascending)
+            drawPosition -= 1;
+        else
+            drawPosition = rackUnits - position - (U - 1);
+        int y = RACK_UNIT_IN_PX * drawPosition + RACK_Y_OFFSET * drawPosition;
+
+        deviceWidget.setPreferredLocation(new Point(0, y));
+        deviceLayer.addChild(deviceWidget);
+        validate();
+    }
+     
     @Override
-    protected Widget attachNodeWidget(LocalObject node) {
+    protected Widget attachNodeWidget(LocalObjectLight node) {
         if (node.getOid() <= -1) {
             Widget widget = new Widget(this);
 
             widget.setOpaque(true);
-            widget.setBackground(new Color(112, 112, 112));
-            widget.setPreferredSize(new Dimension(RackViewScene.STANDARD_RACK_WIDTH, RackViewScene.RACK_UNIT_IN_PX));
+            widget.setBackground(emptyColor);
+            widget.setPreferredSize(new Dimension(RackInsideViewScene.STANDARD_RACK_WIDTH, RackInsideViewScene.RACK_UNIT_IN_PX));
             rackLayer.addChild(widget);
             validate();
             
             return widget;
         } else {
-            Integer U = (Integer) node.getAttribute(Constants.PROPERTY_RACK_UNITS);
-            Integer position = (Integer) node.getAttribute(Constants.PROPERTY_POSITION);
-            
-            SelectableDeviceWidget deviceWidget = new SelectableDeviceWidget(this, node);
-            deviceWidget.createActions(AbstractScene.ACTION_SELECT);
-            deviceWidget.getActions(ACTION_SELECT).addAction(createSelectAction());
-            
-            int width = STANDARD_RACK_WIDTH;
-            int height = RACK_UNIT_IN_PX * U + RACK_Y_OFFSET * (U - 1);
-                        
-            deviceWidget.setBackground(new Color(136, 170, 0));
-            deviceWidget.setPreferredSize(new Dimension(width, height));
-            deviceWidget.setOpaque(true);
-            
-            
-            deviceWidget.setLayout(LayoutFactory.createVerticalFlowLayout(LayoutFactory.SerialAlignment.CENTER, 0));
-            
-            LabelWidget lblDeviceName = new LabelWidget(this, node.toString());
-            
-            int top, bottom;
-            top = bottom = (height - RACK_UNIT_IN_PX) / 2;
-            
-            lblDeviceName.setBorder(BorderFactory.createEmptyBorder(top == 0 ? 3 : top, 0, 0, 0));
-            lblDeviceName.setForeground(Color.WHITE);
-            
-            LabelWidget lblDeviceInfo = new LabelWidget(this, "Position: " + position + "U - " + "Size: " + U + "U");
-            lblDeviceInfo.setBorder(BorderFactory.createEmptyBorder(0, 0, bottom, 0));
-            lblDeviceInfo.setForeground(Color.WHITE);
-            
-            int drawPosition = position;
-            if (ascending)
-                drawPosition -= 1;
-            else
-                drawPosition = rackUnits - position - (U - 1);
-            int y = RACK_UNIT_IN_PX * drawPosition + RACK_Y_OFFSET * drawPosition;
-            
-            deviceWidget.setPreferredLocation(new Point(0, y));
-            
-            deviceWidget.addChild(lblDeviceName);
-            deviceWidget.addChild(lblDeviceInfo);
-            
-            deviceLayer.addChild(deviceWidget);
-            validate();
-            return deviceWidget;
+            Widget widget = new NestedDeviceWidget(this, node);
+            widget.getActions().addAction(createSelectAction());
+            widget.repaint();
+            widget.revalidate();
+            return widget;
         }
     }
 
     @Override
-    protected Widget attachEdgeWidget(LocalObject edge) {
-        return null;
+    protected Widget attachEdgeWidget(LocalObjectLight edge) {
+        SimpleConnectionWidget widget = new SimpleConnectionWidget(this, edge, ((LocalObject)edge).getObjectMetadata().getColor());
+        widget.getActions().addAction(createSelectAction());
+        widget.setStroke(new BasicStroke(1));
+        edgeLayer.addChild(widget);
+        validate();
+        return widget;
     }
 
     @Override
-    protected void attachEdgeSourceAnchor(LocalObject edge, LocalObject oldSourceNode, LocalObject sourceNode) {
+    protected void attachEdgeSourceAnchor(LocalObjectLight edge, LocalObjectLight oldSourceNode, LocalObjectLight sourceNode) {
     }
 
     @Override
-    protected void attachEdgeTargetAnchor(LocalObject edge, LocalObject oldTargetNode, LocalObject targetNode) {
+    protected void attachEdgeTargetAnchor(LocalObjectLight edge, LocalObjectLight oldTargetNode, LocalObjectLight targetNode) {
     }
     
     /**
@@ -334,11 +320,15 @@ public class RackViewScene extends AbstractScene<LocalObject, LocalObject> {
         public void notifyStateChanged(ObjectState previousState, ObjectState state) {
             if (!selected) {
                 selected = true;
-                setBackground(new Color(136, 170, 0));
+                setBackground(new Color(136, 170, 0, 240));
             } else {
                 selected = false;                
-                setBackground(Color.LIGHT_GRAY);
+                setBackground(new Color(60, 184, 188, 235));
             }
         }
+    }
+    
+    public Router getRouter() {
+        return router;
     }
 }

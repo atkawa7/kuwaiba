@@ -20,7 +20,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
-import org.inventory.views.rackview.RackViewTopComponent;
+import org.inventory.views.rackinsideview.RackInsideViewTopComponent;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.windows.WindowManager;
 
@@ -29,20 +29,20 @@ import org.openide.windows.WindowManager;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ShowRackViewAction extends GenericObjectNodeAction {
+public class ShowRackInsideViewAction extends GenericObjectNodeAction {
     
-    public ShowRackViewAction() {
-        putValue(NAME, ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_SHOW_RACK_VIEW"));
+    public ShowRackInsideViewAction() {
+        putValue(NAME, ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_SHOW_INSIDE_RACK_VIEW"));
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
         for (LocalObjectLight rack : selectedObjects) {
-            RackViewTopComponent rackView = ((RackViewTopComponent) WindowManager.
-                getDefault().findTopComponent("RackViewTopComponent_" + rack.getOid()));
+            RackInsideViewTopComponent rackView = ((RackInsideViewTopComponent) WindowManager.
+                getDefault().findTopComponent("RackInsideViewTopComponent_" + rack.getOid()));
             
             if (rackView == null) {
-                rackView = new RackViewTopComponent(rack);
+                rackView = new RackInsideViewTopComponent(rack);
                 rackView.open();
             } else {
                 if (rackView.isOpened())
