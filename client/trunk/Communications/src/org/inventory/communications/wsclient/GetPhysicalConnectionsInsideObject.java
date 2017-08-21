@@ -7,17 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for objectHasValuesInMandatoryAttributes complex type.
+ * <p>Java class for getPhysicalConnectionsInsideObject complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="objectHasValuesInMandatoryAttributes">
+ * &lt;complexType name="getPhysicalConnectionsInsideObject">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="className" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="objId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="objectId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="objectClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -28,55 +28,55 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "objectHasValuesInMandatoryAttributes", propOrder = {
-    "className",
-    "objId",
+@XmlType(name = "getPhysicalConnectionsInsideObject", propOrder = {
+    "objectId",
+    "objectClass",
     "sessionId"
 })
-public class ObjectHasValuesInMandatoryAttributes {
+public class GetPhysicalConnectionsInsideObject {
 
-    protected String className;
-    protected long objId;
+    protected long objectId;
+    protected String objectClass;
     protected String sessionId;
 
     /**
-     * Gets the value of the className property.
+     * Gets the value of the objectId property.
+     * 
+     */
+    public long getObjectId() {
+        return objectId;
+    }
+
+    /**
+     * Sets the value of the objectId property.
+     * 
+     */
+    public void setObjectId(long value) {
+        this.objectId = value;
+    }
+
+    /**
+     * Gets the value of the objectClass property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getClassName() {
-        return className;
+    public String getObjectClass() {
+        return objectClass;
     }
 
     /**
-     * Sets the value of the className property.
+     * Sets the value of the objectClass property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setClassName(String value) {
-        this.className = value;
-    }
-
-    /**
-     * Gets the value of the objId property.
-     * 
-     */
-    public long getObjId() {
-        return objId;
-    }
-
-    /**
-     * Sets the value of the objId property.
-     * 
-     */
-    public void setObjId(long value) {
-        this.objId = value;
+    public void setObjectClass(String value) {
+        this.objectClass = value;
     }
 
     /**

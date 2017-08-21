@@ -1393,7 +1393,7 @@ public class CommunicationsStub {
     
     // <editor-fold defaultstate="collapsed" desc="Object methods. Click on the + sign on the left to edit the code.">
     /**
-     * 
+     * Create an Inventory Object
      * @param objectClass
      * @param parentClass
      * @param parentOid
@@ -1656,14 +1656,6 @@ public class CommunicationsStub {
         }
     }
     
-    public void objectHasValuesInMandatoryAttributes(String className, long objId){
-        try{
-            service.objectHasValuesInMandatoryAttributes(className, objId, session.getSessionId());
-        }catch(Exception ex){
-            this.error = ex.getMessage();
-        }
-    }
-    
     /**
      * Creates multiple objects using a given name pattern
      * @param className The class name for the new objects
@@ -1800,6 +1792,20 @@ public class CommunicationsStub {
                 res[i] = new LocalObjectLight(element.getOid(), element.getName(), element.getClassName());
                 i++;
             }
+            
+            return res;
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    
+    public List<LocalObjectLightList> getPhysicalConnectionsInsideObject(long objectId, String objectClass){
+        try{
+            List<RemoteBusinessObjectLightList> paths = service.getPhysicalConnectionsInsideObject(objectId, objectClass, session.getSessionId());
+            List<LocalObjectLightList> res = new ArrayList<>();
+            for (RemoteBusinessObjectLightList route : paths) 
+                res.add(new LocalObjectLightList(route));
             
             return res;
         }catch(Exception ex){
