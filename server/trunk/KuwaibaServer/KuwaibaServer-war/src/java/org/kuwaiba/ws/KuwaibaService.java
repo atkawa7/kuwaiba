@@ -2403,32 +2403,6 @@ public class KuwaibaService {
     }
     
     /**
-     * 
-     * @param className
-     * @param objId
-     * @param sessionId
-     * @throws ServerSideException If the object doesn't exist
-     *                             If the class doesn't exist
-     *                             If the mandatory attribute has no value
-     */
-    @WebMethod(operationName = "objectHasValuesInMandatoryAttributes")
-    public void objectHasValuesInMandatoryAttributes(
-            @WebParam(name = "className") String className,
-            @WebParam(name = "objId") long objId, 
-            @WebParam(name = "sessionId") String sessionId) throws ServerSideException{
-        try{
-            wsBean.objectHasValuesInMandatoryAttributes(className, objId,  getIPAddress(), sessionId);
-        }catch(Exception e){
-            if (e instanceof ServerSideException)
-                throw e;
-            else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in objectHasValuesInMandatoryAttributes: " + e.getMessage());
-                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
-            }
-        }
-    }
-    
-    /**
      * Creates multiple objects using a given name pattern
      * @param className The class name for the new objects
      * @param parentClassName The parent class name for the new objects
@@ -2680,6 +2654,32 @@ public class KuwaibaService {
                 throw e;
             else {
                 System.out.println("[KUWAIBA] An unexpected error occurred in getPhysicalPath: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    } 
+    
+    /**
+     * Gets the physical trace of connections and ports from a port
+     * @param objectClass Object class
+     * @param objectId Object id
+     * @param sessionId Session token
+     * @return An array containing the sorted elements in the physical path of the given port
+     * @throws ServerSideException If the user is not allowed to invoke the method
+     *                             
+     */
+    @WebMethod(operationName = "getPhysicalConnectionsInsideObject")
+    public List<RemoteBusinessObjectLightList> getPhysicalConnectionsInsideObject (
+            @WebParam(name = "objectId")long objectId,
+            @WebParam(name = "objectClass")String objectClass,
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getPhysicalConnectionsInsideObject(objectId, objectClass, getIPAddress(), sessionId);
+        } catch(Exception e) {
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getPhysicalConnectionsInsideObject: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
