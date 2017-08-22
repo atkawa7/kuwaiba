@@ -663,74 +663,82 @@ public class ToolsBean implements ToolsBeanRemote {
                 break;
                 case "7":
                 {
+                try {                    
+                    ClassMetadata electricalPortType = mem.getClass("ElectricalPortType"); //NOI18N
+                    if (!"CommunicationsPortType".equals(electricalPortType.getParentClassName())) //NOI18N
+                        break;
+                } catch (MetadataObjectNotFoundException ex) {
+                    break;
+                }
+                
                 try {
-                    // If not exist the ElectricalLinkPort and the OpticalLinkPort create them, value of the attribute type are loose
-                    // Get all instances of ELP and OLP and if the type is a CommunicationsPortType set to null
                     ClassMetadata electricalLinkPort = mem.getClass("ElectricalPort"); //NOI18N
                     
                     if (electricalLinkPort.hasAttribute("type")) { //NOI18N
                         AttributeMetadata oldAttr = electricalLinkPort.getAttribute("type"); //NOI18N
+                        
+                        try {
+                            AttributeMetadata newAttr = new AttributeMetadata();
+                            newAttr.setId(oldAttr.getId());
+                            newAttr.setName(null);
+                            newAttr.setDisplayName(null);
+                            newAttr.setDescription(null);
+                            newAttr.setType("ElectricalPortType"); //NOI18N
+                            newAttr.setAdministrative(null);
+                            newAttr.setUnique(null);
+                            newAttr.setMandatory(null);
+                            newAttr.setVisible(null);
+                            newAttr.setReadOnly(null);
+                            newAttr.setNoCopy(null);
 
-                        String typeType = oldAttr.getType();
-//                        if (!"ElectricalPortType".equals(typeType)) { //NOI18N
-                            try {
-                                AttributeMetadata newAttr = new AttributeMetadata();
-                                newAttr.setId(oldAttr.getId());
-                                newAttr.setName(null);
-                                newAttr.setDisplayName(null);
-                                newAttr.setDescription(null);
-                                newAttr.setType("ElectricalPortType"); //NOI18N
-                                newAttr.setAdministrative(null);
-                                newAttr.setUnique(null);
-                                newAttr.setMandatory(null);
-                                newAttr.setVisible(null);
-                                newAttr.setReadOnly(null);
-                                newAttr.setNoCopy(null);
+                            ChangeDescriptor changeDescriptor = mem.setAttributeProperties(electricalLinkPort.getId(), newAttr);
 
-                                ChangeDescriptor changeDescriptor = mem.setAttributeProperties(electricalLinkPort.getId(), newAttr);
-
-                                aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN,
-                                    ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT,
-                                    changeDescriptor);
-                            } catch (InvalidArgumentException | ObjectNotFoundException | ApplicationObjectNotFoundException ex) {
-                                Logger.getLogger(ToolsBean.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-//                        }
+                            aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN,
+                                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT,
+                                changeDescriptor);
+                        } catch (InvalidArgumentException | ObjectNotFoundException | ApplicationObjectNotFoundException ex) {
+                            Logger.getLogger(ToolsBean.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                 } catch (MetadataObjectNotFoundException ex) {
                     results[i] += ", " + ex.getMessage();
                 }
-
-
+                
+                try {
+                    ClassMetadata opticalPortType = mem.getClass("OpticalPortType"); //NOI18N
+                    
+                    if (!"CommunicationsPortType".equals(opticalPortType.getParentClassName())) //NOI18N
+                        break;
+                } catch (MetadataObjectNotFoundException ex) {
+                    break;
+                }
+                
                 try {
                     ClassMetadata opticalLinkPort = mem.getClass("OpticalPort"); //NOI18N
                     if (opticalLinkPort.hasAttribute("type")) { //NOI18N
                         AttributeMetadata oldAttr = opticalLinkPort.getAttribute("type"); //NOI18N
+                        
+                        try {
+                            AttributeMetadata newAttr = new AttributeMetadata();
+                            newAttr.setId(oldAttr.getId());
+                            newAttr.setName(null);
+                            newAttr.setDisplayName(null);
+                            newAttr.setDescription(null);
+                            newAttr.setType("OpticalPortType"); //NOI18N
+                            newAttr.setAdministrative(null);
+                            newAttr.setUnique(null);
+                            newAttr.setMandatory(null);
+                            newAttr.setVisible(null);
+                            newAttr.setReadOnly(null);
+                            newAttr.setNoCopy(null);
+                            ChangeDescriptor changeDescriptor = mem.setAttributeProperties(opticalLinkPort.getId(), newAttr);
 
-                        String typeType = oldAttr.getType();
-//                        if (!"OpticalPortType".equals(typeType)) { //NOI18N
-                            try {
-                                AttributeMetadata newAttr = new AttributeMetadata();
-                                newAttr.setId(oldAttr.getId());
-                                newAttr.setName(null);
-                                newAttr.setDisplayName(null);
-                                newAttr.setDescription(null);
-                                newAttr.setType("OpticalPortType"); //NOI18N
-                                newAttr.setAdministrative(null);
-                                newAttr.setUnique(null);
-                                newAttr.setMandatory(null);
-                                newAttr.setVisible(null);
-                                newAttr.setReadOnly(null);
-                                newAttr.setNoCopy(null);
-                                ChangeDescriptor changeDescriptor = mem.setAttributeProperties(opticalLinkPort.getId(), newAttr);
-                                
-                                aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN,
-                                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT,
-                                changeDescriptor);
-                            } catch (InvalidArgumentException | ObjectNotFoundException | ApplicationObjectNotFoundException ex) {
-                                results[i] += ", " + ex.getMessage();
-                            }
-//                        }
+                            aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN,
+                            ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT,
+                            changeDescriptor);
+                        } catch (InvalidArgumentException | ObjectNotFoundException | ApplicationObjectNotFoundException ex) {
+                            results[i] += ", " + ex.getMessage();
+                        }
                     }
                 } catch (MetadataObjectNotFoundException ex) {
                     Logger.getLogger(ToolsBean.class.getName()).log(Level.SEVERE, null, ex);
