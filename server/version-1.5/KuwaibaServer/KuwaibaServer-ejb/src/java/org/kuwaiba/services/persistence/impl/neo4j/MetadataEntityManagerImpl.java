@@ -853,7 +853,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         }
                         else{
                             Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
-                            cm.removeUniqueAtribute(currentAttributeName, currentAttributeName);
+                            cm.removeUniqueAtribute((String)classNode.getProperty(Constants.PROPERTY_NAME), currentAttributeName);
                         }
                         affectedProperties = Constants.PROPERTY_UNIQUE + " ";
                         oldValues = " ";
@@ -980,7 +980,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         }
                         else{
                             Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
-                            cm.removeUniqueAtribute(currentAttributeName, currentAttributeName);
+                            cm.removeUniqueAtribute((String)classNode.getProperty(Constants.PROPERTY_NAME), currentAttributeName);
                         }
                         
                         affectedProperties = Constants.PROPERTY_UNIQUE + " ";
