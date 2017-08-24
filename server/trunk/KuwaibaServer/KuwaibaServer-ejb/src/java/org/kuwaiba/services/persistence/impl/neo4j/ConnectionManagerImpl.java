@@ -82,7 +82,7 @@ public class ConnectionManagerImpl implements ConnectionManager <GraphDatabaseSe
             if (!dbFile.exists() || !dbFile.canWrite())
                 throw new Exception(String.format("Path %s does not exist or is not writeable", dbFile.getAbsolutePath()));
             graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(dbFile);
-        }catch(Exception e){
+        }catch(Exception e) {
             throw new ConnectionException(e.getMessage());
         }
     }

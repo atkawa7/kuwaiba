@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.kuwaiba.apis.persistence.business;
+package org.kuwaiba.ws.toserialize.business;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -24,27 +24,31 @@ import javax.xml.bind.annotation.XmlAccessorType;
 
 
 /**
- * This class represents a list of RemoteBusinessObjectLight instances. It's basically a wrapper for ArrayList&lt;RemoteBusinessObjectLight&gt; 
- * It's used only to improve code readability. This class extended from ArrayList of RemoteBusinessObjectLight at the beginning, but JAX-WS just refused to treat it as a List
+ * This class represents a list of RemoteObjectLight instances. It's basically a wrapper for ArrayList&lt;RemoteObjectLight&gt; 
+ * It's used only to improve code readability. This class extended from ArrayList of RemoteObjectLight at the beginning, but JAX-WS just refused to treat it as a List
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RemoteBusinessObjectLightList implements  Serializable {
-    private List<RemoteBusinessObjectLight> list;
+public class RemoteObjectLightList implements  Serializable {
+    private List<RemoteObjectLight> list;
 
-    public RemoteBusinessObjectLightList() {
+    public RemoteObjectLightList() {
         list = new ArrayList<>();
     }
     
-    public boolean add(RemoteBusinessObjectLight element) {
+    public RemoteObjectLightList(List<RemoteObjectLight> list) {
+        this.list = list;
+    }
+    
+    public boolean add(RemoteObjectLight element) {
         return list.add(element);
     }
     
-    public boolean addAll(Collection<? extends RemoteBusinessObjectLight> elements) {
+    public boolean addAll(Collection<? extends RemoteObjectLight> elements) {
         return list.addAll(elements);
     }
     
-    public boolean remove(RemoteBusinessObjectLight element) {
+    public boolean remove(RemoteObjectLight element) {
         return list.remove(element);
     }
 }

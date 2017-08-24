@@ -16,10 +16,9 @@
 package org.kuwaiba.ws.toserialize.business;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
@@ -30,35 +29,25 @@ import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteObjectSpecialRelationships implements Serializable {
-    private String[] relationships;
-    private RemoteObjectLight[][] relatedObjects;
+    private List<String> relationships;
+    private List<RemoteObjectLightList> relatedObjects;
 
     public RemoteObjectSpecialRelationships() { }
 
     public RemoteObjectSpecialRelationships(HashMap<String, List<RemoteBusinessObjectLight>> relationships) {
-        this.relationships = new String[relationships.size()];
-        this.relatedObjects = new RemoteObjectLight[relationships.size()][];
-        //For some reason, it's not possible to 
-        int i = 0;
-        for (String relationship : relationships.keySet()){
-            this.relationships[i] = relationship;
-            this.relatedObjects[i] = RemoteObjectLight.toRemoteObjectLightArray(relationships.get(relationship));
-            i++;
+        this.relationships = new ArrayList<>();
+        this.relatedObjects = new ArrayList<>();
+
+        for (String relationshipName : relationships.keySet()){
+            this.relationships.add(relationshipName);
+            this.relatedObjects.add(new RemoteObjectLightList(RemoteObjectLight.toRemoteObjectLightArray(relationships.get(relationshipName))));
         }
     }
-    public String[] getRelationships() {
+    public List<String> getRelationships() {
         return relationships;
     }
 
-    public RemoteObjectLight[][] getRelatedObjects() {
+    public List<RemoteObjectLightList> getRelatedObjects() {
         return relatedObjects;
-    }
-
-    public void setRelationships(String[] relationships) {
-        this.relationships = relationships;
-    }
-
-    public void setRelatedObjects(RemoteObjectLight[][] relatedObjects) {
-        this.relatedObjects = relatedObjects;
     }
 }

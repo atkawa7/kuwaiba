@@ -56,6 +56,7 @@ import org.kuwaiba.ws.toserialize.application.ViewInfoLight;
 import org.kuwaiba.ws.toserialize.business.RemoteLogicalConnectionDetails;
 import org.kuwaiba.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.ws.toserialize.business.RemoteObjectLightList;
 import org.kuwaiba.ws.toserialize.business.RemoteObjectSpecialRelationships;
 import org.kuwaiba.ws.toserialize.metadata.AttributeInfo;
 import org.kuwaiba.ws.toserialize.metadata.ClassInfo;
@@ -856,7 +857,7 @@ public class KuwaibaService {
      *                             If the class provided is not a list type
      */
     @WebMethod(operationName = "getListTypeItems")
-    public RemoteObjectLight[] getListTypeItems(
+    public List<RemoteObjectLight> getListTypeItems(
             @WebParam(name = "className") String className,
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException{
         try{
@@ -1365,7 +1366,7 @@ public class KuwaibaService {
      *                             If the pool id provided is not valid
      */
     @WebMethod(operationName = "getPoolItems")
-    public RemoteObjectLight[] getPoolItems(@WebParam(name = "poolId")long poolId,
+    public List<RemoteObjectLight> getPoolItems(@WebParam(name = "poolId")long poolId,
             @WebParam(name = "limit")int limit,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
@@ -1710,12 +1711,12 @@ public class KuwaibaService {
      * @throws ServerSideException If the class could not be found
      */
     @WebMethod(operationName = "getObjectChildrenForClassWithId")
-    public RemoteObjectLight[] getObjectChildrenForClassWithId(@WebParam(name = "oid") long oid,
+    public List<RemoteObjectLight> getObjectChildrenForClassWithId(@WebParam(name = "oid") long oid,
             @WebParam(name = "objectClassId") long objectClassId,
             @WebParam(name = "maxResults") int maxResults,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
-            RemoteObjectLight[] res = wsBean.getObjectChildren(oid,objectClassId, maxResults, getIPAddress(), sessionId);
+            List<RemoteObjectLight> res = wsBean.getObjectChildren(oid,objectClassId, maxResults, getIPAddress(), sessionId);
             return res;
         } catch(Exception e){
             if (e instanceof ServerSideException)
@@ -1737,12 +1738,12 @@ public class KuwaibaService {
      * @throws ServerSideException If the class could not be found.
      */
     @WebMethod(operationName = "getObjectChildren")
-    public RemoteObjectLight[] getObjectChildren(@WebParam(name = "objectClassName") String objectClassName,
+    public List<RemoteObjectLight> getObjectChildren(@WebParam(name = "objectClassName") String objectClassName,
             @WebParam(name = "oid") long oid,
             @WebParam(name = "maxResults") int maxResults,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
-            RemoteObjectLight[] res = wsBean.getObjectChildren(objectClassName, oid, maxResults, getIPAddress(), sessionId);
+            List<RemoteObjectLight> res = wsBean.getObjectChildren(objectClassName, oid, maxResults, getIPAddress(), sessionId);
             return res;
         } catch(Exception e){
             if (e instanceof ServerSideException)
@@ -1765,12 +1766,12 @@ public class KuwaibaService {
      *                             If the object does not exist
      */
     @WebMethod(operationName = "getSiblings")
-    public RemoteObjectLight[] getSiblings(@WebParam(name = "objectClassName") String objectClassName,
+    public List<RemoteObjectLight> getSiblings(@WebParam(name = "objectClassName") String objectClassName,
             @WebParam(name = "oid") long oid,
             @WebParam(name = "maxResults") int  maxResults,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
-            RemoteObjectLight[] res = wsBean.getSiblings(objectClassName, oid, maxResults, getIPAddress(), sessionId);
+            List<RemoteObjectLight> res = wsBean.getSiblings(objectClassName, oid, maxResults, getIPAddress(), sessionId);
             return res;
         } catch(Exception e){
             if (e instanceof ServerSideException)
@@ -1825,7 +1826,7 @@ public class KuwaibaService {
      *                             If parent object can not be found
      */
     @WebMethod(operationName="getChildrenOfClassLight")
-    public RemoteObjectLight[] getChildrenOfClassLight(@WebParam(name="parentOid")long parentOid,
+    public List<RemoteObjectLight> getChildrenOfClassLight(@WebParam(name="parentOid")long parentOid,
             @WebParam(name="parentClass")String parentClass,
             @WebParam(name="childrenClass")String childrenClass,
             @WebParam(name="maxResults")int maxResults,
@@ -1903,7 +1904,7 @@ public class KuwaibaService {
      *                             If the class is not subclass of InventoryObject
      */
     @WebMethod(operationName = "getObjectsOfClassLight")
-    public RemoteObjectLight[] getObjectsOfClassLight(@WebParam(name = "className") String className,
+    public List<RemoteObjectLight> getObjectsOfClassLight(@WebParam(name = "className") String className,
             @WebParam(name = "maxResults")int maxResults,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
@@ -1986,7 +1987,7 @@ public class KuwaibaService {
      * @throws ServerSideException In case something goes wrong.
      */
     @WebMethod(operationName = "getParents")
-    public RemoteObjectLight[] getParents(@WebParam(name = "objectclass") String objectClass,
+    public List<RemoteObjectLight> getParents(@WebParam(name = "objectclass") String objectClass,
             @WebParam(name = "oid") long oid,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
@@ -2088,7 +2089,7 @@ public class KuwaibaService {
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getSpecialAttribute")
-    public RemoteObjectLight[] getSpecialAttribute(@WebParam(name = "objectclass") String objectClass,
+    public List<RemoteObjectLight> getSpecialAttribute(@WebParam(name = "objectclass") String objectClass,
             @WebParam(name = "oid") long oid,
             @WebParam(name = "attributename") String attributeName,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
@@ -2114,7 +2115,7 @@ public class KuwaibaService {
      *                             If the object could not be found
      */
     @WebMethod(operationName = "getObjectSpecialChildren")
-    public RemoteObjectLight[] getObjectSpecialChildren (@WebParam(name = "objectclass") String objectClass,
+    public List<RemoteObjectLight> getObjectSpecialChildren (@WebParam(name = "objectclass") String objectClass,
             @WebParam(name = "objectId") long objectId,
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try{
@@ -2439,7 +2440,7 @@ public class KuwaibaService {
     }
     
     /**
-     * Creates multiple special objects using a given name pattern
+     * Creates multiple special objects using a given naming pattern
      * @param className The class name for the new special objects
      * @param parentClassName The parent class name for the new special objects
      * @param parentId The object id of the parent
@@ -2635,16 +2636,43 @@ public class KuwaibaService {
     }
     
     /**
-     * Gets the physical trace of connections and ports from a port
+     * Loops through all instances of GenericCommunicationsPort at any level inside the given object and gets the physical path. 
+     * Only the ports with connections (physicalPath.size > 1) are returned
+     * @param objectClass The class of the object.
+     * @param objectId The id of the object.
+     * @param sessionId Session token
+     * @return A list of physical paths from all the ports with connections inside the given object. See <code>getPhysicalPath</code> for details about the structure of each entry
+     * @throws ServerSideException In the same cases as <code>getChildrenOfClassLightRecursive</code> and <code>getPhysicalPath</code>
+
+     */
+    @WebMethod(operationName = "getPhysicalConnectionsInObject")
+    public List<RemoteObjectLightList> getPhysicalConnectionsInObject(@WebParam(name = "objectClass")String objectClass, 
+            @WebParam(name = "objectId")long objectId, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getPhysicalConnectionsInObject(objectClass, objectId, getIPAddress(), sessionId);
+        } catch(Exception e) {
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getPhysicalConnectionsInCommunicationsEquipment: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Gets the physical trace of connections and ports from a given port.
      * @param objectClass Object class
      * @param objectId Object id
      * @param sessionId Session token
-     * @return An array containing the sorted elements in the physical path of the given port
+     * @return An array containing the sorted elements in the physical path of the given port. The first element is the port from which the trace is generated, 
+     * while the last is the destination port until which there is physical continuity. If the source port does not have any connection, the physical path will have only one element (that port).
      * @throws ServerSideException If the user is not allowed to invoke the method
      *                             
      */
     @WebMethod(operationName = "getPhysicalPath")
-    public RemoteObjectLight[] getPhysicalPath (@WebParam(name = "objectClass")String objectClass,
+    public List<RemoteObjectLight> getPhysicalPath (@WebParam(name = "objectClass")String objectClass,
             @WebParam(name = "objectId")long objectId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
@@ -2657,33 +2685,7 @@ public class KuwaibaService {
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
-    } 
-    
-    /**
-     * Gets the physical trace of connections and ports from a port
-     * @param objectClass Object class
-     * @param objectId Object id
-     * @param sessionId Session token
-     * @return An array containing the sorted elements in the physical path of the given port
-     * @throws ServerSideException If the user is not allowed to invoke the method
-     *                             
-     */
-    @WebMethod(operationName = "getPhysicalConnectionsInsideObject")
-    public List<RemoteBusinessObjectLightList> getPhysicalConnectionsInsideObject (
-            @WebParam(name = "objectId")long objectId,
-            @WebParam(name = "objectClass")String objectClass,
-            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
-        try {
-            return wsBean.getPhysicalConnectionsInsideObject(objectId, objectClass, getIPAddress(), sessionId);
-        } catch(Exception e) {
-            if (e instanceof ServerSideException)
-                throw e;
-            else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in getPhysicalConnectionsInsideObject: " + e.getMessage());
-                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
-            }
-        }
-    } 
+    }  
     
     /**
      * Connects pairs of ports (if they are not connected already) using physical link (cable, fibers, any subclass of GenericPhysicalLink)
@@ -2913,7 +2915,7 @@ public class KuwaibaService {
      *                             If either the object class or the attribute can not be found
      */
     @WebMethod(operationName = "getServiceResources")
-    public RemoteObjectLight[] getServiceResources (
+    public List<RemoteObjectLight> getServiceResources (
             @WebParam(name = "serviceClass")String serviceClass,
             @WebParam(name = "serviceId")long serviceId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
@@ -4759,7 +4761,7 @@ public class KuwaibaService {
      * @return The list of objects
      */
     @WebMethod(operationName = "getObjectsInFavoritesFolder")
-    public RemoteObjectLight[] getObjectsInFavoritesFolder(
+    public List<RemoteObjectLight> getObjectsInFavoritesFolder(
         @WebParam(name = "favoritesFolderId") long favoritesFolderId, 
         @WebParam(name = "userId") long userId,
         @WebParam(name = "limit") int limit,
@@ -5274,7 +5276,7 @@ public class KuwaibaService {
      * @throws ServerSideException 
      */
     @WebMethod(operationName = "getSubnets")
-    public RemoteObjectLight[] getSubnets(@WebParam(name = "poolId")long poolId,
+    public List<RemoteObjectLight> getSubnets(@WebParam(name = "poolId")long poolId,
             @WebParam(name = "limit")int limit,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
@@ -5502,7 +5504,7 @@ public class KuwaibaService {
      * @throws ServerSideException 
      */
     @WebMethod(operationName = "getSubnetUsedIps")
-    public RemoteObjectLight[] getSubnetUsedIps(@WebParam(name = "id")long id,
+    public List<RemoteObjectLight> getSubnetUsedIps(@WebParam(name = "id")long id,
             @WebParam(name = "limit")int limit,
             @WebParam(name = "className")String className,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
@@ -5528,7 +5530,7 @@ public class KuwaibaService {
      * @throws ServerSideException 
      */
     @WebMethod(operationName = "getSubnetsInSubent")
-    public RemoteObjectLight[] getSubnetsInSubent(@WebParam(name = "id")long id,
+    public List<RemoteObjectLight> getSubnetsInSubent(@WebParam(name = "id")long id,
             @WebParam(name = "limit")int limit,
             @WebParam(name = "className")String className,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
@@ -6070,7 +6072,7 @@ public class KuwaibaService {
      *                             If the Project pool is not found
      */
     @WebMethod(operationName = "getProjectsInProjectPool")
-    public RemoteObjectLight[] getProjectsInProjectPool(
+    public List<RemoteObjectLight> getProjectsInProjectPool(
         @WebParam(name = "poolId") long poolId, 
         @WebParam(name = "limit") int limit, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
@@ -6096,7 +6098,7 @@ public class KuwaibaService {
      *                             If the project is not subclass of GenericProject
      */
     @WebMethod(operationName = "getProjectResurces")
-    public RemoteObjectLight[] getProjectResurces(
+    public List<RemoteObjectLight> getProjectResurces(
         @WebParam(name = "projectClass") String projectClass, 
         @WebParam(name = "projectId") long projectId, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
@@ -6126,7 +6128,7 @@ public class KuwaibaService {
      *                             If the project is not found
      */
     @WebMethod(operationName = "getProjectActivities")
-    public RemoteObjectLight[] getProjectActivities(
+    public List<RemoteObjectLight> getProjectActivities(
         @WebParam(name = "projectClass") String projectClass, 
         @WebParam(name = "projectId") long projectId, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
@@ -6244,7 +6246,7 @@ public class KuwaibaService {
      *                             If the project class is no found
      */
     @WebMethod(operationName = "getProjectsAssociateToObject")
-    public RemoteObjectLight[] getProjectsAssociateToObject(
+    public List<RemoteObjectLight> getProjectsAssociateToObject(
         @WebParam(name = "objectClass") String objectClass, 
         @WebParam(name = "ObjectId") long objectId, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {

@@ -233,9 +233,10 @@ public interface BusinessEntityManager {
      * @return The list of parents until an instance of objectToMatchClassName is found. If no instance of that class is found, all parents until the Dummy Root will be returned
      * @throws ObjectNotFoundException If the object to evaluate can not be found
      * @throws MetadataObjectNotFoundException If any of the classes provided could not be found
+     * @throws ApplicationObjectNotFoundException If the object provided is not in the standard containment hierarchy
      */
     public List<RemoteBusinessObjectLight> getParentsUntilFirstOfClass(String objectClassName, long oid, String objectToMatchClassName)
-        throws ObjectNotFoundException, MetadataObjectNotFoundException;
+        throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException;
 
     /**
      * Gets the first parent of an object which matches the given class in the containment hierarchy
@@ -590,18 +591,7 @@ public interface BusinessEntityManager {
      */
     public List<AttributeMetadata> getMandatoryAttributesInClass(String className) throws 
             MetadataObjectNotFoundException;
-    
-    /**
-     * Retrieves the list of the attributes marked as mandatory
-     * @param objectId the object id
-     * @param className the class name
-     * @return a list with all the paths between connections
-     * @throws InvalidArgumentException if can't create the remoteObjectLight(the connection) from the node
-     * @throws ObjectNotFoundException can't find the object
-     * @throws MetadataObjectNotFoundException can't the class name
-     */
-    public List<RemoteBusinessObjectLightList> getPhysicalConnectionsInsideObject(long objectId, String className) 
-            throws InvalidArgumentException, ObjectNotFoundException, MetadataObjectNotFoundException;
+   
     /**
      * Finds the physical path from one port to another
      * @param objectClass The source port class.

@@ -695,7 +695,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     @Override
     public List<RemoteBusinessObjectLight> getParentsUntilFirstOfClass(String objectClass, 
-            long oid, String objectToMatchClassName) throws ObjectNotFoundException, MetadataObjectNotFoundException {
+            long oid, String objectToMatchClassName) throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException {
         /**
          * TODO: Replace this for a proper implementation using cypher
          */
@@ -709,7 +709,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 
                 if (objectNode.hasRelationship(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING))
                     parentNode = objectNode.getSingleRelationship(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).getEndNode();
-                                
+                              
+                
+                if (parentNode == null)
+                    throw new ApplicationObjectNotFoundException(String.format("Navigation tree root not found. Contact your administrator (%s, %s)", objectClass, oid));
+                
                 Label label = DynamicLabel.label(Constants.LABEL_ROOT); //If the parent node is the dummy root, just return null
                 if (parentNode.hasLabel(label))
                     return parents;
@@ -1524,44 +1528,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                  mandatoryAttributes.add(mandatoryAttribute);
         }
         return mandatoryAttributes;
-    }
-    
-    @Override
-    public List<RemoteBusinessObjectLightList> getPhysicalConnectionsInsideObject(long objectId, String className) 
-            throws InvalidArgumentException, ObjectNotFoundException, MetadataObjectNotFoundException
-    {
-        List<RemoteBusinessObjectLightList> connections = new ArrayList<>();
-        //get all the connections(optical, electrical, etc) inside the object
-        String cypherQuery = String.format("MATCH(n)<-[%s]-(connection)-[%s]->(subclass)-[r:%s*]->(class)  " +
-                             "WHERE ID(n)=%s AND class.name='%s' " +
-                             "RETURN connection", RelTypes.CHILD_OF_SPECIAL, 
-                             RelTypes.INSTANCE_OF, RelTypes.EXTENDS,
-                             objectId, Constants.CLASS_PHYSICALCONNECTION);
-
-        try (Transaction tx = graphDb.beginTx()){
-
-            Result result = graphDb.execute(cypherQuery);
-            Iterator<Node> column = result.columnAs("connection");
-
-            for (Node node : IteratorUtil.asIterable(column)){
-                RemoteBusinessObjectLightList path = new RemoteBusinessObjectLightList();
-                Iterable<Relationship> relationships = node.getRelationships(Direction.OUTGOING, RelTypes.RELATED_TO_SPECIAL);
-                
-                for (Relationship relationship : relationships) {
-                    if(relationship.hasProperty(Constants.PROPERTY_NAME)){
-                        if(((String)relationship.getProperty(Constants.PROPERTY_NAME)).contains("endpoint")){
-                            RemoteBusinessObject aConnectionSide = Util.createRemoteObjectFromNode(relationship.getEndNode());
-                            List<RemoteBusinessObjectLight> parentsSide = new ArrayList<>();
-                            parentsSide.add(aConnectionSide); //Add the port
-                            path.addAll(parentsSide); //Add the parents
-                        }
-                    }
-                }
-                path.add(Util.createRemoteObjectFromNode(node)); //Add the connection to the path
-                connections.add(path);
-            }
-        }
-        return connections;
     }
     
     //<editor-fold desc="Reporting API implementation" defaultstate="collapsed">

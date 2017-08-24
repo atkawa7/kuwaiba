@@ -19,7 +19,7 @@ package org.kuwaiba.apis.persistence.exceptions;
  * Thrown if you're trying to access to a non existing object
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ObjectNotFoundException extends InventoryException{
+public class ObjectNotFoundException extends InventoryException {
 
     public ObjectNotFoundException(String objectClass, Long oid) {
         super(java.util.ResourceBundle.getBundle("org/kuwaiba/Bundle").
