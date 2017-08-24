@@ -10,16 +10,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for getObjectChildrenForClassWithIdResponse complex type.
+ * <p>Java class for remoteObjectLightList complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="getObjectChildrenForClassWithIdResponse">
+ * &lt;complexType name="remoteObjectLightList">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://ws.kuwaiba.org/}remoteObjectLight" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="list" type="{http://ws.kuwaiba.org/}remoteObjectLight" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,27 +29,27 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getObjectChildrenForClassWithIdResponse", propOrder = {
-    "_return"
+@XmlType(name = "remoteObjectLightList", propOrder = {
+    "list"
 })
-public class GetObjectChildrenForClassWithIdResponse {
+public class RemoteObjectLightList {
 
-    @XmlElement(name = "return")
-    protected List<RemoteObjectLight> _return;
+    @XmlElement(nillable = true)
+    protected List<RemoteObjectLight> list;
 
     /**
-     * Gets the value of the return property.
+     * Gets the value of the list property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the return property.
+     * This is why there is not a <CODE>set</CODE> method for the list property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getReturn().add(newItem);
+     *    getList().add(newItem);
      * </pre>
      * 
      * 
@@ -59,11 +59,11 @@ public class GetObjectChildrenForClassWithIdResponse {
      * 
      * 
      */
-    public List<RemoteObjectLight> getReturn() {
-        if (_return == null) {
-            _return = new ArrayList<RemoteObjectLight>();
+    public List<RemoteObjectLight> getList() {
+        if (list == null) {
+            list = new ArrayList<RemoteObjectLight>();
         }
-        return this._return;
+        return this.list;
     }
 
 }

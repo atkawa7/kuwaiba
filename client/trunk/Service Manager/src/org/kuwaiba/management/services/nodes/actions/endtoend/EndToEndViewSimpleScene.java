@@ -24,7 +24,6 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -237,7 +236,6 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
 
     @Override
     public void render(byte[] structure) throws IllegalArgumentException { 
-        CommunicationsStub com = CommunicationsStub.getInstance();
         
         LocalObjectLight object = (LocalObjectLight) configObject.getProperty("currentObject");
         LocalObjectView currentView = (LocalObjectView) configObject.getProperty("currentView");

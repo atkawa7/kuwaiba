@@ -10,16 +10,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for getObjectChildrenForClassWithIdResponse complex type.
+ * <p>Java class for getPhysicalConnectionsInObjectResponse complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="getObjectChildrenForClassWithIdResponse">
+ * &lt;complexType name="getPhysicalConnectionsInObjectResponse">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://ws.kuwaiba.org/}remoteObjectLight" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="return" type="{http://ws.kuwaiba.org/}remoteObjectLightList" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,13 +29,13 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getObjectChildrenForClassWithIdResponse", propOrder = {
+@XmlType(name = "getPhysicalConnectionsInObjectResponse", propOrder = {
     "_return"
 })
-public class GetObjectChildrenForClassWithIdResponse {
+public class GetPhysicalConnectionsInObjectResponse {
 
     @XmlElement(name = "return")
-    protected List<RemoteObjectLight> _return;
+    protected List<RemoteObjectLightList> _return;
 
     /**
      * Gets the value of the return property.
@@ -55,13 +55,13 @@ public class GetObjectChildrenForClassWithIdResponse {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link RemoteObjectLight }
+     * {@link RemoteObjectLightList }
      * 
      * 
      */
-    public List<RemoteObjectLight> getReturn() {
+    public List<RemoteObjectLightList> getReturn() {
         if (_return == null) {
-            _return = new ArrayList<RemoteObjectLight>();
+            _return = new ArrayList<RemoteObjectLightList>();
         }
         return this._return;
     }

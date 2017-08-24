@@ -15,12 +15,11 @@
 package org.inventory.views.rackview.actions;
 
 import java.awt.event.ActionEvent;
-import java.util.ResourceBundle;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
-import org.inventory.views.rackinsideview.RackInsideViewTopComponent;
+import org.inventory.views.connections.ConnectionsInRackViewTopComponent;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.windows.WindowManager;
 
@@ -29,20 +28,20 @@ import org.openide.windows.WindowManager;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ShowRackInsideViewAction extends GenericObjectNodeAction {
+public class ShowConnectionsInRackViewAction extends GenericObjectNodeAction {
     
-    public ShowRackInsideViewAction() {
-        putValue(NAME, ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_SHOW_INSIDE_RACK_VIEW"));
+    public ShowConnectionsInRackViewAction() {
+        putValue(NAME, "Show COnnections in Rack");
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
         for (LocalObjectLight rack : selectedObjects) {
-            RackInsideViewTopComponent rackView = ((RackInsideViewTopComponent) WindowManager.
-                getDefault().findTopComponent("RackInsideViewTopComponent_" + rack.getOid()));
+            ConnectionsInRackViewTopComponent rackView = ((ConnectionsInRackViewTopComponent) WindowManager.
+                getDefault().findTopComponent("ConnectionsInRackViewTopComponent_" + rack.getOid()));
             
             if (rackView == null) {
-                rackView = new RackInsideViewTopComponent(rack);
+                rackView = new ConnectionsInRackViewTopComponent(rack);
                 rackView.open();
             } else {
                 if (rackView.isOpened())
@@ -64,7 +63,7 @@ public class ShowRackInsideViewAction extends GenericObjectNodeAction {
 
     @Override
     public LocalPrivilege getPrivilege() {
-        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_PHYSICAL_VIEW, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_PHYSICAL_VIEW, LocalPrivilege.ACCESS_LEVEL_READ);
     }
     
 }

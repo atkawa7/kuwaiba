@@ -18,9 +18,11 @@ package org.inventory.communications.core;
 import java.util.ArrayList;
 import org.inventory.communications.wsclient.RemoteBusinessObjectLight;
 import org.inventory.communications.wsclient.RemoteBusinessObjectLightList;
+import org.inventory.communications.wsclient.RemoteObjectLight;
+import org.inventory.communications.wsclient.RemoteObjectLightList;
 
 /**
- * A list of localobjectlight lists
+ * A list of LocalObjectLight instances. It's a simple wrapper to improve code readability.
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class LocalObjectLightList extends ArrayList<LocalObjectLight> {
@@ -28,5 +30,10 @@ public class LocalObjectLightList extends ArrayList<LocalObjectLight> {
     public LocalObjectLightList(RemoteBusinessObjectLightList objectChain) {
         for (RemoteBusinessObjectLight anElement : objectChain.getList()) 
             add(new LocalObjectLight(anElement.getId(), anElement.getName(), anElement.getClassName()));
+    }
+    
+    public LocalObjectLightList(RemoteObjectLightList objectChain) {
+        for (RemoteObjectLight anElement : objectChain.getList()) 
+            add(new LocalObjectLight(anElement.getOid(), anElement.getName(), anElement.getClassName()));
     }
 }

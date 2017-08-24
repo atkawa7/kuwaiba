@@ -1,14 +1,18 @@
 /*
- * Copyright (c) 2017 johnyortega.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *    johnyortega - initial API and implementation and/or initial documentation
+ *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ * 
+ *   Licensed under the EPL License, Version 1.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *        http://www.eclipse.org/legal/epl-v10.html
+ * 
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
  */
-package org.inventory.views.rackview;
+package org.inventory.views.connections;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,7 +23,6 @@ import org.inventory.core.visual.export.ExportScenePanel;
 import org.inventory.core.visual.export.filters.ImageFilter;
 import org.inventory.core.visual.export.filters.SceneExportFilter;
 import org.inventory.views.rackview.scene.ConnectionsInRackViewScene;
-import org.inventory.views.rackview.scene.RackViewScene;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.explorer.ExplorerManager;
@@ -31,26 +34,26 @@ import org.openide.util.NbBundle.Messages;
  * Top component which displays something.
  */
 @Messages({
-    "CTL_RackViewTopComponent=Rack View",
-    "HINT_RackViewTopComponent=Rack View"
+    "CTL_ConnectionsInRackViewTopComponent=Connections in Rack",
+    "HINT_ConnectionsInRackViewTopComponent=Connections in Rack View"
 })
-public final class RackViewTopComponent extends TopComponent implements ExplorerManager.Provider, ActionListener, Refreshable {
+public final class ConnectionsInRackViewTopComponent extends TopComponent implements ExplorerManager.Provider, ActionListener, Refreshable {
     private ExplorerManager em;
-    private RackViewService service;
-    private RackViewScene scene;
+    private ConnectionsInRackViewService service;
+    private ConnectionsInRackViewScene scene;
     private LocalObjectLight currentRack;
     
-    public RackViewTopComponent(LocalObjectLight rack) {
+    public ConnectionsInRackViewTopComponent(LocalObjectLight rack) {
         this.currentRack = rack;
         initComponents();
         initCustomComponents();
-        setName(Bundle.CTL_RackViewTopComponent());
-        setToolTipText(Bundle.HINT_RackViewTopComponent());
+        setName(Bundle.CTL_ConnectionsInRackViewTopComponent());
+        setToolTipText(Bundle.HINT_ConnectionsInRackViewTopComponent());
     }
     
     @Override
     protected String preferredID() {
-        return "RackViewTopComponent_" + service.getRack().getOid(); //NOI18N
+        return "ConnectionsInRackViewTopComponent_" + service.getRack().getOid(); //NOI18N
     }
 
     @Override
@@ -61,13 +64,13 @@ public final class RackViewTopComponent extends TopComponent implements Explorer
     private void initCustomComponents() {
         em = new ExplorerManager();
         
-        scene = new RackViewScene();
+        scene = new ConnectionsInRackViewScene();
         scene.addChangeListener(this);
                 
         associateLookup(scene.getLookup());
         pnlMainScrollPanel.setViewportView(scene.createView());
         
-        service = new RackViewService(scene, currentRack);                
+        service = new ConnectionsInRackViewService(scene, currentRack);                
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -90,8 +93,8 @@ public final class RackViewTopComponent extends TopComponent implements Explorer
         toolBarMain.setPreferredSize(new java.awt.Dimension(392, 38));
 
         btnExport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/rackview/res/export.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnExport, org.openide.util.NbBundle.getMessage(RackViewTopComponent.class, "RackViewTopComponent.btnExport.text")); // NOI18N
-        btnExport.setToolTipText(org.openide.util.NbBundle.getMessage(RackViewTopComponent.class, "RackViewTopComponent.btnExport.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnExport, org.openide.util.NbBundle.getMessage(ConnectionsInRackViewTopComponent.class, "ConnectionsInRackViewTopComponent.btnExport.text")); // NOI18N
+        btnExport.setToolTipText(org.openide.util.NbBundle.getMessage(ConnectionsInRackViewTopComponent.class, "ConnectionsInRackViewTopComponent.btnExport.toolTipText")); // NOI18N
         btnExport.setFocusable(false);
         btnExport.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnExport.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -103,8 +106,8 @@ public final class RackViewTopComponent extends TopComponent implements Explorer
         toolBarMain.add(btnExport);
 
         btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/rackview/res/refresh.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnRefresh, org.openide.util.NbBundle.getMessage(RackViewTopComponent.class, "RackViewTopComponent.btnRefresh.text")); // NOI18N
-        btnRefresh.setToolTipText(org.openide.util.NbBundle.getMessage(RackViewTopComponent.class, "RackViewTopComponent.btnRefresh.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnRefresh, org.openide.util.NbBundle.getMessage(ConnectionsInRackViewTopComponent.class, "ConnectionsInRackViewTopComponent.btnRefresh.text")); // NOI18N
+        btnRefresh.setToolTipText(org.openide.util.NbBundle.getMessage(ConnectionsInRackViewTopComponent.class, "ConnectionsInRackViewTopComponent.btnRefresh.toolTipText")); // NOI18N
         btnRefresh.setFocusable(false);
         btnRefresh.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnRefresh.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -122,7 +125,7 @@ public final class RackViewTopComponent extends TopComponent implements Explorer
     private void btnRefreshMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRefreshMouseClicked
         try {
             scene.clear();
-            service.buildRackView();
+            service.buildConnectionsInRackView();
         } catch (Exception ex) {
             scene.clear();
             NotificationUtil.getInstance().showSimplePopup("Error", 
@@ -148,7 +151,7 @@ public final class RackViewTopComponent extends TopComponent implements Explorer
     @Override
     public void componentOpened() {
         try {
-            service.buildRackView();
+            service.buildConnectionsInRackView();
         } catch (Exception ex) {
             scene.clear();
             NotificationUtil.getInstance().showSimplePopup("Error", 
@@ -163,7 +166,7 @@ public final class RackViewTopComponent extends TopComponent implements Explorer
     
     @Override
     public String getDisplayName() {
-        return String.format("Rack View for %s", service.getRack().getName());
+        return String.format("Connections in %s", service.getRack().getName());
     }
         
     void writeProperties(java.util.Properties p) {

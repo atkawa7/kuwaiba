@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="relationships" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="relatedObjects" type="{http://ws.kuwaiba.org/}remoteObjectLightArray" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="relatedObjects" type="{http://ws.kuwaiba.org/}remoteObjectLightList" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -39,7 +39,7 @@ public class RemoteObjectSpecialRelationships {
     @XmlElement(nillable = true)
     protected List<String> relationships;
     @XmlElement(nillable = true)
-    protected List<RemoteObjectLightArray> relatedObjects;
+    protected List<RemoteObjectLightList> relatedObjects;
 
     /**
      * Gets the value of the relationships property.
@@ -88,13 +88,13 @@ public class RemoteObjectSpecialRelationships {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link RemoteObjectLightArray }
+     * {@link RemoteObjectLightList }
      * 
      * 
      */
-    public List<RemoteObjectLightArray> getRelatedObjects() {
+    public List<RemoteObjectLightList> getRelatedObjects() {
         if (relatedObjects == null) {
-            relatedObjects = new ArrayList<RemoteObjectLightArray>();
+            relatedObjects = new ArrayList<RemoteObjectLightList>();
         }
         return this.relatedObjects;
     }

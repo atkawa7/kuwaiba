@@ -23,8 +23,8 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.visual.scene.AbstractScene;
 import static org.inventory.core.visual.scene.AbstractScene.ACTION_SELECT;
 import org.inventory.core.visual.scene.SelectableNodeWidget;
-import org.inventory.views.rackinsideview.NestedDeviceWidget;
-import org.inventory.views.rackinsideview.SimpleConnectionWidget;
+import org.inventory.views.connections.NestedDeviceWidget;
+import org.inventory.views.connections.SimpleConnectionWidget;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.layout.LayoutFactory;
@@ -40,7 +40,7 @@ import org.netbeans.api.visual.widget.Widget;
  * Scene for Rack view, the inside view of the rack.
  * @author Adrian MArtinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class RackInsideViewScene extends AbstractScene<LocalObjectLight, LocalObjectLight> {
+public class ConnectionsInRackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLight> {
     public static final int STANDARD_RACK_WIDTH = 800;
     public static final int RACK_UNIT_IN_PX = 150;
     
@@ -59,7 +59,7 @@ public class RackInsideViewScene extends AbstractScene<LocalObjectLight, LocalOb
     private final Color boxSeparationColor = new Color(153, 153, 153, 230);
     private final Color emptyColor = new Color(51, 51, 51, 230);
     
-    public RackInsideViewScene() {
+    public ConnectionsInRackViewScene() {
         getActions().addAction(ActionFactory.createZoomAction());
         getInputBindings ().setZoomActionModifiers(0); //No keystroke combinations
         getActions().addAction(ActionFactory.createPanAction());
@@ -179,7 +179,7 @@ public class RackInsideViewScene extends AbstractScene<LocalObjectLight, LocalOb
         while (ascending ? U <= rackUnits : U >= 1) {
             
             Widget widget = new Widget(this);
-            widget.setPreferredSize(new Dimension(25, RackInsideViewScene.RACK_UNIT_IN_PX));
+            widget.setPreferredSize(new Dimension(25, ConnectionsInRackViewScene.RACK_UNIT_IN_PX));
                         
             widget.setLayout(LayoutFactory.createVerticalFlowLayout(LayoutFactory.SerialAlignment.CENTER, 0));
             
@@ -273,7 +273,7 @@ public class RackInsideViewScene extends AbstractScene<LocalObjectLight, LocalOb
 
             widget.setOpaque(true);
             widget.setBackground(emptyColor);
-            widget.setPreferredSize(new Dimension(RackInsideViewScene.STANDARD_RACK_WIDTH, RackInsideViewScene.RACK_UNIT_IN_PX));
+            widget.setPreferredSize(new Dimension(ConnectionsInRackViewScene.STANDARD_RACK_WIDTH, ConnectionsInRackViewScene.RACK_UNIT_IN_PX));
             rackLayer.addChild(widget);
             validate();
             

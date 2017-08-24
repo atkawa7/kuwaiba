@@ -75,6 +75,7 @@ import org.inventory.communications.wsclient.RemoteBusinessRule;
 import org.inventory.communications.wsclient.RemoteObject;
 import org.inventory.communications.wsclient.RemoteObjectLight;
 import org.inventory.communications.wsclient.RemoteObjectLightArray;
+import org.inventory.communications.wsclient.RemoteObjectLightList;
 import org.inventory.communications.wsclient.RemoteObjectSpecialRelationships;
 import org.inventory.communications.wsclient.RemotePool;
 import org.inventory.communications.wsclient.RemoteQueryLight;
@@ -448,10 +449,10 @@ public class CommunicationsStub {
             
             for (int i = 0; i < remoteRelationships.getRelationships().size(); i++){
                 
-                RemoteObjectLightArray relatedRemoteObjects = remoteRelationships.getRelatedObjects().get(i);
-                LocalObjectLight[] relatedLocalObjects = new LocalObjectLight[relatedRemoteObjects.getItem().size()];
+                RemoteObjectLightList relatedRemoteObjects = remoteRelationships.getRelatedObjects().get(i);
+                LocalObjectLight[] relatedLocalObjects = new LocalObjectLight[relatedRemoteObjects.getList().size()];
                 int j = 0;
-                for (RemoteObjectLight relatedRemoteObject : relatedRemoteObjects.getItem()) {
+                for (RemoteObjectLight relatedRemoteObject : relatedRemoteObjects.getList()) {
                     relatedLocalObjects[j] = new LocalObjectLight(relatedRemoteObject.getOid(), 
                                                     relatedRemoteObject.getName(), 
                                                     relatedRemoteObject.getClassName());
@@ -1009,15 +1010,15 @@ public class CommunicationsStub {
     }*/
     
     /**
-     * Retrieves the metadata for a given class providing its ide
-     * @param className the object class
-     * @return the metadata information
+     * Gets the class hierarchy tree
+     * @param showAll Return all classes
+     * @return A byte array with an XML document representing the class hierarchy tree
      */
     public byte[] getClassHierarchy(boolean showAll) {
         try{
             return service.getClassHierarchy(showAll, session.getSessionId());
         }catch(Exception ex){
-            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName() + ": " + ex.getMessage();
             return null;
         }
     }
@@ -1800,11 +1801,11 @@ public class CommunicationsStub {
         }
     }
     
-    public List<LocalObjectLightList> getPhysicalConnectionsInsideObject(long objectId, String objectClass){
+    public List<LocalObjectLightList> getPhysicalConnectionsInObject(long objectId, String objectClass){
         try{
-            List<RemoteBusinessObjectLightList> paths = service.getPhysicalConnectionsInsideObject(objectId, objectClass, session.getSessionId());
+            List<RemoteObjectLightList> paths = service.getPhysicalConnectionsInObject(objectClass, objectId, session.getSessionId());
             List<LocalObjectLightList> res = new ArrayList<>();
-            for (RemoteBusinessObjectLightList route : paths) 
+            for (RemoteObjectLightList route : paths) 
                 res.add(new LocalObjectLightList(route));
             
             return res;

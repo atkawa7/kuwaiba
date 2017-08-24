@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class GetProjectActivitiesResponse {
 
-    @XmlElement(name = "return", nillable = true)
+    @XmlElement(name = "return")
     protected List<RemoteObjectLight> _return;
 
     /**
