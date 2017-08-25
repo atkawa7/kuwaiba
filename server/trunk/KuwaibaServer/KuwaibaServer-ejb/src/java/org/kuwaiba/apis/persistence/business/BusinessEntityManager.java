@@ -382,7 +382,9 @@ public interface BusinessEntityManager {
             throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException;
     
     /**
-     * Gets all children of a given class to filter in a hierarchy with root in the given parent
+     * Gets all class and abstract class children of a given class to filter in 
+     * a hierarchy with root in the given parent.
+     * Use case: used in some class level and inventory level reports script 
      * @param parentOid Object id of the root parent of the hierarchy
      * @param parentClass Class name of the root parent of the hierarchy
      * @param classToFilter Class name of the expected children
@@ -394,7 +396,9 @@ public interface BusinessEntityManager {
     public List<RemoteBusinessObjectLight> getChildrenOfClassLightRecursive(long parentOid, String parentClass, String classToFilter, int maxResults) 
         throws MetadataObjectNotFoundException, ObjectNotFoundException;
     /**
-     * Gets all special children of a given class to filter in a hierarchy with root in the given parent
+     * Gets all class and abstract class special children of a given class to filter 
+     * in a hierarchy with root in the given parent.
+     * Use case: used in some class level and inventory level reports script 
      * @param parentOid Object id of the root parent of the hierarchy
      * @param parentClass Class name of the root parent of the hierarchy
      * @param classToFilter Class name of the expected children
