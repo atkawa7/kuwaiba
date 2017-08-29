@@ -70,7 +70,7 @@ public final class ServiceManagerTopComponent extends TopComponent
         nu = Lookup.getDefault().lookup(NotificationUtil.class);
         sms = new ServiceManagerService(this);
         tree = new BeanTreeView();
-        pnlScrollMain.setViewportView(tree);
+        add(tree);
     }
 
     /**
@@ -81,14 +81,10 @@ public final class ServiceManagerTopComponent extends TopComponent
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        pnlScrollMain = new javax.swing.JScrollPane();
-
         setLayout(new java.awt.BorderLayout());
-        add(pnlScrollMain, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JScrollPane pnlScrollMain;
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {

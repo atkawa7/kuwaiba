@@ -17,7 +17,19 @@
 package org.kuwaiba.management.services.views.topology;
 
 import java.awt.Point;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLEventFactory;
+import javax.xml.stream.XMLEventWriter;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalObjectLight;
@@ -31,16 +43,21 @@ import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.core.visual.scene.ObjectConnectionWidget;
 import org.inventory.core.visual.scene.ObjectNodeWidget;
 import org.netbeans.api.visual.action.ConnectProvider;
+import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.router.RouterFactory;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Widget;
+import org.openide.util.Exceptions;
 
 /**
  * This scene renders a view where the communications equipment associated directly to a service and the physical connections between them are displayed in a topology fashion
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObjectLight> {
+    
+    protected static final String VIEW_CLASS = "ServiceTopologyView";
+    
     private CommunicationsStub com = CommunicationsStub.getInstance();
     /**
      * Default move widget action (shared by all connection widgets)
@@ -68,13 +85,213 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
     }
     
     @Override
-    public byte[] getAsXML() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public byte[] getAsXML() { 
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
+            XMLEventWriter xmlew = xmlof.createXMLEventWriter(baos);
+            XMLEventFactory xmlef = XMLEventFactory.newInstance();
+            
+            QName qnameView = new QName("view");
+            xmlew.add(xmlef.createStartElement(qnameView, null, null));
+            xmlew.add(xmlef.createAttribute(new QName("version"), Constants.VIEW_FORMAT_VERSION));
+            
+            QName qnameClass = new QName("class");
+            xmlew.add(xmlef.createStartElement(qnameClass, null, null));
+            xmlew.add(xmlef.createCharacters(VIEW_CLASS));
+            xmlew.add(xmlef.createEndElement(qnameClass, null));
+            
+            QName qnameNodes = new QName("nodes");
+            xmlew.add(xmlef.createStartElement(qnameNodes, null, null));
+            
+            for (Widget nodeWidget : nodeLayer.getChildren()) {
+                QName qnameNode = new QName("node");
+                xmlew.add(xmlef.createStartElement(qnameNode, null, null));
+                xmlew.add(xmlef.createAttribute(new QName("x"), Integer.toString(nodeWidget.getPreferredLocation().x)));
+                xmlew.add(xmlef.createAttribute(new QName("y"), Integer.toString(nodeWidget.getPreferredLocation().y)));
+                LocalObjectLight lolNode = (LocalObjectLight) findObject(nodeWidget);
+                xmlew.add(xmlef.createAttribute(new QName("class"), lolNode.getClassName()));
+                xmlew.add(xmlef.createCharacters(Long.toString(lolNode.getOid())));
+                xmlew.add(xmlef.createEndElement(qnameNode, null));
+            }
+            xmlew.add(xmlef.createEndElement(qnameNodes, null));
+            
+            QName qnameEdges = new QName("edges");
+            xmlew.add(xmlef.createStartElement(qnameEdges, null, null));
+            
+            for (Widget edgeWidget : edgeLayer.getChildren()) {
+                
+                ObjectConnectionWidget acwEdge = (ObjectConnectionWidget) edgeWidget;
+                if (acwEdge.getSourceAnchor() == null || acwEdge.getTargetAnchor() == null) //This connection is malformed because one of the endpoints does not exist
+                    continue;                                                               //probably, it was moved to another parent
+                
+                QName qnameEdge = new QName("edge");
+                xmlew.add(xmlef.createStartElement(qnameEdge, null, null));
+                
+                LocalObjectLight lolEdge = (LocalObjectLight) findObject(acwEdge);
+                xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(lolEdge.getOid())));
+                xmlew.add(xmlef.createAttribute(new QName("class"), lolEdge.getClassName()));
+                
+                xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(((LocalObjectLight) findObject(acwEdge.getSourceAnchor().getRelatedWidget())).getOid())));
+                xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(((LocalObjectLight) findObject(acwEdge.getTargetAnchor().getRelatedWidget())).getOid())));
+                
+                for (Point point : acwEdge.getControlPoints()) {
+                    QName qnameControlpoint = new QName("controlpoint");
+                    xmlew.add(xmlef.createStartElement(qnameControlpoint, null, null));
+                    xmlew.add(xmlef.createAttribute(new QName("x"), Integer.toString(point.x)));
+                    xmlew.add(xmlef.createAttribute(new QName("y"), Integer.toString(point.y)));
+                    xmlew.add(xmlef.createEndElement(qnameControlpoint, null));
+                }
+                xmlew.add(xmlef.createEndElement(qnameEdge, null));
+            }
+            xmlew.add(xmlef.createEndElement(qnameEdges, null));
+            // polygons
+            QName qnamePolygons = new QName("polygons");
+            xmlew.add(xmlef.createStartElement(qnamePolygons, null, null));
+            //Add frames if necessary
+            xmlew.add(xmlef.createEndElement(qnamePolygons, null));
+            
+            xmlew.add(xmlef.createEndElement(qnameView, null));
+            xmlew.close();
+            return baos.toByteArray();
+        } catch (XMLStreamException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return null; 
     }
+
 
     @Override
     public void render(byte[] structure) throws IllegalArgumentException {
-        throw new IllegalArgumentException("This view needs a service to be rendered");
+        //<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
+//        try {
+//            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_"+currentView.getId()+".xml");
+//            fos.write(currentView.getStructure());
+//            fos.close();
+//        } catch(Exception e) {}
+        //</editor-fold>
+        try {
+            XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+            QName qZoom = new QName("zoom"); //NOI18N
+            QName qCenter = new QName("center"); //NOI18N
+            QName qNode = new QName("node"); //NOI18N
+            QName qEdge = new QName("edge"); //NOI18N
+            QName qLabel = new QName("label"); //NOI18N
+            QName qPolygon = new QName("polygon"); //NOI18N
+            QName qControlPoint = new QName("controlpoint"); //NOI18N
+
+            ByteArrayInputStream bais = new ByteArrayInputStream(structure);
+            XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
+
+            while (reader.hasNext()) {
+                int event = reader.next();
+                if (event == XMLStreamConstants.START_ELEMENT) {
+                    if (reader.getName().equals(qNode)) {
+                        String objectClass = reader.getAttributeValue(null, "class");
+
+                        int xCoordinate = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
+                        int yCoordinate = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
+                        long objectId = Long.valueOf(reader.getElementText());
+
+                        LocalObjectLight lol = CommunicationsStub.getInstance().getObjectInfoLight(objectClass, objectId);
+                        if (lol != null) {
+                            if (getNodes().contains(lol)) //The node in the saved view already exists in the canvas, so either is duplicated or the view was not cleared previously 
+                                NotificationUtil.getInstance().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, "The view seems to be corrupted. Self-healing measures were taken");
+                            else {
+                                Widget widget = addNode(lol);
+                                widget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
+                                widget.setBackground(com.getMetaForClass(objectClass, false).getColor());
+                                validate();
+                            }
+                        } //In case of error, ignore the node
+                    }else {
+                        if (reader.getName().equals(qEdge)) {
+                            long objectId = Long.valueOf(reader.getAttributeValue(null, "id")); //NOI18N
+
+                            long aSide = Long.valueOf(reader.getAttributeValue(null, "aside")); //NOI18N
+                            long bSide = Long.valueOf(reader.getAttributeValue(null, "bside")); //NOI18N
+
+                            String className = reader.getAttributeValue(null,"class"); //NOI18N
+
+                            LocalObjectLight container = com.getObjectInfoLight(className, objectId);
+
+                            boolean hasEndpointA = false;
+                            boolean hasEndpointB = false;
+
+                            if (container != null) { // if the connection exist
+                                HashMap<String, LocalObjectLight[]> specialAttributes = com.getSpecialAttributes(className, objectId);
+
+                                for (String key : specialAttributes.keySet()) {
+                                    if(key.contains("endpointA")) //NOI18N
+                                        hasEndpointA = true;
+                                    if(key.contains("endpointB")) //NOI18N
+                                        hasEndpointB = true;
+                                }
+                            }
+
+                            if (hasEndpointA && hasEndpointB ) {
+                                LocalObjectLight aSideObject = new LocalObjectLight(aSide, null, null);
+                                ObjectNodeWidget aSideWidget = (ObjectNodeWidget) findWidget(aSideObject);
+
+                                LocalObjectLight bSideObject = new LocalObjectLight(bSide, null, null);
+                                ObjectNodeWidget bSideWidget = (ObjectNodeWidget) findWidget(bSideObject);
+
+                                
+                                if (aSideWidget != null && bSideWidget != null) {//If one of the endpoints is missing, don't render the connection
+
+                                    if (getEdges().contains(container))
+                                        NotificationUtil.getInstance().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, "The view seems to be corrupted. Self-healing measures were taken");
+                                    else {
+                                        ObjectConnectionWidget newEdge = (ObjectConnectionWidget) addEdge(container);
+                                        newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideWidget.getNodeWidget()));
+                                        newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideWidget.getNodeWidget()));
+                                        
+                                        List<Point> localControlPoints = new ArrayList<>();
+                                        while(true) {
+                                            reader.nextTag();
+
+                                            if (reader.getName().equals(qControlPoint)) {
+                                                if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
+                                                    localControlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")), Integer.valueOf(reader.getAttributeValue(null,"y"))));
+                                            } else {
+                                                newEdge.setControlPoints(localControlPoints,false);
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                                
+                            } 
+                        }
+                        // FREE FRAMES
+                        else if (reader.getName().equals(qPolygon)) { /*Nothing for now*/ }//end qPolygon
+
+                        else {
+                            if (reader.getName().equals(qLabel)) {
+                                //Unavailable for now
+                            } else {
+                                if (reader.getName().equals(qZoom))
+                                    setZoomFactor(Integer.valueOf(reader.getText()));
+                                else {
+                                    if (reader.getName().equals(qCenter)) {
+                                        double x = Double.valueOf(reader.getAttributeValue(null, "x"));
+                                        double y = Double.valueOf(reader.getAttributeValue(null, "y"));
+                                    } else {
+                                        //Place more tags
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (XMLStreamException ex) {
+            if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_INFO)
+                Exceptions.printStackTrace(ex);
+        }
+        validate();
+        repaint();
+        
     }
 
     @Override
@@ -83,11 +300,24 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
         if (serviceResources == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else {
-            //We will ignore all resources that are not either GenericCommunicationsEquipment
+            
+            List<LocalObjectLight> nodesToBeDeleted = new ArrayList<>(getNodes()); //We clone the existing nodes to synchronize the view, so saved nodes that are no longer listed as service resources are removed
+                                                                                   //We assume that render(byte[]) was called before calling render(LocalObjectLight)
+
+            //We will ignore all resources that are not either GenericCommunicationsElement
             for (LocalObjectLight serviceResource : serviceResources) {
-                if (com.isSubclassOf(serviceResource.getClassName(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT))
+                if (findWidget(serviceResource) == null && 
+                        com.isSubclassOf(serviceResource.getClassName(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT)) 
                     addNode(serviceResource);
+                    
+                nodesToBeDeleted.remove(serviceResource);
             }
+            
+            for (LocalObjectLight nodeToBeDeleted : nodesToBeDeleted) {
+                removeNodeWithEdges(nodeToBeDeleted);
+                validate();
+            }
+            
             //Once the nodes have been added, we retrieve the physical connections between them and ignore those that end in other elements
             for (LocalObjectLight aNode : getNodes()) {
                 List<LocalObjectLightList> physicalConnections = com.getPhysicalConnectionsInObject(aNode.getClassName(), aNode.getOid());
@@ -106,13 +336,19 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
                                 LocalObjectLight targetEquipment = parentsUntilFirstOfClass.get(parentsUntilFirstOfClass.size() - 1);
                                 
                                 if (findWidget(targetEquipment) != null) {
-                                    if (findWidget(aConnection.get(1)) == null) {
-                                        ObjectConnectionWidget connectionWidget = (ObjectConnectionWidget)addEdge(aConnection.get(1));
+                                    
+                                    ObjectConnectionWidget connectionWidget = (ObjectConnectionWidget)findWidget(aConnection.get(1));
+                                    if (connectionWidget == null) 
+                                        connectionWidget = (ObjectConnectionWidget)findWidget(aConnection.get(aConnection.size() - 2));
+                                    
+                                    if (connectionWidget == null) {
+                                        connectionWidget = (ObjectConnectionWidget)addEdge(aConnection.get(1));
                                         setEdgeSource(aConnection.get(1), sourceEquipment);
                                         setEdgeTarget(aConnection.get(1), targetEquipment);
-                                        connectionWidget.getLabelWidget().setLabel(sourceEquipment.getName() + ":" + sourcePort.getName() + 
-                                                " ** " +targetEquipment.getName() + ":" + targetPort.getName());
                                     }
+                                    
+                                    connectionWidget.getLabelWidget().setLabel(sourceEquipment.getName() + ":" + sourcePort.getName() + 
+                                                " ** " +targetEquipment.getName() + ":" + targetPort.getName());
                                 } //Else, we just ignore this connection trace
                             }
                         }
