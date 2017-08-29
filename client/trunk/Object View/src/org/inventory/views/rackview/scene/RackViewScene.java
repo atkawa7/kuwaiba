@@ -207,11 +207,6 @@ public class RackViewScene extends AbstractScene<LocalObject, LocalObject> {
     @Override
     public void render(byte[] structure) throws IllegalArgumentException {
     }
-    
-    @Override
-    public Color getConnectionColor(LocalObjectLight theConnection) {
-        return null;
-    }
 
     @Override
     public ConnectProvider getConnectProvider() {
@@ -309,14 +304,6 @@ public class RackViewScene extends AbstractScene<LocalObject, LocalObject> {
     @Override
     protected Widget attachEdgeWidget(LocalObject edge) {
         return null;
-    }
-
-    @Override
-    protected void attachEdgeSourceAnchor(LocalObject edge, LocalObject oldSourceNode, LocalObject sourceNode) {
-    }
-
-    @Override
-    protected void attachEdgeTargetAnchor(LocalObject edge, LocalObject oldTargetNode, LocalObject targetNode) {
     }
     
     /**

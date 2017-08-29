@@ -19,8 +19,8 @@ package org.kuwaiba.management.services.nodes.actions;
 import java.awt.event.ActionEvent;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
-import org.kuwaiba.management.services.nodes.actions.endtoend.EndToEndViewDetailedScene;
-import org.kuwaiba.management.services.nodes.actions.endtoend.EndToEndViewTopComponent;
+import org.kuwaiba.management.services.views.endtoend.EndToEndViewDetailedScene;
+import org.kuwaiba.management.services.views.endtoend.EndToEndViewTopComponent;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.windows.TopComponent;
 
@@ -29,7 +29,7 @@ import org.openide.windows.TopComponent;
  * logical circuits directly associated to the selected instance
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-@ServiceProvider(service = GenericObjectNodeAction.class)
+//@ServiceProvider(service = GenericObjectNodeAction.class)
 public class ShowEndToEndDetailedViewAction extends GenericObjectNodeAction {
 
     public ShowEndToEndDetailedViewAction() {

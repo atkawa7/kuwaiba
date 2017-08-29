@@ -66,14 +66,6 @@ public class PhysicalPathScene  extends AbstractScene <LocalObjectLight, LocalOb
         edgeLayer.addChild(widget);
         return widget;
     }
-
-    @Override
-    protected void attachEdgeSourceAnchor(LocalObjectLight edge, LocalObjectLight oldSourceNode, LocalObjectLight sourceNode) {
-    }
-
-    @Override
-    protected void attachEdgeTargetAnchor(LocalObjectLight edge, LocalObjectLight oldTargetNode, LocalObjectLight targetNode) {
-    }
     
     public void addRootWidget (Widget widget){
         widget.getActions().addAction(ActionFactory.createMoveAction());
@@ -109,12 +101,6 @@ public class PhysicalPathScene  extends AbstractScene <LocalObjectLight, LocalOb
         return null;
     }
     
-    @Override
-    public Color getConnectionColor(LocalObjectLight theConnection) {
-        //TODO: Calculate the connection color here, not in Utils
-        return null;
-    }
-
     @Override
     public boolean supportsConnections() {
         return false;

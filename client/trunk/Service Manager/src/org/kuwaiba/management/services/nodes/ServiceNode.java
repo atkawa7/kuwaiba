@@ -22,9 +22,8 @@ import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.navigation.navigationtree.nodes.actions.ExecuteClassLevelReportAction;
 import org.inventory.navigation.navigationtree.nodes.actions.ShowMoreInformationAction;
 import org.kuwaiba.management.services.nodes.actions.ServiceManagerActionFactory;
-import org.kuwaiba.management.services.nodes.actions.ShowEndToEndDetailedViewAction;
 import org.kuwaiba.management.services.nodes.actions.ShowEndToEndSimpleViewAction;
-import org.kuwaiba.management.services.nodes.actions.ShowEndToEndViewAction;
+import org.kuwaiba.management.services.nodes.actions.ShowServiceTopologyViewAction;
 import org.openide.util.Lookup;
 
 /**
@@ -45,6 +44,7 @@ public class ServiceNode extends ObjectNode {
             ServiceManagerActionFactory.getDeleteServiceAction(),
             null,
             Lookup.getDefault().lookup(ShowEndToEndSimpleViewAction.class),
+            Lookup.getDefault().lookup(ShowServiceTopologyViewAction.class),
             //Lookup.getDefault().lookup(ShowEndToEndViewAction.class),
             //Lookup.getDefault().lookup(ShowEndToEndDetailedViewAction.class),
             Lookup.getDefault().lookup(AddObjectToFavoritesFolderAction.class),

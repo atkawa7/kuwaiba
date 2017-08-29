@@ -17,7 +17,6 @@ package org.inventory.navigation.special.relationships.scene;
 
 import org.inventory.navigation.special.relationships.nodes.LocalObjectLightWrapper;
 import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import org.inventory.communications.CommunicationsStub;
@@ -101,11 +100,6 @@ public class SpecialRelationshipsGraphExplorerScene extends AbstractScene<LocalO
 
     @Override
     public void render(byte[] structure) throws IllegalArgumentException {
-    }
-
-    @Override
-    public Color getConnectionColor(LocalObjectLight theConnection) {
-        return null;
     }
 
     @Override

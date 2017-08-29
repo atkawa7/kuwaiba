@@ -161,20 +161,6 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
         return widget;
     }
 
-    /**
-     * These are called when creating anchors based on the past methods
-     * @param edge
-     * @param oldSourceNode
-     * @param sourceNode
-     */
-    @Override
-    protected void attachEdgeSourceAnchor(LocalObjectLight edge, LocalObjectLight oldSourceNode, LocalObjectLight sourceNode) {
-    }
-
-    @Override
-    protected void attachEdgeTargetAnchor(LocalObjectLight edge, LocalObjectLight oldTargetNode, LocalObjectLight targetNode) {
-    }
-
     public LayerWidget getNodesLayer(){
         return nodeLayer;
     }
@@ -494,12 +480,6 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
             newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideWidget));
             validate();
         }
-    }
-    
-    @Override
-    public Color getConnectionColor(LocalObjectLight theConnection) {
-        //TODO: Calculate the connection color here instead of in Utils
-        return null;
     }
     
     @Override

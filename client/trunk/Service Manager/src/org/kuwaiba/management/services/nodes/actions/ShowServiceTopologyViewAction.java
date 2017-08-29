@@ -20,21 +20,20 @@ import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
-import org.kuwaiba.management.services.views.endtoend.EndToEndViewSimpleScene;
-import org.kuwaiba.management.services.views.endtoend.EndToEndViewTopComponent;
+import org.kuwaiba.management.services.views.topology.TopologyViewScene;
+import org.kuwaiba.management.services.views.topology.TopologyViewTopComponent;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.windows.TopComponent;
 
 /**
- * Opens an end-to-end view of the service, by trying to match the endpoints of the 
- * logical circuits directly associated to the selected instance
+ * Opens a view that shows the network equipment associated directly to the service and the physical connections between these nodes
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @ServiceProvider(service = GenericObjectNodeAction.class)
-public class ShowEndToEndSimpleViewAction extends GenericObjectNodeAction {
+public class ShowServiceTopologyViewAction extends GenericObjectNodeAction {
 
-    public ShowEndToEndSimpleViewAction() {
-        putValue(NAME, "Show End-to-End View (Simple)");
+    public ShowServiceTopologyViewAction() {
+        putValue(NAME, "Show Topology View");
     }
 
     @Override
@@ -45,9 +44,9 @@ public class ShowEndToEndSimpleViewAction extends GenericObjectNodeAction {
             //TopComponent endToEndTC = ((EndToEndViewTopComponent)WindowManager.getDefault().
             //  findTopComponent("ObjectViewTopComponent_" + selectedObjects.get(0).getOid()));
             
-            TopComponent endToEndTC = new EndToEndViewTopComponent(selectedObjects.get(0), new EndToEndViewSimpleScene());
-            endToEndTC.open();
-            endToEndTC.requestActive();
+            TopComponent topologyViewTC = new TopologyViewTopComponent(selectedObjects.get(0), new TopologyViewScene());
+            topologyViewTC.open();
+            topologyViewTC.requestActive();
         }
     }
     

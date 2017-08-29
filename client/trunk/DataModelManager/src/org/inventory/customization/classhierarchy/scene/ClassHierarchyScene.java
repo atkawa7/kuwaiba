@@ -15,11 +15,9 @@
  */
 package org.inventory.customization.classhierarchy.scene;
 
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import org.inventory.communications.core.LocalClassMetadata;
-import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.visual.actions.providers.CustomSelectProvider;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.core.visual.scene.SelectableVMDNodeWidget;
@@ -103,11 +101,6 @@ public class ClassHierarchyScene extends AbstractScene<LocalClassMetadata, Strin
 
     @Override
     public void render(byte[] structure) throws IllegalArgumentException {
-    }
-
-    @Override
-    public Color getConnectionColor(LocalObjectLight theConnection) {
-        return null;
     }
 
     @Override

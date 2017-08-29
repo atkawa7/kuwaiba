@@ -16,7 +16,6 @@
 package org.inventory.design.topology.scene;
 
 import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Insets;
@@ -383,11 +382,6 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
     }
 
     @Override
-    public Color getConnectionColor(LocalObjectLight theConnection) {
-        return null;
-    }
-    
-    @Override
     public ConnectProvider getConnectProvider() {
         
         return new ConnectProvider() {
@@ -600,20 +594,6 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
         newEdge.getActions().addAction(ActionFactory.createPopupMenuAction(ObjectConnectionWidgetMenu.getInstance()));
         edgeLayer.addChild(newEdge);
         return newEdge;
-    }
-
-    @Override
-    protected void attachEdgeSourceAnchor(String edge, LocalObjectLight oldSourceNode, LocalObjectLight sourceNode) {
-        ConnectionWidget connectionWidget = (ConnectionWidget) findWidget(edge);
-        Widget sourceWidget = findWidget(sourceNode);
-        connectionWidget.setSourceAnchor(sourceWidget != null ? AnchorFactory.createCircularAnchor(sourceWidget, 3) : null);
-    }
-
-    @Override
-    protected void attachEdgeTargetAnchor(String edge, LocalObjectLight oldTargetNode, LocalObjectLight targetNode) {
-        ConnectionWidget connectionWidget = (ConnectionWidget) findWidget(edge);
-        Widget targetWidget = findWidget(targetNode);
-        connectionWidget.setTargetAnchor(targetWidget != null ? AnchorFactory.createCircularAnchor(targetWidget, 3) : null);
     }
 
     @Override

@@ -74,7 +74,6 @@ import org.inventory.communications.wsclient.RemoteBusinessObjectLightList;
 import org.inventory.communications.wsclient.RemoteBusinessRule;
 import org.inventory.communications.wsclient.RemoteObject;
 import org.inventory.communications.wsclient.RemoteObjectLight;
-import org.inventory.communications.wsclient.RemoteObjectLightArray;
 import org.inventory.communications.wsclient.RemoteObjectLightList;
 import org.inventory.communications.wsclient.RemoteObjectSpecialRelationships;
 import org.inventory.communications.wsclient.RemotePool;
@@ -1801,7 +1800,14 @@ public class CommunicationsStub {
         }
     }
     
-    public List<LocalObjectLightList> getPhysicalConnectionsInObject(long objectId, String objectClass){
+    /**
+     * Loops through all instances of GenericCommunicationsPort at any level inside the given object and gets the physical path. 
+     * Only the ports with connections (physicalPath.size > 1) are returned
+     * @param objectClass The object class
+     * @param objectId The object id
+     * @return The list of physical paths of the connected ports inside the given objects or null in case of error.
+     */
+    public List<LocalObjectLightList> getPhysicalConnectionsInObject(String objectClass, long objectId){
         try{
             List<RemoteObjectLightList> paths = service.getPhysicalConnectionsInObject(objectClass, objectId, session.getSessionId());
             List<LocalObjectLightList> res = new ArrayList<>();

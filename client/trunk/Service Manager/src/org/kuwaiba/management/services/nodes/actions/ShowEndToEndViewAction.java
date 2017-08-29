@@ -19,8 +19,8 @@ package org.kuwaiba.management.services.nodes.actions;
 import java.awt.event.ActionEvent;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
-import org.kuwaiba.management.services.nodes.actions.endtoend.EndToEndViewScene;
-import org.kuwaiba.management.services.nodes.actions.endtoend.EndToEndViewTopComponent;
+import org.kuwaiba.management.services.views.endtoend.EndToEndViewScene;
+import org.kuwaiba.management.services.views.endtoend.EndToEndViewTopComponent;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.windows.TopComponent;
 

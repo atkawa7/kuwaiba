@@ -204,11 +204,6 @@ public class ConnectionsInRackViewScene extends AbstractScene<LocalObjectLight, 
     @Override
     public void render(byte[] structure) throws IllegalArgumentException {
     }
-    
-    @Override
-    public Color getConnectionColor(LocalObjectLight theConnection) {
-        return null;
-    }
 
     @Override
     public ConnectProvider getConnectProvider() {
@@ -295,14 +290,6 @@ public class ConnectionsInRackViewScene extends AbstractScene<LocalObjectLight, 
         edgeLayer.addChild(widget);
         validate();
         return widget;
-    }
-
-    @Override
-    protected void attachEdgeSourceAnchor(LocalObjectLight edge, LocalObjectLight oldSourceNode, LocalObjectLight sourceNode) {
-    }
-
-    @Override
-    protected void attachEdgeTargetAnchor(LocalObjectLight edge, LocalObjectLight oldTargetNode, LocalObjectLight targetNode) {
     }
     
     /**

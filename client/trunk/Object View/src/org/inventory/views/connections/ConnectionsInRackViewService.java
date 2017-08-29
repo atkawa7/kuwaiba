@@ -151,7 +151,7 @@ public class ConnectionsInRackViewService {
             addSubdevices(deviceNode, device);
             scene.addRootWidget(deviceNode, U, position);
         }
-        createConnections(CommunicationsStub.getInstance().getPhysicalConnectionsInObject(rack.getOid(), rack.getClassName()));
+        createConnections(CommunicationsStub.getInstance().getPhysicalConnectionsInObject(rack.getClassName(), rack.getOid()));
     }
     
     public void addSubdevices(Widget deviceNode, LocalObjectLight device){

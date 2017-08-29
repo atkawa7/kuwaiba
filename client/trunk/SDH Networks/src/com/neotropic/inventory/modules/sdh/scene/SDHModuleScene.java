@@ -148,6 +148,12 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
         newEdge.setEndPointShape(PointShape.SQUARE_FILLED_BIG);
         newEdge.setRouter(RouterFactory.createFreeRouter());
         newEdge.setToolTipText(edge.toString());
+        LocalClassMetadata connectionClassMetadata = CommunicationsStub.getInstance().getMetaForClass(edge.getClassName(), false);
+        if (connectionClassMetadata == null || connectionClassMetadata.getColor() == null)
+            newEdge.setLineColor(Color.BLACK);
+        else
+            newEdge.setLineColor(connectionClassMetadata.getColor());
+        
         edgeLayer.addChild(newEdge);
         return newEdge;
     }
@@ -288,7 +294,6 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
                                 }
                                 else {
                                     ConnectionWidget newEdge = (ObjectConnectionWidget)addEdge(container);
-                                    newEdge.setLineColor(getConnectionColor(container));
                                     setEdgeSource(container, aSideObject);
                                     setEdgeTarget(container, bSideObject);
                                     List<Point> localControlPoints = new ArrayList<>();
@@ -338,16 +343,6 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
     public boolean supportsBackgrounds() {
         return false;
     }
-    
-    @Override
-    public Color getConnectionColor(LocalObjectLight theConnection) {
-        
-        LocalClassMetadata connectionClassMetadata = CommunicationsStub.getInstance().getMetaForClass(theConnection.getClassName(), false);
-        if (connectionClassMetadata == null)
-            return Color.BLACK;
-        
-        return connectionClassMetadata.getColor() == null ? Color.BLACK : connectionClassMetadata.getColor();
-    }
 
     @Override
     public void render(LocalObjectLight root) { }
@@ -369,7 +364,6 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
                     ObjectConnectionWidget newConnectionWidget = (ObjectConnectionWidget)addEdge(newConnection);
                     setEdgeSource(newConnection, sourceObject);
                     setEdgeTarget(newConnection, targetObject);
-                    newConnectionWidget.setLineColor(getConnectionColor(newConnection));
                     fireChangeEvent(new ActionEvent(this, SCENE_CHANGE, "attachEdge")); //NOI18N
                 }
             }

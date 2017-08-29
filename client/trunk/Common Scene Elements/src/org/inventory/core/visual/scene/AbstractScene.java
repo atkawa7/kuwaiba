@@ -24,16 +24,17 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
-import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.communications.util.Utils;
 import org.inventory.core.visual.configuration.ObjectViewConfigurationObject;
 import org.netbeans.api.visual.action.ConnectProvider;
+import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.model.ObjectSceneEvent;
 import org.netbeans.api.visual.model.ObjectSceneEventType;
 import org.netbeans.api.visual.model.ObjectSceneListener;
 import org.netbeans.api.visual.model.ObjectState;
+import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.ImageWidget;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Widget;
@@ -244,6 +245,20 @@ public abstract class AbstractScene<N, E> extends GraphScene<N, E> {
         repaint();
     }
     
+    @Override
+    protected void attachEdgeSourceAnchor(E edge, N oldSourceNode, N newSourceNode) {
+        ConnectionWidget connectionWidget = (ConnectionWidget)findWidget(edge);
+        Widget sourceWidget = findWidget(newSourceNode);
+        connectionWidget.setSourceAnchor(sourceWidget != null ? AnchorFactory.createCircularAnchor(sourceWidget, 3) : null);
+    }
+
+    @Override
+    protected void attachEdgeTargetAnchor(E edge, N oldTargetNode, N newTargetNode) {
+        ConnectionWidget connectionWidget = (ConnectionWidget)findWidget(edge);
+        Widget targetWidget = findWidget(newTargetNode);
+        connectionWidget.setTargetAnchor(targetWidget != null ? AnchorFactory.createCircularAnchor(targetWidget, 3) : null);
+    }
+    
     /**
      * The XML representation of the view. Typically used to serialize it
      * @return XML document as a byte arrays
@@ -263,13 +278,6 @@ public abstract class AbstractScene<N, E> extends GraphScene<N, E> {
      * 
      */
     public abstract void render(N root);
-    
-    /**
-     * Calculates the connection color. This calculation depends on the implementor, and it's usually based on the class of the connection object
-     * @param theConnection The object representing the connection
-     * @return The color corresponding on the connection. Black should be the default value
-     */
-    public abstract Color getConnectionColor (LocalObjectLight theConnection);
     
     /**
      * Get the active connect provider. Null if supportsConnections returns false.
