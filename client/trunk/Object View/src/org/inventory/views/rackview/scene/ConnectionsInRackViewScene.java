@@ -38,7 +38,7 @@ import org.netbeans.api.visual.widget.Widget;
 
 /**
  * Scene for Rack view, the inside view of the rack.
- * @author Adrian MArtinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class ConnectionsInRackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLight> {
     public static final int STANDARD_RACK_WIDTH = 800;
