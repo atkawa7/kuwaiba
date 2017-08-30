@@ -42,6 +42,7 @@ public class RackViewService {
     }
     
     public void buildRackView() throws Exception {
+        scene.clear();
         LocalObject rack = CommunicationsStub.getInstance().getObjectInfo(rackLight.getClassName(), rackLight.getOid());
         
         if (rack == null)

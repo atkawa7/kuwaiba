@@ -13,7 +13,7 @@
  *   limitations under the License.
  * 
  */
-package org.inventory.views.rackview;
+package org.inventory.views.rackinsideview;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,7 +23,7 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.visual.export.ExportScenePanel;
 import org.inventory.core.visual.export.filters.ImageFilter;
 import org.inventory.core.visual.export.filters.SceneExportFilter;
-import org.inventory.views.rackview.scene.RackViewScene;
+import org.inventory.views.rackview.scene.RackInsideViewScene;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.explorer.ExplorerManager;
@@ -35,26 +35,26 @@ import org.openide.util.NbBundle.Messages;
  * Top component which displays something.
  */
 @Messages({
-    "CTL_RackViewTopComponent=Rack View",
-    "HINT_RackViewTopComponent=Rack View"
+    "CTL_RackInsideViewTopComponent=Rack Inisde View",
+    "HINT_RackInsideViewTopComponent=Rack Inside View"
 })
-public final class RackViewTopComponent extends TopComponent implements ExplorerManager.Provider, ActionListener, Refreshable {
+public final class RackInsideViewTopComponent extends TopComponent implements ExplorerManager.Provider, ActionListener, Refreshable {
     private ExplorerManager em;
-    private RackViewService service;
-    private RackViewScene scene;
+    private RackInsideViewService service;
+    private RackInsideViewScene scene;
     private LocalObjectLight currentRack;
     
-    public RackViewTopComponent(LocalObjectLight rack) {
+    public RackInsideViewTopComponent(LocalObjectLight rack) {
         this.currentRack = rack;
         initComponents();
         initCustomComponents();
-        setName(Bundle.CTL_RackViewTopComponent());
-        setToolTipText(Bundle.HINT_RackViewTopComponent());
+        setName(Bundle.CTL_RackInsideViewTopComponent());
+        setToolTipText(Bundle.HINT_RackInsideViewTopComponent());
     }
     
     @Override
     protected String preferredID() {
-        return "RackViewTopComponent_" + service.getRack().getOid(); //NOI18N
+        return "RackInsideViewTopComponent_" + service.getRack().getOid(); //NOI18N
     }
 
     @Override
@@ -65,13 +65,13 @@ public final class RackViewTopComponent extends TopComponent implements Explorer
     private void initCustomComponents() {
         em = new ExplorerManager();
         
-        scene = new RackViewScene();
+        scene = new RackInsideViewScene();
         scene.addChangeListener(this);
                 
         associateLookup(scene.getLookup());
         pnlMainScrollPanel.setViewportView(scene.createView());
         
-        service = new RackViewService(scene, currentRack);                
+        service = new RackInsideViewService(scene, currentRack);                
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -94,8 +94,8 @@ public final class RackViewTopComponent extends TopComponent implements Explorer
         toolBarMain.setPreferredSize(new java.awt.Dimension(392, 38));
 
         btnExport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/rackview/res/export.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnExport, org.openide.util.NbBundle.getMessage(RackViewTopComponent.class, "RackViewTopComponent.btnExport.text")); // NOI18N
-        btnExport.setToolTipText(org.openide.util.NbBundle.getMessage(RackViewTopComponent.class, "RackViewTopComponent.btnExport.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnExport, org.openide.util.NbBundle.getMessage(RackInsideViewTopComponent.class, "RackInsideViewTopComponent.btnExport.text")); // NOI18N
+        btnExport.setToolTipText(org.openide.util.NbBundle.getMessage(RackInsideViewTopComponent.class, "RackInsideViewTopComponent.btnExport.toolTipText")); // NOI18N
         btnExport.setFocusable(false);
         btnExport.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnExport.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -107,14 +107,19 @@ public final class RackViewTopComponent extends TopComponent implements Explorer
         toolBarMain.add(btnExport);
 
         btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/rackview/res/refresh.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnRefresh, org.openide.util.NbBundle.getMessage(RackViewTopComponent.class, "RackViewTopComponent.btnRefresh.text")); // NOI18N
-        btnRefresh.setToolTipText(org.openide.util.NbBundle.getMessage(RackViewTopComponent.class, "RackViewTopComponent.btnRefresh.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnRefresh, org.openide.util.NbBundle.getMessage(RackInsideViewTopComponent.class, "RackInsideViewTopComponent.btnRefresh.text")); // NOI18N
+        btnRefresh.setToolTipText(org.openide.util.NbBundle.getMessage(RackInsideViewTopComponent.class, "RackInsideViewTopComponent.btnRefresh.toolTipText")); // NOI18N
         btnRefresh.setFocusable(false);
         btnRefresh.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnRefresh.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnRefresh.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnRefreshMouseClicked(evt);
+            }
+        });
+        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRefreshActionPerformed(evt);
             }
         });
         toolBarMain.add(btnRefresh);
@@ -126,7 +131,7 @@ public final class RackViewTopComponent extends TopComponent implements Explorer
     private void btnRefreshMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRefreshMouseClicked
         try {
             scene.clear();
-            service.buildRackView();
+            service.buildRackInsideView();
         } catch (Exception ex) {
             scene.clear();
             NotificationUtil.getInstance().showSimplePopup("Error", 
@@ -143,6 +148,17 @@ public final class RackViewTopComponent extends TopComponent implements Explorer
         DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
     }//GEN-LAST:event_btnExportMouseClicked
 
+    private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
+        try {
+            scene.clear();
+            service.buildRackInsideView();
+        } catch (Exception ex) {
+            scene.clear();
+            NotificationUtil.getInstance().showSimplePopup("Error", 
+                NotificationUtil.ERROR_MESSAGE, ex.getMessage());
+        }
+    }//GEN-LAST:event_btnRefreshActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnExport;
     private javax.swing.JButton btnRefresh;
@@ -152,7 +168,7 @@ public final class RackViewTopComponent extends TopComponent implements Explorer
     @Override
     public void componentOpened() {
         try {
-            service.buildRackView();
+            service.buildRackInsideView();
         } catch (Exception ex) {
             scene.clear();
             NotificationUtil.getInstance().showSimplePopup("Error", 
@@ -167,7 +183,7 @@ public final class RackViewTopComponent extends TopComponent implements Explorer
     
     @Override
     public String getDisplayName() {
-        return String.format("Rack View for %s", service.getRack().getName());
+        return String.format("Rack Inside View for %s", service.getRack().getName());
     }
         
     void writeProperties(java.util.Properties p) {

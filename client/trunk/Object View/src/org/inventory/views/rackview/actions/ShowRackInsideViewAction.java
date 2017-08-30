@@ -15,44 +15,47 @@
 package org.inventory.views.rackview.actions;
 
 import java.awt.event.ActionEvent;
+import java.util.ResourceBundle;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
-import org.inventory.views.connections.ConnectionsInRackViewTopComponent;
+import org.inventory.views.rackinsideview.RackInsideViewTopComponent;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.windows.WindowManager;
 
 /**
- * Action to show the rack view of a rack
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * Action to show the rack inside view 
+ * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ShowConnectionsInRackViewAction extends GenericObjectNodeAction {
+public class ShowRackInsideViewAction extends GenericObjectNodeAction {
     
-    public ShowConnectionsInRackViewAction() {
-        putValue(NAME, "Show COnnections in Rack");
+    public ShowRackInsideViewAction() {
+        putValue(NAME, ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_SHOW_INSIDE_RACK_VIEW"));
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
         for (LocalObjectLight rack : selectedObjects) {
-            ConnectionsInRackViewTopComponent rackView = ((ConnectionsInRackViewTopComponent) WindowManager.
-                getDefault().findTopComponent("ConnectionsInRackViewTopComponent_" + rack.getOid()));
+            RackInsideViewTopComponent rackInsideView = ((RackInsideViewTopComponent) WindowManager.
+                getDefault().findTopComponent("RackInsideViewTopComponent_" + rack.getOid()));
             
-            if (rackView == null) {
-                rackView = new ConnectionsInRackViewTopComponent(rack);
-                rackView.open();
+            if (rackInsideView == null) {
+                rackInsideView = new RackInsideViewTopComponent(rack);
+                rackInsideView.open();
             } else {
-                if (rackView.isOpened())
-                    rackView.requestAttention(true);
-                else { //Even after closed, the TCs (even the no-singletons) continue to exist in the NBP's PersistenceManager registry, 
-                       //so we will reuse the instance, refreshing the vierw first
-                    rackView.refresh();
-                    rackView.open();
+                if (rackInsideView.isOpened())
+                    rackInsideView.requestAttention(true);
+                else { 
+                    //Even after closed, the TCs (even the no-singletons) 
+                    //continue to exist in the NBP's PersistenceManager registry, 
+                    //so we will reuse the instance, refreshing the vierw first
+                    rackInsideView.refresh();
+                    rackInsideView.open();
                 }
             }
-            rackView.requestActive();
+            rackInsideView.requestActive();
         }
     }
     
@@ -63,7 +66,6 @@ public class ShowConnectionsInRackViewAction extends GenericObjectNodeAction {
 
     @Override
     public LocalPrivilege getPrivilege() {
-        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_PHYSICAL_VIEW, LocalPrivilege.ACCESS_LEVEL_READ);
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_PHYSICAL_VIEW, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
-    
 }
