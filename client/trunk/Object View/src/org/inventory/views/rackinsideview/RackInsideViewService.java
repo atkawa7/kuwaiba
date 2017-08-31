@@ -25,6 +25,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalObjectLightList;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.visual.scene.ObjectConnectionWidget;
 import org.inventory.views.rackview.scene.RackInsideViewScene;
 import org.netbeans.api.visual.widget.Widget;
 
@@ -161,7 +162,6 @@ public class RackInsideViewService {
     
     public void addSubdevices(Widget deviceNode, LocalObjectLight device){
         List<LocalObjectLight> objectChildren = CommunicationsStub.getInstance().getObjectChildren(device.getOid(), device.getClassName());
-        Color childrenColor = randomColor();
         if(!objectChildren.isEmpty()){
             for (LocalObjectLight objectChild : objectChildren) {
                 if(objectChild.getClassName().equals("PowerBoard"))
@@ -205,7 +205,7 @@ public class RackInsideViewService {
     public void createConnections(List<LocalObjectLightList> connections){
         List<LocalObjectLight> addedConnections = new ArrayList<>();
         for (LocalObjectLightList connection : connections) {
-            SimpleConnectionWidget lastConnectionWidget = null;
+            ObjectConnectionWidget lastConnectionWidget = null;
             LocalObjectLight aSide = null;
             LocalObjectLight bSide = null;        
             LocalObjectLight linkLight = null;
@@ -235,7 +235,7 @@ public class RackInsideViewService {
                         if(findWidget != null)
                             scene.removeEdge(link);
 
-                        lastConnectionWidget = (SimpleConnectionWidget)scene.addEdge(link);
+                        lastConnectionWidget = (ObjectConnectionWidget)scene.addEdge(link);
                         lastConnectionWidget.getLabelWidget().setLabel( 
                                 (aSide.getName() == null ? "" : aSide.getName()) + " ** " + (bSide.getName() == null ? "" : bSide.getName()));
                         scene.setEdgeSource(link, aSide);

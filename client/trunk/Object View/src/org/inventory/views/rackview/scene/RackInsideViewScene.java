@@ -24,9 +24,9 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.visual.scene.AbstractScene;
 import static org.inventory.core.visual.scene.AbstractScene.ACTION_SELECT;
+import org.inventory.core.visual.scene.ObjectConnectionWidget;
 import org.inventory.core.visual.scene.SelectableNodeWidget;
 import org.inventory.views.rackinsideview.NestedDeviceWidget;
-import org.inventory.views.rackinsideview.SimpleConnectionWidget;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.layout.LayoutFactory;
@@ -298,9 +298,10 @@ public class RackInsideViewScene extends AbstractScene<LocalObjectLight, LocalOb
 
     @Override
     protected Widget attachEdgeWidget(LocalObjectLight edge) {
-        SimpleConnectionWidget newWidget = new SimpleConnectionWidget(this, edge, ((LocalObject)edge).getObjectMetadata().getColor());
+        ObjectConnectionWidget newWidget = new ObjectConnectionWidget(this, edge);
         newWidget.getActions().addAction(createSelectAction());
         newWidget.setRouter(RouterFactory.createFreeRouter());
+        newWidget.setLineColor(((LocalObject)edge).getObjectMetadata().getColor());
         edgeLayer.addChild(newWidget);
         validate();
         return newWidget;
