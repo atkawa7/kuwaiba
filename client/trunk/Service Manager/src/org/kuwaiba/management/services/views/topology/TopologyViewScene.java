@@ -20,7 +20,6 @@ import java.awt.Point;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
@@ -43,7 +42,6 @@ import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.core.visual.scene.ObjectConnectionWidget;
 import org.inventory.core.visual.scene.ObjectNodeWidget;
 import org.netbeans.api.visual.action.ConnectProvider;
-import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.router.RouterFactory;
 import org.netbeans.api.visual.widget.LayerWidget;
@@ -120,20 +118,21 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
             xmlew.add(xmlef.createStartElement(qnameEdges, null, null));
             
             for (Widget edgeWidget : edgeLayer.getChildren()) {
-                
+                LocalObjectLight lolEdge = (LocalObjectLight) findObject(edgeWidget);
                 ObjectConnectionWidget acwEdge = (ObjectConnectionWidget) edgeWidget;
-                if (acwEdge.getSourceAnchor() == null || acwEdge.getTargetAnchor() == null) //This connection is malformed because one of the endpoints does not exist
-                    continue;                                                               //probably, it was moved to another parent
+                
+                if (getEdgeSource(lolEdge) == null || getEdgeTarget(lolEdge) == null) //This connection is malformed because one of the endpoints does not exist
+                    continue;                                                         //probably, it was moved to another parent
                 
                 QName qnameEdge = new QName("edge");
                 xmlew.add(xmlef.createStartElement(qnameEdge, null, null));
                 
-                LocalObjectLight lolEdge = (LocalObjectLight) findObject(acwEdge);
+                
                 xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(lolEdge.getOid())));
                 xmlew.add(xmlef.createAttribute(new QName("class"), lolEdge.getClassName()));
                 
-                xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(((LocalObjectLight) findObject(acwEdge.getSourceAnchor().getRelatedWidget())).getOid())));
-                xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(((LocalObjectLight) findObject(acwEdge.getTargetAnchor().getRelatedWidget())).getOid())));
+                xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(getEdgeSource(lolEdge).getOid())));
+                xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(getEdgeTarget(lolEdge).getOid())));
                 
                 for (Point point : acwEdge.getControlPoints()) {
                     QName qnameControlpoint = new QName("controlpoint");
@@ -164,11 +163,9 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
     @Override
     public void render(byte[] structure) throws IllegalArgumentException {
         //<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
-//        try {
-//            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_"+currentView.getId()+".xml");
-//            fos.write(currentView.getStructure());
-//            fos.close();
-//        } catch(Exception e) {}
+//        try (FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_" + VIEW_CLASS + ".xml")) {
+//            fos.write(structure);
+//        } catch(Exception e) { }
         //</editor-fold>
         try {
             XMLInputFactory inputFactory = XMLInputFactory.newInstance();
@@ -211,7 +208,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
                             long aSide = Long.valueOf(reader.getAttributeValue(null, "aside")); //NOI18N
                             long bSide = Long.valueOf(reader.getAttributeValue(null, "bside")); //NOI18N
 
-                            String className = reader.getAttributeValue(null,"class"); //NOI18N
+                            String className = reader.getAttributeValue(null, "class"); //NOI18N
 
                             LocalObjectLight container = com.getObjectInfoLight(className, objectId);
 
@@ -219,17 +216,6 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
                             boolean hasEndpointB = false;
 
                             if (container != null) { // if the connection exist
-                                HashMap<String, LocalObjectLight[]> specialAttributes = com.getSpecialAttributes(className, objectId);
-
-                                for (String key : specialAttributes.keySet()) {
-                                    if(key.contains("endpointA")) //NOI18N
-                                        hasEndpointA = true;
-                                    if(key.contains("endpointB")) //NOI18N
-                                        hasEndpointB = true;
-                                }
-                            }
-
-                            if (hasEndpointA && hasEndpointB ) {
                                 LocalObjectLight aSideObject = new LocalObjectLight(aSide, null, null);
                                 ObjectNodeWidget aSideWidget = (ObjectNodeWidget) findWidget(aSideObject);
 
@@ -243,8 +229,8 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
                                         NotificationUtil.getInstance().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, "The view seems to be corrupted. Self-healing measures were taken");
                                     else {
                                         ObjectConnectionWidget newEdge = (ObjectConnectionWidget) addEdge(container);
-                                        newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideWidget.getNodeWidget()));
-                                        newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideWidget.getNodeWidget()));
+                                        setEdgeSource(container, aSideObject);
+                                        setEdgeTarget(container, bSideObject);
                                         
                                         List<Point> localControlPoints = new ArrayList<>();
                                         while(true) {
@@ -260,7 +246,6 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
                                         }
                                     }
                                 }
-                                
                             } 
                         }
                         // FREE FRAMES
@@ -304,12 +289,12 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
             List<LocalObjectLight> nodesToBeDeleted = new ArrayList<>(getNodes()); //We clone the existing nodes to synchronize the view, so saved nodes that are no longer listed as service resources are removed
                                                                                    //We assume that render(byte[]) was called before calling render(LocalObjectLight)
 
-            //We will ignore all resources that are not either GenericCommunicationsElement
+            //We will ignore all resources that are not GenericCommunicationsElement
             for (LocalObjectLight serviceResource : serviceResources) {
                 if (findWidget(serviceResource) == null && 
-                        com.isSubclassOf(serviceResource.getClassName(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT)) 
-                    addNode(serviceResource);
-                    
+                        com.isSubclassOf(serviceResource.getClassName(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT))
+                        addNode(serviceResource);
+                
                 nodesToBeDeleted.remove(serviceResource);
             }
             
@@ -317,42 +302,64 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
                 removeNodeWithEdges(nodeToBeDeleted);
                 validate();
             }
-            
-            //Once the nodes have been added, we retrieve the physical connections between them and ignore those that end in other elements
+                        
+            //Once the nodes have been added, we retrieve the physical and logical (STMX) connections between them and ignore those that end in other elements
             for (LocalObjectLight aNode : getNodes()) {
                 List<LocalObjectLightList> physicalConnections = com.getPhysicalConnectionsInObject(aNode.getClassName(), aNode.getOid());
-                    if (physicalConnections == null) 
-                        NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
-                    else {
-                        for (LocalObjectLightList aConnection : physicalConnections) {
-                            LocalObjectLight sourcePort = aConnection.get(0);
-                            LocalObjectLight targetPort = aConnection.get(aConnection.size() - 1);
-                            
-                            List<LocalObjectLight> parentsUntilFirstOfClass = com.getParentsUntilFirstOfClass(targetPort.getClassName(), targetPort.getOid(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
-                            if (parentsUntilFirstOfClass == null)
-                                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
-                            else {
-                                LocalObjectLight sourceEquipment = aNode;
-                                LocalObjectLight targetEquipment = parentsUntilFirstOfClass.get(parentsUntilFirstOfClass.size() - 1);
-                                
-                                if (findWidget(targetEquipment) != null) {
-                                    
-                                    ObjectConnectionWidget connectionWidget = (ObjectConnectionWidget)findWidget(aConnection.get(1));
-                                    if (connectionWidget == null) 
-                                        connectionWidget = (ObjectConnectionWidget)findWidget(aConnection.get(aConnection.size() - 2));
-                                    
-                                    if (connectionWidget == null) {
-                                        connectionWidget = (ObjectConnectionWidget)addEdge(aConnection.get(1));
-                                        setEdgeSource(aConnection.get(1), sourceEquipment);
-                                        setEdgeTarget(aConnection.get(1), targetEquipment);
-                                    }
-                                    
-                                    connectionWidget.getLabelWidget().setLabel(sourceEquipment.getName() + ":" + sourcePort.getName() + 
-                                                " ** " +targetEquipment.getName() + ":" + targetPort.getName());
-                                } //Else, we just ignore this connection trace
-                            }
+                List<LocalObjectLight> logicalConnections = com.getSpecialAttribute(aNode.getClassName(), aNode.getOid(), "sdhTransportLink"); //NOI18N
+                
+                if (physicalConnections == null || logicalConnections == null) 
+                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+                else {
+                    //First the physical connections
+                    for (LocalObjectLightList aConnection : physicalConnections) {
+                        LocalObjectLight sourcePort = aConnection.get(0);
+                        LocalObjectLight targetPort = aConnection.get(aConnection.size() - 1);
+
+                        List<LocalObjectLight> parentsUntilFirstOfClass = com.getParentsUntilFirstOfClass(targetPort.getClassName(), targetPort.getOid(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
+                        if (parentsUntilFirstOfClass == null)
+                            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+                        else {
+                            LocalObjectLight sourceEquipment = aNode;
+                            LocalObjectLight targetEquipment = parentsUntilFirstOfClass.get(parentsUntilFirstOfClass.size() - 1);
+
+                            if (findWidget(targetEquipment) != null) {
+
+                                ObjectConnectionWidget connectionWidget = (ObjectConnectionWidget)findWidget(aConnection.get(1));
+                                if (connectionWidget == null) 
+                                    connectionWidget = (ObjectConnectionWidget)findWidget(aConnection.get(aConnection.size() - 2));
+
+                                if (connectionWidget == null) {
+                                    connectionWidget = (ObjectConnectionWidget)addEdge(aConnection.get(1));
+                                    setEdgeSource(aConnection.get(1), sourceEquipment);
+                                    setEdgeTarget(aConnection.get(1), targetEquipment);
+                                }
+
+                                connectionWidget.getLabelWidget().setLabel(sourceEquipment.getName() + ":" + sourcePort.getName() + 
+                                            " ** " +targetEquipment.getName() + ":" + targetPort.getName());
+                            } //Else, we just ignore this connection trace
                         }
                     }
+                    
+                    //Now the logical connections
+                    for (LocalObjectLight aConnection : logicalConnections) {
+                        ObjectConnectionWidget connectionWidget = (ObjectConnectionWidget)findWidget(aConnection);
+                        if (connectionWidget == null) { //The connection hasn't already added, so we add it and set the source anchor
+                            addEdge(aConnection);
+                            setEdgeSource(aConnection, aNode);
+                        } else { //The connection already exists, check the endpoints and connect whatever is left to connect
+                            if (getEdgeTarget(aConnection) == null)
+                                setEdgeTarget(aConnection, aNode);
+                        }
+                    }
+                }
+            }
+            
+            //Now we delete the connections to elements that are not in the view. Granted, this is a reprocess, but I prefer and save a few
+            //calls to the server doing this at client-side only
+            for (LocalObjectLight aConnection : new ArrayList<>(getEdges())) {
+                if (getEdgeTarget(aConnection) == null)
+                    removeEdge(aConnection);
             }
         }
     }
