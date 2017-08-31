@@ -20,7 +20,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
-import org.inventory.views.rackinsideviewz.RackInsideViewTopComponent;
+import org.inventory.views.rackinsideview.RackInsideViewTopComponent;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.windows.WindowManager;
 
@@ -29,9 +29,9 @@ import org.openide.windows.WindowManager;
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ShowRackInsideViewAction extends GenericObjectNodeAction {
+public class ShowConnectionsInRackViewAction extends GenericObjectNodeAction {
     
-    public ShowRackInsideViewAction() {
+    public ShowConnectionsInRackViewAction() {
         putValue(NAME, ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_SHOW_INSIDE_RACK_VIEW"));
     }
     

@@ -14,18 +14,19 @@
  */
 package org.inventory.views.rackview.scene;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
+import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.util.Constants;
 import org.inventory.core.visual.scene.AbstractScene;
 import static org.inventory.core.visual.scene.AbstractScene.ACTION_SELECT;
 import org.inventory.core.visual.scene.SelectableNodeWidget;
-import org.inventory.views.rackinsideviewz.NestedDeviceWidget;
-import org.inventory.views.rackinsideviewz.SimpleConnectionWidget;
+import org.inventory.views.rackinsideview.NestedDeviceWidget;
+import org.inventory.views.rackinsideview.SimpleConnectionWidget;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.layout.LayoutFactory;
@@ -38,14 +39,16 @@ import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
- * Scene for Rack inside view.
+ * This scene renders the devices inside the rack and the connections between them
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class RackInsideViewScene extends AbstractScene<LocalObjectLight, LocalObjectLight> {
+    
     public int STANDARD_RACK_WIDTH = 800;
     public static final int RACK_UNIT_IN_PX = 150;
-    
     public static final int RACK_Y_OFFSET = 5;
+
+    private CommunicationsStub com = CommunicationsStub.getInstance();
     
     private LayerWidget numberingInRackLayer;
     private LayerWidget rackLayer;
@@ -64,10 +67,8 @@ public class RackInsideViewScene extends AbstractScene<LocalObjectLight, LocalOb
         getActions().addAction(ActionFactory.createZoomAction());
         getInputBindings ().setZoomActionModifiers(0); //No keystroke combinations
         getActions().addAction(ActionFactory.createPanAction());
-                
         setActiveTool(ACTION_SELECT);
         initSelectionListener();
-        router = RouterFactory.createDirectRouter();
     }
         
     private void buildScene(LocalObjectLight rack) {
@@ -272,8 +273,9 @@ public class RackInsideViewScene extends AbstractScene<LocalObjectLight, LocalOb
      
     @Override
     protected Widget attachNodeWidget(LocalObjectLight node) {
+        Widget widget;
         if (node.getOid() <= -1) {
-            Widget widget = new Widget(this);
+            widget = new Widget(this);
 
             widget.setOpaque(true);
             widget.setBackground(emptyColor);
@@ -283,11 +285,10 @@ public class RackInsideViewScene extends AbstractScene<LocalObjectLight, LocalOb
             
             return widget;
         } else {
-            Widget widget;
-            if(node.getClassName().contains("Port"))
-                widget = new NestedDeviceWidget(this, node, true);
-            else
-                widget = new NestedDeviceWidget(this, node, false);
+            //if is a port it should be render diferent
+            widget = new NestedDeviceWidget(this, node, 
+                com.isSubclassOf(node.getClassName(), Constants.CLASS_GENERICPORT)
+            );
             widget.getActions().addAction(createSelectAction());
             widget.repaint();
             widget.revalidate();
@@ -297,20 +298,12 @@ public class RackInsideViewScene extends AbstractScene<LocalObjectLight, LocalOb
 
     @Override
     protected Widget attachEdgeWidget(LocalObjectLight edge) {
-        SimpleConnectionWidget widget = new SimpleConnectionWidget(this, edge, ((LocalObject)edge).getObjectMetadata().getColor());
-        widget.getActions().addAction(createSelectAction());
-        widget.setStroke(new BasicStroke(1));
-        edgeLayer.addChild(widget);
+        SimpleConnectionWidget newWidget = new SimpleConnectionWidget(this, edge, ((LocalObject)edge).getObjectMetadata().getColor());
+        newWidget.getActions().addAction(createSelectAction());
+        newWidget.setRouter(RouterFactory.createFreeRouter());
+        edgeLayer.addChild(newWidget);
         validate();
-        return widget;
-    }
-
-    @Override
-    protected void attachEdgeSourceAnchor(LocalObjectLight edge, LocalObjectLight oldSourceNode, LocalObjectLight sourceNode) {
-    }
-
-    @Override
-    protected void attachEdgeTargetAnchor(LocalObjectLight edge, LocalObjectLight oldTargetNode, LocalObjectLight targetNode) {
+        return newWidget;
     }
     
     /**

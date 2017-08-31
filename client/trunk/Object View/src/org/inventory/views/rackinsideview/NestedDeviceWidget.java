@@ -51,10 +51,11 @@ public class NestedDeviceWidget extends SelectableNodeWidget {
         addChild(labelWidgetObjectName);
         
         if(isPort){
-            //if the object is an instance of a port the label should be display veticaly
+            //if the object is an instance of a port the label should be display verticaly
             this.labelWidgetObjectName.setOrientation(LabelWidget.Orientation.ROTATE_90);
             this.labelWidgetObjectName.setBorder(BorderFactory.createEmptyBorder(2, 0 ,2 , 0));
             this.labelWidgetObjectName.setLabel("["+object.getClassName().substring(0,1)+"]");
+            this.setToolTipText(object.getName());
             this.childrenWidget.setBorder(BorderFactory.createEmptyBorder(2, 0, 2, 0));
         }
         else{

@@ -17,10 +17,8 @@ package org.inventory.views.rackinsideview;
 
 import java.awt.Color;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.core.visual.scene.HighContrastLookAndFeel;
 import org.inventory.core.visual.scene.SelectableConnectionWidget;
 import org.inventory.views.rackview.scene.RackInsideViewScene;
-import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.model.ObjectState;
 
 /**
@@ -33,12 +31,11 @@ public class SimpleConnectionWidget extends SelectableConnectionWidget {
     
     public SimpleConnectionWidget(RackInsideViewScene scene, LocalObjectLight object, Color originalColor) {
         super(scene, object);
-        setRouter(scene.getRouter());
+        setLineColor(originalColor);
         this.originalColor = originalColor;
-        setEndPointShape(PointShape.SQUARE_FILLED_BIG);
     }
     
-     /**
+    /**
      * Implements the widget-state specific look of the widget.
      * @param previousState the previous state
      * @param state the new state
@@ -50,12 +47,10 @@ public class SimpleConnectionWidget extends SelectableConnectionWidget {
         if (state.isSelected()) {
             labelWidget.setForeground (Color.WHITE);
             labelWidget.setBackground(Color.BLUE);
-            //labelWidget.setBorder(getScene().getLookFeel().getBorder (state));
         } else if (previousState.isSelected()){
             labelWidget.setForeground (Color.BLACK);
             labelWidget.setBackground(Color.WHITE);
-            //labelWidget.setBorder(HighContrastLookAndFeel.getInstance().getBorder (state));
-            setForeground(originalColor);
+            setLineColor(originalColor);
         }
     }
 }

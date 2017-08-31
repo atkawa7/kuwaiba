@@ -19,13 +19,13 @@ import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalObjectLightList;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.views.rackview.scene.RackInsideViewScene;
-import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
@@ -141,8 +141,9 @@ public class RackInsideViewService {
             
             if (scene.findWidget(device) != null)
                 scene.removeNode(device);
+            
             Widget deviceNode = scene.addNode(device);
-            ((NestedDeviceWidget)deviceNode).setBackgroundColor(new Color(213, 216, 221, 240));
+            ((NestedDeviceWidget)deviceNode).setBackgroundColor(device.getObjectMetadata().getColor());
             
             addSubdevices(deviceNode, device);
             scene.addRootWidget(deviceNode, U, position);
@@ -166,8 +167,8 @@ public class RackInsideViewService {
                 if(objectChild.getClassName().equals("PowerBoard"))
                     scene.removeNode(device);
                 //this need to be replace, the VirtualPort should be moved under GenericLogicalPort, 
-                //find a better place for the other classes under GenericBoard should be GenericCommunitacionsBoard 
-                //to make a diference between the PowerBoards and the GenericCommunitacionsBoards
+                //find a better place for the other classes under GenericBoard, should be GenericCommunitacionsBoard 
+                //to make a diference between the PowerBoards and the Communitacions Boards
                 else if(!objectChild.getClassName().equals("VirtualPort") &&
                         !objectChild.getClassName().equals("ServiceInstance") &&
                         !objectChild.getClassName().equals("PowerPort") &&
@@ -183,8 +184,11 @@ public class RackInsideViewService {
                         ((NestedDeviceWidget)subDevice).setBackgroundColor(new Color(144, 245, 0));
                         subDevice.setMaximumSize(new Dimension(20, 20));
                     }
-                    else
-                        ((NestedDeviceWidget)subDevice).setBackgroundColor(childrenColor);
+                    else{
+                        LocalClassMetadata metaForClass = CommunicationsStub.getInstance().getMetaForClass(objectChild.getClassName(), false);
+                        if(metaForClass != null)
+                            ((NestedDeviceWidget)subDevice).setBackgroundColor(metaForClass.getColor());
+                    }
                     ((NestedDeviceWidget)deviceNode).addBox(subDevice);
                     
                     addSubdevices(subDevice, objectChild);
@@ -220,27 +224,29 @@ public class RackInsideViewService {
             //if the connection has both sides
             if(aSideNode != null && bSideNode != null){
                 LocalObject link = CommunicationsStub.getInstance().getObjectInfo(linkLight.getClassName(), linkLight.getOid());
+                if(link != null){
+                    if(!addedConnections.contains(link)){
+                        //The background for the connected ports is set to red.
+                        ((NestedDeviceWidget)bSideNode).setBackgroundColor(new Color(255, 62, 51));
+                        ((NestedDeviceWidget)aSideNode).setBackgroundColor(new Color(255, 62, 51));
 
-                if(!addedConnections.contains(link)){
-                    //The background for the connected ports is set to red.
-                    ((NestedDeviceWidget)bSideNode).setBackgroundColor(new Color(255, 62, 51));
-                    ((NestedDeviceWidget)aSideNode).setBackgroundColor(new Color(255, 62, 51));
+                        Widget findWidget = scene.findWidget(link);
 
-                     Widget findWidget = scene.findWidget(link);
+                        if(findWidget != null)
+                            scene.removeEdge(link);
 
-                    if(findWidget != null)
-                        scene.removeEdge(link);
-
-                    lastConnectionWidget = (SimpleConnectionWidget)scene.addEdge(link);
-                    lastConnectionWidget.getLabelWidget().setLabel( 
-                            (aSide.getName() == null ? "" : aSide.getName()) + " ** " + (bSide.getName() == null ? "" : bSide.getName()));
-                    lastConnectionWidget.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideNode));
-                    lastConnectionWidget.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideNode));
-                    lastConnectionWidget.setForeground(link.getObjectMetadata().getColor());
-                    addedConnections.add(link);
+                        lastConnectionWidget = (SimpleConnectionWidget)scene.addEdge(link);
+                        lastConnectionWidget.getLabelWidget().setLabel( 
+                                (aSide.getName() == null ? "" : aSide.getName()) + " ** " + (bSide.getName() == null ? "" : bSide.getName()));
+                        scene.setEdgeSource(link, aSide);
+                        scene.setEdgeTarget(link, bSide);
+                        addedConnections.add(link);
+                    }
                 }
             }
         }
+        scene.validate();
+        scene.repaint();
     }
     
     private static int rand(double min, double max) {

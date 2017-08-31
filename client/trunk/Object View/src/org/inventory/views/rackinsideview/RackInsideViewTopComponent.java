@@ -15,6 +15,7 @@
  */
 package org.inventory.views.rackinsideview;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import org.inventory.communications.core.LocalObjectLight;
@@ -71,7 +72,8 @@ public final class RackInsideViewTopComponent extends TopComponent implements Ex
         associateLookup(scene.getLookup());
         pnlMainScrollPanel.setViewportView(scene.createView());
         
-        service = new RackInsideViewService(scene, currentRack);                
+        service = new RackInsideViewService(scene, currentRack);     
+        add(scene.createSatelliteView(), BorderLayout.EAST);
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -178,7 +180,8 @@ public final class RackInsideViewTopComponent extends TopComponent implements Ex
 
     @Override
     public void componentClosed() {
-        // TODO add custom code on component closing
+        scene.clear();
+        scene.removeAllListeners();
     }
     
     @Override
