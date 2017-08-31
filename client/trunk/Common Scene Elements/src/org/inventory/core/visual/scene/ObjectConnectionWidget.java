@@ -16,6 +16,7 @@
 
 package org.inventory.core.visual.scene;
 
+import java.awt.BasicStroke;
 import org.inventory.communications.core.LocalObjectLight;
 import org.netbeans.api.visual.model.ObjectState;
 import org.netbeans.api.visual.widget.Scene;
@@ -50,11 +51,17 @@ public class ObjectConnectionWidget extends SelectableConnectionWidget {
     @Override
     public void notifyStateChanged (ObjectState previousState, ObjectState state) {
         super.notifyStateChanged(previousState, state);
+
+        if (state.isSelected()) 
+            setStroke(new BasicStroke(3));
+        else if (previousState.isSelected())
+            setStroke(new BasicStroke(1));
         
         if (!highContrast) {
             labelWidget.setForeground (getScene().getLookFeel().getForeground (state));
             labelWidget.setBackground(getScene().getLookFeel().getBackground(state));
             labelWidget.setBorder(getScene().getLookFeel().getBorder (state));
+            
         } else {
             labelWidget.setForeground (HighContrastLookAndFeel.getInstance().getForeground (state));
             labelWidget.setBackground(HighContrastLookAndFeel.getInstance().getBackground(state));
