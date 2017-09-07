@@ -239,6 +239,20 @@ public interface BusinessEntityManager {
         throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException;
 
     /**
+     * Gets the first occurrence of a parent with a given class (according to the special and standard containment hierarchy)
+     * (for example "give me the parent of this port until you find the nearest rack")
+     * @param objectClassName Class of the object to get the parent from
+     * @param oid Id of the object to get the parent from
+     * @param objectToMatchClassName Class of the object that will limit the search. It can be a superclass, if you want to match many classes at once
+     * @return The the first occurrence of a parent with a given class. If no instance of that class is found, the child of Dummy Root related in this hierarchy will be returned
+     * @throws ObjectNotFoundException If the object to evaluate can not be found
+     * @throws MetadataObjectNotFoundException If any of the classes provided could not be found
+     * @throws ApplicationObjectNotFoundException If the object provided is not in the standard containment hierarchy
+     */
+    public RemoteBusinessObjectLight getFirstParentOfClass(String objectClassName, long oid, String objectToMatchClassName)
+        throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException;
+
+    /**
      * Gets the first parent of an object which matches the given class in the containment hierarchy
      * @param objectClass Object class
      * @param oid Object id

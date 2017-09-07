@@ -954,6 +954,20 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(ex.getMessage());
         }
     }
+    
+    @Override
+    public List<RemoteObjectLight> getChildrenOfClassLightRecursive(long parentOid, String parentClass, String classToFilter, int maxResults, String ipAddress, String sessionId) 
+        throws ServerSideException {
+        
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("getChildrenOfClassLightRecursive", ipAddress, sessionId);
+            return RemoteObjectLight.toRemoteObjectLightArray(bem.getChildrenOfClassLightRecursive(parentOid, parentClass,classToFilter, maxResults));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
 
     @Override
     public RemoteObject getObject(String objectClass, long oid, String ipAddress, String sessionId) throws ServerSideException{
@@ -1059,6 +1073,20 @@ public class WebserviceBean implements WebserviceBeanRemote {
             for (RemoteBusinessObjectLight remoteObject : bem.getParentsUntilFirstOfClass(objectClassName, oid, objectToMatchClassName))
                 remoteObjects.add(new RemoteObjectLight(remoteObject));
             return remoteObjects;
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public RemoteObjectLight getFirstParentOfClass(String objectClassName, 
+        long oid, String objectToMatchClassName, String ipAddress, String sessionId) throws ServerSideException {
+                
+        if (bem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("getLastParentUntilFirstOfClass", ipAddress, sessionId);
+            return new RemoteObjectLight(bem.getFirstParentOfClass(objectClassName, oid, objectToMatchClassName));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }

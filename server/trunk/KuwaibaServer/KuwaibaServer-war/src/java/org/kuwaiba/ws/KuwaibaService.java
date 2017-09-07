@@ -1813,6 +1813,38 @@ public class KuwaibaService {
             }
         }
     }
+    
+    /**
+     * Gets recursively all children of an object of a given class
+     * @param parentOid Parent whose children are requested
+     * @param parentClass Class name of the element we want the children from
+     * @param childrenClass The type of children we want to retrieve
+     * @param maxResults Max number of children to be returned. O for all
+     * @param sessionId Session token
+     * @return An array with the children objects
+     * @throws ServerSideException If any of the classes can not be found
+     *                             If parent object can not be found
+     *                             If the database objects can not be correctly mapped into serializable Java objects.
+     */
+    @WebMethod(operationName="getChildrenOfClassLightRecursive")
+    public List<RemoteObjectLight> getChildrenOfClassLightRecursive(
+        @WebParam(name="parentOid") long parentOid,
+        @WebParam(name="parentClass") String parentClass,
+        @WebParam(name="childrenClass") String childrenClass,
+        @WebParam(name="maxResults") int maxResults,
+        @WebParam(name="sessionId") String sessionId) throws ServerSideException {
+        try{
+            List<RemoteObjectLight> res = wsBean.getChildrenOfClassLightRecursive(parentOid, parentClass, childrenClass, maxResults, getIPAddress(), sessionId);
+            return res;
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getChildrenOfClassLightRecursive: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
 
      /**
      * Gets all children of an object of a given class
@@ -2042,6 +2074,36 @@ public class KuwaibaService {
             long oid, String objectToMatchClassName, String sessionId) throws ServerSideException {
         try{
             return wsBean.getParentsUntilFirstOfClass(objectClass, oid, objectToMatchClassName, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getParentsUntilFirstOfClass: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+
+    /**
+     * Gets the first occurrence of a parent with a given class (according to the special and standard containment hierarchy)
+     * (for example "give me the parent of this port until you find the nearest rack")
+     * @param objectClass Class of the object to get the parent from
+     * @param oid Id of the object to get the parent from
+     * @param objectToMatchClassName Class of the object that will limit the search. It can be a superclass, if you want to match many classes at once
+     * @param sessionId The session id token
+     * @return The the first occurrence of a parent with a given class. If no instance of that class is found, the child of Dummy Root related in this hierarchy will be returned
+     * @throws ServerSideException If the object to evaluate can not be found
+                                   If any of the classes provided could not be found
+                                   If the object provided is not in the standard containment hierarchy
+     */
+    @WebMethod(operationName = "getFirstParentOfClass")
+    public RemoteObjectLight getFirstParentOfClass(
+            @WebParam(name = "objectClass") String objectClass, 
+            @WebParam(name = "oid") long oid, 
+            @WebParam(name = "objectToMatchClassName") String objectToMatchClassName, 
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try{
+            return wsBean.getFirstParentOfClass(objectClass, oid, objectToMatchClassName, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;

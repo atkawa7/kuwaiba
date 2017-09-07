@@ -749,6 +749,40 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
+    public RemoteBusinessObjectLight getFirstParentOfClass(String objectClassName, long oid, String objectToMatchClassName)
+        throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException {
+        
+        try(Transaction tx = graphDb.beginTx()) {
+            Node objectNode = getInstanceOfClass(objectClassName, oid);
+            List<RemoteBusinessObjectLight> parents = new ArrayList<>();
+            while (true) {
+                Node parentNode = null;
+                if (objectNode.hasRelationship(RelTypes.CHILD_OF, Direction.OUTGOING))
+                    parentNode = objectNode.getSingleRelationship(RelTypes.CHILD_OF, Direction.OUTGOING).getEndNode();
+                
+                if (objectNode.hasRelationship(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING))
+                    parentNode = objectNode.getSingleRelationship(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).getEndNode();
+                              
+                
+                if (parentNode == null)
+                    throw new ApplicationObjectNotFoundException(String.format("Navigation tree root not found. Contact your administrator (%s, %s)", objectClassName, oid));
+                
+                Label label = DynamicLabel.label(Constants.LABEL_ROOT); //If the parent node is the dummy root, just return null
+                if (parentNode.hasLabel(label))
+                    return parents.get(parents.size() - 1);
+                else { 
+                    String parentNodeClass = Util.getClassName(parentNode);
+                    parents.add(Util.createRemoteObjectLightFromNode(parentNode));
+                    if (cm.isSubClass(objectToMatchClassName, parentNodeClass))
+                        return parents.get(parents.size() - 1);
+                    
+                    objectNode = parentNode;
+                }
+            }
+        }
+    }
+    
+    @Override
     public RemoteBusinessObject getParentOfClass(String objectClass, long oid, String parentClass) 
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         
