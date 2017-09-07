@@ -20,7 +20,9 @@ import java.awt.Point;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
@@ -288,21 +290,30 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
             
             List<LocalObjectLight> nodesToBeDeleted = new ArrayList<>(getNodes()); //We clone the existing nodes to synchronize the view, so saved nodes that are no longer listed as service resources are removed
                                                                                    //We assume that render(byte[]) was called before calling render(LocalObjectLight)
-
+            Map<Long, LocalObjectLight> equipmentByPort = new HashMap();
             //We will ignore all resources that are not GenericCommunicationsElement
             for (LocalObjectLight serviceResource : serviceResources) {
-                if (findWidget(serviceResource) == null && 
-                        com.isSubclassOf(serviceResource.getClassName(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT))
-                        addNode(serviceResource);
+                boolean isGenericCommunicationsElement = com.isSubclassOf(serviceResource.getClassName(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
                 
-                nodesToBeDeleted.remove(serviceResource);
+                if (isGenericCommunicationsElement) {
+                    if (findWidget(serviceResource) == null)
+                        addNode(serviceResource);
+                    
+                    nodesToBeDeleted.remove(serviceResource);
+                    
+                    List<LocalObjectLight> physicalPorts = com.getChildrenOfClassLightRecursive(serviceResource.getOid(), serviceResource.getClassName(), "GenericPhysicalPort");
+                    if (physicalPorts == null) 
+                        NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+
+                    for (LocalObjectLight physicalPort : physicalPorts)
+                        equipmentByPort.put(physicalPort.getOid(), serviceResource);
+                }
             }
             
             for (LocalObjectLight nodeToBeDeleted : nodesToBeDeleted) {
                 removeNodeWithEdges(nodeToBeDeleted);
                 validate();
-            }
-                        
+            }           
             //Once the nodes have been added, we retrieve the physical and logical (STMX) connections between them and ignore those that end in other elements
             for (LocalObjectLight aNode : getNodes()) {
                 List<LocalObjectLightList> physicalConnections = com.getPhysicalConnectionsInObject(aNode.getClassName(), aNode.getOid());
@@ -315,30 +326,25 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
                     for (LocalObjectLightList aConnection : physicalConnections) {
                         LocalObjectLight sourcePort = aConnection.get(0);
                         LocalObjectLight targetPort = aConnection.get(aConnection.size() - 1);
+                        
+                        LocalObjectLight sourceEquipment = aNode;
+                        LocalObjectLight targetEquipment = equipmentByPort.get(targetPort.getOid());
 
-                        List<LocalObjectLight> parentsUntilFirstOfClass = com.getParentsUntilFirstOfClass(targetPort.getClassName(), targetPort.getOid(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
-                        if (parentsUntilFirstOfClass == null)
-                            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
-                        else {
-                            LocalObjectLight sourceEquipment = aNode;
-                            LocalObjectLight targetEquipment = parentsUntilFirstOfClass.get(parentsUntilFirstOfClass.size() - 1);
+                        if (findWidget(targetEquipment) != null) {
+                            
+                            ObjectConnectionWidget connectionWidget = (ObjectConnectionWidget)findWidget(aConnection.get(1));
+                            if (connectionWidget == null) 
+                                connectionWidget = (ObjectConnectionWidget)findWidget(aConnection.get(aConnection.size() - 2));
 
-                            if (findWidget(targetEquipment) != null) {
+                            if (connectionWidget == null) {
+                                connectionWidget = (ObjectConnectionWidget)addEdge(aConnection.get(1));
+                                setEdgeSource(aConnection.get(1), sourceEquipment);
+                                setEdgeTarget(aConnection.get(1), targetEquipment);
+                            }
 
-                                ObjectConnectionWidget connectionWidget = (ObjectConnectionWidget)findWidget(aConnection.get(1));
-                                if (connectionWidget == null) 
-                                    connectionWidget = (ObjectConnectionWidget)findWidget(aConnection.get(aConnection.size() - 2));
-
-                                if (connectionWidget == null) {
-                                    connectionWidget = (ObjectConnectionWidget)addEdge(aConnection.get(1));
-                                    setEdgeSource(aConnection.get(1), sourceEquipment);
-                                    setEdgeTarget(aConnection.get(1), targetEquipment);
-                                }
-
-                                connectionWidget.getLabelWidget().setLabel(sourceEquipment.getName() + ":" + sourcePort.getName() + 
-                                            " ** " +targetEquipment.getName() + ":" + targetPort.getName());
-                            } //Else, we just ignore this connection trace
-                        }
+                            connectionWidget.getLabelWidget().setLabel(sourceEquipment.getName() + ":" + sourcePort.getName() + 
+                                        " ** " +targetEquipment.getName() + ":" + targetPort.getName());
+                        } //Else, we just ignore this connection trace
                     }
                     
                     //Now the logical connections
@@ -353,8 +359,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
                         }
                     }
                 }
-            }
-            
+            }            
             //Now we delete the connections to elements that are not in the view. Granted, this is a reprocess, but I prefer and save a few
             //calls to the server doing this at client-side only
             for (LocalObjectLight aConnection : new ArrayList<>(getEdges())) {
@@ -363,7 +368,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
             }
         }
     }
-
+    
     @Override
     public ConnectProvider getConnectProvider() { return null; }
 

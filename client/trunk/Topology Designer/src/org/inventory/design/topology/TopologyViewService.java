@@ -102,8 +102,20 @@ public class TopologyViewService {
             }
         } 
         else {
-            if (com.updateGeneralView(view.getId(), view.getName(), 
-                    view.getDescription(), scene.getAsXML(), scene.getBackgroundImage())) {
+            LocalObjectView theView = com.getGeneralView(view.getId());
+            if (theView == null) {
+                NotificationUtil.getInstance().showSimplePopup("Load view", NotificationUtil.ERROR_MESSAGE, com.getError());
+                return false;
+            }
+            String name = view.getName() != null ? view.getName().equals(theView.getName()) ? null : view.getName() : null;
+            String description = view.getDescription() != null ? view.getDescription().equals(theView.getDescription()) ? null : view.getDescription() : null;
+                        
+            if (com.updateGeneralView(
+                view.getId(), 
+                name, 
+                description, 
+                scene.getAsXML(), 
+                scene.getBackgroundImage())) {
                 TopologyViewConfigurationObject configObject = Lookup.getDefault().lookup(TopologyViewConfigurationObject.class);
                 
                 boolean savedNodes = saveNodesOfCurrentView();

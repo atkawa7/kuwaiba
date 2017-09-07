@@ -290,6 +290,29 @@ public class CommunicationsStub {
         }
     }
     
+    /**
+     * Gets recursively all children of an object of a given class
+     * @param oid Parent whose children are requested
+     * @param parentClassName Class name of the element we want the children from
+     * @param childrenClassName The type of children we want to retrieve
+     * @return An array with the children objects
+     */
+    public List<LocalObjectLight> getChildrenOfClassLightRecursive(long oid, String parentClassName, String childrenClassName) {
+        try{
+            List <RemoteObjectLight> children = service.getChildrenOfClassLightRecursive(oid, parentClassName, childrenClassName, -1, session.getSessionId());
+            List <LocalObjectLight> res = new ArrayList<>();
+
+            for (RemoteObjectLight rol : children){
+ 
+                res.add(new LocalObjectLight(rol.getOid(), rol.getName(), rol.getClassName()));
+            }
+            return res;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
     public List<LocalObjectLight> getObjectsOfClassLight(String className){
         try{
             List <RemoteObjectLight> instances = service.getObjectsOfClassLight(className, 0, this.session.getSessionId());
@@ -435,6 +458,24 @@ public class CommunicationsStub {
                 res.add(new LocalObjectLight(aParent.getOid(), aParent.getName(), aParent.getClassName()));
 
             return res;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Gets the first occurrence of a parent with a given class (according to the special and standard containment hierarchy)
+     * (for example "give me the parent of this port until you find the nearest rack")
+     * @param objectClass Class of the object to get the parent from
+     * @param objectId Id of the object to get the parent from
+     * @param objectToMatchClassName Class of the object that will limit the search. It can be a superclass, if you want to match many classes at once
+     * @return The the first occurrence of a parent with a given class. If no instance of that class is found, the child of Dummy Root related in this hierarchy will be returned
+     */
+    public LocalObjectLight getFirstParentOfClass(String objectClass, long objectId, String objectToMatchClassName) {
+        try {
+            RemoteObjectLight parent = service.getFirstParentOfClass(objectClass, objectId, objectToMatchClassName, session.getSessionId());
+            return new LocalObjectLight(parent.getOid(), parent.getName(), parent.getClassName());
         }catch(Exception ex){
             this.error = ex.getMessage();
             return null;

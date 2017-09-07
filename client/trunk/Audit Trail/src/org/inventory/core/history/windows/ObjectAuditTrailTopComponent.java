@@ -24,6 +24,8 @@ import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalApplicationLogEntry;
@@ -84,6 +86,7 @@ public class ObjectAuditTrailTopComponent extends TopComponent implements Export
         add(pnlScrollMain, BorderLayout.CENTER);
         Mode myMode = WindowManager.getDefault().findMode("bottomSlidingSide"); //NOI18N
         myMode.dockInto(this);
+        customTable();
     }
     
     @Override
@@ -191,5 +194,24 @@ public class ObjectAuditTrailTopComponent extends TopComponent implements Export
             return;
         }
         aTable.setModel(buildTableModel(entries));
+        customTable();
+    }
+    
+    private void customTable() {
+        TableModel tableModel = aTable.getModel();
+        
+        ETable table = aTable;
+            
+        if (table.getModel() instanceof DefaultTableModel)
+            table.setModel(tableModel);
+        else
+            table.setModel(tableModel);
+            
+        TableColumnModel columnModel = table.getColumnModel();
+            
+        for (int i = 0; i < tableModel.getColumnCount(); i += 1) {
+            if ("Old value".equals(tableModel.getColumnName(i)) || "New value".equals(tableModel.getColumnName(i)))                
+                columnModel.getColumn(i).setPreferredWidth(81);
+        }
     }
 }
