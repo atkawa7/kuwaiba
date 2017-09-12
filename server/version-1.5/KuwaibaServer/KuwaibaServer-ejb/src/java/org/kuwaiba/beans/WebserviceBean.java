@@ -693,12 +693,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("addPossibleChildren", ipAddress, sessionId);
-            ClassMetadata classMetadata = mem.getClass(parentClassId);
+            ClassMetadata classMetadata = parentClassId == -1 ? null : mem.getClass(parentClassId);
             mem.addPossibleChildren(parentClassId, possibleChildren);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
-                String.format("Added possible children to %s class", classMetadata.getName()));
+                String.format("Added possible children to %s", classMetadata == null ? "Navigation Tree Root" : classMetadata.getName()));
             
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -711,12 +711,14 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("addPossibleSpecialChildren", ipAddress, sessionId);
-            ClassMetadata classMetadata = mem.getClass(parentClassId);
+            ClassMetadata classMetadata = null;
+            if (parentClassId != -1)
+                classMetadata = mem.getClass(parentClassId);
             mem.addPossibleSpecialChildren(parentClassId, possibleSpecialChildren);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
-                String.format("Added possible special children to %s class", classMetadata.getName()));
+                String.format("Added possible special children to %s class", classMetadata != null ? classMetadata.getName() : "Navigation Tree Root"));
             
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -763,12 +765,14 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("removePossibleChildren", ipAddress, sessionId);
-            ClassMetadata classMetadata = mem.getClass(parentClassId);
+            ClassMetadata classMetadata = null;
+            if (parentClassId != -1)
+                classMetadata = mem.getClass(parentClassId);
             mem.removePossibleChildren(parentClassId, childrenToBeRemoved);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
-                String.format("Removed possible children from %s class", classMetadata.getName()));
+                String.format("Removed possible children from %s class", classMetadata != null ? classMetadata.getName() : "Navigation Tree Root"));
 
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -781,12 +785,15 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("removePossibleSpecialChildren", ipAddress, sessionId);
-            ClassMetadata classMetadata = mem.getClass(parentClassId);
+            ClassMetadata classMetadata = null;
+            if (parentClassId != -1)
+                classMetadata = mem.getClass(parentClassId);
+            
             mem.removePossibleSpecialChildren(parentClassId, specialChildrenToBeRemoved);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
-                String.format("Removed possible special children from %s class", classMetadata.getName()));
+                String.format("Removed possible special children from %s class", classMetadata != null ? classMetadata.getName() : "Navigation Tree Root"));
 
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
