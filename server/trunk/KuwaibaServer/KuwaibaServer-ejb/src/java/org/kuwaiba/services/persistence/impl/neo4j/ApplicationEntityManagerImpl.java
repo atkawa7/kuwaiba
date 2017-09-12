@@ -2241,7 +2241,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             environmentParameters.setVariable("RelTypes", RelTypes.class); //NOI18N
             environmentParameters.setVariable("scriptParameters", scriptParameters); //NOI18N
             try {
-                GroovyShell shell = new GroovyShell(environmentParameters);
+                GroovyShell shell = new GroovyShell(ApplicationEntityManager.class.getClassLoader(), environmentParameters);
                 Object theResult = shell.evaluate(script);
                 
                 if (theResult == null)
