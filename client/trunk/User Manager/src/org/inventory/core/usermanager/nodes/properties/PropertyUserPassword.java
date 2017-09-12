@@ -40,7 +40,7 @@ public class PropertyUserPassword extends PropertySupport.ReadWrite<String>{
     @Override
     public void setValue(String val) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         try {
-            this.user.firePropertyChange(LocalUserObject.PROPERTY_PASSWORD, "", val);
+            this.user.fireVetoablePropertyChange(LocalUserObject.PROPERTY_PASSWORD, "", val);
         } catch (PropertyVetoException ex) { }
     }
 
