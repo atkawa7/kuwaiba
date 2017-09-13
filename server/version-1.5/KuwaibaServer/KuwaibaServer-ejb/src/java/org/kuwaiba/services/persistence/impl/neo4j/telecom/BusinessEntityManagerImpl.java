@@ -655,7 +655,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             }
             if (objectNode.hasRelationship(Direction.OUTGOING, RelTypes.CHILD_OF_SPECIAL)){
                 Node parentNode = objectNode.getSingleRelationship(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).getEndNode();
-                return Util.createRemoteObjectLightFromNode(parentNode);
+                if (parentNode.hasRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING)) {
+                    return Util.createRemoteObjectLightFromNode(parentNode);
+                } else {
+                    // Use the dummy root like parent to services, contracts, projects pool...
+                    return new RemoteBusinessObject(-1L, Constants.NODE_DUMMYROOT, Constants.NODE_DUMMYROOT);
+                }
             }
             throw new InvalidArgumentException(String.format("The Parent of object with id %s cannot be found", oid));
         }
