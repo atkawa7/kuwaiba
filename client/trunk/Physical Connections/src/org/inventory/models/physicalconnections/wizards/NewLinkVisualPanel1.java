@@ -30,7 +30,6 @@ import org.inventory.communications.util.Constants;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public final class NewLinkVisualPanel1 extends JPanel {
-
     /**
      * Creates new form NewLinkVisualPanel1
      */

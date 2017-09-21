@@ -37,17 +37,24 @@ public final class NewLinkWizard {
     private ObjectNode bSide;
     private LocalObjectLight parent;
     private LocalObjectLight newConnection;
+    private List<LocalObjectLight> existintWireContainersList;
     
-    public NewLinkWizard(ObjectNode aSide, ObjectNode bSide, LocalObjectLight parent) {
+    public NewLinkWizard(ObjectNode aSide, ObjectNode bSide, LocalObjectLight parent, List<LocalObjectLight> existintWireContainersList) {
         this.aSide = aSide;
         this.bSide = bSide;
         this.parent = parent;
+        this.existintWireContainersList = existintWireContainersList;
     }
     
     public void show() {
         List<WizardDescriptor.Panel<WizardDescriptor>> panels = new ArrayList<>();
         NewLinkWizardPanel1 panel1 = new NewLinkWizardPanel1();
         NewLinkWizardPanel2 panel2 = new NewLinkWizardPanel2(aSide, bSide);
+        NewLinkWizardPanel0 panel0 = null;
+        if(!existintWireContainersList.isEmpty()){
+            panel0 = new NewLinkWizardPanel0(existintWireContainersList);
+            panels.add(panel0);
+        }
         panels.add(panel1);
         panels.add(panel2);
         String[] steps = new String[panels.size()];
@@ -71,9 +78,16 @@ public final class NewLinkWizard {
         if (DialogDisplayer.getDefault().notify(wiz) == WizardDescriptor.FINISH_OPTION) {
             LocalObjectLight selectedAEndpoint = panel2.getComponent().getSelectedAEndpoint();
             LocalObjectLight selectedBEndpoint = panel2.getComponent().getSelectedBEndpoint();
-            
+            LocalObjectLight selectedContainer = null;
+            if(panel0 != null){
+                if(!panel0.getComponent().noContainer()){
+                    selectedContainer = panel0.getComponent().getSelectedContainer();
+                }
+            }
             newConnection = CommunicationsStub.getInstance().createPhysicalConnection(selectedAEndpoint.getClassName(), selectedAEndpoint.getOid(),
-                    selectedBEndpoint.getClassName(), selectedBEndpoint.getOid(), parent.getClassName(), parent.getOid(),
+                    selectedBEndpoint.getClassName(), selectedBEndpoint.getOid(), 
+                    selectedContainer != null ? selectedContainer.getClassName() : parent.getClassName(), 
+                    selectedContainer != null ? selectedContainer.getOid() : parent.getOid(),
                     panel1.getComponent().getLinkName(), panel1.getComponent().getLinkClass().getClassName(),
                     panel1.getComponent().dontUseTemplate() || panel1.getComponent().getLinkTemplate() == null ? - 1 : panel1.getComponent().getLinkTemplate().getOid());
             
