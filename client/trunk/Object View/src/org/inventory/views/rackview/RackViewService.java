@@ -11,24 +11,39 @@
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
+ *
  */
 package org.inventory.views.rackview;
 
+import org.inventory.views.rackview.scene.RackViewScene;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.ResourceBundle;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalObjectLightList;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.views.rackview.scene.RackViewScene;
+import org.inventory.core.visual.scene.ObjectConnectionWidget;
+import org.inventory.views.rackview.widgets.EquipmentWidget;
+import org.inventory.views.rackview.widgets.NestedDeviceWidget;
+import org.inventory.views.rackview.widgets.PortWidget;
+import org.inventory.views.rackview.widgets.RackViewConnectionWidget;
+import org.inventory.views.rackview.widgets.RackWidget;
+import org.inventory.views.rackview.widgets.SelectableRackViewWidget;
+import org.netbeans.api.visual.widget.Widget;
 
 /**
- * Service for Rack view
+ * Service used to load data to render a rack view
+ * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class RackViewService {
+    //this need to be replace, the VirtualPort should be moved under GenericLogicalPort, 
+    //find a better place for the other classes under GenericBoard, should be GenericCommunitacionsBoard 
+    //to make a diference between the PowerBoards and the Communitacions Boards
+    private static final List<String> noVisibleDevices = Arrays.asList(new String [] {"PowerBoard", "VirtualPort", "ServiceInstance", "PowerPort", "Transceiver"});
     private final LocalObjectLight rackLight;
     private final RackViewScene scene;
     
@@ -37,134 +52,172 @@ public class RackViewService {
         this.scene = scene;
     }
     
-    public LocalObjectLight getRack() {
-        return rackLight;        
+    public void shownRack() {
+        LocalObject rack = CommunicationsStub.getInstance().getObjectInfo(
+            rackLight.getClassName(), rackLight.getOid());
+        if (rack == null) {
+            NotificationUtil.getInstance().showSimplePopup("Error", 
+                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+        } else {
+            Integer rackUnits = (Integer) rack.getAttribute(Constants.PROPERTY_RACK_UNITS);
+            if (rackUnits == null || rackUnits == 0) {
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, 
+                    String.format("Attribute %s in rack %s does not exist or is not set correctly", Constants.PROPERTY_RACK_UNITS, rack));
+                return;
+            }
+            Boolean ascending = (Boolean) rack.getAttribute(Constants.PROPERTY_RACK_UNITS_NUMBERING);
+            if (ascending == null) {
+                ascending = true;
+                NotificationUtil.getInstance().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, 
+                    "The rack unit sorting has not been set. Ascending is assumed");
+            } else
+                ascending = !ascending;
+            
+            scene.render(rack);
+            if (scene.getShowConnections()) {
+                Widget widget = scene.findWidget(rack);
+                if (widget instanceof RackWidget) {
+                    for (LocalObject equipment : ((RackWidget) widget).getLocalEquipment())
+                        addNestedDevices(equipment);
+                    createConnections(CommunicationsStub.getInstance().getPhysicalConnectionsInObject(rack.getClassName(), rack.getOid()));
+                }
+            }
+            ((RackWidget) scene.findWidget(rack)).resizeRackWidget();
+            scene.repaint();
+        }
     }
     
-    public void buildRackView() throws Exception {
-        scene.clear();
-        LocalObject rack = CommunicationsStub.getInstance().getObjectInfo(rackLight.getClassName(), rackLight.getOid());
-        
-        if (rack == null)
-            throw new Exception(CommunicationsStub.getInstance().getError());
-        
-        scene.render(rack);
-        
-        Integer rackUnits = (Integer) rack.getAttribute(Constants.PROPERTY_RACK_UNITS);
-        if (rackUnits == null || rackUnits == 0)
-            throw new Exception(String.format("Attribute %s in rack %s does not exist or is not set correctly", Constants.PROPERTY_RACK_UNITS, rack));
+    public void addNestedDevices(LocalObjectLight parent) {
+        Widget parentWidget = scene.findWidget(parent);
                 
-        Boolean ascending = (Boolean) rack.getAttribute(Constants.PROPERTY_RACK_UNITS_NUMBERING);
-        if (ascending == null) {
-            ascending = true;
-            NotificationUtil.getInstance().showSimplePopup("Warning", 
-                NotificationUtil.INFO_MESSAGE, String.format("The rack unit sorting has not been set. Ascending is assumed"));
-        }else 
-            ascending = !ascending;
+        if (parentWidget == null)
+            return;
         
-        List<LocalObjectLight> devicesLight = CommunicationsStub.getInstance().getObjectChildren(rack.getOid(), rack.getClassName());
-        
-        if (devicesLight == null)
-            throw new Exception(CommunicationsStub.getInstance().getError());
-        
-        int rackUnitsCounter = 0;
-        
-        List<LocalObject> devices = new ArrayList();
-        
-        for (LocalObjectLight deviceLight : devicesLight) {
+        if (parentWidget instanceof NestedDeviceWidget) {
             
-            LocalObject device = CommunicationsStub.getInstance().getObjectInfo(deviceLight.getClassName(), deviceLight.getOid());
-            if (device == null)
-                throw new Exception(CommunicationsStub.getInstance().getError());
-            
-            Integer deviceRackUnits = (Integer) device.getAttribute(Constants.PROPERTY_RACK_UNITS);
-            Integer position = (Integer) device.getAttribute(Constants.PROPERTY_POSITION);
-            
-            if (deviceRackUnits == null || position == null) {
-                throw new Exception(String.format(
-                    "Attribute %s or %s does not exist or is not set correctly in element %s", 
-                    Constants.PROPERTY_RACK_UNITS, 
-                    Constants.PROPERTY_POSITION, device.toString()));
+            List<LocalObjectLight> children = CommunicationsStub.getInstance()
+                .getObjectChildren(parent.getOid(), parent.getClassName());
+
+            if (children == null) {
+                NotificationUtil.getInstance().showSimplePopup("Error", 
+                    NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                return;
             }
             
-            if (deviceRackUnits < 1 || position < 1)
-                continue;
-            
-            if (position == rackUnits.intValue() && deviceRackUnits > 1)
-                throw new Exception(String.format("The device %s in the position %s cannot have more than one rack unit", device.toString(), position));
-            
-            devices.add(device);
-            rackUnitsCounter += deviceRackUnits;
+            for (LocalObjectLight child : children) {
+                if (noVisibleDevices.contains(child.getClassName()))
+                    continue;
+                Widget deviceWidget = scene.addNode(child);
+                ((NestedDeviceWidget) parentWidget).addChildDevice((SelectableRackViewWidget) deviceWidget);
+                scene.validate();
+                addNestedDevices(child);
+            }
         }
-        if (rackUnitsCounter > rackUnits) {
-            throw new Exception(String.format(
-                "The sum of the sizes of the elements (%s) exceeds the rack capacity (%s)", 
-                rackUnitsCounter, 
-                rackUnits));
-        }
-        List<LocalObject> emptyModules = new ArrayList();
-                
-        for (int i = 0; i < rackUnits; i += 1) {
-            Long id = -1L * (i + 1);
-            emptyModules.add(new LocalObject("", id, new String[0], new Object[0]));
-        }
-        scene.createNumberingInRack(ascending, rackUnits);
-        
-        for (LocalObject emptyModule : emptyModules) {
-            if (scene.findWidget(emptyModule) != null)
-                scene.removeNode(emptyModule);
-            
-            scene.addNode(emptyModule);
-        }
-        int [] units = new int[rackUnits];        
-        for (int i = 0; i <= rackUnits; i += 1)
-            units[0] = 0; // rack module free
-        
-        for (LocalObject device : devices) {
-            Integer U = (Integer) device.getAttribute(Constants.PROPERTY_RACK_UNITS);
-            Integer position = (Integer) device.getAttribute(Constants.PROPERTY_POSITION);
-            
-            int drawPosition = position;
-            if (ascending)
-                drawPosition -= 1;
-            else
-                drawPosition = rackUnits - position - (U - 1);
-            
-            if (drawPosition + (U - 1) < rackUnits) {
-                for (int i = drawPosition; i <= drawPosition + (U - 1); i += 1) {
-                    if (units[i] == 0)
-                        units[i] = 1; // rack module used
+    }    
+    
+    public void createConnections(List<LocalObjectLightList> connections) {
+        List<LocalObjectLight> addedConnections = new ArrayList<>();
+        for (LocalObjectLightList connection : connections) {
+            ObjectConnectionWidget lastConnectionWidget = null;
+            LocalObjectLight aSide = null;
+            LocalObjectLight bSide = null;        
+            LocalObjectLight linkLight = null;
+            for (LocalObjectLight object : connection) {
+                if(CommunicationsStub.getInstance().isSubclassOf(object.getClassName(), Constants.CLASS_GENERICPORT)){
+                    if(aSide == null)
+                        aSide = object;
                     else
-                        throw new Exception(String.format("The device %s in the position %s cannot be located inside a unit in use", device.toString(), position));
+                        bSide = object;
                 }
-            } else
-                throw new Exception(String.format("The device %s in the position %s cannot have more than %s rack units", device.toString(), position, rackUnits - drawPosition));
-            
-            if (scene.findWidget(device) != null)
-                scene.removeNode(device);
-            
-            scene.addNode(device);
+                else
+                    linkLight = object;
+            }
+            Widget aSideNode = scene.findWidget(aSide);
+            Widget bSideNode = scene.findWidget(bSide);            
+            //if the connection has both sides
+            if(aSideNode != null && bSideNode != null){
+                if (linkLight == null)
+                    continue;
+                
+                LocalObject link = CommunicationsStub.getInstance().getObjectInfo(linkLight.getClassName(), linkLight.getOid());
+                if(link != null){
+                    if(!addedConnections.contains(link)) {
+                        //The background for the connected ports is set to red.
+                        ((PortWidget) bSideNode).setFree(false);
+                        ((PortWidget) aSideNode).setFree(false);
+
+                        Widget findWidget = scene.findWidget(link);
+
+                        if(findWidget != null)
+                            scene.removeEdge(link);
+
+                        lastConnectionWidget = (ObjectConnectionWidget)scene.addEdge(link);
+                        lastConnectionWidget.getLabelWidget().setLabel( 
+                                (aSide.getName() == null ? "" : aSide.getName()) + " ** " + (bSide.getName() == null ? "" : bSide.getName()));
+                        scene.setEdgeSource(link, aSide);
+                        scene.setEdgeTarget(link, bSide);
+                        addedConnections.add(link);
+                    }
+                }
+            } else {
+                if (aSideNode != null && linkLight != null)
+                    ((PortWidget) aSideNode).setFree(false);
+                
+                if (bSideNode != null && linkLight != null)
+                    ((PortWidget) bSideNode).setFree(false);
+            }
         }
-        String lblName = ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_RACK_NAME"); //NOI18N
-        String lblSerialNumber = ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_RACK_SERIAL_NUMBER"); //NOI18N
-        String lblVendor = ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_RACK_VENDOR"); //NOI18N
-        String lblRackNumbering = ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_RACK_NUMBERING"); //NOI18N
-        
-        String lblAscending = ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_RACK_NUMBERING_ASCENDING"); //NOI18N
-        String lblDescending = ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_RACK_NUMBERING_DESCENDING"); //NOI18N
-        
-        String lblUsagePercentage = ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_RACK_USAGE_PERCENTAGE"); //NOI18N
-        
-        String name = rack.getName();
-        String serialNumber = rack.getAttribute("serialNumber") == null ? "" : rack.getAttribute("serialNumber").toString(); //NOI18N
-        String vendor = rack.getAttribute("vendor") == null ? "" : rack.getAttribute("vendor").toString(); //NOI18N
-        String rackNumbering = ascending ? lblAscending : lblDescending;
-        String usagePercentage = "" + Math.round((float)rackUnitsCounter * 100/rackUnits) +"% (" + rackUnitsCounter + "U/" + rackUnits + "U)";
-        
-        scene.addRackInfoLabel(String.format("%s: %s", lblName, name), false);
-        scene.addRackInfoLabel(String.format("%s: %s", lblSerialNumber, serialNumber), false);
-        scene.addRackInfoLabel(String.format("%s: %s", lblVendor, vendor), false);
-        scene.addRackInfoLabel(String.format("%s: %s", lblRackNumbering, rackNumbering), false);
-        scene.addRackInfoLabel(String.format("%s: %s", lblUsagePercentage, usagePercentage), true);
+        scene.validate();
+        scene.repaint();
+    }
+    
+    public List<List<LocalObjectLight>> getRackTable() {
+        List<LocalObjectLight> ports = new ArrayList();
+        for (LocalObjectLight node : scene.getNodes()) {
+            if (scene.findWidget(node) instanceof PortWidget)
+                ports.add(node);
+        }        
+        List<List<LocalObjectLight>> result = new ArrayList();
+                
+        while (!ports.isEmpty()) {
+            LocalObjectLight port = ports.get(0);
+            
+            LocalObjectLight[] edges = scene.findNodeEdges(port, true, true).toArray(new LocalObjectLight[] {});
+            if (edges.length == 1) {
+                LocalObjectLight edge = edges[0];
+                
+                RackViewConnectionWidget conn = (RackViewConnectionWidget) scene.findWidget(edge);
+                PortWidget sourcePort = (PortWidget) conn.getSourceAnchor().getRelatedWidget();
+                PortWidget targetPort = (PortWidget) conn.getTargetAnchor().getRelatedWidget();
+                
+                NestedDevice sourceEquipment = sourcePort;
+                while (sourceEquipment.getParent() != null)
+                    sourceEquipment = sourceEquipment.getParent();
+                
+                NestedDevice targetEquipment = targetPort;
+                while (targetEquipment.getParent() != null)
+                    targetEquipment = targetEquipment.getParent();
+                
+                EquipmentWidget sourceDevice = (EquipmentWidget) sourceEquipment;
+                EquipmentWidget targetDevice = (EquipmentWidget) targetEquipment;
+                
+                LocalObjectLight sourcePortObj = sourcePort.getLookup().lookup(LocalObjectLight.class);
+                LocalObjectLight targetPortObj = targetPort.getLookup().lookup(LocalObjectLight.class);
+                
+                List<LocalObjectLight> row = new ArrayList();
+                row.add(sourceDevice.getLookup().lookup(LocalObject.class));
+                row.add(sourcePortObj);
+                row.add(targetDevice.getLookup().lookup(LocalObject.class));
+                row.add(targetPortObj);
+                
+                ports.remove(sourcePortObj);
+                ports.remove(targetPortObj);
+                
+                result.add(row);
+            } else {
+                ports.remove(port);
+            }
+        }
+        return result;
     }
 }

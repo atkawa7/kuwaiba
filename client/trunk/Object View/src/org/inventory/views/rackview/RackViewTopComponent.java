@@ -11,50 +11,55 @@
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
- * 
+ *
  */
 package org.inventory.views.rackview;
 
+import org.inventory.views.rackview.scene.RackViewScene;
+import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.JComponent;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.behaviors.Refreshable;
-import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.visual.export.ExportScenePanel;
 import org.inventory.core.visual.export.filters.ImageFilter;
 import org.inventory.core.visual.export.filters.SceneExportFilter;
-import org.inventory.views.rackview.scene.RackViewScene;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
-import org.openide.explorer.ExplorerManager;
 import org.openide.windows.TopComponent;
-import org.openide.util.NbBundle.Messages;
+import org.openide.windows.WindowManager;
 
 /**
- * Top component for Rack view
- * Top component which displays something.
+ * TopComponent used to show a simple rack view or an inside rack view
+ * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-@Messages({
-    "CTL_RackViewTopComponent=Rack View",
-    "HINT_RackViewTopComponent=Rack View"
-})
-public final class RackViewTopComponent extends TopComponent implements ExplorerManager.Provider, ActionListener, Refreshable {
-    private ExplorerManager em;
-    private RackViewService service;
+public final class RackViewTopComponent extends TopComponent implements ActionListener, Refreshable {
     private RackViewScene scene;
-    private LocalObjectLight currentRack;
+    private LocalObjectLight rack;
+    private RackViewService service;
+    private JComponent satelliteView;
     
     public RackViewTopComponent(LocalObjectLight rack) {
-        this.currentRack = rack;
-        initComponents();
+        this();
+        this.rack = rack;
         initCustomComponents();
-        setName(Bundle.CTL_RackViewTopComponent());
-        setToolTipText(Bundle.HINT_RackViewTopComponent());
+        btnSelect.setEnabled(false);
+        btnConnect.setEnabled(false);
+        btnRackTableView.setEnabled(false);
+        
+        btnSelect.setSelected(true);
+        setName("Rack View to " + rack.toString());
+    }
+
+    private RackViewTopComponent() {
+        initComponents();
     }
     
     @Override
     protected String preferredID() {
-        return "RackViewTopComponent_" + service.getRack().getOid(); //NOI18N
+        return "RackViewTopComponent_" + rack.getOid(); //NOI18N
     }
 
     @Override
@@ -63,16 +68,15 @@ public final class RackViewTopComponent extends TopComponent implements Explorer
     }
     
     private void initCustomComponents() {
-        em = new ExplorerManager();
-        
-        scene = new RackViewScene();
-        scene.addChangeListener(this);
+        scene = new RackViewScene(rack);
+        scene.addChangeListener(this);        
                 
         associateLookup(scene.getLookup());
         pnlMainScrollPanel.setViewportView(scene.createView());
-        
-        service = new RackViewService(scene, currentRack);                
+                        
+        service = new RackViewService(scene, rack);                 
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -81,12 +85,20 @@ public final class RackViewTopComponent extends TopComponent implements Explorer
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        pnlMainScrollPanel = new javax.swing.JScrollPane();
         toolBarMain = new javax.swing.JToolBar();
         btnExport = new javax.swing.JButton();
+        jSeparator1 = new javax.swing.JToolBar.Separator();
+        btnShowConnections = new javax.swing.JToggleButton();
+        jSeparator2 = new javax.swing.JToolBar.Separator();
+        btnSelect = new javax.swing.JToggleButton();
+        btnConnect = new javax.swing.JToggleButton();
+        btnRackTableView = new javax.swing.JButton();
+        jSeparator3 = new javax.swing.JToolBar.Separator();
         btnRefresh = new javax.swing.JButton();
-        pnlMainScrollPanel = new javax.swing.JScrollPane();
 
         setLayout(new java.awt.BorderLayout());
+        add(pnlMainScrollPanel, java.awt.BorderLayout.CENTER);
 
         toolBarMain.setRollover(true);
         toolBarMain.setMaximumSize(new java.awt.Dimension(392, 38));
@@ -105,6 +117,61 @@ public final class RackViewTopComponent extends TopComponent implements Explorer
             }
         });
         toolBarMain.add(btnExport);
+        toolBarMain.add(jSeparator1);
+
+        btnShowConnections.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/rackview/res/show_connection.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnShowConnections, org.openide.util.NbBundle.getMessage(RackViewTopComponent.class, "RackViewTopComponent.btnShowConnections.text")); // NOI18N
+        btnShowConnections.setToolTipText(org.openide.util.NbBundle.getMessage(RackViewTopComponent.class, "RackViewTopComponent.btnShowConnections.toolTipText")); // NOI18N
+        btnShowConnections.setFocusable(false);
+        btnShowConnections.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnShowConnections.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnShowConnections.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnShowConnectionsMouseClicked(evt);
+            }
+        });
+        toolBarMain.add(btnShowConnections);
+        toolBarMain.add(jSeparator2);
+
+        btnSelect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/rackview/res/select.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnSelect, org.openide.util.NbBundle.getMessage(RackViewTopComponent.class, "RackViewTopComponent.btnSelect.text")); // NOI18N
+        btnSelect.setToolTipText(org.openide.util.NbBundle.getMessage(RackViewTopComponent.class, "RackViewTopComponent.btnSelect.toolTipText")); // NOI18N
+        btnSelect.setFocusable(false);
+        btnSelect.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSelect.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnSelect.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnSelectMouseClicked(evt);
+            }
+        });
+        toolBarMain.add(btnSelect);
+
+        btnConnect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/rackview/res/connect.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnConnect, org.openide.util.NbBundle.getMessage(RackViewTopComponent.class, "RackViewTopComponent.btnConnect.text")); // NOI18N
+        btnConnect.setToolTipText(org.openide.util.NbBundle.getMessage(RackViewTopComponent.class, "RackViewTopComponent.btnConnect.toolTipText")); // NOI18N
+        btnConnect.setFocusable(false);
+        btnConnect.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnConnect.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnConnect.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnConnectMouseClicked(evt);
+            }
+        });
+        toolBarMain.add(btnConnect);
+
+        btnRackTableView.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/rackview/res/show_table.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnRackTableView, org.openide.util.NbBundle.getMessage(RackViewTopComponent.class, "RackViewTopComponent.btnRackTableView.text")); // NOI18N
+        btnRackTableView.setToolTipText(org.openide.util.NbBundle.getMessage(RackViewTopComponent.class, "RackViewTopComponent.btnRackTableView.toolTipText")); // NOI18N
+        btnRackTableView.setFocusable(false);
+        btnRackTableView.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnRackTableView.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnRackTableView.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnRackTableViewMouseClicked(evt);
+            }
+        });
+        toolBarMain.add(btnRackTableView);
+        toolBarMain.add(jSeparator3);
 
         btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/rackview/res/refresh.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnRefresh, org.openide.util.NbBundle.getMessage(RackViewTopComponent.class, "RackViewTopComponent.btnRefresh.text")); // NOI18N
@@ -120,56 +187,119 @@ public final class RackViewTopComponent extends TopComponent implements Explorer
         toolBarMain.add(btnRefresh);
 
         add(toolBarMain, java.awt.BorderLayout.PAGE_START);
-        add(pnlMainScrollPanel, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnRefreshMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRefreshMouseClicked
-        try {
-            scene.clear();
-            service.buildRackView();
-        } catch (Exception ex) {
-            scene.clear();
-            NotificationUtil.getInstance().showSimplePopup("Error", 
-                NotificationUtil.ERROR_MESSAGE, ex.getMessage());
-        }
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        scene.clear();
+        service.shownRack();
+        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_btnRefreshMouseClicked
 
     private void btnExportMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnExportMouseClicked
         ExportScenePanel exportPanel = new ExportScenePanel(
             new SceneExportFilter[]{ImageFilter.getInstance()}, 
-            scene, currentRack.toString());
-        
+            scene, rack.toString());
+                
         DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export options",true, exportPanel);
         DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
     }//GEN-LAST:event_btnExportMouseClicked
 
+    private void btnRackTableViewMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRackTableViewMouseClicked
+        if (!btnRackTableView.isEnabled())
+            return;
+        
+        RackTableViewTopComponent rackTable = ((RackTableViewTopComponent) WindowManager.
+            getDefault().findTopComponent("RackTableViewTopComponent_" + rack.getOid())); //NOI18N
+
+        if (rackTable == null) {
+            rackTable = new RackTableViewTopComponent(rack, service);
+            rackTable.open();
+        } else {
+            if (rackTable.isOpened())
+                rackTable.requestAttention(true);
+            else { //Even after closed, the TCs (even the no-singletons) continue to exist in the NBP's PersistenceManager registry, 
+                   //so we will reuse the instance, refreshing the vierw first
+                rackTable.refresh();
+                rackTable.open();
+            }
+        }
+        rackTable.requestActive();
+    }//GEN-LAST:event_btnRackTableViewMouseClicked
+
+    private void btnShowConnectionsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnShowConnectionsMouseClicked
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        if (satelliteView == null)
+            satelliteView = scene.createSatelliteView();
+        
+        if (isAncestorOf(satelliteView)) {
+            scene.setShowConnections(false);
+            scene.clear();
+            service.shownRack();
+            remove(satelliteView);
+            
+            scene.setActiveTool(RackViewScene.ACTION_SELECT);
+            btnSelect.setSelected(true);        
+            btnConnect.setSelected(false);
+            btnShowConnections.setToolTipText("Show Connections in Rack");
+            btnSelect.setEnabled(false);
+            btnConnect.setEnabled(false);
+            btnRackTableView.setEnabled(false);
+        } else {
+            add(satelliteView, BorderLayout.EAST);
+            scene.setShowConnections(true);            
+            scene.clear();
+            service.shownRack(); 
+            
+            btnShowConnections.setToolTipText("Hide Connections in Rack");
+            btnSelect.setEnabled(true);
+            btnConnect.setEnabled(true);
+            btnRackTableView.setEnabled(true);
+        }
+        revalidate();
+        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_btnShowConnectionsMouseClicked
+
+    private void btnConnectMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnConnectMouseClicked
+        if (!btnConnect.isEnabled())
+            return;
+        
+        btnSelect.setSelected(false);
+        btnConnect.setSelected(true);
+        scene.setActiveTool(RackViewScene.ACTION_CONNECT);
+    }//GEN-LAST:event_btnConnectMouseClicked
+
+    private void btnSelectMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSelectMouseClicked
+        if (!btnSelect.isEnabled())
+            return;
+        btnSelect.setSelected(true);        
+        btnConnect.setSelected(false);
+        scene.setActiveTool(RackViewScene.ACTION_SELECT);
+    }//GEN-LAST:event_btnSelectMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JToggleButton btnConnect;
     private javax.swing.JButton btnExport;
+    private javax.swing.JButton btnRackTableView;
     private javax.swing.JButton btnRefresh;
+    private javax.swing.JToggleButton btnSelect;
+    private javax.swing.JToggleButton btnShowConnections;
+    private javax.swing.JToolBar.Separator jSeparator1;
+    private javax.swing.JToolBar.Separator jSeparator2;
+    private javax.swing.JToolBar.Separator jSeparator3;
     private javax.swing.JScrollPane pnlMainScrollPanel;
     private javax.swing.JToolBar toolBarMain;
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
-        try {
-            service.buildRackView();
-        } catch (Exception ex) {
-            scene.clear();
-            NotificationUtil.getInstance().showSimplePopup("Error", 
-                NotificationUtil.ERROR_MESSAGE, ex.getMessage());
-        }
+        service.shownRack();        
     }
 
     @Override
     public void componentClosed() {
-        // TODO add custom code on component closing
+        scene.clear();
     }
-    
-    @Override
-    public String getDisplayName() {
-        return String.format("Rack View for %s", service.getRack().getName());
-    }
-        
+
     void writeProperties(java.util.Properties p) {
         // better to version settings since initial version as advocated at
         // http://wiki.apidesign.org/wiki/PropertyFiles
@@ -184,11 +314,10 @@ public final class RackViewTopComponent extends TopComponent implements Explorer
 
     @Override
     public void actionPerformed(ActionEvent e) {
-    }
-
-    @Override
-    public ExplorerManager getExplorerManager() {
-        return em;
+        if (e.getID() == RackViewScene.SCENE_CHANGE) {
+            scene.clear();
+            service.shownRack();
+        }
     }
 
     @Override

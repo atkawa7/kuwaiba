@@ -18,7 +18,6 @@ package org.inventory.navigation.special.relationships;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
-import org.inventory.navigation.special.relationships.nodes.RelationshipNode;
 import org.inventory.navigation.special.relationships.nodes.SpecialRelatedObjectNode;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;

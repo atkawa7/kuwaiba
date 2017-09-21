@@ -11,194 +11,71 @@
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
+ *
  */
 package org.inventory.views.rackview.scene;
 
-import java.awt.Color;
-import java.awt.Dimension;
+import java.awt.BasicStroke;
 import java.awt.Point;
+import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.visual.scene.AbstractScene;
-import org.inventory.core.visual.scene.SelectableNodeWidget;
+import org.inventory.models.physicalconnections.wizards.NewLinkWizard;
+import org.inventory.navigation.navigationtree.nodes.ObjectNode;
+import org.inventory.views.rackview.widgets.EquipmentWidget;
+import org.inventory.views.rackview.widgets.NestedDeviceWidget;
+import org.inventory.views.rackview.widgets.PortWidget;
+import org.inventory.views.rackview.widgets.RackViewConnectionWidget;
+import org.inventory.views.rackview.widgets.RackWidget;
+import org.inventory.views.rackview.widgets.RackWidgetWrapper;
+import org.inventory.views.rackview.widgets.actions.ChangePositionAction;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
-import org.netbeans.api.visual.border.BorderFactory;
-import org.netbeans.api.visual.layout.LayoutFactory;
-import org.netbeans.api.visual.model.ObjectState;
-import org.netbeans.api.visual.widget.LabelWidget;
+import org.netbeans.api.visual.action.ConnectorState;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
  * Scene for Rack view, shows the front view of the rack
+ * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class RackViewScene extends AbstractScene<LocalObject, LocalObject> {
-    public static final int STANDARD_RACK_WIDTH = 300;
-    public static final int RACK_UNIT_IN_PX = 35;
+public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLight> {
+    private boolean showConnections = false;
+    private LocalObjectLight rack;
     
-    public static final int RACK_Y_OFFSET = 5;
+    private final ChangePositionAction changePositionAction = new ChangePositionAction();
     
-    private LayerWidget numberingInRackLayer;
-    private LayerWidget rackLayer;
-    private LayerWidget deviceLayer;
-    private LayerWidget infoLayer;
-    
-    private boolean ascending = true;
-    private int rackUnits;
-    
-    private final Color boxColor = new Color(128, 128, 128);
-    
-    public RackViewScene() {
+    public RackViewScene(LocalObjectLight rack) {
+        this.rack = rack;
         getActions().addAction(ActionFactory.createZoomAction());
-        getInputBindings ().setZoomActionModifiers(0); //No keystroke combinations
+        getInputBindings().setZoomActionModifiers(0); //No keystroke combinations
         getActions().addAction(ActionFactory.createPanAction());
-                
         setActiveTool(ACTION_SELECT);
         initSelectionListener();
-    }
         
-    private void buildScene(LocalObject rack) {
-        int margin = 50;
-        
-        Widget topWidget = new Widget(this);        
-        topWidget.setPreferredSize(new Dimension(margin, margin));
-        addChild(topWidget);
-        
-        Widget middleWidget = new Widget(this);
-        middleWidget.setLayout(LayoutFactory.createHorizontalFlowLayout());
-        addChild(middleWidget);
-        
-        Widget leftWidget = new Widget(this);
-        leftWidget.setPreferredSize(new Dimension(margin, margin));
-        
-        Widget centerWidget = new Widget(this);
-        centerWidget.setLayout(LayoutFactory.createHorizontalFlowLayout());
-                
-        Widget rightWidget = new Widget(this);
-        rightWidget.setPreferredSize(new Dimension(margin, margin));
-        
-        middleWidget.addChild(leftWidget);
-        middleWidget.addChild(centerWidget);
-        middleWidget.addChild(rightWidget);
-        
-        Widget bottomWidget = new Widget(this);
-        bottomWidget.setPreferredSize(new Dimension(margin, margin));
-        addChild(bottomWidget);
-        
-        buildBox(rack, centerWidget);
-        
-        Widget infoWidget = new Widget(this);
-        infoWidget.setLayout(LayoutFactory.createVerticalFlowLayout());
-                
-        centerWidget.addChild(infoWidget);
-        infoWidget.addChild(infoLayer);
-        
-        validate();
+        nodeLayer = new LayerWidget(this);
+        interactionLayer = new LayerWidget(this);
+        addChild(nodeLayer);
+        addChild(interactionLayer);
     }
     
-    private void buildBox(LocalObject rack, Widget centerWidget) {
-        Widget verticalBoxWidget = new Widget(this);
-        verticalBoxWidget.setLayout(LayoutFactory.createVerticalFlowLayout());
-        
-        SelectableDeviceWidget topBoxWidget = new SelectableDeviceWidget(this, rack);
-        topBoxWidget.createActions(AbstractScene.ACTION_SELECT);
-        topBoxWidget.getActions(ACTION_SELECT).addAction(createSelectAction());
-        topBoxWidget.setBackground(boxColor);
-        topBoxWidget.setPreferredSize(new Dimension(39, 39));
-        topBoxWidget.setOpaque(true);
-        topBoxWidget.setLayout(LayoutFactory.createVerticalFlowLayout(LayoutFactory.SerialAlignment.CENTER, 0));
-        
-        LabelWidget lblDeviceName = new LabelWidget(this, rack.toString());
-        lblDeviceName.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
-        lblDeviceName.setForeground(new Color(245, 245, 245));
-        
-        topBoxWidget.addChild(lblDeviceName);
-        
-        Widget bottomBoxWidget = new Widget(this);
-        bottomBoxWidget.setBackground(boxColor);
-        bottomBoxWidget.setPreferredSize(new Dimension(39, 39));
-        bottomBoxWidget.setOpaque(true);
-        
-        Widget horizontalBoxWidget = new Widget(this);
-        horizontalBoxWidget.setLayout(LayoutFactory.createHorizontalFlowLayout());
-        
-        Widget numberingInRackWidget = new Widget(this);
-        numberingInRackWidget.setLayout(LayoutFactory.createVerticalFlowLayout());
-        numberingInRackWidget.setBackground(boxColor);
-        numberingInRackWidget.setOpaque(true);
-        numberingInRackWidget.addChild(numberingInRackLayer);
-        horizontalBoxWidget.addChild(numberingInRackWidget);
-        
-        Widget rackWidget = new Widget(this);
-        rackWidget.setLayout(LayoutFactory.createAbsoluteLayout());
-        rackWidget.setBackground(boxColor);
-        rackWidget.setOpaque(true);
-                
-        rackWidget.addChild(rackLayer);
-        rackWidget.addChild(deviceLayer);
-        
-        horizontalBoxWidget.addChild(rackWidget);
-                
-        Widget rightSideBoxWidget = new Widget(this);
-        rightSideBoxWidget.setPreferredSize(new Dimension(39, 39));
-        rightSideBoxWidget.setBackground(boxColor);
-        rightSideBoxWidget.setOpaque(true);
-        horizontalBoxWidget.addChild(rightSideBoxWidget);
-        
-        verticalBoxWidget.addChild(topBoxWidget);
-        verticalBoxWidget.addChild(horizontalBoxWidget);
-        verticalBoxWidget.addChild(bottomBoxWidget);
-        
-        centerWidget.addChild(verticalBoxWidget);        
+    public LocalObjectLight getRack() {
+        return rack;
     }
     
-    @Override
-    public void clear() {
-        removeChildren();
-        validate();
+    public boolean getShowConnections() {
+        return showConnections;
     }
     
-    public void createNumberingInRack(final Boolean ascending, final int rackUnits) {
-        this.ascending = ascending;
-        this.rackUnits = rackUnits;
-        
-        int U = ascending ? 1 : rackUnits;
-                
-        while (ascending ? U <= rackUnits : U >= 1) {
-            
-            Widget widget = new Widget(this);
-            widget.setPreferredSize(new Dimension(39, RackViewScene.RACK_UNIT_IN_PX));
-                        
-            widget.setLayout(LayoutFactory.createVerticalFlowLayout(LayoutFactory.SerialAlignment.CENTER, 0));
-            
-            LabelWidget lblU = new LabelWidget(this, Integer.toString(U));
-            lblU.setForeground(new Color(245, 245, 245));
-            lblU.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
-            
-            widget.addChild(lblU);
-            
-            numberingInRackLayer.addChild(widget);
-                        
-            U = ascending ? U + 1 : U - 1;                        
-        }
-        validate();
+    public void setShowConnections(boolean showConnections) {
+        this.showConnections = showConnections;
     }
-    
-    public void addRackInfoLabel(String infoLabel, boolean emphasis) {
-        LabelWidget infoLblWidget = new LabelWidget(this, infoLabel);
-        infoLblWidget.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 0));
-        
-        if (emphasis)
-            infoLblWidget.setForeground(Color.RED);
-        
-        infoLayer.addChild(infoLblWidget);
-        validate();
-    }
-    
+
     @Override
     public byte[] getAsXML() {
         return null;
@@ -209,13 +86,82 @@ public class RackViewScene extends AbstractScene<LocalObject, LocalObject> {
     }
 
     @Override
+    public void render(LocalObjectLight root) {
+        this.rack = root;
+        RackWidgetWrapper rackWidgetWrapper = new RackWidgetWrapper(this, root, !getShowConnections());
+        rackWidgetWrapper.setPreferredLocation(new Point(70, 30));
+        rackWidgetWrapper.paintRack();
+        nodeLayer.addChild(rackWidgetWrapper);
+        validate();
+    }
+
+    @Override
     public ConnectProvider getConnectProvider() {
-        return null;        
+        
+        return new ConnectProvider() {
+
+            @Override
+            public boolean isSourceWidget(Widget sourceWidget) {
+                return sourceWidget instanceof PortWidget && ((PortWidget) sourceWidget).isFree();
+            }
+
+            @Override
+            public ConnectorState isTargetWidget(Widget sourceWidget, Widget targetWidget) {
+                if (targetWidget instanceof PortWidget && ((PortWidget) targetWidget).isFree()) {
+                    if(sourceWidget.equals(targetWidget))
+                        return ConnectorState.REJECT;
+                    
+                    return ConnectorState.ACCEPT;
+                }
+                return ConnectorState.REJECT;
+            }
+
+            @Override
+            public boolean hasCustomTargetWidgetResolver(Scene scene) {
+                return false;
+            }
+
+            @Override
+            public Widget resolveTargetWidget(Scene scene, Point point) {
+                return null;
+            }
+
+            @Override
+            public void createConnection(Widget sourceWidget, Widget targetWidget) {
+                LocalObjectLight newConnection;
+                LocalObjectLight sourcePort = sourceWidget.getLookup().lookup(LocalObjectLight.class);
+                LocalObjectLight targetPort = targetWidget.getLookup().lookup(LocalObjectLight.class);
+                
+                LocalObjectLight commonParent = CommunicationsStub.getInstance()
+                    .getCommonParent(sourcePort.getClassName(), sourcePort.getOid(), 
+                        targetPort.getClassName(), targetPort.getOid());
+                
+                NewLinkWizard newLinkWizard = new NewLinkWizard(sourceWidget.getLookup().lookup(ObjectNode.class), 
+                        targetWidget.getLookup().lookup(ObjectNode.class), commonParent);
+                newLinkWizard.show();
+                newConnection = newLinkWizard.getNewConnection();
+                
+                if (newConnection != null){
+                    LocalObject link = CommunicationsStub.getInstance().getObjectInfo(newConnection.getClassName(), newConnection.getOid());
+                    RackViewConnectionWidget edge = (RackViewConnectionWidget) addEdge(link);
+                    setEdgeSource(newConnection, sourcePort);
+                    setEdgeTarget(newConnection, targetPort);
+                    
+                    ((PortWidget) sourceWidget).setFree(false);
+                    ((PortWidget) targetWidget).setFree(false);
+                            
+                    edge.getLabelWidget().setVisible(true);
+                    edge.setStroke(new BasicStroke(3));                    
+                    
+                    validate();
+                }
+            }
+        };
     }
 
     @Override
     public boolean supportsConnections() {
-        return false;
+        return true;
     }
 
     @Override
@@ -224,108 +170,66 @@ public class RackViewScene extends AbstractScene<LocalObject, LocalObject> {
     }
 
     @Override
-    public void render(LocalObject root) {
-        setLayout(LayoutFactory.createVerticalFlowLayout(LayoutFactory.SerialAlignment.CENTER, 0));
-        
-        rackLayer = new LayerWidget(this);
-        rackLayer.setLayout(LayoutFactory.createVerticalFlowLayout(LayoutFactory.SerialAlignment.CENTER, RACK_Y_OFFSET));
-        
-        deviceLayer = new LayerWidget(this);
-        deviceLayer.setLayout(LayoutFactory.createAbsoluteLayout());
-        
-        infoLayer = new LayerWidget(this);
-        infoLayer.setLayout(LayoutFactory.createVerticalFlowLayout(LayoutFactory.SerialAlignment.LEFT_TOP, 10));
-        
-        numberingInRackLayer = new LayerWidget(this);
-        numberingInRackLayer.setLayout(LayoutFactory.createVerticalFlowLayout(LayoutFactory.SerialAlignment.CENTER, RACK_Y_OFFSET));
-        buildScene(root);
-    }
+    protected Widget attachNodeWidget(LocalObjectLight node) {
+        Widget widget = null;
 
-    @Override
-    protected Widget attachNodeWidget(LocalObject node) {
-        if (node.getOid() <= -1) {
-            Widget widget = new Widget(this);
-
-            widget.setOpaque(true);
-            widget.setBackground(new Color(112, 112, 112));
-            widget.setPreferredSize(new Dimension(RackViewScene.STANDARD_RACK_WIDTH, RackViewScene.RACK_UNIT_IN_PX));
-            rackLayer.addChild(widget);
-            validate();
-            
-            return widget;
-        } else {
-            Integer U = (Integer) node.getAttribute(Constants.PROPERTY_RACK_UNITS);
-            Integer position = (Integer) node.getAttribute(Constants.PROPERTY_POSITION);
-            
-            SelectableDeviceWidget deviceWidget = new SelectableDeviceWidget(this, node);
-            deviceWidget.createActions(AbstractScene.ACTION_SELECT);
-            deviceWidget.getActions(ACTION_SELECT).addAction(createSelectAction());
-            
-            int width = STANDARD_RACK_WIDTH;
-            int height = RACK_UNIT_IN_PX * U + RACK_Y_OFFSET * (U - 1);
-                        
-            deviceWidget.setBackground(new Color(136, 170, 0));
-            deviceWidget.setPreferredSize(new Dimension(width, height));
-            deviceWidget.setOpaque(true);
-            
-            
-            deviceWidget.setLayout(LayoutFactory.createVerticalFlowLayout(LayoutFactory.SerialAlignment.CENTER, 0));
-            
-            LabelWidget lblDeviceName = new LabelWidget(this, node.toString());
-            
-            int top, bottom;
-            top = bottom = (height - RACK_UNIT_IN_PX) / 2;
-            
-            lblDeviceName.setBorder(BorderFactory.createEmptyBorder(top == 0 ? 3 : top, 0, 0, 0));
-            lblDeviceName.setForeground(Color.WHITE);
-            
-            LabelWidget lblDeviceInfo = new LabelWidget(this, "Position: " + position + "U - " + "Size: " + U + "U");
-            lblDeviceInfo.setBorder(BorderFactory.createEmptyBorder(0, 0, bottom, 0));
-            lblDeviceInfo.setForeground(Color.WHITE);
-            
-            int drawPosition = position;
-            if (ascending)
-                drawPosition -= 1;
-            else
-                drawPosition = rackUnits - position - (U - 1);
-            int y = RACK_UNIT_IN_PX * drawPosition + RACK_Y_OFFSET * drawPosition;
-            
-            deviceWidget.setPreferredLocation(new Point(0, y));
-            
-            deviceWidget.addChild(lblDeviceName);
-            deviceWidget.addChild(lblDeviceInfo);
-            
-            deviceLayer.addChild(deviceWidget);
-            validate();
-            return deviceWidget;
-        }
-    }
-
-    @Override
-    protected Widget attachEdgeWidget(LocalObject edge) {
-        return null;
-    }
-    
-    /**
-     * Class to wrap a Rack Object in a Widget. 
-     */
-    private class SelectableDeviceWidget extends SelectableNodeWidget {
-        private boolean selected = false;
-
-        public SelectableDeviceWidget(Scene scene, LocalObjectLight businessObject) {
-            super(scene, businessObject);
-            setToolTipText(null);
-        }
-        
-        @Override
-        public void notifyStateChanged(ObjectState previousState, ObjectState state) {
-            if (!selected) {
-                selected = true;
-                setBackground(new Color(136, 170, 0));
+        if (showConnections) {
+            LocalObject object = CommunicationsStub.getInstance().getObjectInfo(node.getClassName(), node.getOid());
+            if (object == null) {
+                NotificationUtil.getInstance().showSimplePopup("Error", 
+                    NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                return null;
+            }
+            if (CommunicationsStub.getInstance().isSubclassOf(object.getClassName(), "GenericPhysicalPort")) {
+                widget = new PortWidget(this, object);
+                
+                widget.createActions(AbstractScene.ACTION_CONNECT);
+                widget.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(interactionLayer, getConnectProvider()));
+                widget.getActions(ACTION_CONNECT).addAction(createSelectAction());                
             } else {
-                selected = false;                
-                setBackground(Color.LIGHT_GRAY);
+                widget = new NestedDeviceWidget(this, object);
+                ((NestedDeviceWidget) widget).paintNestedDeviceWidget();
+            }
+            widget.createActions(AbstractScene.ACTION_SELECT);
+            widget.getActions(ACTION_SELECT).addAction(createSelectAction());
+        }
+        if (node instanceof LocalObject) {
+            LocalObject object = ((LocalObject) node);
+            if (object.getAttribute(Constants.PROPERTY_RACK_UNITS) != null && 
+                object.getAttribute(Constants.PROPERTY_POSITION) != null) {
+
+                widget = new EquipmentWidget(this, object, object.getObjectMetadata().getColor());
+                widget.createActions(AbstractScene.ACTION_SELECT);
+                widget.getActions(ACTION_SELECT).addAction(createSelectAction());
+                widget.getActions(ACTION_SELECT).addAction(changePositionAction);
             }
         }
+            
+        if (getRack().equals(node)) {
+            if (showConnections)
+                widget = new RackWidget(this, node, 800, 150, 15);
+            else
+                widget = new RackWidget(this, node, 300, 35, 5);
+            widget.createActions(AbstractScene.ACTION_SELECT);
+            widget.getActions(ACTION_SELECT).addAction(createSelectAction());
+        }
+        return widget;
+    }
+
+    @Override
+    protected Widget attachEdgeWidget(LocalObjectLight edge) {
+        RackViewConnectionWidget newWidget = new RackViewConnectionWidget(this, edge);
+        newWidget.getLabelWidget().setVisible(false);
+        newWidget.getActions().addAction(createSelectAction());
+        
+        newWidget.setLineColor(((LocalObject)edge).getObjectMetadata().getColor());
+        
+        RackWidget rackWidget = (RackWidget) findWidget(rack);
+        
+        newWidget.setRouter(new RackViewConnectionRouter(rackWidget.getEdgetLayer(), rackWidget.getRackUnitHeight()));
+        rackWidget.getEdgetLayer().addChild(newWidget);
+                
+        validate();
+        return newWidget;
     }
 }
