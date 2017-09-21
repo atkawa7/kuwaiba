@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -19,15 +19,23 @@ import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
 
 /**
- * The same SpecialObjectNode, but without actions (useful in views inside wizards, where the selected nodes are not placed in the global lookup, so the the context actions,
- * that are dependant of the selected nodes won't crash)
+ * The same SpecialObjectNode, but without actions (useful in views inside 
+ * wizards, where the selected nodes are not placed in the global lookup, so the 
+ * context actions, that are dependant of the selected nodes won't crash)
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ActionlessSpecialObjectNode extends SpecialObjectNode {
 
-    public ActionlessSpecialObjectNode(LocalObjectLight anObject) {
+    /**
+     * The constructor
+     * @param anObject the object in the node 
+     * @param classToFilter Given a class name the only children shown will be of this 
+     * class, if a null is given all the objects of all classes will be shown 
+     * (this is used in the physical wizard connection to show only wire containers)
+     */
+    public ActionlessSpecialObjectNode(LocalObjectLight anObject, String classToFilter) {
         super(anObject);
-        setChildren(new ActionlessSpecialChildren());
+        setChildren(new ActionlessSpecialChildren(classToFilter));
     }
     
     @Override

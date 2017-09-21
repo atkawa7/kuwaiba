@@ -15,6 +15,7 @@
  */
 package org.inventory.navigation.special.children.nodes;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
@@ -30,6 +31,21 @@ import org.openide.nodes.Node;
  */
 public class SpecialChildren extends AbstractChildren {  
 
+    /**
+     * Used when you want to show only children of a given className for 
+     * example is used in the connect physical link to show only the containers
+     * and ignore de links
+     */
+    private String childrenOfClass;
+    
+    public SpecialChildren(String childrenOfClass) {
+        this.childrenOfClass = childrenOfClass;
+    }
+
+    public String getChildrenOfClass() {
+        return childrenOfClass;
+    }
+    
     @Override
     public void addNotify(){
         LocalObjectLight parentObject = ((ObjectNode)getNode()).getObject();
@@ -41,6 +57,15 @@ public class SpecialChildren extends AbstractChildren {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             setKeys(Collections.EMPTY_SET);
         } else {
+            //If the children of class is not null we filter only for that kind of class objects
+            if(childrenOfClass != null){
+                List<LocalObjectLight> onlyContainers = new ArrayList<>();
+                for (LocalObjectLight specialChild : specialChildren) {
+                    if(specialChild.getClassName().equals(childrenOfClass))
+                        onlyContainers.add(specialChild);
+                }
+                specialChildren = onlyContainers;
+            }
             Collections.sort(specialChildren);
             setKeys(specialChildren);
         }
