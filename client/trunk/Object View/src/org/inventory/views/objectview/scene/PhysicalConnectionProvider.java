@@ -18,6 +18,7 @@ package org.inventory.views.objectview.scene;
 
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.core.visual.scene.ObjectNodeWidget;
@@ -79,7 +80,9 @@ public class PhysicalConnectionProvider implements ConnectProvider {
             newConnection = newContainerWizard.getNewConnection();
         } else {
             NewLinkWizard newLinkWizard = new NewLinkWizard(sourceWidget.getLookup().lookup(ObjectNode.class), 
-                    targetWidget.getLookup().lookup(ObjectNode.class), (LocalObjectLight)configObject.getProperty("currentObject"));
+                    targetWidget.getLookup().lookup(ObjectNode.class), 
+                    (LocalObjectLight)configObject.getProperty("currentObject"), 
+                    new  ArrayList<LocalObjectLight>());
             newLinkWizard.show();
             newConnection = newLinkWizard.getNewConnection();
         }
