@@ -126,6 +126,10 @@ public class Constants {
      */
     public static final String CLASS_GENERICCOMMUNICATIONSELEMENT = "GenericCommunicationsElement";
     /**
+     * Root class of all logical connections
+     */
+    public static final String CLASS_GENERICLOGICALCONNECTION = "GenericLogicalConnection";
+    /**
      * Class Rack
      */
     public static final String CLASS_RACK = "Rack";
@@ -188,6 +192,10 @@ public class Constants {
      * Class FrameRelay
      */
     public static final String CLASS_FRAMERELAYCIRCUIT = "FrameRelayCircuit";
+    /**
+     * Class WireContainer
+     */
+    public static final String CLASS_WIRECONTAINER = "WireContainer";
     /**
      * Default type for a new attribute
      */
