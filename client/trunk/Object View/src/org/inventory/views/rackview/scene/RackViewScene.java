@@ -17,6 +17,7 @@ package org.inventory.views.rackview.scene;
 
 import java.awt.BasicStroke;
 import java.awt.Point;
+import java.util.ArrayList;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
@@ -137,7 +138,7 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
                         targetPort.getClassName(), targetPort.getOid());
                 
                 NewLinkWizard newLinkWizard = new NewLinkWizard(sourceWidget.getLookup().lookup(ObjectNode.class), 
-                        targetWidget.getLookup().lookup(ObjectNode.class), commonParent);
+                        targetWidget.getLookup().lookup(ObjectNode.class), commonParent, new  ArrayList<LocalObjectLight>());
                 newLinkWizard.show();
                 newConnection = newLinkWizard.getNewConnection();
                 

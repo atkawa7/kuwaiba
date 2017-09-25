@@ -35,7 +35,6 @@ public class NestedDeviceWidget extends SelectableRackViewWidget implements Nest
         
     private static final Color selectedColor = new Color(255, 255, 255, 230);
     private LabelWidget lblName;
-    private LabelWidget lblClass;
     private RackViewWidget widgetToChildren;
     
     public NestedDeviceWidget(RackViewScene scene, LocalObject businessObject) {
@@ -63,17 +62,11 @@ public class NestedDeviceWidget extends SelectableRackViewWidget implements Nest
         lblName.setLabel(getLookup().lookup(LocalObjectLight.class).getName());
         lblName.setForeground(Color.WHITE);
         
-        lblClass = new LabelWidget(getRackViewScene());
-        lblClass.setBorder(BorderFactory.createEmptyBorder(0, 5 ,0 , 5));
-        lblClass.setLabel("[" + getLookup().lookup(LocalObjectLight.class).getClassName() + "]");
-        lblClass.setForeground(Color.WHITE);      
-        
         widgetToChildren = new RackViewWidget(getRackViewScene());
         widgetToChildren.setBorder(BorderFactory.createEmptyBorder(5, 5 ,5 , 5));
         widgetToChildren.setLayout(LayoutFactory.createHorizontalFlowLayout(LayoutFactory.SerialAlignment.LEFT_TOP, 2));
         
         addChild(lblName);
-        addChild(lblClass);
         addChild(widgetToChildren);
     }
     
@@ -87,13 +80,11 @@ public class NestedDeviceWidget extends SelectableRackViewWidget implements Nest
         if (state.isSelected()) {
             setBackground(selectedColor);
             lblName.setForeground(Color.ORANGE);
-            lblClass.setForeground(Color.ORANGE);
         }
         if (previousState.isSelected()) {
             Color backgroundColor = getLookup().lookup(LocalObject.class).getObjectMetadata().getColor();
             setBackground(backgroundColor != null ? backgroundColor : Color.WHITE);
             lblName.setForeground(Color.WHITE);
-            lblClass.setForeground(Color.WHITE);
         }
     }
 }
