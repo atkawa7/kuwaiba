@@ -24,7 +24,7 @@ import org.openide.nodes.Node;
 
 /**
  * Is a hidden root node for SpecialObjectNode, this node has no actions 
- * (is used in the wizard link connection to show the existing wire containers)
+ * (is used in the wizard physical link connection to show the existing wire containers)
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class ActionlessSpecialOnlyContainersRootNode extends AbstractNode{
@@ -43,7 +43,7 @@ public class ActionlessSpecialOnlyContainersRootNode extends AbstractNode{
 
         @Override
         protected Node[] createNodes(LocalObjectLight key) {
-            return new Node[] { new ActionlessSpecialObjectNode(key, Constants.CLASS_WIRECONTAINER) };
+            return new Node[] { new ActionlessSpecialFilteredObjectNode(key, Constants.CLASS_WIRECONTAINER) };
         }
     }
 }

@@ -26,16 +26,9 @@ import org.inventory.communications.core.LocalObjectLight;
  */
 public class ActionlessSpecialObjectNode extends SpecialObjectNode {
 
-    /**
-     * The constructor
-     * @param anObject the object in the node 
-     * @param classToFilter Given a class name the only children shown will be of this 
-     * class, if a null is given all the objects of all classes will be shown 
-     * (this is used in the physical wizard connection to show only wire containers)
-     */
-    public ActionlessSpecialObjectNode(LocalObjectLight anObject, String classToFilter) {
+    public ActionlessSpecialObjectNode(LocalObjectLight anObject) {
         super(anObject);
-        setChildren(new ActionlessSpecialChildren(classToFilter));
+        setChildren(new ActionlessSpecialChildren());
     }
     
     @Override

@@ -38,8 +38,7 @@ public class SpecialObjectNode extends ObjectNode {
     
     public SpecialObjectNode(LocalObjectLight anObject) {
         super(anObject);
-        //the null is passed as parameter because we want the children of all classes
-        setChildren(new SpecialChildren(null));
+        setChildren(new SpecialChildren());
     }
     
     @Override

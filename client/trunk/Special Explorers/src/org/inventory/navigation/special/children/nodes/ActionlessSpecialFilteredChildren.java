@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,24 +15,40 @@
  */
 package org.inventory.navigation.special.children.nodes;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
-import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.openide.nodes.Node;
 
 /**
- * Children to SpecialNodes
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * The same SpecialChildren, but creates ActionlessSpecialObjectNodes instead of SpecialObjectNodes
+ * in addition this children only show the class WireContainer
+ * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class SpecialChildren extends AbstractChildren {  
+public class ActionlessSpecialFilteredChildren extends SpecialChildren {
+    
+    /**
+     * Used when you want to show only children of a given className for 
+     * example is used in the connect physical link to show only the containers
+     * and ignore de links
+     */
+    private String classNameFiltered;
+    
+    public ActionlessSpecialFilteredChildren(String classNameFiltered) {
+        this.classNameFiltered = classNameFiltered;
+    }
 
+    public String getChildrenOfClass() {
+        return classNameFiltered;
+    }
+    
     @Override
     public void addNotify(){
-        LocalObjectLight parentObject = ((ObjectNode)getNode()).getObject();
+        LocalObjectLight parentObject = ((ActionlessSpecialFilteredObjectNode)getNode()).getObject();
 
         List<LocalObjectLight> specialChildren = CommunicationsStub.getInstance().
                 getObjectSpecialChildren(parentObject.getClassName(), parentObject.getOid());
@@ -41,13 +57,19 @@ public class SpecialChildren extends AbstractChildren {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             setKeys(Collections.EMPTY_SET);
         } else {
-            Collections.sort(specialChildren);
-            setKeys(specialChildren);
+            List<LocalObjectLight> onlyContainers = new ArrayList<>();
+            for (LocalObjectLight specialChild : specialChildren) {
+                if(specialChild.getClassName().equals(classNameFiltered))
+                    onlyContainers.add(specialChild);
+            }
+            
+            Collections.sort(onlyContainers);
+            setKeys(onlyContainers);
         }
     }
-
+    
     @Override
     protected Node[] createNodes(LocalObjectLight key) {
-        return new SpecialObjectNode[] { new SpecialObjectNode(key) };
+        return new Node[]  { new ActionlessSpecialFilteredObjectNode(key, classNameFiltered) };
     }
 }

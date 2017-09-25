@@ -15,21 +15,26 @@
  */
 package org.inventory.navigation.special.children.nodes;
 
+import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
-import org.openide.nodes.Node;
+import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 
 /**
- * The same SpecialChildren, but creates ActionlessSpecialObjectNodes instead of SpecialObjectNodes
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * Is an alternate SpecialObjectNode, without actions (useful in views inside 
+ * wizards, where the selected nodes are not placed in the global lookup, so the 
+ * context actions, that are dependant of the selected nodes won't crash)
+ * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class ActionlessSpecialChildren extends SpecialChildren {
+public class ActionlessSpecialFilteredObjectNode extends ObjectNode {
 
-    public ActionlessSpecialChildren() {
-        super();
+   
+    public ActionlessSpecialFilteredObjectNode(LocalObjectLight anObject, String classNameFiltered) {
+        super(anObject);
+        setChildren(new ActionlessSpecialFilteredChildren(classNameFiltered));
     }
     
     @Override
-    protected Node[] createNodes(LocalObjectLight key) {
-        return new Node[]  { new ActionlessSpecialObjectNode(key)};
+    public Action[] getActions(boolean context) {
+        return new Action[0];
     }
 }
