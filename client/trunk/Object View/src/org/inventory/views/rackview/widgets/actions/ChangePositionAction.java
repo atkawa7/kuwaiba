@@ -15,9 +15,6 @@
  */
 package org.inventory.views.rackview.widgets.actions;
 
-import java.awt.AWTException;
-import java.awt.Cursor;
-import java.awt.HeadlessException;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import org.inventory.communications.core.LocalObject;
@@ -73,13 +70,15 @@ public class ChangePositionAction extends WidgetAction.LockedAdapter {
                 NotificationUtil.getInstance().showSimplePopup("Information", 
                     NotificationUtil.INFO_MESSAGE, "The equipment must be dropped inside of a rack unit");
             } else {
-                if (rackWidget.canBeMoved(equipmentObject, rackUnit.getRackUnitIndex())) {
+                String canBeMoved = rackWidget.canBeMoved(equipmentObject, rackUnit.getRackUnitIndex());
+                if (canBeMoved == null) {
                     rackWidget.getLocalEquipment().remove(equipmentObject);
                     rackWidget.freeEquipmentRackUnits(equipmentObject);
                     rackUnit.setEquipmentPosition(rackUnit, equipmentObject);
                 } else {
                     rackWidget.getLocalEquipment().remove(equipmentObject);
                     rackWidget.addEquipment(equipmentObject);
+                    NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, canBeMoved);                    
                 }
             }
             moved = false;

@@ -327,7 +327,7 @@ public class RackWidget extends SelectableRackViewWidget {
         return true;        
     }
     
-    public boolean canBeMoved(LocalObject equipment, int newPosition) {
+    public String canBeMoved(LocalObject equipment, int newPosition) {
         int equipmentRackUnits = (int) equipment.getAttribute(Constants.PROPERTY_RACK_UNITS);
         int equipmentPosition = (int) equipment.getAttribute(Constants.PROPERTY_POSITION);
         
@@ -337,14 +337,13 @@ public class RackWidget extends SelectableRackViewWidget {
                 
         for (int i = 0; i < equipmentRackUnits; i += 1) {
             int idx = newPosition + i;
-            if (idx > rackUnits) {
-                return false;
-            }
-            if (!mapRackUnits.get(idx).isAvailable() && !currentRackUnits.contains(idx)) {
-                return false;
-            }            
+            if (idx > rackUnits)
+                return "The device is too large for the given position";
+            
+            if (!mapRackUnits.get(idx).isAvailable() && !currentRackUnits.contains(idx))
+                return String.format("The position cannot be changed to rack unit %s because rack unit %s is not available", newPosition, idx);
         }
-        return true;
+        return null;
     }
     
     public void freeEquipmentRackUnits(LocalObject equipment) {
