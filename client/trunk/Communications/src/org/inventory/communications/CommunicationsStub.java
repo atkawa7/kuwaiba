@@ -1650,6 +1650,23 @@ public class CommunicationsStub {
             return false;
         }
     }
+    
+    public boolean moveSpecialObjects(String targetClass, long targetOid, LocalObjectLight[] objects) {
+        try{
+            List<Long> objectOids = new ArrayList<>();
+            List<String> objectClasses = new ArrayList<>();
+
+            for (LocalObjectLight lol : objects){
+                objectOids.add(lol.getOid());
+                objectClasses.add(lol.getClassName());
+            }
+            service.moveSpecialObjects(targetClass, targetOid, objectClasses, objectOids,this.session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
 
     public LocalObjectLight[] copyObjects(String targetClass, long targetOid, LocalObjectLight[] objects){
         try{
@@ -1663,6 +1680,32 @@ public class CommunicationsStub {
 
             //Let's do the copy recursive by default
             List<Long> objs = service.copyObjects(targetClass, targetOid, objectClasses, objectOids, true, this.session.getSessionId());
+
+            LocalObjectLight[] res = new LocalObjectLight[objs.size()];
+            for (int i = 0; i < res.length ; i++){
+                res[i] = new LocalObjectLight(objs.get(i), objects[i].getName(), objects[i].getClassName());
+                i++;
+            }
+            return res;
+
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    public LocalObjectLight[] copySpecialObjects(String targetClass, long targetOid, LocalObjectLight[] objects){
+        try{
+            List<Long> objectOids = new ArrayList<>();
+            List<String> objectClasses = new ArrayList<>();
+
+            for (LocalObjectLight lol : objects){
+                objectOids.add(lol.getOid());
+                objectClasses.add(lol.getClassName());
+            }
+
+            //Let's do the copy recursive by default
+            List<Long> objs = service.copySpecialObjects(targetClass, targetOid, objectClasses, objectOids, true, this.session.getSessionId());
 
             LocalObjectLight[] res = new LocalObjectLight[objs.size()];
             for (int i = 0; i < res.length ; i++){
@@ -1833,6 +1876,31 @@ public class CommunicationsStub {
                 res[i] = new LocalObjectLight(element.getOid(), element.getName(), element.getClassName());
                 i++;
             }
+            
+            return res;
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Retrieves the existing containers between two given nodes. . 
+     * Only the ports with connections (physicalPath.size > 1) are returned
+     * @param objectAClass The class of the object A.
+     * @param objectAId The id of the object A.
+     * @param objectBClass The class of the object B. (end point B class)
+     * @param objectBId The id of the object B (end point B id).
+     * @param containerClass The class of the containers to be return.
+     * @return The list of physical paths of the connected ports inside the given objects or null in case of error.
+     */
+    public List<LocalObjectLight> getContainersBetweenObjects(String objectAClass, long objectAId,
+            String objectBClass, long objectBId, String containerClass){
+        try{
+            List<RemoteObjectLight> existingContainers = service.getContainersBetweenObjects(objectAClass, objectAId, objectBClass, objectBId, containerClass, session.getSessionId());
+            List<LocalObjectLight> res = new ArrayList<>();
+            for (RemoteObjectLight container : existingContainers) 
+                res.add(new LocalObjectLight(container.getOid(), container.getName(), container.getClassName()));
             
             return res;
         }catch(Exception ex){
