@@ -2408,6 +2408,35 @@ public class KuwaibaService {
             }
         }
     }
+    
+     /**
+     * Moves special objects from their current parent to a target object.
+     * @param  targetClass New parent object id
+     * @param targetOid The new parent's oid
+     * @param objectClasses Class names of the objects to be moved
+     * @param objectOids Oids of the objects to be moved
+     * @param sessionId Session token
+     * @throws ServerSideException If the object's or new parent's class can't be found
+     *                             If the object or its new parent can't be found
+     *                             If the update can't be performed due to a business rule
+     */
+    @WebMethod(operationName = "moveSpecialObjects")
+    public void moveSpecialObjects(@WebParam(name = "targetClass")String targetClass,
+            @WebParam(name = "targetOid")long targetOid,
+            @WebParam(name = "objectsClasses")String[] objectClasses,
+            @WebParam(name = "objectsOids")long[] objectOids,
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
+        try{
+            wsBean.moveSpecialObjects(targetClass,targetOid, objectClasses, objectOids, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in moveSpecialObjects: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
 
      /**
      * Copy objects from its current parent to a target. This is <b>not</b> a deep copy. Only the selected object will be copied, not the children
@@ -2437,6 +2466,40 @@ public class KuwaibaService {
                 throw e;
             else {
                 System.out.println("[KUWAIBA] An unexpected error occurred in copyObjects: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+     /**
+     * Copy special objects from its current parent to a target. 
+     * This is <b>not</b> a deep copy. Only the selected object will be copied, not the children
+     * @param targetClass  The new parent class name
+     * @param targetOid The new parent oid
+     * @param objectClasses Class names of the objects to be copied
+     * @param objectOids Oids of the objects to be copied
+     * @param recursive should the objects be copied recursively? (themselves plus their children)
+     * @param sessionId Session token
+     * @return An array with the ids of the new objects
+     * @throws ServerSideException If any of the provided classes couldn't be found
+     *                             If any of the template objects couldn't be found
+     *                             If the target parent can't contain any of the new instances
+     */
+    @WebMethod(operationName = "copySpecialObjects")
+    public long[] copySpecialObjects(
+            @WebParam(name = "targetClass")String targetClass,
+            @WebParam(name = "targetOid")long targetOid,
+            @WebParam(name = "templateClases")String[] objectClasses,
+            @WebParam(name = "templateOids")long[] objectOids,
+            @WebParam(name = "recursive")boolean recursive,
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
+        try{
+            return wsBean.copySpecialObjects(targetClass,targetOid, objectClasses, objectOids, recursive, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in copySpecialObjects: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
@@ -2692,6 +2755,37 @@ public class KuwaibaService {
                 throw e;
             else {
                 System.out.println("[KUWAIBA] An unexpected error occurred in getLogicalLinkDetails: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Retrieves the existing containers between two given nodes. 
+     * @param objectAClass The class of the object A.
+     * @param objectAId The id of the object A.
+     * @param objectBClass The class of the object B. (end point B class)
+     * @param objectBId The id of the object B (end point B id).
+     * @param containerClass The class of the containers to be return.
+     * @param sessionId Session token
+     * @return A list with the common wire containers between the two objects
+     * @throws ServerSideException if an objects doesn't exist or if a given class doesn't exist
+
+     */
+    @WebMethod(operationName = "getContainersBetweenObjects")
+    public List<RemoteObjectLight> getContainersBetweenObjects(@WebParam(name = "objectAClass")String objectAClass, 
+            @WebParam(name = "objectAId")long objectAId, 
+            @WebParam(name = "objectBClass")String objectBClass, 
+            @WebParam(name = "objectBId")long objectBId, 
+            @WebParam(name = "containerClass")String containerClass, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getContainersBetweenObjects(objectAClass, objectAId, objectBClass, objectBId, containerClass, getIPAddress(), sessionId);
+        } catch(Exception e) {
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getContainersBetweenObjects: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
