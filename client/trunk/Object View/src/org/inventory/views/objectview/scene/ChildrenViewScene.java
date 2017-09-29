@@ -16,7 +16,6 @@
 
 package org.inventory.views.objectview.scene;
 
-import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.io.ByteArrayInputStream;
