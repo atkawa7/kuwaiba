@@ -121,8 +121,6 @@ public class TopologyViewTopComponent extends TopComponent implements
             add(barMainToolBar, BorderLayout.NORTH);
             associateLookup(scene.getLookup());
         }
-        
-        
     }
     
     @Override
@@ -143,7 +141,9 @@ public class TopologyViewTopComponent extends TopComponent implements
         if (currentView != null)
             scene.render(currentView.getStructure()); //Render the saved view, if any
         
-        scene.render(currentService); //Renders the defalt anyway to synchronize the possible changes that might have appeared since the last time the view was opened
+        //Renders the default anyway to synchronize the possible changes
+        //that might have appeared since the last time the view was opened
+        scene.render(currentService); 
         saved = true;
         scene.addChangeListener(this);
     }
@@ -165,7 +165,6 @@ public class TopologyViewTopComponent extends TopComponent implements
     }
     
     private void saveView() {
-        
         if (currentView == null) { //The service does not have a saved view associated yet, so create a new one
             long newViewId = com.createObjectRelatedView(currentService.getOid(), currentService.getClassName(), TopologyViewScene.VIEW_CLASS, 
                     null, TopologyViewScene.VIEW_CLASS, scene.getAsXML(), null);
@@ -215,7 +214,8 @@ public class TopologyViewTopComponent extends TopComponent implements
                 break;
             case AbstractScene.SCENE_CHANGEANDSAVE:
                 saveView();
-                NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "An external change was detected. The view has been saved automatically");
+                NotificationUtil.getInstance().showSimplePopup("Information", 
+                        NotificationUtil.INFO_MESSAGE, "An external change was detected. The view has been saved automatically");
         }
     }
 }

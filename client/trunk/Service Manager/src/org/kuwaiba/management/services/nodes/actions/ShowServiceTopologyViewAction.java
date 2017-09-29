@@ -41,9 +41,6 @@ public class ShowServiceTopologyViewAction extends GenericObjectNodeAction {
         if (selectedObjects.size() != 1)
             JOptionPane.showMessageDialog(null, "Select only one node service.", "Error", JOptionPane.ERROR_MESSAGE);
         else{
-            //TopComponent endToEndTC = ((EndToEndViewTopComponent)WindowManager.getDefault().
-            //  findTopComponent("ObjectViewTopComponent_" + selectedObjects.get(0).getOid()));
-            
             TopComponent topologyViewTC = new TopologyViewTopComponent(selectedObjects.get(0), new TopologyViewScene());
             topologyViewTC.open();
             topologyViewTC.requestActive();

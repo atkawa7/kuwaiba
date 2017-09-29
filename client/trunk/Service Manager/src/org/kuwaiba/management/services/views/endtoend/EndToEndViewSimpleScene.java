@@ -23,8 +23,8 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import javax.xml.namespace.QName;
@@ -38,22 +38,20 @@ import javax.xml.stream.XMLStreamReader;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalLogicalConnectionDetails;
-import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.visual.actions.CustomAddRemoveControlPointAction;
 import org.inventory.core.visual.actions.CustomMoveAction;
 import org.inventory.core.visual.actions.CustomMoveControlPointAction;
 import org.inventory.core.visual.actions.providers.CustomResizeProvider;
+import org.inventory.core.visual.menu.FrameMenu;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.core.visual.scene.ObjectConnectionWidget;
 import org.inventory.core.visual.scene.ObjectNodeWidget;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.TextFieldInplaceEditor;
-import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.border.BorderFactory;
 import org.netbeans.api.visual.layout.LayoutFactory;
@@ -70,6 +68,8 @@ import org.openide.util.ImageUtilities;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, LocalObjectLight> {
+    
+    public final static String VIEW_CLASS = "ServiceSimpleView"; 
     
     private CommunicationsStub com = CommunicationsStub.getInstance();
     private final LayerWidget imagesLayer;
@@ -124,7 +124,7 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
             
             QName qnameClass = new QName("class");
             xmlew.add(xmlef.createStartElement(qnameClass, null, null));
-            xmlew.add(xmlef.createCharacters("ServiceSimpleView"));
+            xmlew.add(xmlef.createCharacters(VIEW_CLASS));
             xmlew.add(xmlef.createEndElement(qnameClass, null));
             
             QName qnameNodes = new QName("nodes");
@@ -146,7 +146,7 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
             xmlew.add(xmlef.createStartElement(qnameEdges, null, null));
             
             for (Widget edgeWidget : edgeLayer.getChildren()) {
-                
+                LocalObjectLight lolEdge = (LocalObjectLight) findObject(edgeWidget);
                 ObjectConnectionWidget acwEdge = (ObjectConnectionWidget) edgeWidget;
                 if (acwEdge.getSourceAnchor() == null || acwEdge.getTargetAnchor() == null) //This connection is malformed because one of the endpoints does not exist
                     continue;                                                               //probably, it was moved to another parent
@@ -154,12 +154,11 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
                 QName qnameEdge = new QName("edge");
                 xmlew.add(xmlef.createStartElement(qnameEdge, null, null));
                 
-                LocalObjectLight lolEdge = (LocalObjectLight) findObject(acwEdge);
                 xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(lolEdge.getOid())));
                 xmlew.add(xmlef.createAttribute(new QName("class"), lolEdge.getClassName()));
                 
-                xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(((LocalObjectLight) findObject(acwEdge.getSourceAnchor().getRelatedWidget())).getOid())));
-                xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(((LocalObjectLight) findObject(acwEdge.getTargetAnchor().getRelatedWidget())).getOid())));
+                xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(getEdgeSource(lolEdge).getOid())));
+                xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(getEdgeTarget(lolEdge).getOid())));
                 
                 for (Point point : acwEdge.getControlPoints()) {
                     QName qnameControlpoint = new QName("controlpoint");
@@ -235,170 +234,130 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
 
     @Override
     public void render(byte[] structure) throws IllegalArgumentException { 
-        
-        LocalObjectLight object = (LocalObjectLight) configObject.getProperty("currentObject");
-        LocalObjectView currentView = (LocalObjectView) configObject.getProperty("currentView");
-        
        //<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
-//        try {
-//            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_"+currentView.getId()+".xml");
-//            fos.write(currentView.getStructure());
-//            fos.close();
-//        } catch(Exception e) {}
+        try {
+            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_.xml");
+            fos.write(structure);
+            fos.close();
+        } catch(Exception e) {}
         //</editor-fold>
-        
-        List<LocalObjectLight> myChildren = com.getObjectChildren(object.getOid(), com.getMetaForClass(object.getClassName(),false).getOid());
-        if (myChildren == null)
-            throw new IllegalArgumentException();
-        
-        List<LocalObject> myConnections = com.getChildrenOfClass(object.getOid(),object.getClassName(), Constants.CLASS_GENERICCONNECTION);
-        if (myConnections == null)
-            throw new IllegalArgumentException();
-        
-        if (structure == null) 
-            render((LocalObjectLight)configObject.getProperty("currentObject"));
-        else{
-            try{
-                XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-                QName qZoom = new QName("zoom"); //NOI18N
-                QName qCenter = new QName("center"); //NOI18N
-                QName qNode = new QName("node"); //NOI18N
-                QName qEdge = new QName("edge"); //NOI18N
-                QName qLabel = new QName("label"); //NOI18N
-                QName qPolygon = new QName("polygon"); //NOI18N
-                QName qControlPoint = new QName("controlpoint"); //NOI18N
+        try{
+            XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+            QName qZoom = new QName("zoom"); //NOI18N
+            QName qCenter = new QName("center"); //NOI18N
+            QName qNode = new QName("node"); //NOI18N
+            QName qEdge = new QName("edge"); //NOI18N
+            QName qLabel = new QName("label"); //NOI18N
+            QName qPolygon = new QName("polygon"); //NOI18N
+            QName qControlPoint = new QName("controlpoint"); //NOI18N
 
-                ByteArrayInputStream bais = new ByteArrayInputStream(structure);
-                XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
+            ByteArrayInputStream bais = new ByteArrayInputStream(structure);
+            XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
 
-                while (reader.hasNext()) {
-                    int event = reader.next();
-                    if (event == XMLStreamConstants.START_ELEMENT) {
-                        if (reader.getName().equals(qNode)) {
-                            String objectClass = reader.getAttributeValue(null, "class");
+            while (reader.hasNext()) {
+                int event = reader.next();
+                if (event == XMLStreamConstants.START_ELEMENT) {
+                    if (reader.getName().equals(qNode)) {
+                        String objectClass = reader.getAttributeValue(null, "class");
 
-                            int xCoordinate = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
-                            int yCoordinate = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
-                            long objectId = Long.valueOf(reader.getElementText());
+                        int xCoordinate = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
+                        int yCoordinate = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
+                        long objectId = Long.valueOf(reader.getElementText());
 
-                            LocalObjectLight lol = CommunicationsStub.getInstance().getObjectInfoLight(objectClass, objectId);
-                            if (lol != null) {
-                                if (getNodes().contains(lol))
-                                    NotificationUtil.getInstance().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, "The view seems to be corrupted. Self-healing measures were taken");
-                                else {
-                                    Widget widget = addNode(lol);
-                                    widget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
-                                    widget.setBackground(com.getMetaForClass(objectClass, false).getColor());
-                                    validate();
-                                    myChildren.remove(lol);
-                                }
-                            }
-                            else
-                                currentView.setDirty(true);
-                        }else {
-                            if (reader.getName().equals(qEdge)) {
-                                long objectId = Long.valueOf(reader.getAttributeValue(null, "id")); //NOI18N
-
-                                long aSide = Long.valueOf(reader.getAttributeValue(null, "aside")); //NOI18N
-                                long bSide = Long.valueOf(reader.getAttributeValue(null, "bside")); //NOI18N
-
-                                String className = reader.getAttributeValue(null,"class"); //NOI18N
-
-                                LocalObjectLight container = com.getObjectInfoLight(className, objectId);
-                                
-                                boolean hasEndpointA = false;
-                                boolean hasEndpointB = false;
-                                    
-                                if (container != null) { // if the connection exist
-                                    HashMap<String, LocalObjectLight[]> specialAttributes = com.getSpecialAttributes(className, objectId);
-                                    
-                                    for (String key : specialAttributes.keySet()) {
-                                        if(key.contains("ndpointA"))
-                                            hasEndpointA = true;
-                                        if(key.contains("ndpointB"))
-                                            hasEndpointB = true;
-                                    }
-                                }
-                                
-                                if (hasEndpointA && hasEndpointB ) {
-                                    myConnections.remove(container);
-
-                                    LocalObjectLight aSideObject = new LocalObjectLight(aSide, null, null);
-                                    ObjectNodeWidget aSideWidget = (ObjectNodeWidget) findWidget(aSideObject);
-
-                                    LocalObjectLight bSideObject = new LocalObjectLight(bSide, null, null);
-                                    ObjectNodeWidget bSideWidget = (ObjectNodeWidget) findWidget(bSideObject);
-
-                                    if (aSideWidget == null || bSideWidget == null)
-                                        currentView.setDirty(true);
-                                    else {
-                                        if (getEdges().contains(container))
-                                            NotificationUtil.getInstance().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, "The view seems to be corrupted. Self-healing measures were taken");
-                                        else {
-                                            ObjectConnectionWidget newEdge = (ObjectConnectionWidget) addEdge(container);
-                                            newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideWidget.getNodeWidget()));
-                                            newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideWidget.getNodeWidget()));
-                                            List<Point> localControlPoints = new ArrayList<>();
-                                            while(true) {
-                                                reader.nextTag();
-
-                                                if (reader.getName().equals(qControlPoint)) {
-                                                    if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
-                                                        localControlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")), Integer.valueOf(reader.getAttributeValue(null,"y"))));
-                                                } else {
-                                                    newEdge.setControlPoints(localControlPoints,false);
-                                                    break;
-                                                }
-                                            }
-                                            validate();
-                                        }
-                                    }
-                                } else
-                                    currentView.setDirty(true);
-                            }
-                            // FREE FRAMES
-                            else if (reader.getName().equals(qPolygon)) { 
-                                    long oid = randomGenerator.nextInt(1000);
-                                    LocalObjectLight lol = new LocalObjectLight(oid, oid + FREE_FRAME + reader.getAttributeValue(null, "title"), null);
-                                    Widget myPolygon = addNode(lol);
-                                    Point p = new Point();
-                                    p.setLocation(Double.valueOf(reader.getAttributeValue(null, "x")), Double.valueOf(reader.getAttributeValue(null, "y")));
-                                    myPolygon.setPreferredLocation(p);
-                                    Dimension d = new Dimension();
-                                    d.setSize(Double.valueOf(reader.getAttributeValue(null, "w")), Double.valueOf(reader.getAttributeValue(null, "h")));
-                                    Rectangle r = new Rectangle(d);
-                                    myPolygon.setPreferredBounds(r);
-                                
-                            }//end qPolygon
-                            
+                        LocalObjectLight lol = CommunicationsStub.getInstance().getObjectInfoLight(objectClass, objectId);
+                        if (lol != null) {
+                            if (getNodes().contains(lol))
+                                NotificationUtil.getInstance().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, "The view seems to be corrupted. Self-healing measures were taken");
                             else {
-                                if (reader.getName().equals(qLabel)) {
-                                    //Unavailable for now
-                                } else {
-                                    if (reader.getName().equals(qZoom))
-                                        currentView.setZoom(Integer.valueOf(reader.getText()));
+                                Widget widget = addNode(lol);
+                                widget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
+                                widget.setBackground(com.getMetaForClass(objectClass, false).getColor());
+                                validate();
+                            }
+                        }
+                    }else {
+                        if (reader.getName().equals(qEdge)) {
+                            long objectId = Long.valueOf(reader.getAttributeValue(null, "id")); //NOI18N
+
+                            long aSide = Long.valueOf(reader.getAttributeValue(null, "aside")); //NOI18N
+                            long bSide = Long.valueOf(reader.getAttributeValue(null, "bside")); //NOI18N
+
+                            String className = reader.getAttributeValue(null,"class"); //NOI18N
+
+                            LocalObjectLight container = com.getObjectInfoLight(className, objectId);
+
+                            if (container != null) { // if the connection exist
+                                LocalObjectLight aSideObject = new LocalObjectLight(aSide, null, null);
+                                ObjectNodeWidget aSideWidget = (ObjectNodeWidget) findWidget(aSideObject);
+
+                                LocalObjectLight bSideObject = new LocalObjectLight(bSide, null, null);
+                                ObjectNodeWidget bSideWidget = (ObjectNodeWidget) findWidget(bSideObject);
+
+                                if (aSideWidget != null || bSideWidget != null) {//If one of the endpoints is missing, don't render the connection
+
+                                    if (getEdges().contains(container))
+                                        NotificationUtil.getInstance().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, "The view seems to be corrupted. Self-healing measures were taken");
                                     else {
-                                        if (reader.getName().equals(qCenter)) {
-                                            double x = Double.valueOf(reader.getAttributeValue(null, "x"));
-                                            double y = Double.valueOf(reader.getAttributeValue(null, "y"));
-                                            currentView.setCenter(new double[]{ x, y });
-                                        } else {
-                                            //Place more tags
+                                        ObjectConnectionWidget newEdge = (ObjectConnectionWidget) addEdge(container);
+                                        setEdgeSource(container, aSideObject);
+                                        setEdgeTarget(container, bSideObject);
+                                        
+                                        List<Point> localControlPoints = new ArrayList<>();
+                                        while(true) {
+                                            reader.nextTag();
+
+                                            if (reader.getName().equals(qControlPoint)) {
+                                                if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
+                                                    localControlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")), Integer.valueOf(reader.getAttributeValue(null,"y"))));
+                                            } else {
+                                                newEdge.setControlPoints(localControlPoints,false);
+                                                break;
+                                            }
                                         }
                                     }
                                 }
                             }
-                            
+                        }
+                        // FREE FRAMES
+                        else if (reader.getName().equals(qPolygon)) { 
+                                long oid = randomGenerator.nextInt(1000);
+                                LocalObjectLight lol = new LocalObjectLight(oid, oid + FREE_FRAME + reader.getAttributeValue(null, "title"), null);
+                                Widget myPolygon = addNode(lol);
+                                Point p = new Point();
+                                p.setLocation(Double.valueOf(reader.getAttributeValue(null, "x")), Double.valueOf(reader.getAttributeValue(null, "y")));
+                                myPolygon.setPreferredLocation(p);
+                                Dimension d = new Dimension();
+                                d.setSize(Double.valueOf(reader.getAttributeValue(null, "w")), Double.valueOf(reader.getAttributeValue(null, "h")));
+                                Rectangle r = new Rectangle(d);
+                                myPolygon.setPreferredBounds(r);
+
+                        }//end qPolygon
+
+                        else {
+                            if (reader.getName().equals(qLabel)) {
+                                //Unavailable for now
+                            } else {
+                                if (reader.getName().equals(qZoom))
+                                    setZoomFactor(Integer.valueOf(reader.getText()));
+                                else {
+                                    if (reader.getName().equals(qCenter)) {
+                                        double x = Double.valueOf(reader.getAttributeValue(null, "x"));
+                                        double y = Double.valueOf(reader.getAttributeValue(null, "y"));
+                                    } else {
+                                        //Place more tags
+                                    }
+                                }
+                            }
                         }
                     }
                 }
-            } catch (XMLStreamException ex) {
-                if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_INFO)
-                    Exceptions.printStackTrace(ex);
             }
-            validate();
-            repaint();
+        } catch (XMLStreamException ex) {
+            if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_INFO)
+                Exceptions.printStackTrace(ex);
         }
+        validate();
+        repaint();
     }
 
     @Override
@@ -407,6 +366,8 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
         if (serviceResources == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else {
+            List<LocalObjectLight> nodesToBeDeleted = new ArrayList<>(getNodes()); 
+            
             try {
                 for (LocalObjectLight serviceResource : serviceResources) {
                     if (com.isSubclassOf(serviceResource.getClassName(), "GenericLogicalConnection")) {
@@ -417,24 +378,34 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
                                 getClassName(), logicalCircuitDetails.getEndpointA().getOid(), "GenericCommunicationsElement");
                         
                         LocalObjectLight aSideEquipmentLogical = parentsUntilFirstComEquipmentA.get(parentsUntilFirstComEquipmentA.size() - 1);
-                        if (findWidget(aSideEquipmentLogical) == null)
-                            addNode(aSideEquipmentLogical);
                         
+                        if (findWidget(aSideEquipmentLogical) != null)
+                            nodesToBeDeleted.remove(aSideEquipmentLogical);
+                        else
+                            addNode(aSideEquipmentLogical);
+
                         //Now the other side
                         List<LocalObjectLight> parentsUntilFirstComEquipmentB = com.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointB().
                                 getClassName(), logicalCircuitDetails.getEndpointB().getOid(), "GenericCommunicationsElement");
-                        
+
                         LocalObjectLight bSideEquipmentLogical = parentsUntilFirstComEquipmentB.get(parentsUntilFirstComEquipmentB.size() - 1);
-                        if (findWidget(bSideEquipmentLogical) == null)
+                            
+                        if (findWidget(bSideEquipmentLogical) != null)
+                            nodesToBeDeleted.remove(bSideEquipmentLogical);
+                        else
                             addNode(bSideEquipmentLogical);
                         
                         //Now the logical link
-                        ObjectConnectionWidget logicalLinkWidget = (ObjectConnectionWidget)addEdge(logicalCircuitDetails.getConnectionObject());
-                        logicalLinkWidget.getLabelWidget().setLabel(aSideEquipmentLogical.getName() + ":" + logicalCircuitDetails.getEndpointA().getName() + " ** " +
-                                bSideEquipmentLogical.getName() + ":" + logicalCircuitDetails.getEndpointB().getName());
-                        setEdgeSource(logicalCircuitDetails.getConnectionObject(), aSideEquipmentLogical);
-                        setEdgeTarget(logicalCircuitDetails.getConnectionObject(), bSideEquipmentLogical);
-                        
+                        ObjectConnectionWidget logicalLinkWidget = (ObjectConnectionWidget) findWidget(logicalCircuitDetails.getConnectionObject());
+                        if(logicalLinkWidget == null){
+                            logicalLinkWidget = (ObjectConnectionWidget) addEdge(logicalCircuitDetails.getConnectionObject());
+
+                            //ObjectConnectionWidget logicalLinkWidget = (ObjectConnectionWidget)addEdge(logicalCircuitDetails.getConnectionObject());
+                            logicalLinkWidget.getLabelWidget().setLabel(aSideEquipmentLogical.getName() + ":" + logicalCircuitDetails.getEndpointA().getName() + " ** " +
+                                    bSideEquipmentLogical.getName() + ":" + logicalCircuitDetails.getEndpointB().getName());
+                            setEdgeSource(logicalCircuitDetails.getConnectionObject(), aSideEquipmentLogical);
+                            setEdgeTarget(logicalCircuitDetails.getConnectionObject(), bSideEquipmentLogical);
+                        }
                         //Now with render the physical part
                         //We start with the A side
                         if (!logicalCircuitDetails.getPhysicalPathForEndpointA().isEmpty()) {
@@ -443,11 +414,19 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
                                 getClassName(), nextPhysicalHop.getOid(), "GenericCommunicationsElement");
                             
                             LocalObjectLight aSideEquipmentPhysical = parentsUntilFirstNextComEquipmentA.get(parentsUntilFirstNextComEquipmentA.size() - 1);
-                            if (findWidget(aSideEquipmentPhysical) == null)
+                            if (findWidget(aSideEquipmentPhysical) != null)
+                                nodesToBeDeleted.remove(aSideEquipmentPhysical);
+                            else
                                 addNode(aSideEquipmentPhysical);
                             
-                            if (findWidget(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1)) == null) { 
-                                ObjectConnectionWidget physicalLinkWidgetA = (ObjectConnectionWidget)addEdge(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1));
+                            if (findWidget(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1)) != null) 
+                                nodesToBeDeleted.remove(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1));
+                            else{ 
+                                ObjectConnectionWidget physicalLinkWidgetA = (ObjectConnectionWidget) findWidget(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1));
+                                if(physicalLinkWidgetA == null)
+                                    physicalLinkWidgetA = (ObjectConnectionWidget) addEdge(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1));
+                                    
+                                
                                 physicalLinkWidgetA.getLabelWidget().setLabel(aSideEquipmentLogical.getName() + ":" + logicalCircuitDetails.getEndpointA().getName() + " ** " +
                                     aSideEquipmentPhysical.getName() + ":" + nextPhysicalHop.getName());
                                 setEdgeSource(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1), aSideEquipmentLogical);
@@ -462,11 +441,18 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
                                 getClassName(), nextPhysicalHop.getOid(), "GenericCommunicationsElement");
                         
                             LocalObjectLight bSideEquipmentPhysical = parentsUntilFirstNextComEquipmentB.get(parentsUntilFirstNextComEquipmentB.size() - 1);
-                            if (findWidget(bSideEquipmentPhysical) == null)
+                            if (findWidget(bSideEquipmentPhysical) != null)
+                                nodesToBeDeleted.remove(bSideEquipmentPhysical);
+                            else
                                 addNode(bSideEquipmentPhysical);
                             
-                            if (findWidget(logicalCircuitDetails.getPhysicalPathForEndpointB().get(1)) == null) { 
-                                ObjectConnectionWidget physicalLinkWidgetB = (ObjectConnectionWidget)addEdge(logicalCircuitDetails.getPhysicalPathForEndpointB().get(1));
+                            if (findWidget(logicalCircuitDetails.getPhysicalPathForEndpointB().get(1)) != null) 
+                                nodesToBeDeleted.remove(logicalCircuitDetails.getPhysicalPathForEndpointB().get(1));
+                            else{ 
+                                ObjectConnectionWidget physicalLinkWidgetB = (ObjectConnectionWidget) findWidget(logicalCircuitDetails.getPhysicalPathForEndpointB().get(1));
+                                if(physicalLinkWidgetB == null)
+                                    physicalLinkWidgetB = (ObjectConnectionWidget) addEdge(logicalCircuitDetails.getPhysicalPathForEndpointB().get(1));
+                                    
                                 physicalLinkWidgetB.getLabelWidget().setLabel(bSideEquipmentLogical.getName() + ":" + logicalCircuitDetails.getEndpointB().getName() + " ** " +
                                     bSideEquipmentPhysical.getName() + ":" + nextPhysicalHop.getName());
                                 setEdgeSource(logicalCircuitDetails.getPhysicalPathForEndpointB().get(1), bSideEquipmentLogical);
@@ -475,6 +461,9 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
                         }
                     }
                 }
+                for (LocalObjectLight node : nodesToBeDeleted) 
+                    removeNodeWithEdges(node);
+                
             } catch (Exception ex) {
                 clear();
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
@@ -507,7 +496,7 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
             frameWidget.getActions(ACTION_SELECT).addAction(createSelectAction());
             frameWidget.getActions(ACTION_SELECT).addAction(ActionFactory.createResizeAction(resizeProvider, resizeProvider));
             frameWidget.getActions(ACTION_SELECT).addAction(moveAction);
-            //frameWidget.getActions().addAction(ActionFactory.createPopupMenuAction(FrameMenu.getInstance()));
+            frameWidget.getActions().addAction(ActionFactory.createPopupMenuAction(FrameMenu.getInstance()));
             frameWidget.getActions().addAction(ActionFactory.createInplaceEditorAction(new TextFieldInplaceEditor() {
 
                 @Override

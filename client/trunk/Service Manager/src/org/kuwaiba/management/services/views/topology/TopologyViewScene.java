@@ -51,7 +51,9 @@ import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Exceptions;
 
 /**
- * This scene renders a view where the communications equipment associated directly to a service and the physical connections between them are displayed in a topology fashion
+ * This scene renders a view where the communications equipment associated 
+ * directly to a service and the physical connections between them are 
+ * displayed in a topology fashion
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObjectLight> {
@@ -214,9 +216,6 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
 
                             LocalObjectLight container = com.getObjectInfoLight(className, objectId);
 
-                            boolean hasEndpointA = false;
-                            boolean hasEndpointB = false;
-
                             if (container != null) { // if the connection exist
                                 LocalObjectLight aSideObject = new LocalObjectLight(aSide, null, null);
                                 ObjectNodeWidget aSideWidget = (ObjectNodeWidget) findWidget(aSideObject);
@@ -287,9 +286,9 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
         if (serviceResources == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else {
-            
-            List<LocalObjectLight> nodesToBeDeleted = new ArrayList<>(getNodes()); //We clone the existing nodes to synchronize the view, so saved nodes that are no longer listed as service resources are removed
-                                                                                   //We assume that render(byte[]) was called before calling render(LocalObjectLight)
+            List<LocalObjectLight> nodesToBeDeleted = new ArrayList<>(getNodes()); 
+//We clone the existing nodes to synchronize the view, so saved nodes that are no longer listed as service resources are removed
+//We assume that render(byte[]) was called before calling render(LocalObjectLight)
             Map<Long, LocalObjectLight> equipmentByPort = new HashMap();
             //We will ignore all resources that are not GenericCommunicationsElement
             for (LocalObjectLight serviceResource : serviceResources) {
