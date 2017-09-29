@@ -151,7 +151,7 @@ public class EditConnectionsFrame extends JFrame {
     
     private void init() {
         pnlLeft.getExplorerManager().setRootContext(new ActionlessObjectNode(aSideRoot));
-        pnlCenter.getExplorerManager().setRootContext(new ActionlessSpecialObjectNode(centerRoot, null));
+        pnlCenter.getExplorerManager().setRootContext(new ActionlessSpecialObjectNode(centerRoot));
         pnlRight.getExplorerManager().setRootContext(new ActionlessObjectNode(bSideRoot));
         
         pnlLeft.getLookup().lookupResult(LocalObjectLight.class).addLookupListener(new LookupListener() {

@@ -17,7 +17,6 @@ package org.inventory.models.physicalconnections.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -69,7 +68,7 @@ public class CreatePhysicalConnectionAction extends GenericObjectNodeAction {
     public void actionPerformed(ActionEvent e) {
         Iterator<? extends ObjectNode> endpoints = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
         List<ObjectNode> endpointNodes = new ArrayList();
-        List<LocalObjectLight> existintWireContainersList = new  ArrayList<>();
+        List<LocalObjectLight> existintWireContainersList = new ArrayList<>();
 
         while(endpoints.hasNext())
             endpointNodes.add(endpoints.next());
@@ -79,9 +78,6 @@ public class CreatePhysicalConnectionAction extends GenericObjectNodeAction {
         LocalObjectLight commonParent = CommunicationsStub.getInstance()
             .getCommonParent(endpointA.getClassName(), endpointA.getOid(), 
                              endpointB.getClassName(), endpointB.getOid());
-        //we find relted wirecontainer with 
-        HashMap<String, LocalObjectLight[]> specialRelationshipsA = CommunicationsStub.getInstance().getSpecialAttributes(endpointA.getClassName(), endpointA.getOid());
-        HashMap<String, LocalObjectLight[]> specialRelationshipsB = CommunicationsStub.getInstance().getSpecialAttributes(endpointB.getClassName(), endpointB.getOid());
         
         if (commonParent == null) {
             NotificationUtil.getInstance().showSimplePopup("Error", 
@@ -95,8 +91,8 @@ public class CreatePhysicalConnectionAction extends GenericObjectNodeAction {
             return;
         }
         //if there are wirecontainers in both of the two selected nodes 
-        if(!specialRelationshipsA.isEmpty() && !specialRelationshipsB.isEmpty())
-            existintWireContainersList = checkForExistingContainers(specialRelationshipsA, specialRelationshipsB);
+        existintWireContainersList = CommunicationsStub.getInstance().getContainersBetweenObjects(endpointA.getClassName(), endpointA.getOid(), 
+                endpointB.getClassName(), endpointB.getOid(), Constants.CLASS_WIRECONTAINER);
                             
         JComboBox cmbConnectionType = new JComboBox(new String[] {"Container", "Link"});
             
@@ -109,44 +105,5 @@ public class CreatePhysicalConnectionAction extends GenericObjectNodeAction {
             else 
                 new NewLinkWizard(endpointNodes.get(0), endpointNodes.get(1), commonParent, existintWireContainersList).show();
         }
-    }
-     
-    private List<LocalObjectLight> checkForExistingContainers(HashMap<String, LocalObjectLight[]> specialRelationshipsA, HashMap<String, LocalObjectLight[]> specialRelationshipsB){
-        List<LocalObjectLight> wireContainersListA = new  ArrayList<>();
-        List<LocalObjectLight> existintWireContainersList = new  ArrayList<>();    
-        
-        if(specialRelationshipsA.get("endpointA") != null){
-            for(LocalObjectLight connection : specialRelationshipsA.get("endpointA")){
-                if(connection.getClassName().equals(Constants.CLASS_WIRECONTAINER))
-                    wireContainersListA.add(connection);
-            }
-        }
-
-        if(specialRelationshipsA.get("endpointB") != null){
-            for(LocalObjectLight connection : specialRelationshipsA.get("endpointB")){
-                if(connection.getClassName().equals(Constants.CLASS_WIRECONTAINER))
-                    wireContainersListA.add(connection);
-            }
-        }
-
-        if(specialRelationshipsB.get("endpointA") != null){
-            for(LocalObjectLight connection : specialRelationshipsB.get("endpointA")){
-                if(connection.getClassName().equals(Constants.CLASS_WIRECONTAINER)){
-                    if(wireContainersListA.contains(connection))
-                        existintWireContainersList.add(connection);
-                }
-            }
-        }
-
-        if(specialRelationshipsB.get("endpointB") != null){
-            for(LocalObjectLight connection : specialRelationshipsB.get("endpointB")){
-                if(connection.getClassName().equals(Constants.CLASS_WIRECONTAINER)){
-                    if(wireContainersListA.contains(connection))
-                        existintWireContainersList.add(connection);
-                }
-            }
-        }
-        
-        return existintWireContainersList;
     }
 }
