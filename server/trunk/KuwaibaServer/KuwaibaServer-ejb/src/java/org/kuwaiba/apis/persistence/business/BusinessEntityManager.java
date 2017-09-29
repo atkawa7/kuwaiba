@@ -343,6 +343,19 @@ public interface BusinessEntityManager {
     public void moveObjects(String targetClassName, long targetOid, HashMap<String,long[]> objects)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException;
 
+     /**
+     * Move a list of objects to a new parent(taking into account the special
+     * hierarchy containment): this methods ignores those who can't be moved and raises an 
+     * OperationNotPermittedException, however, it will move those which can be moved
+     * @param objects Map using the object class name as keys and the respective objects oids as values
+     * @param targetClassName Parent's class name
+     * @param targetOid Parent's oid
+     * @throws MetadataObjectNotFoundException If the object's or new parent's class can't be found
+     * @throws ObjectNotFoundException If the object or its new parent can't be found
+     * @throws OperationNotPermittedException If the update can't be performed due to a business rule
+     */
+    public void moveSpecialObjects(String targetClassName, long targetOid, HashMap<String,long[]> objects)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException;
     /**
      * Copy a set of objects
      * @param objects Hashmap with the objects class names as keys and their oids as values
@@ -357,6 +370,20 @@ public interface BusinessEntityManager {
     public long[] copyObjects(String targetClassName, long targetOid, HashMap<String, long[]> objects, boolean recursive)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException;
 
+    /**
+     * Copy a set of special objects (this is used to copy objects when they are containment are set in the special containment hierarchy)
+     * use case: to move physical links into a wire Container
+     * @param objects Hashmap with the objects class names as keys and their oids as values
+     * @param targetClassName Target parent's class name
+     * @param targetOid Target parent's oid
+     * @param recursive If this operation should also copy the children objects recursively
+     * @return A list containing the newly created object ids
+     * @throws MetadataObjectNotFoundException If any of the provided classes couldn't be found
+     * @throws ObjectNotFoundException If any of the template objects couldn't be found
+     * @throws OperationNotPermittedException If the target parent can't contain any of the new instances
+     */
+    public long[] copySpecialObjects(String targetClassName, long targetOid, HashMap<String, long[]> objects, boolean recursive)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException;
     /**
      * Gets the children of a given object
      * @param className Object's class name

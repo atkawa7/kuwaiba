@@ -1027,6 +1027,38 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             tx.success();
         }
     }
+    
+    @Override
+    public void moveSpecialObjects(String targetClassName, long targetOid, HashMap<String, long[]> objects)
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
+        ClassMetadata newParentClass = cm.getClass(targetClassName);
+        
+        if (newParentClass == null)
+            throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", targetClassName));
+        
+        try(Transaction tx = graphDb.beginTx()) {
+            Node newParentNode = getInstanceOfClass(targetClassName, targetOid);
+            for (String myClass : objects.keySet()){
+                if (!cm.canBeSpecialChild(targetClassName, myClass))
+                    throw new OperationNotPermittedException(String.format("An instance of class %s can not be special child of an instance of class %s", myClass,targetClassName));
+
+                Node instanceClassNode = classIndex.get(Constants.PROPERTY_NAME, myClass).getSingle();
+                if (instanceClassNode == null)
+                    throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", myClass));
+                for (long oid : objects.get(myClass)){
+                    Node instance = getInstanceOfClass(instanceClassNode, oid);
+                    String oldValue = null;
+                    if (instance.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).iterator().hasNext()){
+                        Relationship rel = instance.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).iterator().next();
+                        oldValue = String.valueOf(rel.getEndNode().getId());
+                        rel.delete();
+                    }
+                    instance.createRelationshipTo(newParentNode, RelTypes.CHILD_OF_SPECIAL);
+                }
+            }
+            tx.success();
+        }
+    }
 
     @Override
     public long[] copyObjects(String targetClassName, long targetOid, HashMap<String, long[]> objects, boolean recursive)
@@ -1051,6 +1083,38 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     Node templateObject = getInstanceOfClass(instanceClassNode, oid);
                     Node newInstance = copyObject(templateObject, recursive);
                     newInstance.createRelationshipTo(newParentNode, RelTypes.CHILD_OF);
+                    res[i] = newInstance.getId();
+                    i++;            
+                }
+            }
+            tx.success();
+            return res;
+        }        
+    }
+    
+    @Override
+    public long[] copySpecialObjects(String targetClassName, long targetOid, HashMap<String, long[]> objects, boolean recursive)
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
+        ClassMetadata newParentClass = cm.getClass(targetClassName);
+
+        if (newParentClass == null)
+            throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", targetClassName));
+
+        try (Transaction tx = graphDb.beginTx()) {
+            Node newParentNode = getInstanceOfClass(targetClassName, targetOid);
+            long[] res = new long[objects.size()];
+            int i = 0;
+            for (String myClass : objects.keySet()){
+                if (!cm.canBeSpecialChild(targetClassName, myClass))
+                    throw new OperationNotPermittedException(String.format("An instance of class %s can not be special child of an instance of class %s", myClass,targetClassName));
+
+                Node instanceClassNode = classIndex.get(Constants.PROPERTY_NAME, myClass).getSingle();
+                if (instanceClassNode == null)
+                    throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", myClass));
+                for (long oid : objects.get(myClass)){
+                    Node templateObject = getInstanceOfClass(instanceClassNode, oid);
+                    Node newInstance = copyObject(templateObject, recursive);
+                    newInstance.createRelationshipTo(newParentNode, RelTypes.CHILD_OF_SPECIAL);
                     res[i] = newInstance.getId();
                     i++;            
                 }

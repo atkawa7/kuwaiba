@@ -1289,6 +1289,28 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(ex.getMessage());
         }
     }
+    
+    @Override
+    public void moveSpecialObjects(String targetClass, long targetOid, String[] objectClasses, long[] objectOids, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        if (objectClasses.length != objectOids.length)
+            throw new ServerSideException("Array sizes do not match");
+        try {
+            aem.validateWebServiceCall("moveSpecialObjects", ipAddress, sessionId);
+            HashMap<String,long[]> objects = new HashMap<>();
+            for (int i = 0; i< objectClasses.length;i++){
+                if (objects.get(objectClasses[i]) == null)
+                    objects.put(objectClasses[i], new long[]{objectOids[i]});
+            }
+            bem.moveSpecialObjects(targetClass, targetOid, objects);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                    ActivityLogEntry.ACTIVITY_TYPE_CHANGE_PARENT, 
+                    String.format("%s moved to object with id %s", Arrays.toString(objectOids), targetOid));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
 
     @Override
     public long[] copyObjects(String targetClass, long targetOid, String[] objectClasses, long[] objectOids, boolean recursive, String ipAddress, String sessionId) throws ServerSideException {
@@ -1306,13 +1328,36 @@ public class WebserviceBean implements WebserviceBeanRemote {
             long[] newObjects = bem.copyObjects(targetClass, targetOid, objects, recursive);
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                     ActivityLogEntry.ACTIVITY_TYPE_CHANGE_PARENT, 
-                    String.format("%s moved to object with id %s of class %s", Arrays.toString(newObjects), targetOid, targetClass));
+                    String.format("%s moved to (Special) object with id %s of class %s", Arrays.toString(newObjects), targetOid, targetClass));
             return newObjects;
         }catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
 
+    @Override
+    public long[] copySpecialObjects(String targetClass, long targetOid, String[] objectClasses, long[] objectOids, boolean recursive, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        if (objectClasses.length != objectOids.length)
+            throw new ServerSideException("Array sizes do not match");
+        try {
+            aem.validateWebServiceCall("copySpecialObjects", ipAddress, sessionId);
+            HashMap<String,long[]> objects = new HashMap<>();
+            for (int i = 0; i< objectClasses.length;i++){
+                if (objects.get(objectClasses[i]) == null)
+                    objects.put(objectClasses[i], new long[]{objectOids[i]});
+            }
+            long[] newObjects = bem.copySpecialObjects(targetClass, targetOid, objects, recursive);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                    ActivityLogEntry.ACTIVITY_TYPE_CHANGE_PARENT, 
+                    String.format("%s moved to (Special)object with id %s of class %s", Arrays.toString(newObjects), targetOid, targetClass));
+            return newObjects;
+        }catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
     @Override
     public void updateObject(String className, long oid, String[] attributeNames, String[] attributeValues, String ipAddress, String sessionId) throws ServerSideException{
         if (bem == null || aem == null)
@@ -1755,6 +1800,60 @@ public class WebserviceBean implements WebserviceBeanRemote {
             }
 
             return new RemoteLogicalConnectionDetails(linkObject, endpointA, endpointB, physicalPathA, physicalPathB);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public List<RemoteObjectLight> getContainersBetweenObjects(String objectAClassName, long objectAId,
+            String objectBClassName, long objectBId, String containerClassName, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator"); //NOI18N
+        try {
+            aem.validateWebServiceCall("getContainersBetweenObjects", ipAddress, sessionId); //NOI18N
+            List<RemoteObjectLight> res = new ArrayList<>();
+
+            HashMap<String, List<RemoteBusinessObjectLight>> specialAttributesA = bem.getSpecialAttributes(objectAClassName, objectAId);
+            HashMap<String, List<RemoteBusinessObjectLight>> specialAttributesB = bem.getSpecialAttributes(objectBClassName, objectBId);
+            
+            if(!specialAttributesA.isEmpty() && !specialAttributesB.isEmpty()){
+                List<RemoteBusinessObjectLight> wireContainersListA = new  ArrayList<>();
+
+                if(specialAttributesA.get("endpointA") != null){
+                    for(RemoteBusinessObjectLight container : specialAttributesA.get("endpointA")){
+                        if(container.getClassName().equals(containerClassName))
+                            wireContainersListA.add(container);
+                    }
+                }
+
+                if(specialAttributesA.get("endpointB") != null){
+                    for(RemoteBusinessObjectLight container : specialAttributesA.get("endpointB")){
+                        if(container.getClassName().equals(containerClassName))
+                            wireContainersListA.add(container);
+                    }
+                }
+
+                if(specialAttributesB.get("endpointA") != null){
+                    for(RemoteBusinessObjectLight container : specialAttributesB.get("endpointA")){
+                        if(container.getClassName().equals(containerClassName)){
+                            if(wireContainersListA.contains(container))
+                                res.add(new RemoteObjectLight(container));
+                        }
+                    }
+                }
+
+                if(specialAttributesB.get("endpointB") != null){
+                    for(RemoteBusinessObjectLight container : specialAttributesB.get("endpointB")){
+                        if(container.getClassName().equals(containerClassName)){
+                            if(wireContainersListA.contains(container))
+                                res.add(new RemoteObjectLight(container));
+                        }
+                    }
+                }
+            }
+            
+            return res;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }

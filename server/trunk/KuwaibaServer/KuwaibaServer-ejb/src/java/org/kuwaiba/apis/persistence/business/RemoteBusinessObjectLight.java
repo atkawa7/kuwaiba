@@ -78,4 +78,20 @@ public class RemoteBusinessObjectLight implements Serializable, Comparable<Remot
     public int compareTo(RemoteBusinessObjectLight o) {
         return getName().compareTo(o.getName());
     }
+    
+    @Override
+    public boolean equals(Object obj){
+       if(obj == null)
+           return false;
+       if (!(obj instanceof RemoteBusinessObjectLight))
+           return false;
+       return (this.getId() == ((RemoteBusinessObjectLight)obj).getId());
+   }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 47 * hash + (int) (this.id ^ (this.id >>> 32));
+        return hash;
+    }
 }
