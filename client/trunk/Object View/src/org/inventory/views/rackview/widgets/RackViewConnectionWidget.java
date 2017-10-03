@@ -26,7 +26,7 @@ import org.netbeans.api.visual.widget.Scene;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class RackViewConnectionWidget extends ObjectConnectionWidget {
-
+    
     public RackViewConnectionWidget(Scene scene, LocalObjectLight object) {
         super(scene, object);
     }
@@ -34,7 +34,7 @@ public class RackViewConnectionWidget extends ObjectConnectionWidget {
     @Override
     public void notifyStateChanged (ObjectState previousState, ObjectState state) {
         super.notifyStateChanged(previousState, state);
-        if (state.isSelected()) 
+        if (state.isSelected())                       
             getLabelWidget().setVisible(true);
         else if (previousState.isSelected())
             getLabelWidget().setVisible(false);

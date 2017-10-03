@@ -19,8 +19,10 @@ import org.inventory.views.rackview.NestedDevice;
 import org.inventory.views.rackview.scene.RackViewScene;
 import java.awt.Color;
 import java.awt.Dimension;
-import org.inventory.communications.core.LocalObject;
+import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.netbeans.api.visual.border.BorderFactory;
 import org.netbeans.api.visual.model.ObjectState;
 import org.netbeans.api.visual.widget.Widget;
@@ -39,12 +41,20 @@ public class PortWidget extends SelectableRackViewWidget implements NestedDevice
     
     private boolean free;
     private final Widget innerWidget;
+    
+    private final LocalClassMetadata portClass;
 
     public PortWidget(RackViewScene scene, LocalObjectLight portObject) {
         super(scene, portObject);
-        free = true;
+        
+        portClass = CommunicationsStub.getInstance().getMetaForClass(portObject.getClassName(), false);
+        if (portClass == null) {
+            NotificationUtil.getInstance().showSimplePopup("Error", 
+                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+        }
+        free = true; 
         innerWidget = new Widget(scene);
-        innerWidget.setBackground(((LocalObject) portObject).getObjectMetadata().getColor());
+        innerWidget.setBackground(portClass.getColor());
         innerWidget.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
         innerWidget.setPreferredSize(new Dimension(25, 25));
         innerWidget.setOpaque(true);
@@ -85,6 +95,6 @@ public class PortWidget extends SelectableRackViewWidget implements NestedDevice
         if (state.isSelected())
             innerWidget.setBackground(selectedColor);
         if (previousState.isSelected())
-            innerWidget.setBackground(getLookup().lookup(LocalObject.class).getObjectMetadata().getColor());
+            innerWidget.setBackground(portClass.getColor());
     }
 }

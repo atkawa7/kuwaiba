@@ -19,7 +19,11 @@ package org.inventory.views.objectview.scene;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.List;
+import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.util.Constants;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.core.visual.scene.ObjectNodeWidget;
 import org.inventory.models.physicalconnections.wizards.NewContainerWizard;
@@ -79,10 +83,24 @@ public class PhysicalConnectionProvider implements ConnectProvider {
             newContainerWizard.show();
             newConnection = newContainerWizard.getNewConnection();
         } else {
+            LocalObjectLight sourceObject = (LocalObjectLight) scene.findObject(sourceWidget);
+            LocalObjectLight targetObject = (LocalObjectLight) scene.findObject(targetWidget);
+            
+            List<LocalObjectLight> existintWireContainersList = CommunicationsStub.getInstance()
+                .getContainersBetweenObjects(
+                    sourceObject.getClassName(), sourceObject.getOid(), 
+                    targetObject.getClassName(), targetObject.getOid(), 
+                    Constants.CLASS_WIRECONTAINER);
+            
+            if (existintWireContainersList == null) {
+                NotificationUtil.getInstance().showSimplePopup("Error", 
+                    NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                return;
+            } 
             NewLinkWizard newLinkWizard = new NewLinkWizard(sourceWidget.getLookup().lookup(ObjectNode.class), 
                     targetWidget.getLookup().lookup(ObjectNode.class), 
                     (LocalObjectLight)configObject.getProperty("currentObject"), 
-                    new  ArrayList<LocalObjectLight>());
+                    existintWireContainersList);
             newLinkWizard.show();
             newConnection = newLinkWizard.getNewConnection();
         }

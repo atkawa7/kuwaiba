@@ -21,14 +21,12 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.event.ActionEvent;
 import java.io.IOException;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import static org.inventory.core.visual.scene.AbstractScene.SCENE_CHANGE;
 import org.netbeans.api.visual.action.AcceptProvider;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectorState;
@@ -140,8 +138,6 @@ public class RackUnitWidget extends RackViewWidget {
                 return;
             }
             parentRackWidget.addEquipment(equipment);
-
-            parentRackWidget.getRackViewScene().fireChangeEvent(new ActionEvent(equipment, SCENE_CHANGE, "equipment-add-operation"));
         } else {
             NotificationUtil.getInstance().showSimplePopup("Information", 
                 NotificationUtil.INFO_MESSAGE, "The equipment is already displayed in the rack");

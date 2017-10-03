@@ -16,9 +16,13 @@
 package org.inventory.views.rackview.scene;
 
 import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
@@ -36,6 +40,7 @@ import org.inventory.views.rackview.widgets.actions.ChangePositionAction;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.ConnectorState;
+import org.netbeans.api.visual.action.SelectProvider;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
@@ -136,15 +141,26 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
                 LocalObjectLight commonParent = CommunicationsStub.getInstance()
                     .getCommonParent(sourcePort.getClassName(), sourcePort.getOid(), 
                         targetPort.getClassName(), targetPort.getOid());
-                
+                if (commonParent == null) {
+                    NotificationUtil.getInstance().showSimplePopup("Error", 
+                        NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                    return;
+                } 
+                List<LocalObjectLight> existintWireContainersList = CommunicationsStub.getInstance()
+                    .getContainersBetweenObjects(sourcePort.getClassName(), sourcePort.getOid(), 
+                        targetPort.getClassName(), targetPort.getOid(), Constants.CLASS_WIRECONTAINER);
+                if (existintWireContainersList == null) {
+                    NotificationUtil.getInstance().showSimplePopup("Error", 
+                        NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                    return;
+                } 
                 NewLinkWizard newLinkWizard = new NewLinkWizard(sourceWidget.getLookup().lookup(ObjectNode.class), 
-                        targetWidget.getLookup().lookup(ObjectNode.class), commonParent, new  ArrayList<LocalObjectLight>());
+                    targetWidget.getLookup().lookup(ObjectNode.class), commonParent, existintWireContainersList);
                 newLinkWizard.show();
                 newConnection = newLinkWizard.getNewConnection();
                 
-                if (newConnection != null){
-                    LocalObject link = CommunicationsStub.getInstance().getObjectInfo(newConnection.getClassName(), newConnection.getOid());
-                    RackViewConnectionWidget edge = (RackViewConnectionWidget) addEdge(link);
+                if (newConnection != null) {                    
+                    RackViewConnectionWidget edge = (RackViewConnectionWidget) addEdge(newConnection);
                     setEdgeSource(newConnection, sourcePort);
                     setEdgeTarget(newConnection, targetPort);
                     
@@ -153,6 +169,7 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
                             
                     edge.getLabelWidget().setVisible(true);
                     edge.setStroke(new BasicStroke(3));                    
+                    edge.setLineColor(Color.CYAN);
                     
                     validate();
                 }
@@ -173,27 +190,7 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
     @Override
     protected Widget attachNodeWidget(LocalObjectLight node) {
         Widget widget = null;
-
-        if (showConnections) {
-            LocalObject object = CommunicationsStub.getInstance().getObjectInfo(node.getClassName(), node.getOid());
-            if (object == null) {
-                NotificationUtil.getInstance().showSimplePopup("Error", 
-                    NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-                return null;
-            }
-            if (CommunicationsStub.getInstance().isSubclassOf(object.getClassName(), "GenericPhysicalPort")) {
-                widget = new PortWidget(this, object);
-                
-                widget.createActions(AbstractScene.ACTION_CONNECT);
-                widget.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(interactionLayer, getConnectProvider()));
-                widget.getActions(ACTION_CONNECT).addAction(createSelectAction());                
-            } else {
-                widget = new NestedDeviceWidget(this, object);
-                ((NestedDeviceWidget) widget).paintNestedDeviceWidget();
-            }
-            widget.createActions(AbstractScene.ACTION_SELECT);
-            widget.getActions(ACTION_SELECT).addAction(createSelectAction());
-        }
+        
         if (node instanceof LocalObject) {
             LocalObject object = ((LocalObject) node);
             if (object.getAttribute(Constants.PROPERTY_RACK_UNITS) != null && 
@@ -204,8 +201,21 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
                 widget.getActions(ACTION_SELECT).addAction(createSelectAction());
                 widget.getActions(ACTION_SELECT).addAction(changePositionAction);
             }
-        }
             
+        } else if (showConnections) {
+            if (CommunicationsStub.getInstance().isSubclassOf(node.getClassName(), "GenericPhysicalPort")) {
+                widget = new PortWidget(this, node);
+                
+                widget.createActions(AbstractScene.ACTION_CONNECT);
+                widget.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(interactionLayer, getConnectProvider()));
+                widget.getActions(ACTION_CONNECT).addAction(createSelectAction());                
+            } else {
+                widget = new NestedDeviceWidget(this, node);
+                ((NestedDeviceWidget) widget).paintNestedDeviceWidget();
+            }
+            widget.createActions(AbstractScene.ACTION_SELECT);
+            widget.getActions(ACTION_SELECT).addAction(createSelectAction());
+        }            
         if (getRack().equals(node)) {
             if (showConnections)
                 widget = new RackWidget(this, node, 800, 150, 15);
@@ -221,16 +231,70 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
     protected Widget attachEdgeWidget(LocalObjectLight edge) {
         RackViewConnectionWidget newWidget = new RackViewConnectionWidget(this, edge);
         newWidget.getLabelWidget().setVisible(false);
-        newWidget.getActions().addAction(createSelectAction());
+        newWidget.getActions().addAction(ActionFactory.createSelectAction(new RackConnectionSelectProvider()));
         
-        newWidget.setLineColor(((LocalObject)edge).getObjectMetadata().getColor());
+        LocalClassMetadata edgeClass = CommunicationsStub.getInstance().getMetaForClass(edge.getClassName(), false);
+        if (edgeClass == null) {
+            NotificationUtil.getInstance().showSimplePopup("Error", 
+                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            return null;
+        }        
+        newWidget.setLineColor(edgeClass.getColor());
         
-        RackWidget rackWidget = (RackWidget) findWidget(rack);
+        RackWidget rackWidget = (RackWidget) findWidget(rack);        
         
         newWidget.setRouter(new RackViewConnectionRouter(rackWidget.getEdgetLayer(), rackWidget.getRackUnitHeight()));
         rackWidget.getEdgetLayer().addChild(newWidget);
-                
+        
         validate();
         return newWidget;
+    }
+    
+    public class RackConnectionSelectProvider implements SelectProvider {
+    
+        public RackConnectionSelectProvider() {        
+        }
+
+        @Override
+        public boolean isAimingAllowed (Widget widget, Point localLocation, boolean invertSelection) {
+            return false;
+        }
+
+        @Override
+        public boolean isSelectionAllowed (Widget widget, Point localLocation, boolean invertSelection) {
+            return ((RackViewScene) widget.getScene()).findObject(widget) != null;
+        }
+
+        @Override
+        public void select (Widget widget, Point localLocation, boolean invertSelection) {
+            RackViewScene scene = ((RackViewScene) widget.getScene());
+            
+            Object object = scene.findObject (widget);
+            
+            scene.setFocusedObject (object);
+            if (object != null) {
+                if (!invertSelection && scene.getSelectedObjects().contains(object))
+                    return;
+                scene.userSelectionSuggested (Collections.singleton(object), invertSelection);
+                
+                for (LocalObjectLight edge : scene.getEdges()) {
+                    Widget edgeWidget = scene.findWidget(edge);
+                    
+                    if (edgeWidget != null && edgeWidget instanceof RackViewConnectionWidget) {
+                        
+                        LocalClassMetadata connectionClass = CommunicationsStub.getInstance().getMetaForClass(edge.getClassName(), false);
+                        if (connectionClass == null) {
+                            NotificationUtil.getInstance().showSimplePopup("Error", 
+                                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                            continue;
+                        }
+                        ((RackViewConnectionWidget )edgeWidget).setLineColor(connectionClass.getColor());
+                    }
+                }
+                if (widget instanceof RackViewConnectionWidget)
+                    ((RackViewConnectionWidget) widget).setLineColor(Color.CYAN);
+            } else
+                scene.userSelectionSuggested (Collections.emptySet(), invertSelection);
+        }
     }
 }

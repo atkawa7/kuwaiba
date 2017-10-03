@@ -55,6 +55,7 @@ public class RackViewService {
     public void shownRack() {
         LocalObject rack = CommunicationsStub.getInstance().getObjectInfo(
             rackLight.getClassName(), rackLight.getOid());
+        
         if (rack == null) {
             NotificationUtil.getInstance().showSimplePopup("Error", 
                 NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
@@ -79,7 +80,14 @@ public class RackViewService {
                 if (widget instanceof RackWidget) {
                     for (LocalObject equipment : ((RackWidget) widget).getLocalEquipment())
                         addNestedDevices(equipment);
-                    createConnections(CommunicationsStub.getInstance().getPhysicalConnectionsInObject(rack.getClassName(), rack.getOid()));
+                    
+                    List<LocalObjectLightList> connections = CommunicationsStub.getInstance().getPhysicalConnectionsInObject(rack.getClassName(), rack.getOid());
+                    
+                    if (connections == null) {
+                        NotificationUtil.getInstance().showSimplePopup("Error", 
+                            NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                    } else
+                        createConnections(connections);
                 }
             }
             ((RackWidget) scene.findWidget(rack)).resizeRackWidget();
@@ -117,6 +125,7 @@ public class RackViewService {
     
     public void createConnections(List<LocalObjectLightList> connections) {
         List<LocalObjectLight> addedConnections = new ArrayList<>();
+        
         for (LocalObjectLightList connection : connections) {
             ObjectConnectionWidget lastConnectionWidget = null;
             LocalObjectLight aSide = null;
@@ -138,26 +147,23 @@ public class RackViewService {
             if(aSideNode != null && bSideNode != null){
                 if (linkLight == null)
                     continue;
-                
-                LocalObject link = CommunicationsStub.getInstance().getObjectInfo(linkLight.getClassName(), linkLight.getOid());
-                if(link != null){
-                    if(!addedConnections.contains(link)) {
-                        //The background for the connected ports is set to red.
-                        ((PortWidget) bSideNode).setFree(false);
-                        ((PortWidget) aSideNode).setFree(false);
+                                
+                if (!addedConnections.contains(linkLight)) {
+                    //The background for the connected ports is set to red.
+                    ((PortWidget) bSideNode).setFree(false);
+                    ((PortWidget) aSideNode).setFree(false);
 
-                        Widget findWidget = scene.findWidget(link);
+                    Widget findWidget = scene.findWidget(linkLight);
 
-                        if(findWidget != null)
-                            scene.removeEdge(link);
+                    if (findWidget != null)
+                        scene.removeEdge(linkLight);
 
-                        lastConnectionWidget = (ObjectConnectionWidget)scene.addEdge(link);
-                        lastConnectionWidget.getLabelWidget().setLabel( 
-                                (aSide.getName() == null ? "" : aSide.getName()) + " ** " + (bSide.getName() == null ? "" : bSide.getName()));
-                        scene.setEdgeSource(link, aSide);
-                        scene.setEdgeTarget(link, bSide);
-                        addedConnections.add(link);
-                    }
+                    lastConnectionWidget = (ObjectConnectionWidget)scene.addEdge(linkLight);
+                    lastConnectionWidget.getLabelWidget().setLabel( 
+                            (aSide.getName() == null ? "" : aSide.getName()) + " ** " + (bSide.getName() == null ? "" : bSide.getName()));
+                    scene.setEdgeSource(linkLight, aSide);
+                    scene.setEdgeTarget(linkLight, bSide);
+                    addedConnections.add(linkLight);
                 }
             } else {
                 if (aSideNode != null && linkLight != null)

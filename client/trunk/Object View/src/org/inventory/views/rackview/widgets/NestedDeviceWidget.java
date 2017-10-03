@@ -18,7 +18,8 @@ package org.inventory.views.rackview.widgets;
 import org.inventory.views.rackview.NestedDevice;
 import org.inventory.views.rackview.scene.RackViewScene;
 import java.awt.Color;
-import org.inventory.communications.core.LocalObject;
+import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalObjectLight;
 import org.netbeans.api.visual.border.BorderFactory;
 import org.netbeans.api.visual.layout.LayoutFactory;
@@ -37,8 +38,11 @@ public class NestedDeviceWidget extends SelectableRackViewWidget implements Nest
     private LabelWidget lblName;
     private RackViewWidget widgetToChildren;
     
-    public NestedDeviceWidget(RackViewScene scene, LocalObject businessObject) {
+    private final LocalClassMetadata nestedDeviceClass;
+    
+    public NestedDeviceWidget(RackViewScene scene, LocalObjectLight businessObject) {
         super(scene, businessObject);
+        nestedDeviceClass = CommunicationsStub.getInstance().getMetaForClass(businessObject.getClassName(), false);
     }    
     
     @Override
@@ -53,7 +57,7 @@ public class NestedDeviceWidget extends SelectableRackViewWidget implements Nest
     
     public void paintNestedDeviceWidget() {
         setLayout(LayoutFactory.createVerticalFlowLayout());
-        Color backgroundColor = getLookup().lookup(LocalObject.class).getObjectMetadata().getColor();
+        Color backgroundColor = nestedDeviceClass.getColor();
         setBackground(backgroundColor != null ? backgroundColor : Color.WHITE);
         setOpaque(true);
         
@@ -82,7 +86,7 @@ public class NestedDeviceWidget extends SelectableRackViewWidget implements Nest
             lblName.setForeground(Color.ORANGE);
         }
         if (previousState.isSelected()) {
-            Color backgroundColor = getLookup().lookup(LocalObject.class).getObjectMetadata().getColor();
+            Color backgroundColor = nestedDeviceClass.getColor();
             setBackground(backgroundColor != null ? backgroundColor : Color.WHITE);
             lblName.setForeground(Color.WHITE);
         }

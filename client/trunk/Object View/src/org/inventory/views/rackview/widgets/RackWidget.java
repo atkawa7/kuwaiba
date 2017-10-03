@@ -380,7 +380,7 @@ public class RackWidget extends SelectableRackViewWidget {
         
         EquipmentWidget equipmentWidget = (EquipmentWidget) getRackViewScene().findWidget(equipment);
         
-        if (getRackViewScene().findWidget(equipment) == null) {
+        if (equipmentWidget == null) {            
             equipmentWidget = (EquipmentWidget) (getRackViewScene()).addNode(equipment);
             
             equipmentWidget.setRackWidget(this);
@@ -392,6 +392,11 @@ public class RackWidget extends SelectableRackViewWidget {
             equipmentWidget.paintNestedDeviceWidget();
             
             equipmentsLayer.addChild(equipmentWidget);
+        } else {
+            equipmentWidget.getLookup().lookup(LocalObject.class)
+                .setAttribute(Constants.PROPERTY_POSITION, equipmentPosition);
+            equipmentWidget.getLookup().lookup(LocalObject.class)
+                .setAttribute(Constants.PROPERTY_RACK_UNITS, equipmentRackUnits);
         }
         int drawPosition = equipmentPosition;
         if (ascending)
@@ -401,6 +406,7 @@ public class RackWidget extends SelectableRackViewWidget {
         int y = getRackUnitHeight() * drawPosition + getSpacingRackUnits() * drawPosition;
             
         equipmentWidget.setPreferredLocation(new Point(0, y));
+        getRackViewScene().repaint();
     }
     
     public void resizeRackWidget() {

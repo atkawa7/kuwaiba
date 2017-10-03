@@ -32,8 +32,10 @@ import org.netbeans.api.visual.widget.Widget;
  */
 public class ChangePositionAction extends WidgetAction.LockedAdapter {       
     private boolean moved;
+    private Point oldLocation;
     
     public ChangePositionAction() {
+        oldLocation = new Point(0, 0);
     }
     
     @Override
@@ -43,6 +45,8 @@ public class ChangePositionAction extends WidgetAction.LockedAdapter {
 
     @Override
     public State mousePressed (Widget widget, WidgetMouseEvent event) {
+        oldLocation = new Point(widget.getPreferredLocation().x, widget.getPreferredLocation().y);
+        
         if (isLocked ())
             return State.createLocked (widget, this);
         if (event.getButton () == MouseEvent.BUTTON1  &&  event.getClickCount () == 1)
@@ -64,20 +68,20 @@ public class ChangePositionAction extends WidgetAction.LockedAdapter {
             RackUnitWidget rackUnit = rackWidget.findRackUnitIndex(newLocation);
 
             if (rackUnit == null) {
-                rackWidget.getLocalEquipment().remove(equipmentObject);
-                rackWidget.addEquipment(equipmentObject);
+                ((EquipmentWidget) widget).setPreferredLocation(oldLocation);
+                rackViewScene.repaint();
 
                 NotificationUtil.getInstance().showSimplePopup("Information", 
                     NotificationUtil.INFO_MESSAGE, "The equipment must be dropped inside of a rack unit");
             } else {
                 String canBeMoved = rackWidget.canBeMoved(equipmentObject, rackUnit.getRackUnitIndex());
                 if (canBeMoved == null) {
-                    rackWidget.getLocalEquipment().remove(equipmentObject);
                     rackWidget.freeEquipmentRackUnits(equipmentObject);
+                    rackWidget.getLocalEquipment().remove(equipmentObject);
                     rackUnit.setEquipmentPosition(rackUnit, equipmentObject);
                 } else {
-                    rackWidget.getLocalEquipment().remove(equipmentObject);
-                    rackWidget.addEquipment(equipmentObject);
+                    ((EquipmentWidget) widget).setPreferredLocation(oldLocation);
+                    rackViewScene.repaint();
                     NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, canBeMoved);                    
                 }
             }
