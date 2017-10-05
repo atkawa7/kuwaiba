@@ -23,6 +23,7 @@ import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.navigation.navigationtree.nodes.actions.ShowMoreInformationAction;
 import org.openide.nodes.Children;
@@ -58,7 +59,7 @@ public class ContractNode extends ObjectNode {
             
             if (equipment == null) {
                 setKeys(Collections.EMPTY_LIST);
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, 
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, 
                         CommunicationsStub.getInstance().getError());
             } else {
                 Collections.sort(equipment);

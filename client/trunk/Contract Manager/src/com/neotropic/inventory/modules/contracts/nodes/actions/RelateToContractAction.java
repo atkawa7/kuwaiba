@@ -24,6 +24,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -35,20 +36,19 @@ import org.openide.util.lookup.ServiceProvider;
 public class RelateToContractAction extends GenericObjectNodeAction {
 
     public RelateToContractAction() {
-        putValue(NAME, "Relate to Contract...");
+        putValue(NAME, I18N.gm("relate_to_contract"));
     }
-
     
     @Override
     public void actionPerformed(ActionEvent e) {
         List<LocalObjectLight> contracts = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_GENERICCONTRACT);
 
         if (contracts ==  null)
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else {
             if (contracts.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "There are no contracts created. Create at least one using the Contracts Manager", 
-                    "Information", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, I18N.gm("no_contracts_created"), 
+                    I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
             } else {
                 ContractFrame frame = new ContractFrame(selectedObjects, contracts);
                 frame.setVisible(true);

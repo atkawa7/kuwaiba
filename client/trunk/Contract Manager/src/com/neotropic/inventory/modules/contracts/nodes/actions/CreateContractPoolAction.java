@@ -30,6 +30,7 @@ import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.openide.util.Utilities;
 
@@ -40,7 +41,7 @@ import org.openide.util.Utilities;
 public class CreateContractPoolAction extends GenericInventoryAction {
     private CommunicationsStub com = CommunicationsStub.getInstance();
     public CreateContractPoolAction() {
-        putValue(NAME, "New Contract Pool");
+        putValue(NAME, I18N.gm("new_contract_pool"));
     }
     
     @Override
@@ -56,7 +57,7 @@ public class CreateContractPoolAction extends GenericInventoryAction {
         
         List<LocalClassMetadataLight> possibleContractClasses = com.getLightSubclasses(Constants.CLASS_GENERICCONTRACT, false, false);
         if (possibleContractClasses == null)
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
         else {       
             JTextField txtPoolName = new JTextField();
             txtPoolName.setName("txtPoolName");
@@ -69,10 +70,10 @@ public class CreateContractPoolAction extends GenericInventoryAction {
             txtPoolDescription.setName("txtPoolDescription");
             txtPoolDescription.setColumns(10);
             
-            JComplexDialogPanel pnlPoolProperties = new JComplexDialogPanel(new String[] { "Pool Name", "Pool Type", "Pool Description" }, 
+            JComplexDialogPanel pnlPoolProperties = new JComplexDialogPanel(new String[] {I18N.gm("pool_name"), I18N.gm("pool_type"), I18N.gm("pool_description") }, 
                     new JComponent[] { txtPoolName, cmbPoolType, txtPoolDescription });
             
-            if (JOptionPane.showConfirmDialog(null, pnlPoolProperties, "New Contract Pool", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+            if (JOptionPane.showConfirmDialog(null, pnlPoolProperties, I18N.gm("new_contract_pool"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
                 
                 LocalClassMetadataLight poolType = (LocalClassMetadataLight)((JComboBox)pnlPoolProperties.getComponent("cmbPoolType")).getSelectedItem();
                 
@@ -82,13 +83,12 @@ public class CreateContractPoolAction extends GenericInventoryAction {
                                         LocalPool.POOL_TYPE_MODULE_ROOT);
                 
                 if (newPool == null)
-                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
                 else {       
                     ((ContractManagerRootNode.ContractManagerRootChildren)selectedNode.getChildren()).addNotify();
-                    NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Contract pool created");
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, I18N.gm("contract_pool_created"));
                 }
             }
-            
         }
     }    
 

@@ -24,6 +24,7 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.openide.util.Utilities;
 
 /**
@@ -33,13 +34,13 @@ import org.openide.util.Utilities;
 public class DeleteContractAction extends GenericInventoryAction {
 
     public DeleteContractAction() {
-        putValue(NAME, "Delete Contract");
+        putValue(NAME, I18N.gm("delete_contract"));
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this contract?", 
-                "Warning", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+        if (JOptionPane.showConfirmDialog(null, I18N.gm("want_to_delete_contract"), 
+                I18N.gm("warning"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
         
             Iterator<? extends ContractNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ContractNode.class).allInstances().iterator();
 
@@ -49,13 +50,12 @@ public class DeleteContractAction extends GenericInventoryAction {
             ContractNode selectedNode = selectedNodes.next();
 
             if (CommunicationsStub.getInstance().deleteObject(selectedNode.getObject().getClassName(), selectedNode.getObject().getOid())) {
-                NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "The selected contract was deleted");
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, I18N.gm("contract_was_deleted"));
                 ((ContractPoolNode.ContractPoolChildren)selectedNode.getParentNode().getChildren()).addNotify();
             }
             else
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE, CommunicationsStub.getInstance().getError());
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.INFO_MESSAGE, CommunicationsStub.getInstance().getError());
         }
-            
     }
     
     @Override

@@ -18,7 +18,9 @@ package com.neotropic.inventory.modules.contracts.nodes.actions.generic;
 import java.awt.event.ActionEvent;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -30,20 +32,20 @@ import org.openide.util.lookup.ServiceProvider;
 public class GeneralPurposeDeleteContractAction extends GenericObjectNodeAction {
 
     public GeneralPurposeDeleteContractAction() {
-        putValue(NAME, "Delete Contract");
+        putValue(NAME, I18N.gm("delete_contract"));
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
         if (CommunicationsStub.getInstance().deleteObject(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getOid()))
-            NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "The selected contract was deleted");
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, I18N.gm("contract_was_deleted"));
         else
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());            
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());            
     }
 
     @Override
     public String getValidator() {
-        return "contract";
+        return Constants.VALIDATOR_CONTRACT;
     }
     
     @Override

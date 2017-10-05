@@ -27,6 +27,7 @@ import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.ComposedAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.SubMenuDialog;
 import org.inventory.core.services.utils.SubMenuItem;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
@@ -42,7 +43,7 @@ import org.openide.util.lookup.ServiceProvider;
 public class ReleaseFromContractAction extends GenericObjectNodeAction implements ComposedAction {
     
     public ReleaseFromContractAction() {
-        putValue(NAME, "Release from Contract...");
+        putValue(NAME, I18N.gm("release_from_contract"));
     }
     
     @Override
@@ -52,12 +53,12 @@ public class ReleaseFromContractAction extends GenericObjectNodeAction implement
             .getSpecialAttribute(selectedObj.getClassName(), selectedObj.getOid(), "contractHas");
         
         if (contracts == null) {
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE, 
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.INFO_MESSAGE, 
                 CommunicationsStub.getInstance().getError());
         } else {
             if (contracts.isEmpty())
-                JOptionPane.showMessageDialog(null, "There are not contracts related to the selected object", 
-                    "Information", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, I18N.gm("no_cotracts_related_to_selected_object"), 
+                    I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
             else {
                 List<SubMenuItem> subMenuItems = new ArrayList();
                 for (LocalObjectLight contract : contracts) {
@@ -84,7 +85,7 @@ public class ReleaseFromContractAction extends GenericObjectNodeAction implement
     public void finalActionPerformed(ActionEvent e) {
         if (e != null && e.getSource() instanceof SubMenuDialog) {
             if (JOptionPane.showConfirmDialog(null, 
-                    "The selected objects will no longer be related to this contract\n Are you sure you want to continue?", "Warning", 
+                    I18N.gm("want_to_release_from_contract"), I18N.gm("warning"), 
                     JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
 
                 Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
@@ -98,12 +99,12 @@ public class ReleaseFromContractAction extends GenericObjectNodeAction implement
                             ((ContractNode.ContractChildren)selectedNode.getParentNode().getChildren()).addNotify();
                     } else {
                         success = false;
-                        NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                     }
                 }
 
                 if (success)
-                    NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "The selected devices were released from the contract");
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, I18N.gm("objects_released_from_cotract"));
             }
         }
     }

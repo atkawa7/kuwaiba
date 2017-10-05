@@ -37,6 +37,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.core.services.i18n.I18N;
 
 /**
  * Show the activity log associated to an object
@@ -55,10 +56,10 @@ public class ContractFrame extends JFrame {
         this.selectedObjects = selectedObjects;
         this.contracts = contracts;
         setLayout(new BorderLayout());
-        setTitle("Available Contracts");
+        setTitle(I18N.gm("available_contracts"));
         setSize(400, 650);
         setLocationRelativeTo(null);
-        JLabel lblInstructions = new JLabel("Select a contract from the list");
+        JLabel lblInstructions = new JLabel(I18N.gm("select_contract_from_list"));
         lblInstructions.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         
                 
@@ -96,10 +97,10 @@ public class ContractFrame extends JFrame {
         
         JPanel pnlButtons = new JPanel();
         pnlButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
-        JButton btnRelate = new JButton("Create Relationship");
+        JButton btnRelate = new JButton(I18N.gm("create_relationship"));
         pnlButtons.add(btnRelate);
         btnRelate.addActionListener(new BtnConnectActionListener());
-        JButton btnClose = new JButton("Close");
+        JButton btnClose = new JButton(I18N.gm("close"));
         btnClose.addActionListener(new ActionListener() {
 
             @Override
@@ -117,7 +118,7 @@ public class ContractFrame extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (lstAvailableContracts.getSelectedValue() == null)
-                JOptionPane.showMessageDialog(null, "Select a contract from the list");
+                JOptionPane.showMessageDialog(null, I18N.gm("select_contract_from_list"));
             else {
                 String [] objectsClassName = new String[selectedObjects.size()];
                 Long [] objectsId = new Long[selectedObjects.size()];
@@ -130,12 +131,12 @@ public class ContractFrame extends JFrame {
                     objectsClassName, objectsId, 
                     ((LocalObjectLight)lstAvailableContracts.getSelectedValue()).getClassName(),
                     ((LocalObjectLight)lstAvailableContracts.getSelectedValue()).getOid())){
-                        JOptionPane.showMessageDialog(null, String.format("The selected devices were related to %s", lstAvailableContracts.getSelectedValue()));
+                        JOptionPane.showMessageDialog(null, String.format(I18N.gm("selected_devices_were_related_to"), lstAvailableContracts.getSelectedValue()));
                         dispose();
                 }
                 else 
                     JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError(), 
-                        "Error", JOptionPane.ERROR_MESSAGE);
+                        I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
             }
         }
     }

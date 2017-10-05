@@ -24,6 +24,7 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalPool;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
@@ -39,7 +40,7 @@ public class ContractManagerRootNode extends AbstractNode {
     
     public ContractManagerRootNode(ContractManagerRootChildren children) {
         super(children);
-        setDisplayName("Contract Manager");
+        setDisplayName(I18N.gm("ContractManager.module.name"));
     }
 
     @Override
@@ -64,7 +65,7 @@ public class ContractManagerRootNode extends AbstractNode {
             List<LocalPool> contractPools = CommunicationsStub.getInstance().getRootPools(Constants.CLASS_GENERICCONTRACT, LocalPool.POOL_TYPE_MODULE_ROOT, true);
 
             if (contractPools == null)
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, 
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, 
                         CommunicationsStub.getInstance().getError());
             else {
                 Collections.sort(contractPools);
@@ -82,5 +83,4 @@ public class ContractManagerRootNode extends AbstractNode {
             return new Node[] { new ContractPoolNode(key) };
         }
     }
-    
 }
