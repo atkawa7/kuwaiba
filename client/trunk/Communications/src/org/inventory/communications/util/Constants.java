@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,6 +37,10 @@ public class Constants {
      * IP address type for IPv6
      */
     public static final int IPV6_TYPE = 6;
+    /**
+     * Name of the validator to indicate if a given class is a container
+     */
+    public static final String VALIDATOR_CONTRACT = "contract";
     /**
      * Name of the validator to indicate if a given class is a container
      */
