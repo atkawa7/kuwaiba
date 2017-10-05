@@ -89,7 +89,7 @@
                 <package>org.inventory.core.services.api.notifications</package>
                 <package>org.inventory.core.services.api.visual</package>
                 <package>org.inventory.core.services.api.xml</package>
-                <package>org.inventory.core.services.caching</package>
+                <package>org.inventory.core.services.i18n</package>
                 <package>org.inventory.core.services.utils</package>
             </public-packages>
         </data>
