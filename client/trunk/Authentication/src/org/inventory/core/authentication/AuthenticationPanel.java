@@ -21,6 +21,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import org.inventory.core.services.i18n.I18N;
 
 /**
  * This is the form displayed at application's startup
@@ -60,17 +61,10 @@ public class AuthenticationPanel extends JPanel {
         txtPassword = new javax.swing.JPasswordField();
         lblError = new javax.swing.JLabel();
 
-        lblUser.setText(org.openide.util.NbBundle.getMessage(AuthenticationPanel.class, "AuthenticationPanel.lblUser.text")); // NOI18N
-
-        lblPassword.setText(org.openide.util.NbBundle.getMessage(AuthenticationPanel.class, "AuthenticationPanel.lblPassword.text")); // NOI18N
-
-        txtUser.setText(org.openide.util.NbBundle.getMessage(AuthenticationPanel.class, "AuthenticationPanel.txtUser.text")); // NOI18N
-
-        txtPassword.setText(org.openide.util.NbBundle.getMessage(AuthenticationPanel.class, "AuthenticationPanel.txtPassword.text")); // NOI18N
-
-        lblError.setForeground(new java.awt.Color(255, 0, 0));
+        lblUser.setText(I18N.gm("user"));
+        lblPassword.setText(I18N.gm("password")); // NOI18N
+        lblError.setForeground(new java.awt.Color(233, 29, 41));
         lblError.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/authentication/res/error.png"))); // NOI18N
-        lblError.setText(org.openide.util.NbBundle.getMessage(AuthenticationPanel.class, "AuthenticationPanel.lblError.text")); // NOI18N
         lblError.setAutoscrolls(true);
         lblError.setFocusable(false);
         lblError.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -119,8 +113,8 @@ public class AuthenticationPanel extends JPanel {
         );
     }// </editor-fold>                        
 
-    private void lblErrorMouseClicked(java.awt.event.MouseEvent evt) {                                      
-        JOptionPane.showMessageDialog(this, detailedError, "Error", JOptionPane.ERROR_MESSAGE);
+    private void lblErrorMouseClicked(java.awt.event.MouseEvent evt) {   
+        JOptionPane.showMessageDialog(this, detailedError, I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
     }                                     
 
     // Variables declaration - do not modify                     

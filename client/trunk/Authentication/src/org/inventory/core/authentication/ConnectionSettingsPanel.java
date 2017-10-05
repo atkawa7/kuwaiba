@@ -16,6 +16,7 @@
 package org.inventory.core.authentication;
 
 import java.util.Properties;
+import org.inventory.core.services.i18n.I18N;
 
 /**
  * This panel shows the form with the connection settings (server, port and WSDL path)
@@ -64,9 +65,9 @@ public class ConnectionSettingsPanel extends javax.swing.JPanel {
 
         txtServerPort.setText(org.openide.util.NbBundle.getMessage(ConnectionSettingsPanel.class, "ConnectionSettingsPanel.txtServerPort.text")); // NOI18N
 
-        lblServerPort.setText(org.openide.util.NbBundle.getMessage(ConnectionSettingsPanel.class, "ConnectionSettingsPanel.lblServerPort.text")); // NOI18N
+        lblServerPort.setText(I18N.gm("server_port")); // NOI18N
 
-        lblServerAddress.setText(org.openide.util.NbBundle.getMessage(ConnectionSettingsPanel.class, "ConnectionSettingsPanel.lblServerAddress.text")); // NOI18N
+        lblServerAddress.setText(I18N.gm("server_address")); // NOI18N
 
         txtServerAddress.setText(org.openide.util.NbBundle.getMessage(ConnectionSettingsPanel.class, "ConnectionSettingsPanel.txtServerAddress.text")); // NOI18N
 
@@ -91,9 +92,11 @@ public class ConnectionSettingsPanel extends javax.swing.JPanel {
             }
         });
 
-        chkHostVerification.setText(org.openide.util.NbBundle.getMessage(ConnectionSettingsPanel.class, "ConnectionSettingsPanel.chkHostVerification.text")); // NOI18N
-        chkHostVerification.setToolTipText(org.openide.util.NbBundle.getMessage(ConnectionSettingsPanel.class, "ConnectionSettingsPanel.chkHostVerification.toolTipText")); // NOI18N
+        chkHostVerification.setText(I18N.gm("check_host_verification")); // NOI18N
+        chkHostVerification.setToolTipText(I18N.gm("check_host_verification_tooltiptext")); // NOI18N
+        chkHostVerification.setActionCommand(I18N.gm("check_host_verification")); // NOI18N
         chkHostVerification.setEnabled(false);
+        chkHostVerification.setLabel(I18N.gm("check_host_verification")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -148,6 +151,11 @@ public class ConnectionSettingsPanel extends javax.swing.JPanel {
                 .addComponent(chkHostVerification)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        lblServerPort.getAccessibleContext().setAccessibleName(I18N.gm("server_port")); // NOI18N
+        lblServerAddress.getAccessibleContext().setAccessibleName(I18N.gm("server_address")); // NOI18N
+        chkHostVerification.getAccessibleContext().setAccessibleName(I18N.gm("check_host_verification")); // NOI18N
+        chkHostVerification.getAccessibleContext().setAccessibleDescription(I18N.gm("check_host_verification_tooltiptext")); // NOI18N
     }// </editor-fold>//GEN-END:initComponents
 
     private void radBtnHttpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radBtnHttpActionPerformed
