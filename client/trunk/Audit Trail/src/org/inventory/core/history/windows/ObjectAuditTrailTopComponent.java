@@ -36,6 +36,7 @@ import org.inventory.core.services.api.export.ExportableTable;
 import org.inventory.core.services.api.export.filters.CSVFilter;
 import org.inventory.core.services.api.export.filters.TextExportFilter;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.netbeans.swing.etable.ETable;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
@@ -58,18 +59,21 @@ public class ObjectAuditTrailTopComponent extends TopComponent implements Export
     public ObjectAuditTrailTopComponent(LocalObjectLight object) {
         LocalApplicationLogEntry[] entries = CommunicationsStub.getInstance().getBusinessObjectAuditTrail(object.getClassName(), object.getOid());
         if (entries == null) {
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             return;
         }
         this.object = object;
-        this.columnNames =  new String[]{"Timestamp", "Type", "User", "Property", "Old value", "New value"};
+        this.columnNames =  new String[]{I18N.gm("timestamp"), I18N.gm("type"), 
+            I18N.gm("user"), I18N.gm("property"), I18N.gm("old_value"), 
+            I18N.gm("new_value")};
+        
         setLayout(new BorderLayout());
         barMain = new JToolBar();
         add(barMain, BorderLayout.NORTH);
         btnExport = new JButton();
         btnExport.setIcon(new ImageIcon(getClass().getResource("/org/inventory/core/history/res/export.png"))); //NOI18N
         barMain.add(btnExport);
-        btnExport.setToolTipText("Export to CSV...");
+        btnExport.setToolTipText(I18N.gm("export_to_csv"));
         btnExport.addActionListener(new ActionListener() {
 
             @Override
@@ -77,7 +81,7 @@ public class ObjectAuditTrailTopComponent extends TopComponent implements Export
                 btnExportButtonActionPerformed(e);
             }
         });
-        setName(String.format("Audit trail for %s", object));
+        setName(String.format(I18N.gm("audit_trail_for"), object));
         
         aTable = new ETable(buildTableModel(entries));
         
@@ -144,17 +148,13 @@ public class ObjectAuditTrailTopComponent extends TopComponent implements Export
             }
 
             @Override
-            public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-                
-            }
+            public void setValueAt(Object aValue, int rowIndex, int columnIndex) {}
 
             @Override
-            public void addTableModelListener(TableModelListener l) {
-            }
+            public void addTableModelListener(TableModelListener l) {}
 
             @Override
-            public void removeTableModelListener(TableModelListener l) {
-            }
+            public void removeTableModelListener(TableModelListener l) {}
         };
         
     }
@@ -171,7 +171,7 @@ public class ObjectAuditTrailTopComponent extends TopComponent implements Export
     
     private void btnExportButtonActionPerformed(ActionEvent e) {
         ExportTablePanel exportPanel = new ExportTablePanel(new TextExportFilter []{CSVFilter.getInstance()}, this);
-        DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export options",true, exportPanel);
+        DialogDescriptor dd = new DialogDescriptor(exportPanel, I18N.gm("export_options"),true, exportPanel);
         DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
     }
 
@@ -187,10 +187,10 @@ public class ObjectAuditTrailTopComponent extends TopComponent implements Export
 
     @Override
     public void refresh() {
-        setName(String.format("Audit trail for %s", object));
+        setName(String.format(I18N.gm("audit_trail_for"), object));
         LocalApplicationLogEntry[] entries = CommunicationsStub.getInstance().getBusinessObjectAuditTrail(object.getClassName(), object.getOid());
         if (entries == null) {
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             return;
         }
         aTable.setModel(buildTableModel(entries));
@@ -210,7 +210,7 @@ public class ObjectAuditTrailTopComponent extends TopComponent implements Export
         TableColumnModel columnModel = table.getColumnModel();
             
         for (int i = 0; i < tableModel.getColumnCount(); i += 1) {
-            if ("Old value".equals(tableModel.getColumnName(i)) || "New value".equals(tableModel.getColumnName(i)))                
+            if (I18N.gm("old_value").equals(tableModel.getColumnName(i)) || I18N.gm("new_value").equals(tableModel.getColumnName(i)))                
                 columnModel.getColumn(i).setPreferredWidth(81);
         }
     }

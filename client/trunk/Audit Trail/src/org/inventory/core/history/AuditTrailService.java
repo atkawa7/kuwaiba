@@ -20,6 +20,7 @@ import javax.swing.table.TableColumnModel;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalApplicationLogEntry;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.netbeans.swing.etable.ETable;
 
 /**
@@ -71,7 +72,7 @@ public class AuditTrailService {
         }
         
         if (records == null)
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
         else{
             AuditTrailTableModel tableModel = new AuditTrailTableModel(records);
             ETable table = component.getTable();
@@ -84,7 +85,7 @@ public class AuditTrailService {
             TableColumnModel columnModel = table.getColumnModel();
             
             for (int i = 0; i < tableModel.getColumnCount(); i += 1) {
-                if ("Old value".equals(tableModel.getColumnName(i)) || "New value".equals(tableModel.getColumnName(i)))                
+                if (I18N.gm("old_value").equals(tableModel.getColumnName(i)) || I18N.gm("new_value").equals(tableModel.getColumnName(i)))                
                     columnModel.getColumn(i).setPreferredWidth(81);
             }
         }

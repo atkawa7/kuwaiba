@@ -19,13 +19,16 @@ import java.util.Date;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 import org.inventory.communications.core.LocalApplicationLogEntry;
+import org.inventory.core.services.i18n.I18N;
 
 /**
  * The table model of the audit trail table
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class AuditTrailTableModel implements TableModel {
-    private String columnNames[] =  new String[]{"Timestamp", "Type", "User", "Property", "Old value", "New value", "Notes"};
+    private String columnNames[] =  new String[]{ I18N.gm("timestamp"), 
+        I18N.gm("type"), I18N.gm("user"), I18N.gm("property"), 
+        I18N.gm("old_value"), I18N.gm("new_value"), I18N.gm("notes")};
     private LocalApplicationLogEntry[] records;
 
     public AuditTrailTableModel(LocalApplicationLogEntry[] records) {

@@ -23,6 +23,7 @@ import org.inventory.core.services.api.export.ExportableTable;
 import org.inventory.core.services.api.export.filters.CSVFilter;
 import org.inventory.core.services.api.export.filters.TextExportFilter;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.netbeans.swing.etable.ETable;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
@@ -30,7 +31,6 @@ import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.windows.TopComponent;
-import org.openide.util.NbBundle.Messages;
 
 /**
  * Audit trail module main TopComponent
@@ -45,21 +45,17 @@ persistenceType = TopComponent.PERSISTENCE_NEVER)
 @ActionReferences(value = {@ActionReference(path = "Menu/Tools"),
     @ActionReference(path = "Toolbars/05_Tools", position = 3)})
 @TopComponent.OpenActionRegistration(
-    displayName = "#CTL_AuditTrailAction",
-preferredID = "AuditTrailTopComponent")
-@Messages({
-    "CTL_AuditTrailAction=Audit Trail",
-    "CTL_AuditTrailTopComponent=Activity Log",
-    "HINT_AuditTrailTopComponent=Activity Log"
-})
+    displayName = "#AuditTrail.displayname",
+    preferredID = "AuditTrailTopComponent")
+
 public final class AuditTrailTopComponent extends TopComponent implements ExportableTable {
     private ETable aTable;
     private AuditTrailService service;
 
     public AuditTrailTopComponent() {
         initComponents();
-        setName(Bundle.CTL_AuditTrailTopComponent());
-        setToolTipText(Bundle.HINT_AuditTrailTopComponent());
+        setName(I18N.gm("AuditTrail.module.name"));
+        setToolTipText(I18N.gm("AuditTrail.module.tooltiptext"));
         service = new AuditTrailService(this);
         pnlScrollMain.setViewportView(aTable = new ETable());
     }
@@ -84,8 +80,8 @@ public final class AuditTrailTopComponent extends TopComponent implements Export
         barMain.setRollover(true);
 
         btnExport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/history/res/export.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnExport, org.openide.util.NbBundle.getMessage(AuditTrailTopComponent.class, "AuditTrailTopComponent.btnExport.text")); // NOI18N
-        btnExport.setToolTipText(org.openide.util.NbBundle.getMessage(AuditTrailTopComponent.class, "AuditTrailTopComponent.btnExport.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnExport, I18N.gm("none")); // NOI18N
+        btnExport.setToolTipText(I18N.gm( "export")); // NOI18N
         btnExport.setFocusable(false);
         btnExport.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnExport.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -95,10 +91,11 @@ public final class AuditTrailTopComponent extends TopComponent implements Export
             }
         });
         barMain.add(btnExport);
+        btnExport.getAccessibleContext().setAccessibleDescription(I18N.gm("export")); // NOI18N
 
         btnAll.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/history/res/all.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnAll, org.openide.util.NbBundle.getMessage(AuditTrailTopComponent.class, "AuditTrailTopComponent.btnAll.text")); // NOI18N
-        btnAll.setToolTipText(org.openide.util.NbBundle.getMessage(AuditTrailTopComponent.class, "AuditTrailTopComponent.btnAll.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnAll, I18N.gm("none")); // NOI18N
+        btnAll.setToolTipText(I18N.gm("get_all_records")); // NOI18N
         btnAll.setFocusable(false);
         btnAll.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnAll.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -108,10 +105,11 @@ public final class AuditTrailTopComponent extends TopComponent implements Export
             }
         });
         barMain.add(btnAll);
+        btnAll.getAccessibleContext().setAccessibleDescription(I18N.gm("get_all_records")); // NOI18N
 
         btnPrevious.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/history/res/previous.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnPrevious, org.openide.util.NbBundle.getMessage(AuditTrailTopComponent.class, "AuditTrailTopComponent.btnPrevious.text")); // NOI18N
-        btnPrevious.setToolTipText(org.openide.util.NbBundle.getMessage(AuditTrailTopComponent.class, "AuditTrailTopComponent.btnPrevious.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnPrevious, I18N.gm("none")); // NOI18N
+        btnPrevious.setToolTipText(I18N.gm("previous_page")); // NOI18N
         btnPrevious.setFocusable(false);
         btnPrevious.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnPrevious.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -121,10 +119,11 @@ public final class AuditTrailTopComponent extends TopComponent implements Export
             }
         });
         barMain.add(btnPrevious);
+        btnPrevious.getAccessibleContext().setAccessibleDescription(I18N.gm("previous_page")); // NOI18N
 
         btnNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/history/res/next.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnNext, org.openide.util.NbBundle.getMessage(AuditTrailTopComponent.class, "AuditTrailTopComponent.btnNext.text")); // NOI18N
-        btnNext.setToolTipText(org.openide.util.NbBundle.getMessage(AuditTrailTopComponent.class, "AuditTrailTopComponent.btnNext.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnNext, I18N.gm("none")); // NOI18N
+        btnNext.setToolTipText(I18N.gm("next_page")); // NOI18N
         btnNext.setFocusable(false);
         btnNext.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnNext.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -134,6 +133,7 @@ public final class AuditTrailTopComponent extends TopComponent implements Export
             }
         });
         barMain.add(btnNext);
+        btnNext.getAccessibleContext().setAccessibleDescription(I18N.gm("next_page")); // NOI18N
 
         add(barMain, java.awt.BorderLayout.PAGE_START);
         add(pnlScrollMain, java.awt.BorderLayout.CENTER);
@@ -158,7 +158,7 @@ public final class AuditTrailTopComponent extends TopComponent implements Export
 
     private void btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportActionPerformed
         ExportTablePanel exportPanel = new ExportTablePanel(new TextExportFilter[]{CSVFilter.getInstance()}, this);
-        DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export options",true, exportPanel);
+        DialogDescriptor dd = new DialogDescriptor(exportPanel, I18N.gm("export_options"),true, exportPanel);
         DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
     }//GEN-LAST:event_btnExportActionPerformed
 
@@ -203,7 +203,7 @@ public final class AuditTrailTopComponent extends TopComponent implements Export
         }else{
             LocalApplicationLogEntry[] records = CommunicationsStub.getInstance().getGeneralActivityAuditTrail(0, 0);
             if (records == null){
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 return new Object[0][0];
             }
             else{

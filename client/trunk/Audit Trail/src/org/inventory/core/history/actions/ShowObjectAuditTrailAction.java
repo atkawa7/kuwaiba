@@ -22,6 +22,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.history.windows.ObjectAuditTrailTopComponent;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.windows.WindowManager;
@@ -35,7 +36,7 @@ public final class ShowObjectAuditTrailAction extends GenericObjectNodeAction {
     private CommunicationsStub com;
 
     public ShowObjectAuditTrailAction() {
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/core/history/Bundle").getString("LBL_AUDIT_TRAIL"));
+        putValue(NAME, I18N.gm("audit_trail"));
         com = CommunicationsStub.getInstance();
     }
 
@@ -44,7 +45,7 @@ public final class ShowObjectAuditTrailAction extends GenericObjectNodeAction {
         LocalObjectLight selectedObject = selectedObjects.get(0);
         LocalApplicationLogEntry[] entries = com.getBusinessObjectAuditTrail(selectedObject.getClassName(), selectedObject.getOid());
         if (entries == null)
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
         else{
             ObjectAuditTrailTopComponent tc = (ObjectAuditTrailTopComponent) WindowManager.getDefault()
                 .findTopComponent("ObjectAuditTrailTopComponent_" + selectedObject.getOid());
