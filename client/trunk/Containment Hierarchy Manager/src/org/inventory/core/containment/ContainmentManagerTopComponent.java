@@ -26,6 +26,7 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.containment.nodes.ClassMetadataChildren;
 import org.inventory.core.containment.nodes.ClassMetadataSpecialChildren;
 import org.inventory.core.containment.nodes.ClassMetadataTransferManager;
+import org.inventory.core.services.i18n.I18N;
 import org.openide.windows.TopComponent;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -52,8 +53,9 @@ persistenceType = TopComponent.PERSISTENCE_NEVER)
 @ActionReferences(value = {@ActionReference(path = "Menu/Tools/Administration"),
     @ActionReference(path = "Toolbars/04_Customization", position = 2)})
 @TopComponent.OpenActionRegistration(
-    displayName = "Containment Manager",
-preferredID = "ContainmentManagerTopComponent")
+    displayName = "#ContainmentManager.module.displayname",
+    preferredID = "ContainmentManagerTopComponent"
+)
 public final class ContainmentManagerTopComponent extends TopComponent
     implements Refreshable, ExplorerManager.Provider{
 
@@ -66,8 +68,8 @@ public final class ContainmentManagerTopComponent extends TopComponent
     public ContainmentManagerTopComponent() {
         initComponents();
         initComponentsCustom();
-        setName("Containment Manager");
-        setToolTipText("Manage the Standard and Special Containment Hierarchies");
+        setName(I18N.gm("ContainmentManager.module.name"));
+        setToolTipText(I18N.gm("ContainmentManager.module.tooltiptext"));
     }
 
     private void initComponentsCustom() {
@@ -124,8 +126,9 @@ public final class ContainmentManagerTopComponent extends TopComponent
 
         add(pnlHierarchyManagerMain, java.awt.BorderLayout.CENTER);
 
-        org.openide.awt.Mnemonics.setLocalizedText(lblInfo, org.openide.util.NbBundle.getMessage(ContainmentManagerTopComponent.class, "ContainmentManagerTopComponent.lblInfo.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(lblInfo, I18N.gm("containment_hierarchy_instructions")); // NOI18N
         add(lblInfo, java.awt.BorderLayout.PAGE_END);
+        lblInfo.getAccessibleContext().setAccessibleName(I18N.gm("containment_hierarchy_instructions")); // NOI18N
 
         toolBarMain.setRollover(true);
         toolBarMain.setMaximumSize(new java.awt.Dimension(392, 38));
@@ -133,8 +136,8 @@ public final class ContainmentManagerTopComponent extends TopComponent
         toolBarMain.setPreferredSize(new java.awt.Dimension(326, 33));
 
         btnStandartContainmentHierarchy.setSelected(true);
-        org.openide.awt.Mnemonics.setLocalizedText(btnStandartContainmentHierarchy, org.openide.util.NbBundle.getMessage(ContainmentManagerTopComponent.class, "ContainmentManagerTopComponent.btnStandartContainmentHierarchy.text")); // NOI18N
-        btnStandartContainmentHierarchy.setToolTipText(org.openide.util.NbBundle.getMessage(ContainmentManagerTopComponent.class, "ContainmentManagerTopComponent.btnStandartContainmentHierarchy.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnStandartContainmentHierarchy, I18N.gm("standard_containment_hierarchy")); // NOI18N
+        btnStandartContainmentHierarchy.setToolTipText(I18N.gm("standard_containment_hierarchy")); // NOI18N
         btnStandartContainmentHierarchy.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
         btnStandartContainmentHierarchy.setFocusable(false);
         btnStandartContainmentHierarchy.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -146,9 +149,11 @@ public final class ContainmentManagerTopComponent extends TopComponent
             }
         });
         toolBarMain.add(btnStandartContainmentHierarchy);
+        btnStandartContainmentHierarchy.getAccessibleContext().setAccessibleName(I18N.gm("standard_containment_hierarchy")); // NOI18N
+        btnStandartContainmentHierarchy.getAccessibleContext().setAccessibleDescription(I18N.gm("standard_containment_hierarchy")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(btnSpecialContainmentHierarchy, org.openide.util.NbBundle.getMessage(ContainmentManagerTopComponent.class, "ContainmentManagerTopComponent.btnSpecialContainmentHierarchy.text")); // NOI18N
-        btnSpecialContainmentHierarchy.setToolTipText(org.openide.util.NbBundle.getMessage(ContainmentManagerTopComponent.class, "ContainmentManagerTopComponent.btnSpecialContainmentHierarchy.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnSpecialContainmentHierarchy, I18N.gm("special_containment_hierarchy")); // NOI18N
+        btnSpecialContainmentHierarchy.setToolTipText(I18N.gm("special_containment_hierarchy")); // NOI18N
         btnSpecialContainmentHierarchy.setBorder(javax.swing.BorderFactory.createEmptyBorder(3, 3, 3, 3));
         btnSpecialContainmentHierarchy.setFocusable(false);
         btnSpecialContainmentHierarchy.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -159,6 +164,8 @@ public final class ContainmentManagerTopComponent extends TopComponent
             }
         });
         toolBarMain.add(btnSpecialContainmentHierarchy);
+        btnSpecialContainmentHierarchy.getAccessibleContext().setAccessibleName(I18N.gm("special_containment_hierarchy")); // NOI18N
+        btnSpecialContainmentHierarchy.getAccessibleContext().setAccessibleDescription(I18N.gm("special_containment_hierarchy")); // NOI18N
 
         add(toolBarMain, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents

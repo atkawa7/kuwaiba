@@ -22,6 +22,7 @@ import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.openide.nodes.Children.Array;
 import org.openide.nodes.Node;
 /**
@@ -62,7 +63,7 @@ public class ClassMetadataChildren extends Array {
             List<LocalClassMetadataLight> children = CommunicationsStub.getInstance().getPossibleChildrenNoRecursive(lcm.getClassName());
             
             if (children == null) {
-                NotificationUtil.getInstance().showSimplePopup("Error", 
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             } else {
                 keys = new ArrayList();

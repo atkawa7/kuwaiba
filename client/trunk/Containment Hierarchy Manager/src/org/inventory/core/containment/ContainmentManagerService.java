@@ -21,6 +21,7 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 
 /**
  * Contains the business logic for the related TopComponent
@@ -47,7 +48,7 @@ public class ContainmentManagerService {
         LocalClassMetadataLight[] allMeta;
         allMeta = com.getAllLightMeta(false);
         if (allMeta==null)
-           hctc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+           hctc.getNotifier().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
         else{
             //Build the lstClasses model, made out of all metadata
             //and the bTreeView model, made out of allMeta minus the abstract classes

@@ -24,6 +24,7 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.containment.nodes.actions.RemovePossibleChildAction;
+import org.inventory.core.services.i18n.I18N;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.util.datatransfer.PasteType;
@@ -63,12 +64,12 @@ public class ClassMetadataNode extends AbstractNode {
    public String getDisplayName(){
        if (object!=null){
             if (object.getClassName() == null)
-                return java.util.ResourceBundle.getBundle("org/inventory/core/containment/Bundle").getString("LBL_ROOTNODE_TEXT");
+                return I18N.gm("navigation_tree_root");
             else
                 return object.getClassName();       
        }
        else
-           return java.util.ResourceBundle.getBundle("org/inventory/core/containment/Bundle").getString("LBL_NONAME");
+           return I18N.gm("noname");
    }
 
     @Override
@@ -106,16 +107,16 @@ public class ClassMetadataNode extends AbstractNode {
                         ((ClassMetadataChildren) getChildren()).add(new ClassMetadataNode[]{new ClassMetadataNode(data)});
                         CommunicationsStub.getInstance().refreshCache(false, false, false, true, false);
 
-                        NotificationUtil.getInstance().showSimplePopup("Success", 
+                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), 
                             NotificationUtil.INFO_MESSAGE, 
-                            java.util.ResourceBundle.getBundle("org/inventory/core/containment/Bundle").getString("LBL_HIERARCHY_UPDATE_TEXT"));
+                            I18N.gm("operation_complete_successfully"));
                     }
                     else {
-                        NotificationUtil.getInstance().showSimplePopup("Error", 
+                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                             NotificationUtil.ERROR_MESSAGE,CommunicationsStub.getInstance().getError());
                     }
                 } catch (UnsupportedFlavorException ex) {
-                    NotificationUtil.getInstance().showSimplePopup("Error", 
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                         NotificationUtil.ERROR_MESSAGE,ex.getMessage());
                 }
                 return null;

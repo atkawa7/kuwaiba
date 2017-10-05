@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import org.inventory.core.containment.nodes.ClassMetadataSpecialChildren;
 import org.inventory.core.containment.nodes.ClassMetadataSpecialNode;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.openide.nodes.Node;
 import org.openide.util.Utilities;
 
@@ -33,7 +34,7 @@ public class RemovePossibleSpecialChildAction extends GenericInventoryAction {
     private static RemovePossibleSpecialChildAction instance;
     
     private RemovePossibleSpecialChildAction() {
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/core/containment/Bundle").getString("LBL_REMOVE_SPECIAL_CHILD"));
+        putValue(NAME, I18N.gm("remove_special_child"));
     }
     
     public static RemovePossibleSpecialChildAction getInstance() {
@@ -56,10 +57,10 @@ public class RemovePossibleSpecialChildAction extends GenericInventoryAction {
                 ((ClassMetadataSpecialChildren) selectedNode.getParentNode().getChildren()).remove(new Node[] {selectedNode});
                 CommunicationsStub.getInstance().refreshCache(false, false, false, false, true);
                 
-                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE,
-                    java.util.ResourceBundle.getBundle("org/inventory/core/containment/Bundle").getString("LBL_HIERARCHY_UPDATE_TEXT"));
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE,
+                    I18N.gm("operation_complete_successfully"));
             } else {
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             }
         }
     }
