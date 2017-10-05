@@ -1226,7 +1226,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
 
                 if (parentNode == null)
                     throw new MetadataObjectNotFoundException(String.format(
-                            "Can not find a class with id %1s", parentClassId));
+                            "Can not find a class with id %s", parentClassId));
                 if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, (String)parentNode.getProperty(Constants.PROPERTY_NAME)))
                     throw new InvalidArgumentException(
                             String.format("%s is not a business class, thus can not be added to the containment hierarchy", (String)parentNode.getProperty(Constants.PROPERTY_NAME)));
