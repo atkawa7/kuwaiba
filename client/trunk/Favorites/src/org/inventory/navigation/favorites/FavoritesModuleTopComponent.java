@@ -19,12 +19,12 @@ import org.inventory.navigation.favorites.nodes.FavoritesFolderRootNode;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
-import org.openide.util.NbBundle.Messages;
 import java.awt.event.KeyEvent;
 import javax.swing.InputMap;
 import javax.swing.KeyStroke;
 import javax.swing.text.DefaultEditorKit;
 import org.inventory.core.services.api.behaviors.Refreshable;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.actions.DeleteBusinessObjectAction;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.explorer.ExplorerManager;
@@ -52,14 +52,10 @@ import org.openide.windows.TopComponent;
 @ActionReferences(value = {@ActionReference(path = "Menu/Tools/Navigation"), 
     @ActionReference(path = "Toolbars/01_Navigation", position = 2)})
 @TopComponent.OpenActionRegistration(
-        displayName = "#CTL_FavoritesModuleAction",
+        displayName = "#Favorites.module.displayname",
         preferredID = "FavoritesModuleTopComponent"
 )
-@Messages({
-    "CTL_FavoritesModuleAction=Favorites",
-    "CTL_FavoritesModuleTopComponent=Favorites",
-    "HINT_FavoritesModuleTopComponent=Favorites"
-})
+
 public final class FavoritesModuleTopComponent extends TopComponent implements 
     ExplorerManager.Provider, Refreshable {
     
@@ -70,8 +66,8 @@ public final class FavoritesModuleTopComponent extends TopComponent implements
         em = new ExplorerManager();
         initComponents();
         initCustomComponents();
-        setName(Bundle.CTL_FavoritesModuleTopComponent());
-        setToolTipText(Bundle.HINT_FavoritesModuleTopComponent());
+        setName(I18N.gm("Favorites.module.name"));
+        setToolTipText(I18N.gm("Favorites.module.tooltiptext"));
     }
     
     public void initCustomComponents() {

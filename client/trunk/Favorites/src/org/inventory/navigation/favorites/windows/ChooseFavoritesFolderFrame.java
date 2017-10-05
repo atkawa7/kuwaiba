@@ -38,6 +38,7 @@ import javax.swing.event.DocumentListener;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalFavoritesFolder;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.core.services.i18n.I18N;
 
 /**
  * Frame for choose a Favorites folder
@@ -54,10 +55,10 @@ public class ChooseFavoritesFolderFrame extends JFrame {
         this.selectedObjects = selectedObjects;
         this.favoritesFolders = favoritesFolders;       
         setLayout(new BorderLayout());
-        setTitle(java.util.ResourceBundle.getBundle("org/inventory/navigation/favorites/Bundle").getString("LBL_TITLE_AVAILABLE_FAVORITES"));
+        setTitle(I18N.gm("favorites_folder"));
         setSize(400, 650);
         setLocationRelativeTo(null);
-        JLabel lblInstructions = new JLabel(java.util.ResourceBundle.getBundle("org/inventory/navigation/favorites/Bundle").getString("LBL_INSTRUCTIONS_SELECT_FAVORITE"));
+        JLabel lblInstructions = new JLabel(I18N.gm("search"));
         lblInstructions.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         
         JPanel pnlSearch = new JPanel();
@@ -95,10 +96,10 @@ public class ChooseFavoritesFolderFrame extends JFrame {
         
         JPanel pnlButtons = new JPanel();
         pnlButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
-        JButton btnRelate = new JButton("Create Relationship");
+        JButton btnRelate = new JButton(I18N.gm("create_relationship"));
         pnlButtons.add(btnRelate);
         btnRelate.addActionListener(new BtnAddToFavoritesFolderActionListener());
-        JButton btnClose = new JButton("Close");
+        JButton btnClose = new JButton(I18N.gm("close"));
         btnClose.addActionListener(new ActionListener() {
 
             @Override
@@ -115,7 +116,7 @@ public class ChooseFavoritesFolderFrame extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (lstAviableFavoritesFolders.getSelectedValue() == null)
-                JOptionPane.showMessageDialog(null, "Select a Favorites folder from the list");
+                JOptionPane.showMessageDialog(null, I18N.gm("select_a_favorites_folder"));
             else {
                 List<String> objectsClassName = new ArrayList();
                 List<Long> objectsId = new ArrayList();
@@ -128,11 +129,11 @@ public class ChooseFavoritesFolderFrame extends JFrame {
                         .addObjectsToFavoritesFolder(objectsClassName, objectsId, ((LocalFavoritesFolder) lstAviableFavoritesFolders.getSelectedValue()).getId())) {
                         
                         
-                        JOptionPane.showMessageDialog(null, String.format("%s added to Favorites folder %s", selectedObject, lstAviableFavoritesFolders.getSelectedValue()));
+                        JOptionPane.showMessageDialog(null, String.format("%s "+ I18N.gm("added_to_favorites_folder") +" %s", selectedObject, lstAviableFavoritesFolders.getSelectedValue()));
                         dispose();
                     } else {
                         JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError(), 
-                            "Error", JOptionPane.ERROR_MESSAGE);
+                            I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
                     }
                     
                     objectsClassName.clear();

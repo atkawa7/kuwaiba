@@ -21,6 +21,7 @@ import org.inventory.navigation.favorites.nodes.FavoritesFolderNode;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.openide.nodes.PropertySupport;
 
 /**
@@ -59,7 +60,7 @@ public class FavoritesFolderNativeTypeProperty extends PropertySupport.ReadWrite
             }
         }
         else {
-            NotificationUtil.getInstance().showSimplePopup("Error", 
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         }
     }

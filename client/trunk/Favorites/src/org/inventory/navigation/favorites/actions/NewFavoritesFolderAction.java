@@ -17,7 +17,6 @@ package org.inventory.navigation.favorites.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
-import java.util.ResourceBundle;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -29,6 +28,7 @@ import org.inventory.navigation.favorites.nodes.FavoritesFolderRootNode;
 import org.inventory.navigation.favorites.nodes.FavoritesFolderRootNode.FavoritesFolderRootChildren;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
+import org.inventory.core.services.i18n.I18N;
 import org.openide.util.Utilities;
 
 /**
@@ -39,8 +39,7 @@ public class NewFavoritesFolderAction extends GenericInventoryAction {
     private static NewFavoritesFolderAction instance;
     
     private NewFavoritesFolderAction() {
-        putValue(NAME, ResourceBundle.getBundle("org/inventory/navigation/favorites/Bundle")
-            .getString("ACTION_NAME_NEW_FAVORITE"));
+        putValue(NAME, I18N.gm("new_favorites_folder"));
     }
     
     public static NewFavoritesFolderAction getInstance() {
@@ -62,23 +61,23 @@ public class NewFavoritesFolderAction extends GenericInventoryAction {
         txtPoolName.setColumns(10);
         
         JComplexDialogPanel pnlPoolProperties = new JComplexDialogPanel(
-            new String[] {"Folder Name"}, 
+            new String[] {I18N.gm("folder_name")}, 
             new JComponent[] {txtPoolName});
         
-        if (JOptionPane.showConfirmDialog(null, pnlPoolProperties, "New Favorites Folder", 
+        if (JOptionPane.showConfirmDialog(null, pnlPoolProperties, I18N.gm("new_favorites_folder"), 
             JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             
             LocalFavoritesFolder newFavorites = CommunicationsStub.getInstance().createFavoritesFolderForUser(
                 ((JTextField) pnlPoolProperties.getComponent("txtFavoritesFolderName")).getText());
             
             if (newFavorites == null) {
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, 
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, 
                     CommunicationsStub.getInstance().getError());
             } else {
                 ((FavoritesFolderRootChildren) selectedNode.getChildren()).addNotify();
                 
-                NotificationUtil.getInstance().showSimplePopup("Information", 
-                    NotificationUtil.INFO_MESSAGE, "Favorites folder created sucessfully");
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), 
+                    NotificationUtil.INFO_MESSAGE, I18N.gm("favorites_folder_created_successfully"));
             }
         }
     }

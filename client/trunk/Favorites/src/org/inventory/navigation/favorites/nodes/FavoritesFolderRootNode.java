@@ -22,6 +22,7 @@ import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalFavoritesFolder;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.favorites.actions.NewFavoritesFolderAction;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
@@ -38,7 +39,7 @@ public class FavoritesFolderRootNode extends AbstractNode {
     
     public FavoritesFolderRootNode() {
         super(new FavoritesFolderRootChildren());
-        setDisplayName("Favorites Folders");
+        setDisplayName(I18N.gm("favorites_folder"));
     }
     
     @Override
@@ -63,8 +64,8 @@ public class FavoritesFolderRootNode extends AbstractNode {
             List<LocalFavoritesFolder> bookmarks = CommunicationsStub.getInstance().getFavoritesFoldersForUser();
             
             if (bookmarks == null) {
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, 
-                    CommunicationsStub.getInstance().getError());                                
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"),
+                        NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());                                
             } else {
                 Collections.sort(bookmarks);
                 setKeys(bookmarks);

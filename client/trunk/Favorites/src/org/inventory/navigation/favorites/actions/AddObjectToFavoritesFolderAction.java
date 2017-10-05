@@ -23,6 +23,7 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.favorites.windows.ChooseFavoritesFolderFrame;
 import org.inventory.communications.core.LocalFavoritesFolder;
 import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -34,8 +35,7 @@ import org.openide.util.lookup.ServiceProvider;
 public class AddObjectToFavoritesFolderAction extends GenericObjectNodeAction {
         
     public AddObjectToFavoritesFolderAction() {
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/favorites/Bundle")
-            .getString("LBL_ADD_FAVORITE"));
+        putValue(NAME, I18N.gm("add_to_favorite_folder"));
     }
             
     @Override
@@ -48,12 +48,12 @@ public class AddObjectToFavoritesFolderAction extends GenericObjectNodeAction {
         List<LocalFavoritesFolder> favoritesFolders = CommunicationsStub.getInstance().getFavoritesFoldersForUser();
                 
         if (favoritesFolders == null) {
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, 
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, 
                 CommunicationsStub.getInstance().getError());
         } else {
             if (favoritesFolders.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "There are no favorites folders created. Create at least one using the Favorites Module", 
-                    "Information", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, I18N.gm("no_favorite_folders_created_create_one_to_use_favorites_module"), 
+                    I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
             } else {
                 ChooseFavoritesFolderFrame frame = new ChooseFavoritesFolderFrame(selectedObjects, favoritesFolders);
                 frame.setVisible(true);

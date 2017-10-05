@@ -19,7 +19,6 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ResourceBundle;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -27,6 +26,7 @@ import org.inventory.navigation.favorites.nodes.FavoritesFolderNode;
 import org.inventory.navigation.favorites.nodes.FavoritesFolderRootNode.FavoritesFolderRootChildren;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
+import org.inventory.core.services.i18n.I18N;
 import org.openide.util.Utilities;
 
 /**
@@ -37,8 +37,7 @@ public class DeleteFavoritesFolderAction extends GenericInventoryAction {
     private static DeleteFavoritesFolderAction instance;
     
     private DeleteFavoritesFolderAction() {
-        putValue(NAME, ResourceBundle.getBundle("org/inventory/navigation/favorites/Bundle")
-            .getString("ACTION_NAME_DELETE_FAVORITE"));
+        putValue(NAME, I18N.gm("delete_favorites_folder"));
     }
     
     public static DeleteFavoritesFolderAction getInstance() {
@@ -47,8 +46,8 @@ public class DeleteFavoritesFolderAction extends GenericInventoryAction {
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this favorites folder?", 
-            "Warning", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+        if (JOptionPane.showConfirmDialog(null, I18N.gm("want_to_delete_favorites_folder"), 
+            I18N.gm("warning"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             
             Iterator<? extends FavoritesFolderNode> selectedNodes = Utilities.actionsGlobalContext()
                 .lookupResult(FavoritesFolderNode.class).allInstances().iterator();
@@ -62,12 +61,12 @@ public class DeleteFavoritesFolderAction extends GenericInventoryAction {
             ids.add(selectedNode.getFavoritesFolder().getId());
             
             if (CommunicationsStub.getInstance().deleteFavoritesFolders(ids)) {
-                NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, 
-                    "The selected favorites folder was deleted successfully");
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, 
+                    I18N.gm("favorites_folder_deleted_successfully"));
                 
                 ((FavoritesFolderRootChildren) selectedNode.getParentNode().getChildren()).addNotify();
             } else {
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE, 
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.INFO_MESSAGE, 
                     CommunicationsStub.getInstance().getError());
             }
         }
