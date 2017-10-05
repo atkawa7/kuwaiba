@@ -22,6 +22,7 @@ import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.communications.core.caching.Cache;
 import org.inventory.communications.util.Constants;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.customization.classhierarchy.nodes.AttributeMetadataNode;
 import org.openide.nodes.PropertySupport;
 
@@ -75,9 +76,9 @@ public class AttributeMetadataProperty extends PropertySupport.ReadWrite {
             Cache.getInstace().resetAll();
             //Refresh the class node
             node.getClassNode().refresh();
-            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Attribute updated successfully");
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, I18N.gm("attribute_updated"));
         }else
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
     }
     
     @Override

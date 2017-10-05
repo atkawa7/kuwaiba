@@ -19,6 +19,7 @@ import java.awt.Component;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.beans.PropertyEditorSupport;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.customization.classhierarchy.nodes.AttributeMetadataNode;
 import org.openide.explorer.propertysheet.ExPropertyEditor;
 import org.openide.explorer.propertysheet.PropertyEnv;
@@ -90,7 +91,7 @@ public class AttributeEditorSupport extends PropertyEditorSupport
     
     @Override
     public String getAsText(){
-        return "[Click the button to edit]";
+        return "["+I18N.gm("click_to_edit")+"]";
     }
     
     

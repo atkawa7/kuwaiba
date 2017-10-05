@@ -22,6 +22,7 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.api.xml.ClassHierarchyReader;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.customization.classhierarchy.scene.ClassHierarchyScene;
 import org.inventory.customization.classhierarchy.scene.xml.ClassHierarchyReaderImpl;
 import org.netbeans.api.visual.vmd.VMDNodeWidget;
@@ -59,9 +60,8 @@ public class ClassHierarchyService {
                 roots = ((ClassHierarchyReaderImpl) xmlReader).getRoots();
             }
             catch (Exception e) {
-                NotificationUtil.getInstance().showSimplePopup("Error", 
-                    NotificationUtil.ERROR_MESSAGE, 
-                    e.getMessage());
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                    NotificationUtil.ERROR_MESSAGE, e.getMessage());
             }
         }
     }
@@ -83,7 +83,7 @@ public class ClassHierarchyService {
     }
             
     private List<LocalClassMetadata> getSubclasses(LocalClassMetadata parent) {
-        List<LocalClassMetadata> children = new ArrayList();
+        List<LocalClassMetadata> children = new ArrayList<>();
         for (LocalClassMetadata possibleChild : roots) {
             if (parent.getClassName().equals(possibleChild.getParentName()))
                 children.add(possibleChild);
@@ -129,8 +129,8 @@ public class ClassHierarchyService {
     }
     
     private void findAddedOrRemovedClasses(LocalClassMetadata parent, List<LocalClassMetadata> children, List<LocalClassMetadata> classes) {
-        List<LocalClassMetadata> added = new ArrayList();
-        List<LocalClassMetadata> removed = new ArrayList();
+        List<LocalClassMetadata> added = new ArrayList<>();
+        List<LocalClassMetadata> removed = new ArrayList<>();
         // Added
         for (LocalClassMetadata child : children) {
             if (!classes.contains(child))

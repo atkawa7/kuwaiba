@@ -69,7 +69,7 @@ public class ClassHierarchyReaderImpl implements ClassHierarchyReader {
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         ByteArrayInputStream bais = new ByteArrayInputStream(xmlDocument);
         XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
-        roots = new ArrayList();
+        roots = new ArrayList<>();
         
         while (reader.hasNext()) {
             int event = reader.next();
@@ -103,8 +103,8 @@ public class ClassHierarchyReaderImpl implements ClassHierarchyReader {
         String className = reader.getAttributeValue(null, "name"); //NOI18N
         int javaModifiers = Integer.valueOf(reader.getAttributeValue(null, "javaModifiers")); //NOI18N
         
-        List<String> attributesNames = new ArrayList();
-        List<String> attributesTypes = new ArrayList();
+        List<String> attributesNames = new ArrayList<>();
+        List<String> attributesTypes = new ArrayList<>();
         
         QName attributeTag = new QName("attribute"); //NOI18N
         QName classTag = new QName("class"); //NOI18N
@@ -132,10 +132,10 @@ public class ClassHierarchyReaderImpl implements ClassHierarchyReader {
         LocalClassMetadata lcm = new LocalClassMetadata(
                 id, className, "", parentName, 
                 Modifier.isAbstract(javaModifiers), false, false, false, false, 
-                new byte[0], 0, new HashMap(), new byte[0], "", new ArrayList(), 
+                new byte[0], 0, new HashMap(), new byte[0], "", new ArrayList<Long>(), 
                 attributesNames.toArray(new String[0]), 
                 attributesTypes.toArray(new String[0]), new String[0], 
-                new ArrayList(),new ArrayList(), new ArrayList(), new String[0]);
+                new ArrayList<Boolean>(),new ArrayList<Boolean>(), new ArrayList<Boolean>(), new String[0]);
         
         return lcm;
     }

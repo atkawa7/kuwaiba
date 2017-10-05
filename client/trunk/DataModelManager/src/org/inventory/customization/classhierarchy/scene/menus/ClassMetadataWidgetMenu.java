@@ -19,6 +19,7 @@ import java.awt.Point;
 import javax.swing.Action;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.visual.scene.SelectableVMDNodeWidget;
 import org.inventory.customization.classhierarchy.nodes.ClassMetadataNode;
 import org.inventory.customization.classhierarchy.scene.ClassHierarchyScene;
@@ -44,7 +45,7 @@ public class ClassMetadataWidgetMenu implements PopupMenuProvider {
 
     @Override
     public JPopupMenu getPopupMenu(Widget widget, Point localLocation) {
-        JPopupMenu popupMenu = new JPopupMenu("Options");
+        JPopupMenu popupMenu = new JPopupMenu(I18N.gm("options"));
         popupMenu.add(ShowSubclassAction.getInstance((ClassHierarchyScene) widget.getScene()));
         popupMenu.add(HideSubclassAction.getInstance((ClassHierarchyScene) widget.getScene()));
         popupMenu.add(new JSeparator());

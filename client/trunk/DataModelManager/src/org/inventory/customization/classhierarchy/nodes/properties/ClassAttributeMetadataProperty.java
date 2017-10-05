@@ -18,6 +18,7 @@ package org.inventory.customization.classhierarchy.nodes.properties;
 import java.beans.PropertyEditor;
 import java.lang.reflect.InvocationTargetException;
 import org.inventory.communications.core.LocalAttributeMetadata;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.customization.classhierarchy.nodes.ClassMetadataNode;
 import org.openide.nodes.PropertySupport;
 
@@ -33,14 +34,14 @@ public class ClassAttributeMetadataProperty extends PropertySupport.ReadWrite {
     public ClassAttributeMetadataProperty(LocalAttributeMetadata attributeMetadata, ClassMetadataNode classNode) {
         super(attributeMetadata.getName(), String.class, 
                 (attributeMetadata.isMandatory() ? "\u002A" : "") + attributeMetadata.getName(), //this mark the mandatory attributes with a *
-                "Click the button to edit");
+                I18N.gm("click_to_edit"));
         this.attributeMetadata = attributeMetadata;
         this.classNode = classNode;
     }
     
     @Override
     public Object getValue() throws IllegalAccessException, InvocationTargetException {
-        return "[Click the button to edit]";
+        return "["+I18N.gm("click_to_edit")+"]";
     }
     
     @Override

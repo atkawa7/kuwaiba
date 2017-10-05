@@ -18,6 +18,7 @@ package org.inventory.customization.classhierarchy.scene;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import org.inventory.communications.core.LocalClassMetadata;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.visual.actions.providers.CustomSelectProvider;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.core.visual.scene.SelectableVMDNodeWidget;
@@ -83,7 +84,7 @@ public class ClassHierarchyScene extends AbstractScene<LocalClassMetadata, Strin
                 }
                 String className = subclass.getClassName();
                 
-                String edge = String.format("%s subclass of %s", className, rootClass.getClassName());
+                String edge = String.format("%s " + I18N.gm("subclass_of") + " %s", className, rootClass.getClassName());
                 
                 addEdge(edge);
                 setEdgeSource(edge, rootClass);
@@ -122,7 +123,7 @@ public class ClassHierarchyScene extends AbstractScene<LocalClassMetadata, Strin
     protected Widget attachNodeWidget(LocalClassMetadata node) {
         VMDNodeWidget nodeWidget = new SelectableVMDNodeWidget(this, new ClassMetadataNode(node));
         
-        nodeWidget.setNodeName(node.isAbstract() ?  node.getClassName() + " [Abstract]" : node.getClassName());
+        nodeWidget.setNodeName(node.isAbstract() ?  node.getClassName() + " [" +I18N.gm("abstract")+ "]" : node.getClassName());
         nodeWidget.getActions().addAction(selectAction);
         nodeWidget.getActions().addAction(ActionFactory.createMoveAction());
         nodeWidget.getActions().addAction(ActionFactory.createPopupMenuAction(ClassMetadataWidgetMenu.getInstance()));

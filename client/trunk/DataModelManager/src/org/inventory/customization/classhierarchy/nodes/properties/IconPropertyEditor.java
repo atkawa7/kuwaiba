@@ -34,6 +34,7 @@ import org.inventory.communications.core.caching.Cache;
 import org.inventory.communications.util.Constants;
 import org.inventory.communications.util.Utils;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.openide.explorer.propertysheet.ExPropertyEditor;
 import org.openide.explorer.propertysheet.PropertyEnv;
 
@@ -67,7 +68,7 @@ public class IconPropertyEditor extends PropertyEditorSupport
 
     @Override
     public String getAsText() {
-        return "[Click the button to choose a file]";
+        return "[" + I18N.gm("click_to_choose_file") + "]";
     }
     
     @Override
@@ -88,10 +89,10 @@ public class IconPropertyEditor extends PropertyEditorSupport
         if(fChooser.showOpenDialog(fChooser)  == JFileChooser.APPROVE_OPTION){ 
             Image myIcon = Toolkit.getDefaultToolkit().createImage(fChooser.getSelectedFile().getAbsolutePath());
             if (myIcon == null)
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, String.format("Image in %s couldn't be loaded", fChooser.getSelectedFile().getAbsolutePath()));
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, String.format(I18N.gm("image_not_loaded"), fChooser.getSelectedFile().getAbsolutePath()));
             else{
                 if((myIcon.getHeight(null) > maxAllowedSize) || (myIcon.getWidth(null) > maxAllowedSize)) //Images have limits depending of if you need to set "icon" or "smallIcon"
-                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, String.format("The size of the image is exceeds the limits"));
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, String.format(I18N.gm("image_exceeds_limits")));
                 else{
                     try {
                         icon = Utils.getByteArrayFromFile(fChooser.getSelectedFile());
@@ -99,18 +100,18 @@ public class IconPropertyEditor extends PropertyEditorSupport
                         //This should be here but in the setValue method, however I haven't discovered yet why clicking on "cancel" still calls setValue
                         if (attribute.equals(Constants.PROPERTY_ICON)){
                             if(!com.setClassMetadataProperties(id, null, null, null, null, icon, -1, null, null, null, null))
-                                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+                                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
                             else
                                 Cache.getInstace().resetAll();
                         }else{
                             if(!com.setClassMetadataProperties(id, null, null, null, icon, null, -1, null, null, null, null))
-                                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+                                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
                             else
                                 Cache.getInstace().resetAll();
                         }
                     } catch (IOException ex) {
                         icon = null;
-                        NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, "The file couldn't be converted: " + ex.getMessage());
+                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, I18N.gm("file_could_not_be_converted") + ex.getMessage());
                     }
                 }
             }
@@ -135,9 +136,9 @@ public class IconPropertyEditor extends PropertyEditorSupport
             fChooser.setFileFilter(new ImageFileFilter());
             fChooser.setMultiSelectionEnabled(false);
 
-            lblText = new JLabel("Select an image file (up to 32x32 pixels for icons and 16x16 for small icons):");
+            lblText = new JLabel(I18N.gm("select_image_with_proper_size"));
             
-            btnImageChooser = new JButton("Browse...");
+            btnImageChooser = new JButton(I18N.gm("browse"));
 
             btnImageChooser.addActionListener(new ActionListener() {
 

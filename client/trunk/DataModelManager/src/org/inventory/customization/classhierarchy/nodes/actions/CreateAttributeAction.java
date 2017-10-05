@@ -30,6 +30,7 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.communications.core.caching.Cache;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.customization.classhierarchy.nodes.ClassMetadataNode;
 
@@ -42,7 +43,7 @@ public class CreateAttributeAction extends GenericInventoryAction {
     private ClassMetadataNode classNode;
 
     public CreateAttributeAction() {
-        putValue(NAME, "New Attribute");
+        putValue(NAME, I18N.gm("new_attribute"));
     }
 
     public CreateAttributeAction(ClassMetadataNode classNode) {
@@ -74,11 +75,12 @@ public class CreateAttributeAction extends GenericInventoryAction {
         lstType.setName("lstType");
                 
         JComplexDialogPanel pnlMyDialog = new JComplexDialogPanel(
-                new String[]{"Name", "Display Name", "Description", "Type"},
+                new String[]{I18N.gm("name"), I18N.gm("display_name"), 
+                    I18N.gm("description"), I18N.gm("type")},
                 new JComponent []{txtName, txtDisplayName, txtDescription, lstType});
         if (JOptionPane.showConfirmDialog(null,
                 pnlMyDialog,
-                "New Attribute",
+                I18N.gm("new_attribute"),
                 JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION){
                     if (CommunicationsStub.getInstance().createAttribute(classNode.getClassMetadata().getOid(), 
@@ -87,12 +89,12 @@ public class CreateAttributeAction extends GenericInventoryAction {
                             ((JTextField)pnlMyDialog.getComponent("txtDescription")).getText(), 
                             (String)((JComboBox)pnlMyDialog.getComponent("lstType")).getSelectedItem(), 
                             false, false, true, false, false, false)){
-                        NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Attribute added successfully");
+                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, I18N.gm("attributed_added_successfully"));
                         Cache.getInstace().resetAll();
                         classNode.refresh();
                     }
                     else
-                        NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         }
     }
     

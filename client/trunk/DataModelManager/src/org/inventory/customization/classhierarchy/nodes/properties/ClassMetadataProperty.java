@@ -25,6 +25,7 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.communications.core.caching.Cache;
 import org.inventory.communications.util.Constants;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.customization.classhierarchy.nodes.ClassMetadataNode;
 import org.openide.nodes.PropertySupport.ReadWrite;
 
@@ -77,7 +78,7 @@ public class ClassMetadataProperty extends ReadWrite {
             Cache.getInstace().resetAll();
             
         }catch(Exception e){
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, e.getMessage());
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, e.getMessage());
         }
     }
 

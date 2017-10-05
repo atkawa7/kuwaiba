@@ -19,6 +19,7 @@ import java.awt.event.ActionEvent;
 import java.util.Set;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.customization.classhierarchy.scene.ClassHierarchyScene;
 
@@ -32,7 +33,7 @@ public class HideSubclassAction extends GenericInventoryAction {
     private static HideSubclassAction instance;
     
     private HideSubclassAction(ClassHierarchyScene scene) {
-        putValue(NAME, "Hide Subclasses");
+        putValue(NAME, I18N.gm("hide_subclases"));
         this.scene = scene;
     }
     

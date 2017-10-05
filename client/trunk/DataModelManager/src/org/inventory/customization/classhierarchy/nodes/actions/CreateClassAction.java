@@ -21,6 +21,7 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.customization.classhierarchy.nodes.ClassMetadataChildren;
 import org.inventory.customization.classhierarchy.nodes.ClassMetadataNode;
 
@@ -34,7 +35,7 @@ public class CreateClassAction extends GenericInventoryAction {
     private CommunicationsStub com;
 
     public CreateClassAction() {
-        putValue(NAME, "Create Class");
+        putValue(NAME, I18N.gm("create_class"));
         com = CommunicationsStub.getInstance();
     }
 
@@ -45,7 +46,7 @@ public class CreateClassAction extends GenericInventoryAction {
    
     @Override
     public void actionPerformed(ActionEvent ae) {
-        String className = JOptionPane.showInputDialog(null, "Please enter the class name");
+        String className = JOptionPane.showInputDialog(null, I18N.gm("enter_the_class_name"));
         
         if (className == null)
             return;
@@ -53,12 +54,12 @@ public class CreateClassAction extends GenericInventoryAction {
         long classId = com.createClassMetadata(className, "","", node.getClassMetadata().getClassName(), 
                 true, true, 0, false, true);
         if (classId == -1)
-            NotificationUtil.getInstance().showSimplePopup("New Class", NotificationUtil.ERROR_MESSAGE,
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("new_class"), NotificationUtil.ERROR_MESSAGE,
                     com.getError());
         else {           
             ((ClassMetadataChildren)node.getChildren()).refreshList();
-            NotificationUtil.getInstance().showSimplePopup("New Class", NotificationUtil.INFO_MESSAGE,
-                    "Class created successfully");
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("new_class"), NotificationUtil.INFO_MESSAGE,
+                    I18N.gm("class_created_successfully"));
         }
     }
     

@@ -18,6 +18,7 @@ package org.inventory.customization.classhierarchy.nodes.actions;
 import java.awt.event.ActionEvent;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.customization.classhierarchy.nodes.ClassMetadataNode;
 
 /**
@@ -29,7 +30,7 @@ public class RefreshClassMetadataAction extends GenericInventoryAction {
 
     public RefreshClassMetadataAction(ClassMetadataNode node) {
         this.node = node;
-        putValue(NAME, "Refresh");
+        putValue(NAME, I18N.gm("refresh"));
     }
     
     @Override

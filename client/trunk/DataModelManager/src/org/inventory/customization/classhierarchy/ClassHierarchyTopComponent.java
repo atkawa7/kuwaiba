@@ -40,6 +40,7 @@ import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.core.visual.export.ExportScenePanel;
 import org.inventory.core.visual.export.filters.ImageFilter;
@@ -126,9 +127,7 @@ public final class ClassHierarchyTopComponent extends TopComponent implements Ex
         toolMain.setPreferredSize(new java.awt.Dimension(326, 33));
 
         btnExpand.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/customization/classhierarchy/res/expand.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnExpand, org.openide.util.NbBundle.getMessage(ClassHierarchyTopComponent.class, "ClassHierarchyTopComponent.btnExpand.text_1")); // NOI18N
-        btnExpand.setToolTipText(org.openide.util.NbBundle.getMessage(ClassHierarchyTopComponent.class, "ClassHierarchyTopComponent.btnExpand.toolTipText_1")); // NOI18N
-        btnExpand.setActionCommand(org.openide.util.NbBundle.getMessage(ClassHierarchyTopComponent.class, "ClassHierarchyTopComponent.btnExpand.actionCommand")); // NOI18N
+        btnExpand.setToolTipText(I18N.gm("expand_class_hierarchy")); // NOI18N
         btnExpand.setFocusable(false);
         btnExpand.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnExpand.setMaximumSize(new java.awt.Dimension(34, 34));
@@ -141,12 +140,10 @@ public final class ClassHierarchyTopComponent extends TopComponent implements Ex
             }
         });
         toolMain.add(btnExpand);
-        btnExpand.getAccessibleContext().setAccessibleName(org.openide.util.NbBundle.getMessage(ClassHierarchyTopComponent.class, "ClassHierarchyTopComponent.btnExpand.AccessibleContext.accessibleName")); // NOI18N
+        btnExpand.getAccessibleContext().setAccessibleDescription(I18N.gm("expand_class_hierarchy")); // NOI18N
 
         btnCollapse.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/customization/classhierarchy/res/collapse.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnCollapse, org.openide.util.NbBundle.getMessage(ClassHierarchyTopComponent.class, "ClassHierarchyTopComponent.btnCollapse.text_1")); // NOI18N
-        btnCollapse.setToolTipText(org.openide.util.NbBundle.getMessage(ClassHierarchyTopComponent.class, "ClassHierarchyTopComponent.btnCollapse.toolTipText")); // NOI18N
-        btnCollapse.setActionCommand(org.openide.util.NbBundle.getMessage(ClassHierarchyTopComponent.class, "ClassHierarchyTopComponent.btnCollapse.actionCommand")); // NOI18N
+        btnCollapse.setToolTipText(I18N.gm("collapse_class_hierarchy")); // NOI18N
         btnCollapse.setFocusable(false);
         btnCollapse.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnCollapse.setMaximumSize(new java.awt.Dimension(34, 34));
@@ -159,11 +156,10 @@ public final class ClassHierarchyTopComponent extends TopComponent implements Ex
             }
         });
         toolMain.add(btnCollapse);
+        btnCollapse.getAccessibleContext().setAccessibleDescription(I18N.gm("collapse_class_hierarchy")); // NOI18N
 
         btnShowAttributes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/customization/classhierarchy/res/showAttributes.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnShowAttributes, org.openide.util.NbBundle.getMessage(ClassHierarchyTopComponent.class, "ClassHierarchyTopComponent.btnShowAttributes.text_1")); // NOI18N
-        btnShowAttributes.setToolTipText(org.openide.util.NbBundle.getMessage(ClassHierarchyTopComponent.class, "ClassHierarchyTopComponent.btnShowAttributes.toolTipText")); // NOI18N
-        btnShowAttributes.setActionCommand(org.openide.util.NbBundle.getMessage(ClassHierarchyTopComponent.class, "ClassHierarchyTopComponent.btnShowAttributes.actionCommand")); // NOI18N
+        btnShowAttributes.setToolTipText(I18N.gm("expand_class_hierarchy_with_attributes")); // NOI18N
         btnShowAttributes.setFocusable(false);
         btnShowAttributes.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnShowAttributes.setMaximumSize(new java.awt.Dimension(34, 34));
@@ -176,11 +172,10 @@ public final class ClassHierarchyTopComponent extends TopComponent implements Ex
             }
         });
         toolMain.add(btnShowAttributes);
+        btnShowAttributes.getAccessibleContext().setAccessibleDescription(I18N.gm("expand_class_hierarchy_with_attributes")); // NOI18N
 
         btnOrganize.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/customization/classhierarchy/res/organize.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnOrganize, org.openide.util.NbBundle.getMessage(ClassHierarchyTopComponent.class, "ClassHierarchyTopComponent.btnOrganize.text_1")); // NOI18N
-        btnOrganize.setToolTipText(org.openide.util.NbBundle.getMessage(ClassHierarchyTopComponent.class, "ClassHierarchyTopComponent.btnOrganize.toolTipText")); // NOI18N
-        btnOrganize.setActionCommand(org.openide.util.NbBundle.getMessage(ClassHierarchyTopComponent.class, "ClassHierarchyTopComponent.btnOrganize.actionCommand")); // NOI18N
+        btnOrganize.setToolTipText(I18N.gm("organize")); // NOI18N
         btnOrganize.setFocusable(false);
         btnOrganize.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnOrganize.setMaximumSize(new java.awt.Dimension(34, 34));
@@ -193,11 +188,10 @@ public final class ClassHierarchyTopComponent extends TopComponent implements Ex
             }
         });
         toolMain.add(btnOrganize);
+        btnOrganize.getAccessibleContext().setAccessibleDescription(I18N.gm("organize")); // NOI18N
 
         btnExportAsImage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/customization/classhierarchy/res/exportAsImg.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnExportAsImage, org.openide.util.NbBundle.getMessage(ClassHierarchyTopComponent.class, "ClassHierarchyTopComponent.btnExportAsImage.text_1")); // NOI18N
-        btnExportAsImage.setToolTipText(org.openide.util.NbBundle.getMessage(ClassHierarchyTopComponent.class, "ClassHierarchyTopComponent.btnExportAsImage.toolTipText")); // NOI18N
-        btnExportAsImage.setActionCommand(org.openide.util.NbBundle.getMessage(ClassHierarchyTopComponent.class, "ClassHierarchyTopComponent.btnExportAsImage.actionCommand")); // NOI18N
+        btnExportAsImage.setToolTipText(I18N.gm("export_as_image")); // NOI18N
         btnExportAsImage.setFocusable(false);
         btnExportAsImage.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnExportAsImage.setMaximumSize(new java.awt.Dimension(34, 34));
@@ -210,11 +204,10 @@ public final class ClassHierarchyTopComponent extends TopComponent implements Ex
             }
         });
         toolMain.add(btnExportAsImage);
+        btnExportAsImage.getAccessibleContext().setAccessibleDescription(I18N.gm("export_as_image")); // NOI18N
 
         btnExportAsXML.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/customization/classhierarchy/res/exportAsXML.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnExportAsXML, org.openide.util.NbBundle.getMessage(ClassHierarchyTopComponent.class, "ClassHierarchyTopComponent.btnExportAsXML.text_1")); // NOI18N
-        btnExportAsXML.setToolTipText(org.openide.util.NbBundle.getMessage(ClassHierarchyTopComponent.class, "ClassHierarchyTopComponent.btnExportAsXML.toolTipText")); // NOI18N
-        btnExportAsXML.setActionCommand(org.openide.util.NbBundle.getMessage(ClassHierarchyTopComponent.class, "ClassHierarchyTopComponent.btnExportAsXML.actionCommand")); // NOI18N
+        btnExportAsXML.setToolTipText(I18N.gm("export_as_xml")); // NOI18N
         btnExportAsXML.setFocusable(false);
         btnExportAsXML.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnExportAsXML.setMaximumSize(new java.awt.Dimension(34, 34));
@@ -227,11 +220,10 @@ public final class ClassHierarchyTopComponent extends TopComponent implements Ex
             }
         });
         toolMain.add(btnExportAsXML);
+        btnExportAsXML.getAccessibleContext().setAccessibleDescription(I18N.gm("export_as_xml")); // NOI18N
 
         btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/customization/classhierarchy/res/refresh.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnRefresh, org.openide.util.NbBundle.getMessage(ClassHierarchyTopComponent.class, "ClassHierarchyTopComponent.btnRefresh.text")); // NOI18N
-        btnRefresh.setToolTipText(org.openide.util.NbBundle.getMessage(ClassHierarchyTopComponent.class, "ClassHierarchyTopComponent.btnRefresh.toolTipText")); // NOI18N
-        btnRefresh.setActionCommand(org.openide.util.NbBundle.getMessage(ClassHierarchyTopComponent.class, "ClassHierarchyTopComponent.btnRefresh.actionCommand")); // NOI18N
+        btnRefresh.setToolTipText(I18N.gm("refresh")); // NOI18N
         btnRefresh.setFocusable(false);
         btnRefresh.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnRefresh.setMaximumSize(new java.awt.Dimension(34, 34));
@@ -244,17 +236,20 @@ public final class ClassHierarchyTopComponent extends TopComponent implements Ex
             }
         });
         toolMain.add(btnRefresh);
+        btnRefresh.getAccessibleContext().setAccessibleDescription(I18N.gm("refresh")); // NOI18N
 
         layeredPaneLbl.setLayout(new java.awt.BorderLayout());
 
-        org.openide.awt.Mnemonics.setLocalizedText(lblLocate, org.openide.util.NbBundle.getMessage(ClassHierarchyTopComponent.class, "ClassHierarchyTopComponent.lblLocate.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(lblLocate, I18N.gm("locate")); // NOI18N
         layeredPaneLbl.add(lblLocate, java.awt.BorderLayout.EAST);
+        lblLocate.getAccessibleContext().setAccessibleName(I18N.gm("locate")); // NOI18N
 
         toolMain.add(layeredPaneLbl);
 
         layeredPaneCmb.setPreferredSize(new java.awt.Dimension(32, 24));
         layeredPaneCmb.setLayout(new java.awt.BorderLayout());
 
+        cmbClassList.setToolTipText("");
         layeredPaneCmb.add(cmbClassList, java.awt.BorderLayout.CENTER);
 
         toolMain.add(layeredPaneCmb);
@@ -276,7 +271,7 @@ public final class ClassHierarchyTopComponent extends TopComponent implements Ex
     private void btnExportAsImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportAsImageActionPerformed
         ExportScenePanel exportPanel = new ExportScenePanel(new SceneExportFilter[]{ ImageFilter.getInstance() }, 
                 scene, "class_hierarchy");
-        DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export options", true, exportPanel);
+        DialogDescriptor dd = new DialogDescriptor(exportPanel, I18N.gm("export_options"), true, exportPanel);
         DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
     }//GEN-LAST:event_btnExportAsImageActionPerformed
 
@@ -292,7 +287,7 @@ public final class ClassHierarchyTopComponent extends TopComponent implements Ex
                 
         final JFileChooser fChooser = new JFileChooser();
         fChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        fChooser.setDialogTitle("Select a directory");
+        fChooser.setDialogTitle(I18N.gm("select_directory"));
         
         final JButton btnFileChooser = new JButton();
         btnFileChooser.setAction(new AbstractAction() {
@@ -316,7 +311,7 @@ public final class ClassHierarchyTopComponent extends TopComponent implements Ex
             }
         });
         btnFileChooser.setText("...");
-        btnFileChooser.setToolTipText("Select a directory");
+        btnFileChooser.setToolTipText(I18N.gm("select_directory"));
         btnFileChooser.setSize(34, 34);
         
         JPanel pnl = new JPanel();
@@ -324,17 +319,17 @@ public final class ClassHierarchyTopComponent extends TopComponent implements Ex
         pnl.add(btnFileChooser);
         
         JComplexDialogPanel exportAsXMLDialog = new JComplexDialogPanel(
-                new String[] {"Name "}, 
+                new String[] {I18N.gm("name")}, 
                 new JComponent[] {pnl});
         
-        if(JOptionPane.showConfirmDialog(null, exportAsXMLDialog, "Export AS XML", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+        if(JOptionPane.showConfirmDialog(null, exportAsXMLDialog, I18N.gm("export_as_xml"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             try (Writer writer = new BufferedWriter(new OutputStreamWriter(
                     new FileOutputStream(txtClassHierarchyName.getText()), "utf-8"))) {
                 writer.write(service.getHierarchyAsString());
             } catch(Exception ex) {
-                NotificationUtil.getInstance().showSimplePopup("Error", 
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                         NotificationUtil.ERROR_MESSAGE, 
-                        "Can not create the file");
+                        I18N.gm("can_not_read_file"));
             }
         }
     }//GEN-LAST:event_btnExportAsXMLActionPerformed
@@ -420,7 +415,7 @@ public final class ClassHierarchyTopComponent extends TopComponent implements Ex
     @Override
     public void refresh() {
         if (isOpened()) {
-            List<LocalClassMetadata> classes = new ArrayList();
+            List<LocalClassMetadata> classes = new ArrayList<>();
             for (int i = 0; i < cmbClassList.getItemCount(); i += 1)
                 classes.add((LocalClassMetadata) cmbClassList.getItemAt(i));
 
@@ -430,7 +425,7 @@ public final class ClassHierarchyTopComponent extends TopComponent implements Ex
     }
     
     private void listOfClasses() {
-        List<LocalClassMetadata> classes = new ArrayList();
+        List<LocalClassMetadata> classes = new ArrayList<>();
                 
         for (Object object : scene.getObjects()) {
             if (object instanceof LocalClassMetadata) {

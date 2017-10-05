@@ -17,6 +17,7 @@ package org.inventory.customization.classhierarchy.nodes.properties;
 
 import java.io.File;
 import javax.swing.filechooser.FileFilter;
+import org.inventory.core.services.i18n.I18N;
 
 /**
  * Image Filter
@@ -50,14 +51,14 @@ public class ImageFileFilter extends FileFilter {
 
         String extension = getExtension(f);
         if (extension != null)
-            return extension.equals(gif) || extension.equals(jpeg) || extension.equals(jpg) ||
-                    extension.equals(png);
+            return extension.equals(gif) || extension.equals(jpeg) || 
+                    extension.equals(jpg) || extension.equals(png);
         
         return false;
     }
 
     @Override
     public String getDescription() {
-        return "Image Files";
+        return I18N.gm("image_files");
     }
 }

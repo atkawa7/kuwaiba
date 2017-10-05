@@ -76,5 +76,4 @@ public class ListAttributeMetadataProperty extends PropertyEditorSupport{
     public boolean supportsCustomEditor(){
         return false;
     }
-    
 }

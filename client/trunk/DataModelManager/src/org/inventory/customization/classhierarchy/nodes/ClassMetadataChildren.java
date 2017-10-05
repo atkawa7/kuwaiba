@@ -20,6 +20,7 @@ import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 
@@ -68,7 +69,7 @@ public class ClassMetadataChildren extends Children.Keys<LocalClassMetadataLight
 
         if (subClasses == null) {
             setKeys(Collections.EMPTY_LIST);
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
         }
         else {
             Collections.sort(subClasses);

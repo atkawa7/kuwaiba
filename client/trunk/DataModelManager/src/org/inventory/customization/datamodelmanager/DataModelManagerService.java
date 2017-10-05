@@ -21,6 +21,7 @@ import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 
 /**
  * Data model manager Top component service.
@@ -44,14 +45,14 @@ public class DataModelManagerService {
     public LocalClassMetadataLight[] getRootChildren(){
         LocalClassMetadata inventoryObjectClass = com.getMetaForClass(Constants.CLASS_INVENTORYOBJECT, true);
         if(inventoryObjectClass == null){
-            dmmtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+            dmmtc.getNotifier().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
             return new LocalClassMetadataLight[0];
         }
         
         LocalClassMetadata genericObjectListClass = com.getMetaForClass(Constants.CLASS_GENERICOBJECTLIST, true);
         
         if(genericObjectListClass == null) {
-            dmmtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+            dmmtc.getNotifier().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
             return new LocalClassMetadataLight[0];
         }
         
