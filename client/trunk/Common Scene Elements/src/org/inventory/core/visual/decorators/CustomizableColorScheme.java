@@ -51,8 +51,9 @@ public class CustomizableColorScheme extends VMDColorScheme{
      * Set the colors manually
      * @param bodyColor
      * @param edgeColor
+     * @param border
      */
-    public CustomizableColorScheme(Color bodyColor,Color edgeColor, Border border) {
+    public CustomizableColorScheme(Color bodyColor, Color edgeColor, Border border) {
         this.edgeColor = edgeColor;
         this.bodyColor = bodyColor;
         this.headerColor = bodyColor.darker();
@@ -100,6 +101,7 @@ public class CustomizableColorScheme extends VMDColorScheme{
         widget.setTargetAnchorShape (AnchorShape.TRIANGLE_FILLED);
         widget.setPaintControlPoints (true);
     }
+    
     @Override
     public void updateUI(VMDConnectionWidget widget, ObjectState previousState, ObjectState state) {
         if (state.isHovered ())

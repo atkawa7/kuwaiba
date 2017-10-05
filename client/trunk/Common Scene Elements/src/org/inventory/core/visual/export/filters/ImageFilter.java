@@ -22,6 +22,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.netbeans.api.visual.export.SceneExporter;
@@ -68,7 +69,7 @@ public class ImageFilter extends SceneExportFilter {
                 100,
                 0,  //Not used
                 0); //Not used
-        JOptionPane.showMessageDialog(null, "The view was exported successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, I18N.gm("view_export_successfully"), I18N.gm("success"), JOptionPane.INFORMATION_MESSAGE);
     }
     
     @Override
@@ -83,7 +84,7 @@ public class ImageFilter extends SceneExportFilter {
             JComboBox cmbVisibleAreaOnly = new JComboBox(new Boolean[]{false, true});
             cmbVisibleAreaOnly.setName("cmbVisibleAreaOnly");
             
-            myPanel = new JComplexDialogPanel(new String[]{"Format", "Zoom", "Visible area only"}, 
+            myPanel = new JComplexDialogPanel(new String[]{I18N.gm("format"), I18N.gm("zoom"), I18N.gm("visible_read_only")}, 
                     new JComponent[]{cmbFormat, cmbZoom, cmbVisibleAreaOnly});
         }
         return myPanel;

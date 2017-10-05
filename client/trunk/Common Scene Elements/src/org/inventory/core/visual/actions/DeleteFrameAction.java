@@ -20,6 +20,7 @@ import java.util.Set;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.visual.scene.AbstractScene;
 
 /**
@@ -31,7 +32,7 @@ public class DeleteFrameAction extends GenericInventoryAction {
     private final AbstractScene scene;
     
     private DeleteFrameAction(AbstractScene scene) {
-        putValue(NAME, "Delete Frame");
+        putValue(NAME, I18N.gm("delete_frame"));
         this.scene = scene;
     }
     

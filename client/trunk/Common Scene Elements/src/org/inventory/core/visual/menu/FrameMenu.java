@@ -17,13 +17,14 @@ package org.inventory.core.visual.menu;
 
 import java.awt.Point;
 import javax.swing.JPopupMenu;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.visual.actions.DeleteFrameAction;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.netbeans.api.visual.action.PopupMenuProvider;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
- * Create Menu for frames inside topology designer scene
+ * Create Menu for frames in the scene where the frames are used
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class FrameMenu implements PopupMenuProvider {
@@ -40,7 +41,7 @@ public class FrameMenu implements PopupMenuProvider {
     @Override
     public JPopupMenu getPopupMenu(Widget widget, Point localLocation) {
         if (theMenu == null) {
-            theMenu = new JPopupMenu("Frame Menu");
+            theMenu = new JPopupMenu(I18N.gm("frame_menu"));
             theMenu.add(DeleteFrameAction.getInstance((AbstractScene) widget.getScene()));
         }
         return theMenu;

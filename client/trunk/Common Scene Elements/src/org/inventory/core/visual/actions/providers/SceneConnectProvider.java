@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,7 +24,8 @@ import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
- * A general purpose provider that allows to connect AbstractNodeWidgets. Subclasses must implement the createConnection method according to their needs
+ * A general purpose provider that allows to connect AbstractNodeWidgets. 
+ * Subclasses must implement the createConnection method according to their needs
  * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
  */
 public abstract class SceneConnectProvider implements ConnectProvider {
@@ -41,7 +42,6 @@ public abstract class SceneConnectProvider implements ConnectProvider {
                 return ConnectorState.REJECT;
             return  ConnectorState.ACCEPT;
         }
-        
         return ConnectorState.REJECT;
     }
 

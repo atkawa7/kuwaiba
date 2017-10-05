@@ -31,7 +31,7 @@ import org.netbeans.api.visual.widget.Widget;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class MultipleWidgetMoveActionProvider implements MoveProvider,MoveStrategy {
-    private HashMap<Widget,Point> originalLocations = new HashMap<Widget, Point> ();
+    private HashMap<Widget,Point> originalLocations = new HashMap<> ();
     private final GraphScene scene;
 
     public MultipleWidgetMoveActionProvider (GraphScene scene) {

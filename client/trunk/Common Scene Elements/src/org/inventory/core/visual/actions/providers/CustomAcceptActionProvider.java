@@ -24,6 +24,7 @@ import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.netbeans.api.visual.action.AcceptProvider;
 import org.netbeans.api.visual.action.ConnectorState;
@@ -81,7 +82,7 @@ public class CustomAcceptActionProvider implements AcceptProvider {
             if (!scene.isNode(droppedObject)){
                 
                 if (!CommunicationsStub.getInstance().isSubclassOf(droppedObject.getClassName(), filterClass))
-                    JOptionPane.showMessageDialog(null, String.format("Only %s are allowed in this view", filterClass), "Information", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, String.format(I18N.gm("only_allowed_in_this_view"), filterClass), I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
                 else {
                     Widget newNode = scene.addNode(droppedObject); 
                     //validate is called here, otherwise, the widget won't be able to resolve its bounds and the next line will raise a NullPointerException
@@ -95,7 +96,7 @@ public class CustomAcceptActionProvider implements AcceptProvider {
                     
                 }
             } else
-                JOptionPane.showMessageDialog(null, "The view already contains this object", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, I18N.gm("view_already_contains_this_object"), I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
         } catch (UnsupportedFlavorException | IOException ex) {
             if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_INFO || Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_FINE)
                 Exceptions.printStackTrace(ex);
