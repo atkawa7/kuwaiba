@@ -30,6 +30,7 @@ import org.inventory.communications.core.LocalTask;
 import org.inventory.communications.core.LocalTaskScheduleDescriptor;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.dashboard.widgets.AbstractWidget;
 import org.inventory.navigation.dashboard.widgets.DashboardWidgetUtilities;
 import org.inventory.navigation.dashboard.widgets.TaskResultWidget;
@@ -37,7 +38,6 @@ import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.windows.TopComponent;
-import org.openide.util.NbBundle.Messages;
 import org.openide.windows.WindowManager;
 
 /**
@@ -57,14 +57,10 @@ import org.openide.windows.WindowManager;
 @ActionID(category = "Window", id = "org.inventory.navigation.dashboard.DashBoardTopComponent")
 @ActionReference(path = "Menu/Window" /*, position = 333 */)
 @TopComponent.OpenActionRegistration(
-        displayName = "#CTL_DashBoardAction",
+        displayName = "#Dashboard.module.displayname",
         preferredID = "DashBoardTopComponent"
 )
-@Messages({
-    "CTL_DashBoardAction=DashBoard",
-    "CTL_DashBoardTopComponent=DashBoard",
-    "HINT_DashBoardTopComponent=All the relevant information in a single place"
-})
+
 public final class DashBoardTopComponent extends TopComponent implements Refreshable {
     
     private boolean loaded = false;
@@ -74,8 +70,8 @@ public final class DashBoardTopComponent extends TopComponent implements Refresh
     public DashBoardTopComponent() {
         initComponents();
         initCustomComponents();
-        setName(Bundle.CTL_DashBoardTopComponent());
-        setToolTipText(Bundle.HINT_DashBoardTopComponent());        
+        setName(I18N.gm("Dashboard.module.name"));
+        setToolTipText(I18N.gm("Dashboard.module.tooltiptext"));        
     }
 
     public void initCustomComponents() {
@@ -122,11 +118,11 @@ public final class DashBoardTopComponent extends TopComponent implements Refresh
     public void loadWidgets() {    
         List<LocalTask> allTasks = CommunicationsStub.getInstance().getTasks();
         if (allTasks == null)
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, 
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, 
                     CommunicationsStub.getInstance().getError());
         else {
             if (allTasks.isEmpty()) {
-                JLabel lblDefaultMessage = new JLabel("The dashboard is empty! Add some tasks in the Task Manager", SwingConstants.CENTER);
+                JLabel lblDefaultMessage = new JLabel(I18N.gm("dashboard_is_empty"), SwingConstants.CENTER);
                 lblDefaultMessage.setOpaque(true);
                 lblDefaultMessage.setBackground(DashboardWidgetUtilities.DARK_GREEN);
                 lblDefaultMessage.setForeground(Color.WHITE);

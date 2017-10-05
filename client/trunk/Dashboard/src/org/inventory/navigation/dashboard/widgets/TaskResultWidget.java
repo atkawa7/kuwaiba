@@ -33,6 +33,7 @@ import org.inventory.communications.core.LocalTask;
 import org.inventory.communications.core.LocalTaskResult;
 import org.inventory.communications.core.LocalTaskResultMessage;
 import org.inventory.communications.util.Utils;
+import org.inventory.core.services.i18n.I18N;
 
 /**
  * A widget that shows the results of a task
@@ -56,7 +57,7 @@ public class TaskResultWidget extends AbstractWidget {
     
     @Override
     public String getDescription() {
-        return "This widget displays the results of a task";
+        return I18N.gm("Dashboard.description");
     }
 
     @Override
@@ -123,14 +124,14 @@ public class TaskResultWidget extends AbstractWidget {
         LocalTaskResult taskResult = CommunicationsStub.getInstance().executeTask(task.getId());
         
         if (taskResult == null) {
-            JLabel lblError = DashboardWidgetUtilities.buildOpaqueLabel(String.format("Error: %s", 
+            JLabel lblError = DashboardWidgetUtilities.buildOpaqueLabel(String.format(I18N.gm("error")+" %s", 
                     CommunicationsStub.getInstance().getError()), DashboardWidgetUtilities.LIGHT_RED);
             layoutConstraints.gridy = 1;           
             pnlInner.add(lblError, layoutConstraints);
             
         } else {
             if (taskResult.getMessages().isEmpty()) {
-                JLabel lblNoResults = DashboardWidgetUtilities.buildOpaqueLabel(String.format("No results for this task"), DashboardWidgetUtilities.LIGHT_GREEN);
+                JLabel lblNoResults = DashboardWidgetUtilities.buildOpaqueLabel(String.format(I18N.gm("no_results_for_task")), DashboardWidgetUtilities.LIGHT_GREEN);
 
                 layoutConstraints.gridy = 1;
 
