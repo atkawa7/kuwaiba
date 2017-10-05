@@ -3,10 +3,13 @@
 <jnlp spec="1.0+" codebase="$$codebase" href="master.jnlp">
   <information>
       <title>${app.title}</title>
-      <vendor>${app.title} vendor</vendor>
-      <description>${app.name} application</description>
+      <vendor>Neotropic SAS</vendor>
+      <description>The First and Only Open Source Network Inventory System for the Telecom Industry</description>
       <icon href="${app.icon}"/>
+      <homepage>http://www.kuwaiba.org</homepage>
+      <offline-allowed>true</offline-allowed>
   </information>
+  <update check="always" policy="prompt-update" />
   <security><all-permissions/></security>
   <resources>
     <!-- The following property is needed when running with unsigned jars: -->
@@ -14,9 +17,6 @@
     <extension name='branding' href='branding.jnlp' />
 <!-- The following line will be replaced with an automatically generated list of resources: -->
 <!--${jnlp.resources}-->
-  </resources>
-  <resources os="Mac OS X">
-      <property name="jnlp.netbeans.user" value="${user.home}/Library/Application Support/${app.name}"/>
   </resources>
   <application-desc>
     <argument>--branding</argument>

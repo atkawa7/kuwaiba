@@ -3,8 +3,8 @@
 <jnlp spec="1.0+" codebase="$$codebase">
   <information>
       <title>${app.title}</title>
-      <vendor>${app.title} vendor</vendor>
-      <description>${app.name} application</description>
+      <vendor>Neotropic SAS</vendor>
+      <description>The First and Only Open Source Network Inventory System for the Telecom Industry</description>
       <icon href="${app.icon}"/>
   </information>
   ${jnlp.permissions}
