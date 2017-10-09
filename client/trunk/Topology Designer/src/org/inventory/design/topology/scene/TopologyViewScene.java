@@ -56,7 +56,6 @@ import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.ConnectorState;
 import org.netbeans.api.visual.action.TextFieldInplaceEditor;
 import org.netbeans.api.visual.action.WidgetAction;
-import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.border.BorderFactory;
 import org.netbeans.api.visual.layout.LayoutFactory;
@@ -290,7 +289,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
 
             while (reader.hasNext()){
                 int event = reader.next();
-                if (event == XMLStreamConstants.START_ELEMENT){
+                if (event == XMLStreamConstants.START_ELEMENT) {
                     if (reader.getName().equals(qNode)){
                         String objectClass = reader.getAttributeValue(null, "class");
 

@@ -16,10 +16,13 @@
  */
 package org.inventory.core.templates;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.util.Constants;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.templates.nodes.TemplatesModuleClassNode;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
@@ -30,9 +33,8 @@ import org.openide.nodes.Node;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class TemplatesService  {
-    private static TemplatesService instance;
-    private TemplatesTopComponent topComponent;
-    private CommunicationsStub com = CommunicationsStub.getInstance();
+    private final TemplatesTopComponent topComponent;
+    private final CommunicationsStub com = CommunicationsStub.getInstance();
     
     public TemplatesService(TemplatesTopComponent topComponent) {
         this.topComponent = topComponent;
@@ -41,14 +43,38 @@ public class TemplatesService  {
     public void setRoot() {
         final List<LocalClassMetadataLight> allClasses = com.getLightSubclasses(Constants.CLASS_INVENTORYOBJECT, false, false);
         topComponent.getExplorerManager().setRootContext(new AbstractNode(new Children.Keys<LocalClassMetadataLight>() {
-                    {
-                        setKeys(allClasses);
-                    }
-                    @Override
-                    protected Node[] createNodes(LocalClassMetadataLight t) {
-                        return new Node[] {new TemplatesModuleClassNode(t)};
-                    }
-                }));
+            
+            {
+                setKeys(allClasses);
+            }
+                        
+            @Override
+            protected Node[] createNodes(LocalClassMetadataLight t) {
+                return new Node[] {new TemplatesModuleClassNode(t)};
+            }
+        }));
     }
-
+    
+    public List<LocalClassMetadataLight> getClassesWithModelTypeAttribute() {
+        List <LocalClassMetadataLight> inventoryObjSubclasses = com
+            .getLightSubclasses(Constants.CLASS_INVENTORYOBJECT, false, false);
+        
+        if (inventoryObjSubclasses == null)
+            NotificationUtil.getInstance().showSimplePopup("Error", 
+                NotificationUtil.ERROR_MESSAGE, com.getError());
+        
+        List<LocalClassMetadataLight> classes = new ArrayList();
+        
+        for (LocalClassMetadataLight subclass : inventoryObjSubclasses) {
+            
+            LocalClassMetadata lcm = com.getMetaForClass(subclass.getClassName(), false);
+            for (String type : lcm.getAttributesTypes()) {
+                if ("ModelType".equals(type)) {
+                    classes.add(subclass);
+                    break;
+                }
+            }            
+        }
+        return classes;
+    }
 }

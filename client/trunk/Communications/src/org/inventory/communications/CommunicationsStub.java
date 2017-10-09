@@ -2650,6 +2650,87 @@ public class CommunicationsStub {
     }// </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Views methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Creates a view for a given list type item. If there's already a view of the provided view type, it will be overwritten
+     * @param listTypeItemId list type item id
+     * @param listTypeItemClassName list type item class name
+     * @param viewClassName view class name
+     * @param name view name
+     * @param description view description
+     * @param structure XML document with the view structure
+     * @param background background image
+     * @return The id of the new view.
+     */
+    public long createListTypeItemRelateView(long listTypeItemId, String listTypeItemClassName, String viewClassName, 
+        String name, String description, byte [] structure, byte [] background) {
+        
+        try{
+            return service.createListTypeItemRelateView(listTypeItemId, listTypeItemClassName, viewClassName, name, description, structure, background, session.getSessionId());
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return -1;
+        }
+    }
+    
+    /**
+     * Updates a view for a given list type item. If there's already a view of the provided view type, it will be overwritten
+     * @param listTypeItemId list type item id
+     * @param listTypeItemClass list type item class
+     * @param viewId viewId
+     * @param name view name
+     * @param description view description
+     * @param structure XML document with the view structure
+     * @param background Background image. If null, the previous will be removed, if 0-sized array, it will remain unchanged
+     * @return
+     */
+    public boolean updateListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId, 
+        String name, String description, byte[] structure, byte[] background) {
+        
+        try{
+            service.updateListTypeItemRelatedView(listTypeItemId, listTypeItemClass, viewId, name, description, structure, background, session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Gets a view related to an list type item, such as the default, rack or equipment views
+     * @param listTypeItemId list type item id
+     * @param listTypeItemClass list type item class
+     * @param viewId view id
+     * @return The associated view (there should be only one of each type). Null if there's none yet
+     */
+    public LocalObjectView getListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId) {
+        try{
+            ViewInfo view = service.getListTypeItemRelatedView(listTypeItemId, listTypeItemClass, viewId, session.getSessionId());
+            return new LocalObjectView(view.getId(), view.getClassName(), view.getName(), view.getDescription(), view.getStructure(), view.getBackground());
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Gets the views related to a list type item, such as the default, rack or equipment views
+     * @param listTypeItemId list type item id
+     * @param listTypeItemClass list type class name
+     * @return The associated views
+     */
+    public List<LocalObjectViewLight> getListTypeItemRelatedViews(long listTypeItemId, String listTypeItemClass) {
+        try{
+            List<ViewInfoLight> views = service.getListTypeItemRelatedViews(listTypeItemId, listTypeItemClass, -1, session.getSessionId());
+            List<LocalObjectViewLight> res = new ArrayList<>();
+            
+            for (ViewInfoLight view : views)
+                res.add(new LocalObjectViewLight(view.getId(), view.getName(), view.getDescription(), view.getClassName()));
+            return res;
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
 
     /**
      * Get a view related to an object, such as the default, rack or equipment views

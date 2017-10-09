@@ -16,11 +16,20 @@
 package org.inventory.core.templates;
 
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.KeyStroke;
 import javax.swing.text.DefaultEditorKit;
+import org.inventory.communications.core.LocalClassMetadataLight;
+import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.behaviors.Refreshable;
+import org.inventory.core.templates.nodes.TemplateElementNode;
+import org.inventory.core.templates.nodes.TemplatesModuleClassNode;
+import org.inventory.core.templates.nodes.actions.TemplateActionsFactory;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -28,6 +37,8 @@ import org.openide.awt.ActionReferences;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
+import org.openide.nodes.AbstractNode;
+import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
@@ -101,10 +112,88 @@ public final class TemplatesTopComponent extends TopComponent implements Explore
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        toolMain = new javax.swing.JToolBar();
+        btnDefault = new javax.swing.JToggleButton();
+        btnModel = new javax.swing.JToggleButton();
+        pnlMain = new javax.swing.JScrollPane();
+
         setLayout(new java.awt.BorderLayout());
+
+        toolMain.setRollover(true);
+
+        btnDefault.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/templates/res/delete.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnDefault, org.openide.util.NbBundle.getMessage(TemplatesTopComponent.class, "TemplatesTopComponent.btnDefault.text")); // NOI18N
+        btnDefault.setToolTipText(org.openide.util.NbBundle.getMessage(TemplatesTopComponent.class, "TemplatesTopComponent.btnDefault.toolTipText")); // NOI18N
+        btnDefault.setFocusable(false);
+        btnDefault.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnDefault.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnDefault.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDefaultActionPerformed(evt);
+            }
+        });
+        toolMain.add(btnDefault);
+
+        btnModel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/templates/res/delete.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnModel, org.openide.util.NbBundle.getMessage(TemplatesTopComponent.class, "TemplatesTopComponent.btnModel.text")); // NOI18N
+        btnModel.setToolTipText(org.openide.util.NbBundle.getMessage(TemplatesTopComponent.class, "TemplatesTopComponent.btnModel.toolTipText")); // NOI18N
+        btnModel.setFocusable(false);
+        btnModel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnModel.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnModel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnModelMouseClicked(evt);
+            }
+        });
+        toolMain.add(btnModel);
+
+        add(toolMain, java.awt.BorderLayout.PAGE_START);
+        add(pnlMain, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnModelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnModelMouseClicked
+        em.setRootContext(new AbstractNode(new Children.Keys<LocalClassMetadataLight>() {
+            
+            {
+                setKeys(service.getClassesWithModelTypeAttribute());
+            }
+            
+            @Override
+            protected Node[] createNodes(LocalClassMetadataLight key) {
+                return new Node[] {new TemplatesModuleClassNode(key) {
+                    
+                    {
+                        setChildren(new TemplatesModuleClassNode.ClassChildren() {
+
+                            @Override
+                            protected Node[] createNodes(LocalObjectLight t) {
+                                return new Node[] { new TemplateElementNode(t) {
+                                    @Override
+                                    public Action[] getActions(boolean context) {
+                                        List<Action> lstActions = new ArrayList(Arrays.asList(super.getActions(context)));
+                                        lstActions.add(0, TemplateActionsFactory.getAssociateLayoutAction());
+                                        lstActions.add(1, null);
+                                        
+                                        return lstActions.toArray(new Action[0]);
+                                    }
+                                }};
+                            }
+                        });
+                    }
+                }};
+            }
+        }));
+    }//GEN-LAST:event_btnModelMouseClicked
+
+    private void btnDefaultActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDefaultActionPerformed
+        service.setRoot();
+    }//GEN-LAST:event_btnDefaultActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JToggleButton btnDefault;
+    private javax.swing.JToggleButton btnModel;
+    private javax.swing.JScrollPane pnlMain;
+    private javax.swing.JToolBar toolMain;
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {

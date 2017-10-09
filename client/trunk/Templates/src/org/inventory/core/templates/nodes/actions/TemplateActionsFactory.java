@@ -27,6 +27,7 @@ public class TemplateActionsFactory {
     static CreateTemplateElementAction createTemplateElementAction;
     static DeleteTemplateElementAction deleteTemplateElementAction;
     static CreateTemplateElementSpecialAction createTemplateElementSpecialAction;
+    static AssociateLayoutAction associateLayoutAction;
     
     public static GenericInventoryAction getCreateTemplateAction() {
         if (createTemplateAction == null)
@@ -50,5 +51,11 @@ public class TemplateActionsFactory {
         if (createTemplateElementSpecialAction == null) 
             createTemplateElementSpecialAction = new CreateTemplateElementSpecialAction();
         return createTemplateElementSpecialAction;
+    }
+    
+    public static GenericInventoryAction getAssociateLayoutAction() {
+        if (associateLayoutAction == null)
+            associateLayoutAction = new AssociateLayoutAction();
+        return associateLayoutAction;
     }
 }
