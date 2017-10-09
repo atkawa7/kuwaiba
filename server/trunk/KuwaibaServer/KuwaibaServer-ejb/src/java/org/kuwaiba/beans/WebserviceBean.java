@@ -2255,6 +2255,87 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(ex.getMessage());
         }
     }
+    
+    @Override
+    public long createListTypeItemRelateView(long listTypeItemId, String listTypeItemClassName, String viewClassName, 
+        String name, String description, byte [] structure, byte [] background, String ipAddress, String sessionId) 
+        throws ServerSideException {
+        
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("createListTypeItemRelateView", ipAddress, sessionId);            
+            
+            long viewId = aem.createListTypeItemRelateView(listTypeItemId, listTypeItemClassName, viewClassName, name, description, structure, background);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+                String.format("Created %s [%s] list type item related view %s [%s] with id %s", listTypeItemId, listTypeItemClassName, name, viewClassName, viewId));
+            return viewId;
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void updateListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId, 
+        String name, String description, byte[] structure, byte[] background, String ipAddress, String sessionId) 
+        throws ServerSideException {
+        
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("updateListTypeItemRelatedView", ipAddress, sessionId);
+            
+            ChangeDescriptor theChange = aem.updateListTypeItemRelatedView(listTypeItemId, listTypeItemClass, viewId, name, description, structure, background);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                    ActivityLogEntry.ACTIVITY_TYPE_UPDATE_VIEW, theChange);
+        }catch(InventoryException ie){
+            throw new ServerSideException(ie.getMessage());
+        }
+    }
+    
+    @Override
+    public ViewInfo getListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId, String ipAddress, String sessionId) 
+        throws ServerSideException {
+        
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("getListTypeItemRelatedView", ipAddress, sessionId);
+            ViewObject myView = aem.getListTypeItemRelatedView(listTypeItemId, listTypeItemClass, viewId);
+            if (myView == null)
+                return null;
+            ViewInfo res = new ViewInfo(myView);
+            res.setBackground(myView.getBackground());
+            return res;
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public ViewInfoLight[] getListTypeItemRelatedViews(long listTypeItemId, String listTypeItemClass, int limit, 
+        String ipAddress, String sessionId) 
+        throws ServerSideException {
+        
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("getListTypeItemRelatedViews", ipAddress, sessionId);
+            List<ViewObjectLight> views = aem.getListTypeItemRelatedViews(listTypeItemId, listTypeItemClass, limit);
+            ViewInfoLight[] res = new ViewInfoLight[views.size()];
+            int i = 0;
+            for (ViewObjectLight view : views){
+                res[i] = new ViewInfoLight(view);
+                i++;
+            }
+            return res;
+        } catch(InventoryException e) {
+            throw new ServerSideException(e.getMessage());
+        }   
+    }
 
     @Override   
     public long createObjectRelatedView(long objectId, String objectClass, String name, 

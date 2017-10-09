@@ -280,7 +280,66 @@ public interface ApplicationEntityManager {
      */
     public List<ClassMetadataLight> getInstanceableListTypes()
             throws ApplicationObjectNotFoundException;
-
+    
+    /**
+     * Creates a view for a given list type item. If there's already a view of the provided view type, it will be overwritten
+     * @param listTypeItemId list type item id
+     * @param listTypeItemClassName list type item class name
+     * @param name view name
+     * @param description view description
+     * @param viewClassName view class name
+     * @param structure XML document with the view structure
+     * @param background background image
+     * @return The id of the new view.
+     * @throws MetadataObjectNotFoundException if the list type item class can not be found
+     * @throws InvalidArgumentException if the view type is not supported
+     */
+    public long createListTypeItemRelateView(long listTypeItemId, String listTypeItemClassName, String viewClassName, String name, String description, byte [] structure, byte [] background) 
+        throws MetadataObjectNotFoundException, InvalidArgumentException;
+    
+    /**
+     * Gets a view related to an list type item, such as the default, rack or equipment views
+     * @param listTypeItemId list type item id
+     * @param listTypeItemClass list type item class
+     * @param viewId view id
+     * @return The associated view (there should be only one of each type). Null if there's none yet
+     * @throws ObjectNotFoundException if the list type item or the view can not be found
+     * @throws MetadataObjectNotFoundException if the corresponding class metadata can not be found
+     * @throws InvalidArgumentException if the provided view type is not supported
+     */    
+    public ViewObject getListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId) 
+        throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException;
+    
+    /**
+     * Updates a view for a given list type item. If there's already a view of the provided view type, it will be overwritten
+     * @param listTypeItemId list type item id
+     * @param listTypeItemClass list type item class
+     * @param viewId viewId
+     * @param name view name
+     * @param description view description
+     * @param structure XML document with the view structure
+     * @param background Background image. If null, the previous will be removed, if 0-sized array, it will remain unchanged
+     * @return The summary of the changes
+     * @throws ObjectNotFoundException if the list type item can not be found
+     * @throws MetadataObjectNotFoundException if the list type item class can not be found
+     * @throws InvalidArgumentException if the view type is not supported
+     */
+    public ChangeDescriptor updateListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId, 
+        String name, String description, byte[] structure, byte[] background) 
+        throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException;
+    
+    /**
+     * Gets the views related to a list type item, such as the default, rack or equipment views
+     * @param listTypeItemId list type item id
+     * @param listTypeItemClass list type class name
+     * @param limit max number of results
+     * @return The associated views
+     * @throws MetadataObjectNotFoundException if the corresponding class metadata can not be found
+     * @throws InvalidArgumentException if the provided view type is not supported
+     */
+    public List<ViewObjectLight> getListTypeItemRelatedViews(long listTypeItemId, String listTypeItemClass, int limit) 
+        throws MetadataObjectNotFoundException, InvalidArgumentException;
+    
     /**
      * Get a view related to an object, such as the default, rack or equipment views
      * @param oid object's id

@@ -640,6 +640,142 @@ public class KuwaibaService {
             }
         }
     }
+    
+    /**
+     * Creates a view for a given list type item. If there's already a view of the provided view type, it will be overwritten
+     * @param listTypeItemId list type item id
+     * @param listTypeItemClassName list type item class name
+     * @param viewClassName view class name
+     * @param name view name
+     * @param description view description
+     * @param structure XML document with the view structure
+     * @param background background image
+     * @param sessionId Session token
+     * @return The id of the new view.
+     * @throws ServerSideException If the list type item class can not be found
+     *                             If the view type is not supported
+     */
+    @WebMethod(operationName = "createListTypeItemRelateView")
+    public long createListTypeItemRelateView(
+        @WebParam(name = "listTypeItemId") long listTypeItemId, 
+        @WebParam(name = "listTypeItemClassName") String listTypeItemClassName, 
+        @WebParam(name = "viewClassName") String viewClassName, 
+        @WebParam(name = "name") String name, 
+        @WebParam(name = "description") String description, 
+        @WebParam(name = "structure") byte [] structure, 
+        @WebParam(name = "background") byte [] background, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        
+        try {
+            return wsBean.createListTypeItemRelateView(listTypeItemId, listTypeItemClassName, viewClassName, 
+                name, description, structure, background, getIPAddress(), sessionId);            
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createListTypeItemRelateView: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Updates a view for a given list type item. If there's already a view of the provided view type, it will be overwritten
+     * @param listTypeItemId list type item id
+     * @param listTypeItemClass list type item class
+     * @param viewId viewId
+     * @param name view name
+     * @param description view description
+     * @param structure XML document with the view structure
+     * @param background Background image. If null, the previous will be removed, if 0-sized array, it will remain unchanged
+     * @param sessionId Session token
+     * @throws ServerSideException If the list type item can not be found
+     *                             If the list type item class can not be found
+     *                             If the view type is not supported
+     */
+    @WebMethod(operationName = "updateListTypeItemRelatedView")
+    public void updateListTypeItemRelatedView(
+        @WebParam(name = "listTypeItemId") long listTypeItemId, 
+        @WebParam(name = "listTypeItemClass") String listTypeItemClass, 
+        @WebParam(name = "viewId") long viewId, 
+        @WebParam(name = "name") String name, 
+        @WebParam(name = "description") String description, 
+        @WebParam(name = "structure") byte[] structure, 
+        @WebParam(name = "background") byte[] background, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        
+        
+        try {
+            wsBean.updateListTypeItemRelatedView(listTypeItemId, listTypeItemClass, viewId, 
+                name, description, structure, background, getIPAddress(), sessionId);            
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in updateListTypeItemRelatedView: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Gets a view related to an list type item, such as the default, rack or equipment views
+     * @param listTypeItemId list type item id
+     * @param listTypeItemClass list type item class
+     * @param viewId view id
+     * @param sessionId Session token
+     * @return The associated view (there should be only one of each type). Null if there's none yet
+     * @throws ServerSideException If the list type item or the view can not be found.
+     *                             If the corresponding class metadata can not be found.
+     *                             If the provided view type is not supported.
+     */
+    @WebMethod(operationName = "getListTypeItemRelatedView")
+    public ViewInfo getListTypeItemRelatedView(
+        @WebParam(name = "listTypeItemId") long listTypeItemId, 
+        @WebParam(name = "listTypeItemClass") String listTypeItemClass, 
+        @WebParam(name = "viewId") long viewId, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        
+        try {
+            return wsBean.getListTypeItemRelatedView(listTypeItemId, listTypeItemClass, viewId, getIPAddress(), sessionId);            
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getListTypeItemRelatedView: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Gets the views related to a list type item, such as the default, rack or equipment views
+     * @param listTypeItemId list type item id
+     * @param listTypeItemClass list type class name
+     * @param limit max number of results
+     * @param sessionId Session token
+     * @return The associated views
+     * @throws ServerSideException If the corresponding class metadata can not be found
+     *                             If the provided view type is not supported
+     */
+    @WebMethod(operationName = "getListTypeItemRelatedViews")
+    public ViewInfoLight[] getListTypeItemRelatedViews(
+        @WebParam(name = "listTypeItemId")  long listTypeItemId, 
+        @WebParam(name = "listTypeItemClass")  String listTypeItemClass, 
+        @WebParam(name = "limit")  int limit, 
+        @WebParam(name = "sessionId")  String sessionId) throws ServerSideException {
+        
+        try {
+            return wsBean.getListTypeItemRelatedViews(listTypeItemId, listTypeItemClass, limit, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getListTypeItemRelatedViews: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }        
+    }
 
     /**
      * Creates a view an relates it to an existing object

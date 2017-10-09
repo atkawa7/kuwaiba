@@ -250,6 +250,21 @@ public interface WebserviceBeanRemote {
 
     public void deleteGroups(long[] oids, String ipAddress, String sessionId)
             throws ServerSideException;
+    
+    public long createListTypeItemRelateView(long listTypeItemId, String listTypeItemClassName, String viewClassName, 
+        String name, String description, byte [] structure, byte [] background, String ipAddress, String sessionId) 
+        throws ServerSideException;
+    
+    public void updateListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId, 
+        String name, String description, byte[] structure, byte[] background, String ipAddress, String sessionId) 
+        throws ServerSideException;
+    
+    public ViewInfo getListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId, String ipAddress, String sessionId) 
+        throws ServerSideException;
+    
+    public ViewInfoLight[] getListTypeItemRelatedViews(long listTypeItemId, String listTypeItemClass, int limit, 
+        String ipAddress, String sessionId) 
+        throws ServerSideException;
 
     public ViewInfo getObjectRelatedView(long oid, String objectClass, long viewId, String ipAddress, String sessionId) throws ServerSideException;
 

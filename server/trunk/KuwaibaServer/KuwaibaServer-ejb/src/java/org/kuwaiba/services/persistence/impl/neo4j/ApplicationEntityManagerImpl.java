@@ -804,7 +804,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             throw new InvalidArgumentException(String.format("Can not find the list type item with id %s", listTypeItemId));
         }
     }
-
+    
     @Override
     public List<ClassMetadataLight> getInstanceableListTypes()
             throws ApplicationObjectNotFoundException {
@@ -835,7 +835,205 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         }
         
     }
+    
+    private Node getListTypeItemNode(long listTypeItemId, String listTypeItemClassName) 
+        throws MetadataObjectNotFoundException, InvalidArgumentException {
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            Node classNode = classIndex.get(Constants.PROPERTY_NAME, listTypeItemClassName).getSingle();
+            if (classNode == null)
+                throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %s", listTypeItemClassName));
+            
+            if (!Util.isSubClass(Constants.CLASS_GENERICOBJECTLIST, classNode))
+                throw new InvalidArgumentException(String.format("Class %s is not a list type", listTypeItemClassName));
+            
+            Node listTypeItemNode = null;
+            
+            for (Relationship childRel : classNode.getRelationships(RelTypes.INSTANCE_OF)) {
+                Node child = childRel.getStartNode();
+                if (child.getId() == listTypeItemId) {
+                    listTypeItemNode = child;
+                    break;
+                }
+            }
+            if (listTypeItemNode == null)
+                throw new InvalidArgumentException(String.format("Can not find the list type item with id %s", listTypeItemId));
+            
+            tx.success();
+            return listTypeItemNode;
+        }
+    }
+    
+    @Override
+    public long createListTypeItemRelateView(long listTypeItemId, String listTypeItemClassName, String viewClassName, String name, String description, byte [] structure, byte [] background) 
+        throws MetadataObjectNotFoundException, InvalidArgumentException {
+        long id;
+        try (Transaction tx = graphDb.beginTx()) {
+            Node listTypeItemNode = getListTypeItemNode(listTypeItemId, listTypeItemClassName);
+            if (listTypeItemNode == null)
+                throw new InvalidArgumentException(String.format("Can not find the list type item with id %s", listTypeItemId));
+            
+            Node viewNode = graphDb.createNode();
+            viewNode.setProperty(Constants.PROPERTY_CLASS_NAME, viewClassName);
+            listTypeItemNode.createRelationshipTo(viewNode, RelTypes.HAS_VIEW);
+            
+            if (name != null)
+                viewNode.setProperty(Constants.PROPERTY_NAME, name);
+            
+            if (description != null)
+                viewNode.setProperty(Constants.PROPERTY_DESCRIPTION, description);
+            
+            if (structure != null)
+                viewNode.setProperty(Constants.PROPERTY_STRUCTURE, structure);
+            
+            if (background != null) {
+                try {
+                    String fileName = "view-" + listTypeItemId + "-" + viewNode.getId() + "-" + viewClassName;
+                    Util.saveFile(configuration.getProperty("backgroundsPath", DEFAULT_BACKGROUNDS_PATH), fileName, background);
+                    viewNode.setProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME, fileName);
+                } catch(Exception ex){
+                    throw new InvalidArgumentException(String.format("Background image for view %s could not be saved: %s",
+                            listTypeItemId, ex.getMessage()));
+                }
+            }
+            tx.success();
+            id = viewNode.getId();
+        }
+        return id;
+    }
+    
+    @Override
+    public ChangeDescriptor updateListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId, 
+        String name, String description, byte[] structure, byte[] background) 
+        throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException {
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            Node listTypeItemNode = getListTypeItemNode(listTypeItemId, listTypeItemClass);
+            if (listTypeItemNode == null)
+                throw new InvalidArgumentException(String.format("Can not find the list type item with id %s", listTypeItemId));
+            
+            Node viewNode = null;
+            for (Relationship rel : listTypeItemNode.getRelationships(RelTypes.HAS_VIEW, Direction.OUTGOING)){
+                if (rel.getEndNode().getId() == viewId){
+                    viewNode = rel.getEndNode();
+                    break;
+                }
+            }
+            if (viewNode == null)
+                throw new ObjectNotFoundException("View", viewId); //NOI18N
+            
+            String affectedProperties = "", oldValues = "", newValues = "";
+            
+            if (name != null) {
+                oldValues +=  " " + viewNode.getProperty(Constants.PROPERTY_NAME);
+                newValues += " " + name;
+                affectedProperties += " " + Constants.PROPERTY_NAME;
+                viewNode.setProperty(Constants.PROPERTY_NAME, name);
+            }
 
+            if (structure != null) {
+                affectedProperties += " " + Constants.PROPERTY_STRUCTURE;
+                viewNode.setProperty(Constants.PROPERTY_STRUCTURE, structure);
+            }
+
+            if (description != null) {
+                oldValues += " " + viewNode.getProperty(Constants.PROPERTY_DESCRIPTION);
+                newValues += " " + description;
+                affectedProperties += " " + Constants.PROPERTY_DESCRIPTION;
+                viewNode.setProperty(Constants.PROPERTY_DESCRIPTION, description);
+            }
+
+            String fileName = "view-" + listTypeItemId + "-" + viewId + "-" + viewNode.getProperty(Constants.PROPERTY_CLASS_NAME);
+            if (background != null){
+                try{
+                    affectedProperties += " " + Constants.PROPERTY_BACKGROUND;
+                    Util.saveFile(configuration.getProperty("backgroundsPath", DEFAULT_BACKGROUNDS_PATH), fileName, background);
+                    viewNode.setProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME, fileName);
+                }catch(Exception ex){
+                    throw new InvalidArgumentException(String.format("Background image for view %s couldn't be saved: %s",
+                            listTypeItemId, ex.getMessage()));
+                }
+            }
+            else {
+                if (viewNode.hasProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME)){
+                    try{
+                        new File(configuration.getProperty("backgroundsPath", DEFAULT_BACKGROUNDS_PATH) + "/" + fileName).delete();
+                    }catch(Exception ex){
+                        throw new InvalidArgumentException(String.format("View background %s couldn't be deleted: %s", 
+                                configuration.getProperty("backgroundsPath", DEFAULT_BACKGROUNDS_PATH) + "/" + fileName, ex.getMessage()));
+                    }
+                    viewNode.removeProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME);
+                    affectedProperties += " " + Constants.PROPERTY_BACKGROUND;
+                }
+            }
+            tx.success();
+            return new ChangeDescriptor(affectedProperties, oldValues, newValues, null);
+        }
+    }
+    
+    @Override
+    public ViewObject getListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId) 
+        throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException {
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            Node listTypeItemNode = getListTypeItemNode(listTypeItemId, listTypeItemClass);
+            if (listTypeItemNode == null)
+                throw new InvalidArgumentException(String.format("Can not find the list type item with id %s", listTypeItemId));
+            
+            for (Relationship rel : listTypeItemNode.getRelationships(RelTypes.HAS_VIEW, Direction.OUTGOING)) {
+                Node viewNode = rel.getEndNode();
+                if (viewNode.getId() == viewId){
+                    ViewObject res = new ViewObject(viewId,
+                            viewNode.hasProperty(Constants.PROPERTY_NAME) ? (String)viewNode.getProperty(Constants.PROPERTY_NAME) : null,
+                            viewNode.hasProperty(Constants.PROPERTY_DESCRIPTION) ? (String)viewNode.getProperty(Constants.PROPERTY_DESCRIPTION) : null,
+                            (String)viewNode.getProperty(Constants.PROPERTY_CLASS_NAME));
+                    if (viewNode.hasProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME)){
+                        String fileName = (String)viewNode.getProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME);
+                        byte[] background = null;
+                        try {
+                            background = Util.readBytesFromFile(configuration.getProperty("backgroundsPath", DEFAULT_BACKGROUNDS_PATH) + "/" + fileName);
+                        }catch(Exception e){
+                            System.out.println(e.getMessage());
+                        }
+                        res.setBackground(background);
+                    }
+                    if (viewNode.hasProperty(Constants.PROPERTY_STRUCTURE))
+                        res.setStructure((byte[])viewNode.getProperty(Constants.PROPERTY_STRUCTURE));
+                    return res;
+                }
+            }
+        }
+        throw new ObjectNotFoundException("View", viewId);                
+    }
+    
+    @Override        
+    public List<ViewObjectLight> getListTypeItemRelatedViews(long listTypeItemId, String listTypeItemClass, int limit) 
+        throws MetadataObjectNotFoundException, InvalidArgumentException {
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            Node listTypeItemNode = getListTypeItemNode(listTypeItemId, listTypeItemClass);
+            if (listTypeItemNode == null)
+                throw new InvalidArgumentException(String.format("Can not find the list type item with id %s", listTypeItemId));
+            
+            List<ViewObjectLight> res = new ArrayList();
+            int i = 0;
+            for (Relationship rel : listTypeItemNode.getRelationships(RelTypes.HAS_VIEW, Direction.OUTGOING)) {
+                if (limit != -1) {
+                    if (i < limit)
+                        i += 1;
+                    else
+                        break;
+                }
+                Node viewNode = rel.getEndNode();
+                res.add(new ViewObjectLight(viewNode.getId(),
+                    viewNode.hasProperty(Constants.PROPERTY_NAME) ? (String)viewNode.getProperty(Constants.PROPERTY_NAME) : null,
+                    viewNode.hasProperty(Constants.PROPERTY_DESCRIPTION) ? (String)viewNode.getProperty(Constants.PROPERTY_DESCRIPTION) : null,
+                    (String) viewNode.getProperty(Constants.PROPERTY_CLASS_NAME)));
+            }
+            return res;
+        }
+    }
+    
     @Override
     public long createObjectRelatedView(long oid, String objectClass, String name, String description, String viewClassName, 
         byte[] structure, byte[] background) 
