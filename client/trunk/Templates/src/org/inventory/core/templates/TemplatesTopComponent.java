@@ -23,8 +23,11 @@ import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.ButtonGroup;
 import javax.swing.InputMap;
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.text.DefaultEditorKit;
+import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.behaviors.Refreshable;
@@ -160,6 +163,12 @@ public final class TemplatesTopComponent extends TopComponent implements Explore
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnModelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnModelMouseClicked
+        LocalClassMetadata equipmentModelClass = CommunicationsStub.getInstance().getMetaForClass("EquipmentModel", true); //NOI18N
+        if (equipmentModelClass == null) {
+            JOptionPane.showMessageDialog(null, "This database seems outdated. Contact your administrator to apply the necessary patches to run the Equipment Model Layout Manager", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
         em.setRootContext(new AbstractNode(new Children.Keys<LocalClassMetadataLight>() {
             
             {

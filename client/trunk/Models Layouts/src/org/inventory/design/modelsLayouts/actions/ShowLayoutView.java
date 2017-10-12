@@ -15,8 +15,12 @@
 package org.inventory.design.modelsLayouts.actions;
 
 import java.awt.event.ActionEvent;
+import javax.swing.JOptionPane;
+import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.communications.util.Constants;
 import org.inventory.design.modelsLayouts.ShowModelLayoutTopComponent;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.openide.util.lookup.ServiceProvider;
@@ -30,12 +34,12 @@ import org.openide.windows.WindowManager;
 public class ShowLayoutView extends GenericObjectNodeAction {
     
     public ShowLayoutView() {
-        putValue(NAME, "Show Layout view");        
+        putValue(NAME, "Show Equipment Model Layout View");
     }
 
     @Override
     public String getValidator() {
-        return null;
+        return Constants.VALIDATOR_GENERIC_COMMUNICATIONS_ELEMENT;
     }
 
     @Override
@@ -45,6 +49,12 @@ public class ShowLayoutView extends GenericObjectNodeAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        LocalClassMetadata equipmentModelClass = CommunicationsStub.getInstance().getMetaForClass("EquipmentModel", true); //NOI18N
+        if (equipmentModelClass == null) {
+            JOptionPane.showMessageDialog(null, "This database seems outdated. Contact your administrator to apply the necessary patches to run the Show Equipment Model Layout View action", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
         for (LocalObjectLight lol : selectedObjects) {
             ShowModelLayoutTopComponent modelLayoutView = ((ShowModelLayoutTopComponent) WindowManager.
                 getDefault().findTopComponent("ShowModelLayoutTopComponent_" + lol.getOid())); //NOI18N

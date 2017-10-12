@@ -83,10 +83,10 @@ public class ModelLayoutService {
         byte[] structure = scene.getAsXML();
         if (currentView == null) {
             long viewId = CommunicationsStub.getInstance().createListTypeItemRelateView(
-                listItem.getId(), listItem.getClassName(), "ModelTypeLayoutView", null, null, structure, scene.getBackgroundImage()); //NOI18N
+                listItem.getId(), listItem.getClassName(), "EquipmentModelLayoutView", null, null, structure, scene.getBackgroundImage()); //NOI18N
             
             if (viewId != -1) { //Success
-                currentView = new LocalObjectView(viewId, "ModelTypeLayoutView", null, null, structure, scene.getBackgroundImage()); //NOI18N
+                currentView = new LocalObjectView(viewId, "EquipmentModelLayoutView", null, null, structure, scene.getBackgroundImage()); //NOI18N
                 NotificationUtil.getInstance().showSimplePopup("Information", 
                     NotificationUtil.INFO_MESSAGE, "The view was saved successfully");
             } else

@@ -60,7 +60,7 @@ public class AssociateLayoutAction extends GenericInventoryAction {
             if (attributeValue instanceof LocalObjectListItem) {                
                 LocalObjectListItem listItem = (LocalObjectListItem) attributeValue;
                 
-                if ("ModelType".equals(listItem.getClassName())) {
+                if ("EquipmentModel".equals(listItem.getClassName())) { //NOI18N
                     loli = listItem;
                     break;
                 }
@@ -68,7 +68,7 @@ public class AssociateLayoutAction extends GenericInventoryAction {
         }
         if (loli == null) {
             NotificationUtil.getInstance().showSimplePopup("Error", 
-                NotificationUtil.ERROR_MESSAGE, "The template no has assigned the list type attribute with type ModelType");
+                NotificationUtil.ERROR_MESSAGE, "The template no has assigned the list type attribute with type EquipmentModel");
             return;
         }
         

@@ -27,9 +27,7 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.design.modelsLayouts.scene.LayoutViewScene;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.netbeans.api.visual.layout.LayoutFactory;
-import org.netbeans.api.visual.widget.Scene;
 import org.openide.windows.TopComponent;
-import org.openide.util.NbBundle.Messages;
 
 /**
  * Top component which displays model type view for an object.
@@ -117,27 +115,28 @@ public final class ShowModelLayoutTopComponent extends TopComponent {
     @Override
     public void componentOpened() {        
         
-        LocalObject lol = CommunicationsStub.getInstance().getObjectInfo(objectLight.getClassName(), objectLight.getOid());
-        if (lol == null) {
+        LocalObject localObject = CommunicationsStub.getInstance().getObjectInfo(objectLight.getClassName(), objectLight.getOid());
+        if (localObject == null) {
             NotificationUtil.getInstance().showSimplePopup("Error", 
                 NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             return;
         }
         LocalObjectListItem loli = null;
                 
-        for (Object attributeValue : lol.getAttributes().values()) {            
+        for (Object attributeValue : localObject.getAttributes().values()) {            
             if (attributeValue instanceof LocalObjectListItem) {                
                 LocalObjectListItem listItem = (LocalObjectListItem) attributeValue;
                 
-                if ("ModelType".equals(listItem.getClassName())) {
+                if ("EquipmentModel".equals(listItem.getClassName())) { //NOI18N
                     loli = listItem;
                     break;
                 }
             }
         }
         if (loli == null) {
-            NotificationUtil.getInstance().showSimplePopup("Error", 
-                NotificationUtil.ERROR_MESSAGE, "The object no has assigned the list type attribute with type ModelType");
+            close();
+            NotificationUtil.getInstance().showSimplePopup("Warning", 
+                NotificationUtil.WARNING_MESSAGE, String.format("The object %s no has set the value of the attribute with name \"model\"", localObject));
             return;
         }
         LocalObjectView currentView = null;
@@ -145,11 +144,11 @@ public final class ShowModelLayoutTopComponent extends TopComponent {
         if (relatedViews != null) {
             if (relatedViews.isEmpty()) {
                 NotificationUtil.getInstance().showSimplePopup("Information", 
-                    NotificationUtil.INFO_MESSAGE, "The ModelType no has associate a layout");
+                    NotificationUtil.INFO_MESSAGE, "The EquipmentModel no has associate a layout");
             } else {
                 currentView = CommunicationsStub.getInstance().getListTypeItemRelatedView(loli.getId(), loli.getClassName(), relatedViews.get(0).getId());
                 
-                RenderModelLayout renderModelLayout = new RenderModelLayout(lol, loli, scene, 100, 100, 700, 700);
+                RenderModelLayout renderModelLayout = new RenderModelLayout(localObject, loli, scene, 100, 100, 700, 700);
                 renderModelLayout.render(currentView.getStructure());
                 scene.validate();
                 scene.paint();
@@ -157,6 +156,13 @@ public final class ShowModelLayoutTopComponent extends TopComponent {
         } else
             NotificationUtil.getInstance().showSimplePopup("Error", 
                 NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+        
+        if (currentView == null) {
+            close();
+            NotificationUtil.getInstance().showSimplePopup("Warning", 
+                NotificationUtil.WARNING_MESSAGE, String.format("The Equipment Model %s no has a related layout view", loli.getName()));
+            return;
+        }
     }
 
     @Override

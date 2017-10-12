@@ -86,6 +86,10 @@ public class Constants {
      */
     public static final String VALIDATOR_RACK = "rack";
     /**
+     * The validator to indicate if a given class is a GenericCommunicationsElement
+     */
+    public static final String VALIDATOR_GENERIC_COMMUNICATIONS_ELEMENT = "communicationsElement";
+    /**
      * DummyRoot constant. It's a pseudo class
      */
     public static final String DUMMYROOT = "DummyRoot";

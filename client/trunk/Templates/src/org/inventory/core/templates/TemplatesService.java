@@ -69,7 +69,7 @@ public class TemplatesService  {
             
             LocalClassMetadata lcm = com.getMetaForClass(subclass.getClassName(), false);
             for (String type : lcm.getAttributesTypes()) {
-                if ("ModelType".equals(type)) {
+                if ("EquipmentModel".equals(type)) { //NOI18N
                     classes.add(subclass);
                     break;
                 }
