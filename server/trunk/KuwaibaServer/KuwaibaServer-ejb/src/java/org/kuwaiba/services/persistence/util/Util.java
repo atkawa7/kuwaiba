@@ -162,12 +162,26 @@ public class Util {
 
         for (Relationship rel : instance.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF, RelTypes.CHILD_OF_SPECIAL))
             deleteObject(rel.getStartNode(), unsafeDeletion);
-
+        
+        // Searches the related views to delete the nodes in the data base
+        List<Node> relatedViews = new ArrayList();
+        for (Relationship rel : instance.getRelationships()) {
+            if (rel.getType().name().equals(RelTypes..name())) {
+                if (rel.getEndNode().getId() != instance.getId())
+                    relatedViews.add(rel.getEndNode());
+            }
+        }
+        
         for (Relationship rel : instance.getRelationships())
             rel.delete();
 
         instance.getGraphDatabase().index().forNodes(Constants.INDEX_OBJECTS).remove(instance);
         instance.delete();
+        
+        while (!relatedViews.isEmpty()) {
+            // Removing the node to the current related view
+            relatedViews.remove(0).delete();
+        }
     }
     
     public static void deleteTemplateObject(Node instance) {

@@ -20,7 +20,9 @@ import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
@@ -29,6 +31,8 @@ import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
@@ -37,6 +41,7 @@ import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
+import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.util.ChangeDescriptor;
@@ -241,12 +246,12 @@ public class ToolsBean implements ToolsBeanRemote {
                     cm.setViewable(true);
                     cm.setInDesign(false);
                     
-                    AttributeMetadata attributeMetadata = new AttributeMetadata();
-                    attributeMetadata.setDescription("");
-                    attributeMetadata.setReadOnly(false);
-                    attributeMetadata.setUnique(false);
-                    attributeMetadata.setVisible(true);
-                    attributeMetadata.setNoCopy(false);
+                    AttributeMetadata attributeModel = new AttributeMetadata();
+                    attributeModel.setDescription("");
+                    attributeModel.setReadOnly(false);
+                    attributeModel.setUnique(false);
+                    attributeModel.setVisible(true);
+                    attributeModel.setNoCopy(false);
                     
                     long genericProjectId = -1;                    
                     try {
@@ -265,28 +270,28 @@ public class ToolsBean implements ToolsBeanRemote {
                     }
                     if (genericProjectId != -1) {
                         try {
-                            attributeMetadata.setName("notes"); //NOI18N
-                            attributeMetadata.setDisplayName("notes"); 
-                            attributeMetadata.setType("String"); //NOI18N
-                            mem.createAttribute(genericProjectId, attributeMetadata);
+                            attributeModel.setName("notes"); //NOI18N
+                            attributeModel.setDisplayName("notes"); 
+                            attributeModel.setType("String"); //NOI18N
+                            mem.createAttribute(genericProjectId, attributeModel);
                             
                         } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
                             results[i] += ", " + ex.getMessage();
                         }                        
                         try {
-                            attributeMetadata.setName("projectManager"); //NOI18N
-                            attributeMetadata.setDisplayName("projectManager");
-                            attributeMetadata.setType("Employee"); //NOI18N
-                            mem.createAttribute(genericProjectId, attributeMetadata);
+                            attributeModel.setName("projectManager"); //NOI18N
+                            attributeModel.setDisplayName("projectManager");
+                            attributeModel.setType("Employee"); //NOI18N
+                            mem.createAttribute(genericProjectId, attributeModel);
                             
                         } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
                             results[i] += ", " + ex.getMessage();
                         }                        
                         try {
-                            attributeMetadata.setName("startDate"); //NOI18N
-                            attributeMetadata.setDisplayName("startDate");
-                            attributeMetadata.setType("Date"); //NOI18N
-                            mem.createAttribute(genericProjectId, attributeMetadata);
+                            attributeModel.setName("startDate"); //NOI18N
+                            attributeModel.setDisplayName("startDate");
+                            attributeModel.setType("Date"); //NOI18N
+                            mem.createAttribute(genericProjectId, attributeModel);
                             
                         } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
                             results[i] += ", " + ex.getMessage();
@@ -306,10 +311,10 @@ public class ToolsBean implements ToolsBeanRemote {
                             results[i] += ", " + ex.getMessage();
                         }
                         try {
-                            attributeMetadata.setName("status"); //NOI18N
-                            attributeMetadata.setDisplayName("status");
-                            attributeMetadata.setType("ProjectStatusType"); //NOI18N                        
-                            mem.createAttribute(genericProjectId, attributeMetadata);
+                            attributeModel.setName("status"); //NOI18N
+                            attributeModel.setDisplayName("status");
+                            attributeModel.setType("ProjectStatusType"); //NOI18N                        
+                            mem.createAttribute(genericProjectId, attributeModel);
                             
                         } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
                             results[i] += ", " + ex.getMessage();
@@ -354,19 +359,19 @@ public class ToolsBean implements ToolsBeanRemote {
                             results[i] += ", " + ex.getMessage();
                         }
                         try {
-                            attributeMetadata.setName("activityType"); //NOI18N
-                            attributeMetadata.setDisplayName("activityType");
-                            attributeMetadata.setType("ActivityType"); //NOI18N
-                            mem.createAttribute(genericActivityId, attributeMetadata);
+                            attributeModel.setName("activityType"); //NOI18N
+                            attributeModel.setDisplayName("activityType");
+                            attributeModel.setType("ActivityType"); //NOI18N
+                            mem.createAttribute(genericActivityId, attributeModel);
                             
                         } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
                             results[i] += ", " + ex.getMessage();
                         }
                         try {
-                            attributeMetadata.setName("sequecing"); //NOI18N
-                            attributeMetadata.setDisplayName("sequecing");
-                            attributeMetadata.setType("ActivityType"); //NOI18N
-                            mem.createAttribute(genericActivityId, attributeMetadata);
+                            attributeModel.setName("sequecing"); //NOI18N
+                            attributeModel.setDisplayName("sequecing");
+                            attributeModel.setType("ActivityType"); //NOI18N
+                            mem.createAttribute(genericActivityId, attributeModel);
                             
                         } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
                             results[i] += ", " + ex.getMessage();
@@ -386,82 +391,82 @@ public class ToolsBean implements ToolsBeanRemote {
                             results[i] += ", " + ex.getMessage();
                         }
                         try {
-                            attributeMetadata.setName("status"); //NOI18N
-                            attributeMetadata.setDisplayName("status");
-                            attributeMetadata.setType("ActivityStatusType"); //NOI18N
-                            mem.createAttribute(genericActivityId, attributeMetadata);
+                            attributeModel.setName("status"); //NOI18N
+                            attributeModel.setDisplayName("status");
+                            attributeModel.setType("ActivityStatusType"); //NOI18N
+                            mem.createAttribute(genericActivityId, attributeModel);
                             
                         } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
                             results[i] += ", " + ex.getMessage();
                         }                        
                         try {
-                            attributeMetadata.setName("notes"); //NOI18N
-                            attributeMetadata.setDisplayName("notes");
-                            attributeMetadata.setType("String"); //NOI18N
-                            mem.createAttribute(genericActivityId, attributeMetadata);
+                            attributeModel.setName("notes"); //NOI18N
+                            attributeModel.setDisplayName("notes");
+                            attributeModel.setType("String"); //NOI18N
+                            mem.createAttribute(genericActivityId, attributeModel);
                             
                         } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
                             results[i] += ", " + ex.getMessage();
                         }
                         try {
-                            attributeMetadata.setName("startDate"); //NOI18N
-                            attributeMetadata.setDisplayName("startDate");
-                            attributeMetadata.setType("Date"); //NOI18N
-                            mem.createAttribute(genericActivityId, attributeMetadata);
+                            attributeModel.setName("startDate"); //NOI18N
+                            attributeModel.setDisplayName("startDate");
+                            attributeModel.setType("Date"); //NOI18N
+                            mem.createAttribute(genericActivityId, attributeModel);
                             
                         } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
                             results[i] += ", " + ex.getMessage();
                         }
                         try {
-                            attributeMetadata.setName("endDate"); //NOI18N
-                            attributeMetadata.setDisplayName("endDate");
-                            attributeMetadata.setType("Date"); //NOI18N
-                            mem.createAttribute(genericActivityId, attributeMetadata);
+                            attributeModel.setName("endDate"); //NOI18N
+                            attributeModel.setDisplayName("endDate");
+                            attributeModel.setType("Date"); //NOI18N
+                            mem.createAttribute(genericActivityId, attributeModel);
                             
                         } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
                             results[i] += ", " + ex.getMessage();
                         }
                         try {
-                            attributeMetadata.setName("lastUpdate"); //NOI18N
-                            attributeMetadata.setDisplayName("lastUpdate");
-                            attributeMetadata.setType("Date"); //NOI18N
-                            mem.createAttribute(genericActivityId, attributeMetadata);
+                            attributeModel.setName("lastUpdate"); //NOI18N
+                            attributeModel.setDisplayName("lastUpdate");
+                            attributeModel.setType("Date"); //NOI18N
+                            mem.createAttribute(genericActivityId, attributeModel);
                             
                         } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
                             results[i] += ", " + ex.getMessage();
                         }
                         try {
-                            attributeMetadata.setName("duration"); //NOI18N
-                            attributeMetadata.setDisplayName("duration");
-                            attributeMetadata.setType("Float"); //NOI18N
-                            mem.createAttribute(genericActivityId, attributeMetadata);
+                            attributeModel.setName("duration"); //NOI18N
+                            attributeModel.setDisplayName("duration");
+                            attributeModel.setType("Float"); //NOI18N
+                            mem.createAttribute(genericActivityId, attributeModel);
                             
                         } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
                             results[i] += ", " + ex.getMessage();
                         }
                         try {
-                            attributeMetadata.setName("cost"); //NOI18N
-                            attributeMetadata.setDisplayName("cost");
-                            attributeMetadata.setType("Float"); //NOI18N
-                            mem.createAttribute(genericActivityId, attributeMetadata);
+                            attributeModel.setName("cost"); //NOI18N
+                            attributeModel.setDisplayName("cost");
+                            attributeModel.setType("Float"); //NOI18N
+                            mem.createAttribute(genericActivityId, attributeModel);
                             
                         } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
                             results[i] += ", " + ex.getMessage();
                         }
                         try {
-                            attributeMetadata.setName("owner"); //NOI18N
-                            attributeMetadata.setDisplayName("owner");
-                            attributeMetadata.setType("Employee"); //NOI18N
-                            mem.createAttribute(genericActivityId, attributeMetadata);
+                            attributeModel.setName("owner"); //NOI18N
+                            attributeModel.setDisplayName("owner");
+                            attributeModel.setType("Employee"); //NOI18N
+                            mem.createAttribute(genericActivityId, attributeModel);
                             
                         } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
                             results[i] += ", " + ex.getMessage();
                         }                    
                         try {
-                            attributeMetadata.setName("risk"); //NOI18N
-                            attributeMetadata.setDisplayName("risk");
-                            attributeMetadata.setType("Integer"); //NOI18N
-                            mem.createAttribute(genericActivityId, attributeMetadata);
+                            attributeModel.setName("risk"); //NOI18N
+                            attributeModel.setDisplayName("risk");
+                            attributeModel.setType("Integer"); //NOI18N
+                            mem.createAttribute(genericActivityId, attributeModel);
                             
                         } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
                             results[i] += ", " + ex.getMessage();
@@ -569,17 +574,17 @@ public class ToolsBean implements ToolsBeanRemote {
                 case "5":
                 {
                     try {
-                        attributeMetadata = new AttributeMetadata();
-                        attributeMetadata.setName("rackUnitsNumberingDescending"); //NOI18N
-                        attributeMetadata.setDisplayName("rackUnitsNumberingDescending"); //NOI18N
-                        attributeMetadata.setDescription("");
-                        attributeMetadata.setReadOnly(false);
-                        attributeMetadata.setType("Boolean"); //NOI18N
-                        attributeMetadata.setUnique(false);
-                        attributeMetadata.setVisible(true);
-                        attributeMetadata.setNoCopy(false); 
+                        attributeModel = new AttributeMetadata();
+                        attributeModel.setName("rackUnitsNumberingDescending"); //NOI18N
+                        attributeModel.setDisplayName("rackUnitsNumberingDescending"); //NOI18N
+                        attributeModel.setDescription("");
+                        attributeModel.setReadOnly(false);
+                        attributeModel.setType("Boolean"); //NOI18N
+                        attributeModel.setUnique(false);
+                        attributeModel.setVisible(true);
+                        attributeModel.setNoCopy(false); 
                         
-                        mem.createAttribute("Rack", attributeMetadata); //NOI18N
+                        mem.createAttribute("Rack", attributeModel); //NOI18N
                         
                         aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
                             ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
@@ -604,15 +609,15 @@ public class ToolsBean implements ToolsBeanRemote {
                     cm.setViewable(true);
                     cm.setInDesign(false);
                     
-                    attributeMetadata = new AttributeMetadata();
-                    attributeMetadata.setDescription("");
-                    attributeMetadata.setReadOnly(false);                    
-                    attributeMetadata.setUnique(false);
-                    attributeMetadata.setVisible(true);
-                    attributeMetadata.setNoCopy(false);
+                    attributeModel = new AttributeMetadata();
+                    attributeModel.setDescription("");
+                    attributeModel.setReadOnly(false);                    
+                    attributeModel.setUnique(false);
+                    attributeModel.setVisible(true);
+                    attributeModel.setNoCopy(false);
                     
-                    attributeMetadata.setName("connectorType"); //NOI18N
-                    attributeMetadata.setDisplayName("connectorType"); //NOI18N
+                    attributeModel.setName("connectorType"); //NOI18N
+                    attributeModel.setDisplayName("connectorType"); //NOI18N
                     
                     try {
                         cm.setName("LinkConnectorType"); //NOI18N
@@ -627,8 +632,8 @@ public class ToolsBean implements ToolsBeanRemote {
                         results[i] = ex.getMessage();
                     }                        
                     try {
-                        attributeMetadata.setType("LinkConnectorType"); //NOI18N
-                        mem.createAttribute("GenericPhysicalLink", attributeMetadata); //NOI18N
+                        attributeModel.setType("LinkConnectorType"); //NOI18N
+                        mem.createAttribute("GenericPhysicalLink", attributeModel); //NOI18N
                         
                         aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
                             ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
@@ -650,8 +655,8 @@ public class ToolsBean implements ToolsBeanRemote {
                         results[i] += ", " + ex.getMessage();
                     } 
                     try {
-                        attributeMetadata.setType("PortConnectorType"); //NOI18N
-                        mem.createAttribute("GenericPort", attributeMetadata); //NOI18N
+                        attributeModel.setType("PortConnectorType"); //NOI18N
+                        mem.createAttribute("GenericPort", attributeModel); //NOI18N
 
                         aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
                             ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
@@ -744,6 +749,115 @@ public class ToolsBean implements ToolsBeanRemote {
                     Logger.getLogger(ToolsBean.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 
+                }
+                break;
+                case "8":
+                {
+                    String equipmentModelClassName = "EquipmentModel"; //NOI18N
+                    ClassMetadata equipmentTypeClass;
+                    
+                    try {
+                        equipmentTypeClass = mem.getClass(equipmentModelClassName); 
+                    } catch (MetadataObjectNotFoundException ex) {
+                        equipmentTypeClass = null;
+                    }
+                    if (equipmentTypeClass == null) {                                            
+                        try {
+                            cm = new ClassMetadata();                    
+                            cm.setDisplayName("");
+                            cm.setDescription("");                    
+                            cm.setAbstract(false);
+                            cm.setColor(0);
+                            cm.setCountable(false);
+                            cm.setCreationDate(Calendar.getInstance().getTimeInMillis());
+                            cm.setIcon(null);
+                            cm.setSmallIcon(null);
+                            cm.setCustom(false);
+                            cm.setViewable(true);
+                            cm.setInDesign(false);
+                            cm.setName(equipmentModelClassName);
+                            cm.setParentClassName("GenericType"); //NOI18N
+                            
+                            mem.createClass(cm);
+
+                            aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
+                                ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT,
+                                String.format("Created class %s", cm.getName()));
+
+                        } catch (DatabaseException | MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
+                            results[i] = ex.getMessage();
+                        }
+                    }                    
+                    List<RemoteBusinessObjectLight> equipments;
+                    
+                    try {
+                        equipments = bem.getObjectsOfClassLight("GenericCommunicationsElement", 0); //NOI18N
+                    } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
+                        results[i] += " " + ex.getMessage();
+                        return results;
+                    }
+                    List<String> classesToRemoveModelAttr = new ArrayList();
+                    // Search the classes that cannot be applied the patch and need remove the model attribute
+                    for (RemoteBusinessObjectLight equipment : equipments) {
+                        ClassMetadata equipmentClass;
+                        try {
+                            equipmentClass = mem.getClass(equipment.getClassName());
+                        } catch (MetadataObjectNotFoundException ex) {
+                            results[i] += " " + ex.getMessage();
+                            return results;
+                        }
+                        AttributeMetadata attrMetadataModel = equipmentClass.getAttribute("model"); //NOI18N
+                        if (attrMetadataModel != null && equipmentModelClassName.equals(attrMetadataModel.getType()))
+                            continue;
+                        
+                        RemoteBusinessObject object;
+                        try {
+                            object = bem.getObject(equipment.getClassName(), equipment.getId());
+                        } catch (MetadataObjectNotFoundException | ObjectNotFoundException | InvalidArgumentException ex) {
+                            results[i] += " " + ex.getMessage();
+                            return results;
+                        }
+                        if (object.getAttributes().containsKey("model")) { //NOI18N
+                            String currentModel = object.getAttributes().get("model").get(0); //NOI18N
+                                                        
+                            results[i] += " * The current model attribute value \"" + currentModel + "\" for object \"id = " + object.getId() + " name = " + object.getName() + " class = " + object.getClassName() + "\" cannot be mapped to a EquipmentModel item. Actions: "
+                                    + "1) Create a EquipmentModel item for the \"model\" of this object. "
+                                    + "2) Delete the \"model\" attribute in the class for this object. "
+                                    + "3) Execute the patch. "
+                                    + "4) If there are errors repeat the 1 to 3 steps."
+                                    + "5) Set the \"model\" new value.";
+                            classesToRemoveModelAttr.add(object.getClassName());
+                        }
+                    }
+                    if (classesToRemoveModelAttr.isEmpty()) {
+                        ClassMetadata genericComElementClass;
+                        try {
+                            genericComElementClass = mem.getClass("GenericCommunicationsElement");
+                        } catch (MetadataObjectNotFoundException ex) {
+                            results[i] += " " + ex.getMessage();
+                            return results;
+                        }
+                        if (!genericComElementClass.hasAttribute("model")) { //NOI18N
+                            attributeModel = new AttributeMetadata();
+                            attributeModel.setDescription("");
+                            attributeModel.setReadOnly(false);                    
+                            attributeModel.setUnique(false);
+                            attributeModel.setVisible(true);
+                            attributeModel.setNoCopy(false);
+                            attributeModel.setName("model"); //NOI18N
+                            attributeModel.setDisplayName("model"); //NOI18N
+                            attributeModel.setType(equipmentModelClassName);
+                            try {
+                                mem.createAttribute("GenericCommunicationsElement", attributeModel); //NOI18N
+                            aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
+                                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
+                                String.format("Added attributes to class %s", "GenericCommunicationsElement")); //NOI18N
+                            } catch (MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
+                                results[i] += " " + ex.getMessage();
+                                return results;
+                            }
+                        }
+                    }
                 }
                 break;
                 default:

@@ -66,6 +66,7 @@ public class TempBusinessRulesEngine {
         //fine a suitable solution for this temporal rule engine
         subClassOfValidators.put("GenericService", "service");
         subClassOfValidators.put("Rack", "rack");
+        subClassOfValidators.put("GenericCommunicationsElement", "communicationsElement");
         //TODO: These validators will be used to enable special actions for certain type of objects
         //Perhaps we should use some other type of solution for this in the future
         subClassOfValidators.put("GenericSDHTransportLink", "sdhTransportLink");
