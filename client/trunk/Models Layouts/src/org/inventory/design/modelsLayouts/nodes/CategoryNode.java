@@ -20,7 +20,7 @@ import org.openide.nodes.AbstractNode;
 import org.openide.util.lookup.Lookups;
 
 /**
- *
+ * A category in the palette
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class CategoryNode extends AbstractNode {

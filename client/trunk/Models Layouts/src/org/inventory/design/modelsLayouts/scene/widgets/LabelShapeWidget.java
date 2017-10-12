@@ -17,8 +17,10 @@
 package org.inventory.design.modelsLayouts.scene.widgets;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -28,6 +30,7 @@ import org.inventory.design.modelsLayouts.lookup.SharedContentLookup;
 import org.inventory.design.modelsLayouts.model.LabelShape;
 import org.inventory.design.modelsLayouts.model.Shape;
 import org.inventory.design.modelsLayouts.nodes.ShapeNode;
+import org.inventory.design.modelsLayouts.scene.ModelLayoutScene;
 import org.netbeans.api.visual.border.BorderFactory;
 import org.netbeans.api.visual.widget.LabelWidget;
 import org.netbeans.api.visual.widget.Scene;
@@ -36,7 +39,7 @@ import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
 
 /**
- *
+ * Widget used to represent a label in the scene
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class LabelShapeWidget extends LabelWidget  implements PropertyChangeListener, SharedContentLookup {
@@ -127,8 +130,12 @@ public class LabelShapeWidget extends LabelWidget  implements PropertyChangeList
             setLabel((String) evt.getNewValue());
         } else if (LabelShape.PROPERTY_TEXT_COLOR.equals(evt.getPropertyName())) {            
             setForeground((Color) evt.getNewValue());
-        }        
+        } else if (LabelShape.PROPERTY_FONT_SIZE.equals(evt.getPropertyName())) { 
+            setFont(new Font(null, 0, (Integer) evt.getNewValue()));
+        }
         getScene().validate();
         getScene().paint();
+        
+        ((ModelLayoutScene) getScene()).fireChangeEvent(new ActionEvent(this, ModelLayoutScene.SCENE_CHANGE, evt.getPropertyName() + " Property Change"));
     }    
 }

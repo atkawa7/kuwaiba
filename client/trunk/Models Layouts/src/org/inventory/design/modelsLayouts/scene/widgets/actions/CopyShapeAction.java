@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-package org.inventory.design.modelsLayouts.actions;
+package org.inventory.design.modelsLayouts.scene.widgets.actions;
 
 import java.awt.event.ActionEvent;
 import org.inventory.communications.core.LocalPrivilege;
@@ -24,20 +24,20 @@ import org.inventory.design.modelsLayouts.scene.ModelLayoutScene;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
- *
+ * Action used to copy a widget in the scene
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class GroupCopyShapeAction extends GenericInventoryAction {
-    private static GroupCopyShapeAction instance;
+public class CopyShapeAction extends GenericInventoryAction {
+    private static CopyShapeAction instance;
     private Widget selectedWidget;
     private Shape shapeToCopy;
     
-    public GroupCopyShapeAction() {
-        putValue(NAME, "Group Copy");
+    private CopyShapeAction() {
+        putValue(NAME, "Copy");
     }
     
-    public static GroupCopyShapeAction getInstance() {
-        return instance == null ? instance = new GroupCopyShapeAction() : instance;
+    public static CopyShapeAction getInstance() {
+        return instance == null ? instance = new CopyShapeAction() : instance;
     }
     
     public Widget getSelectedWidget() {
@@ -55,7 +55,7 @@ public class GroupCopyShapeAction extends GenericInventoryAction {
     public void setShapeToCopy(Shape shapeToCopy) {
         this.shapeToCopy = shapeToCopy;
     }
-
+    
     @Override
     public LocalPrivilege getPrivilege() {
         return null;
@@ -65,7 +65,7 @@ public class GroupCopyShapeAction extends GenericInventoryAction {
     public void actionPerformed(ActionEvent e) {
         if (selectedWidget != null) {
             // Copy and Group copy actions are mutually exclusive
-            CopyShapeAction.getInstance().setShapeToCopy(null);
+            GroupCopyShapeAction.getInstance().setShapeToCopy(null);
             
             ModelLayoutScene scene = ((ModelLayoutScene) selectedWidget.getScene());
             Object object = scene.findObject(selectedWidget);

@@ -32,8 +32,7 @@ import org.openide.windows.WindowManager;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class AssociateLayoutAction extends GenericInventoryAction {
-    private Object LayoutTopComponent;
-        
+    
     public AssociateLayoutAction() {
         putValue(NAME, "Associate Layout");
     }

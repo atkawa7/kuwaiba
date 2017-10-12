@@ -20,7 +20,7 @@ import org.inventory.design.modelsLayouts.model.RectangleShape;
 import org.netbeans.api.visual.widget.Scene;
 
 /**
- *
+ * Widget used to represent a rectangle in the scene
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class RectangleShapeWidget extends SelectableShapeWidget {

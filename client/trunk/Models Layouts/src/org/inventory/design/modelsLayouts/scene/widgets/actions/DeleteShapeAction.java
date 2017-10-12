@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-package org.inventory.design.modelsLayouts.actions;
+package org.inventory.design.modelsLayouts.scene.widgets.actions;
 
 import java.awt.event.ActionEvent;
 import org.inventory.communications.core.LocalPrivilege;
@@ -25,7 +25,7 @@ import org.inventory.design.modelsLayouts.scene.ModelLayoutScene;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
- *
+ * Action used to delete a widget in the scene
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class DeleteShapeAction extends GenericInventoryAction {
@@ -72,6 +72,8 @@ public class DeleteShapeAction extends GenericInventoryAction {
                 }                
                 scene.validate();
                 scene.paint();
+                
+                scene.fireChangeEvent(new ActionEvent(this, ModelLayoutScene.SCENE_CHANGE, "Shape deleted"));
             }
         }
     }

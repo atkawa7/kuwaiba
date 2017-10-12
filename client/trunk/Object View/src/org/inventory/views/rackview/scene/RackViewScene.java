@@ -18,7 +18,6 @@ package org.inventory.views.rackview.scene;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Point;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;

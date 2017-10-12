@@ -19,6 +19,7 @@ package org.inventory.design.modelsLayouts.scene.widgets.actions;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
 import org.inventory.design.modelsLayouts.scene.ModelLayoutScene;
 import org.netbeans.api.visual.action.ResizeProvider;
 import org.netbeans.api.visual.action.ResizeStrategy;
@@ -71,6 +72,7 @@ public class ResizeShapeProvider implements ResizeProvider, ResizeStrategy {
         scene.fireShapeBoundsChange(newWidget, widgetOldBounds, widgetNewBounds);        
         scene.repaint();
         
+        scene.fireChangeEvent(new ActionEvent(this, ModelLayoutScene.SCENE_CHANGE, "Shape resized"));
         oldLocation = null;
         oldBounds = null;
     }

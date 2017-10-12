@@ -27,7 +27,7 @@ import org.netbeans.api.visual.model.ObjectScene;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
- *
+ * Shape widget select provider
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ShapeSelectProvider implements SelectProvider {

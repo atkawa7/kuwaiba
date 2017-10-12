@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-package org.inventory.design.modelsLayouts.actions;
+package org.inventory.design.modelsLayouts.scene.widgets.actions;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -26,7 +26,7 @@ import org.inventory.design.modelsLayouts.scene.ModelLayoutScene;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
- *
+ * Action used to paste a widget in the scene
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class PasteShapeAction extends GenericInventoryAction {

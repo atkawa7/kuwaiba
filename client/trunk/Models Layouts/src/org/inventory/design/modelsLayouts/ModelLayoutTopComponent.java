@@ -16,30 +16,39 @@
  */
 package org.inventory.design.modelsLayouts;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import org.inventory.design.modelsLayouts.lookup.SharedContent;
 import java.util.Collections;
+import javax.swing.JOptionPane;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.core.services.api.behaviors.Refreshable;
+import org.inventory.design.modelsLayouts.scene.ModelLayoutScene;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.windows.TopComponent;
 
 /**
- * Top component which displays something.
+ * Top component which displays a model type layout view.
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 @ConvertAsProperties(
         dtd = "-//org.inventory.design.drawobject//DrawObject//EN",
         autostore = false
 )
-public final class ModelLayoutTopComponent extends TopComponent implements Refreshable {
+public final class ModelLayoutTopComponent extends TopComponent implements ActionListener, Refreshable {
     public static String ID = "LayoutTopComponent_";
     private ModelLayoutService service;
     
+    private ModelLayoutConfigurationObject configObject;
+    
     public ModelLayoutTopComponent(LocalObjectListItem listItem) {
         this();
-        service = new ModelLayoutService(listItem);
+        configObject = new ModelLayoutConfigurationObject();
+        configObject.setProperty("saved", true);
         
-        setName(listItem.toString() + " Layout");
+        service = new ModelLayoutService(listItem);
+                
+        setDisplayName(listItem.toString() + " Layout");
         
         associateLookup(SharedContent.getInstance().getAbstractLookup());
         
@@ -138,10 +147,12 @@ public final class ModelLayoutTopComponent extends TopComponent implements Refre
 
     private void btnSaveMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSaveMouseClicked
         service.saveView();
+        setSaved(true);
     }//GEN-LAST:event_btnSaveMouseClicked
 
     private void btnCleanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCleanMouseClicked
         service.getScene().clear();
+        setSaved(false);
     }//GEN-LAST:event_btnCleanMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -151,13 +162,20 @@ public final class ModelLayoutTopComponent extends TopComponent implements Refre
     private javax.swing.JScrollPane pnlScrollPane;
     // End of variables declaration//GEN-END:variables
     @Override
-    public void componentOpened() {
-        service.renderView();
+    public void componentOpened() {        
+        service.renderView();      
+        service.getScene().addChangeListener(this);
     }
 
     @Override
     public void componentClosed() {
+        service.getScene().removeAllListeners();
         service.getScene().clear();
+    }
+    
+    @Override
+    public boolean canClose(){
+        return checkForUnsavedView();
     }
 
     void writeProperties(java.util.Properties p) {
@@ -175,4 +193,46 @@ public final class ModelLayoutTopComponent extends TopComponent implements Refre
     @Override
     public void refresh() {
     }
+    
+    @Override
+    public String getDisplayName(){
+        if (super.getDisplayName() == null)
+            return "<No View>";
+        return super.getDisplayName().trim().isEmpty() ? "<No view>" : super.getDisplayName();
+    }
+    
+    public void setSaved(boolean value) {
+        configObject.setProperty("saved", value);
+        
+        if (value)
+            this.setHtmlDisplayName(this.getDisplayName());
+        else
+            this.setHtmlDisplayName(String.format("<html><b>%s [Modified]</b></html>", getDisplayName()));
+    }
+    
+    public boolean checkForUnsavedView() {
+        if (!(boolean) configObject.getProperty("saved")) {
+            if (JOptionPane.showConfirmDialog(null, "This view has not been saved, do you want to save it?", 
+                "Confirmation", JOptionPane.YES_NO_CANCEL_OPTION) == JOptionPane.YES_OPTION) {
+                
+                btnSaveMouseClicked(null);
+                configObject.setProperty("saved", true);
+                return true;
+            }
+        } else
+            return true;
+        return false;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        switch (e.getID()){
+            case ModelLayoutScene.SCENE_CHANGE:
+                setSaved(false);
+                break;
+            case ModelLayoutScene.SCENE_CHANGEANDSAVE:
+                break;
+        }
+    }
+    
 }

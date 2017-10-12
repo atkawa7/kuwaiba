@@ -22,7 +22,7 @@ import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 
 /**
- *
+ * Shapes set for a category in the palette
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ShapeChildren extends Children.Keys {

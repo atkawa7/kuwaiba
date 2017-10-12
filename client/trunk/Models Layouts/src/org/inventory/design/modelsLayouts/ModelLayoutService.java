@@ -39,7 +39,7 @@ import org.openide.util.Lookup;
 import org.openide.util.datatransfer.ExTransferable;
 
 /**
- *
+ * Service used to get/set information from/to the server for the model layout view
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ModelLayoutService {
@@ -50,7 +50,7 @@ public class ModelLayoutService {
     
     private LocalObjectView currentView;
     
-    private LocalObjectListItem listItem;
+    private final LocalObjectListItem listItem;
             
     public ModelLayoutService(LocalObjectListItem listItem) {
         this.listItem = listItem;
@@ -66,7 +66,6 @@ public class ModelLayoutService {
     }
         
     public void renderView() {
-        LocalObjectListItem listItem = scene.getListItem();
         List<LocalObjectViewLight> relatedViews = CommunicationsStub.getInstance().getListTypeItemRelatedViews(listItem.getId(), listItem.getClassName());
         if (relatedViews != null) {
             if (relatedViews.isEmpty()) {
@@ -80,9 +79,7 @@ public class ModelLayoutService {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
     }
     
-    public void saveView() {
-        LocalObjectListItem listItem = scene.getListItem();
-        
+    public void saveView() {        
         byte[] structure = scene.getAsXML();
         if (currentView == null) {
             long viewId = CommunicationsStub.getInstance().createListTypeItemRelateView(

@@ -17,33 +17,29 @@
 package org.inventory.design.modelsLayouts.model;
 
 /**
- * Class used to represent rectangles
+ * Factory used to get instances of shapes, given a type of shape
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class RectangleShape extends Shape {
-    public static String SHAPE_TYPE = "rectangle";
+public class ShapeFactory {
+    private static ShapeFactory instance;
     
-    public RectangleShape() {
-        super();
+    private ShapeFactory() {
     }
     
-    public RectangleShape(String urlIcon) {
-        super(urlIcon);
+    public static ShapeFactory getInstance() {
+        return instance == null ? instance = new ShapeFactory() : instance;        
     }
     
-    public RectangleShape(Shape parent) {
-        super(parent);
-    }
-    
-    @Override
-    public Shape shapeCopy() {
-        RectangleShape shapeCpy = new RectangleShape();
-        shapeCopy(shapeCpy);
-        return shapeCpy;
-    }
-    
-    @Override
-    protected void shapeCopy(Shape shapeCpy) {   
-        super.shapeCopy(shapeCpy);
-    }
+    public Shape getShape(String type) {
+        if (type == null)
+            return null;
+        
+        if (RectangleShape.SHAPE_TYPE.equals(type))
+            return new RectangleShape();
+        
+        if (LabelShape.SHAPE_TYPE.equals(type))
+            return new LabelShape();
+        
+        return null;
+    }    
 }

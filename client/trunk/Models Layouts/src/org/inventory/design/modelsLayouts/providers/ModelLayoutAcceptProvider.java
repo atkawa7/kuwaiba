@@ -18,19 +18,25 @@ package org.inventory.design.modelsLayouts.providers;
 
 import java.awt.Point;
 import java.awt.datatransfer.Transferable;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.design.modelsLayouts.model.LabelShape;
 import org.inventory.design.modelsLayouts.model.RectangleShape;
 import org.inventory.design.modelsLayouts.model.Shape;
 import org.inventory.design.modelsLayouts.scene.ModelLayoutScene;
 import org.inventory.design.modelsLayouts.scene.widgets.LabelShapeWidget;
 import org.inventory.design.modelsLayouts.scene.widgets.RectangleShapeWidget;
-import org.inventory.design.modelsLayouts.scene.widgets.SelectableShapeWidget;
 import org.netbeans.api.visual.action.AcceptProvider;
 import org.netbeans.api.visual.action.ConnectorState;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
- *
+ * Drop. Accept provider to add shapes from palette
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ModelLayoutAcceptProvider implements AcceptProvider {
@@ -43,42 +49,68 @@ public class ModelLayoutAcceptProvider implements AcceptProvider {
     }
 
     @Override
-    public void accept(Widget widget, Point point, Transferable t) {  
-        try {  
-            Widget newWidget = null;
-            Shape shape = (Shape) t.getTransferData(Shape.DATA_FLAVOR);
+    public void accept(Widget widget, Point point, Transferable t) { 
+        JTextField txtName = new JTextField(20);
+        txtName.setName("txtName");
+        JCheckBox chkEquipment = new JCheckBox();
+        chkEquipment.setName("chkEquipment");
+        
+        JComplexDialogPanel pnlShape = new JComplexDialogPanel(
+            new String[] {"Shape name", "Is the shape an equipment?"}, 
+            new JComponent[] {txtName, chkEquipment});
+        if (JOptionPane.showConfirmDialog(null, pnlShape, "New Shape", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             
-            Shape newShape = null;
-            if (shape instanceof LabelShape)
-                newShape = new LabelShape();
-            else
-                newShape = new RectangleShape();
-                                    
-            if (widget instanceof ModelLayoutScene) {
-                newShape.setParent(null);
-                newWidget = ((ModelLayoutScene) widget).addNode(newShape);
-            }
-            else {
-                Object parent = ((ModelLayoutScene) widget.getScene()).findObject(widget);
+            String shapeName = txtName.getText();
+            Boolean isEquipment = chkEquipment.isSelected();
+            
+            ModelLayoutScene scene ;
+            if (widget.getScene() instanceof ModelLayoutScene) {
+                scene = (ModelLayoutScene) widget.getScene();
                 
-                if (parent != null && parent instanceof Shape) {
-                    newShape.setParent((Shape) parent);
-                    newWidget = ((ModelLayoutScene) widget.getScene()).addNode(newShape);
+                for (Shape node : scene.getNodes()) {
+                    if (!shapeName.isEmpty() && shapeName.equals(node.getName())) {
+                        NotificationUtil.getInstance().showSimplePopup("Warning", 
+                            NotificationUtil.WARNING_MESSAGE, "There cannot be two figures with the same name");
+                    }
+                }
+                try {  
+                    Widget newWidget = null;
+                    Shape shape = (Shape) t.getTransferData(Shape.DATA_FLAVOR);
+
+                    Shape newShape = null;
+                    if (shape instanceof LabelShape)
+                        newShape = new LabelShape();
+                    else
+                        newShape = new RectangleShape();
+                    newShape.setName(shapeName);
+                    newShape.setIsEquipment(isEquipment);
+
+                    if (widget instanceof ModelLayoutScene) {
+                        newShape.setParent(null);
+                        newWidget = scene.addNode(newShape);
+                    }
+                    else {
+                        Object parent = scene.findObject(widget);
+
+                        if (parent != null && parent instanceof Shape) {
+                            newShape.setParent((Shape) parent);
+                            newWidget = scene.addNode(newShape);
+                        }
+                    }
+                    if (newWidget != null) {
+                        newWidget.setPreferredLocation(point);
+                        scene.repaint();
+
+                        newShape.setX(point.x);
+                        newShape.setY(point.y);
+                        if (newShape instanceof LabelShape)
+                            ((LabelShapeWidget) newWidget).fixLookup();
+                        if (newShape instanceof RectangleShape)
+                            ((RectangleShapeWidget) newWidget).fixLookup();
+                    }
+                } catch (Exception ex) {            
                 }
             }
-            
-            if (newWidget != null) {
-                newWidget.setPreferredLocation(point);
-                ((ModelLayoutScene) widget).repaint();
-                
-                newShape.setX(point.x);
-                newShape.setY(point.y);
-                if (newShape instanceof LabelShape)
-                    ((LabelShapeWidget) newWidget).fixLookup();
-                if (newShape instanceof RectangleShape)
-                    ((RectangleShapeWidget) newWidget).fixLookup();
-            }
-        } catch (Exception ex) {            
         }
     }
 }

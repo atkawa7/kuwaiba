@@ -18,16 +18,18 @@ package org.inventory.design.modelsLayouts.scene.widgets.actions;
 
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
 import org.inventory.design.modelsLayouts.model.Shape;
 import org.inventory.design.modelsLayouts.scene.ModelLayoutScene;
 import org.netbeans.api.visual.action.MoveProvider;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
- *
+ * 
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class MoveShapeProvider implements MoveProvider {
+    private Point initialLocalLocation;
 
     public MoveShapeProvider() {
     }
@@ -35,6 +37,7 @@ public class MoveShapeProvider implements MoveProvider {
     @Override
     public void movementStarted(Widget widget) {                
         widget.bringToFront();
+        initialLocalLocation = widget.getLocation();
     }
 
     @Override
@@ -68,6 +71,8 @@ public class MoveShapeProvider implements MoveProvider {
             shape.setY(newLocalLocation.y);
             shape.firePropertyChange(widget, Shape.PROPERTY_Y, oldLocalLocation.y, newLocalLocation.y);
         }
+        if (!initialLocalLocation.equals(newLocalLocation))
+            scene.fireChangeEvent(new ActionEvent(this, ModelLayoutScene.SCENE_CHANGE, "Shape moved"));
     }
 
     private boolean isContained(Widget child, Widget possibleParent) {

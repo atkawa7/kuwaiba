@@ -28,7 +28,7 @@ import org.openide.nodes.Sheet;
 import org.openide.util.lookup.Lookups;
 
 /**
- *
+ * A shape in the palette or a node in the scene
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ShapeNode extends AbstractNode implements PropertyChangeListener {
@@ -59,6 +59,7 @@ public class ShapeNode extends AbstractNode implements PropertyChangeListener {
         ShapeGeneralProperty propertyColor = new ShapeGeneralProperty(Shape.PROPERTY_COLOR, Color.class, Shape.PROPERTY_COLOR, "");
         //ShapeGeneralProperty propertyBorderWidth = new ShapeGeneralProperty(Shape.PROPERTY_BORDER_WIDTH, Integer.class, Shape.PROPERTY_BORDER_WIDTH, "");
         ShapeGeneralProperty propertyBoderColor = new ShapeGeneralProperty(Shape.PROPERTY_BORDER_COLOR, Color.class, Shape.PROPERTY_BORDER_COLOR, "");
+        ShapeGeneralProperty propertyIsEquipment = new ShapeGeneralProperty(Shape.PROPERTY_IS_EQUIPMENT, Boolean.class, Shape.PROPERTY_IS_EQUIPMENT, "");
         
         generalPropertySet.setDisplayName("General");
         generalPropertySet.setName("general");  //NOI18N
@@ -70,6 +71,7 @@ public class ShapeNode extends AbstractNode implements PropertyChangeListener {
         generalPropertySet.put(propertyColor);
         //generalPropertySet.put(propertyBorderWidth);
         generalPropertySet.put(propertyBoderColor);
+        generalPropertySet.put(propertyIsEquipment);
         sheet.put(generalPropertySet);
         
         propertiesPropertySet.setDisplayName("Properties");
@@ -77,9 +79,11 @@ public class ShapeNode extends AbstractNode implements PropertyChangeListener {
         if (getShape() instanceof LabelShape) {
             ShapeGeneralProperty propertyLabel = new ShapeGeneralProperty(LabelShape.PROPERTY_LABEL, String.class, LabelShape.PROPERTY_LABEL, "");
             ShapeGeneralProperty propertyTextColor = new ShapeGeneralProperty(LabelShape.PROPERTY_TEXT_COLOR, Color.class, LabelShape.PROPERTY_TEXT_COLOR, "");            
+            ShapeGeneralProperty propertyFontSize = new ShapeGeneralProperty(LabelShape.PROPERTY_FONT_SIZE, Integer.class, LabelShape.PROPERTY_FONT_SIZE, "");
             
             propertiesPropertySet.put(propertyLabel);
-            propertiesPropertySet.put(propertyTextColor);            
+            propertiesPropertySet.put(propertyTextColor);
+            propertiesPropertySet.put(propertyFontSize);
         }
         sheet.put(propertiesPropertySet);
         return sheet;

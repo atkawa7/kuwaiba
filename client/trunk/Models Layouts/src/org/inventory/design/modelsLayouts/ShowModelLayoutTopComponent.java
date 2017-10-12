@@ -1,37 +1,74 @@
-/*
- * Copyright (c) 2017 johnyortega.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/**
+ *  Copyright 2010-2017, Neotropic SAS <contact@neotropic.co>.
  *
- * Contributors:
- *    johnyortega - initial API and implementation and/or initial documentation
+ *  Licensed under the EPL License, Version 1.0 (the "License");
+ *  you may not use this file except in compliance with the License
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.eclipse.org/legal/epl-v10.html
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
  */
 package org.inventory.design.modelsLayouts;
 
+import java.util.List;
+import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalObject;
+import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalObjectListItem;
+import org.inventory.communications.core.views.LocalObjectView;
+import org.inventory.communications.core.views.LocalObjectViewLight;
+import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.design.modelsLayouts.scene.LayoutViewScene;
 import org.netbeans.api.settings.ConvertAsProperties;
+import org.netbeans.api.visual.layout.LayoutFactory;
+import org.netbeans.api.visual.widget.Scene;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 
 /**
- * Top component which displays something.
+ * Top component which displays model type view for an object.
+ * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 @ConvertAsProperties(
         dtd = "-//org.inventory.design.modelsLayouts//ShowModelLayout//EN",
         autostore = false
 )
-@Messages({
-    "CTL_ShowModelLayoutTopComponent=ShowModelLayout",
-    "HINT_ShowModelLayoutTopComponent=ShowModelLayout"
-})
 public final class ShowModelLayoutTopComponent extends TopComponent {
+    private LayoutViewScene scene;
+    private LocalObjectLight objectLight;
+    
 
-    public ShowModelLayoutTopComponent() {
-        initComponents();
-        setName(Bundle.CTL_ShowModelLayoutTopComponent());
-        setToolTipText(Bundle.HINT_ShowModelLayoutTopComponent());
+    
+    private ShowModelLayoutTopComponent() {
+        initComponents();        
+    }
 
+    public ShowModelLayoutTopComponent(LocalObjectLight objectLight) {
+        this();
+        this.objectLight = objectLight;
+        
+        setName("Model Layout to " + objectLight.getName());
+        
+        scene = new LayoutViewScene();
+        associateLookup(scene.getLookup());
+        scene.setLayout(LayoutFactory.createAbsoluteLayout());
+        pnlScrollPane.setViewportView(scene.createView());
+    }
+    
+    @Override
+    protected String preferredID() {
+        return "ShowModelLayoutTopComponent_" + objectLight.getOid(); //NOI18N
+    }
+    
+    @Override
+    public int getPersistenceType() {
+        return TopComponent.PERSISTENCE_NEVER;
     }
 
     /**
@@ -42,28 +79,89 @@ public final class ShowModelLayoutTopComponent extends TopComponent {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
-        );
+        pnlScrollPane = new javax.swing.JScrollPane();
+        barMain = new javax.swing.JToolBar();
+        btnRefresh = new javax.swing.JButton();
+
+        setLayout(new java.awt.BorderLayout());
+        add(pnlScrollPane, java.awt.BorderLayout.CENTER);
+
+        barMain.setRollover(true);
+
+        btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/design/modelsLayouts/res/refresh.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnRefresh, org.openide.util.NbBundle.getMessage(ShowModelLayoutTopComponent.class, "ShowModelLayoutTopComponent.btnRefresh.text")); // NOI18N
+        btnRefresh.setToolTipText(org.openide.util.NbBundle.getMessage(ShowModelLayoutTopComponent.class, "ShowModelLayoutTopComponent.btnRefresh.toolTipText")); // NOI18N
+        btnRefresh.setFocusable(false);
+        btnRefresh.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnRefresh.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnRefresh.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnRefreshMouseClicked(evt);
+            }
+        });
+        barMain.add(btnRefresh);
+
+        add(barMain, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnRefreshMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRefreshMouseClicked
+        componentClosed();
+        componentOpened();
+    }//GEN-LAST:event_btnRefreshMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JToolBar barMain;
+    private javax.swing.JButton btnRefresh;
+    private javax.swing.JScrollPane pnlScrollPane;
     // End of variables declaration//GEN-END:variables
     @Override
-    public void componentOpened() {
-        // TODO add custom code on component opening
+    public void componentOpened() {        
+        
+        LocalObject lol = CommunicationsStub.getInstance().getObjectInfo(objectLight.getClassName(), objectLight.getOid());
+        if (lol == null) {
+            NotificationUtil.getInstance().showSimplePopup("Error", 
+                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            return;
+        }
+        LocalObjectListItem loli = null;
+                
+        for (Object attributeValue : lol.getAttributes().values()) {            
+            if (attributeValue instanceof LocalObjectListItem) {                
+                LocalObjectListItem listItem = (LocalObjectListItem) attributeValue;
+                
+                if ("ModelType".equals(listItem.getClassName())) {
+                    loli = listItem;
+                    break;
+                }
+            }
+        }
+        if (loli == null) {
+            NotificationUtil.getInstance().showSimplePopup("Error", 
+                NotificationUtil.ERROR_MESSAGE, "The object no has assigned the list type attribute with type ModelType");
+            return;
+        }
+        LocalObjectView currentView = null;
+        List<LocalObjectViewLight> relatedViews = CommunicationsStub.getInstance().getListTypeItemRelatedViews(loli.getId(), loli.getClassName());
+        if (relatedViews != null) {
+            if (relatedViews.isEmpty()) {
+                NotificationUtil.getInstance().showSimplePopup("Information", 
+                    NotificationUtil.INFO_MESSAGE, "The ModelType no has associate a layout");
+            } else {
+                currentView = CommunicationsStub.getInstance().getListTypeItemRelatedView(loli.getId(), loli.getClassName(), relatedViews.get(0).getId());
+                
+                RenderModelLayout renderModelLayout = new RenderModelLayout(lol, loli, scene, 100, 100, 700, 700);
+                renderModelLayout.render(currentView.getStructure());
+                scene.validate();
+                scene.paint();
+            }            
+        } else
+            NotificationUtil.getInstance().showSimplePopup("Error", 
+                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
     }
 
     @Override
     public void componentClosed() {
-        // TODO add custom code on component closing
+        scene.clear();
     }
 
     void writeProperties(java.util.Properties p) {

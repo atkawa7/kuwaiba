@@ -21,7 +21,7 @@ import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 
 /**
- *
+ * Categories set for the palette
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class CategoryChildren extends Children.Keys {

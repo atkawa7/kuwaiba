@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * Class used to represent a generic shape
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class Shape implements Transferable {    
@@ -39,6 +39,7 @@ public class Shape implements Transferable {
     public static String PROPERTY_COLOR = "color";
     public static String PROPERTY_BORDER_WIDTH = "borderWidth";
     public static String PROPERTY_BORDER_COLOR = "borderColor";
+    public static String PROPERTY_IS_EQUIPMENT = "isEquipment";
     public static Integer DEFAULT_WITH = 10;
     public static Integer DEFAULT_HEIGHT = 10;
     private static long counter = 0;
@@ -56,6 +57,7 @@ public class Shape implements Transferable {
     private Color color = Color.WHITE;
     private Integer borderWidth = 4;
     private Color borderColor = Color.BLACK;
+    private Boolean isEquipment = false;
     
     private final List<PropertyChangeListener> propertyChangeListeners;
     
@@ -94,6 +96,8 @@ public class Shape implements Transferable {
         shapeCpy.setWidth(this.getWidth());
         shapeCpy.setX(this.getX());
         shapeCpy.setY(this.getY());
+        shapeCpy.setBorderWidth(this.getBorderWidth());
+        shapeCpy.setBorderColor(this.getBorderColor());
     }
         
     public long getId() {
@@ -182,6 +186,14 @@ public class Shape implements Transferable {
     
     public void setBorderColor(Color borderColor) {
         this.borderColor = borderColor;
+    }
+    
+    public Boolean isEquipment() {
+        return isEquipment;
+    }
+    
+    public void setIsEquipment(Boolean isEquipment) {
+        this.isEquipment = isEquipment;
     }
     
     public void addPropertyChangeListener(PropertyChangeListener pcl) {

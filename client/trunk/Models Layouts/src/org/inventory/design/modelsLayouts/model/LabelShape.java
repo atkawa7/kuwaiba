@@ -19,15 +19,17 @@ package org.inventory.design.modelsLayouts.model;
 import java.awt.Color;
 
 /**
- *
+ * Class used to represent labels
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class LabelShape extends Shape {
     public static String SHAPE_TYPE = "label";
     public static String PROPERTY_LABEL = "label";
     public static String PROPERTY_TEXT_COLOR = "textColor";
+    public static String PROPERTY_FONT_SIZE = "fontSize";
     private String label;
     private Color textColor = Color.BLACK;
+    private Integer fontSize = 11;
     
     public LabelShape() {
         super();
@@ -59,6 +61,14 @@ public class LabelShape extends Shape {
         this.textColor = textColor;        
     }
     
+    public Integer getFontSize() {
+        return fontSize;
+    }
+    
+    public void setFontSize(Integer fontSize) {
+        this.fontSize = fontSize;        
+    }
+    
     @Override
     public Shape shapeCopy() {
         LabelShape shapeCpy = new LabelShape();
@@ -70,5 +80,7 @@ public class LabelShape extends Shape {
     protected void shapeCopy(Shape shapeCpy) {   
         super.shapeCopy(shapeCpy);
         ((LabelShape) shapeCpy).setLabel(this.getLabel());
+        ((LabelShape) shapeCpy).setTextColor(this.getTextColor());
+        ((LabelShape) shapeCpy).setFontSize(this.getFontSize());
     }
 }

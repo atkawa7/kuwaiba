@@ -20,6 +20,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
 
 /**
- *
+ * Widget used to represent a generic shape in the scene
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class SelectableShapeWidget extends Widget implements PropertyChangeListener, SharedContentLookup {
@@ -96,8 +97,6 @@ public class SelectableShapeWidget extends Widget implements PropertyChangeListe
             int width = (Integer) evt.getNewValue();
             double widthPercentage = Double.parseDouble(Integer.toString((Integer) evt.getNewValue())) / Double.parseDouble(Integer.toString((Integer) evt.getOldValue()));
             
-//            setPreferredBounds(new Rectangle(bounds.x, bounds.y, width, bounds.height));
-                        
             ((ModelLayoutScene) getScene()).changeWidget(new Dimension(width, bounds.height), this, this.getBounds(), widthPercentage, 1, ResizeProvider.ControlPoint.BOTTOM_RIGHT);
         }
         else if (Shape.PROPERTY_HEIGHT.equals(evt.getPropertyName())) {
@@ -108,7 +107,6 @@ public class SelectableShapeWidget extends Widget implements PropertyChangeListe
             int height = (Integer) evt.getNewValue();
             double heightPercentage = Double.parseDouble(Integer.toString((Integer) evt.getNewValue())) / Double.parseDouble(Integer.toString((Integer) evt.getOldValue()));
             
-//            setPreferredBounds(new Rectangle(bounds.x, bounds.y, bounds.width, height));
             ((ModelLayoutScene) getScene()).changeWidget(new Dimension(bounds.width, height), this, this.getBounds(), 1, heightPercentage, ResizeProvider.ControlPoint.BOTTOM_RIGHT);
         }
         else if (Shape.PROPERTY_COLOR.equals(evt.getPropertyName())) {
@@ -116,5 +114,7 @@ public class SelectableShapeWidget extends Widget implements PropertyChangeListe
         }
         getScene().validate();
         getScene().paint();
+        
+        ((ModelLayoutScene) getScene()).fireChangeEvent(new ActionEvent(this, ModelLayoutScene.SCENE_CHANGE, evt.getPropertyName() + " Property Change"));
     }
 }

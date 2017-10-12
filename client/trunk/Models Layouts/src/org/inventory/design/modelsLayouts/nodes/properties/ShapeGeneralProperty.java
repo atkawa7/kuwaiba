@@ -25,7 +25,7 @@ import org.inventory.design.modelsLayouts.nodes.ShapeNode;
 import org.openide.nodes.PropertySupport;
 
 /**
- *
+ * Property for a shape node
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ShapeGeneralProperty extends PropertySupport.ReadWrite {
@@ -55,10 +55,18 @@ public class ShapeGeneralProperty extends PropertySupport.ReadWrite {
             return shape.getBorderWidth();
         else if (Shape.PROPERTY_BORDER_COLOR.equals(getName()))
             return shape.getBorderColor();
-        if (shape instanceof LabelShape && LabelShape.PROPERTY_LABEL.equals(getName()))
-            return ((LabelShape) shape).getLabel();
-        if (shape instanceof LabelShape && LabelShape.PROPERTY_TEXT_COLOR.equals(getName()))
-            return ((LabelShape) shape).getTextColor();
+        else if (Shape.PROPERTY_BORDER_COLOR.equals(getName()))
+            return shape.getBorderColor();
+        else if (Shape.PROPERTY_IS_EQUIPMENT.equals(getName()))
+            return shape.isEquipment();
+        if (shape instanceof LabelShape) {
+            if (LabelShape.PROPERTY_LABEL.equals(getName()))
+                return ((LabelShape) shape).getLabel();
+            if (LabelShape.PROPERTY_TEXT_COLOR.equals(getName()))
+                return ((LabelShape) shape).getTextColor();
+            if (LabelShape.PROPERTY_FONT_SIZE.equals(getName()))
+                return ((LabelShape) shape).getFontSize();
+        }
         return null;
     }
 
@@ -66,40 +74,39 @@ public class ShapeGeneralProperty extends PropertySupport.ReadWrite {
     public void setValue(Object val) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         ShapeNode shapeNode = SharedContent.getInstance().getAbstractLookup().lookup(ShapeNode.class);
         Shape shape = shapeNode.getLookup().lookup(Shape.class);
-        
-        if (shape instanceof LabelShape && LabelShape.PROPERTY_LABEL.equals(getName())) {
-            shape.firePropertyChange(shapeNode, LabelShape.PROPERTY_LABEL, ((LabelShape) shape).getLabel(), val);
-            ((LabelShape) shape).setLabel((String) val);
-            return;
+        if (shape instanceof LabelShape) {
+            if (LabelShape.PROPERTY_LABEL.equals(getName())) {
+                shape.firePropertyChange(shapeNode, LabelShape.PROPERTY_LABEL, ((LabelShape) shape).getLabel(), val);
+                ((LabelShape) shape).setLabel((String) val);
+                return;
+            }
+            if (LabelShape.PROPERTY_TEXT_COLOR.equals(getName())) {
+                shape.firePropertyChange(shapeNode, LabelShape.PROPERTY_TEXT_COLOR, ((LabelShape) shape).getTextColor(), val);
+                ((LabelShape) shape).setTextColor((Color) val);
+                return;
+            }
+            if (LabelShape.PROPERTY_FONT_SIZE.equals(getName())) {
+                shape.firePropertyChange(shapeNode, LabelShape.PROPERTY_FONT_SIZE, ((LabelShape) shape).getFontSize(), val);
+                ((LabelShape) shape).setFontSize((Integer) val);
+                return;
+            }
         }
-        
-        if (shape instanceof LabelShape && LabelShape.PROPERTY_TEXT_COLOR.equals(getName())) {
-            shape.firePropertyChange(shapeNode, LabelShape.PROPERTY_TEXT_COLOR, ((LabelShape) shape).getTextColor(), val);
-            ((LabelShape) shape).setTextColor((Color) val);
-            return;
-        }
-        
         if (Shape.PROPERTY_NAME.equals(getName())) {
             shape.firePropertyChange(shapeNode, Shape.PROPERTY_NAME, shape.getName(), val);
             shape.setName((String) val);
-        }
-        else if (Shape.PROPERTY_X.equals(getName())) {
+        } else if (Shape.PROPERTY_X.equals(getName())) {
             shape.firePropertyChange(shapeNode, Shape.PROPERTY_X, shape.getX(), val);
             shape.setX((Integer) val);
-        }
-        else if (Shape.PROPERTY_Y.equals(getName())) {
+        } else if (Shape.PROPERTY_Y.equals(getName())) {
             shape.firePropertyChange(shapeNode, Shape.PROPERTY_Y, shape.getY(), val);
             shape.setY((Integer) val);
-        }
-        else if (Shape.PROPERTY_WIDTH.equals(getName())) {
+        } else if (Shape.PROPERTY_WIDTH.equals(getName())) {
             shape.firePropertyChange(shapeNode, Shape.PROPERTY_WIDTH, shape.getWidth(), val);
             shape.setWidth((Integer) val);
-        }
-        else if (Shape.PROPERTY_HEIGHT.equals(getName())) {
+        } else if (Shape.PROPERTY_HEIGHT.equals(getName())) {
             shape.firePropertyChange(shapeNode, Shape.PROPERTY_HEIGHT, shape.getHeight(), val);
             shape.setHeight((Integer) val);
-        }
-        else if (Shape.PROPERTY_COLOR.equals(getName())) {
+        } else if (Shape.PROPERTY_COLOR.equals(getName())) {
             shape.firePropertyChange(shapeNode, Shape.PROPERTY_COLOR, shape.getColor(), val);
             shape.setColor((Color) val);
         } else if (Shape.PROPERTY_BORDER_WIDTH.equals(getName())) {
@@ -108,6 +115,9 @@ public class ShapeGeneralProperty extends PropertySupport.ReadWrite {
         } else if (Shape.PROPERTY_BORDER_COLOR.equals(getName())) {
             shape.firePropertyChange(shapeNode, Shape.PROPERTY_BORDER_COLOR, shape.getBorderColor(), val);
             shape.setBorderColor((Color) val);
+        } else if (Shape.PROPERTY_IS_EQUIPMENT.equals(getName())) {
+            shape.firePropertyChange(shapeNode, Shape.PROPERTY_IS_EQUIPMENT, shape.isEquipment(), val);
+            shape.setIsEquipment((Boolean) val);
         }
     }
     

@@ -14,14 +14,14 @@
  *  limitations under the License.
  *
  */
-package org.inventory.design.modelsLayouts.actions;
+package org.inventory.design.modelsLayouts.scene.widgets.actions;
 
 import java.awt.event.ActionEvent;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 
 /**
- *
+ * Action used to group/ungroup shapes in the scene
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class GroupShapesAction extends GenericInventoryAction {

@@ -18,16 +18,16 @@ package org.inventory.design.modelsLayouts.menus;
 
 import java.awt.Point;
 import javax.swing.JPopupMenu;
-import org.inventory.design.modelsLayouts.actions.CopyShapeAction;
-import org.inventory.design.modelsLayouts.actions.DeleteShapeAction;
-import org.inventory.design.modelsLayouts.actions.GroupCopyShapeAction;
-import org.inventory.design.modelsLayouts.actions.GroupShapesAction;
-import org.inventory.design.modelsLayouts.actions.PasteShapeAction;
+import org.inventory.design.modelsLayouts.scene.widgets.actions.CopyShapeAction;
+import org.inventory.design.modelsLayouts.scene.widgets.actions.DeleteShapeAction;
+import org.inventory.design.modelsLayouts.scene.widgets.actions.GroupCopyShapeAction;
+import org.inventory.design.modelsLayouts.scene.widgets.actions.GroupShapesAction;
+import org.inventory.design.modelsLayouts.scene.widgets.actions.PasteShapeAction;
 import org.netbeans.api.visual.action.PopupMenuProvider;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
- *
+ * Popup Menu to the shape widgets
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ShapeWidgetMenu implements PopupMenuProvider {
@@ -46,11 +46,13 @@ public class ShapeWidgetMenu implements PopupMenuProvider {
         if (popupMenu == null) {
             popupMenu = new JPopupMenu();
             popupMenu.add(CopyShapeAction.getInstance());
-            popupMenu.add(GroupCopyShapeAction.getInstance());
             popupMenu.add(PasteShapeAction.getInstance());
             popupMenu.addSeparator();
-            popupMenu.add(DeleteShapeAction.getInstance());
+            popupMenu.add(GroupCopyShapeAction.getInstance());
+            popupMenu.addSeparator();
             popupMenu.add(GroupShapesAction.getInstance());
+            popupMenu.addSeparator();
+            popupMenu.add(DeleteShapeAction.getInstance());
         }
         CopyShapeAction.getInstance().setSelectedWidget(widget);
         
