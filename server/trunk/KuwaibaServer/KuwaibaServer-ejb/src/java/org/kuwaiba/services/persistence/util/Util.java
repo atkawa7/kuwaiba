@@ -166,7 +166,7 @@ public class Util {
         // Searches the related views to delete the nodes in the data base
         List<Node> relatedViews = new ArrayList();
         for (Relationship rel : instance.getRelationships()) {
-            if (rel.getType().name().equals(RelTypes..name())) {
+            if (rel.getType().name().equals(RelTypes.HAS_VIEW.name())) {
                 if (rel.getEndNode().getId() != instance.getId())
                     relatedViews.add(rel.getEndNode());
             }
