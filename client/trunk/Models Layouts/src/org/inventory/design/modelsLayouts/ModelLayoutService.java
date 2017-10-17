@@ -64,6 +64,10 @@ public class ModelLayoutService {
     public LocalObjectListItem getListItem() {
         return listItem;
     }
+    
+    public LocalObjectView getCurrentView() {
+        return currentView;        
+    }
         
     public void renderView() {
         List<LocalObjectViewLight> relatedViews = CommunicationsStub.getInstance().getListTypeItemRelatedViews(listItem.getId(), listItem.getClassName());
@@ -79,7 +83,7 @@ public class ModelLayoutService {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
     }
     
-    public void saveView() {        
+    public boolean saveView() {        
         byte[] structure = scene.getAsXML();
         if (currentView == null) {
             long viewId = CommunicationsStub.getInstance().createListTypeItemRelateView(
@@ -89,17 +93,34 @@ public class ModelLayoutService {
                 currentView = new LocalObjectView(viewId, "EquipmentModelLayoutView", null, null, structure, scene.getBackgroundImage()); //NOI18N
                 NotificationUtil.getInstance().showSimplePopup("Information", 
                     NotificationUtil.INFO_MESSAGE, "The view was saved successfully");
-            } else
+                return true;
+            } else {
                 NotificationUtil.getInstance().showSimplePopup("Error", 
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                return false;
+            }
         } else {
             if (CommunicationsStub.getInstance().updateListTypeItemRelatedView(listItem.getId(), listItem.getClassName(), 
-                currentView.getId(), null, null, structure, scene.getBackgroundImage()))
+                currentView.getId(), null, null, structure, scene.getBackgroundImage())) {
                 NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "The view was saved successfully");
-            else
+                return true;
+            } else {
                 NotificationUtil.getInstance().showSimplePopup("Error", 
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                return false;
+            }
         }
+    }
+    
+    public boolean deleteView() {
+        if (currentView == null)
+            return false;
+        if (listItem == null)
+            return false;
+        boolean deleted = CommunicationsStub.getInstance().deleteListTypeItemRelatedView(listItem.getId(), listItem.getClassName(), currentView.getId());
+        if (deleted)
+            currentView = null;
+        return deleted;
     }
         
     public ModelLayoutScene getScene() {

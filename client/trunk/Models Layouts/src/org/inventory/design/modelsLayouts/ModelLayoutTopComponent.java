@@ -21,8 +21,10 @@ import java.awt.event.ActionListener;
 import org.inventory.design.modelsLayouts.lookup.SharedContent;
 import java.util.Collections;
 import javax.swing.JOptionPane;
+import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.core.services.api.behaviors.Refreshable;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.design.modelsLayouts.scene.ModelLayoutScene;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.windows.TopComponent;
@@ -83,6 +85,7 @@ public final class ModelLayoutTopComponent extends TopComponent implements Actio
         pnlScrollPane = new javax.swing.JScrollPane();
         barMain = new javax.swing.JToolBar();
         btnSave = new javax.swing.JButton();
+        btnDelete = new javax.swing.JButton();
         btnClean = new javax.swing.JButton();
 
         addMouseListener(new java.awt.event.MouseAdapter() {
@@ -115,7 +118,30 @@ public final class ModelLayoutTopComponent extends TopComponent implements Actio
                 btnSaveMouseClicked(evt);
             }
         });
+        btnSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveActionPerformed(evt);
+            }
+        });
         barMain.add(btnSave);
+
+        btnDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/design/modelsLayouts/res/delete.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnDelete, org.openide.util.NbBundle.getMessage(ModelLayoutTopComponent.class, "ModelLayoutTopComponent.btnDelete.text")); // NOI18N
+        btnDelete.setToolTipText(org.openide.util.NbBundle.getMessage(ModelLayoutTopComponent.class, "ModelLayoutTopComponent.btnDelete.toolTipText")); // NOI18N
+        btnDelete.setFocusable(false);
+        btnDelete.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnDelete.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnDelete.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnDeleteMouseClicked(evt);
+            }
+        });
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
+        barMain.add(btnDelete);
 
         btnClean.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/design/modelsLayouts/res/clean.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnClean, org.openide.util.NbBundle.getMessage(ModelLayoutTopComponent.class, "ModelLayoutTopComponent.btnClean.text")); // NOI18N
@@ -126,6 +152,11 @@ public final class ModelLayoutTopComponent extends TopComponent implements Actio
         btnClean.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnCleanMouseClicked(evt);
+            }
+        });
+        btnClean.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCleanActionPerformed(evt);
             }
         });
         barMain.add(btnClean);
@@ -146,24 +177,53 @@ public final class ModelLayoutTopComponent extends TopComponent implements Actio
     }//GEN-LAST:event_pnlScrollPaneMouseExited
 
     private void btnSaveMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSaveMouseClicked
-        service.saveView();
-        setSaved(true);
+        
     }//GEN-LAST:event_btnSaveMouseClicked
 
     private void btnCleanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCleanMouseClicked
+
+    }//GEN-LAST:event_btnCleanMouseClicked
+
+    private void btnDeleteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDeleteMouseClicked
+        
+    }//GEN-LAST:event_btnDeleteMouseClicked
+
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        if (JOptionPane.showConfirmDialog(this, "Are you sure you want to delete the current Equipment Model View?", 
+                "Delete Equipment Model View", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+            
+            if (service.deleteView()) {
+                service.getScene().clear();
+                NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "The current view was deleted");
+            } else
+                NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "The current view can not be deleted");            
+        }
+    }//GEN-LAST:event_btnDeleteActionPerformed
+
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        if (service.saveView()) {
+            btnDelete.setEnabled(true);
+            setSaved(true);
+        }
+    }//GEN-LAST:event_btnSaveActionPerformed
+
+    private void btnCleanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCleanActionPerformed
         service.getScene().clear();
         setSaved(false);
-    }//GEN-LAST:event_btnCleanMouseClicked
+    }//GEN-LAST:event_btnCleanActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barMain;
     private javax.swing.JButton btnClean;
+    private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnSave;
     private javax.swing.JScrollPane pnlScrollPane;
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {        
         service.renderView();      
+        if (service.getCurrentView() == null)
+            btnDelete.setEnabled(false);
         service.getScene().addChangeListener(this);
     }
 

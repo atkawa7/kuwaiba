@@ -101,11 +101,11 @@ public class ShapeGeneralProperty extends PropertySupport.ReadWrite {
             shape.firePropertyChange(shapeNode, Shape.PROPERTY_Y, shape.getY(), val);
             shape.setY((Integer) val);
         } else if (Shape.PROPERTY_WIDTH.equals(getName())) {
-            shape.firePropertyChange(shapeNode, Shape.PROPERTY_WIDTH, shape.getWidth(), val);
             shape.setWidth((Integer) val);
+            shape.firePropertyChange(shapeNode, Shape.PROPERTY_WIDTH, shape.getWidth(), val);            
         } else if (Shape.PROPERTY_HEIGHT.equals(getName())) {
-            shape.firePropertyChange(shapeNode, Shape.PROPERTY_HEIGHT, shape.getHeight(), val);
             shape.setHeight((Integer) val);
+            shape.firePropertyChange(shapeNode, Shape.PROPERTY_HEIGHT, shape.getHeight(), val);
         } else if (Shape.PROPERTY_COLOR.equals(getName())) {
             shape.firePropertyChange(shapeNode, Shape.PROPERTY_COLOR, shape.getColor(), val);
             shape.setColor((Color) val);
