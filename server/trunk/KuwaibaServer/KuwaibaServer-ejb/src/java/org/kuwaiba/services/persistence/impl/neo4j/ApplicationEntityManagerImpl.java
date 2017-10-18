@@ -17,6 +17,7 @@
 package org.kuwaiba.services.persistence.impl.neo4j;
 
 import com.neotropic.kuwaiba.modules.GenericCommercialModule;
+import com.neotropic.kuwaiba.sync.snmp.util.EtlSNMP;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import java.io.BufferedReader;
@@ -2410,9 +2411,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         }
     }
     
-    
     @Override
     public TaskResult executeTask(long taskId) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+        String script = null;
+        Binding environmentParameters = new Binding();
+        
         try (Transaction tx = graphDb.beginTx()) {
             Node taskNode = taskIndex.get(Constants.PROPERTY_ID, taskId).getSingle();
             if (taskNode == null)
@@ -2420,7 +2423,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (!taskNode.hasProperty(Constants.PROPERTY_SCRIPT))
                 throw new InvalidArgumentException(String.format("The task with id %s does not have a script", taskId));
             
-            String script = (String)taskNode.getProperty(Constants.PROPERTY_SCRIPT);
+            script = (String)taskNode.getProperty(Constants.PROPERTY_SCRIPT);
             
             Iterable<String> allProperties = taskNode.getPropertyKeys();
             HashMap<String, String> scriptParameters = new HashMap<>();
@@ -2429,7 +2432,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     scriptParameters.put(property.replace("PARAM_", ""), (String)taskNode.getProperty(property));
             }
             
-            Binding environmentParameters = new Binding();
             environmentParameters.setVariable("graphDb", graphDb); //NOI18N
             environmentParameters.setVariable("objectIndex", objectIndex); //NOI18N
             environmentParameters.setVariable("classIndex", classIndex); //NOI18N
@@ -2438,21 +2440,23 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             environmentParameters.setVariable("Direction", Direction.class); //NOI18N
             environmentParameters.setVariable("RelTypes", RelTypes.class); //NOI18N
             environmentParameters.setVariable("scriptParameters", scriptParameters); //NOI18N
-            try {
-                GroovyShell shell = new GroovyShell(ApplicationEntityManager.class.getClassLoader(), environmentParameters);
-                Object theResult = shell.evaluate(script);
-                
-                if (theResult == null)
-                    throw new InvalidArgumentException("The script returned a null object. Please check the syntax.");
-                else if (!TaskResult.class.isInstance(theResult))
-                    throw new InvalidArgumentException("The script does not return a TaskResult object. Please check the return value.");
-                
-                return (TaskResult)theResult;
-                
-            } catch(Exception ex) {
-                return TaskResult.createErrorResult(ex.getMessage());
-            }
+            environmentParameters.setVariable("EtlSNMP", EtlSNMP.class); //NOI18N
+        } 
+        try {
+            GroovyShell shell = new GroovyShell(ApplicationEntityManager.class.getClassLoader(), environmentParameters);
+            Object theResult = shell.evaluate(script);
+
+            if (theResult == null)
+                throw new InvalidArgumentException("The script returned a null object. Please check the syntax.");
+            else if (!TaskResult.class.isInstance(theResult))
+                throw new InvalidArgumentException("The script does not return a TaskResult object. Please check the return value.");
+           
+            return (TaskResult)theResult;
+
+        } catch(Exception ex) {
+            return TaskResult.createErrorResult(ex.getMessage());
         }
+       
     }
     
     //Templates
