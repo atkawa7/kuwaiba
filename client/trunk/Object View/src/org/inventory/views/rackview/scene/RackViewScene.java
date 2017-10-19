@@ -50,6 +50,7 @@ import org.netbeans.api.visual.widget.Widget;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLight> {
+    private boolean addingNestedDevice = true;
     private boolean showConnections = false;
     private LocalObjectLight rack;
     
@@ -81,6 +82,14 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
         this.showConnections = showConnections;
     }
 
+    public boolean isAddingNestedDevice() {
+        return addingNestedDevice;
+    }
+
+    public void setAddingNestedDevice(boolean addNestedDevice) {
+        this.addingNestedDevice = addNestedDevice;
+    }
+    
     @Override
     public byte[] getAsXML() {
         return null;
@@ -203,7 +212,7 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
             
         } else if (showConnections) {
             if (CommunicationsStub.getInstance().isSubclassOf(node.getClassName(), "GenericPhysicalPort")) {
-                widget = new PortWidget(this, node);
+                widget = new PortWidget(this, node, addingNestedDevice);
                 
                 widget.createActions(AbstractScene.ACTION_CONNECT);
                 widget.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(interactionLayer, getConnectProvider()));
@@ -217,7 +226,7 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
         }            
         if (getRack().equals(node)) {
             if (showConnections)
-                widget = new RackWidget(this, node, 800, 150, 15);
+                widget = new RackWidget(this, node, 1086, 100, 15);
             else
                 widget = new RackWidget(this, node, 300, 35, 5);
             widget.createActions(AbstractScene.ACTION_SELECT);

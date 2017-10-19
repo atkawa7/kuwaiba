@@ -493,10 +493,13 @@ public class ModelLayoutScene extends AbstractScene<Shape, String> implements Sh
         // Gets the current shapes hierarchy
         Map<Shape, List<Shape>> hierarchy = new HashMap();
         getShapeHierarchy(scene, oldWidget, hierarchy);
-        // If shapes are group then remove children recursive
-        if (GroupShapesAction.getInstance().isGroup())
-            removeRecursive(scene, oldWidget);
         
+        removeRecursive(scene, oldWidget);        
+        if (!GroupShapesAction.getInstance().isGroup()) {
+            // If shapes are ungroup then no resize
+            widthPercentage = 1;
+            heightPercentage = 1;
+        }
         Shape shape = (Shape) scene.findObject(oldWidget);
         //BOTTOM_CENTER, CENTER_RIGHT, BOTTOM_RIGHT don't has resize problem
         if (!(ResizeProvider.ControlPoint.BOTTOM_CENTER.equals(controlPoint) || 
@@ -534,9 +537,8 @@ public class ModelLayoutScene extends AbstractScene<Shape, String> implements Sh
         
         scene.validate();
         scene.paint();
-        // If shapes are group then resizing recursive
-        if (GroupShapesAction.getInstance().isGroup())
-            addNewWidgetChildren(scene, hierarchy, shape, widthPercentage, heightPercentage);
+        
+        addNewWidgetChildren(scene, hierarchy, shape, widthPercentage, heightPercentage);
         return newWidget;
     }
 }

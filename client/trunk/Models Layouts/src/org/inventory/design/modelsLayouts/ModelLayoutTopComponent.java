@@ -21,13 +21,13 @@ import java.awt.event.ActionListener;
 import org.inventory.design.modelsLayouts.lookup.SharedContent;
 import java.util.Collections;
 import javax.swing.JOptionPane;
-import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.design.modelsLayouts.scene.ModelLayoutScene;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.windows.TopComponent;
+import org.openide.windows.WindowManager;
 
 /**
  * Top component which displays a model type layout view.
@@ -86,23 +86,10 @@ public final class ModelLayoutTopComponent extends TopComponent implements Actio
         barMain = new javax.swing.JToolBar();
         btnSave = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
+        btnShowPalette = new javax.swing.JButton();
         btnClean = new javax.swing.JButton();
 
-        addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                formMouseEntered(evt);
-            }
-        });
         setLayout(new java.awt.BorderLayout());
-
-        pnlScrollPane.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                pnlScrollPaneMouseExited(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                pnlScrollPaneMouseEntered(evt);
-            }
-        });
         add(pnlScrollPane, java.awt.BorderLayout.CENTER);
 
         barMain.setRollover(true);
@@ -113,11 +100,6 @@ public final class ModelLayoutTopComponent extends TopComponent implements Actio
         btnSave.setFocusable(false);
         btnSave.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnSave.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnSave.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnSaveMouseClicked(evt);
-            }
-        });
         btnSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSaveActionPerformed(evt);
@@ -131,11 +113,6 @@ public final class ModelLayoutTopComponent extends TopComponent implements Actio
         btnDelete.setFocusable(false);
         btnDelete.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnDelete.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnDelete.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnDeleteMouseClicked(evt);
-            }
-        });
         btnDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDeleteActionPerformed(evt);
@@ -143,17 +120,25 @@ public final class ModelLayoutTopComponent extends TopComponent implements Actio
         });
         barMain.add(btnDelete);
 
+        btnShowPalette.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/design/modelsLayouts/res/show_palette.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnShowPalette, org.openide.util.NbBundle.getMessage(ModelLayoutTopComponent.class, "ModelLayoutTopComponent.btnShowPalette.text")); // NOI18N
+        btnShowPalette.setToolTipText(org.openide.util.NbBundle.getMessage(ModelLayoutTopComponent.class, "ModelLayoutTopComponent.btnShowPalette.toolTipText")); // NOI18N
+        btnShowPalette.setFocusable(false);
+        btnShowPalette.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnShowPalette.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnShowPalette.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnShowPaletteActionPerformed(evt);
+            }
+        });
+        barMain.add(btnShowPalette);
+
         btnClean.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/design/modelsLayouts/res/clean.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnClean, org.openide.util.NbBundle.getMessage(ModelLayoutTopComponent.class, "ModelLayoutTopComponent.btnClean.text")); // NOI18N
         btnClean.setToolTipText(org.openide.util.NbBundle.getMessage(ModelLayoutTopComponent.class, "ModelLayoutTopComponent.btnClean.toolTipText")); // NOI18N
         btnClean.setFocusable(false);
         btnClean.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnClean.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnClean.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnCleanMouseClicked(evt);
-            }
-        });
         btnClean.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCleanActionPerformed(evt);
@@ -163,31 +148,7 @@ public final class ModelLayoutTopComponent extends TopComponent implements Actio
 
         add(barMain, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void pnlScrollPaneMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlScrollPaneMouseEntered
-        
-    }//GEN-LAST:event_pnlScrollPaneMouseEntered
-
-    private void formMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseEntered
-        
-    }//GEN-LAST:event_formMouseEntered
-
-    private void pnlScrollPaneMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlScrollPaneMouseExited
-        
-    }//GEN-LAST:event_pnlScrollPaneMouseExited
-
-    private void btnSaveMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSaveMouseClicked
-        
-    }//GEN-LAST:event_btnSaveMouseClicked
-
-    private void btnCleanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCleanMouseClicked
-
-    }//GEN-LAST:event_btnCleanMouseClicked
-
-    private void btnDeleteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDeleteMouseClicked
-        
-    }//GEN-LAST:event_btnDeleteMouseClicked
-
+    
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         if (JOptionPane.showConfirmDialog(this, "Are you sure you want to delete the current Equipment Model View?", 
                 "Delete Equipment Model View", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
@@ -211,16 +172,26 @@ public final class ModelLayoutTopComponent extends TopComponent implements Actio
         service.getScene().clear();
         setSaved(false);
     }//GEN-LAST:event_btnCleanActionPerformed
+    
+    private void btnShowPaletteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowPaletteActionPerformed
+        for (TopComponent topComponent : WindowManager.getDefault().findMode("commonpalette").getTopComponents()) {
+            if (!topComponent.isOpened()) // open the palette is was closed
+                topComponent.open();
+        }
+    }//GEN-LAST:event_btnShowPaletteActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barMain;
     private javax.swing.JButton btnClean;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnSave;
+    private javax.swing.JButton btnShowPalette;
     private javax.swing.JScrollPane pnlScrollPane;
     // End of variables declaration//GEN-END:variables
     @Override
-    public void componentOpened() {        
+    public void componentOpened() {    
+        btnShowPaletteActionPerformed(null);
+
         service.renderView();      
         if (service.getCurrentView() == null)
             btnDelete.setEnabled(false);
@@ -272,13 +243,16 @@ public final class ModelLayoutTopComponent extends TopComponent implements Actio
     
     public boolean checkForUnsavedView() {
         if (!(boolean) configObject.getProperty("saved")) {
-            if (JOptionPane.showConfirmDialog(null, "This view has not been saved, do you want to save it?", 
-                "Confirmation", JOptionPane.YES_NO_CANCEL_OPTION) == JOptionPane.YES_OPTION) {
+            int option = JOptionPane.showConfirmDialog(null, "This view has not been saved, do you want to save it?", 
+                "Confirmation", JOptionPane.YES_NO_CANCEL_OPTION);
+            if (option == JOptionPane.YES_OPTION) {
                 
-                btnSaveMouseClicked(null);
+                btnSaveActionPerformed(null);
                 configObject.setProperty("saved", true);
                 return true;
             }
+            if (option == JOptionPane.NO_OPTION)
+                return true;                
         } else
             return true;
         return false;

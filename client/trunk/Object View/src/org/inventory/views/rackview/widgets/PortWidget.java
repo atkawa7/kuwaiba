@@ -33,6 +33,7 @@ import org.netbeans.api.visual.widget.Widget;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class PortWidget extends SelectableRackViewWidget implements NestedDevice {
+    private boolean isNested = false;
     private NestedDeviceWidget parent;
     
     private static final Color selectedColor = new Color(255, 255, 255, 230);
@@ -43,8 +44,10 @@ public class PortWidget extends SelectableRackViewWidget implements NestedDevice
     private final Widget innerWidget;
     
     private final LocalClassMetadata portClass;
+    
+    private Color previousColor;
 
-    public PortWidget(RackViewScene scene, LocalObjectLight portObject) {
+    public PortWidget(RackViewScene scene, LocalObjectLight portObject, boolean isNested) {
         super(scene, portObject);
         
         portClass = CommunicationsStub.getInstance().getMetaForClass(portObject.getClassName(), false);
@@ -53,18 +56,21 @@ public class PortWidget extends SelectableRackViewWidget implements NestedDevice
                 NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         }
         free = true; 
-        innerWidget = new Widget(scene);
-        innerWidget.setBackground(portClass.getColor());
-        innerWidget.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
-        innerWidget.setPreferredSize(new Dimension(25, 25));
-        innerWidget.setOpaque(true);
-        
-        setOpaque(true);        
-        setBackground(colorGreen);
-        setToolTipText(portObject.getName());
-        setPreferredSize(new Dimension(25, 25));
-        
-        addChild(innerWidget);
+        if (isNested) {
+            innerWidget = new Widget(scene);
+            innerWidget.setBackground(portClass.getColor());
+            innerWidget.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+            innerWidget.setPreferredSize(new Dimension(25, 25));
+            innerWidget.setOpaque(true);
+
+            setOpaque(true);        
+            setBackground(colorGreen);
+            setToolTipText(portObject.getName());
+            setPreferredSize(new Dimension(25, 25));
+
+            addChild(innerWidget);
+        } else
+            innerWidget = null;
     }
     
     @Override
@@ -92,9 +98,28 @@ public class PortWidget extends SelectableRackViewWidget implements NestedDevice
     
     @Override
     public void notifyStateChanged (ObjectState previousState, ObjectState state) {
-        if (state.isSelected())
-            innerWidget.setBackground(selectedColor);
-        if (previousState.isSelected())
-            innerWidget.setBackground(portClass.getColor());
+        if (previousState.isSelected()) {
+            if (isNested)
+                innerWidget.setBackground(portClass.getColor());
+            else
+                setBackground(previousColor);
+            return;
+        }        
+        if (state.isSelected()) {
+            if (isNested)
+                innerWidget.setBackground(selectedColor);
+            else {
+                previousColor = new Color(((Color) this.getBackground()).getRGB());
+                setBackground(selectedColor);
+            }
+        }
+    }
+    
+    public boolean isNested() {
+        return isNested;
+    }
+    
+    public void setIsNested(boolean isNested) {
+        this.isNested = isNested;       
     }
 }

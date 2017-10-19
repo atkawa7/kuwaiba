@@ -18,7 +18,6 @@ package org.inventory.design.modelsLayouts.scene;
 
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.visual.scene.AbstractScene;
-import org.inventory.core.visual.scene.ObjectNodeWidget;
 import org.inventory.core.visual.scene.SelectableNodeWidget;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;

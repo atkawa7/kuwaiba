@@ -70,6 +70,10 @@ public class MoveShapeProvider implements MoveProvider {
             shape.firePropertyChange(widget, Shape.PROPERTY_X, oldLocalLocation.x, newLocalLocation.x);
             shape.setY(newLocalLocation.y);
             shape.firePropertyChange(widget, Shape.PROPERTY_Y, oldLocalLocation.y, newLocalLocation.y);
+                        
+            Shape parentShape = (Shape) scene.findObject(parent);
+            if (parentShape != null)
+                shape.setParent(parentShape);
         }
         if (!initialLocalLocation.equals(newLocalLocation))
             scene.fireChangeEvent(new ActionEvent(this, ModelLayoutScene.SCENE_CHANGE, "Shape moved"));

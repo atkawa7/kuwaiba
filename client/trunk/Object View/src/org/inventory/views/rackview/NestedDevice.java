@@ -29,5 +29,5 @@ public interface NestedDevice {
     /**
      * Sets the parent of the current device
      */
-    public void setParent(NestedDeviceWidget parent);    
+    public void setParent(NestedDeviceWidget parent);
 }

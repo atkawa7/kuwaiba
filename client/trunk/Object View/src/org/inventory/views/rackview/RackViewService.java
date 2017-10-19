@@ -15,6 +15,8 @@
  */
 package org.inventory.views.rackview;
 
+import java.awt.Point;
+import java.awt.Rectangle;
 import org.inventory.views.rackview.scene.RackViewScene;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +28,7 @@ import org.inventory.communications.core.LocalObjectLightList;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.visual.scene.ObjectConnectionWidget;
+import org.inventory.design.modelsLayouts.RenderModelLayout;
 import org.inventory.views.rackview.widgets.EquipmentWidget;
 import org.inventory.views.rackview.widgets.NestedDeviceWidget;
 import org.inventory.views.rackview.widgets.PortWidget;
@@ -78,8 +81,21 @@ public class RackViewService {
             if (scene.getShowConnections()) {
                 Widget widget = scene.findWidget(rack);
                 if (widget instanceof RackWidget) {
+                    for (LocalObject equipment : ((RackWidget) widget).getLocalEquipment()) {
+                        scene.setAddingNestedDevice(false);
+                        boolean hasLayout = paintEquipmentModelLayout(equipment);
+                        scene.setAddingNestedDevice(true);
+                        if(hasLayout) {
+                            Widget equipmentWidget = scene.findWidget(equipment);
+                            setEquipmentParent(equipmentWidget, equipmentWidget);
+                        } else
+                            addNestedDevices(equipment);
+                    }
+                    /*
                     for (LocalObject equipment : ((RackWidget) widget).getLocalEquipment())
                         addNestedDevices(equipment);
+                    */
+                    
                     
                     List<LocalObjectLightList> connections = CommunicationsStub.getInstance().getPhysicalConnectionsInObject(rack.getClassName(), rack.getOid());
                     
@@ -88,10 +104,43 @@ public class RackViewService {
                             NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                     } else
                         createConnections(connections);
+                            
                 }
             }
             ((RackWidget) scene.findWidget(rack)).resizeRackWidget();
             scene.repaint();
+        }
+    }
+    
+    public boolean paintEquipmentModelLayout(LocalObject equipment) {
+        Widget equipmentWidget = scene.findWidget(equipment);
+        if (equipmentWidget.getPreferredBounds() == null || equipmentWidget.getLocation() == null)
+            return false;
+        Point location = equipmentWidget.getLocation();
+        Rectangle bounds = new Rectangle(equipmentWidget.getPreferredBounds());
+        
+        RenderModelLayout render = new RenderModelLayout(equipment, equipmentWidget.getParentWidget(), location.x, location.y, bounds.width, bounds.height);
+        if (render.hasEquipmentModelLayout()) {
+            scene.removeNodeWithEdges(equipment);
+            render.render();
+            scene.validate();
+            scene.paint();
+            return true;
+        }
+        return false;                    
+    }
+    
+    private void setEquipmentParent(Widget equipmentWidget, Widget parentWidget) {
+        
+        for (Widget child : parentWidget.getChildren()) {
+            Object objectChild = scene.findObject(child);
+            if (objectChild instanceof LocalObjectLight) {
+                if (CommunicationsStub.getInstance().isSubclassOf(((LocalObjectLight) objectChild).getClassName(), "GenericPhysicalPort")) {
+                    if (child instanceof PortWidget)
+                        ((PortWidget) child).setParent((NestedDeviceWidget) equipmentWidget);
+                }
+            }
+            setEquipmentParent(equipmentWidget, child);
         }
     }
     

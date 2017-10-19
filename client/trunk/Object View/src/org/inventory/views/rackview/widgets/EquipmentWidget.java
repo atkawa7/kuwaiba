@@ -21,7 +21,6 @@ import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.util.Constants;
 import org.netbeans.api.visual.border.BorderFactory;
 import org.netbeans.api.visual.layout.LayoutFactory;
-import org.netbeans.api.visual.model.ObjectState;
 import org.netbeans.api.visual.widget.LabelWidget;
 
 /**
@@ -30,12 +29,10 @@ import org.netbeans.api.visual.widget.LabelWidget;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class EquipmentWidget extends NestedDeviceWidget {
-    private static final Color selectedColor = Color.LIGHT_GRAY;
     private RackWidget rackWidget;
 
     public EquipmentWidget(RackViewScene scene, LocalObject equipment, Color background) {
         super(scene, equipment);
-
     }
     // The Equipment Widgets not has parent because they are the root in the 
     // containment of devices
@@ -79,13 +76,5 @@ public class EquipmentWidget extends NestedDeviceWidget {
             this.addChild(lblDeviceName);
             this.addChild(lblDeviceInfo);
         }
-    }
-        
-    @Override
-    public void notifyStateChanged(ObjectState previousState, ObjectState state) {
-        if (state.isSelected())
-            setBackground(selectedColor);
-        else if (previousState.isSelected())
-            setBackground(getLookup().lookup(LocalObject.class).getObjectMetadata().getColor());
     }
 }

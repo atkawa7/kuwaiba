@@ -119,8 +119,8 @@ public class RackViewConnectionRouter implements Router {
             //  TODO: change yB, yC, yE, yD with the total height when exist a implementation
             // of a view by equipments, e.g. A router load an xml configuration of the 
             // appearance of the device
-            yB = yC = srcEquipmentPoint.y + (srcEquipmentBounds.height <= 2 * rackUnitHeight ? srcEquipmentBounds.height : srcEquipmentBounds.height / 2) + BOTTOM_MARGIN;
-            yE = yD = trgEquipmentPoint.y + (trgEquipmentBounds.height <= 2 * rackUnitHeight ? trgEquipmentBounds.height : trgEquipmentBounds.height / 2) + BOTTOM_MARGIN;
+            yB = yC = srcEquipmentPoint.y + (srcEquipmentBounds.height <= 2 * rackUnitHeight || !sourcePort.isNested() ? srcEquipmentBounds.height : srcEquipmentBounds.height / 2) + BOTTOM_MARGIN;
+            yE = yD = trgEquipmentPoint.y + (trgEquipmentBounds.height <= 2 * rackUnitHeight || !targetPort.isNested() ? trgEquipmentBounds.height : trgEquipmentBounds.height / 2) + BOTTOM_MARGIN;
             
             Point pointB = new Point(sourcePoint.x, yB);        
             Point pointC = new Point(xC ,yC);

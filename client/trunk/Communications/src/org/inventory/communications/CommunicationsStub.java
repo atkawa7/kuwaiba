@@ -2681,7 +2681,7 @@ public class CommunicationsStub {
      * @param description view description
      * @param structure XML document with the view structure
      * @param background Background image. If null, the previous will be removed, if 0-sized array, it will remain unchanged
-     * @return
+     * @return true if the related view was updated
      */
     public boolean updateListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId, 
         String name, String description, byte[] structure, byte[] background) {
@@ -2729,6 +2729,23 @@ public class CommunicationsStub {
         }catch(Exception ex){
             this.error =  ex.getMessage();
             return null;
+        }
+    }
+    
+    /**
+     * Gets the views related to a list type item, such as the default, rack or equipment views
+     * @param listTypeItemId list type item id
+     * @param listTypeItemClass list type class name
+     * @param viewId Related view id
+     * @return true if the related view was deleted
+     */
+    public boolean deleteListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId) {
+        try{
+            service.deleteListTypeItemRelatedView(listTypeItemId, listTypeItemClass, viewId, session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return false;
         }
     }
 

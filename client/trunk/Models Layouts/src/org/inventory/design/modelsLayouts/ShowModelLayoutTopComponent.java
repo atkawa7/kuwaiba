@@ -16,17 +16,15 @@
  */
 package org.inventory.design.modelsLayouts;
 
-import java.util.List;
-import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.communications.core.LocalObjectListItem;
-import org.inventory.communications.core.views.LocalObjectView;
-import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.visual.export.ExportScenePanel;
+import org.inventory.core.visual.export.filters.ImageFilter;
+import org.inventory.core.visual.export.filters.SceneExportFilter;
 import org.inventory.design.modelsLayouts.scene.LayoutViewScene;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.netbeans.api.visual.layout.LayoutFactory;
+import org.openide.*;
 import org.openide.windows.TopComponent;
 
 /**
@@ -80,6 +78,7 @@ public final class ShowModelLayoutTopComponent extends TopComponent {
         pnlScrollPane = new javax.swing.JScrollPane();
         barMain = new javax.swing.JToolBar();
         btnRefresh = new javax.swing.JButton();
+        btnExport = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
         add(pnlScrollPane, java.awt.BorderLayout.CENTER);
@@ -99,6 +98,19 @@ public final class ShowModelLayoutTopComponent extends TopComponent {
         });
         barMain.add(btnRefresh);
 
+        btnExport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/design/modelsLayouts/res/export.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnExport, org.openide.util.NbBundle.getMessage(ShowModelLayoutTopComponent.class, "ShowModelLayoutTopComponent.btnExport.text")); // NOI18N
+        btnExport.setToolTipText(org.openide.util.NbBundle.getMessage(ShowModelLayoutTopComponent.class, "ShowModelLayoutTopComponent.btnExport.toolTipText")); // NOI18N
+        btnExport.setFocusable(false);
+        btnExport.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnExport.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnExport.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnExportMouseClicked(evt);
+            }
+        });
+        barMain.add(btnExport);
+
         add(barMain, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -107,62 +119,34 @@ public final class ShowModelLayoutTopComponent extends TopComponent {
         componentOpened();
     }//GEN-LAST:event_btnRefreshMouseClicked
 
+    private void btnExportMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnExportMouseClicked
+        ExportScenePanel exportPanel = new ExportScenePanel(
+            new SceneExportFilter[]{ImageFilter.getInstance()}, 
+            scene, "ModelLayoutTo" + objectLight.getName());
+                
+        DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export options",true, exportPanel);
+        DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
+    }//GEN-LAST:event_btnExportMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barMain;
+    private javax.swing.JButton btnExport;
     private javax.swing.JButton btnRefresh;
     private javax.swing.JScrollPane pnlScrollPane;
     // End of variables declaration//GEN-END:variables
     @Override
-    public void componentOpened() {        
-        
-        LocalObject localObject = CommunicationsStub.getInstance().getObjectInfo(objectLight.getClassName(), objectLight.getOid());
-        if (localObject == null) {
-            NotificationUtil.getInstance().showSimplePopup("Error", 
-                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-            return;
-        }
-        LocalObjectListItem loli = null;
-                
-        for (Object attributeValue : localObject.getAttributes().values()) {            
-            if (attributeValue instanceof LocalObjectListItem) {                
-                LocalObjectListItem listItem = (LocalObjectListItem) attributeValue;
-                
-                if ("EquipmentModel".equals(listItem.getClassName())) { //NOI18N
-                    loli = listItem;
-                    break;
-                }
-            }
-        }
-        if (loli == null) {
+    public void componentOpened() {              
+        RenderModelLayout renderModelLayout = new RenderModelLayout(objectLight, scene, 100, 100, 700, 700);
+        if (renderModelLayout.getEquipmentModelView() == null) {
             close();
-            NotificationUtil.getInstance().showSimplePopup("Warning", 
-                NotificationUtil.WARNING_MESSAGE, String.format("The object %s no has set the value of the attribute with name \"model\"", localObject));
+            NotificationUtil.getInstance().showSimplePopup("Information", 
+                NotificationUtil.INFO_MESSAGE, renderModelLayout.getErrorMessage());
             return;
         }
-        LocalObjectView currentView = null;
-        List<LocalObjectViewLight> relatedViews = CommunicationsStub.getInstance().getListTypeItemRelatedViews(loli.getId(), loli.getClassName());
-        if (relatedViews != null) {
-            if (relatedViews.isEmpty()) {
-                NotificationUtil.getInstance().showSimplePopup("Information", 
-                    NotificationUtil.INFO_MESSAGE, "The EquipmentModel no has associate a layout");
-            } else {
-                currentView = CommunicationsStub.getInstance().getListTypeItemRelatedView(loli.getId(), loli.getClassName(), relatedViews.get(0).getId());
-                
-                RenderModelLayout renderModelLayout = new RenderModelLayout(localObject, loli, scene, 100, 100, 700, 700);
-                renderModelLayout.render(currentView.getStructure());
-                scene.validate();
-                scene.paint();
-            }            
-        } else
-            NotificationUtil.getInstance().showSimplePopup("Error", 
-                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-        
-        if (currentView == null) {
-            close();
-            NotificationUtil.getInstance().showSimplePopup("Warning", 
-                NotificationUtil.WARNING_MESSAGE, String.format("The Equipment Model %s no has a related layout view", loli.getName()));
-            return;
-        }
+        renderModelLayout.setOriginalSize(true);
+        renderModelLayout.render();
+        scene.revalidate();
+        scene.paint();
     }
 
     @Override

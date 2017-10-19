@@ -40,6 +40,8 @@ public class NestedDeviceWidget extends SelectableRackViewWidget implements Nest
     
     private final LocalClassMetadata nestedDeviceClass;
     
+    private Color previousBackground;
+    
     public NestedDeviceWidget(RackViewScene scene, LocalObjectLight businessObject) {
         super(scene, businessObject);
         nestedDeviceClass = CommunicationsStub.getInstance().getMetaForClass(businessObject.getClassName(), false);
@@ -81,14 +83,20 @@ public class NestedDeviceWidget extends SelectableRackViewWidget implements Nest
     
     @Override
     public void notifyStateChanged (ObjectState previousState, ObjectState state) {
-        if (state.isSelected()) {
-            setBackground(selectedColor);
-            lblName.setForeground(Color.ORANGE);
-        }
         if (previousState.isSelected()) {
-            Color backgroundColor = nestedDeviceClass.getColor();
-            setBackground(backgroundColor != null ? backgroundColor : Color.WHITE);
-            lblName.setForeground(Color.WHITE);
+//            Color backgroundColor = nestedDeviceClass.getColor();
+//            setBackground(backgroundColor != null ? backgroundColor : Color.WHITE);
+            setBackground(previousBackground);
+            if (lblName != null)
+                lblName.setForeground(Color.WHITE);
+            return;
+        }
+        
+        if (state.isSelected()) {
+            previousBackground = new Color(((Color) getBackground()).getRGB());
+            setBackground(selectedColor);
+            if (lblName != null)
+                lblName.setForeground(Color.ORANGE);
         }
     }
 }

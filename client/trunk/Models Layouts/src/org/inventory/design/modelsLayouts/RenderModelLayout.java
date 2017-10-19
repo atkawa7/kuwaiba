@@ -26,8 +26,11 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalObjectListItem;
+import org.inventory.communications.core.views.LocalObjectView;
+import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.visual.scene.AbstractScene;
@@ -45,6 +48,7 @@ import org.openide.util.Exceptions;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class RenderModelLayout {
+    private String errorMessage;
     private final Widget parentWidget;
     private Rectangle rectangle;
     private double widthPercentage;
@@ -53,16 +57,81 @@ public class RenderModelLayout {
     private Widget modelLayoutWidget;
     
     private final LocalObjectLight objectLight;
-    private final LocalObjectListItem listItem;
+    private LocalObjectListItem equipmentModel;
+    private LocalObjectView equipmentModelView;
     
-    public RenderModelLayout(LocalObjectLight objectLight, LocalObjectListItem listItem, Widget parentWidget, int x, int y, int width, int height) {
+    private boolean originalSize = false;
+    
+    public RenderModelLayout(LocalObjectLight objectLight, Widget parentWidget, int x, int y, int width, int height) {
         this.objectLight = objectLight;
-        this.listItem = listItem;
         this.parentWidget = parentWidget;
         rectangle = new Rectangle(x, y, width, height);
+        errorMessage = null;
+        initializeRenderEquipmentModelLayout();
     }
     
-    public void render(byte[] structure) {
+    public void setOriginalSize(boolean originalSize) {
+        this.originalSize = originalSize;
+    }
+    
+    public boolean hasEquipmentModelLayout() {
+        return equipmentModelView != null;
+    }
+    
+    public LocalObjectView getEquipmentModelView() {
+        return equipmentModelView;
+    }
+    
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+    
+    private void initializeRenderEquipmentModelLayout() {
+        if (objectLight == null)
+            return;
+        if (!CommunicationsStub.getInstance().isSubclassOf(objectLight.getClassName(), "GenericCommunicationsElement")) //NOI18N
+            return;
+                
+        LocalObject localObject = CommunicationsStub.getInstance().getObjectInfo(objectLight.getClassName(), objectLight.getOid());
+        if (localObject == null) {
+            this.errorMessage = CommunicationsStub.getInstance().getError();
+            return;
+        }
+        equipmentModel = null;
+        for (Object attrValue : localObject.getAttributes().values()) {
+            if (attrValue instanceof LocalObjectListItem) {
+                LocalObjectListItem loli = (LocalObjectListItem) attrValue;
+                if ("EquipmentModel".equals(loli.getClassName())) { //NOI18N
+                    equipmentModel = loli;
+                    break;
+                }
+            }
+        }
+        if (equipmentModel == null) {
+            this.errorMessage = String.format("The object %s no has or not set the attribute \"model\"", localObject);
+            return;
+        }
+        equipmentModelView = null;
+        List<LocalObjectViewLight> relatedViews = CommunicationsStub.getInstance().getListTypeItemRelatedViews(equipmentModel.getId(), equipmentModel.getClassName());
+        if (relatedViews == null) {
+            this.errorMessage = CommunicationsStub.getInstance().getError();
+            return;
+        }
+        if (!relatedViews.isEmpty()) {
+            equipmentModelView = CommunicationsStub.getInstance().getListTypeItemRelatedView(equipmentModel.getId(), equipmentModel.getClassName(), relatedViews.get(0).getId());
+            if (equipmentModelView == null) {
+                this.errorMessage = CommunicationsStub.getInstance().getError();
+            }
+        } else {
+            this.errorMessage = String.format("The EquipmentModel %s no has associate a layout", equipmentModel);
+        }
+    }
+        
+    public void render() {
+        if (equipmentModelView == null)
+            return;
+        
+        byte[] structure = equipmentModelView.getStructure();
         if (structure == null)
             return;
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
@@ -79,8 +148,8 @@ public class RenderModelLayout {
                         Shape model = ModelLayoutScene.XMLtoShape(reader, null);
                         if (model.getWidth() == null || model.getHeight() == null)
                             return;
-                        widthPercentage = Double.valueOf(Integer.toString(rectangle.width)) / Double.valueOf(Integer.toString(model.getWidth()));
-                        heightPercentage = Double.valueOf(Integer.toString(rectangle.height)) / Double.valueOf(Integer.toString(model.getHeight()));
+                        widthPercentage = originalSize ? 1 : Double.valueOf(Integer.toString(rectangle.width)) / Double.valueOf(Integer.toString(model.getWidth()));
+                        heightPercentage = originalSize ? 1 : Double.valueOf(Integer.toString(rectangle.height)) / Double.valueOf(Integer.toString(model.getHeight()));
                         
                         List<LocalObjectLight> children = getObjectChildren(objectLight);                                                
                         recursiveRender(true, objectLight, children, reader, tagShape, null, parentWidget, widthPercentage, heightPercentage);
@@ -115,11 +184,11 @@ public class RenderModelLayout {
                 shapeEnable = true;
         }
         if (parentShape == null) {
-            shapeEnable = shape.getName() != null && shape.getName().equals(listItem.getName());
+            shapeEnable = shape.getName() != null && shape.getName().equals(equipmentModel.getName());
         }        
         Widget shapeWidget = null;
         
-        if (RectangleShape.SHAPE_TYPE.equals(type)) {
+        if (RectangleShape.SHAPE_TYPE.equals(type)) {            
             shapeWidget = shapeEnable && object != null ? ((AbstractScene) parentWidget.getScene()).addNode(object) : new Widget(parentWidget.getScene());
         }
         if (LabelShape.SHAPE_TYPE.equals(type)) {
@@ -169,7 +238,10 @@ public class RenderModelLayout {
                     Shape shapeChild = ModelLayoutScene.XMLtoShape(reader, null);
                     LocalObjectLight objChild = findTheObjectForTheShape(shapeChild, objChildren);
                     List<LocalObjectLight> children = getObjectChildren(objChild);
-                                        
+                    
+                    if (children == null) {
+                        children = objChildren;
+                    }
                     recursiveRender(shapeEnable, objChild, children, reader, tagShape, shape, shapeWidget, widthPercentage, heightPercentage);
                 }                                              
             } else if (event == XMLStreamConstants.END_ELEMENT)
