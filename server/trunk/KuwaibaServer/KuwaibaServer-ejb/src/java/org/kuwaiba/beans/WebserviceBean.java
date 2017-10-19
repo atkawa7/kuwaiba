@@ -4222,6 +4222,195 @@ public class WebserviceBean implements WebserviceBeanRemote {
         }
     }
         // </editor-fold>    
+        // <editor-fold defaultstate="collapsed" desc="Fault Management Integration">
+
+    @Override
+    public List<RemoteObjectLight> getAffectedServices(int resourceType, String resourceDefinition, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("getAffectedServices", ipAddress, sessionId);
+            List<RemoteObjectLight> res = new ArrayList<>();
+            
+            String[] resourceDefinitionTokens = resourceDefinition.split(";");
+            
+            if (resourceType == 1) { //Hardware
+            
+                switch (resourceDefinitionTokens.length) {
+                    case 1: //A whole network element
+                        List<RemoteBusinessObjectLight> matchedRouters = bem.getObjectsWithFilterLight("GenericCommunicationsElement", "name", resourceDefinitionTokens[0]);
+                        
+                        if (matchedRouters.isEmpty())
+                            throw new ServerSideException(String.format("No resource with name %s could be found", resourceDefinitionTokens[0]));
+                        
+                        for (RemoteBusinessObjectLight matchedRouter : matchedRouters) {
+                            
+                            //First the directly related
+                            List<RemoteBusinessObjectLight> directlyAssociatedServices = bem.getSpecialAttribute(matchedRouter.getClassName(), matchedRouter.getId(), "uses");
+                            for (RemoteBusinessObjectLight directlyAssociatedService : directlyAssociatedServices)
+                                res.add(new RemoteObjectLight(directlyAssociatedService));
+                            
+                            //Now those associated to the ports
+                            List<RemoteBusinessObjectLight> portsInRouter = 
+                                    bem.getChildrenOfClassLightRecursive(matchedRouter.getId(), matchedRouter.getClassName(), "GenericPort", -1); //NOI18N
+                            
+                            for (RemoteBusinessObjectLight portInRouter : portsInRouter) {
+                                List<RemoteBusinessObjectLight> servicesInPort = bem.getSpecialAttribute(portInRouter.getClassName(), portInRouter.getId(), "uses");
+                                for (RemoteBusinessObjectLight serviceInPort : servicesInPort) {
+                                    RemoteObjectLight newRemoteService = new RemoteObjectLight(serviceInPort);
+                                    if (!res.contains(newRemoteService))
+                                        res.add(newRemoteService);
+                                }
+                                
+                                List<RemoteBusinessObjectLight> physicalPath = bem.getPhysicalPath(portInRouter.getClassName(), portInRouter.getId());
+                                if (physicalPath.size() > 1) {
+                                    List<RemoteBusinessObjectLight> servicesInPhysicalConnection = bem.getSpecialAttribute(physicalPath.get(1).getClassName(), physicalPath.get(1).getId(), "uses");
+                                    for (RemoteBusinessObjectLight serviceInPhysicalConnection : servicesInPhysicalConnection) {
+                                        RemoteObjectLight newRemoteService = new RemoteObjectLight(serviceInPhysicalConnection);
+                                        if (!res.contains(newRemoteService))
+                                            res.add(newRemoteService);
+                                    }
+                                }
+                            }
+                            
+                            //And finally the STM1
+                            List<RemoteBusinessObjectLight> stmsInRouter = bem.getSpecialAttribute(matchedRouter.getClassName(), matchedRouter.getId(), "sdhTransportLink");
+                            for (RemoteBusinessObjectLight stmInRouter : stmsInRouter) {
+                                List<RemoteBusinessObjectLight> servicesInStm = bem.getSpecialAttribute(stmInRouter.getClassName(), stmInRouter.getId(), "uses");
+                                for (RemoteBusinessObjectLight serviceInStm : servicesInStm) {
+                                    RemoteObjectLight newRemoteService = new RemoteObjectLight(serviceInStm);
+                                    if (!res.contains(newRemoteService))
+                                        res.add(newRemoteService);
+                                }
+                            }
+                        }
+                        return res;
+                    case 2: //A slot
+                        matchedRouters = bem.getObjectsWithFilterLight("Router", "name", resourceDefinitionTokens[0]);
+                        
+                        if (matchedRouters.isEmpty())
+                            throw new ServerSideException(String.format("No resource with name %s could be found", resourceDefinitionTokens[0]));
+                        
+                        if (matchedRouters.size() > 1)
+                            throw new ServerSideException(String.format("More than one communications equipment with name %s was found", resourceDefinitionTokens[0]));
+                        
+                        
+                        List<RemoteBusinessObject> slotsInRouter = bem.getChildrenOfClass(matchedRouters.get(0).getId(), matchedRouters.get(0).getClassName(), "Slot", -1);
+                        
+                        for (RemoteBusinessObjectLight slotInRouter : slotsInRouter) {
+                            if (slotInRouter.getName().equals(resourceDefinitionTokens[1])) {
+                                List<RemoteBusinessObjectLight> portsInSlot = 
+                                        bem.getChildrenOfClassLightRecursive(slotInRouter.getId(), slotInRouter.getClassName(), "GenericPort", -1); //NOI18N
+
+                                for (RemoteBusinessObjectLight portInSlot : portsInSlot) {
+                                    List<RemoteBusinessObjectLight> servicesInPort = bem.getSpecialAttribute(portInSlot.getClassName(), portInSlot.getId(), "uses");
+                                    for (RemoteBusinessObjectLight serviceInPort : servicesInPort) {
+                                        RemoteObjectLight newRemoteService = new RemoteObjectLight(serviceInPort);
+                                        if (!res.contains(newRemoteService))
+                                            res.add(newRemoteService);
+                                    }
+
+                                    List<RemoteBusinessObjectLight> physicalPath = bem.getPhysicalPath(portInSlot.getClassName(), portInSlot.getId());
+                                    if (physicalPath.size() > 1) {
+                                        List<RemoteBusinessObjectLight> servicesInPhysicalConnection = bem.getSpecialAttribute(physicalPath.get(1).getClassName(), physicalPath.get(1).getId(), "uses");
+                                        for (RemoteBusinessObjectLight serviceInPhysicalConnection : servicesInPhysicalConnection) {
+                                            RemoteObjectLight newRemoteService = new RemoteObjectLight(serviceInPhysicalConnection);
+                                            if (!res.contains(newRemoteService))
+                                                res.add(newRemoteService);
+                                        }
+                                    }
+                                }
+                                return res;
+                            }
+                        }
+                        
+                        throw new ServerSideException(String.format("No slot in communications equipment %s with name %s was found", 
+                                resourceDefinitionTokens[0], resourceDefinitionTokens[1]));
+                        
+                        
+                    case 3: //A port
+                        matchedRouters = bem.getObjectsWithFilterLight("Router", "name", resourceDefinitionTokens[0]);
+                        
+                        if (matchedRouters.isEmpty())
+                            throw new ServerSideException(String.format("No resource with name %s could be found", resourceDefinitionTokens[0]));
+                        
+                        if (matchedRouters.size() > 1)
+                            throw new ServerSideException(String.format("More than one communications equipment with name %s was found", resourceDefinitionTokens[0]));
+                        
+                        
+                        slotsInRouter = bem.getChildrenOfClass(matchedRouters.get(0).getId(), matchedRouters.get(0).getClassName(), "Slot", -1);
+                                              
+                        for (RemoteBusinessObjectLight slotInRouter : slotsInRouter) {
+                            if (slotInRouter.getName().equals(resourceDefinitionTokens[1])) {
+                                List<RemoteBusinessObjectLight> portsInSlot = 
+                                        bem.getChildrenOfClassLightRecursive(slotInRouter.getId(), slotInRouter.getClassName(), "GenericPort", -1); //NOI18N
+
+                                for (RemoteBusinessObjectLight portInSlot : portsInSlot) {
+                                    
+                                    if (portInSlot.getName().equals(resourceDefinitionTokens[2])) {
+                                        List<RemoteBusinessObjectLight> servicesInPort = bem.getSpecialAttribute(portInSlot.getClassName(), portInSlot.getId(), "uses");
+                                        for (RemoteBusinessObjectLight serviceInPort : servicesInPort)
+                                            res.add(new RemoteObjectLight(serviceInPort));
+                                        
+                                        List<RemoteBusinessObjectLight> physicalPath = bem.getPhysicalPath(portInSlot.getClassName(), portInSlot.getId());
+                                        if (physicalPath.size() > 1) {
+                                            List<RemoteBusinessObjectLight> servicesInPhysicalConnection = bem.getSpecialAttribute(physicalPath.get(1).getClassName(), physicalPath.get(1).getId(), "uses");
+                                            for (RemoteBusinessObjectLight serviceInPhysicalConnection : servicesInPhysicalConnection) {
+                                                RemoteObjectLight newRemoteService = new RemoteObjectLight(serviceInPhysicalConnection);
+                                                if (!res.contains(newRemoteService))
+                                                    res.add(newRemoteService);
+                                            }
+                                        }
+                                        
+                                        //And finally the STM1
+                                        List<RemoteBusinessObjectLight> stmsInPort = bem.getSpecialAttribute(portInSlot.getClassName(), portInSlot.getId(), "sdhTLEndpointA");
+                                        stmsInPort.addAll(bem.getSpecialAttribute(portInSlot.getClassName(), portInSlot.getId(), "sdhTLEndpointB"));
+                                        
+                                        for (RemoteBusinessObjectLight stmInPort : stmsInPort) {
+                                            List<RemoteBusinessObjectLight> servicesInStm = bem.getSpecialAttribute(stmInPort.getClassName(), stmInPort.getId(), "uses");
+                                            for (RemoteBusinessObjectLight serviceInStm : servicesInStm) {
+                                                RemoteObjectLight newRemoteService = new RemoteObjectLight(serviceInStm);
+                                                if (!res.contains(newRemoteService))
+                                                    res.add(newRemoteService);
+                                            }
+                                        }
+                                        
+                                        return res;
+                                    }
+                                }
+                                throw new ServerSideException(String.format("No port with name %s in a slot with name %s in communications equipment %s was found", 
+                                    resourceDefinitionTokens[2], resourceDefinitionTokens[1], resourceDefinitionTokens[0]));
+                            }
+                        }
+                        
+                        throw new ServerSideException(String.format("No slot in communications equipment %s with name %s was found", 
+                                resourceDefinitionTokens[0], resourceDefinitionTokens[1]));
+                    default:
+                        throw new ServerSideException("Invalid resource definition");
+                }
+            }
+            
+            if (resourceType == 2) { //Logical connection
+                List<RemoteBusinessObjectLight> matchedConnections = bem.getObjectsWithFilterLight("STM1", "name", resourceDefinitionTokens[0]);
+                if (matchedConnections.isEmpty())
+                    throw new ServerSideException(String.format("No logical connection with name %s could be found", resourceDefinitionTokens[0]));
+                
+                for (RemoteBusinessObjectLight matchedConnection : matchedConnections) {
+                    List<RemoteBusinessObjectLight> servicesInConnection = bem.getSpecialAttribute(matchedConnection.getClassName(), matchedConnection.getId(), "uses");
+                    for (RemoteBusinessObjectLight serviceInConnection : servicesInConnection)
+                        res.add(new RemoteObjectLight(serviceInConnection));
+                }
+                return res;
+            }
+            
+            throw new ServerSideException("Invalid resource type");
+            
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+        
+        // </editor-fold>
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Helper methods. Click on the + sign on the left to edit the code.">

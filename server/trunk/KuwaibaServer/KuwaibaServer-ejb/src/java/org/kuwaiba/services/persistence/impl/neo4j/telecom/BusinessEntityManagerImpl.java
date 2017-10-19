@@ -457,8 +457,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             
             DynamicName dynamicName = new DynamicName(namePattern);
             if (dynamicName.getNumberOfDynamicNames() < numberOfObjects) {
-                throw new InvalidArgumentException("The given pattern name have "
-                        + "less possibilities that the given number of object to create");
+                throw new InvalidArgumentException("The given pattern to generate the name has "
+                        + "less possibilities that the number of objects to be created");
             }
             long res[] = new long[numberOfObjects];
             for (int i = 0; i < numberOfObjects; i += 1) {
@@ -520,8 +520,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             
             DynamicName dynamicName = new DynamicName(namePattern);
             if (dynamicName.getNumberOfDynamicNames() < numberOfSpecialObjects) {
-                throw new InvalidArgumentException("The given pattern to the name have "
-                        + "less possibilities that the given number of object to create");
+                throw new InvalidArgumentException("The given pattern to generate the name has "
+                        + "less possibilities that the number of object to be created");
             }
             long res[] = new long[numberOfSpecialObjects];
             for (int i = 0; i < numberOfSpecialObjects; i++) {
@@ -547,7 +547,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             ClassMetadata myClass = cm.getClass(className);
             Node instance = getInstanceOfClass(className, oid);
             RemoteBusinessObject res = Util.createRemoteObjectFromNode(instance, myClass);
-            tx.success();
             return res;
         }
     }
@@ -572,10 +571,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     }
                 }
             }
-            tx.success();
         }
+        
         if (className == null)
-            throw new InvalidArgumentException("The class for the object with id %s can not be found");
+            throw new InvalidArgumentException(String.format("The class for object with id %s could not be found", oid));
         
         return getObject(className, oid);
     }
@@ -584,10 +583,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     public RemoteBusinessObjectLight getObjectLight(String className, long oid)
             throws ObjectNotFoundException, MetadataObjectNotFoundException {
         
-        //Perform benchmarks to see if accessing to the objects index is less expensive
+        //TODO: Re-write this method and check if a simple Cypher query is faster than the programatic solution!
         try(Transaction tx = graphDb.beginTx()) {
             Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
-            tx.success();
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
             Iterable<Relationship> iterableInstances = classNode.getRelationships(RelTypes.INSTANCE_OF);
@@ -600,6 +598,19 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                             className);
             }
             throw new ObjectNotFoundException(className, oid);
+        }
+    }
+    
+    @Override
+    public List<RemoteBusinessObjectLight> getObjectsWithFilterLight (String className, 
+            String filterName, String filterValue) throws MetadataObjectNotFoundException {
+        try(Transaction tx = graphDb.beginTx()) {
+            Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
+
+            if (classNode == null)
+                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
+            
+            return getObjectsWithFilterLight(classNode, filterName, filterValue);
         }
     }
     
@@ -2290,4 +2301,25 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         return true;
     }
     //</editor-fold>
+    
+    
+    
+    private List<RemoteBusinessObjectLight> getObjectsWithFilterLight (Node classNode, 
+            String filterName, String filterValue) {
+        
+        List<RemoteBusinessObjectLight> res = new ArrayList<>();
+            
+        for (Relationship instanceOfRelationship : classNode.getRelationships(Direction.INCOMING, RelTypes.INSTANCE_OF)) {
+            Node instance = instanceOfRelationship.getStartNode();
+            if (instance.hasProperty(filterName) && instance.getProperty(filterName).equals(filterValue))
+                res.add(Util.createRemoteObjectLightFromNode(instance));
+        }
+        
+        for (Relationship subClassRel : classNode.getRelationships(Direction.INCOMING, RelTypes.EXTENDS))
+            res.addAll(getObjectsWithFilterLight(subClassRel.getStartNode(), filterName, filterValue));
+        
+        return res;
+    }
+    
+    
 }

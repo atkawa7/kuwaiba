@@ -545,4 +545,5 @@ public interface WebserviceBeanRemote {
     public long createBusinessRule(String ruleName, String ruleDescription, int ruleType, int ruleScope, String appliesTo, String ruleVersion, List<String> constraints, String ipAddress, String sessionId) throws ServerSideException;
     public void deleteBusinessRule(long businessRuleId, String ipAddress, String sessionId) throws ServerSideException;
     public List<RemoteBusinessRule> getBusinessRules(int type, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteObjectLight> getAffectedServices(int resourceType, String resourceDefinition, String ipAddress, String sessionId) throws ServerSideException;
 }

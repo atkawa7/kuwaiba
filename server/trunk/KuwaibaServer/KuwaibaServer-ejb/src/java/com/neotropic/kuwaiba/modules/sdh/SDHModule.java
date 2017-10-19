@@ -444,7 +444,7 @@ public class SDHModule implements GenericCommercialModule {
     }
     
     /**
-     * Finds a route between two GenericcommunicationsEquipment based on the TransportLinks network map (for more details on how this works, please read the SDH Model: Technical Design and Tools document)
+     * Finds a route between two GenericCommunicationsEquipment based on the TransportLinks network map (for more details on how this works, please read the SDH Model: Technical Design and Tools document)
      * @param communicationsEquipmentClassA The class of one of the route endpoints
      * @param communicationsEquipmentIdA The id of one of the route endpoints
      * @param communicationsEquipmentClassB The class of the other route endpoint
@@ -494,8 +494,8 @@ public class SDHModule implements GenericCommercialModule {
     
     /**
      * Retrieves the container links within a transport link (e.g. the VC4XX in and STMX)
-     * @param transportLinkClass Transportlink's class
-     * @param transportLinkId Transportlink's id
+     * @param transportLinkClass TransportLink's class
+     * @param transportLinkId TransportLink's id
      * @return The list of the containers that go through that transport link
      * @throws NotAuthorizedException if the user is nt authorized to inquire about the structure of a transport link
      * @throws InvalidArgumentException If the given transport link is no subclass of GenericSDHTransportLink

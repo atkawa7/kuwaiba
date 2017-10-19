@@ -18,6 +18,7 @@ package org.kuwaiba.ws.toserialize.business;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
@@ -117,5 +118,18 @@ public class RemoteObjectLight implements Serializable {
             res.add(new RemoteObjectLight(aRemoteBusinesObjectLight));
 
         return res;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 83 * hash + (int) (this.oid ^ (this.oid >>> 32));
+        hash = 83 * hash + Objects.hashCode(this.name);
+        return hash;
+    }
+    
+    @Override
+    public boolean equals (Object obj) {
+        return obj instanceof RemoteObjectLight && ((RemoteObjectLight)obj).getOid() == oid;
     }
 }

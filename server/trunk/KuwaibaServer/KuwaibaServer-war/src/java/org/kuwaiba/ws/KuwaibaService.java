@@ -6615,6 +6615,38 @@ public class KuwaibaService {
         }
     }
         // </editor-fold>
+    
+        //<editor-fold desc="Fault Management Integration" defaultstate="collapsed">
+    /**
+     * Retrieves the services affected when a given network resource is alarmed (or down). 
+     * The services associated directly to the given resource are returned first, but depending on the resource type, the analysis might be more extensive. 
+     * If the resource is a link (logical or physical), the services associated to the endpoint ports are also returned. 
+     * If the the resource is a container (physical or logical), the services associated to the contained links are also returned. 
+     * If the resource is a network equipment, the services associated directly to the ports contained and their connections are also returned.
+     * @param resourceType Use 1 for hardware and 2 for logical links
+     * @param resourceDefinition A semi-colon (;) separated string. The first segment (mandatory) is the name of the affected element, 
+     * the second is the number of the slot (optional) and the third is the port (optional). Note that to address a logical connection, the 
+     * resource definition will contain only the name of such connection.
+     * @param sessionId Session token
+     * @return The list of affected services
+     * @throws ServerSideException If the resource could not be found or if the resource definition/resource type is not valid
+     */
+    @WebMethod(operationName = "getAffectedServices")
+    public List<RemoteObjectLight> getAffectedServices(@WebParam(name = "resourceType")int resourceType,
+            @WebParam(name = "resourceDefinition")String resourceDefinition, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getAffectedServices(resourceType, resourceDefinition, getIPAddress(), sessionId);
+        } catch (Exception ex) {
+            if (ex instanceof ServerSideException)
+                throw ex;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getAffectedServices: " + ex.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+        //</editor-fold>
     // </editor-fold>
         
     // <editor-fold defaultstate="collapsed" desc="Helpers. Click on the + sign on the left to edit the code.">/**

@@ -188,6 +188,17 @@ public interface BusinessEntityManager {
             throws MetadataObjectNotFoundException, ObjectNotFoundException;
     
     /**
+     * Retrieves a list of instances of a given class
+     * @param className Class name. This method only works with non-abstract classes for now
+     * @param filterName The attribute to be used as filter. This will work <b>only</b> with String-type attributes. Example: serialNumber
+     * @param filterValue The value to be use to match the instances. Example "Serial-12345"
+     * @return The list of instances that meet the filterName/filterValue criteria
+     * @throws MetadataObjectNotFoundException If the class provided could not be found
+     */
+    public List<RemoteBusinessObjectLight> getObjectsWithFilterLight (String className, 
+            String filterName, String filterValue) throws MetadataObjectNotFoundException;
+    
+    /**
      * Gets the common parent between an a object and b object
      * @param aObjectClass Object a class name
      * @param aOid Object a id
