@@ -284,7 +284,7 @@ public final class MPLSModuleTopComponent extends TopComponent implements Explor
                 txtViewDescription.setText(service.getView().getDescription());
             }
             
-            JComplexDialogPanel saveDialog = new JComplexDialogPanel(new String[] {"View name", "View Description"}, new JComponent[] { txtViewName, txtViewDescription });
+            JComplexDialogPanel saveDialog = new JComplexDialogPanel(new String[] {"View name", "View description"}, new JComponent[] { txtViewName, txtViewDescription });
 
             if(JOptionPane.showConfirmDialog(null, saveDialog, "View details", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
                 //It's a new view

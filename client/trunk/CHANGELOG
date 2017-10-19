@@ -143,3 +143,7 @@
 * End-to-end view for services with logical segments added
 * Now you can access the details of a list type directly (that is without having to open the List Type Manager)by clicking on the "..." button next to the list type value in the Properties window.
 * Multiple bugfixes and improvements
+
+1.6
+* Many objects can now be dragged and dropped at the same time to a view
+* It's possible to create sdh links that use concatenated containers. This way, the user can create sdh connections with arbitrary capacities to support services such as Ethernet/IP over SDH

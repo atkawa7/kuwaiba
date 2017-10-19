@@ -4,12 +4,11 @@
   <information>
       <title>${app.title}</title>
       <vendor>Neotropic SAS</vendor>
-      <description>The First and Only Open Source Network Inventory System for the Telecom Industry</description>
+      <description>The First and Only Open Source Network Inventory System for the Telco Industry</description>
       <icon href="${app.icon}"/>
-      <homepage>http://www.kuwaiba.org</homepage>
-      <offline-allowed>true</offline-allowed>
+      <homepage href="http://www.kuwaiba.org"/>
   </information>
-  <update check="always" policy="prompt-update" />
+  <!--<update check="always" policy="prompt-update" />-->
   <security><all-permissions/></security>
   <resources>
     <!-- The following property is needed when running with unsigned jars: -->
