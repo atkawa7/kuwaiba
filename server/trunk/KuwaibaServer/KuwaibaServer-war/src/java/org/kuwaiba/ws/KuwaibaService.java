@@ -21,6 +21,8 @@ import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
 import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.jws.WebMethod;
@@ -776,6 +778,35 @@ public class KuwaibaService {
             }
         }        
     }
+    
+    /**
+     * Deletes a list type item related view
+     * @param listTypeItemId list type item id
+     * @param listTypeItemClass list type class name
+     * @param viewId related view id
+     * @param sessionId Session token
+     * @throws ServerSideException If the list type item class can not be found
+     *                             If the list type item can no be found using the id
+     *                             If the view can not be found
+     */
+    @WebMethod(operationName = "deleteListTypeItemRelatedView")
+    public void deleteListTypeItemRelatedView(
+        @WebParam(name = "listTypeItemId") long listTypeItemId, 
+        @WebParam(name = "listTypeItemClass") String listTypeItemClass, 
+        @WebParam(name = "viewId") long viewId, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            wsBean.deleteListTypeItemRelatedView(listTypeItemId, listTypeItemClass, viewId, getIPAddress(), sessionId);
+        } catch (Exception e) {
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteListTypeItemRelatedView: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
 
     /**
      * Creates a view an relates it to an existing object

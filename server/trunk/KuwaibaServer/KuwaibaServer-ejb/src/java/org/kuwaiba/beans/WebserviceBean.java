@@ -31,6 +31,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Singleton;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
@@ -58,6 +60,8 @@ import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
+import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
@@ -2335,6 +2339,20 @@ public class WebserviceBean implements WebserviceBeanRemote {
         } catch(InventoryException e) {
             throw new ServerSideException(e.getMessage());
         }   
+    }
+    
+    @Override
+    public void deleteListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId, 
+        String ipAddress, String sessionId) 
+        throws ServerSideException {        
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("deleteListTypeItemRelatedView", ipAddress, sessionId);
+            aem.deleteListTypeItemRelatedView(listTypeItemId, listTypeItemClass, viewId);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());            
+        }
     }
 
     @Override   

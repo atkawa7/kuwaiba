@@ -341,6 +341,18 @@ public interface ApplicationEntityManager {
         throws MetadataObjectNotFoundException, InvalidArgumentException;
     
     /**
+     * Deletes a list type item related view
+     * @param listTypeItemId list type item id
+     * @param listTypeItemClass list type class name
+     * @param viewId related view id
+     * @throws MetadataObjectNotFoundException if the list type item class can not be found
+     * @throws InvalidArgumentException if the list type item can no be found using the id
+     * @throws ObjectNotFoundException if the view can not be found
+     */
+    public void deleteListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId) 
+        throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException;
+        
+    /**
      * Get a view related to an object, such as the default, rack or equipment views
      * @param oid object's id
      * @param objectClass object's class

@@ -1035,6 +1035,29 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         }
     }
     
+    @Override        
+    public void deleteListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId) 
+        throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException {
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            Node listTypeItemNode = getListTypeItemNode(listTypeItemId, listTypeItemClass);            
+            if (listTypeItemNode == null)
+                throw new InvalidArgumentException(String.format("Can not find the list type item with id %s", listTypeItemId));
+            
+            for (Relationship rel : listTypeItemNode.getRelationships(RelTypes.HAS_VIEW, Direction.OUTGOING)) {
+                Node viewNode = rel.getEndNode();
+                if (viewNode.getId() == viewId) {
+                    rel.delete();
+                    viewNode.delete();
+                    tx.success();
+                    return;
+                }
+            }
+            tx.success();
+        }
+        throw new ObjectNotFoundException("View", viewId);
+    }
+        
     @Override
     public long createObjectRelatedView(long oid, String objectClass, String name, String description, String viewClassName, 
         byte[] structure, byte[] background) 
