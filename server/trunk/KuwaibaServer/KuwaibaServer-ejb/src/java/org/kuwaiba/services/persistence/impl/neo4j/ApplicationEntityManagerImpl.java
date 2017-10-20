@@ -17,7 +17,6 @@
 package org.kuwaiba.services.persistence.impl.neo4j;
 
 import com.neotropic.kuwaiba.modules.GenericCommercialModule;
-import com.neotropic.kuwaiba.sync.snmp.util.EtlSNMP;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import java.io.BufferedReader;
@@ -2463,9 +2462,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             environmentParameters.setVariable("Direction", Direction.class); //NOI18N
             environmentParameters.setVariable("RelTypes", RelTypes.class); //NOI18N
             environmentParameters.setVariable("scriptParameters", scriptParameters); //NOI18N
-            environmentParameters.setVariable("EtlSNMP", EtlSNMP.class); //NOI18N
-        } 
-        try {
+        
             GroovyShell shell = new GroovyShell(ApplicationEntityManager.class.getClassLoader(), environmentParameters);
             Object theResult = shell.evaluate(script);
 
