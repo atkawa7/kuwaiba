@@ -255,8 +255,6 @@ public final class ClassHierarchyTopComponent extends TopComponent implements Ex
         toolMain.add(layeredPaneCmb);
 
         add(toolMain, java.awt.BorderLayout.PAGE_START);
-        toolMain.getAccessibleContext().setAccessibleDescription(org.openide.util.NbBundle.getMessage(ClassHierarchyTopComponent.class, "ClassHierarchyTopComponent.toolMain.AccessibleContext.accessibleDescription")); // NOI18N
-
         add(pnlMainScrollPane, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
