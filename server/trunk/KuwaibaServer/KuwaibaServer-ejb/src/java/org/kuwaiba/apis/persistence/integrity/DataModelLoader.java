@@ -48,8 +48,7 @@ public class DataModelLoader {
     
     public DataModelLoader(ConnectionManager cmn, MetadataEntityManager mem) {
         graphDb = (GraphDatabaseService) cmn.getConnectionHandler();
-        try(Transaction tx = graphDb.beginTx())
-        {
+        try(Transaction tx = graphDb.beginTx()) {
             specialNodes = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES);
             tx.success();
         }

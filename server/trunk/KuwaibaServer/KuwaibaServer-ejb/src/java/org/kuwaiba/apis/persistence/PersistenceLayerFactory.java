@@ -49,7 +49,7 @@ public class PersistenceLayerFactory{
     /**
      * Dynamically creates a metadata entity manager
      * @param connectionManager
-     * @return The manager
+     * @return An instance of the current Metadata Application Manager
      * @throws InstantiationException
      * @throws IllegalAccessException
      * @throws NoSuchMethodException
@@ -73,6 +73,7 @@ public class PersistenceLayerFactory{
     /**
      * Dynamically creates a application entity manager
      * @param connectionManager
+     * @param mem A reference to the current Metadata Entity Manager
      * @return The manager
      * @throws InstantiationException
      * @throws IllegalAccessException
@@ -80,14 +81,13 @@ public class PersistenceLayerFactory{
      * @throws IllegalArgumentException
      * @throws InvocationTargetException 
      */
-    public ApplicationEntityManager createApplicationEntityManager(ConnectionManager connectionManager) 
+    public ApplicationEntityManager createApplicationEntityManager(ConnectionManager connectionManager, MetadataEntityManager mem) 
             throws InstantiationException, IllegalAccessException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException {
         try {
             Class myClass = (Class) Class.forName(
                     "org.kuwaiba.services.persistence.impl.neo4j.ApplicationEntityManagerImpl");
-            
-            Constructor cmMem = myClass.getConstructor(ConnectionManager.class);
-            return (ApplicationEntityManager)cmMem.newInstance(connectionManager);
+            Constructor cmMem = myClass.getConstructor(ConnectionManager.class, MetadataEntityManager.class);
+            return (ApplicationEntityManager)cmMem.newInstance(connectionManager, mem);
         }
         catch (ClassNotFoundException cnfe) {
             throw new IllegalArgumentException ("ApplicationEntityManager implementation not found: " + cnfe.getMessage());

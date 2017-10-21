@@ -77,16 +77,16 @@ public class PersistenceService {
             connectionManager.openConnection();
             System.out.println(String.format("[KUWAIBA] [%s] Connection established", Calendar.getInstance().getTime()));
             System.out.println(String.format("[KUWAIBA] [%s] %s", Calendar.getInstance().getTime(), connectionManager.getConnectionDetails()));
-            aem = plf.createApplicationEntityManager(connectionManager);
+            mem = plf.createMetadataEntityManager(connectionManager);
+            aem = plf.createApplicationEntityManager(connectionManager, mem);           
+            bem = plf.createBusinessEntityManager(connectionManager, aem, mem);
+            
             Properties applicationConfiguration = new Properties();
             applicationConfiguration.put("backgroundsPath", configuration.getProperty("backgroundsPath"));
             applicationConfiguration.put("corporateLogo", configuration.getProperty("corporateLogo"));
             aem.setConfiguration(applicationConfiguration);
-            mem = plf.createMetadataEntityManager(connectionManager);
-            bem = plf.createBusinessEntityManager(connectionManager, aem, mem);
+            
             dataModelLoader = new DataModelLoader(connectionManager, mem);
-            //dataIntegrityService = new DataIntegrityService(connectionManager);
-            //dataIntegrityService.checkIntegrity();
             System.out.println(String.format("[KUWAIBA] [%s] Detecting advanced modules...", Calendar.getInstance().getTime()));
             //Place here some fancy OSGi stuff instead of this horrid hardcoded list
             aem.registerCommercialModule(new IPAMModule());

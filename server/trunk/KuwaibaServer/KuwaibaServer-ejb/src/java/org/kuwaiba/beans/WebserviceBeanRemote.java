@@ -97,6 +97,8 @@ public interface WebserviceBeanRemote {
     public List<ClassInfoLight> getSubClassesLightNoRecursive(String className, 
             boolean includeAbstractClasses, boolean includeSelf, String ipAddress, String sessionId) throws ServerSideException;
     
+    public boolean isSubclassOf(String className, String subclassOf, String remoteAddress, String sessionId) throws ServerSideException;
+    
     public List<ClassInfo> getAllClasses(boolean includeListTypes, String ipAddress, String sessionId) throws ServerSideException;
 
     public ClassInfo getClass(String className, String ipAddress, String sessionId) throws ServerSideException;
@@ -527,10 +529,6 @@ public interface WebserviceBeanRemote {
         public List<RemoteObjectLight> getProjectsAssociateToObject(String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;
         public long createProjectPool(String name, String description, String instanceOfClass, String ipAddress, String sessionId) throws ServerSideException;
         // </editor-fold>
-    
-    // <editor-fold defaultstate="collapsed" desc="Help methods. Click on the + sign on the left to edit the code.">
-    public boolean isSubclassOf(String className, String subclassOf, String remoteAddress, String sessionId);
-    // </editor-fold>
     
     // Bookmarks
     public long createFavoritesFolderForUser(String favoritesFolderName, long userId, String ipAddress, String sessionId) throws ServerSideException;

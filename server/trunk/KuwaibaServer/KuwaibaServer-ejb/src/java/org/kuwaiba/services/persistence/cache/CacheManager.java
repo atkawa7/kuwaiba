@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.UserProfile;
-import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.apis.persistence.metadata.GenericObjectList;
@@ -164,7 +163,7 @@ public class CacheManager {
      * @param attributeName attribute name 
      * @param value new value of an unique attribute
      */
-    public void putUniqueAttributeValueIndex(String className, String attributeName, String value){
+    public void putUniqueAttributeValueIndex(String className, String attributeName, String value) {
         HashMap<String, List<String>> uniqueClassAttributes = uniqueClassAttributesIndex.get(className);
         if(uniqueClassAttributes == null){
             uniqueClassAttributes = new HashMap<>();
@@ -266,14 +265,6 @@ public class CacheManager {
         else
             return null;
     }
-    
-    public void clearClassCache(){
-        classIndex.clear();
-        possibleChildrenIndex.clear();
-        possibleSpecialChildrenIndex.clear();
-        subClassesIndex.clear();
-        subClassesNoRecursiveIndex.clear();
-    }
 
     /**
      * Tries to retrieve a cached user
@@ -363,85 +354,25 @@ public class CacheManager {
         listTypeIndex.remove(listTypeName);
     }
     /**
-     * Clear the cache
+     * Clears all cached information
      */
     public void clearAll() {
-        classIndex.clear();
         userIndex.clear();
         groupIndex.clear();
-        possibleChildrenIndex.clear();
-        possibleSpecialChildrenIndex.clear();
         listTypeIndex.clear();
-        subClassesIndex.clear();
-        uniqueClassAttributesIndex.clear();
-    }
-
-     /**
-      * According to the cached metadata, finds out if a given class if subclass of another
-      * @param allegedParentClass Possible super class
-      * @param className Class to be evaluated
-      * @return is className subClass of allegedParentClass?
-      */
-    public boolean isSubClass(String allegedParentClass, String className) {
-
-        if (className == null)
-            return false;
-
-        ClassMetadata currentClass = getClass(className);
-
-        if (currentClass == null)
-            return false;
-
-        if (allegedParentClass.equals(className))
-            return true;
-
-        if (currentClass.getParentClassName() == null)
-            return false;
-
-        if (currentClass.getParentClassName().equals(allegedParentClass))
-            return true;
-        else
-            return isSubClass(allegedParentClass, currentClass.getParentClassName());
-    }
-
-    /**
-     * Finds out if a an instance of a given class can be child of an instance of allegedParent
-     * @param allegedParent Possible parent
-     * @param childToBeEvaluated Class to be evaluated
-     * @return can an instance of childToBeEvaluated be a child of an instance of allegedParent
-     * @throws MetadataObjectNotFoundException
-     */
-    public boolean canBeChild(String allegedParent, String childToBeEvaluated) throws MetadataObjectNotFoundException{
-        List<String> possibleChildren;
-        if (allegedParent == null) //The navigation tree root
-            possibleChildren = possibleChildrenIndex.get("");
-        else
-            possibleChildren = possibleChildrenIndex.get(allegedParent);
-
-        if (possibleChildren == null)
-           throw new MetadataObjectNotFoundException(allegedParent);
-
-        for (String possibleChild : possibleChildren){
-            if (possibleChild.equals(childToBeEvaluated))
-                return true;
-        }
-        return false;
+        clearClassCache();
     }
     
-    public boolean canBeSpecialChild(String allegedParent, String childToBeEvaluated) throws MetadataObjectNotFoundException{
-        List<String> possibleSpecialChildren;
-        if (allegedParent == null) //The navigation tree root
-            possibleSpecialChildren = possibleSpecialChildrenIndex.get("");
-        else
-            possibleSpecialChildren = possibleSpecialChildrenIndex.get(allegedParent);
-
-        if (possibleSpecialChildren == null)
-           throw new MetadataObjectNotFoundException(allegedParent);
-
-        for (String possibleSpecialChild : possibleSpecialChildren){
-            if (possibleSpecialChild.equals(childToBeEvaluated))
-                return true;
-        }
-        return false;
+    /**
+     * Clears only the cached elements associated to the data model. Call it after 
+     * performing any change in the class hierarchy of the property of the classes.
+     */
+    public void clearClassCache(){
+        classIndex.clear();
+        possibleChildrenIndex.clear();
+        possibleSpecialChildrenIndex.clear();
+        subClassesIndex.clear();
+        subClassesNoRecursiveIndex.clear();
+        uniqueClassAttributesIndex.clear();
     }
 }

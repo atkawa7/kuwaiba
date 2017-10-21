@@ -319,6 +319,18 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(ex.getMessage());
         }
     }
+    
+    @Override
+    public boolean isSubclassOf(String className, String subclassOf, String ipAddress, String sessionId) throws ServerSideException {
+        if (mem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("isSubclassOf", ipAddress, sessionId);
+            return mem.isSubClass(subclassOf, className);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
 
     @Override
     public List<ClassInfo> getAllClasses(boolean includeListTypes, String ipAddress, String sessionId) throws ServerSideException {
@@ -3088,10 +3100,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
         }
     }
 
-    @Override
-    public boolean isSubclassOf(String className, String subclassOf, String remoteAddress, String sessionId) {
-        return mem.isSubClass(subclassOf, className);
-    }
+    
     
     
     // </editor-fold>

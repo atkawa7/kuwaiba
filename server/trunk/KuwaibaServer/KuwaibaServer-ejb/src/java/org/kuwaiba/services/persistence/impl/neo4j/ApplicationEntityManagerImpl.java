@@ -73,6 +73,7 @@ import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.apis.persistence.metadata.GenericObjectList;
+import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.services.persistence.cache.CacheManager;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.services.persistence.util.Util;
@@ -163,6 +164,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
      */
     private CacheManager cm;
     /**
+     * Reference to the metadata entity manager
+     */
+    private MetadataEntityManager mem;
+    /**
      * Map with the current sessions. The key is the username, the value is the respective session object
      */
     private HashMap<String, Session> sessions;
@@ -177,9 +182,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         this.configuration = new Properties();
     }
 
-    public ApplicationEntityManagerImpl(ConnectionManager cmn) {
+    public ApplicationEntityManagerImpl(ConnectionManager cmn, MetadataEntityManager mem) {
         this();
         this.graphDb = (GraphDatabaseService) cmn.getConnectionHandler();
+        this.mem = mem;
         try(Transaction tx = graphDb.beginTx()){
             this.userIndex = graphDb.index().forNodes(Constants.INDEX_USERS);
             this.groupIndex = graphDb.index().forNodes(Constants.INDEX_GROUPS);
@@ -720,7 +726,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                  cm.putClass(myClass);
              }      
 
-            if (!cm.isSubClass(Constants.CLASS_GENERICOBJECTLIST, className))
+            if (!mem.isSubClass(Constants.CLASS_GENERICOBJECTLIST, className))
                  throw new InvalidArgumentException(String.format("Class %s is not a list type", className));
 
             if (myClass.isInDesign())
@@ -748,7 +754,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             throws MetadataObjectNotFoundException, OperationNotPermittedException, ObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
         try(Transaction tx = graphDb.beginTx())
         {
-            if (!cm.isSubClass(Constants.CLASS_GENERICOBJECTLIST, className))
+            if (!mem.isSubClass(Constants.CLASS_GENERICOBJECTLIST, className))
                 throw new InvalidArgumentException(String.format("Class %s is not a list type", className));
 
             Node instance = getInstanceOfClass(className, oid);
@@ -1742,8 +1748,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                         if (className != null) { //We will return only those matching with the specified class name or its subclasses, depending on the value of includeSubclasses
                             String poolClass = (String)poolNode.getProperty(Constants.PROPERTY_CLASS_NAME);
                             if (includeSubclasses) {
-                                if (cm.isSubClass(className, poolClass))
-                                    pools.add(Util.createPoolFromNode(poolNode));
+                                try {
+                                    if (mem.isSubClass(className, poolClass))
+                                        pools.add(Util.createPoolFromNode(poolNode));
+                                } catch (MetadataObjectNotFoundException ex) { } //Should not happen
                             } else {
                                 if (className.equals(poolClass))
                                     pools.add(Util.createPoolFromNode(poolNode));
@@ -1877,7 +1885,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public List<ActivityLogEntry> getBusinessObjectAuditTrail(String objectClass, long objectId, int limit) 
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         try(Transaction tx = graphDb.beginTx()) {
-            if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, objectClass))
+            if (!mem.isSubClass(Constants.CLASS_INVENTORYOBJECT, objectClass))
                 throw new InvalidArgumentException(String.format("Class %s is not subclass of %s",
                         objectClass, Constants.CLASS_INVENTORYOBJECT));
             Node instanceNode = getInstanceOfClass(objectClass, objectId);
