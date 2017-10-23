@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.util.Constants;
 
 /**
@@ -157,8 +158,9 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
     }
 
     @Override
-    public String toString(){
-        return (getName() == null ? Constants.LABEL_NONAME : getName()) + " [" + getClassName() + "]"; //NOI18N
+    public String toString() {
+        LocalClassMetadata classMetadata = CommunicationsStub.getInstance().getMetaForClass(className, false); //This info is usually cached already
+        return (getName() == null ? Constants.LABEL_NONAME : getName()) + " [" + (classMetadata == null ? className : classMetadata) + "]"; //NOI18N
     }
 
     @Override

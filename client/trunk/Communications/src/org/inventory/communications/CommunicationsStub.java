@@ -105,6 +105,7 @@ import org.inventory.communications.wsclient.ViewInfoLight;
  */
 public class CommunicationsStub {
     private static CommunicationsStub instance;
+
     private KuwaibaService service;
     private static URL serverURL = null;
     private String error = java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("LBL_NO_ERROR");
@@ -946,7 +947,7 @@ public class CommunicationsStub {
      * @return the metadata information
      */
     public LocalClassMetadata getMetaForClass(String className, boolean ignoreCache) {
-        try{
+        try {
             LocalClassMetadata res;
             if (!ignoreCache){
                 res = cache.getMetaForClass(className);
@@ -984,20 +985,14 @@ public class CommunicationsStub {
     }
 
     /**
-     * Retrieves the metadata for a given class
+     * Retrieves the metadata for a given class. This information is never cached, 
+     * as this method is intended to be used in situations where we need the fresh data from the server
      * @param classId classmetadata id
-     * @param ignoreCache
      * @return the metadata information
      */
-    public LocalClassMetadata getMetaForClass(long classId, boolean ignoreCache) {
+    public LocalClassMetadata getMetaForClass(long classId) {
         try{
             LocalClassMetadata res;
-//            if (!ignoreCache){
-//                res = cache.getMetaForClass(classId);
-//                if (res != null){
-//                    return res;
-//                }
-//            }
             ClassInfo cm = service.getClassWithId(classId,this.session.getSessionId());
             HashMap<String, Integer> validators = new HashMap<>();
             for (Validator validator : cm.getValidators())
@@ -1023,31 +1018,6 @@ public class CommunicationsStub {
             return null;
         }
     }
-
-    /**
-     * Retrieves the metadata for a given class
-     * @param className the object class
-     * @return the metadata information
-     */
-    /*public LocalClassMetadataLight getLightMetaForClass(String className, boolean ignoreCache){
-        try{
-            LocalClassMetadataLight res;
-            if (!ignoreCache){
-                res = cache.getLightMetaForClass(className);
-                if (res != null)
-                    return res;
-            }
-
-            ClassInfo cm = service.getClass(className,this.session.getSessionId());
-
-            res = new LocalClassMetadataLight(cm);
-            cache.addLightMeta(new LocalClassMetadataLight[]{res});
-            return res;
-        }catch(Exception ex){
-            this.error = ex.getMessage();
-            return null;
-        }
-    }*/
     
     /**
      * Gets the class hierarchy tree

@@ -114,7 +114,7 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
     public void refresh(){
         LocalClassMetadataLight classMetadataRefresh;
         
-        classMetadataRefresh = com.getMetaForClass(classMetadata.getOid(), true);
+        classMetadataRefresh = com.getMetaForClass(classMetadata.getOid());
         
         if(classMetadataRefresh == null)
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());

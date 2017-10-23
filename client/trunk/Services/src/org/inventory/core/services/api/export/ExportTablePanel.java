@@ -196,16 +196,13 @@ public class ExportTablePanel extends JPanel implements ActionListener{
 
             Object[][] allResults = exportable.getResults((ExportableTable.Range)cmbRange.getSelectedItem());
             
-            try{
-                FileOutputStream fos = new FileOutputStream(txtOutputFile.getText());
-
+            try (FileOutputStream fos = new FileOutputStream(txtOutputFile.getText())) {
                 if (allResults != null){
                     if (!selectedFilter.export(allResults, fos))
                         JOptionPane.showMessageDialog(this, "Error exporting file", "Error",JOptionPane.ERROR_MESSAGE);
                     else
                         JOptionPane.showMessageDialog(this, "Results exported successfully", "Success",JOptionPane.INFORMATION_MESSAGE);
                 }
-                fos.close();
             }catch(Exception ex){
                 JOptionPane.showMessageDialog(this, String.format("Error exporting file %s", ex.getMessage()), "Error",JOptionPane.ERROR_MESSAGE);
             }

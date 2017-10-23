@@ -285,8 +285,10 @@ public class SDHConnectionWizard {
 
         @Override
         public void storeSettings(WizardDescriptor settings) {
-            lstRoutes.removeItemListener(this);
-            settings.putProperty("route", lstRoutes.getSelectedItem());
+            if (lstRoutes != null) {
+                lstRoutes.removeItemListener(this);
+                settings.putProperty("route", lstRoutes.getSelectedItem());
+            }
         }
 
         @Override

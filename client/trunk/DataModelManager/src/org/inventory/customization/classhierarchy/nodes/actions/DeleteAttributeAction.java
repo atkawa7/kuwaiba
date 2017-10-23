@@ -53,7 +53,7 @@ public class DeleteAttributeAction extends GenericInventoryAction implements Com
     
     @Override
     public void actionPerformed(ActionEvent ae) {
-        LocalClassMetadata metaForThisClass = com.getMetaForClass(classNode.getClassMetadata().getOid(), false);
+        LocalClassMetadata metaForThisClass = com.getMetaForClass(classNode.getClassMetadata().getClassName(), false);
         if (metaForThisClass == null) {
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
         } else {
