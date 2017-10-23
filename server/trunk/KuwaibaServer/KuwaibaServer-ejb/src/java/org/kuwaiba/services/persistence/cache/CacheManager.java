@@ -357,6 +357,7 @@ public class CacheManager {
      * Clears all cached information
      */
     public void clearAll() {
+        classIndex.clear();
         userIndex.clear();
         groupIndex.clear();
         listTypeIndex.clear();
@@ -365,10 +366,12 @@ public class CacheManager {
     
     /**
      * Clears only the cached elements associated to the data model. Call it after 
-     * performing any change in the class hierarchy of the property of the classes.
+     * performing any change in the class hierarchy of the property of the classes. 
+     * Note that this method doesn't actually clears the main classIndex, only de dependencies, such as 
+     * the possibleChildrenIndex, possibleSpecialChildrenIndex, subClassesIndex, 
+     * subClassesNoRecursiveIndex and uniqueClassAttributesIndex
      */
-    public void clearClassCache(){
-        classIndex.clear();
+    public void clearClassCache() {
         possibleChildrenIndex.clear();
         possibleSpecialChildrenIndex.clear();
         subClassesIndex.clear();

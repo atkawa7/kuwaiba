@@ -202,8 +202,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
 
     @Override
     public ChangeDescriptor setClassProperties (ClassMetadata newClassDefinition) 
-            throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException 
-    {
+            throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException {
         String affectedProperties = "", oldValues = "", newValues = "";
         
         try (Transaction tx = graphDb.beginTx()) {
@@ -298,7 +297,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 classMetadata.setProperty(Constants.PROPERTY_CUSTOM, newClassDefinition.isCustom());
             }
             
-            if(newClassDefinition.getAttributes() != null ){
+            if(newClassDefinition.getAttributes() != null ) {
                 for (AttributeMetadata attr : newClassDefinition.getAttributes()) {
                     ChangeDescriptor changeDescriptor = setAttributeProperties(newClassDefinition.getId(), attr);
                     
@@ -309,6 +308,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             }        
             tx.success();
             cm.clearClassCache();
+            cm.removeClass(formerName);
             cm.putClass(Util.createClassMetadataFromNode(classMetadata));
 
             return new ChangeDescriptor(affectedProperties.trim(), oldValues.trim(), 
@@ -498,7 +498,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             for (ClassMetadataLight subclass : subclasses) {                
                 if (!includeAbstractClasses && subclass.isAbstract())
                     continue;
-                
                 classManagerResultList.add(subclass);
             }
             
