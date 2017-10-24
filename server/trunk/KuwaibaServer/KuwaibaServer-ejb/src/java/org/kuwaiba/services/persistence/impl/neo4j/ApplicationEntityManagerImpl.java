@@ -1729,6 +1729,29 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             return new ChangeDescriptor(affectedProperties, oldValues, newValues, String.format("Set %s pool properties", name));
         }
     }
+    
+    @Override
+    public String getNameOfSpecialParentByScaleUp(String className, long id, int targetLevel) {
+        try(Transaction tx = graphDb.beginTx()) {
+            Node node0 = graphDb.getNodeById(id);
+            return getNameOfSpecialParentByScaleUpRecursive(node0, targetLevel, 1);
+        }
+    }
+    
+    private String getNameOfSpecialParentByScaleUpRecursive(Node node, int targetLevel, int currentLevel) {
+        if (node.hasRelationship(Direction.OUTGOING, RelTypes.CHILD_OF_SPECIAL)) {
+            for (Relationship rel : node.getRelationships(Direction.OUTGOING, RelTypes.CHILD_OF_SPECIAL)) {
+                Node endNode = rel.getEndNode();
+                
+                if (currentLevel == targetLevel)
+                    return endNode.hasProperty(Constants.PROPERTY_NAME) ? (String) endNode.getProperty(Constants.PROPERTY_NAME) : "<Not Set>";
+                else
+                    return getNameOfSpecialParentByScaleUpRecursive(endNode, targetLevel, currentLevel + 1);
+            }
+        }
+        return null;                
+    }
+    
        
     @Override
     public List<Pool> getRootPools(String className, int type, boolean includeSubclasses) {

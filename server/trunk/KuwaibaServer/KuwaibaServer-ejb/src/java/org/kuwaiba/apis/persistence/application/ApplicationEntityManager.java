@@ -596,6 +596,16 @@ public interface ApplicationEntityManager {
     public ChangeDescriptor setPoolProperties(long poolId, String name, String description);
     
     /**
+     * Gets the name Of a special parent by scale up the SPECIAL_OF_CHILD hierarchy
+     * Use case: Use in reports to get the costumer of a service
+     * @param className className
+     * @param id node id
+     * @param targetLevel number of levels to scale up
+     * @return the name of the parent
+     */
+    public String getNameOfSpecialParentByScaleUp(String className, long id, int targetLevel);
+    
+    /**
      * Retrieves the pools that don't have any parent and are normally intended to be managed by the Pool Manager
      * @param className The class name used to filter the results. Only the pools with a className attribute matching the provided value will be returned. Use null if you want to get all
      * @param type The type of pools that should be retrieved. Root pools can be for general purpose, or as roots in models
