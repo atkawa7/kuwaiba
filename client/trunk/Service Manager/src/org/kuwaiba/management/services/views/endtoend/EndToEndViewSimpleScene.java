@@ -235,11 +235,11 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
     @Override
     public void render(byte[] structure) throws IllegalArgumentException { 
        //<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
-        try {
-            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_.xml");
-            fos.write(structure);
-            fos.close();
-        } catch(Exception e) {}
+       // try {
+       //     FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_.xml");
+       //     fos.write(structure);
+       //     fos.close();
+       // } catch(Exception e) {}
         //</editor-fold>
         try{
             XMLInputFactory inputFactory = XMLInputFactory.newInstance();
@@ -400,7 +400,6 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
                         if(logicalLinkWidget == null){
                             logicalLinkWidget = (ObjectConnectionWidget) addEdge(logicalCircuitDetails.getConnectionObject());
 
-                            //ObjectConnectionWidget logicalLinkWidget = (ObjectConnectionWidget)addEdge(logicalCircuitDetails.getConnectionObject());
                             logicalLinkWidget.getLabelWidget().setLabel(aSideEquipmentLogical.getName() + ":" + logicalCircuitDetails.getEndpointA().getName() + " ** " +
                                     bSideEquipmentLogical.getName() + ":" + logicalCircuitDetails.getEndpointB().getName());
                             setEdgeSource(logicalCircuitDetails.getConnectionObject(), aSideEquipmentLogical);

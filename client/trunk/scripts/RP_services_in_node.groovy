@@ -1,9 +1,8 @@
 /**
  * Class Level Report to GenericCommunicationsElement:
- * Show the services associated to a given generic communications element,
- * the services associated to his children, and physical connections
- * and a summarize of the statistics of services in a pie chart 
- * Neotropic SAS - version 1.1.1
+ * Shows the services associated to a given generic communications element, its children and physical connections
+ * The results are also displayed as a pie chart
+ * Neotropic SAS - version 1.0
  * Parameters: None
  */
 import org.kuwaiba.apis.persistence.PersistenceService;
@@ -32,19 +31,20 @@ def aem = PersistenceService.getInstance().getApplicationEntityManager();
 // Gets Business Entity Manager
 def bem = PersistenceService.getInstance().getBusinessEntityManager();
 
-def report = new HTMLReport("Servicios Asociados", "Neotropic SAS", "1.1.1");
+def report = new HTMLReport(String.format("Services in Node %s", instanceNode.getProperty("name")), "Neotropic SAS", "1.0");
 
-def linkStyleSheet = "http://localhost/reports.css";
+// def linkStyleSheet = "http://localhost/reports.css";
 // Change this for the url of an style sheet or replace the line below with this line report.setEmbeddedStyleSheet(HTMLReport.getDefaultStyleSheet());
-report.getLinkedStyleSheets().add(linkStyleSheet);
+// report.getLinkedStyleSheets().add(linkStyleSheet);
+report.setEmbeddedStyleSheet(HTMLReport.getDefaultStyleSheet());
 
 def resultTable = new HTMLTable(null, "reportTable", null);
 resultTable.getRows().add(new HTMLRow(
     [
-    new HTMLColumnHeader(null, null, "Servicio"),
-    new HTMLColumnHeader(null, null, "Tipo de servicio"),
-    new HTMLColumnHeader(null, null, "Cliente"),
-    new HTMLColumnHeader(null, null, "Elemento"),
+    new HTMLColumnHeader(null, null, "Service Name"),
+    new HTMLColumnHeader(null, null, "Service Type"),
+    new HTMLColumnHeader(null, null, "Customer"),
+    new HTMLColumnHeader(null, null, "Related Object"),
     ] as HTMLColumnHeader[]));
 
 def currentObj = bem.getObject(objectClassName, objectId);
@@ -86,25 +86,24 @@ allChildren_2.each { child ->
 }
 
 def connections = new ArrayList();
-def communicationsPort = bem.getChildrenOfClassLightRecursive(currentObj.getId(), currentObj.getClassName(), "InventoryObject", -1);
+def communicationsPort = bem.getChildrenOfClassLightRecursive(currentObj.getId(), currentObj.getClassName(), "ConfigurationItem", -1);
 communicationsPort.each { child ->
     def physicalPath = bem.getPhysicalPath(child.getClassName(), child.getId());
     physicalPath.each { aPath ->
         if (mem.isSubClass("GenericPort", aPath.getClassName())) {
             
-        } else {
+        } else 
             allChildren_.add(aPath);        
-        }
     }
 }
 def serviceMap = [:];
 def serviceList = new ArrayList();
 
 allChildren_.each { child ->
-    def associatedServices =bem.getSpecialAttribute(child.getClassName(), child.getId(), "uses"); 
-    if (associatedServices == null) {
+    def associatedServices = bem.getSpecialAttribute(child.getClassName(), child.getId(), "uses"); 
+    if (associatedServices == null) 
         return;
-    }
+    
     associatedServices.each { associatedSrv ->   
         def theParent = aem.getNameOfSpecialParentByScaleUp(associatedSrv.getClassName(), associatedSrv.getId(), 2);
 
@@ -112,52 +111,47 @@ allChildren_.each { child ->
             return;
     
         resultTable.getRows().add(new HTMLRow(
-        [
-        new HTMLColumn(associatedSrv.getName() == null ? "<No set>" : associatedSrv.getName()),
-        new HTMLColumn(associatedSrv.getClassName() == null ? "<No set>" : associatedSrv.getClassName()),
-        new HTMLColumn(theParent),
-        new HTMLColumn(child.getName() == null ? "<No set>" : child.getName() + " [" + child.getClassName() + "]"),
-        ] as HTMLColumn[]));
+            [
+            new HTMLColumn(associatedSrv.getName() == null ? "<Not Set>" : associatedSrv.getName()),
+            new HTMLColumn(associatedSrv.getClassName() == null ? "<Not Set>" : associatedSrv.getClassName()),
+            new HTMLColumn(theParent),
+            new HTMLColumn(child.getName() == null ? "<No set>" : child.getName() + " [" + child.getClassName() + "]"),
+            ] as HTMLColumn[]));
         
 
-        if (serviceMap[associatedSrv.getClassName()] != null) {
-            serviceMap[associatedSrv.getClassName()]['quantity'] += 1;
-        } else {
+        if (serviceMap[associatedSrv.getClassName()] != null) 
+            serviceMap[associatedSrv.getClassName()]['quantity'] ++;
+        else {
             serviceList.add(associatedSrv);
             serviceMap.put(associatedSrv.getClassName(),['quantity': 1]);            
         }
     }
 }
 
-def dataTable = new DataTable([DataType.STRING, DataType.NUMBER] as DataType[], ["Servicio", "Cantidad"] as String[]);
+def dataTable = new DataTable([DataType.STRING, DataType.NUMBER] as DataType[], ["Service", "Percentage"] as String[]);
 
 serviceList.each { child ->
     def quantity = serviceMap[child.getClassName()]['quantity'];
     dataTable.addRow([child.getClassName(), Integer.toString(quantity)] as String[]);
 }
 def chartsFactory = new GChartsFactory(report);
-def htmlDivPieChart = chartsFactory.createHTMLDivWrapperChart(ChartType.PIECHART, "divPieChart", "Servicios Asociados", dataTable);
+def htmlDivPieChart = chartsFactory.createHTMLDivWrapperChart(ChartType.PIECHART, "divPieChart", "Summary", dataTable);
 
 def location = Util.formatObjectList(bem.getParents(objectClassName, objectId), true, 4);
 
-def informationTable = new HTMLTable("width: 30%;", "infoTable", null);
-informationTable.getRows().add(new HTMLRow([new HTMLColumn(null, "generalInfoLabel", "<b>Elemento:</b>"), new HTMLColumn(null, "generalInfoValue", currentObj.getName())] as HTMLColumn []));
-informationTable.getRows().add(new HTMLRow([new HTMLColumn(null, "generalInfoLabel", "<b>Clase:</b>"), new HTMLColumn(null, "generalInfoValue", currentObj.getClassName())] as HTMLColumn []));
+def informationTable = new HTMLTable("width: 80%;", "infoTable", null);
+informationTable.getRows().add(new HTMLRow([new HTMLColumn(null, "generalInfoLabel", "<b>Element Name:</b>"), new HTMLColumn(null, "generalInfoValue", currentObj.getName())] as HTMLColumn []));
+informationTable.getRows().add(new HTMLRow([new HTMLColumn(null, "generalInfoLabel", "<b>Element Type:</b>"), new HTMLColumn(null, "generalInfoValue", currentObj.getClassName())] as HTMLColumn []));
 informationTable.getRows().add(new HTMLRow([new HTMLColumn(null, "generalInfoLabel", "<b>Location:</b>"), new HTMLColumn(null, "generalInfoValue", location)] as HTMLColumn []));
 informationTable.getRows().add(new HTMLRow([new HTMLColumn(null, "generalInfoLabel", "<b>Date:</b>"), new HTMLColumn(null, "generalInfoValue", DateFormat.getDateInstance(DateFormat.MEDIUM).format(new Date()))] as HTMLColumn []));
-informationTable.getRows().add(new HTMLRow([new HTMLColumn(null, "generalInfoLabel", "<b>Version:</b>"), new HTMLColumn(null, "generalInfoValue", report.getVersion())] as HTMLColumn []));
-
-def headerTable = new HTMLTable("width: 80%;", "headerTable", null);
-headerTable.getRows().add(new HTMLRow([new HTMLColumn(informationTable), new HTMLColumn(htmlDivPieChart)] as HTMLColumn []));
 
 
-report.getComponents().add(new HTMLHx(1, "Servicios Asociados"));
-report.getComponents().add(new HTMLBR());
+def headerTable = new HTMLTable("width: 100%;", "headerTable", null);
+headerTable.getRows().add(new HTMLRow([new HTMLColumn(informationTable), new HTMLColumn("width: 550px; height: 250px;", "", htmlDivPieChart)] as HTMLColumn []));
+
+report.getComponents().add(new HTMLHx(1, String.format("Services in Node %s", instanceNode.getProperty("name"))));
 report.getComponents().add(headerTable);
-report.getComponents().add(new HTMLBR());
 report.getComponents().add(resultTable);
-report.getComponents().add(new HTMLBR());
 report.getComponents().add(new HTMLDiv("", "footer", "", "This report is powered by <a href=\"http://www.kuwaiba.org\">Kuwaiba Open Network Inventory</a>"));
-report.getComponents().add(new HTMLBR());
 report.getComponents().add(new HTMLDiv("", "footer", "", new HTMLImage("width:82px;height:62px;", null, "http://neotropic.co/img/logo_blue.png")));
 return report;

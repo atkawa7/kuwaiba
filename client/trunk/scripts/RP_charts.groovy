@@ -16,7 +16,7 @@ def dataTable = new DataTable([DataType.STRING, DataType.NUMBER] as DataType[], 
 dataTable.addRow(["Row 1", "20"] as String[]);
 dataTable.addRow(["Row 2", "30"] as String[]);
 dataTable.addRow(["Row 3", "50"] as String[]);
-def chartsFactory = new ChartsFactory(report);
+def chartsFactory = new GChartsFactory(report);
 def htmlDivPieChart = chartsFactory.createHTMLDivWrapperChart(ChartType.PIECHART, "divPieChart", "Chart Pie Sample", dataTable);
 def htmlDivLineChart = chartsFactory.createHTMLDivWrapperChart(ChartType.LINECHART, "divLinechart", "Chart Line Sample", dataTable);
 def htmlDivColumnChart = chartsFactory.createHTMLDivWrapperChart(ChartType.COLUMNCHART, "divColumChart", "Chart Column Sample", dataTable);
