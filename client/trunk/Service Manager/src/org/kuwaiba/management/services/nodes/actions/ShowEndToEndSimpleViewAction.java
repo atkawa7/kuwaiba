@@ -34,7 +34,7 @@ import org.openide.windows.TopComponent;
 public class ShowEndToEndSimpleViewAction extends GenericObjectNodeAction {
 
     public ShowEndToEndSimpleViewAction() {
-        putValue(NAME, "Show End-to-End View (Simple)");
+        putValue(NAME, "Show End-to-End View");
     }
 
     @Override

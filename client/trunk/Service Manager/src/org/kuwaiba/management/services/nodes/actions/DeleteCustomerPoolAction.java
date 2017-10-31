@@ -40,7 +40,7 @@ class DeleteCustomerPoolAction extends GenericInventoryAction {
     @Override
     public void actionPerformed(ActionEvent ev) {
 
-        if(JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this pool? All customer associated will be deleted too",
+        if(JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this pool? All customers associated will be deleted too",
                 "Delete Customer Pool",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
 
             Iterator<? extends CustomerPoolNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(CustomerPoolNode.class).allInstances().iterator();

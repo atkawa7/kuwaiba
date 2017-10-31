@@ -15,6 +15,8 @@
  */
 package org.kuwaiba.management.services.nodes.actions;
 
+import org.inventory.core.services.api.actions.GenericInventoryAction;
+
 /**
  * Action factory for the Service Manager module
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
@@ -53,7 +55,7 @@ public class ServiceManagerActionFactory {
      */
     private static DeleteCustomerPoolAction deleteCustomerPoolAction;
     
-    public static CreateServiceAction getCreateServiceAction() {
+    public static GenericInventoryAction getCreateServiceAction() {
         if (createServiceAction == null)
             createServiceAction = new CreateServiceAction();
         
@@ -67,42 +69,42 @@ public class ServiceManagerActionFactory {
         return createServicePoolAction;
     }
     
-    public static CreateCustomerAction getCreateCustomerAction() {
+    public static GenericInventoryAction getCreateCustomerAction() {
         if (createCustomerAction == null)
             createCustomerAction = new CreateCustomerAction();
         
         return createCustomerAction;
     }
     
-    public static CreateCustomerPoolAction getCreateCustomerPoolAction() {
+    public static GenericInventoryAction getCreateCustomerPoolAction() {
         if (createCustomerPoolAction == null)
             createCustomerPoolAction = new CreateCustomerPoolAction();
         
         return createCustomerPoolAction;
     }
     
-    public static DeleteServiceAction getDeleteServiceAction() {
+    public static GenericInventoryAction getDeleteServiceAction() {
         if (deleteServiceAction == null)
             deleteServiceAction = new DeleteServiceAction();
         
         return deleteServiceAction;
     }
     
-    public static DeleteCustomerAction getDeleteCustomerAction() {
+    public static GenericInventoryAction getDeleteCustomerAction() {
         if (deleteCustomerAction == null)
             deleteCustomerAction = new DeleteCustomerAction();
         
         return deleteCustomerAction;
     }
     
-    public static DeleteServicePoolAction getDeleteServicePoolAction() {
+    public static GenericInventoryAction getDeleteServicePoolAction() {
         if (deleteServicePoolAction == null)
             deleteServicePoolAction = new DeleteServicePoolAction();
         
         return deleteServicePoolAction;
     }
     
-    public static DeleteCustomerPoolAction getDeleteCustomerPoolAction() {
+    public static GenericInventoryAction getDeleteCustomerPoolAction() {
         if (deleteCustomerPoolAction == null)
             deleteCustomerPoolAction = new DeleteCustomerPoolAction();
         
