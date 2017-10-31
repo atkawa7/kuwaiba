@@ -242,7 +242,7 @@ public class CacheManager {
     }
     
     public List<String> getPossibleSpecialChildren(String parent){
-        if (parent == null) //Should not happen
+        if (parent == null)
             return possibleSpecialChildrenIndex.get(Constants.NODE_DUMMYROOT);
         return possibleSpecialChildrenIndex.get(parent);
     }

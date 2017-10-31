@@ -1070,50 +1070,38 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     }
     
     @Override
-    public List<ClassMetadataLight> getPossibleChildren(String parentClassName) 
-            throws MetadataObjectNotFoundException   {
-        
+    public List<ClassMetadataLight> getPossibleChildren(String parentClassName) throws MetadataObjectNotFoundException {
         List<ClassMetadataLight> classMetadataResultList = new ArrayList<>();
-        List<String> cachedPossibleChildren = cm.getPossibleChildren(parentClassName);
         
+        List<String> cachedPossibleChildren = cm.getPossibleChildren(parentClassName);
+                
         if (cachedPossibleChildren != null) {
             for (String cachedPossibleChild : cachedPossibleChildren)
                 classMetadataResultList.add(cm.getClass(cachedPossibleChild));
             return classMetadataResultList;
         }
-        
-        cachedPossibleChildren = new ArrayList<>();
-        String cypherQuery;
-        Map<String, Object> params = new HashMap<>();
-        if (parentClassName == null || parentClassName.equals(Constants.NODE_DUMMYROOT)) {
-            cypherQuery = "MATCH (n:root {name:\"" + Constants.NODE_DUMMYROOT + "\"})-[:POSSIBLE_CHILD]->directChild " +
-                    "OPTIONAL MATCH directChild<-[:EXTENDS*]-subClass " +
-                    "WHERE subClass.abstract = false OR subClass IS NULL " +
-                    "RETURN directChild, subClass " +
-                    "ORDER BY directChild.name,subClass.name ASC ";
-        }
-        else {
-            cypherQuery = "START parentClassNode=node:classes(name = {className}) " +
-                        "MATCH (parentClassNode:class)-[:POSSIBLE_CHILD]->(directChild) " +
-                        "OPTIONAL MATCH (directChild)<-[:EXTENDS*]-(subClass) " +
-                        "RETURN directChild, subClass "+
-                        "ORDER BY directChild.name,subClass.name ASC";
-            params.put(Constants.PROPERTY_CLASS_NAME, "className:" + parentClassName);//NOI18N
-        }
-        try (Transaction tx = graphDb.beginTx())
-        {
-            Result result = graphDb.execute(cypherQuery, params); //TODO: review the result are empty, see getPossibleSpecialChildren
-            while (result.hasNext()){
-                Map<String,Object> entry = result.next();
-                Node directChildNode =  (Node)entry.get("directChild");
-                Node indirectChildNode =  (Node)entry.get("subClass");
-                if (!(Boolean)directChildNode.getProperty(Constants.PROPERTY_ABSTRACT)){
-                    classMetadataResultList.add(Util.createClassMetadataFromNode(directChildNode));
-                    cachedPossibleChildren.add((String)directChildNode.getProperty(Constants.PROPERTY_NAME));
-                }
-                if (indirectChildNode != null){
-                    classMetadataResultList.add(Util.createClassMetadataFromNode(indirectChildNode));
-                    cachedPossibleChildren.add((String)indirectChildNode.getProperty(Constants.PROPERTY_NAME));
+        cachedPossibleChildren = new ArrayList();
+        try (Transaction tx = graphDb.beginTx()) {
+            Node parentNode;
+            
+            if (parentClassName == null || parentClassName.equals(Constants.NODE_DUMMYROOT))
+                parentNode = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
+            else
+                parentNode = classIndex.get(Constants.PROPERTY_NAME, parentClassName).getSingle();
+
+            Iterable<Relationship> relationships = parentNode.getRelationships(RelTypes.POSSIBLE_CHILD, Direction.OUTGOING);
+            for (Relationship relationship : relationships) {
+                if ((Boolean) relationship.getEndNode().getProperty(Constants.PROPERTY_ABSTRACT)) {
+                    Iterable<Node> allSubClasses = Util.getAllSubclasses(relationship.getEndNode());
+                    for (Node childNode : allSubClasses) {
+                        if (!(Boolean) childNode.getProperty(Constants.PROPERTY_ABSTRACT)) {
+                            classMetadataResultList.add(Util.createClassMetadataFromNode(childNode));
+                            cachedPossibleChildren.add((String) childNode.getProperty(Constants.PROPERTY_NAME));
+                        }
+                    }
+                } else {
+                    classMetadataResultList.add(Util.createClassMetadataFromNode(relationship.getEndNode()));
+                    cachedPossibleChildren.add((String) relationship.getEndNode().getProperty(Constants.PROPERTY_NAME));
                 }
             }
             cm.putPossibleChildren(parentClassName == null ? 
@@ -1260,33 +1248,42 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     throw new MetadataObjectNotFoundException(String.format(
                             "Can not find class with id %s", parentClassId));
                 
-                if (!isSubClass(Constants.CLASS_INVENTORYOBJECT, (String)childNode.getProperty(Constants.PROPERTY_NAME)))
+                String newPossibleChildrenClassName = (String)childNode.getProperty(Constants.PROPERTY_NAME);
+                String parentClassName = (String)parentNode.getProperty(Constants.PROPERTY_NAME);
+                
+                if (!isSubClass(Constants.CLASS_INVENTORYOBJECT, newPossibleChildrenClassName))
                     throw new InvalidArgumentException(
-                            String.format("%s is not a business class, thus can not be added to the containment hierarchy", (String)childNode.getProperty(Constants.PROPERTY_NAME)));
+                            String.format("%s is not a business class, thus can not be added to the containment hierarchy", newPossibleChildrenClassName));
                 
                 if ((Boolean)childNode.getProperty(Constants.PROPERTY_ABSTRACT)){
                    for (Node subclassNode : Util.getAllSubclasses(childNode)){
                        for (ClassMetadataLight possibleChild : currentPossibleChildren){
                             if (possibleChild.getId() == subclassNode.getId())
-                                throw new InvalidArgumentException(String.format("A subclass of %s is already a possible child for instances of %s", (String)childNode.getProperty(Constants.PROPERTY_NAME), (String)parentNode.getProperty(Constants.PROPERTY_NAME)));
+                                throw new InvalidArgumentException(String.format("A subclass of %s is already a possible child for instances of %s", 
+                                        newPossibleChildrenClassName, parentClassName));
                        }
                    }
                 }
-                else{
-                    for (ClassMetadataLight possibleChild : currentPossibleChildren){
+                else {
+                    for (ClassMetadataLight possibleChild : currentPossibleChildren) {
                         if (possibleChild.getId() == childNode.getId())
-                            throw new InvalidArgumentException(String.format("Class %s is already a possible child for instances of %s", (String)childNode.getProperty(Constants.PROPERTY_NAME), (String)parentNode.getProperty(Constants.PROPERTY_NAME)));
+                            throw new InvalidArgumentException(String.format("Class %s is already a possible child for instances of %s", 
+                                    newPossibleChildrenClassName, parentClassName));
                     }
                 }
                 parentNode.createRelationshipTo(childNode, RelTypes.POSSIBLE_CHILD);
-                 //Refresh cache
-                if ((Boolean)childNode.getProperty(Constants.PROPERTY_ABSTRACT)){
-                    for(ClassMetadataLight subclass : getSubClassesLight((String)childNode.getProperty(Constants.PROPERTY_NAME), false, false))
-                        cm.putPossibleChild((String)parentNode.getProperty(Constants.PROPERTY_NAME),subclass.getName());
-                }else
-                    cm.putPossibleChild((String)parentNode.getProperty(Constants.PROPERTY_NAME), (String)childNode.getProperty(Constants.PROPERTY_NAME));
-                tx.success();
+                
+                //Refresh cache
+                if ((Boolean)childNode.getProperty(Constants.PROPERTY_ABSTRACT)) {
+                    //for(ClassMetadataLight subclass : getSubClassesLight(newPossibleChildrenClassName, false, false))
+                    for (Node subClassNode : Util.getAllSubclasses(childNode)) {
+                        if (!(boolean)subClassNode.getProperty(Constants.PROPERTY_ABSTRACT))
+                            cm.putPossibleChild(parentClassName, (String)subClassNode.getProperty(Constants.PROPERTY_NAME));
+                    }
+                } else
+                    cm.putPossibleChild(parentClassName, newPossibleChildrenClassName);
             }
+            tx.success();
         }
     }
     
