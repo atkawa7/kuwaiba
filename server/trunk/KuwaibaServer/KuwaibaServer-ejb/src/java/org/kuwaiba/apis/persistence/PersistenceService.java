@@ -84,6 +84,7 @@ public class PersistenceService {
             Properties applicationConfiguration = new Properties();
             applicationConfiguration.put("backgroundsPath", configuration.getProperty("backgroundsPath"));
             applicationConfiguration.put("corporateLogo", configuration.getProperty("corporateLogo"));
+            applicationConfiguration.put("enforceBusinessRules", configuration.getProperty("enforceBusinessRules"));
             aem.setConfiguration(applicationConfiguration);
             
             dataModelLoader = new DataModelLoader(connectionManager, mem);
