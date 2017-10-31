@@ -860,6 +860,76 @@ public class ToolsBean implements ToolsBeanRemote {
                     }
                 }
                 break;
+                case "9":
+                {
+                    ClassMetadata classMetadata = new ClassMetadata();
+                    classMetadata.setDisplayName("");
+                    classMetadata.setDescription("");
+                    classMetadata.setColor(0);
+                    classMetadata.setCountable(true);
+                    classMetadata.setCreationDate(Calendar.getInstance().getTimeInMillis());
+                    classMetadata.setIcon(null);
+                    classMetadata.setSmallIcon(null);
+                    classMetadata.setCustom(true);
+                    classMetadata.setViewable(true);
+                    classMetadata.setInDesign(false);
+                    
+                    long genericApplicationListTypeId = -1;
+                    
+                    try {
+                        classMetadata.setName("GenericApplicationListType"); //NOI18N
+                        classMetadata.setParentClassName("GenericObjectList"); //NOI18N
+                        classMetadata.setAbstract(true);                        
+                        
+                        genericApplicationListTypeId = mem.createClass(classMetadata);
+                        
+                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
+                            ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
+                            String.format("Created class %s", classMetadata.getName()));
+                        
+                    } catch (DatabaseException | MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
+                        results[i] += " " + ex.getMessage();
+                    }
+                    if (genericApplicationListTypeId != -1) {
+                        long predefinedShapeId = -1;
+                        try {
+                            classMetadata.setName("PredefinedShape"); //NOI18N
+                            classMetadata.setParentClassName("GenericApplicationListType"); //NOI18N
+                            classMetadata.setAbstract(false);
+                            
+                            predefinedShapeId = mem.createClass(classMetadata);
+                            
+                            aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
+                                ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
+                                String.format("Created class %s", classMetadata.getName()));
+                        
+                        } catch (DatabaseException | MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
+                            results[i] += " " + ex.getMessage();
+                        }
+                        if (predefinedShapeId != -1) {
+                            try {
+                                AttributeMetadata attributeMetadata = new AttributeMetadata();
+                                attributeMetadata.setDescription("");
+                                attributeMetadata.setReadOnly(false);
+                                attributeMetadata.setUnique(false);
+                                attributeMetadata.setVisible(true);
+                                attributeMetadata.setNoCopy(false);
+                                
+                                attributeMetadata.setName("icon"); //NOI18N
+                                attributeMetadata.setDisplayName("icon"); 
+                                attributeMetadata.setType("Binary"); //NOI18N
+                                mem.createAttribute(predefinedShapeId, attributeMetadata);
+                                
+                                aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
+                                    ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT,
+                                    String.format("Added attributes to class %s", "PredefinedShape"));
+                            } catch (MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
+                                results[i] += " " + ex.getMessage();
+                            }
+                        }
+                    }
+                }
+                break;
                 default:
                     results[i] = String.format("Invalid patch id %s", i);
             }

@@ -102,6 +102,8 @@ public class Util {
                 case "Date":
                 case "Timestamp":
                     return Long.valueOf(value);
+                case "Binary":                    
+                    return value.getBytes();
                 default:
                     throw new InvalidArgumentException(String.format("Type %s not found", type));
             }
@@ -511,8 +513,7 @@ public class Util {
             //Neo4J, so a null value is actually a non-existing relationship/value
             if (instance.hasProperty(myAtt.getName())){
                if (AttributeMetadata.isPrimitive(myAtt.getType())) {
-                   
-                   if (!myAtt.getType().equals("Binary")) {
+                    if (!myAtt.getType().equals("Binary")) {
                         String value = String.valueOf(instance.getProperty(myAtt.getName()));
                         
                         if (Constants.PROPERTY_NAME.equals(myAtt.getName()))
@@ -521,6 +522,14 @@ public class Util {
                         List<String> attributeValue = new ArrayList<>();
                         attributeValue.add(value);
                         attributes.put(myAtt.getName(),attributeValue);
+                    } else if (myAtt.getType().equals("Binary")) {
+                        byte [] byteArray = (byte []) instance.getProperty(myAtt.getName());
+                        
+                        String byteArrayAsString = new String(byteArray);
+                        
+                        List<String> attributeValue = new ArrayList();
+                        attributeValue.add(byteArrayAsString);
+                        attributes.put(myAtt.getName(), attributeValue);
                     }
                 }
             }

@@ -237,10 +237,10 @@ public class AttributeMetadata implements Serializable {
      * @param type The type to be matched
      * @return true if the given type is primitive, false otherwise
      */
-    public static boolean isPrimitive(String type){
+    public static boolean isPrimitive(String type) {
         return type.equals("String") || type.equals("Integer") || type.equals("Float") 
                 || type.equals("Long") || type.equals("Boolean") || type.equals("Date")
-                || type.equals("Timestamp");
+                || type.equals("Timestamp") || type.equals("Binary");
     }
     
     public static List<AttributeInfo> toAttributeInfo(List<AttributeMetadata> toBeWrapped){
