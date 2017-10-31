@@ -20,6 +20,7 @@ import java.awt.Font;
 import java.awt.Rectangle;
 import java.io.ByteArrayInputStream;
 import java.util.List;
+import javax.swing.JOptionPane;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
@@ -33,13 +34,18 @@ import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.visual.scene.AbstractScene;
+import org.inventory.design.modelsLayouts.model.CircleShape;
 import org.inventory.design.modelsLayouts.model.LabelShape;
+import org.inventory.design.modelsLayouts.model.PolygonShape;
 import org.inventory.design.modelsLayouts.model.RectangleShape;
 import org.inventory.design.modelsLayouts.model.Shape;
 import org.inventory.design.modelsLayouts.scene.ModelLayoutScene;
+import org.inventory.design.modelsLayouts.scene.widgets.CircleShapeWidget;
+import org.inventory.design.modelsLayouts.scene.widgets.PolygonShapeWidget;
+import org.inventory.design.modelsLayouts.scene.widgets.ResizableLabelWidget;
 import org.netbeans.api.visual.border.BorderFactory;
-import org.netbeans.api.visual.widget.LabelWidget;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Exceptions;
 
@@ -50,7 +56,7 @@ import org.openide.util.Exceptions;
 public class RenderModelLayout {
     private String errorMessage;
     private final Widget parentWidget;
-    private Rectangle rectangle;
+    private final Rectangle rectangle;
     private double widthPercentage;
     private double heightPercentage;
     
@@ -86,31 +92,45 @@ public class RenderModelLayout {
         return errorMessage;
     }
     
-    private void initializeRenderEquipmentModelLayout() {
+    private LocalObjectListItem getEquipmentModel() {
         if (objectLight == null)
-            return;
+            return null;
+        
+        if(CommunicationsStub.getInstance().getMetaForClass("PredefinedShape", true) == null) { //NOI18N
+            JOptionPane.showMessageDialog(null, 
+                "This database seems outdated. Contact your administrator to apply the necessary patches to add the PredefinedShape class", 
+                I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
+            return null;            
+        }
+        
+        if (CommunicationsStub.getInstance().isSubclassOf(objectLight.getClassName(), "PredefinedShape")) //NOI18N
+            return (LocalObjectListItem) objectLight;
+        
         if (!CommunicationsStub.getInstance().isSubclassOf(objectLight.getClassName(), "GenericCommunicationsElement")) //NOI18N
-            return;
-                
+            return null;
+        
         LocalObject localObject = CommunicationsStub.getInstance().getObjectInfo(objectLight.getClassName(), objectLight.getOid());
         if (localObject == null) {
             this.errorMessage = CommunicationsStub.getInstance().getError();
-            return;
+            return null;
         }
-        equipmentModel = null;
         for (Object attrValue : localObject.getAttributes().values()) {
             if (attrValue instanceof LocalObjectListItem) {
                 LocalObjectListItem loli = (LocalObjectListItem) attrValue;
-                if ("EquipmentModel".equals(loli.getClassName())) { //NOI18N
-                    equipmentModel = loli;
-                    break;
-                }
+                if ("EquipmentModel".equals(loli.getClassName())) //NOI18N
+                    return loli;
             }
         }
-        if (equipmentModel == null) {
-            this.errorMessage = String.format("The object %s no has or not set the attribute \"model\"", localObject);
+        errorMessage = String.format("The object %s no has or not set the attribute \"model\"", localObject);
+        return null;
+    }
+    
+    private void initializeRenderEquipmentModelLayout() {
+        equipmentModel = getEquipmentModel();
+        
+        if (equipmentModel == null)
             return;
-        }
+
         equipmentModelView = null;
         List<LocalObjectViewLight> relatedViews = CommunicationsStub.getInstance().getListTypeItemRelatedViews(equipmentModel.getId(), equipmentModel.getClassName());
         if (relatedViews == null) {
@@ -169,7 +189,10 @@ public class RenderModelLayout {
         }
     }
     
-    private void recursiveRender(boolean parentEnable, LocalObjectLight object, List<LocalObjectLight> objChildren, XMLStreamReader reader, QName tagShape, Shape parentShape, Widget parentWidget, double widthPercentage, double heightPercentage) throws XMLStreamException {
+    private void recursiveRender(boolean parentEnable, LocalObjectLight object, 
+        List<LocalObjectLight> objChildren, XMLStreamReader reader, QName tagShape, 
+        Shape parentShape, Widget parentWidget, double widthPercentage, double heightPercentage) throws XMLStreamException {
+        
         String type = reader.getAttributeValue(null, "type"); //NOI18N
         Shape shape = ModelLayoutScene.XMLtoShape(reader, parentShape);
         
@@ -190,21 +213,35 @@ public class RenderModelLayout {
         
         if (RectangleShape.SHAPE_TYPE.equals(type)) {            
             shapeWidget = shapeEnable && object != null ? ((AbstractScene) parentWidget.getScene()).addNode(object) : new Widget(parentWidget.getScene());
-        }
-        if (LabelShape.SHAPE_TYPE.equals(type)) {
-            shapeWidget = new LabelWidget(parentWidget.getScene());
+        } else if (LabelShape.SHAPE_TYPE.equals(type)) {
+            shapeWidget = new ResizableLabelWidget(parentWidget.getScene());
             //TODO: for future feature the use of the width or height percentage 
             //depend of the orientation of the text
             ((LabelShape) shape).setFontSize((int) (((LabelShape) shape).getFontSize() * Math.abs(heightPercentage - 0.30)));
             Font font = new Font(null, 0, ((LabelShape) shape).getFontSize());
-            ((LabelWidget) shapeWidget).setFont(font);
-            ((LabelWidget) shapeWidget).setLabel(((LabelShape) shape).getLabel());
+            ((ResizableLabelWidget) shapeWidget).setFont(font);
+            ((ResizableLabelWidget) shapeWidget).setLabel(((LabelShape) shape).getLabel());
             
             if (shapeEnable)
-                ((LabelWidget) shapeWidget).setForeground(((LabelShape) shape).getTextColor());
+                ((ResizableLabelWidget) shapeWidget).setForeground(((LabelShape) shape).getTextColor());
             else
-                ((LabelWidget) shapeWidget).setForeground(Color.GRAY);
-        }     
+                ((ResizableLabelWidget) shapeWidget).setForeground(Color.GRAY);
+        } else if (CircleShape.SHAPE_TYPE.equals(type)) {
+            shapeWidget = new CircleShapeWidget(parentWidget.getScene(), (CircleShape) shape);            
+            if (!shapeEnable) {
+                ((CircleShapeWidget) shapeWidget).setEllipseColor(Color.GRAY);
+                ((CircleShapeWidget) shapeWidget).setOvalColor(Color.GRAY);
+            }
+        } else if (PolygonShape.SHAPE_TYPE.equals(type)) {
+            shapeWidget = new PolygonShapeWidget(parentWidget.getScene(), (PolygonShape) shape);
+            if (!shapeEnable) {
+                ((PolygonShapeWidget) shapeWidget).setInteriorColor(Color.GRAY);
+                ((PolygonShapeWidget) shapeWidget).setOutlineColor(Color.GRAY);
+            }
+        }
+        if (shapeWidget == null)
+            throw new UnsupportedOperationException("The " + shape.getShapeType() + " is not supported yet.");
+        shapeWidget.setOpaque(shape.isOpaque());
         
         if (parentShape != null) {
             shape.setX((int) (shape.getX() * widthPercentage));
@@ -219,11 +256,15 @@ public class RenderModelLayout {
         
         ModelLayoutScene.shapeToWidget(shape, shapeWidget);
         if (!shapeEnable) {
-            shapeWidget.setBorder(BorderFactory.createLineBorder(shape.getBorderWidth(), Color.GRAY));
+            if (shape.isOpaque()) {
+                shapeWidget.setBorder(BorderFactory.createLineBorder(shape.getBorderWidth(), Color.GRAY));
+            } else {
+                shapeWidget.setBorder(BorderFactory.createOpaqueBorder(
+                    shape.getBorderWidth(), shape.getBorderWidth(), 
+                    shape.getBorderWidth(), shape.getBorderWidth()));
+            }
             shapeWidget.setBackground(Color.LIGHT_GRAY);
         }
-        shapeWidget.setOpaque(true);
-        
         shapeWidget.revalidate();
         parentWidget.addChild(shapeWidget);
         parentWidget.getScene().validate();
@@ -269,7 +310,7 @@ public class RenderModelLayout {
         List<LocalObjectLight> children = CommunicationsStub.getInstance().getObjectChildren(lol.getOid(), lol.getClassName());
         
         if (children == null) {
-            NotificationUtil.getInstance().showSimplePopup("Error", 
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                 NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             return null;
         } else

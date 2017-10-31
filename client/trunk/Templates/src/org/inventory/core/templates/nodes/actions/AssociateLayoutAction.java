@@ -22,6 +22,7 @@ import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.templates.nodes.TemplateElementNode;
 import org.inventory.design.modelsLayouts.ModelLayoutTopComponent;
 import org.openide.util.Utilities;
@@ -49,7 +50,7 @@ public class AssociateLayoutAction extends GenericInventoryAction {
         
         LocalObject templateElement = CommunicationsStub.getInstance().getTemplateElement(selectedObject.getClassName(), selectedObject.getOid());
         if (templateElement == null) {
-            NotificationUtil.getInstance().showSimplePopup("Error", 
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                 NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             return;
         }
@@ -67,8 +68,8 @@ public class AssociateLayoutAction extends GenericInventoryAction {
             }
         }
         if (loli == null) {
-            NotificationUtil.getInstance().showSimplePopup("Error", 
-                NotificationUtil.ERROR_MESSAGE, "The template no has assigned the list type attribute with type EquipmentModel");
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                NotificationUtil.ERROR_MESSAGE, "The property \"model\" is not set");
             return;
         }
         

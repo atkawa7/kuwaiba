@@ -22,15 +22,17 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
-import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
+import org.inventory.design.modelsLayouts.RenderModelLayout;
+import org.inventory.design.modelsLayouts.lookup.SharedContentLookup;
+import org.inventory.design.modelsLayouts.model.CircleShape;
 import org.inventory.design.modelsLayouts.model.LabelShape;
+import org.inventory.design.modelsLayouts.model.PolygonShape;
+import org.inventory.design.modelsLayouts.model.PredefinedShape;
 import org.inventory.design.modelsLayouts.model.RectangleShape;
 import org.inventory.design.modelsLayouts.model.Shape;
 import org.inventory.design.modelsLayouts.scene.ModelLayoutScene;
-import org.inventory.design.modelsLayouts.scene.widgets.LabelShapeWidget;
-import org.inventory.design.modelsLayouts.scene.widgets.RectangleShapeWidget;
 import org.netbeans.api.visual.action.AcceptProvider;
 import org.netbeans.api.visual.action.ConnectorState;
 import org.netbeans.api.visual.widget.Widget;
@@ -63,7 +65,7 @@ public class ModelLayoutAcceptProvider implements AcceptProvider {
             String shapeName = txtName.getText();
             Boolean isEquipment = chkEquipment.isSelected();
             
-            ModelLayoutScene scene ;
+            ModelLayoutScene scene;
             if (widget.getScene() instanceof ModelLayoutScene) {
                 scene = (ModelLayoutScene) widget.getScene();
                 
@@ -76,37 +78,59 @@ public class ModelLayoutAcceptProvider implements AcceptProvider {
                 try {  
                     Widget newWidget = null;
                     Shape shape = (Shape) t.getTransferData(Shape.DATA_FLAVOR);
-
+                    
+                    Object parent = scene.findObject(widget);
+                                        
                     Shape newShape = null;
                     if (shape instanceof LabelShape)
                         newShape = new LabelShape();
-                    else
+                    else if (shape instanceof RectangleShape)
                         newShape = new RectangleShape();
-                    newShape.setName(shapeName);
-                    newShape.setIsEquipment(isEquipment);
-
-                    if (widget instanceof ModelLayoutScene) {
-                        newShape.setParent(null);
-                        newWidget = scene.addNode(newShape);
-                    }
-                    else {
-                        Object parent = scene.findObject(widget);
-
-                        if (parent != null && parent instanceof Shape) {
-                            newShape.setParent((Shape) parent);
-                            newWidget = scene.addNode(newShape);
+                    else if (shape instanceof CircleShape)
+                        newShape = new CircleShape();
+                    else if (shape instanceof PolygonShape)
+                        newShape = new PolygonShape();
+                    else if (shape instanceof PredefinedShape) {
+                        if (parent == null)
+                            return;
+                        
+                        RenderModelLayout render = new RenderModelLayout(((PredefinedShape) shape).getObject(), widget.getParentWidget(), -1, -1, -1, -1);
+                                                
+                        if (render.hasEquipmentModelLayout()) {
+                            scene.setIsNewPredefinedShape(true);
+                            scene.setNewPredefinedShapeParent((Shape) parent);
+                            
+                            scene.renderPredefinedShape(render.getEquipmentModelView().getStructure(), (Shape) parent);
+                            
+                            if (scene.getNewPredefinedShape() != null) {
+                                newWidget = scene.findWidget(scene.getNewPredefinedShape());
+                            }
+                            scene.setIsNewPredefinedShape(false);
+                            scene.setNewPredefinedShapeParent(null);
+                            scene.setNewPredefinedShape(null);
                         }
                     }
+                    if (newShape != null) {
+                        
+                        newShape.setParent((Shape) parent);
+                        newShape.setName(shapeName);
+                        newShape.setIsEquipment(isEquipment);
+                        
+                        if (widget instanceof ModelLayoutScene)
+                            newWidget = scene.addNode(newShape);
+                        else
+                            newWidget = scene.addNode(newShape);
+                    }
                     if (newWidget != null) {
+                        
                         newWidget.setPreferredLocation(point);
                         scene.repaint();
 
                         newShape.setX(point.x);
                         newShape.setY(point.y);
-                        if (newShape instanceof LabelShape)
-                            ((LabelShapeWidget) newWidget).fixLookup();
-                        if (newShape instanceof RectangleShape)
-                            ((RectangleShapeWidget) newWidget).fixLookup();
+
+                        if (newWidget instanceof SharedContentLookup)
+                            ((SharedContentLookup) newWidget).fixLookup();
                     }
                 } catch (Exception ex) {            
                 }

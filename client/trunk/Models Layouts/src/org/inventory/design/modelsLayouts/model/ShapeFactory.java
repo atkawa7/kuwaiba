@@ -40,6 +40,12 @@ public class ShapeFactory {
         if (LabelShape.SHAPE_TYPE.equals(type))
             return new LabelShape();
         
+        if (CircleShape.SHAPE_TYPE.equals(type))
+            return new CircleShape();
+        
+        if (PolygonShape.SHAPE_TYPE.equals(type))
+            return new PolygonShape();
+        
         return null;
     }    
 }

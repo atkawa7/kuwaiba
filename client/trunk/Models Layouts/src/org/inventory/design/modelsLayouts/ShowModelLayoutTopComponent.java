@@ -139,8 +139,10 @@ public final class ShowModelLayoutTopComponent extends TopComponent {
         RenderModelLayout renderModelLayout = new RenderModelLayout(objectLight, scene, 100, 100, 700, 700);
         if (renderModelLayout.getEquipmentModelView() == null) {
             close();
-            NotificationUtil.getInstance().showSimplePopup("Information", 
-                NotificationUtil.INFO_MESSAGE, renderModelLayout.getErrorMessage());
+            if (renderModelLayout.getErrorMessage() != null) {
+                NotificationUtil.getInstance().showSimplePopup("Information", 
+                    NotificationUtil.INFO_MESSAGE, renderModelLayout.getErrorMessage());
+            }
             return;
         }
         renderModelLayout.setOriginalSize(true);

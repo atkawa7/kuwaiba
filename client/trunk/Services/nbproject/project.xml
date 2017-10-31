@@ -86,6 +86,7 @@
                 <package>org.inventory.core.services.api.behaviors</package>
                 <package>org.inventory.core.services.api.export</package>
                 <package>org.inventory.core.services.api.export.filters</package>
+                <package>org.inventory.core.services.api.imports.filters</package>
                 <package>org.inventory.core.services.api.notifications</package>
                 <package>org.inventory.core.services.api.visual</package>
                 <package>org.inventory.core.services.api.xml</package>

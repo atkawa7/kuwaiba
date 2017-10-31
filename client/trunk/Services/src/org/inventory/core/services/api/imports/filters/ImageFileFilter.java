@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.inventory.customization.classhierarchy.nodes.properties;
+package org.inventory.core.services.api.imports.filters;
 
 import java.io.File;
 import javax.swing.filechooser.FileFilter;

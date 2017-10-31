@@ -25,6 +25,7 @@ import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.design.modelsLayouts.scene.ModelLayoutScene;
+import org.inventory.predefinedshapes.PredefinedShapesTopComponent;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -86,7 +87,9 @@ public final class ModelLayoutTopComponent extends TopComponent implements Actio
         barMain = new javax.swing.JToolBar();
         btnSave = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
+        btnManagePredefineShapes = new javax.swing.JButton();
         btnShowPalette = new javax.swing.JButton();
+        btnShapeHierarchy = new javax.swing.JButton();
         btnClean = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
@@ -120,6 +123,19 @@ public final class ModelLayoutTopComponent extends TopComponent implements Actio
         });
         barMain.add(btnDelete);
 
+        btnManagePredefineShapes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/design/modelsLayouts/res/manage_predefined_shapes.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnManagePredefineShapes, org.openide.util.NbBundle.getMessage(ModelLayoutTopComponent.class, "ModelLayoutTopComponent.btnManagePredefineShapes.text")); // NOI18N
+        btnManagePredefineShapes.setToolTipText(org.openide.util.NbBundle.getMessage(ModelLayoutTopComponent.class, "ModelLayoutTopComponent.btnManagePredefineShapes.toolTipText")); // NOI18N
+        btnManagePredefineShapes.setFocusable(false);
+        btnManagePredefineShapes.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnManagePredefineShapes.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnManagePredefineShapes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnManagePredefineShapesActionPerformed(evt);
+            }
+        });
+        barMain.add(btnManagePredefineShapes);
+
         btnShowPalette.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/design/modelsLayouts/res/show_palette.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnShowPalette, org.openide.util.NbBundle.getMessage(ModelLayoutTopComponent.class, "ModelLayoutTopComponent.btnShowPalette.text")); // NOI18N
         btnShowPalette.setToolTipText(org.openide.util.NbBundle.getMessage(ModelLayoutTopComponent.class, "ModelLayoutTopComponent.btnShowPalette.toolTipText")); // NOI18N
@@ -132,6 +148,19 @@ public final class ModelLayoutTopComponent extends TopComponent implements Actio
             }
         });
         barMain.add(btnShowPalette);
+
+        btnShapeHierarchy.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/design/modelsLayouts/res/shape_hierarchy.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnShapeHierarchy, org.openide.util.NbBundle.getMessage(ModelLayoutTopComponent.class, "ModelLayoutTopComponent.btnShapeHierarchy.text")); // NOI18N
+        btnShapeHierarchy.setToolTipText(org.openide.util.NbBundle.getMessage(ModelLayoutTopComponent.class, "ModelLayoutTopComponent.btnShapeHierarchy.toolTipText")); // NOI18N
+        btnShapeHierarchy.setFocusable(false);
+        btnShapeHierarchy.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnShapeHierarchy.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnShapeHierarchy.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnShapeHierarchyActionPerformed(evt);
+            }
+        });
+        barMain.add(btnShapeHierarchy);
 
         btnClean.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/design/modelsLayouts/res/clean.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnClean, org.openide.util.NbBundle.getMessage(ModelLayoutTopComponent.class, "ModelLayoutTopComponent.btnClean.text")); // NOI18N
@@ -180,11 +209,48 @@ public final class ModelLayoutTopComponent extends TopComponent implements Actio
         }
     }//GEN-LAST:event_btnShowPaletteActionPerformed
 
+    private void btnManagePredefineShapesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnManagePredefineShapesActionPerformed
+            PredefinedShapesTopComponent topComponent = (PredefinedShapesTopComponent) WindowManager.getDefault().findTopComponent("PredefinedShapesTopComponent"); //NOI18N
+            if (topComponent == null) {
+                topComponent = new PredefinedShapesTopComponent();
+                topComponent.open();
+            } else {
+                if (topComponent.isOpened())
+                    topComponent.requestAttention(true);
+                else { //Even after closed, the TCs (even the no-singletons) continue to exist in the NBP's PersistenceManager registry, 
+                       //so we will reuse the instance, refreshing the vierw first
+                    //topComponent.refresh();
+                    topComponent.open();
+                }
+            }
+            topComponent.requestActive();
+    }//GEN-LAST:event_btnManagePredefineShapesActionPerformed
+
+    private void btnShapeHierarchyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShapeHierarchyActionPerformed
+        
+            ShapeHierarchyTopComponent topComponent = (ShapeHierarchyTopComponent) WindowManager.getDefault().findTopComponent("ShapeHierarchyTopComponent"); //NOI18N
+            if (topComponent == null) {
+                topComponent = new ShapeHierarchyTopComponent(service.getScene());
+                topComponent.open();
+            } else {
+                if (topComponent.isOpened())
+                    topComponent.requestAttention(true);
+                else { //Even after closed, the TCs (even the no-singletons) continue to exist in the NBP's PersistenceManager registry, 
+                       //so we will reuse the instance, refreshing the vierw first
+                    //topComponent.refresh();
+                    topComponent.open();
+                }
+            }
+            topComponent.requestActive();
+    }//GEN-LAST:event_btnShapeHierarchyActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barMain;
     private javax.swing.JButton btnClean;
     private javax.swing.JButton btnDelete;
+    private javax.swing.JButton btnManagePredefineShapes;
     private javax.swing.JButton btnSave;
+    private javax.swing.JButton btnShapeHierarchy;
     private javax.swing.JButton btnShowPalette;
     private javax.swing.JScrollPane pnlScrollPane;
     // End of variables declaration//GEN-END:variables
@@ -202,6 +268,12 @@ public final class ModelLayoutTopComponent extends TopComponent implements Actio
     public void componentClosed() {
         service.getScene().removeAllListeners();
         service.getScene().clear();
+        
+        ShapeHierarchyTopComponent topComponent = (ShapeHierarchyTopComponent) WindowManager.getDefault().findTopComponent("ShapeHierarchyTopComponent"); //NOI18N
+        if (topComponent != null) {
+            if (topComponent.isOpened())
+                topComponent.close();
+        }
     }
     
     @Override

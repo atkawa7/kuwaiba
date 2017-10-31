@@ -16,18 +16,29 @@
  */
 package org.inventory.design.modelsLayouts;
 
+import java.awt.Color;
+import java.awt.Image;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import org.inventory.design.modelsLayouts.scene.ModelLayoutScene;
 import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalObjectViewLight;
+import org.inventory.communications.util.Binary;
+import org.inventory.communications.util.Utils;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
+import org.inventory.design.modelsLayouts.model.CircleShape;
 import org.inventory.design.modelsLayouts.model.LabelShape;
+import org.inventory.design.modelsLayouts.model.PolygonShape;
+import org.inventory.design.modelsLayouts.model.PredefinedShape;
+import org.inventory.design.modelsLayouts.model.RectangleShape;
 import org.inventory.design.modelsLayouts.nodes.CategoryChildren;
 import org.inventory.design.modelsLayouts.model.Shape;
 import org.netbeans.spi.palette.DragAndDropHandler;
@@ -55,10 +66,44 @@ public class ModelLayoutService {
     public ModelLayoutService(LocalObjectListItem listItem) {
         this.listItem = listItem;
         scene = new ModelLayoutScene(listItem);
-        shapes.put("General", new Shape [] {
-            new Shape("org/inventory/design/modelsLayouts/res/rectangle.png"),
-            new LabelShape("org/inventory/design/modelsLayouts/res/label.png")
+        shapes.put(I18N.gm("palette_category_display_name_general_shapes"), new Shape [] {
+            new LabelShape("org/inventory/design/modelsLayouts/res/label.png"),
+            new RectangleShape("org/inventory/design/modelsLayouts/res/rectangle.png"),
+            new PolygonShape("org/inventory/design/modelsLayouts/res/polygon.png"),
+            new CircleShape("org/inventory/design/modelsLayouts/res/ellipse.png"),
         });
+        shapes.put(I18N.gm("palette_category_display_name_predefined_shapes"), getPredefinedShapes());
+    }
+    
+    private Shape [] getPredefinedShapes() {
+        List<LocalObjectListItem> predefinedShapes = CommunicationsStub.getInstance().getList("PredefinedShape", false, true); //NOI18N
+        if (predefinedShapes == null) {
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            return new Shape[0];
+        }
+                        
+        List<Shape> items = new ArrayList();
+                
+        for (LocalObjectListItem item : predefinedShapes) {
+            
+            LocalObject object = CommunicationsStub.getInstance().getObjectInfo(item.getClassName(), item.getOid());
+                        
+            if (object == null) {
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                    NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                return new Shape[0];
+            }
+            Binary binaryIcon = (Binary) object.getAttribute("icon"); //NOI18N
+            
+            if (binaryIcon == null)
+                continue;
+            
+            Image icon = Utils.getIconFromByteArray(binaryIcon.getByteArray(), Color.BLACK, 50, 50);
+            
+            items.add(new PredefinedShape(item, icon));
+        }
+        return items.toArray(new Shape[0]);
     }
     
     public LocalObjectListItem getListItem() {
@@ -80,7 +125,7 @@ public class ModelLayoutService {
                 scene.render(currentView.getStructure());
             }            
         } else
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
     }
     
     public boolean saveView() {        
@@ -91,21 +136,21 @@ public class ModelLayoutService {
             
             if (viewId != -1) { //Success
                 currentView = new LocalObjectView(viewId, "EquipmentModelLayoutView", null, null, structure, scene.getBackgroundImage()); //NOI18N
-                NotificationUtil.getInstance().showSimplePopup("Information", 
-                    NotificationUtil.INFO_MESSAGE, "The view was saved successfully");
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), 
+                    NotificationUtil.INFO_MESSAGE, I18N.gm("view_save_successfully"));
                 return true;
             } else {
-                NotificationUtil.getInstance().showSimplePopup("Error", 
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 return false;
             }
         } else {
             if (CommunicationsStub.getInstance().updateListTypeItemRelatedView(listItem.getId(), listItem.getClassName(), 
                 currentView.getId(), null, null, structure, scene.getBackgroundImage())) {
-                NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "The view was saved successfully");
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, "The view was saved successfully");
                 return true;
             } else {
-                NotificationUtil.getInstance().showSimplePopup("Error", 
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 return false;
             }
@@ -117,7 +162,9 @@ public class ModelLayoutService {
             return false;
         if (listItem == null)
             return false;
-        boolean deleted = CommunicationsStub.getInstance().deleteListTypeItemRelatedView(listItem.getId(), listItem.getClassName(), currentView.getId());
+        boolean deleted = CommunicationsStub.getInstance().deleteListTypeItemRelatedView(
+            listItem.getId(), listItem.getClassName(), currentView.getId());
+        
         if (deleted)
             currentView = null;
         return deleted;
@@ -134,7 +181,7 @@ public class ModelLayoutService {
     private PaletteController createPalette() {
         if (palette == null) {
             AbstractNode paletteRoot = new AbstractNode(new CategoryChildren());
-            paletteRoot.setName("Palette");
+            paletteRoot.setDisplayName(I18N.gm("palette_root_display_name"));
             palette = PaletteFactory.createPalette(paletteRoot, new CustomPaletteActions(), null, new CustomDragAndDropHandler());
         }
         return palette;

@@ -20,7 +20,6 @@ import org.inventory.design.modelsLayouts.scene.widgets.actions.ResizeShapeProvi
 import org.inventory.design.modelsLayouts.scene.widgets.actions.MoveShapeProvider;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -43,19 +42,24 @@ import javax.xml.stream.XMLStreamReader;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.design.modelsLayouts.scene.widgets.actions.GroupShapesAction;
 import org.inventory.design.modelsLayouts.lookup.SharedContent;
 import org.inventory.design.modelsLayouts.lookup.SharedContentLookup;
 import org.inventory.design.modelsLayouts.menus.ShapeWidgetMenu;
+import org.inventory.design.modelsLayouts.model.CircleShape;
 import org.inventory.design.modelsLayouts.model.LabelShape;
+import org.inventory.design.modelsLayouts.model.PolygonShape;
 import org.inventory.design.modelsLayouts.model.RectangleShape;
 import org.inventory.design.modelsLayouts.providers.ModelLayoutAcceptProvider;
 import org.inventory.design.modelsLayouts.model.Shape;
 import org.inventory.design.modelsLayouts.model.ShapeFactory;
 import org.inventory.design.modelsLayouts.providers.ShapeNameAcceptProvider;
 import org.inventory.design.modelsLayouts.providers.ShapeSelectProvider;
+import org.inventory.design.modelsLayouts.scene.widgets.CircleShapeWidget;
 import org.inventory.design.modelsLayouts.scene.widgets.LabelShapeWidget;
+import org.inventory.design.modelsLayouts.scene.widgets.PolygonShapeWidget;
 import org.inventory.design.modelsLayouts.scene.widgets.RectangleShapeWidget;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
@@ -78,14 +82,17 @@ public class ModelLayoutScene extends AbstractScene<Shape, String> implements Sh
     
     private final LocalObjectListItem listItem;
     private Widget rootWidget;
+    
+    private boolean isNewPredefinedShape = false;
+    private Shape newPredefinedShapeParent;
+    private Shape newPredefinedShape;
             
     public ModelLayoutScene(LocalObjectListItem listItem) {
         this.listItem = listItem;
         shapesLayer = new LayerWidget(this);
         addChild(shapesLayer);
         getActions().addAction(ActionFactory.createAcceptAction(modelLayoutAcceptProvider));
-        //setBackground(Color.WHITE);
-        
+                
         getActions().addAction(ActionFactory.createZoomAction());
         getInputBindings().setZoomActionModifiers(0); //No keystroke combinations
         getActions().addAction(ActionFactory.createPanAction());
@@ -93,24 +100,54 @@ public class ModelLayoutScene extends AbstractScene<Shape, String> implements Sh
         initSelectionListener();
     }
     
+    public boolean isNewPredefinedShape() {
+        return isNewPredefinedShape;
+    }
+    
+    public void setIsNewPredefinedShape(boolean isNewPredefinedShape) {
+        this.isNewPredefinedShape = isNewPredefinedShape;
+    }
+    
+    public Shape getNewPredefinedShapeParent() {
+        return newPredefinedShapeParent;
+    }
+    
+    public void setNewPredefinedShapeParent(Shape newPredefinedShapeParent) {
+        this.newPredefinedShapeParent = newPredefinedShapeParent;
+    }
+        
+    public Shape getNewPredefinedShape() {
+        return newPredefinedShape;
+    }
+    
+    public void setNewPredefinedShape(Shape newPredefinedShape) {
+        this.newPredefinedShape = newPredefinedShape;
+    }
+    
     public LocalObjectListItem getListItem() {
         return listItem;        
+    }
+    
+    public Widget getRootWidget() {
+        return rootWidget;
     }
 
     @Override
     protected Widget attachNodeWidget(Shape node) {
         Widget widget = null;
-        if (node instanceof LabelShape) {
+        if (node instanceof LabelShape)
             widget = new LabelShapeWidget(this, (LabelShape) node);
-            Font font = new Font(null, 0, ((LabelShape) node).getFontSize());
-            ((LabelShapeWidget) widget).setFont(font);
-            ((LabelShapeWidget) widget).setLabel(((LabelShape) node).getLabel());
-            ((LabelShapeWidget) widget).setForeground(((LabelShape) node).getTextColor());
-        }
-        if (node instanceof RectangleShape) {
+        else if (node instanceof RectangleShape)
             widget = new RectangleShapeWidget(this, (RectangleShape) node);
-        }        
-        widget.setOpaque(true);
+        else if (node instanceof CircleShape)
+            widget = new CircleShapeWidget(this, (CircleShape) node);
+        else if (node instanceof PolygonShape)
+            widget = new PolygonShapeWidget(this, (PolygonShape) node);
+        
+        if (widget == null)
+            throw new UnsupportedOperationException("The " + node.getShapeType() + " is not supported yet.");
+        
+        widget.setOpaque(node.isOpaque());
         
         shapeToWidget(node, widget);
         
@@ -122,12 +159,10 @@ public class ModelLayoutScene extends AbstractScene<Shape, String> implements Sh
         widget.getActions().addAction(ActionFactory.createAcceptAction(shapeNameAcceptProvider));
         widget.getActions().addAction(ActionFactory.createPopupMenuAction(ShapeWidgetMenu.getInstance()));
         
-        
-        findWidget(node.getParent());
         if (node.getParent() == null) {
             if (shapesLayer.getChildren().size() == 1) {
-                NotificationUtil.getInstance().showSimplePopup("Information", 
-                    NotificationUtil.INFO_MESSAGE, "The scene can only contain one shape to be the root");
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), 
+                    NotificationUtil.INFO_MESSAGE, I18N.gm("equipment_model_layout_scene_message"));
                 return null;
             } else {
                 shapesLayer.addChild(widget);
@@ -158,16 +193,11 @@ public class ModelLayoutScene extends AbstractScene<Shape, String> implements Sh
     public byte[] getAsXML() {
         Shape rootShape = null;
         
-//        for (Shape shape : getNodes()) {
-//            if (listItem.getName().equals(shape.getName())) {
-//                rootShape = shape;                
-//            }
-//        }
-//        Widget rootWidget = shapesLayer.getChildren().isEmpty() ? null : shapesLayer.getChildren().get(0);
         rootShape = (Shape) findObject(rootWidget);
         // The list item has no assigned none shape
         if (rootShape == null)
             return null;
+        rootShape.setName(listItem.getName());
         
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -175,15 +205,14 @@ public class ModelLayoutScene extends AbstractScene<Shape, String> implements Sh
             XMLEventWriter xmlew = xmlof.createXMLEventWriter(baos);
             XMLEventFactory xmlef = XMLEventFactory.newInstance();
             
-            QName qnameView = new QName("view");
+            QName qnameView = new QName("view"); //NOI18N
             xmlew.add(xmlef.createStartElement(qnameView, null, null));
-            xmlew.add(xmlef.createAttribute(new QName("version"), Constants.VIEW_FORMAT_VERSION));
+            xmlew.add(xmlef.createAttribute(new QName("version"), Constants.VIEW_FORMAT_VERSION)); //NOI18N
             
-            QName qnLayout = new QName("layout");
+            QName qnLayout = new QName("layout"); //NOI18N
             xmlew.add(xmlef.createStartElement(qnLayout, null, null));
             
-            Widget parent = findWidget(rootShape);
-            createXMLLayout(parent, xmlew, xmlef);
+            createXMLLayout(rootWidget, xmlew, xmlef);
             
             xmlew.add(xmlef.createEndElement(qnLayout, null));
             
@@ -202,27 +231,22 @@ public class ModelLayoutScene extends AbstractScene<Shape, String> implements Sh
         if (parentShape == null)
             return;        
         
-        QName qnShape = new QName("shape");        
+        QName qnShape = new QName("shape"); //NOI18N  
         xmlew.add(xmlef.createStartElement(qnShape, null, null));
         
-        String type = "none";
+        String type = parentShape.getShapeType();
         
-        if (parentShape instanceof RectangleShape)
-            type = RectangleShape.SHAPE_TYPE;
+        xmlew.add(xmlef.createAttribute(new QName(Shape.PROPERTY_TYPE), type));
+        xmlew.add(xmlef.createAttribute(new QName(Shape.PROPERTY_NAME), parentShape.getName() != null ? parentShape.getName() : ""));
+        xmlew.add(xmlef.createAttribute(new QName(Shape.PROPERTY_X), Integer.toString(parentShape.getX())));
+        xmlew.add(xmlef.createAttribute(new QName(Shape.PROPERTY_Y), Integer.toString(parentShape.getY())));
+        xmlew.add(xmlef.createAttribute(new QName(Shape.PROPERTY_WIDTH), Integer.toString(parentShape.getWidth())));
+        xmlew.add(xmlef.createAttribute(new QName(Shape.PROPERTY_HEIGHT), Integer.toString(parentShape.getHeight())));
+        xmlew.add(xmlef.createAttribute(new QName(Shape.PROPERTY_COLOR), Integer.toString(parentShape.getColor().getRGB())));
+        xmlew.add(xmlef.createAttribute(new QName(Shape.PROPERTY_BORDER_COLOR), Integer.toString(parentShape.getBorderColor().getRGB())));
+        xmlew.add(xmlef.createAttribute(new QName(Shape.PROPERTY_IS_EQUIPMENT), Boolean.toString(parentShape.isEquipment())));
+        xmlew.add(xmlef.createAttribute(new QName(Shape.PROPERTY_OPAQUE), Boolean.toString(parentShape.isOpaque())));
         
-        if (parentShape instanceof LabelShape)
-            type = LabelShape.SHAPE_TYPE;
-        
-        xmlew.add(xmlef.createAttribute(new QName("type"), type)); //NOI18N
-        xmlew.add(xmlef.createAttribute(new QName("name"), parentShape.getName() != null ? parentShape.getName() : "")); //NOI18N
-        xmlew.add(xmlef.createAttribute(new QName("x"), Integer.toString(parentShape.getX()))); //NOI18N
-        xmlew.add(xmlef.createAttribute(new QName("y"), Integer.toString(parentShape.getY()))); //NOI18N
-        xmlew.add(xmlef.createAttribute(new QName("width"), Integer.toString(parentShape.getWidth()))); //NOI18N
-        xmlew.add(xmlef.createAttribute(new QName("height"), Integer.toString(parentShape.getHeight()))); //NOI18N
-        xmlew.add(xmlef.createAttribute(new QName("color"), Integer.toString(parentShape.getColor().getRGB()))); //NOI18N
-        xmlew.add(xmlef.createAttribute(new QName("boderWidth"), Integer.toString(parentShape.getBorderWidth()))); //NOI18N
-        xmlew.add(xmlef.createAttribute(new QName("boderColor"), Integer.toString(parentShape.getBorderColor().getRGB()))); //NOI18N
-        xmlew.add(xmlef.createAttribute(new QName("isEquipment"), Boolean.toString(parentShape.isEquipment()))); //NOI18N
         
         if (type.equals(RectangleShape.SHAPE_TYPE)) {
             
@@ -231,6 +255,24 @@ public class ModelLayoutScene extends AbstractScene<Shape, String> implements Sh
             xmlew.add(xmlef.createAttribute(new QName("label"), ((LabelShape) parentShape).getLabel())); //NOI18N
             xmlew.add(xmlef.createAttribute(new QName("textColor"), Integer.toString(((LabelShape) parentShape).getTextColor().getRGB()))); //NOI18N
             xmlew.add(xmlef.createAttribute(new QName("fontSize"), Integer.toString(((LabelShape) parentShape).getFontSize()))); //NOI18N
+        }
+        if (type.equals(CircleShape.SHAPE_TYPE)) {
+            xmlew.add(xmlef.createAttribute(
+                new QName(CircleShape.PROPERTY_ELLIPSE_COLOR), 
+                Integer.toString(((CircleShape) parentShape).getEllipseColor().getRGB())));
+            
+            xmlew.add(xmlef.createAttribute(
+                new QName(CircleShape.PROPERTY_OVAL_COLOR), 
+                Integer.toString(((CircleShape) parentShape).getOvalColor().getRGB())));
+        }
+        if (type.equals(PolygonShape.SHAPE_TYPE)) {
+            xmlew.add(xmlef.createAttribute(
+                new QName(PolygonShape.PROPERTY_INTERIOR_COLOR), 
+                Integer.toString(((PolygonShape) parentShape).getInteriorColor().getRGB())));
+            
+            xmlew.add(xmlef.createAttribute(
+                new QName(PolygonShape.PROPERTY_OUTLINE_COLOR), 
+                Integer.toString(((PolygonShape) parentShape).getOutlineColor().getRGB())));
         }
         
         List<Widget> children = parent.getChildren();
@@ -248,6 +290,10 @@ public class ModelLayoutScene extends AbstractScene<Shape, String> implements Sh
 
     @Override
     public void render(byte[] structure) throws IllegalArgumentException {
+        renderPredefinedShape(structure, null);
+    }
+        
+    public void renderPredefinedShape(byte[] structure, Shape parent) {
         if (structure == null)
             return;
         
@@ -262,7 +308,7 @@ public class ModelLayoutScene extends AbstractScene<Shape, String> implements Sh
                 int event = reader.next();
                 if (event == XMLStreamConstants.START_ELEMENT) {                    
                     if (reader.getName().equals(tagShape)) {
-                        recursiveRender(reader, tagShape, null);
+                        recursiveRender(reader, tagShape, parent);
                     }
                 }
             }
@@ -279,65 +325,84 @@ public class ModelLayoutScene extends AbstractScene<Shape, String> implements Sh
         }
     }
     
-    public static Shape XMLtoShape(XMLStreamReader reader, Shape parent) {
-        String type = reader.getAttributeValue(null, "type"); //NOI18N
+    public static Shape XMLtoShape(XMLStreamReader reader, Shape parent) {        
+        String type = reader.getAttributeValue(null, Shape.PROPERTY_TYPE);
         Shape shape = ShapeFactory.getInstance().getShape(type);
         if (shape == null)
             return null;
         shape.setParent(parent);
         
-        String name = reader.getAttributeValue(null, "name"); //NOI18N
-        if (name != null)
-            shape.setName(name);
+        String attrValue;
         
-        String x = reader.getAttributeValue(null, "x"); //NOI18N
-        if (x != null)
-            shape.setX(Integer.valueOf(x));
+        attrValue = reader.getAttributeValue(null, Shape.PROPERTY_NAME);
+        if (attrValue != null)
+            shape.setName(attrValue);
+        
+        attrValue = reader.getAttributeValue(null, Shape.PROPERTY_X);
+        if (attrValue != null)
+            shape.setX(Integer.valueOf(attrValue));
             
-        String y = reader.getAttributeValue(null, "y"); //NOI18N
-        if (y != null)
-            shape.setY(Integer.valueOf(y));
+        attrValue = reader.getAttributeValue(null, Shape.PROPERTY_Y);
+        if (attrValue != null)
+            shape.setY(Integer.valueOf(attrValue));
         
-        String width = reader.getAttributeValue(null, "width"); //NOI18N
-        if (width != null)
-            shape.setWidth(Integer.valueOf(width));
+        attrValue = reader.getAttributeValue(null, Shape.PROPERTY_WIDTH);
+        if (attrValue != null)
+            shape.setWidth(Integer.valueOf(attrValue));
                         
-        String height = reader.getAttributeValue(null, "height"); //NOI18N
-        if (height != null)
-            shape.setHeight(Integer.valueOf(height));
+        attrValue = reader.getAttributeValue(null, Shape.PROPERTY_HEIGHT);
+        if (attrValue != null)
+            shape.setHeight(Integer.valueOf(attrValue));
                 
-        String color = reader.getAttributeValue(null, "color"); //NOI18N
-        if (color != null)
-            shape.setColor(new Color(Integer.valueOf(color)));
+        attrValue = reader.getAttributeValue(null, Shape.PROPERTY_COLOR);
+        if (attrValue != null)
+            shape.setColor(new Color(Integer.valueOf(attrValue)));
         
-        String borderWidth = reader.getAttributeValue(null, "boderWidth"); //NOI18N
-        if (borderWidth != null)
-            shape.setBorderWidth(Integer.valueOf(borderWidth));
-            
-        String borderColor = reader.getAttributeValue(null, "boderColor"); //NOI18N
-        if (borderColor != null)
-            shape.setBorderColor(new Color(Integer.valueOf(borderColor)));
+        attrValue = reader.getAttributeValue(null, Shape.PROPERTY_BORDER_COLOR);
+        if (attrValue != null)
+            shape.setBorderColor(new Color(Integer.valueOf(attrValue)));
         
-        String isEquipment = reader.getAttributeValue(null, "isEquipment"); //NOI18N
-        if (isEquipment != null)
-            shape.setIsEquipment(Boolean.valueOf(isEquipment));
+        attrValue = reader.getAttributeValue(null, Shape.PROPERTY_IS_EQUIPMENT);
+        if (attrValue != null)
+            shape.setIsEquipment(Boolean.valueOf(attrValue));
+        
+        attrValue = reader.getAttributeValue(null, Shape.PROPERTY_OPAQUE);
+        if (attrValue != null)
+            shape.setOpaque(Boolean.valueOf(attrValue));
         
         if (RectangleShape.SHAPE_TYPE.equals(type)) {
         }
         if (LabelShape.SHAPE_TYPE.equals(type)) {
-            String label = reader.getAttributeValue(null, "label"); //NOI18N
-            if (label != null)
-                ((LabelShape) shape).setLabel(label);
+            attrValue = reader.getAttributeValue(null, "label"); //NOI18N
+            if (attrValue != null)
+                ((LabelShape) shape).setLabel(attrValue);
             
-            String textColor = reader.getAttributeValue(null, "textColor"); //NOI18N
-            if (textColor != null)
-                ((LabelShape) shape).setTextColor(new Color(Integer.valueOf(textColor)));
+            attrValue = reader.getAttributeValue(null, "textColor"); //NOI18N
+            if (attrValue != null)
+                ((LabelShape) shape).setTextColor(new Color(Integer.valueOf(attrValue)));
             
-            String fontSize = reader.getAttributeValue(null, "fontSize"); //NOI18N
-            if (fontSize != null)
-                ((LabelShape) shape).setFontSize(Integer.valueOf(fontSize));                
+            attrValue = reader.getAttributeValue(null, "fontSize"); //NOI18N
+            if (attrValue != null)
+                ((LabelShape) shape).setFontSize(Integer.valueOf(attrValue));                
         }
-        
+        if (CircleShape.SHAPE_TYPE.equals(type)) {
+            attrValue = reader.getAttributeValue(null, CircleShape.PROPERTY_ELLIPSE_COLOR);
+            if (attrValue != null)
+                ((CircleShape) shape).setEllipseColor(new Color(Integer.valueOf(attrValue)));
+            
+            attrValue = reader.getAttributeValue(null, CircleShape.PROPERTY_OVAL_COLOR);
+            if (attrValue != null)
+                ((CircleShape) shape).setOvalColor(new Color(Integer.valueOf(attrValue)));
+        }
+        if (PolygonShape.SHAPE_TYPE.equals(type)) {
+            attrValue = reader.getAttributeValue(null, PolygonShape.PROPERTY_INTERIOR_COLOR);
+            if (attrValue != null)
+                ((PolygonShape) shape).setInteriorColor(new Color(Integer.valueOf(attrValue)));
+            
+            attrValue = reader.getAttributeValue(null, PolygonShape.PROPERTY_OUTLINE_COLOR);
+            if (attrValue != null)
+                ((PolygonShape) shape).setOutlineColor(new Color(Integer.valueOf(attrValue)));
+        }
         return shape;                        
     }
     
@@ -360,33 +425,39 @@ public class ModelLayoutScene extends AbstractScene<Shape, String> implements Sh
         if (sourceShape.getHeight() == null)
             sourceShape.setHeight(32 /*parentBounds.height / 2*/);
         
+        if (targetWidget == null)
+            return;            
         targetWidget.setPreferredLocation(new Point(sourceShape.getX(), sourceShape.getY()));
         targetWidget.setPreferredSize(new Dimension(sourceShape.getWidth(), sourceShape.getHeight()));
         targetWidget.setBackground(sourceShape.getColor());
-        targetWidget.setBorder(BorderFactory.createLineBorder(sourceShape.getBorderWidth(), sourceShape.getBorderColor()));
+        if (sourceShape.isOpaque()) {
+            targetWidget.setBorder(BorderFactory.createLineBorder(sourceShape.getBorderWidth(), sourceShape.getBorderColor()));
+            
+        } else {
+            targetWidget.setBorder(BorderFactory.createOpaqueBorder(
+                sourceShape.getBorderWidth(), sourceShape.getBorderWidth(), 
+                sourceShape.getBorderWidth(), sourceShape.getBorderWidth()));
+        }
     }
     
     private void recursiveRender(XMLStreamReader reader, QName tagShape, Shape parent) throws XMLStreamException {
-        String type = reader.getAttributeValue(null, "type"); //NOI18N
         Shape shape = XMLtoShape(reader, parent);
         
         if (shape == null)
             return;
+        
+        if (isNewPredefinedShape && parent == newPredefinedShapeParent)
+            newPredefinedShape = shape;
                 
         Widget shapeWidget = addNode(shape);
         
-        if (RectangleShape.SHAPE_TYPE.equals(type)) {
-        }
-        if (LabelShape.SHAPE_TYPE.equals(type)) {
-            ((LabelShapeWidget) shapeWidget).setLabel(((LabelShape) shape).getLabel());
-            ((LabelShapeWidget) shapeWidget).setForeground(((LabelShape) shape).getTextColor());
-        }        
-        shapeToWidget(shape, shapeWidget);
+        if (shapeWidget == null)
+            return;
+        
         validate();
         paint();
         
         while (reader.hasNext()) {
-            
             int event = reader.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
                 if (reader.getName().equals(tagShape)) {
@@ -397,7 +468,6 @@ public class ModelLayoutScene extends AbstractScene<Shape, String> implements Sh
         }
     }
     
-
     @Override
     public void render(Shape root) {
     }
@@ -484,11 +554,7 @@ public class ModelLayoutScene extends AbstractScene<Shape, String> implements Sh
         }
     }
     
-    public Widget changeWidget(Dimension newSize, Widget oldWidget, Rectangle oldBounds, double widthPercentage, double heightPercentage, ResizeProvider.ControlPoint controlPoint) {
-        if (oldWidget.getParentWidget() == null)
-            return null;
-        
-        Widget newWidget = oldWidget;
+    public void updateWidget(Widget oldWidget, double widthPercentage, double heightPercentage) {
         ModelLayoutScene scene = (ModelLayoutScene) oldWidget.getScene();
         // Gets the current shapes hierarchy
         Map<Shape, List<Shape>> hierarchy = new HashMap();
@@ -501,38 +567,61 @@ public class ModelLayoutScene extends AbstractScene<Shape, String> implements Sh
             heightPercentage = 1;
         }
         Shape shape = (Shape) scene.findObject(oldWidget);
+        addNewWidgetChildren(scene, hierarchy, shape, widthPercentage, heightPercentage);
+    }
+    
+    public Widget changeWidget(Dimension newSize, Widget oldWidget, Rectangle oldBounds, double widthPercentage, double heightPercentage, ResizeProvider.ControlPoint controlPoint) {
+        if (oldWidget.getParentWidget() == null)
+            return null;
+        
+        ModelLayoutScene scene = (ModelLayoutScene) oldWidget.getScene();
+        // Gets the current shapes hierarchy
+        Map<Shape, List<Shape>> hierarchy = new HashMap();
+        getShapeHierarchy(scene, oldWidget, hierarchy);
+        
+        removeRecursive(scene, oldWidget);        
+        if (!GroupShapesAction.getInstance().isGroup()) {
+            // If shapes are ungroup then no resize
+            widthPercentage = 1;
+            heightPercentage = 1;
+        }
+        Shape shape = (Shape) scene.findObject(oldWidget);
+        
+        Point sceneLocation = oldWidget.getParentWidget().convertLocalToScene(oldWidget.getLocation());
+        
+        shape.removePropertyChangeListener((PropertyChangeListener) oldWidget);        
+        scene.removeNode(shape);
+        scene.validate();
+        scene.paint();
+        
+        Widget newWidget = scene.addNode(shape);
+        
+        Point localLocation = oldWidget.getLocation();
         //BOTTOM_CENTER, CENTER_RIGHT, BOTTOM_RIGHT don't has resize problem
         if (!(ResizeProvider.ControlPoint.BOTTOM_CENTER.equals(controlPoint) || 
             ResizeProvider.ControlPoint.CENTER_RIGHT.equals(controlPoint) || 
             ResizeProvider.ControlPoint.BOTTOM_RIGHT.equals(controlPoint))) {
             
-            Point sceneLocation = oldWidget.getParentWidget().convertLocalToScene(oldWidget.getLocation());
-            
-            shape.removePropertyChangeListener((PropertyChangeListener) oldWidget);        
-            scene.removeNode(shape);
-            scene.validate();
-            scene.paint();                
-            
             int x = sceneLocation.x;
-            int y = sceneLocation.y;                
-
+            int y = sceneLocation.y;
+            
             Rectangle newBounds = oldWidget.getBounds();
 
             if (ResizeProvider.ControlPoint.TOP_CENTER.equals(controlPoint) || 
                 ResizeProvider.ControlPoint.TOP_RIGHT.equals(controlPoint))
                 y += oldBounds.height - newBounds.height;
+            
             if (ResizeProvider.ControlPoint.CENTER_LEFT.equals(controlPoint) || 
                 ResizeProvider.ControlPoint.BOTTOM_LEFT.equals(controlPoint))
                 x += oldBounds.width - newBounds.width;
+            
             if (ResizeProvider.ControlPoint.TOP_LEFT.equals(controlPoint)) {
                 x += oldBounds.width - newBounds.width;
                 y += oldBounds.height - newBounds.height;            
-            }
-            newWidget = scene.addNode(shape);
-            Point localLocation = newWidget.convertSceneToLocal(new Point(x, y));
-
-            newWidget.setPreferredLocation(localLocation);
+            }            
+            localLocation = newWidget.convertSceneToLocal(new Point(x, y));
         }
+        newWidget.setPreferredLocation(localLocation);
         newWidget.setPreferredSize(newSize);
         
         scene.validate();

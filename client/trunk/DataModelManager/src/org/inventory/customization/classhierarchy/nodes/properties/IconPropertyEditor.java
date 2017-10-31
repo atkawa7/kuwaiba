@@ -15,6 +15,7 @@
  */
 package org.inventory.customization.classhierarchy.nodes.properties;
 
+import org.inventory.core.services.api.imports.filters.ImageFileFilter;
 import java.awt.Component;
 import java.awt.Image;
 import java.awt.Toolkit;

@@ -27,6 +27,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalObjectLightList;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.visual.scene.ObjectConnectionWidget;
 import org.inventory.design.modelsLayouts.RenderModelLayout;
 import org.inventory.views.rackview.widgets.EquipmentWidget;
@@ -46,7 +47,7 @@ public class RackViewService {
     //this need to be replace, the VirtualPort should be moved under GenericLogicalPort, 
     //find a better place for the other classes under GenericBoard, should be GenericCommunitacionsBoard 
     //to make a diference between the PowerBoards and the Communitacions Boards
-    private static final List<String> noVisibleDevices = Arrays.asList(new String [] {"PowerBoard", "VirtualPort", "ServiceInstance", "PowerPort", "Transceiver"});
+    private static final List<String> noVisibleDevices = Arrays.asList(new String [] {"PowerBoard", "VirtualPort", "ServiceInstance", "PowerPort", "Transceiver"}); //NOI18N
     private final LocalObjectLight rackLight;
     private final RackViewScene scene;
     
@@ -60,19 +61,20 @@ public class RackViewService {
             rackLight.getClassName(), rackLight.getOid());
         
         if (rack == null) {
-            NotificationUtil.getInstance().showSimplePopup("Error", 
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), //NOI18N
                 NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         } else {
             Integer rackUnits = (Integer) rack.getAttribute(Constants.PROPERTY_RACK_UNITS);
             if (rackUnits == null || rackUnits == 0) {
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, 
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), //NOI18N
+                    NotificationUtil.ERROR_MESSAGE, 
                     String.format("Attribute %s in rack %s does not exist or is not set correctly", Constants.PROPERTY_RACK_UNITS, rack));
                 return;
             }
             Boolean ascending = (Boolean) rack.getAttribute(Constants.PROPERTY_RACK_UNITS_NUMBERING);
             if (ascending == null) {
                 ascending = true;
-                NotificationUtil.getInstance().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, 
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("warning"), NotificationUtil.WARNING_MESSAGE, 
                     "The rack unit sorting has not been set. Ascending is assumed");
             } else
                 ascending = !ascending;
@@ -100,7 +102,7 @@ public class RackViewService {
                     List<LocalObjectLightList> connections = CommunicationsStub.getInstance().getPhysicalConnectionsInObject(rack.getClassName(), rack.getOid());
                     
                     if (connections == null) {
-                        NotificationUtil.getInstance().showSimplePopup("Error", 
+                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), //NOI18N
                             NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                     } else
                         createConnections(connections);
@@ -135,7 +137,7 @@ public class RackViewService {
         for (Widget child : parentWidget.getChildren()) {
             Object objectChild = scene.findObject(child);
             if (objectChild instanceof LocalObjectLight) {
-                if (CommunicationsStub.getInstance().isSubclassOf(((LocalObjectLight) objectChild).getClassName(), "GenericPhysicalPort")) {
+                if (CommunicationsStub.getInstance().isSubclassOf(((LocalObjectLight) objectChild).getClassName(), "GenericPhysicalPort")) { //NOI18N
                     if (child instanceof PortWidget)
                         ((PortWidget) child).setParent((NestedDeviceWidget) equipmentWidget);
                 }
@@ -156,7 +158,7 @@ public class RackViewService {
                 .getObjectChildren(parent.getOid(), parent.getClassName());
 
             if (children == null) {
-                NotificationUtil.getInstance().showSimplePopup("Error", 
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), //NOI18N
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 return;
             }
@@ -170,7 +172,7 @@ public class RackViewService {
                 addNestedDevices(child);
             }
         }
-    }    
+    }
     
     public void createConnections(List<LocalObjectLightList> connections) {
         List<LocalObjectLight> addedConnections = new ArrayList<>();
@@ -181,7 +183,7 @@ public class RackViewService {
             LocalObjectLight bSide = null;        
             LocalObjectLight linkLight = null;
             for (LocalObjectLight object : connection) {
-                if(CommunicationsStub.getInstance().isSubclassOf(object.getClassName(), Constants.CLASS_GENERICPORT)){
+                if(CommunicationsStub.getInstance().isSubclassOf(object.getClassName(), Constants.CLASS_GENERICPORT)) {
                     if(aSide == null)
                         aSide = object;
                     else

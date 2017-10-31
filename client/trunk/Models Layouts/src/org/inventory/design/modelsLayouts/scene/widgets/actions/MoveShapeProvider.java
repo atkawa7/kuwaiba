@@ -104,6 +104,7 @@ public class MoveShapeProvider implements MoveProvider {
 
     @Override
     public void setNewLocation(Widget widget, Point point) {
+        //TODO: Boundaries in move and resize
         widget.setPreferredLocation(point);
     }
 }

@@ -256,7 +256,8 @@ public class Constants {
     /**
      * Possible attributes types
      */
-    public static final String [] ATTRIBUTE_TYPES = new String[]{"String", "Integer", "Long", "Float", "Boolean", "Date", "Timestamp"};
+    public static final String [] ATTRIBUTE_TYPES = new String[]{"String", "Integer", "Long", "Float", "Boolean", "Date", "Timestamp", 
+        /*"Binary" //TODO: This attribute type will be supported in a future release. The current use of this attribute type are in the PredefinedShape class*/};
     /**
      * Property name
      */

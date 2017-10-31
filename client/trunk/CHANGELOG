@@ -147,3 +147,8 @@
 1.6
 * Many objects can now be dragged and dropped at the same time to a view
 * It's possible to create sdh links that use concatenated containers. This way, the user can create sdh connections with arbitrary capacities to support services such as Ethernet/IP over SDH
+* Was set a unique rack view which integrating the actions: Show rack view and Show connections in Rack
+* Added patch to create the EquipmentModel class and add the attribute model with type EquipmentModel to GenericCommunicationElement class
+* Added a manager for layouts related to equipment models
+* Added patch to create the GenericApplicationListType class and the PredefinedShape class to manage predefined shapes
+* Updated the Binary data type to manage the predefined shape icon, this data types is will remain hidden for this release

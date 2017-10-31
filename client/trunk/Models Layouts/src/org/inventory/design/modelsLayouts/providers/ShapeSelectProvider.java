@@ -46,7 +46,7 @@ public class ShapeSelectProvider implements SelectProvider {
     }
 
     @Override
-    public void select (Widget widget, Point localLocation, boolean invertSelection) {
+    public void select (Widget widget, Point localLocation, boolean invertSelection) {        
         ModelLayoutScene scene = ((ModelLayoutScene) widget.getScene());
 
         Object object = scene.findObject (widget);
@@ -59,8 +59,15 @@ public class ShapeSelectProvider implements SelectProvider {
             
             for (Shape shape : scene.getNodes()) {
                 Widget shapeWidget = ((ModelLayoutScene) widget.getScene()).findWidget(shape);
-                if (shapeWidget != null && !widget.equals(shapeWidget))
-                    shapeWidget.setBorder(BorderFactory.createLineBorder(shape.getBorderWidth(), shape.getBorderColor()));                                                
+                if (shapeWidget != null && !widget.equals(shapeWidget)) {
+                    if (shape.isOpaque()) {
+                        shapeWidget.setBorder(BorderFactory.createLineBorder(shape.getBorderWidth(), shape.getBorderColor()));                        
+                    } else {
+                        shapeWidget.setBorder(BorderFactory.createOpaqueBorder(
+                            shape.getBorderWidth(), shape.getBorderWidth(), 
+                            shape.getBorderWidth(), shape.getBorderWidth()));
+                    }
+                }                                                
             }
             widget.setBorder(BorderFactory.createResizeBorder(4, Color.BLACK, true));
         } else

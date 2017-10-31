@@ -48,7 +48,7 @@ public class ShowLayoutView extends GenericObjectNodeAction {
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent e) {        
         LocalClassMetadata equipmentModelClass = CommunicationsStub.getInstance().getMetaForClass("EquipmentModel", true); //NOI18N
         if (equipmentModelClass == null) {
             JOptionPane.showMessageDialog(null, "This database seems outdated. Contact your administrator to apply the necessary patches to run the Show Equipment Model Layout View action", "Error", JOptionPane.ERROR_MESSAGE);

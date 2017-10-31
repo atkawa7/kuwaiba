@@ -17,11 +17,10 @@
 package org.inventory.design.modelsLayouts.scene.widgets;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import org.inventory.design.modelsLayouts.lookup.SharedContentLookup;
-import org.inventory.design.modelsLayouts.model.LabelShape;
+import org.inventory.design.modelsLayouts.model.PolygonShape;
 import org.inventory.design.modelsLayouts.model.Shape;
 import org.inventory.design.modelsLayouts.nodes.ShapeNode;
 import org.netbeans.api.visual.widget.Scene;
@@ -29,25 +28,39 @@ import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
 
 /**
- * Widget used to represent a label in the scene
+ * Selectable polygon widget
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class LabelShapeWidget extends ResizableLabelWidget  implements PropertyChangeListener, SharedContentLookup {
-    ShapeNode shapeNode;
-    Lookup lookup;
-
-    public LabelShapeWidget(Scene scene, LabelShape labelShape) {
+public class PolygonShapeWidget extends PolygonWidget implements PropertyChangeListener,  SharedContentLookup {
+    private final ShapeNode shapeNode;
+    private final Lookup lookup;
+    
+    public PolygonShapeWidget(Scene scene, PolygonShape polygonShape) {
         super(scene);
-        labelShape.addPropertyChangeListener(this);
-        lookup = Lookups.fixed(labelShape);
-        shapeNode = new ShapeNode(labelShape);        
+        polygonShape.addPropertyChangeListener(this);
         
-        Font font = new Font(null, 0, labelShape.getFontSize());
-        setFont(font);
-        setLabel(labelShape.getLabel());
-        setForeground(labelShape.getTextColor());
+        setBackground(polygonShape.getColor());
+        setOutlineColor(polygonShape.getOutlineColor());
+        setInteriorColor(polygonShape.getInteriorColor());
+        
+        lookup = Lookups.fixed(polygonShape);
+        shapeNode = new ShapeNode(polygonShape);
     }
     
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        Shape shape = lookup.lookup(Shape.class);
+        if (shape == null)
+            return;
+        
+        if (PolygonShape.PROPERTY_OUTLINE_COLOR.equals(evt.getPropertyName())) {
+            setOutlineColor((Color) evt.getNewValue());
+        } else if (PolygonShape.PROPERTY_INTERIOR_COLOR.equals(evt.getPropertyName())) {
+            setInteriorColor((Color) evt.getNewValue());
+        }
+        ShapeWidgetUtil.propertyChange(this, shape, evt);
+    }
+
     @Override
     public Lookup fixLookup() {
         return ShapeWidgetUtil.fixLookup(shapeNode);
@@ -57,21 +70,5 @@ public class LabelShapeWidget extends ResizableLabelWidget  implements PropertyC
     public Lookup getLookup() {
         fixLookup();
         return super.getLookup();
-    }
-
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        Shape shape = lookup.lookup(Shape.class);
-        if (shape == null)
-            return;
-        
-        if (LabelShape.PROPERTY_LABEL.equals(evt.getPropertyName())) {            
-            setLabel((String) evt.getNewValue());
-        } else if (LabelShape.PROPERTY_TEXT_COLOR.equals(evt.getPropertyName())) {            
-            setForeground((Color) evt.getNewValue());
-        } else if (LabelShape.PROPERTY_FONT_SIZE.equals(evt.getPropertyName())) { 
-            setFont(new Font(null, 0, (Integer) evt.getNewValue()));
-        }
-        ShapeWidgetUtil.propertyChange(this, shape, evt);
     }
 }

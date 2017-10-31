@@ -136,6 +136,8 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
                 PropertySupport.ReadWrite property = null;
                 int mapping = lam.getMapping();
                 switch (mapping) {
+                    case Constants.MAPPING_BINARY: //TODO: to do the mapping for binaries
+                        continue;
                     case Constants.MAPPING_TIMESTAMP:
                     case Constants.MAPPING_DATE:
                         property = new DateTypeProperty((Date)lo.getAttribute(lam.getName()) , 

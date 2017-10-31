@@ -371,7 +371,7 @@ public class CommunicationsStub {
      * @param oid object id
      * @return The local representation of the object
      */
-    public LocalObject getObjectInfo(String objectClass, long oid){
+    public LocalObject getObjectInfo(String objectClass, long oid) {
         try {
             LocalClassMetadata lcmd = getMetaForClass(objectClass, false);
             RemoteObject myObject = service.getObject(objectClass, oid,this.session.getSessionId());
@@ -380,7 +380,7 @@ public class CommunicationsStub {
                 values.add(value.getItem());
             return new LocalObject(myObject.getClassName(), myObject.getOid(), 
                     myObject.getAttributes(), values,lcmd);
-        }catch(Exception ex){
+        } catch(Exception ex) {
             this.error = ex.getMessage();
             return null;
         }

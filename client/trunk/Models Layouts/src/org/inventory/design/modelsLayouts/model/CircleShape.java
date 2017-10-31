@@ -16,23 +16,31 @@
  */
 package org.inventory.design.modelsLayouts.model;
 
+import java.awt.Color;
+
 /**
- * Class used to represent rectangles
+ * Class used to represent circles
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class RectangleShape extends Shape {
-    public static String SHAPE_TYPE = "rectangle";
+public class CircleShape extends Shape {
+    public static String SHAPE_TYPE = "ellipse"; //NOI18N    
+    public static String PROPERTY_ELLIPSE_COLOR = "ellipseColor"; //NOI18N
+    public static String PROPERTY_OVAL_COLOR = "ovalColor"; //NOI18N
+        
+    private Color ellipseColor = Color.BLACK;
+    private Color ovalColor = Color.BLACK;
     
-    public RectangleShape() {
+    public CircleShape() {
         super();
     }
     
-    public RectangleShape(String urlIcon) {
+    public CircleShape(String urlIcon) {
         super(urlIcon);
     }
     
-    public RectangleShape(Shape parent) {
+    public CircleShape(Shape parent) {
         super(parent);
+        setBorderColor(parent.getColor());
     }
     
     @Override
@@ -40,9 +48,25 @@ public class RectangleShape extends Shape {
         return SHAPE_TYPE;     
     }
     
+    public Color getEllipseColor() {
+        return ellipseColor;
+    }
+        
+    public void setEllipseColor(Color ellipseColor) {
+        this.ellipseColor = ellipseColor;
+    }
+    
+    public Color getOvalColor() {
+        return ovalColor;
+    }
+    
+    public void setOvalColor(Color ovalColor) {
+        this.ovalColor = ovalColor;        
+    }
+    
     @Override
     public Shape shapeCopy() {
-        RectangleShape shapeCpy = new RectangleShape();
+        CircleShape shapeCpy = new CircleShape();
         shapeCopy(shapeCpy);
         return shapeCpy;
     }
@@ -50,5 +74,7 @@ public class RectangleShape extends Shape {
     @Override
     protected void shapeCopy(Shape shapeCpy) {   
         super.shapeCopy(shapeCpy);
+        ((CircleShape) shapeCpy).setEllipseColor(this.getEllipseColor());
+        ((CircleShape) shapeCpy).setOvalColor(this.getOvalColor());
     }
 }

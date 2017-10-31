@@ -45,6 +45,11 @@ public class LabelShape extends Shape {
         label = "New Label";
     }
     
+    @Override
+    public String getShapeType() {
+        return SHAPE_TYPE;     
+    }
+    
     public String getLabel() {
         return label;
     }

@@ -19,7 +19,9 @@ package org.inventory.design.modelsLayouts.nodes.properties;
 import java.awt.Color;
 import java.lang.reflect.InvocationTargetException;
 import org.inventory.design.modelsLayouts.lookup.SharedContent;
+import org.inventory.design.modelsLayouts.model.CircleShape;
 import org.inventory.design.modelsLayouts.model.LabelShape;
+import org.inventory.design.modelsLayouts.model.PolygonShape;
 import org.inventory.design.modelsLayouts.model.Shape;
 import org.inventory.design.modelsLayouts.nodes.ShapeNode;
 import org.openide.nodes.PropertySupport;
@@ -59,13 +61,27 @@ public class ShapeGeneralProperty extends PropertySupport.ReadWrite {
             return shape.getBorderColor();
         else if (Shape.PROPERTY_IS_EQUIPMENT.equals(getName()))
             return shape.isEquipment();
-        if (shape instanceof LabelShape) {
+        else if (Shape.PROPERTY_OPAQUE.equals(getName()))
+            return shape.isOpaque();
+        else if (shape instanceof LabelShape) {
             if (LabelShape.PROPERTY_LABEL.equals(getName()))
                 return ((LabelShape) shape).getLabel();
             if (LabelShape.PROPERTY_TEXT_COLOR.equals(getName()))
                 return ((LabelShape) shape).getTextColor();
             if (LabelShape.PROPERTY_FONT_SIZE.equals(getName()))
                 return ((LabelShape) shape).getFontSize();
+        }
+        else if (shape instanceof CircleShape) {
+            if (CircleShape.PROPERTY_ELLIPSE_COLOR.equals(getName()))
+                return ((CircleShape) shape).getEllipseColor();
+            if (CircleShape.PROPERTY_OVAL_COLOR.equals(getName()))
+                return ((CircleShape) shape).getOvalColor();
+        }
+        else if (shape instanceof PolygonShape) {
+            if (PolygonShape.PROPERTY_INTERIOR_COLOR.equals(getName()))
+                return ((PolygonShape) shape).getInteriorColor();
+            if (PolygonShape.PROPERTY_OUTLINE_COLOR.equals(getName()))
+                return ((PolygonShape) shape).getOutlineColor();
         }
         return null;
     }
@@ -90,6 +106,28 @@ public class ShapeGeneralProperty extends PropertySupport.ReadWrite {
                 ((LabelShape) shape).setFontSize((Integer) val);
                 return;
             }
+        } else if (shape instanceof CircleShape) {
+            if (CircleShape.PROPERTY_ELLIPSE_COLOR.equals(getName())) {
+                shape.firePropertyChange(shapeNode, CircleShape.PROPERTY_ELLIPSE_COLOR, ((CircleShape) shape).getEllipseColor(), val);
+                ((CircleShape) shape).setEllipseColor((Color) val);
+                return;
+            }
+            if (CircleShape.PROPERTY_OVAL_COLOR.equals(getName())) {
+                shape.firePropertyChange(shapeNode, CircleShape.PROPERTY_OVAL_COLOR, ((CircleShape) shape).getOvalColor(), val);
+                ((CircleShape) shape).setOvalColor((Color) val);
+                return;
+            }
+        } else if (shape instanceof PolygonShape) {
+            if (PolygonShape.PROPERTY_INTERIOR_COLOR.equals(getName())) {
+                ((PolygonShape) shape).setInteriorColor((Color) val);
+                shape.firePropertyChange(shapeNode, PolygonShape.PROPERTY_INTERIOR_COLOR, ((PolygonShape) shape).getInteriorColor(), val);
+                return;
+            }
+            if (PolygonShape.PROPERTY_OUTLINE_COLOR.equals(getName())) {
+                ((PolygonShape) shape).setOutlineColor((Color) val);
+                shape.firePropertyChange(shapeNode, PolygonShape.PROPERTY_OUTLINE_COLOR, ((PolygonShape) shape).getOutlineColor(), val);
+                return;
+            }
         }
         if (Shape.PROPERTY_NAME.equals(getName())) {
             shape.firePropertyChange(shapeNode, Shape.PROPERTY_NAME, shape.getName(), val);
@@ -101,10 +139,10 @@ public class ShapeGeneralProperty extends PropertySupport.ReadWrite {
             shape.firePropertyChange(shapeNode, Shape.PROPERTY_Y, shape.getY(), val);
             shape.setY((Integer) val);
         } else if (Shape.PROPERTY_WIDTH.equals(getName())) {            
-            shape.firePropertyChange(shapeNode, Shape.PROPERTY_WIDTH, val, val);            
+            shape.firePropertyChange(shapeNode, Shape.PROPERTY_WIDTH, shape.getWidth(), val);            
             shape.setWidth((Integer) val);
         } else if (Shape.PROPERTY_HEIGHT.equals(getName())) {
-            shape.firePropertyChange(shapeNode, Shape.PROPERTY_HEIGHT, val, val);
+            shape.firePropertyChange(shapeNode, Shape.PROPERTY_HEIGHT, shape.getHeight(), val);
             shape.setHeight((Integer) val);
         } else if (Shape.PROPERTY_COLOR.equals(getName())) {
             shape.firePropertyChange(shapeNode, Shape.PROPERTY_COLOR, shape.getColor(), val);
@@ -118,6 +156,9 @@ public class ShapeGeneralProperty extends PropertySupport.ReadWrite {
         } else if (Shape.PROPERTY_IS_EQUIPMENT.equals(getName())) {
             shape.firePropertyChange(shapeNode, Shape.PROPERTY_IS_EQUIPMENT, shape.isEquipment(), val);
             shape.setIsEquipment((Boolean) val);
+        } else if (Shape.PROPERTY_OPAQUE.equals(getName())) {
+            shape.firePropertyChange(shapeNode, Shape.PROPERTY_OPAQUE, shape.isOpaque(), val);
+            shape.setOpaque((Boolean) val);
         }
     }
     

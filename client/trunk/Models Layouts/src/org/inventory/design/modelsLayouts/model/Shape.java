@@ -30,16 +30,18 @@ import java.util.List;
  * Class used to represent a generic shape
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class Shape implements Transferable {    
-    public static String PROPERTY_NAME = "name";
-    public static String PROPERTY_X = "x";
-    public static String PROPERTY_Y = "y";
-    public static String PROPERTY_WIDTH = "width";
-    public static String PROPERTY_HEIGHT = "height";
-    public static String PROPERTY_COLOR = "color";
-    public static String PROPERTY_BORDER_WIDTH = "borderWidth";
-    public static String PROPERTY_BORDER_COLOR = "borderColor";
-    public static String PROPERTY_IS_EQUIPMENT = "isEquipment";
+public abstract class Shape implements Transferable {    
+    public static String PROPERTY_TYPE = "type"; //NOI18N
+    public static String PROPERTY_NAME = "name"; //NOI18N 
+    public static String PROPERTY_X = "x"; //NOI18N
+    public static String PROPERTY_Y = "y"; //NOI18N
+    public static String PROPERTY_WIDTH = "width"; //NOI18N
+    public static String PROPERTY_HEIGHT = "height"; //NOI18N
+    public static String PROPERTY_COLOR = "color"; //NOI18N
+    public static String PROPERTY_BORDER_WIDTH = "borderWidth"; //NOI18N
+    public static String PROPERTY_BORDER_COLOR = "borderColor"; //NOI18N
+    public static String PROPERTY_IS_EQUIPMENT = "isEquipment"; //NOI18N
+    public static String PROPERTY_OPAQUE = "opaque"; //NOI18N
     public static Integer DEFAULT_WITH = 10;
     public static Integer DEFAULT_HEIGHT = 10;
     private static long counter = 0;
@@ -58,6 +60,7 @@ public class Shape implements Transferable {
     private Integer borderWidth = 4;
     private Color borderColor = Color.BLACK;
     private Boolean isEquipment = false;
+    private Boolean opaque = true;
     
     private final List<PropertyChangeListener> propertyChangeListeners;
     
@@ -83,11 +86,9 @@ public class Shape implements Transferable {
         this.parent = parent;
     }
     
-    public Shape shapeCopy() {
-        Shape shapeCpy = new Shape();
-        shapeCopy(shapeCpy);
-        return shapeCpy;
-    }
+    public abstract Shape shapeCopy();
+    
+    public abstract String getShapeType();
     
     protected void shapeCopy(Shape shapeCpy) {        
         shapeCpy.setColor(this.getColor());
@@ -176,6 +177,9 @@ public class Shape implements Transferable {
         return borderWidth;
     }
     
+    /**
+     * Don't use this method
+     */
     public void setBorderWidth(Integer borderWidth) {
         this.borderWidth = borderWidth;                
     }
@@ -194,6 +198,14 @@ public class Shape implements Transferable {
     
     public void setIsEquipment(Boolean isEquipment) {
         this.isEquipment = isEquipment;
+    }
+    
+    public Boolean isOpaque() {
+        return opaque;
+    }
+    
+    public void setOpaque(Boolean opaque) {
+        this.opaque = opaque;
     }
     
     public void addPropertyChangeListener(PropertyChangeListener pcl) {
