@@ -19,6 +19,7 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.views.rackview.scene.RackViewScene;
 import org.inventory.views.rackview.widgets.EquipmentWidget;
 import org.inventory.views.rackview.widgets.RackUnitWidget;
@@ -71,7 +72,7 @@ public class ChangePositionAction extends WidgetAction.LockedAdapter {
                 ((EquipmentWidget) widget).setPreferredLocation(oldLocation);
                 rackViewScene.repaint();
 
-                NotificationUtil.getInstance().showSimplePopup("Information", 
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), 
                     NotificationUtil.INFO_MESSAGE, "The equipment must be dropped inside of a rack unit");
             } else {
                 String canBeMoved = rackWidget.canBeMoved(equipmentObject, rackUnit.getRackUnitIndex());
@@ -82,7 +83,7 @@ public class ChangePositionAction extends WidgetAction.LockedAdapter {
                 } else {
                     ((EquipmentWidget) widget).setPreferredLocation(oldLocation);
                     rackViewScene.repaint();
-                    NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, canBeMoved);                    
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, canBeMoved);                    
                 }
             }
             moved = false;

@@ -16,17 +16,20 @@
  */
 package org.inventory.design.modelsLayouts;
 
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.design.modelsLayouts.model.Shape;
 import org.inventory.design.modelsLayouts.nodes.ShapeHierarchyChildren;
 import org.inventory.design.modelsLayouts.scene.ModelLayoutScene;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.view.BeanTreeView;
 import org.openide.nodes.AbstractNode;
+import org.openide.nodes.Node;
 import org.openide.windows.TopComponent;
 import org.openide.windows.Mode;
 import org.openide.windows.WindowManager;
 
 /**
+ * Top component which displays the shape hierarchy of a layout
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public final class ShapeHierarchyTopComponent extends TopComponent implements ExplorerManager.Provider {
@@ -36,8 +39,8 @@ public final class ShapeHierarchyTopComponent extends TopComponent implements Ex
     
     public ShapeHierarchyTopComponent() {
         initComponents();
-        setName("ShapeHierarchy Window");
-        setToolTipText("This is a ShapeHierarchy window");
+        setName(I18N.gm("top_component_name_shape_hierarchy"));
+        setToolTipText(I18N.gm("top_component_tool_tip_text_shape_hierarchy"));
     }
     
     public ShapeHierarchyTopComponent(ModelLayoutScene scene) {
@@ -89,7 +92,10 @@ public final class ShapeHierarchyTopComponent extends TopComponent implements Ex
 
     @Override
     public void componentClosed() {
-        // TODO add custom code on component closing
+        em.setRootContext(Node.EMPTY);
+        
+        Mode myMode = WindowManager.getDefault().findMode("properties"); //NOI18N
+        myMode.dockInto(this);
     }
 
     void writeProperties(java.util.Properties p) {

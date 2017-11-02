@@ -24,6 +24,7 @@ import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
 import org.openide.nodes.AbstractNode;
+import org.openide.nodes.Node;
 import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -77,9 +78,9 @@ public final class PredefinedShapesTopComponent extends TopComponent implements 
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
-        if(CommunicationsStub.getInstance().getMetaForClass("GenericApplicationListType", true) == null) {
+        if (CommunicationsStub.getInstance().getMetaForClass("GenericApplicationListType", true) == null) { //NOI18N
             JOptionPane.showMessageDialog(null, 
-                "This database seems outdated. Contact your administrator to apply the necessary patches to add the GenericApplicationListType class", 
+                String.format(I18N.gm("database_seems_outdated"), I18N.gm("patch_generic_application_list_type")), 
                 I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
             this.close();
             return;
@@ -91,7 +92,10 @@ public final class PredefinedShapesTopComponent extends TopComponent implements 
 
     @Override
     public void componentClosed() {
-        // TODO add custom code on component closing
+        em.setRootContext(Node.EMPTY);
+        
+        Mode myMode = WindowManager.getDefault().findMode("explorer"); //NOI18N
+        myMode.dockInto(this);
     }
 
     void writeProperties(java.util.Properties p) {

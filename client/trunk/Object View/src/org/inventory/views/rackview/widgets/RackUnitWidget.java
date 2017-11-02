@@ -27,6 +27,7 @@ import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.netbeans.api.visual.action.AcceptProvider;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectorState;
@@ -95,7 +96,7 @@ public class RackUnitWidget extends RackViewWidget {
             getObjectInfo(equipmentLight.getClassName(), equipmentLight.getOid());
 
         if (equipment == null) {
-            NotificationUtil.getInstance().showSimplePopup("Error", 
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                 NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             return;
         }                        
@@ -110,14 +111,14 @@ public class RackUnitWidget extends RackViewWidget {
 
             LocalObjectLight equipmentParent = CommunicationsStub.getInstance().getParent(equipment.getClassName(), equipment.getOid());                            
             if (equipmentParent == null) {
-                NotificationUtil.getInstance().showSimplePopup("Error", 
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 return;
             }
             // Moves the equipment if are not in the current rack
             if (!equipmentParent.equals(parentRack)) {                                
                 if (!CommunicationsStub.getInstance().moveObjects(parentRack.getClassName(), parentRack.getOid(), new LocalObjectLight [] {equipment})) {
-                    NotificationUtil.getInstance().showSimplePopup("Error", 
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                         NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                     return;
                 }                                
@@ -126,20 +127,20 @@ public class RackUnitWidget extends RackViewWidget {
             LocalObject update = new LocalObject(equipment.getClassName(), equipment.getOid(), new String [] {Constants.PROPERTY_POSITION}, new Object [] {position});
 
             if (!CommunicationsStub.getInstance().saveObject(update)) {
-                NotificationUtil.getInstance().showSimplePopup("Error", 
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 return;
             }
             // Adds the equipment in the rack
             equipment = CommunicationsStub.getInstance().getObjectInfo(equipmentLight.getClassName(), equipmentLight.getOid());
             if (equipment == null) {
-                NotificationUtil.getInstance().showSimplePopup("Error", 
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 return;
             }
             parentRackWidget.addEquipment(equipment);
         } else {
-            NotificationUtil.getInstance().showSimplePopup("Information", 
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), 
                 NotificationUtil.INFO_MESSAGE, "The equipment is already displayed in the rack");
         }
     }

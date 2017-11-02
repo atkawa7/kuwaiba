@@ -16,11 +16,13 @@
  */
 package org.inventory.design.modelsLayouts.providers;
 
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.datatransfer.Transferable;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
@@ -68,7 +70,7 @@ public class ModelLayoutAcceptProvider implements AcceptProvider {
             ModelLayoutScene scene;
             if (widget.getScene() instanceof ModelLayoutScene) {
                 scene = (ModelLayoutScene) widget.getScene();
-                
+                                
                 for (Shape node : scene.getNodes()) {
                     if (!shapeName.isEmpty() && shapeName.equals(node.getName())) {
                         NotificationUtil.getInstance().showSimplePopup("Warning", 
@@ -116,9 +118,37 @@ public class ModelLayoutAcceptProvider implements AcceptProvider {
                         newShape.setName(shapeName);
                         newShape.setIsEquipment(isEquipment);
                         
-                        if (widget instanceof ModelLayoutScene)
+                        if (widget instanceof ModelLayoutScene) {
                             newWidget = scene.addNode(newShape);
-                        else
+                            newWidget.setVisible(false);
+                            scene.validate();
+                            if  (JOptionPane.showConfirmDialog(null, "Is the model layout for an equipment which can be put in a Rack?", "Question", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+                                JSpinner numberOfRackUnits = new JSpinner();
+                                numberOfRackUnits.setValue(1);
+                                
+                                numberOfRackUnits.setName("numberOfRackUnits");
+                                JComplexDialogPanel pnlRackUnits = new JComplexDialogPanel(
+                                    new String[] {"Number of Rack Units", }, 
+                                    new JComponent[] {numberOfRackUnits});
+                                
+                                scene.validate();
+                                if (JOptionPane.showConfirmDialog(null, pnlRackUnits, "Rack Units", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+                                    int numberOfRU = (int) numberOfRackUnits.getValue();
+                                    if (numberOfRU <= 0)
+                                        numberOfRU = 1;
+                                    
+                                    // The values 15 (bottom margin), 1086 (width) and 100 (height) are the default values to the rack view which show connections
+                                    if (numberOfRU > 1)
+                                        numberOfRU += 15;
+                                    
+                                    Dimension dimension = new Dimension(1086, numberOfRU * 100);
+                                    newShape.setWidth(dimension.width);
+                                    newShape.setHeight(dimension.height);
+                                    newWidget.setPreferredSize(dimension);
+                                }
+                            }
+                            newWidget.setVisible(true);
+                        } else
                             newWidget = scene.addNode(newShape);
                     }
                     if (newWidget != null) {

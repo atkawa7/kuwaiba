@@ -18,7 +18,6 @@ package org.inventory.views.rackview.scene;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Point;
-import java.util.Collections;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadata;
@@ -39,7 +38,6 @@ import org.inventory.views.rackview.widgets.actions.ChangePositionAction;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.ConnectorState;
-import org.netbeans.api.visual.action.SelectProvider;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
@@ -256,53 +254,5 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
         
         validate();
         return newWidget;
-    }
-    
-    public class RackConnectionSelectProvider implements SelectProvider {
-    
-        public RackConnectionSelectProvider() {        
-        }
-
-        @Override
-        public boolean isAimingAllowed (Widget widget, Point localLocation, boolean invertSelection) {
-            return false;
-        }
-
-        @Override
-        public boolean isSelectionAllowed (Widget widget, Point localLocation, boolean invertSelection) {
-            return ((RackViewScene) widget.getScene()).findObject(widget) != null;
-        }
-
-        @Override
-        public void select (Widget widget, Point localLocation, boolean invertSelection) {
-            RackViewScene scene = ((RackViewScene) widget.getScene());
-            
-            Object object = scene.findObject (widget);
-            
-            scene.setFocusedObject (object);
-            if (object != null) {
-                if (!invertSelection && scene.getSelectedObjects().contains(object))
-                    return;
-                scene.userSelectionSuggested (Collections.singleton(object), invertSelection);
-                
-                for (LocalObjectLight edge : scene.getEdges()) {
-                    Widget edgeWidget = scene.findWidget(edge);
-                    
-                    if (edgeWidget != null && edgeWidget instanceof RackViewConnectionWidget) {
-                        
-                        LocalClassMetadata connectionClass = CommunicationsStub.getInstance().getMetaForClass(edge.getClassName(), false);
-                        if (connectionClass == null) {
-                            NotificationUtil.getInstance().showSimplePopup("Error", 
-                                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-                            continue;
-                        }
-                        ((RackViewConnectionWidget )edgeWidget).setLineColor(connectionClass.getColor());
-                    }
-                }
-                if (widget instanceof RackViewConnectionWidget)
-                    ((RackViewConnectionWidget) widget).setLineColor(Color.CYAN);
-            } else
-                scene.userSelectionSuggested (Collections.emptySet(), invertSelection);
-        }
     }
 }

@@ -31,6 +31,7 @@ import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.behaviors.Refreshable;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.templates.nodes.TemplateElementNode;
 import org.inventory.core.templates.nodes.TemplatesModuleClassNode;
 import org.inventory.core.templates.nodes.actions.TemplateActionsFactory;
@@ -46,6 +47,8 @@ import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
+import org.openide.windows.Mode;
+import org.openide.windows.WindowManager;
 
 /**
  * Template Manager Top component.
@@ -69,9 +72,7 @@ import org.openide.util.NbBundle.Messages;
         preferredID = "TemplatesTopComponent"
 )
 @Messages({
-    "CTL_TemplatesAction=Template Manager",
-    "CTL_TemplatesTopComponent=Template Manager",
-    "HINT_TemplatesTopComponent=Manage Object Templates with this module"
+    "CTL_TemplatesAction=Template Manager"
 })
 public final class TemplatesTopComponent extends TopComponent implements ExplorerManager.Provider, Refreshable {
 
@@ -84,9 +85,8 @@ public final class TemplatesTopComponent extends TopComponent implements Explore
     public TemplatesTopComponent() {
         initComponents();
         initCustomComponents();
-        setName(Bundle.CTL_TemplatesTopComponent());
-        setToolTipText(Bundle.HINT_TemplatesTopComponent());
-
+        setName(I18N.gm("top_component_name_template"));
+        setToolTipText(I18N.gm("top_component_tool_tip_text_template"));
     }
 
     private void initCustomComponents() {
@@ -165,7 +165,7 @@ public final class TemplatesTopComponent extends TopComponent implements Explore
     private void btnModelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnModelMouseClicked
         LocalClassMetadata equipmentModelClass = CommunicationsStub.getInstance().getMetaForClass("EquipmentModel", true); //NOI18N
         if (equipmentModelClass == null) {
-            JOptionPane.showMessageDialog(null, "This database seems outdated. Contact your administrator to apply the necessary patches to run the Equipment Model Layout Manager", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, String.format(I18N.gm("database_seems_outdated"), I18N.gm("patch_equipment_model_layout")), I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
             return;
         }
         
@@ -220,6 +220,9 @@ public final class TemplatesTopComponent extends TopComponent implements Explore
     @Override
     public void componentClosed() {
         em.setRootContext(Node.EMPTY);
+        
+        Mode myMode = WindowManager.getDefault().findMode("explorer"); //NOI18N
+        myMode.dockInto(this);
     }
     
     void writeProperties(java.util.Properties p) {}
