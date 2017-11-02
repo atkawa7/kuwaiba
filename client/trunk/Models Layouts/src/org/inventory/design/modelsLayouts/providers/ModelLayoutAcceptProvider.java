@@ -77,10 +77,16 @@ public class ModelLayoutAcceptProvider implements AcceptProvider {
                             NotificationUtil.WARNING_MESSAGE, "There cannot be two figures with the same name");
                     }
                 }
-                try {  
+                try {                              
                     Widget newWidget = null;
                     Shape shape = (Shape) t.getTransferData(Shape.DATA_FLAVOR);
                     
+                    if (widget instanceof ModelLayoutScene) {
+                        if (!(shape instanceof RectangleShape)) {
+                            NotificationUtil.getInstance().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, "The first shape only can be a rectangle");
+                            return;
+                        }
+                    }
                     Object parent = scene.findObject(widget);
                                         
                     Shape newShape = null;
@@ -122,7 +128,7 @@ public class ModelLayoutAcceptProvider implements AcceptProvider {
                             newWidget = scene.addNode(newShape);
                             newWidget.setVisible(false);
                             scene.validate();
-                            if  (JOptionPane.showConfirmDialog(null, "Is the model layout for an equipment which can be put in a Rack?", "Question", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+                            if  (JOptionPane.showConfirmDialog(null, "Is the model layout for an equipment which can be put in a Rack?", "Question", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                                 JSpinner numberOfRackUnits = new JSpinner();
                                 numberOfRackUnits.setValue(1);
                                 
@@ -136,12 +142,8 @@ public class ModelLayoutAcceptProvider implements AcceptProvider {
                                     int numberOfRU = (int) numberOfRackUnits.getValue();
                                     if (numberOfRU <= 0)
                                         numberOfRU = 1;
-                                    
                                     // The values 15 (bottom margin), 1086 (width) and 100 (height) are the default values to the rack view which show connections
-                                    if (numberOfRU > 1)
-                                        numberOfRU += 15;
-                                    
-                                    Dimension dimension = new Dimension(1086, numberOfRU * 100);
+                                    Dimension dimension = new Dimension(1086, (numberOfRU * 100) + (numberOfRU > 1 ? 15 : 0));
                                     newShape.setWidth(dimension.width);
                                     newShape.setHeight(dimension.height);
                                     newWidget.setPreferredSize(dimension);
