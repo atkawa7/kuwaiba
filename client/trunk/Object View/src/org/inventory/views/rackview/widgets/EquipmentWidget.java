@@ -30,10 +30,9 @@ import org.netbeans.api.visual.widget.LabelWidget;
  */
 public class EquipmentWidget extends NestedDeviceWidget {
     private RackWidget rackWidget;
-    private boolean hasEquipmentModelLayout = false;
-
-    public EquipmentWidget(RackViewScene scene, LocalObject equipment, Color background) {
-        super(scene, equipment);
+    
+    public EquipmentWidget(RackViewScene scene, LocalObject equipment, Color background, boolean hasLayout) {
+        super(scene, equipment, hasLayout);
     }
     // The Equipment Widgets not has parent because they are the root in the 
     // containment of devices
@@ -52,14 +51,6 @@ public class EquipmentWidget extends NestedDeviceWidget {
         this.rackWidget = rackWidget;
     }
     
-    public boolean hasEquipmentModelLayout() {
-        return hasEquipmentModelLayout;
-    }
-    
-    public void setHasEquipmentModelLayout(boolean hasEquipmentModelLayout) {
-        this.hasEquipmentModelLayout = hasEquipmentModelLayout;
-    }
-        
     @Override
     public void paintNestedDeviceWidget() {
         if (getRackViewScene().getShowConnections()) {

@@ -196,13 +196,13 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
     @Override
     protected Widget attachNodeWidget(LocalObjectLight node) {
         Widget widget = null;
-        
+
         if (node instanceof LocalObject) {
             LocalObject object = ((LocalObject) node);
             if (object.getAttribute(Constants.PROPERTY_RACK_UNITS) != null && 
                 object.getAttribute(Constants.PROPERTY_POSITION) != null) {
 
-                widget = new EquipmentWidget(this, object, object.getObjectMetadata().getColor());
+                widget = new EquipmentWidget(this, object, object.getObjectMetadata().getColor(), !isAddingNestedDevice());
                 widget.createActions(AbstractScene.ACTION_SELECT);
                 widget.getActions(ACTION_SELECT).addAction(createSelectAction());
                 widget.getActions(ACTION_SELECT).addAction(changePositionAction);
@@ -216,7 +216,7 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
                 widget.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(interactionLayer, getConnectProvider()));
                 widget.getActions(ACTION_CONNECT).addAction(createSelectAction());                
             } else {
-                widget = new NestedDeviceWidget(this, node);
+                widget = new NestedDeviceWidget(this, node, !isAddingNestedDevice());
                 ((NestedDeviceWidget) widget).paintNestedDeviceWidget();
             }
             widget.createActions(AbstractScene.ACTION_SELECT);

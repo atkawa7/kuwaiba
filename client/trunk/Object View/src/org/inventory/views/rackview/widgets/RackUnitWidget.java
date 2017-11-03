@@ -84,6 +84,14 @@ public class RackUnitWidget extends RackViewWidget {
                         LocalObjectLight equipmentLight = (LocalObjectLight) object;
                         
                         setEquipmentPosition(widget, equipmentLight);
+                        /*
+                        EquipmentWidget equipmentWidget = (EquipmentWidget) ((RackUnitWidget) widget).getRackViewScene().findWidget(equipmentLight);
+                        if (equipmentWidget != null) {
+                            if (!equipmentWidget.hasLayout()) {
+                                equipmentWidget.paintNestedDeviceWidget();
+                            }
+                        }
+                        */
                     }
                 } catch (UnsupportedFlavorException | IOException ex) {
                 }

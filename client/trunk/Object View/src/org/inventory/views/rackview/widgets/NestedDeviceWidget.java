@@ -41,11 +41,21 @@ public class NestedDeviceWidget extends SelectableRackViewWidget implements Nest
     private final LocalClassMetadata nestedDeviceClass;
     
     private Color previousBackground;
+    private boolean hasLayout;
     
-    public NestedDeviceWidget(RackViewScene scene, LocalObjectLight businessObject) {
+    public NestedDeviceWidget(RackViewScene scene, LocalObjectLight businessObject, boolean hasLayout) {
         super(scene, businessObject);
         nestedDeviceClass = CommunicationsStub.getInstance().getMetaForClass(businessObject.getClassName(), false);
-    }    
+        this.hasLayout = hasLayout;
+    }
+    
+    public boolean hasLayout() {
+        return hasLayout;
+    }
+    
+    public void setHasLayout(boolean hasLayout) {
+        this.hasLayout = hasLayout;        
+    }
     
     @Override
     public NestedDeviceWidget getParent() {
@@ -58,22 +68,24 @@ public class NestedDeviceWidget extends SelectableRackViewWidget implements Nest
     }
     
     public void paintNestedDeviceWidget() {
-        setLayout(LayoutFactory.createVerticalFlowLayout());
-        Color backgroundColor = nestedDeviceClass.getColor();
-        setBackground(backgroundColor != null ? backgroundColor : Color.WHITE);
-        setOpaque(true);
-        
-        lblName = new LabelWidget(getRackViewScene());
-        lblName.setBorder(BorderFactory.createEmptyBorder(0, 5 ,0 , 5));
-        lblName.setLabel(getLookup().lookup(LocalObjectLight.class).getName());
-        lblName.setForeground(Color.WHITE);
-        
-        widgetToChildren = new RackViewWidget(getRackViewScene());
-        widgetToChildren.setBorder(BorderFactory.createEmptyBorder(5, 5 ,5 , 5));
-        widgetToChildren.setLayout(LayoutFactory.createHorizontalFlowLayout(LayoutFactory.SerialAlignment.LEFT_TOP, 2));
-        
-        addChild(lblName);
-        addChild(widgetToChildren);
+        if (!hasLayout()) {
+            setLayout(LayoutFactory.createVerticalFlowLayout());
+            Color backgroundColor = nestedDeviceClass.getColor();
+            setBackground(backgroundColor != null ? backgroundColor : Color.WHITE);
+            setOpaque(true);
+
+            lblName = new LabelWidget(getRackViewScene());
+            lblName.setBorder(BorderFactory.createEmptyBorder(0, 5 ,0 , 5));
+            lblName.setLabel(getLookup().lookup(LocalObjectLight.class).getName());
+            lblName.setForeground(Color.WHITE);
+
+            widgetToChildren = new RackViewWidget(getRackViewScene());
+            widgetToChildren.setBorder(BorderFactory.createEmptyBorder(5, 5 ,5 , 5));
+            widgetToChildren.setLayout(LayoutFactory.createHorizontalFlowLayout(LayoutFactory.SerialAlignment.LEFT_TOP, 2));
+
+            addChild(lblName);
+            addChild(widgetToChildren);
+        }
     }
     
     public void addChildDevice(SelectableRackViewWidget child) {
@@ -84,8 +96,6 @@ public class NestedDeviceWidget extends SelectableRackViewWidget implements Nest
     @Override
     public void notifyStateChanged (ObjectState previousState, ObjectState state) {
         if (previousState.isSelected()) {
-//            Color backgroundColor = nestedDeviceClass.getColor();
-//            setBackground(backgroundColor != null ? backgroundColor : Color.WHITE);
             setBackground(previousBackground);
             if (lblName != null)
                 lblName.setForeground(Color.WHITE);

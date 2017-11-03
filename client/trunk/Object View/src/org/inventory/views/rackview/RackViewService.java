@@ -83,7 +83,7 @@ public class RackViewService {
                     for (LocalObject equipment : ((RackWidget) widget).getLocalEquipment()) {
                         Widget equipmentWidget = scene.findWidget(equipment);
                                 
-                        if(equipmentWidget instanceof EquipmentWidget && ((EquipmentWidget) equipmentWidget).hasEquipmentModelLayout())
+                        if(equipmentWidget instanceof EquipmentWidget && ((EquipmentWidget) equipmentWidget).hasLayout())
                             setEquipmentParent(equipmentWidget, equipmentWidget);
                         else
                             addNestedDevices(equipment);

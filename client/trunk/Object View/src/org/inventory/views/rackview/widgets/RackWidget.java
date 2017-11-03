@@ -395,21 +395,21 @@ public class RackWidget extends SelectableRackViewWidget {
                 if (render.hasEquipmentModelLayout()) {
                     render.render();
                     equipmentWidget = (EquipmentWidget) render.getModelLayoutWidget();
-                    equipmentWidget.setHasEquipmentModelLayout(true);
+                    equipmentWidget.setHasLayout(true);
                 }
                 
                 getRackViewScene().setAddingNestedDevice(true);
             }
             if (equipmentWidget == null) {
                 equipmentWidget = (EquipmentWidget) (getRackViewScene()).addNode(equipment);
-                equipmentWidget.setHasEquipmentModelLayout(false);
+                equipmentWidget.setHasLayout(false);
                 
                 equipmentsLayer.addChild(equipmentWidget);                
             }
             equipmentWidget.setRackWidget(this);
             equipmentWidget.setMinimumSize(new Dimension(width, height));
             
-            if (!equipmentWidget.hasEquipmentModelLayout())
+            if (!equipmentWidget.hasLayout())
                 equipmentWidget.paintNestedDeviceWidget();
             
         } else {

@@ -56,25 +56,14 @@ public class TemplatesService  {
     }
     
     public List<LocalClassMetadataLight> getClassesWithModelTypeAttribute() {
-        List <LocalClassMetadataLight> inventoryObjSubclasses = com
-            .getLightSubclasses(Constants.CLASS_INVENTORYOBJECT, false, false);
+        List <LocalClassMetadataLight> subclases = CommunicationsStub.getInstance()
+            .getLightSubclasses("GenericCommunicationsElement", false, false); //NOI18N
         
-        if (inventoryObjSubclasses == null)
+        if (subclases == null) {
             NotificationUtil.getInstance().showSimplePopup("Error", 
-                NotificationUtil.ERROR_MESSAGE, com.getError());
-        
-        List<LocalClassMetadataLight> classes = new ArrayList();
-        
-        for (LocalClassMetadataLight subclass : inventoryObjSubclasses) {
-            
-            LocalClassMetadata lcm = com.getMetaForClass(subclass.getClassName(), false);
-            for (String type : lcm.getAttributesTypes()) {
-                if ("EquipmentModel".equals(type)) { //NOI18N
-                    classes.add(subclass);
-                    break;
-                }
-            }            
+                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         }
-        return classes;
+                
+        return subclases;
     }
 }
