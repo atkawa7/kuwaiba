@@ -20,9 +20,7 @@ import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
@@ -41,7 +39,6 @@ import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
-import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.util.ChangeDescriptor;
@@ -785,7 +782,7 @@ public class ToolsBean implements ToolsBeanRemote {
                                 String.format("Created class %s", cm.getName()));
 
                         } catch (DatabaseException | MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
-                            results[i] = ex.getMessage();
+                            results[i] = " * " + ex.getMessage();
                         }
                     }                    
                     List<RemoteBusinessObjectLight> equipments;
@@ -793,7 +790,7 @@ public class ToolsBean implements ToolsBeanRemote {
                     try {
                         equipments = bem.getObjectsOfClassLight("GenericCommunicationsElement", 0); //NOI18N
                     } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
-                        results[i] += " " + ex.getMessage();
+                        results[i] += " * " + ex.getMessage();
                         return results;
                     }
                     List<String> classesToRemoveModelAttr = new ArrayList();
@@ -803,7 +800,7 @@ public class ToolsBean implements ToolsBeanRemote {
                         try {
                             equipmentClass = mem.getClass(equipment.getClassName());
                         } catch (MetadataObjectNotFoundException ex) {
-                            results[i] += " " + ex.getMessage();
+                            results[i] += " * " + ex.getMessage();
                             return results;
                         }
                         AttributeMetadata attrMetadataModel = equipmentClass.getAttribute("model"); //NOI18N
@@ -814,18 +811,13 @@ public class ToolsBean implements ToolsBeanRemote {
                         try {
                             object = bem.getObject(equipment.getClassName(), equipment.getId());
                         } catch (MetadataObjectNotFoundException | ObjectNotFoundException | InvalidArgumentException ex) {
-                            results[i] += " " + ex.getMessage();
+                            results[i] += " * " + ex.getMessage();
                             return results;
                         }
                         if (object.getAttributes().containsKey("model")) { //NOI18N
                             String currentModel = object.getAttributes().get("model").get(0); //NOI18N
                                                         
-                            results[i] += " * The current model attribute value \"" + currentModel + "\" for object \"id = " + object.getId() + " name = " + object.getName() + " class = " + object.getClassName() + "\" cannot be mapped to a EquipmentModel item. Actions: "
-                                    + "1) Create a EquipmentModel item for the \"model\" of this object. "
-                                    + "2) Delete the \"model\" attribute in the class for this object. "
-                                    + "3) Execute the patch. "
-                                    + "4) If there are errors repeat the 1 to 3 steps."
-                                    + "5) Set the \"model\" new value.";
+                            results[i] += " * Fail reason: 2 for object with id = " + object.getName() + " class = " + object.getClassName() + " model = " + "\"" + currentModel + "\"" + " see patch description";
                             classesToRemoveModelAttr.add(object.getClassName());
                         }
                     }
@@ -834,7 +826,7 @@ public class ToolsBean implements ToolsBeanRemote {
                         try {
                             genericComElementClass = mem.getClass("GenericCommunicationsElement");
                         } catch (MetadataObjectNotFoundException ex) {
-                            results[i] += " " + ex.getMessage();
+                            results[i] += " * " + ex.getMessage();
                             return results;
                         }
                         if (!genericComElementClass.hasAttribute("model")) { //NOI18N
@@ -853,15 +845,11 @@ public class ToolsBean implements ToolsBeanRemote {
                                 ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
                                 String.format("Added attributes to class %s", "GenericCommunicationsElement")); //NOI18N
                             } catch (MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
-                                results[i] += " " + ex.getMessage();
+                                results[i] += " * Fail reason: 1 " + ex.getMessage() + " see the patch description";
                                 return results;
                             }
                         }
-                    }
-                }
-                break;
-                case "9":
-                {
+                    }                    
                     ClassMetadata classMetadata = new ClassMetadata();
                     classMetadata.setDisplayName("");
                     classMetadata.setDescription("");
@@ -873,6 +861,11 @@ public class ToolsBean implements ToolsBeanRemote {
                     classMetadata.setCustom(true);
                     classMetadata.setViewable(true);
                     classMetadata.setInDesign(false);
+                                        
+                    try {
+                        mem.getClass("GenericApplicationListType");
+                        break;
+                    } catch (MetadataObjectNotFoundException ex) {}
                     
                     long genericApplicationListTypeId = -1;
                     
@@ -888,8 +881,14 @@ public class ToolsBean implements ToolsBeanRemote {
                             String.format("Created class %s", classMetadata.getName()));
                         
                     } catch (DatabaseException | MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
-                        results[i] += " " + ex.getMessage();
+                        results[i] += " * " + ex.getMessage();
                     }
+                    
+                    try {
+                        mem.getClass("PredefinedShape");
+                        break;
+                    } catch (MetadataObjectNotFoundException ex) {}
+                    
                     if (genericApplicationListTypeId != -1) {
                         long predefinedShapeId = -1;
                         try {
@@ -904,7 +903,7 @@ public class ToolsBean implements ToolsBeanRemote {
                                 String.format("Created class %s", classMetadata.getName()));
                         
                         } catch (DatabaseException | MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
-                            results[i] += " " + ex.getMessage();
+                            results[i] += " * " + ex.getMessage();
                         }
                         if (predefinedShapeId != -1) {
                             try {
@@ -924,10 +923,10 @@ public class ToolsBean implements ToolsBeanRemote {
                                     ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT,
                                     String.format("Added attributes to class %s", "PredefinedShape"));
                             } catch (MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
-                                results[i] += " " + ex.getMessage();
+                                results[i] += " * " + ex.getMessage();
                             }
                         }
-                    }
+                    }                    
                 }
                 break;
                 default:
