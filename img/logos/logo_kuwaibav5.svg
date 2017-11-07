@@ -14,7 +14,7 @@
    height="1052.3622047"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.48.5 r10040"
    sodipodi:docname="logo_kuwaibav5.svg">
   <defs
      id="defs4">
@@ -111,13 +111,13 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.979899"
-     inkscape:cx="1070.1741"
-     inkscape:cy="3.6027645"
+     inkscape:cx="1131.8054"
+     inkscape:cy="-66.789753"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
-     inkscape:window-width="1280"
-     inkscape:window-height="756"
+     inkscape:window-width="1355"
+     inkscape:window-height="711"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1" />
@@ -129,7 +129,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -1027,8 +1027,8 @@
          sodipodi:role="line"
          x="1029.505"
          y="1084.3036"
-         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#55d400;fill-opacity:1;font-family:Ubuntu;-inkscape-font-specification:Ubuntu Bold"
-         id="tspan3190-2-6-9-1">kuwaiba</tspan></text>
+         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#55d400;fill-opacity:1;font-family:Lato;-inkscape-font-specification:Lato"
+         id="tspan3190-2-6-9-1">Kuwaiba</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#666666;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
@@ -1042,113 +1042,222 @@
          sodipodi:role="line"
          x="1031.177"
          y="1103.6088"
-         style="font-size:16px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#666666;font-family:Ubuntu;-inkscape-font-specification:Ubuntu"
-         id="tspan3619-2">Network Inventory for the masses</tspan></text>
-    <g
-       id="g3581-7"
-       transform="matrix(0,0.80049329,-0.78849416,0,1597.552,460.76823)"
+         style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#666666;font-family:Lato;-inkscape-font-specification:Lato"
+         id="tspan3108">Open Source Network Inventory</tspan></text>
+    <path
+       transform="matrix(0,0.36690961,-0.36674444,0,1131.3767,932.48067)"
+       sodipodi:type="arc"
+       style="fill:#55d400;fill-opacity:1;stroke:#55d400;stroke-opacity:1"
+       id="path3755-2-9-0-0-1-2"
+       sodipodi:cx="402.85715"
+       sodipodi:cy="409.50504"
+       sodipodi:rx="108.57143"
+       sodipodi:ry="108.57143"
+       d="m 511.42857,409.50504 a 108.57143,108.57143 0 1 1 -217.14285,0 108.57143,108.57143 0 1 1 217.14285,0 z"
+       inkscape:export-filename="/home/zim/logo_large.png"
+       inkscape:export-xdpi="600.04883"
+       inkscape:export-ydpi="600.04883" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       id="path3783-6-0-3-6-7-1"
+       sodipodi:cx="132.85715"
+       sodipodi:cy="718.07648"
+       sodipodi:rx="21.428572"
+       sodipodi:ry="20"
+       d="m 154.28572,718.07648 a 21.428572,20 0 1 1 -42.85714,0 21.428572,20 0 1 1 42.85714,0 z"
+       transform="matrix(0,0.36690961,-0.36674444,0,1262.3569,1014.2491)"
+       inkscape:export-filename="/home/zim/logo_large.png"
+       inkscape:export-xdpi="600.04883"
+       inkscape:export-ydpi="600.04883" />
+    <path
+       transform="matrix(0,0.36690961,-0.36674444,0,1218.8715,1026.5668)"
+       sodipodi:type="arc"
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       id="path3783-7-1-4-2-3-7-5"
+       sodipodi:cx="132.85715"
+       sodipodi:cy="718.07648"
+       sodipodi:rx="21.428572"
+       sodipodi:ry="20"
+       d="m 154.28572,718.07648 a 21.428572,20 0 1 1 -42.85714,0 21.428572,20 0 1 1 42.85714,0 z"
+       inkscape:export-filename="/home/zim/logo_large.png"
+       inkscape:export-xdpi="600.04883"
+       inkscape:export-ydpi="600.04883" />
+    <path
+       transform="matrix(0,0.36690961,-0.36674444,0,1237.1563,1008.5358)"
+       sodipodi:type="arc"
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       id="path3783-8-5-8-0-8-1-1"
+       sodipodi:cx="132.85715"
+       sodipodi:cy="718.07648"
+       sodipodi:rx="21.428572"
+       sodipodi:ry="20"
+       d="m 154.28572,718.07648 a 21.428572,20 0 1 1 -42.85714,0 21.428572,20 0 1 1 42.85714,0 z"
+       inkscape:export-filename="/home/zim/logo_large.png"
+       inkscape:export-xdpi="600.04883"
+       inkscape:export-ydpi="600.04883" />
+    <path
+       transform="matrix(0,0.36690961,-0.36674444,0,1226.2064,1050.1538)"
+       sodipodi:type="arc"
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       id="path3783-7-4-5-7-6-5-1-5"
+       sodipodi:cx="132.85715"
+       sodipodi:cy="718.07648"
+       sodipodi:rx="21.428572"
+       sodipodi:ry="20"
+       d="m 154.28572,718.07648 a 21.428572,20 0 1 1 -42.85714,0 21.428572,20 0 1 1 42.85714,0 z"
+       inkscape:export-filename="/home/zim/logo_large.png"
+       inkscape:export-xdpi="600.04883"
+       inkscape:export-ydpi="600.04883" />
+    <path
+       transform="matrix(0,0.36690961,-0.36674444,0,1250.8306,1053.8229)"
+       sodipodi:type="arc"
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       id="path3783-7-5-4-1-1-6-5-6"
+       sodipodi:cx="132.85715"
+       sodipodi:cy="718.07648"
+       sodipodi:rx="21.428572"
+       sodipodi:ry="20"
+       d="m 154.28572,718.07648 a 21.428572,20 0 1 1 -42.85714,0 21.428572,20 0 1 1 42.85714,0 z"
+       inkscape:export-filename="/home/zim/logo_large.png"
+       inkscape:export-xdpi="600.04883"
+       inkscape:export-ydpi="600.04883" />
+    <path
+       transform="matrix(0,0.36690961,-0.36674444,0,1268.12,1038.6224)"
+       sodipodi:type="arc"
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       id="path3783-7-0-7-7-5-1-9-5"
+       sodipodi:cx="132.85715"
+       sodipodi:cy="718.07648"
+       sodipodi:rx="21.428572"
+       sodipodi:ry="20"
+       d="m 154.28572,718.07648 a 21.428572,20 0 1 1 -42.85714,0 21.428572,20 0 1 1 42.85714,0 z"
+       inkscape:export-filename="/home/zim/logo_large.png"
+       inkscape:export-xdpi="600.04883"
+       inkscape:export-ydpi="600.04883" />
+    <path
+       style="fill:none;stroke:#ffffff;stroke-width:4.8054347;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 973.59618,1056.9679 25.93407,5.5036 5.76315,25.1595 -17.55137,15.4627 -25.41014,-4.1933 -7.07292,-23.325 z"
+       id="path3844-6-2-5-1-7-6"
+       inkscape:connector-curvature="0"
+       inkscape:export-xdpi="600.04883"
+       inkscape:export-ydpi="600.04883"
+       inkscape:export-filename="/home/zim/logo_large.png" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#008080;fill-opacity:1;stroke:none"
+       id="path3783-6-0-3-6-7-1-6"
+       sodipodi:cx="132.85715"
+       sodipodi:cy="718.07648"
+       sodipodi:rx="21.428572"
+       sodipodi:ry="20"
+       d="m 154.28572,718.07648 a 21.428572,20 0 1 1 -42.85714,0 21.428572,20 0 1 1 42.85714,0 z"
+       transform="matrix(0,0.36690961,-0.36674444,0,1265.3546,1093.2925)"
+       inkscape:export-filename="/home/zim/logo_large.png"
+       inkscape:export-xdpi="600.04883"
+       inkscape:export-ydpi="600.04883" />
+    <path
+       transform="matrix(0,0.36690961,-0.36674444,0,1221.8692,1105.6102)"
+       sodipodi:type="arc"
+       style="fill:#008080;fill-opacity:1;stroke:none"
+       id="path3783-7-1-4-2-3-7-5-7"
+       sodipodi:cx="132.85715"
+       sodipodi:cy="718.07648"
+       sodipodi:rx="21.428572"
+       sodipodi:ry="20"
+       d="m 154.28572,718.07648 a 21.428572,20 0 1 1 -42.85714,0 21.428572,20 0 1 1 42.85714,0 z"
+       inkscape:export-filename="/home/zim/logo_large.png"
+       inkscape:export-xdpi="600.04883"
+       inkscape:export-ydpi="600.04883" />
+    <path
+       transform="matrix(0,0.36690961,-0.36674444,0,1240.154,1087.5792)"
+       sodipodi:type="arc"
+       style="fill:#008080;fill-opacity:1;stroke:none"
+       id="path3783-8-5-8-0-8-1-1-5"
+       sodipodi:cx="132.85715"
+       sodipodi:cy="718.07648"
+       sodipodi:rx="21.428572"
+       sodipodi:ry="20"
+       d="m 154.28572,718.07648 a 21.428572,20 0 1 1 -42.85714,0 21.428572,20 0 1 1 42.85714,0 z"
+       inkscape:export-filename="/home/zim/logo_large.png"
+       inkscape:export-xdpi="600.04883"
+       inkscape:export-ydpi="600.04883" />
+    <path
+       transform="matrix(0,0.36690961,-0.36674444,0,1229.2041,1129.1972)"
+       sodipodi:type="arc"
+       style="fill:#008080;fill-opacity:1;stroke:none"
+       id="path3783-7-4-5-7-6-5-1-5-3"
+       sodipodi:cx="132.85715"
+       sodipodi:cy="718.07648"
+       sodipodi:rx="21.428572"
+       sodipodi:ry="20"
+       d="m 154.28572,718.07648 a 21.428572,20 0 1 1 -42.85714,0 21.428572,20 0 1 1 42.85714,0 z"
+       inkscape:export-filename="/home/zim/logo_large.png"
+       inkscape:export-xdpi="600.04883"
+       inkscape:export-ydpi="600.04883" />
+    <path
+       transform="matrix(0,0.36690961,-0.36674444,0,1253.8283,1132.8663)"
+       sodipodi:type="arc"
+       style="fill:#008080;fill-opacity:1;stroke:none"
+       id="path3783-7-5-4-1-1-6-5-6-5"
+       sodipodi:cx="132.85715"
+       sodipodi:cy="718.07648"
+       sodipodi:rx="21.428572"
+       sodipodi:ry="20"
+       d="m 154.28572,718.07648 a 21.428572,20 0 1 1 -42.85714,0 21.428572,20 0 1 1 42.85714,0 z"
+       inkscape:export-filename="/home/zim/logo_large.png"
+       inkscape:export-xdpi="600.04883"
+       inkscape:export-ydpi="600.04883" />
+    <path
+       transform="matrix(0,0.36690961,-0.36674444,0,1271.1177,1117.6658)"
+       sodipodi:type="arc"
+       style="fill:#008080;fill-opacity:1;stroke:none"
+       id="path3783-7-0-7-7-5-1-9-5-6"
+       sodipodi:cx="132.85715"
+       sodipodi:cy="718.07648"
+       sodipodi:rx="21.428572"
+       sodipodi:ry="20"
+       d="m 154.28572,718.07648 a 21.428572,20 0 1 1 -42.85714,0 21.428572,20 0 1 1 42.85714,0 z"
+       inkscape:export-filename="/home/zim/logo_large.png"
+       inkscape:export-xdpi="600.04883"
+       inkscape:export-ydpi="600.04883" />
+    <path
+       style="fill:none;stroke:#008080;stroke-width:4.8054347;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 976.59384,1136.0113 25.93406,5.5036 5.7632,25.1595 -17.5514,15.4627 -25.41015,-4.1933 -7.07292,-23.325 z"
+       id="path3844-6-2-5-1-7-6-2"
+       inkscape:connector-curvature="0"
+       inkscape:export-xdpi="600.04883"
+       inkscape:export-ydpi="600.04883"
+       inkscape:export-filename="/home/zim/logo_large.png" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#008080;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="1027.7726"
+       y="1162.4639"
+       id="text3174-7-4-5-5-9"
+       sodipodi:linespacing="125%"
        inkscape:export-filename="/home/gir/header_site.png"
        inkscape:export-xdpi="120.30939"
-       inkscape:export-ydpi="120.30939">
-      <path
-         inkscape:export-ydpi="600.04883"
-         inkscape:export-xdpi="600.04883"
-         inkscape:export-filename="/home/zim/logo_large.png"
-         d="m 511.42857,409.50504 c 0,59.96234 -48.60908,108.57142 -108.57142,108.57142 -59.96235,0 -108.57143,-48.60908 -108.57143,-108.57142 0,-59.96235 48.60908,-108.57143 108.57143,-108.57143 59.96234,0 108.57142,48.60908 108.57142,108.57143 z"
-         sodipodi:ry="108.57143"
-         sodipodi:rx="108.57143"
-         sodipodi:cy="409.50504"
-         sodipodi:cx="402.85715"
-         id="path3755-2-9-0-0-1-2"
-         style="fill:#55d400;fill-opacity:1;stroke:#55d400;stroke-opacity:1"
-         sodipodi:type="arc"
-         transform="matrix(0.45835438,0,0,0.46512004,589.2772,591.2222)" />
-      <path
-         inkscape:export-ydpi="600.04883"
-         inkscape:export-xdpi="600.04883"
-         inkscape:export-filename="/home/zim/logo_large.png"
-         transform="matrix(0.45835438,0,0,0.46512004,691.42475,425.1079)"
-         d="m 154.28572,718.07648 c 0,11.04569 -9.5939,20 -21.42857,20 -11.83468,0 -21.42857,-8.95431 -21.42857,-20 0,-11.0457 9.59389,-20 21.42857,-20 11.83467,0 21.42857,8.9543 21.42857,20 z"
-         sodipodi:ry="20"
-         sodipodi:rx="21.428572"
-         sodipodi:cy="718.07648"
-         sodipodi:cx="132.85715"
-         id="path3783-6-0-3-6-7-1"
-         style="fill:#ffffff;fill-opacity:1;stroke:none"
-         sodipodi:type="arc" />
-      <path
-         inkscape:export-ydpi="600.04883"
-         inkscape:export-xdpi="600.04883"
-         inkscape:export-filename="/home/zim/logo_large.png"
-         d="m 154.28572,718.07648 c 0,11.04569 -9.5939,20 -21.42857,20 -11.83468,0 -21.42857,-8.95431 -21.42857,-20 0,-11.0457 9.59389,-20 21.42857,-20 11.83467,0 21.42857,8.9543 21.42857,20 z"
-         sodipodi:ry="20"
-         sodipodi:rx="21.428572"
-         sodipodi:cy="718.07648"
-         sodipodi:cx="132.85715"
-         id="path3783-7-1-4-2-3-7-5"
-         style="fill:#ffffff;fill-opacity:1;stroke:none"
-         sodipodi:type="arc"
-         transform="matrix(0.45835438,0,0,0.46512004,706.81235,480.25787)" />
-      <path
-         inkscape:export-ydpi="600.04883"
-         inkscape:export-xdpi="600.04883"
-         inkscape:export-filename="/home/zim/logo_large.png"
-         d="m 154.28572,718.07648 c 0,11.04569 -9.5939,20 -21.42857,20 -11.83468,0 -21.42857,-8.95431 -21.42857,-20 0,-11.0457 9.59389,-20 21.42857,-20 11.83467,0 21.42857,8.9543 21.42857,20 z"
-         sodipodi:ry="20"
-         sodipodi:rx="21.428572"
-         sodipodi:cy="718.07648"
-         sodipodi:cx="132.85715"
-         id="path3783-8-5-8-0-8-1-1"
-         style="fill:#ffffff;fill-opacity:1;stroke:none"
-         sodipodi:type="arc"
-         transform="matrix(0.45835438,0,0,0.46512004,684.2875,457.06828)" />
-      <path
-         inkscape:export-ydpi="600.04883"
-         inkscape:export-xdpi="600.04883"
-         inkscape:export-filename="/home/zim/logo_large.png"
-         d="m 154.28572,718.07648 c 0,11.04569 -9.5939,20 -21.42857,20 -11.83468,0 -21.42857,-8.95431 -21.42857,-20 0,-11.0457 9.59389,-20 21.42857,-20 11.83467,0 21.42857,8.9543 21.42857,20 z"
-         sodipodi:ry="20"
-         sodipodi:rx="21.428572"
-         sodipodi:cy="718.07648"
-         sodipodi:cx="132.85715"
-         id="path3783-7-4-5-7-6-5-1-5"
-         style="fill:#ffffff;fill-opacity:1;stroke:none"
-         sodipodi:type="arc"
-         transform="matrix(0.45835438,0,0,0.46512004,736.27801,470.95544)" />
-      <path
-         inkscape:export-ydpi="600.04883"
-         inkscape:export-xdpi="600.04883"
-         inkscape:export-filename="/home/zim/logo_large.png"
-         d="m 154.28572,718.07648 c 0,11.04569 -9.5939,20 -21.42857,20 -11.83468,0 -21.42857,-8.95431 -21.42857,-20 0,-11.0457 9.59389,-20 21.42857,-20 11.83467,0 21.42857,8.9543 21.42857,20 z"
-         sodipodi:ry="20"
-         sodipodi:rx="21.428572"
-         sodipodi:cy="718.07648"
-         sodipodi:cx="132.85715"
-         id="path3783-7-5-4-1-1-6-5-6"
-         style="fill:#ffffff;fill-opacity:1;stroke:none"
-         sodipodi:type="arc"
-         transform="matrix(0.45835438,0,0,0.46512004,740.86154,439.72598)" />
-      <path
-         inkscape:export-ydpi="600.04883"
-         inkscape:export-xdpi="600.04883"
-         inkscape:export-filename="/home/zim/logo_large.png"
-         d="m 154.28572,718.07648 c 0,11.04569 -9.5939,20 -21.42857,20 -11.83468,0 -21.42857,-8.95431 -21.42857,-20 0,-11.0457 9.59389,-20 21.42857,-20 11.83467,0 21.42857,8.9543 21.42857,20 z"
-         sodipodi:ry="20"
-         sodipodi:rx="21.428572"
-         sodipodi:cy="718.07648"
-         sodipodi:cx="132.85715"
-         id="path3783-7-0-7-7-5-1-9-5"
-         style="fill:#ffffff;fill-opacity:1;stroke:none"
-         sodipodi:type="arc"
-         transform="matrix(0.45835438,0,0,0.46512004,721.87258,417.79887)" />
-      <path
-         inkscape:export-filename="/home/zim/logo_large.png"
-         inkscape:export-ydpi="600.04883"
-         inkscape:export-xdpi="600.04883"
-         inkscape:connector-curvature="0"
-         id="path3844-6-2-5-1-7-6"
-         d="m 744.79031,791.32586 6.87529,-32.89063 31.43003,-7.309 19.31638,22.2593 -5.23834,32.22616 -29.13826,8.97016 z"
-         style="fill:none;stroke:#ffffff;stroke-width:6.04859591;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
-    </g>
+       inkscape:export-ydpi="120.30939"><tspan
+         sodipodi:role="line"
+         x="1027.7726"
+         y="1162.4639"
+         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#008080;fill-opacity:1;font-family:Lato;-inkscape-font-specification:Lato"
+         id="tspan3190-2-6-9-1-1">Kuwaiba</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#666666;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="1029.4446"
+       y="1181.769"
+       id="text3174-7-5-8-6-2"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/gir/header_site.png"
+       inkscape:export-xdpi="120.30939"
+       inkscape:export-ydpi="120.30939"><tspan
+         sodipodi:role="line"
+         x="1029.4446"
+         y="1181.769"
+         style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#666666;font-family:Lato;-inkscape-font-specification:Lato"
+         id="tspan3108-7">Open Source Network Inventory</tspan></text>
   </g>
 </svg>

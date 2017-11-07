@@ -14,7 +14,7 @@
    height="1052.3622047"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.92.1 r"
    sodipodi:docname="icons.svg">
   <defs
      id="defs4">
@@ -565,14 +565,14 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.64000003"
-     inkscape:cx="540.21819"
-     inkscape:cy="560.79113"
+     inkscape:zoom="1.2800001"
+     inkscape:cx="130.32306"
+     inkscape:cy="672.47074"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1280"
-     inkscape:window-height="756"
+     inkscape:window-width="1366"
+     inkscape:window-height="714"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -589,7 +589,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -625,7 +625,7 @@
        inkscape:export-ydpi="24.836283" />
     <text
        xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        x="48.487309"
        y="224.03709"
        id="text3630"
@@ -636,7 +636,7 @@
          id="tspan3632"
          x="48.487309"
          y="224.03709"
-         style="font-weight:bold;fill:#ffffff">C</tspan></text>
+         style="font-weight:bold;font-size:40px;line-height:1.25;fill:#ffffff">C</tspan></text>
     <path
        sodipodi:type="arc"
        style="fill:#d40000;fill-opacity:1;stroke:none"
@@ -665,7 +665,7 @@
        inkscape:export-ydpi="24.836277" />
     <text
        xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        x="135.59109"
        y="224.71672"
        id="text3630-6"
@@ -676,7 +676,7 @@
          id="tspan3632-8"
          x="135.59109"
          y="224.71672"
-         style="font-weight:bold;fill:#ffffff">S</tspan></text>
+         style="font-weight:bold;font-size:40px;line-height:1.25;fill:#ffffff">S</tspan></text>
     <path
        sodipodi:type="arc"
        style="fill:#ff6600;fill-opacity:1;stroke:none"
@@ -705,7 +705,7 @@
        inkscape:export-ydpi="24.836277" />
     <text
        xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        x="210.36272"
        y="226.75734"
        id="text3630-6-0"
@@ -716,7 +716,7 @@
          id="tspan3632-8-6"
          x="210.36272"
          y="226.75734"
-         style="font-size:36px;font-weight:bold;fill:#ffffff">Ci</tspan></text>
+         style="font-weight:bold;font-size:36px;line-height:1.25;fill:#ffffff">Ci</tspan></text>
     <path
        sodipodi:type="arc"
        style="fill:#c83737;fill-opacity:1;stroke:none"
@@ -745,7 +745,7 @@
        inkscape:export-ydpi="24.836277" />
     <text
        xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        x="287.13434"
        y="226.75732"
        id="text3630-6-0-4"
@@ -756,7 +756,7 @@
          id="tspan3632-8-6-0"
          x="287.13434"
          y="226.75732"
-         style="font-size:40px;font-weight:bold;fill:#ffffff">B</tspan></text>
+         style="font-weight:bold;font-size:40px;line-height:1.25;fill:#ffffff">B</tspan></text>
     <path
        sodipodi:type="arc"
        style="fill:#aa8800;fill-opacity:1;stroke:none"
@@ -785,7 +785,7 @@
        inkscape:export-ydpi="24.836277" />
     <text
        xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        x="360.87546"
        y="226.75731"
        id="text3630-6-0-2"
@@ -796,7 +796,7 @@
          id="tspan3632-8-6-5"
          x="360.87546"
          y="226.75731"
-         style="font-size:40px;font-weight:bold;fill:#ffffff">F</tspan></text>
+         style="font-weight:bold;font-size:40px;line-height:1.25;fill:#ffffff">F</tspan></text>
     <path
        sodipodi:type="arc"
        style="fill:#00aa88;fill-opacity:1;stroke:none"
@@ -825,7 +825,7 @@
        inkscape:export-ydpi="24.836277" />
     <text
        xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        x="426.53537"
        y="227.7675"
        id="text3630-6-0-6"
@@ -836,7 +836,7 @@
          id="tspan3632-8-6-7"
          x="426.53537"
          y="227.7675"
-         style="font-size:40px;font-weight:bold;fill:#ffffff">R</tspan></text>
+         style="font-weight:bold;font-size:40px;line-height:1.25;fill:#ffffff">R</tspan></text>
     <path
        sodipodi:type="arc"
        style="fill:#330080;fill-opacity:1;stroke:none"
@@ -865,7 +865,7 @@
        inkscape:export-ydpi="24.836277" />
     <text
        xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        x="488.15466"
        y="222.71674"
        id="text3630-6-0-8"
@@ -876,7 +876,7 @@
          id="tspan3632-8-6-1"
          x="488.15466"
          y="222.71674"
-         style="font-size:32px;font-weight:bold;fill:#ffffff">Ra</tspan></text>
+         style="font-weight:bold;font-size:32px;line-height:1.25;fill:#ffffff">Ra</tspan></text>
     <path
        sodipodi:type="arc"
        style="fill:#000080;fill-opacity:1;stroke:none"
@@ -905,7 +905,7 @@
        inkscape:export-ydpi="24.836277" />
     <text
        xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        x="553.81458"
        y="222.71675"
        id="text3630-6-0-8-9"
@@ -916,7 +916,7 @@
          id="tspan3632-8-6-1-4"
          x="553.81458"
          y="222.71675"
-         style="font-size:32px;font-weight:bold;fill:#ffffff">Sw</tspan></text>
+         style="font-weight:bold;font-size:32px;line-height:1.25;fill:#ffffff">Sw</tspan></text>
     <path
        sodipodi:type="arc"
        style="fill:#3771c8;fill-opacity:1;stroke:none"
@@ -945,7 +945,7 @@
        inkscape:export-ydpi="24.836277" />
     <text
        xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        x="628.58618"
        y="221.70659"
        id="text3630-6-0-8-1"
@@ -956,29 +956,18 @@
          id="tspan3632-8-6-1-0"
          x="628.58618"
          y="221.70659"
-         style="font-size:32px;font-weight:bold;fill:#ffffff">Ro</tspan></text>
+         style="font-weight:bold;font-size:32px;line-height:1.25;fill:#ffffff">Ro</tspan></text>
     <rect
        style="fill:#d40055;fill-opacity:1;stroke:none"
        id="rect3120"
        width="75.761444"
        height="31.314728"
-       x="33.335033"
+       x="-109.09648"
        y="396.77319"
-       ry="8.4852819" />
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="37.614586"
-       y="419.32233"
-       id="text3630-6-0-8-1-4"
-       inkscape:export-filename="/home/zim/img/work/elementIcons/city.png"
-       inkscape:export-xdpi="24.836277"
-       inkscape:export-ydpi="24.836277"><tspan
-         sodipodi:role="line"
-         id="tspan3632-8-6-1-0-9"
-         x="37.614586"
-         y="419.32233"
-         style="font-size:20px;font-weight:bold;fill:#ffffff">Board</tspan></text>
+       ry="8.4852819"
+       transform="scale(-1,1)"
+       inkscape:export-xdpi="21.459572"
+       inkscape:export-ydpi="21.459572" />
     <path
        sodipodi:type="arc"
        style="fill:#6c535d;fill-opacity:1;stroke:none"
@@ -1007,7 +996,7 @@
        inkscape:export-ydpi="25.431396" />
     <text
        xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        x="136.58095"
        y="304.51877"
        id="text3630-6-1"
@@ -1018,7 +1007,7 @@
          id="tspan3632-8-3"
          x="136.58095"
          y="304.51877"
-         style="font-weight:bold;fill:#ffffff">P</tspan></text>
+         style="font-weight:bold;font-size:40px;line-height:1.25;fill:#ffffff">P</tspan></text>
     <rect
        style="fill:#d4aa00;fill-opacity:1;stroke:none"
        id="rect3190"
@@ -1029,7 +1018,7 @@
        ry="8.4852819" />
     <text
        xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        x="212.90932"
        y="408.30325"
        id="text3630-6-4"
@@ -1040,7 +1029,7 @@
          id="tspan3632-8-7"
          x="212.90932"
          y="408.30325"
-         style="font-weight:bold;fill:#ffffff">S</tspan></text>
+         style="font-weight:bold;font-size:40px;line-height:1.25;fill:#ffffff">S</tspan></text>
     <path
        sodipodi:type="arc"
        style="fill:#008000;fill-opacity:1;stroke:none"
@@ -1069,7 +1058,7 @@
        inkscape:export-ydpi="24.836277" />
     <text
        xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        x="371.96677"
        y="313.61014"
        id="text3630-6-1-5"
@@ -1080,7 +1069,7 @@
          id="tspan3632-8-3-8"
          x="371.96677"
          y="313.61014"
-         style="font-size:22px;font-weight:bold;fill:#ffffff">SDH</tspan></text>
+         style="font-weight:bold;font-size:22px;line-height:1.25;fill:#ffffff">SDH</tspan></text>
     <path
        sodipodi:type="arc"
        style="fill:#88aa00;fill-opacity:1;stroke:none"
@@ -1109,7 +1098,7 @@
        inkscape:export-ydpi="24.836277" />
     <text
        xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        x="460.8602"
        y="448.97055"
        id="text3630-6-1-5-7"
@@ -1120,7 +1109,7 @@
          id="tspan3632-8-3-8-6"
          x="460.8602"
          y="448.97055"
-         style="font-size:20px;font-weight:bold;fill:#ffffff">WDM</tspan></text>
+         style="font-weight:bold;font-size:20px;line-height:1.25;fill:#ffffff">WDM</tspan></text>
     <rect
        style="fill:#333333;fill-opacity:1;stroke:none"
        id="rect3190-0"
@@ -1144,7 +1133,7 @@
        inkscape:export-ydpi="65.996658" />
     <text
        xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        x="278.56921"
        y="417.39462"
        id="text3630-6-4-7"
@@ -1155,7 +1144,7 @@
          id="tspan3632-8-7-1"
          x="278.56921"
          y="417.39462"
-         style="font-size:24px;font-weight:bold;fill:#ffffff">S</tspan></text>
+         style="font-weight:bold;font-size:24px;line-height:1.25;fill:#ffffff">S</tspan></text>
     <rect
        style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-opacity:1;stroke-width:2.3;stroke-miterlimit:4;stroke-dasharray:none"
        id="rect3190-0-0"
@@ -1179,7 +1168,7 @@
        inkscape:export-ydpi="60.887951" />
     <text
        xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        x="319.48038"
        y="418.40482"
        id="text3630-6-4-7-5"
@@ -1190,10 +1179,10 @@
          id="tspan3632-8-7-1-1"
          x="319.48038"
          y="418.40482"
-         style="font-size:24px;font-weight:bold;fill:#ffffff">W</tspan></text>
+         style="font-weight:bold;font-size:24px;line-height:1.25;fill:#ffffff">W</tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        x="320.64413"
        y="415.61105"
        id="text3630-6-4-7-0"
@@ -1204,7 +1193,7 @@
          id="tspan3632-8-7-1-6"
          x="320.64413"
          y="415.61105"
-         style="font-size:24px;font-weight:bold;fill:#000000">w</tspan></text>
+         style="font-weight:bold;font-size:24px;line-height:1.25;fill:#000000">w</tspan></text>
     <rect
        style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:2.29999995;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="rect3190-0-0-0"
@@ -1228,7 +1217,7 @@
        inkscape:export-ydpi="60.823654" />
     <text
        xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        x="361.9068"
        y="416.38449"
        id="text3630-6-4-7-5-1"
@@ -1239,10 +1228,10 @@
          id="tspan3632-8-7-1-1-3"
          x="361.9068"
          y="416.38449"
-         style="font-size:24px;font-weight:bold;fill:#ffffff">W</tspan></text>
+         style="font-weight:bold;font-size:24px;line-height:1.25;fill:#ffffff">W</tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        x="367.07056"
        y="415.59073"
        id="text3630-6-4-7-0-1"
@@ -1253,7 +1242,7 @@
          id="tspan3632-8-7-1-6-1"
          x="367.07056"
          y="415.59073"
-         style="font-size:22;font-weight:bold;fill:#000000">L</tspan></text>
+         style="font-weight:bold;font-size:22px;line-height:1.25;fill:#000000">L</tspan></text>
     <path
        sodipodi:type="arc"
        style="fill:#c87137;fill-opacity:1;stroke:none"
@@ -1282,7 +1271,7 @@
        inkscape:export-ydpi="49.273331" />
     <text
        xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        x="610.36279"
        y="358.05685"
        id="text3630-6-9"
@@ -1293,7 +1282,7 @@
          id="tspan3632-8-1"
          x="610.36279"
          y="358.05685"
-         style="font-weight:bold;fill:#ffffff">T</tspan></text>
+         style="font-weight:bold;font-size:40px;line-height:1.25;fill:#ffffff">T</tspan></text>
     <rect
        style="fill:#e5ffd5;fill-opacity:1;stroke:#008900;stroke-width:0.969697;stroke-opacity:1"
        id="rect3190-04"
@@ -1307,7 +1296,7 @@
        inkscape:export-ydpi="45" />
     <text
        xml:space="preserve"
-       style="font-size:38.78787613px;font-style:normal;font-weight:normal;fill:#5aa02c;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#5aa02c;fill-opacity:1;stroke:none"
        x="124.35874"
        y="568.59424"
        id="text3630-6-4-4"
@@ -1318,7 +1307,7 @@
          id="tspan3632-8-7-4"
          x="124.35874"
          y="568.59424"
-         style="font-size:27.15151596px;font-weight:bold;fill:#5aa02c;fill-opacity:1;stroke:none">A</tspan></text>
+         style="font-weight:bold;font-size:27.15151596px;line-height:1.25;fill:#5aa02c;fill-opacity:1;stroke:none">A</tspan></text>
     <rect
        style="fill:#e6e6e6;fill-opacity:1;stroke:#4d4d4d;stroke-width:4;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="rect3190-04-2"
@@ -1332,7 +1321,7 @@
        inkscape:export-ydpi="41.106155" />
     <text
        xml:space="preserve"
-       style="font-size:38.78787613px;font-style:normal;font-weight:normal;fill:#4d4d4d;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#4d4d4d;fill-opacity:1;stroke:none"
        x="163.83441"
        y="569.03906"
        id="text3630-6-4-4-0"
@@ -1343,7 +1332,7 @@
          id="tspan3632-8-7-4-2"
          x="163.83441"
          y="569.03906"
-         style="font-size:27.15151596px;font-weight:bold;fill:#4d4d4d;fill-opacity:1;stroke:none" /></text>
+         style="font-weight:bold;font-size:27.15151596px;line-height:1.25;fill:#4d4d4d;fill-opacity:1;stroke:none"> </tspan></text>
     <rect
        style="fill:#eeffaa;fill-opacity:1;stroke:#88aa00;stroke-width:4;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
        id="rect3190-04-22"
@@ -1396,7 +1385,7 @@
        inkscape:export-ydpi="24.836264" />
     <text
        xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        x="582.71429"
        y="97.308937"
        id="text3630-5"
@@ -1407,7 +1396,7 @@
          id="tspan3632-9"
          x="582.71429"
          y="97.308937"
-         style="font-size:28px;font-weight:bold;fill:#ffffff">Air</tspan></text>
+         style="font-weight:bold;font-size:28px;line-height:1.25;fill:#ffffff">Air</tspan></text>
     <path
        sodipodi:type="arc"
        style="fill:#66ff00;fill-opacity:1;stroke:none"
@@ -1436,7 +1425,7 @@
        inkscape:export-ydpi="24.836277" />
     <text
        xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        x="337.40262"
        y="83.476151"
        id="text3630-6-0-8-0"
@@ -1447,7 +1436,7 @@
          id="tspan3632-8-6-1-2"
          x="337.40262"
          y="83.476151"
-         style="font-size:32px;font-weight:bold;fill:#ffffff">Pa</tspan></text>
+         style="font-weight:bold;font-size:32px;line-height:1.25;fill:#ffffff">Pa</tspan></text>
     <path
        sodipodi:type="arc"
        style="fill:none;stroke:#800080;stroke-width:5.60224771;stroke-miterlimit:4;stroke-dasharray:none"
@@ -1470,16 +1459,16 @@
        y="460.44818"
        ry="0"
        inkscape:export-filename="/home/zim/docs/work/freelancing/Neotropic/productos/kuwaiba/img/icons/elementIcons/OutdoorsCabinet_32.png"
-       inkscape:export-xdpi="48"
-       inkscape:export-ydpi="48" />
+       inkscape:export-xdpi="25.6"
+       inkscape:export-ydpi="25.6" />
     <path
        style="fill:#000000;stroke:#4d4d4d;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none;fill-opacity:1"
        d="m 396.91892,483.63842 0,8.01019"
        id="path4220"
        inkscape:connector-curvature="0"
        inkscape:export-filename="/home/zim/docs/work/freelancing/Neotropic/productos/kuwaiba/img/icons/elementIcons/OutdoorsCabinet_32.png"
-       inkscape:export-xdpi="48"
-       inkscape:export-ydpi="48" />
+       inkscape:export-xdpi="25.6"
+       inkscape:export-ydpi="25.6" />
     <rect
        style="fill:#ffeeaa;fill-opacity:1;stroke:#ff6600;stroke-width:4.80682278000000007;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="rect3190-04-2-3-6"
@@ -1610,7 +1599,7 @@
        inkscape:export-ydpi="49.273357" />
     <text
        xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        x="468.93909"
        y="523.15363"
        id="text3630-6-1-5-7-4"
@@ -1621,7 +1610,7 @@
          id="tspan3632-8-3-8-6-5"
          x="468.93909"
          y="523.15363"
-         style="font-size:20px;font-weight:bold;fill:#ffffff">OLT</tspan></text>
+         style="font-weight:bold;font-size:20px;line-height:1.25;fill:#ffffff">OLT</tspan></text>
     <path
        sodipodi:type="arc"
        style="fill:#677821;fill-opacity:1;stroke:none"
@@ -1650,7 +1639,7 @@
        inkscape:export-ydpi="25.431396" />
     <text
        xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        x="468.25366"
        y="594.41669"
        id="text3630-6-1-5-7-4-7"
@@ -1661,7 +1650,7 @@
          id="tspan3632-8-3-8-6-5-6"
          x="468.25366"
          y="594.41669"
-         style="font-size:20px;font-weight:bold;fill:#ffffff">ONT</tspan></text>
+         style="font-weight:bold;font-size:20px;line-height:1.25;fill:#ffffff">ONT</tspan></text>
     <rect
        style="fill:#80b3ff;fill-opacity:0.97254901999999999;stroke:#80b3ff;stroke-width:4;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="rect3190-04-22-6"
@@ -1673,5 +1662,112 @@
        inkscape:export-filename="/home/gir/workspace/java/KuwaibaRCP/trunk/ApplicationNodes/src/org/inventory/navigation/applicationnodes/res/default_32.png"
        inkscape:export-xdpi="56.520962"
        inkscape:export-ydpi="56.520962" />
+    <path
+       style="fill:#000080;fill-opacity:1"
+       id="path213"
+       sodipodi:type="arc"
+       sodipodi:cx="552.97076"
+       sodipodi:cy="447.57471"
+       sodipodi:rx="25.781248"
+       sodipodi:ry="26.562498"
+       sodipodi:start="0"
+       sodipodi:end="3.6984942"
+       d="m 578.75201,447.57471 a 25.781248,26.562498 0 0 1 -17.23301,25.05989 25.781248,26.562498 0 0 1 -28.66085,-8.44178 25.781248,26.562498 0 0 1 -1.77301,-30.65795 l 21.88562,14.03984 z"
+       transform="rotate(25.206886)"
+       inkscape:export-xdpi="31.705235"
+       inkscape:export-ydpi="31.705235" />
+    <path
+       style="fill:#000080;fill-opacity:1;stroke-width:0.37097922"
+       id="path215"
+       sodipodi:type="arc"
+       sodipodi:cx="320.9812"
+       sodipodi:cy="627.27313"
+       sodipodi:rx="4.1999998"
+       sodipodi:ry="4.1999998"
+       sodipodi:start="0"
+       sodipodi:end="6.1473412"
+       d="m 325.1812,627.27313 a 4.1999998,4.1999998 0 0 1 -4.05739,4.19758 4.1999998,4.1999998 0 0 1 -4.33292,-3.91252 4.1999998,4.1999998 0 0 1 3.76314,-4.46328 4.1999998,4.1999998 0 0 1 4.58848,3.60943"
+       sodipodi:open="true"
+       inkscape:export-xdpi="31.705235"
+       inkscape:export-ydpi="31.705235" />
+    <rect
+       style="fill:#0000ff;fill-opacity:1;stroke-width:1.0048393"
+       id="rect217"
+       width="64.199997"
+       height="64.199997"
+       x="18.75"
+       y="288.16208"
+       inkscape:export-xdpi="24.836283"
+       inkscape:export-ydpi="24.836283" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
+       x="33.726559"
+       y="336.28409"
+       id="text3630-3"
+       inkscape:export-filename="/home/zim/img/work/elementIcons/country.png"
+       inkscape:export-xdpi="24.836283"
+       inkscape:export-ydpi="24.836283"><tspan
+         sodipodi:role="line"
+         id="tspan3632-6"
+         x="33.726559"
+         y="336.28409"
+         style="font-weight:bold;font-size:48px;line-height:1.25;fill:#ffffff">C</tspan></text>
+    <rect
+       style="fill:#800000;fill-opacity:1;stroke-width:1.0048393"
+       id="rect217-7"
+       width="64.199997"
+       height="64.199997"
+       x="-124.28749"
+       y="349.94971"
+       inkscape:export-xdpi="23.92523"
+       inkscape:export-ydpi="23.92523" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
+       x="-109.31094"
+       y="398.07172"
+       id="text3630-3-5"
+       inkscape:export-filename="/home/zim/img/work/elementIcons/country.png"
+       inkscape:export-xdpi="23.92523"
+       inkscape:export-ydpi="23.92523"><tspan
+         sodipodi:role="line"
+         id="tspan3632-6-3"
+         x="-109.31094"
+         y="398.07172"
+         style="font-weight:bold;font-size:48px;line-height:1.25;fill:#ffffff">C</tspan></text>
+    <rect
+       style="fill:#ff6600;fill-opacity:1;stroke-width:1.0048393"
+       id="rect217-7-5"
+       width="64.199997"
+       height="64.199997"
+       x="-154.75624"
+       y="446.82471"
+       inkscape:export-xdpi="23.92523"
+       inkscape:export-ydpi="23.92523" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
+       x="-139.77969"
+       y="494.94672"
+       id="text3630-3-5-6"
+       inkscape:export-filename="/home/zim/img/work/elementIcons/country.png"
+       inkscape:export-xdpi="23.92523"
+       inkscape:export-ydpi="23.92523"><tspan
+         sodipodi:role="line"
+         id="tspan3632-6-3-2"
+         x="-139.77969"
+         y="494.94672"
+         style="font-weight:bold;font-size:48px;line-height:1.25;fill:#ffffff">C</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:none"
+       id="rect3120-9"
+       width="75.761444"
+       height="31.314728"
+       x="-8.974473"
+       y="443.73608"
+       ry="8.4852819"
+       inkscape:export-xdpi="20.274164"
+       inkscape:export-ydpi="20.274164" />
   </g>
 </svg>
