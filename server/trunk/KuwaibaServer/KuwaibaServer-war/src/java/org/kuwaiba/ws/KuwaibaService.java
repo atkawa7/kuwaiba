@@ -719,7 +719,7 @@ public class KuwaibaService {
     }
     
     /**
-     * Gets a view related to an list type item, such as the default, rack or equipment views
+     * Gets a view related to a list type item, given its id. An example of these views is a layout associated to a particular device model
      * @param listTypeItemId list type item id
      * @param listTypeItemClass list type item class
      * @param viewId view id
@@ -749,7 +749,7 @@ public class KuwaibaService {
     }
     
     /**
-     * Gets the views related to a list type item, such as the default, rack or equipment views
+     * Gets all the views related to a list type item. An example of these views is a layout associated to a particular device model
      * @param listTypeItemId list type item id
      * @param listTypeItemClass list type class name
      * @param limit max number of results
@@ -778,7 +778,7 @@ public class KuwaibaService {
     }
     
     /**
-     * Deletes a list type item related view
+     * Deletes a view related to a list type item
      * @param listTypeItemId list type item id
      * @param listTypeItemClass list type class name
      * @param viewId related view id

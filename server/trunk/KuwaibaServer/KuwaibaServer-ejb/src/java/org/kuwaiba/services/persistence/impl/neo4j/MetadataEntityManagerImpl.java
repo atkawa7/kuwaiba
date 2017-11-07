@@ -1013,9 +1013,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         if (attributeName.equals(Constants.PROPERTY_NAME) || attributeName.equals(Constants.PROPERTY_CREATION_DATE))
             throw new InvalidArgumentException(String.format("Attribute \"%s\" can not be deleted", attributeName));
         
-//        if (attributeName.equals(Constants.PROPERTY_CREATION_DATE))
-//            throw new InvalidArgumentException(String.format("Attribute \"creationDate\" can not be deleted");
-        
         try(Transaction tx = graphDb.beginTx()) {
             Node classNode = classIndex.get(Constants.PROPERTY_NAME, attributeName).getSingle();
 
@@ -1043,9 +1040,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             throws MetadataObjectNotFoundException, InvalidArgumentException {
         if (attributeName.equals(Constants.PROPERTY_CREATION_DATE) || attributeName.equals(Constants.PROPERTY_NAME))
             throw new InvalidArgumentException(String.format("Attribute \"%s\" can not be deleted", attributeName));
-        
-//        if (attributeName.equals(Constants.PROPERTY_NAME))
-//            throw new InvalidArgumentException("Attribute \"name\" can not be deleted");
         
         try (Transaction tx = graphDb.beginTx()) {
             Node classNode = classIndex.get(Constants.PROPERTY_ID, classId).getSingle();

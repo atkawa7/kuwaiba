@@ -27,15 +27,14 @@
                     <f:selectItem itemEscaped="false" itemLabel="&lt;b&gt;[1.1.x &#8594; 1.5] Rack Views.&lt;/b&gt; This action adds the attribute rackUnitsNumberingDescending to the Rack class, adding support for ascending and descending rack unit numbering." itemValue="5" />
                     <f:selectItem itemEscaped="false" itemLabel="&lt;b&gt;[1.1.x &#8594; 1.5] Connector Matching.&lt;/b&gt; This action adds the classes and attributes in the data model to allow that the connector matching rules can be configured." itemValue="6" />                    
                     <f:selectItem itemEscaped="false" itemLabel="&lt;b&gt;[1.1.x &#8594; 1.5] Port Type Fix.&lt;/b&gt; This patch will update the classes ElectricalPort and OpticalPort, changing the type of the &lt;i&gt;type&lt;/i&gt; attribute to ElectricalPortType and OpticalPortType respectively, to fix a bug detected in a default datamodel. &lt;b&gt;Warning: This action will set to null the value of the attribute in the existing instances&lt;/b&gt;." itemValue="7" />                    
-                    <f:selectItem itemEscaped="false" itemLabel="&lt;b&gt;[1.5 &#8594; 1.6] Device Layout support.&lt;/b&gt; This patch will create the &lt;i&gt;model&lt;/i&gt; attribute with type &lt;i&gt;EquipmentModel&lt;/i&gt; for the &lt;i&gt;GenericCommunicationsElement&lt;/i&gt; class&lt;/b&gt; 
-                         and adds the classes &lt;i&gt;GenericApplicationListType&lt;/i&gt; and &lt;i&gt;PredefinedShape&lt;/i&gt; to allow that the Device Layout support to work correctly.&lt;/b&gt;
-                        &lt;br /&gt;&lt;b&gt;Warning: this patch can fail because exist subclasses of &lt;i&gt;GenericCommunicationsElement&lt;/i&gt; which have the &lt;i&gt;model&lt;/i&gt; attribute&lt;/b&gt;
-                        &lt;br /&gt;&lt;i&gt;Actions&lt;/i&gt;:
-                        &lt;br /&gt;1) Delete the &lt;i&gt;model&lt;/i&gt; attribute in the subclass.
-                        &lt;br /&gt;2) Create an &lt;i&gt;EquipmentModel&lt;/i&gt; item for the &lt;i&gt;model&lt;/i&gt; value in the object.
-                        &lt;br /&gt;3) Execute the patch.
-                        &lt;br /&gt;4) When the patch is executed successfully then set the new value of the &lt;i&gt;model&lt;/i&gt;.
-                        " itemValue="8" />               
+                    <f:selectItem itemEscaped="false" itemLabel="&lt;b&gt;[1.5 &#8594; 1.6] Device Layout Support.&lt;/b&gt; This patch will create the attribute &lt;i&gt;model&lt;/i&gt; of type &lt;i&gt;EquipmentModel&lt;/i&gt; in the class &lt;i&gt;GenericCommunicationsElement&lt;/i&gt;&lt;/b&gt; 
+                         and adds the classes &lt;i&gt;GenericApplicationListType&lt;/i&gt; and &lt;i&gt;PredefinedShape&lt;/i&gt;.&lt;/b&gt;
+                        &lt;br /&gt;&lt;b&gt;Warning: this patch will fail any subclass of &lt;i&gt;GenericCommunicationsElement&lt;/i&gt; already has an attribute called &lt;i&gt;model&lt;/i&gt; &lt;/b&gt; and won't migrate the old values to the new model.
+                        &lt;br /&gt;&lt;i&gt;What to do?&lt;/i&gt;:
+                        &lt;br /&gt;1) Delete the attribute &lt;i&gt;model&lt;/i&gt; in the said subclass.
+                        &lt;br /&gt;2) Run the patch.
+                        &lt;br /&gt;3) Create an &lt;i&gt;EquipmentModel&lt;/i&gt; instance for each &lt;i&gt;model&lt;/i&gt; value you already had prior to the execution of the patch.
+                        &lt;br /&gt;4) Manually set the &lt;i&gt;model&lt;/i&gt; attribute to the respective value using the the enumeration you just populated in the instances that might have been affected." itemValue="8" />               
                 </h:selectManyCheckbox>
                 <br />
                 <h:commandButton class="button" action="#{Tools.applyPatches}" value="#{bundle.ApplyPatchesApply}" />
