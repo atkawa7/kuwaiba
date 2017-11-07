@@ -16,7 +16,6 @@
  */
 -->
 <!-- Defines the default SNMP sync job. Basically, it takes a sync group and polls every item. The processor finds the differences, and the writer commits the actions -->
-<!--
 <job id="DefaultSnmpSyncJob" xmlns="http://xmlns.jcp.org/xml/ns/javaee" version="1.0">
     <listeners>
         <listener ref="com.neotropic.kuwaiba.sync.snmp.DefaultSnmpSyncListener"/>
@@ -29,4 +28,4 @@
             <writer ref="com.neotropic.kuwaiba.sync.snmp.DefaultSnmpSyncWriter"></writer>
         </chunk>
     </step>        
-</job>-->
+</job>
