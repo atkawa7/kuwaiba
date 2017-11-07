@@ -179,8 +179,8 @@ public final class ModelLayoutTopComponent extends TopComponent implements Actio
     }// </editor-fold>//GEN-END:initComponents
     
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        if (JOptionPane.showConfirmDialog(this, "Are you sure you want to delete the current Equipment Model View?", 
-                "Delete Equipment Model View", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+        if (JOptionPane.showConfirmDialog(this, "Are you sure you want to delete the current device layout?", 
+                "Delete", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             
             if (service.deleteView()) {
                 service.getScene().clear();
@@ -198,8 +198,11 @@ public final class ModelLayoutTopComponent extends TopComponent implements Actio
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void btnCleanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCleanActionPerformed
-        service.getScene().clear();
-        setSaved(false);
+        if (JOptionPane.showConfirmDialog(null, "Are you sure you want to clear the canvas?", 
+                "Confirmation", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            service.getScene().clear();
+            setSaved(false);
+        }
     }//GEN-LAST:event_btnCleanActionPerformed
     
     private void btnShowPaletteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowPaletteActionPerformed

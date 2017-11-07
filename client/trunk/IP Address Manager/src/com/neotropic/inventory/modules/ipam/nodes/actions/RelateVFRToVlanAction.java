@@ -49,7 +49,7 @@ public class RelateVFRToVlanAction extends GenericObjectNodeAction {
         else {
             
             if (vlans.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "There are no VLANs created. Create at least one using the Navigation Tree", 
+                JOptionPane.showMessageDialog(null, "There are no VLANs created. Create at least one using the Pools module", 
                     "Information", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 VlansFrame frame = new VlansFrame(selectedObjects, vlans);

@@ -44,7 +44,7 @@ public class RelateIPToBDIInterfaceAction extends GenericObjectNodeAction {
         
         if (bdis != null) {
             if (bdis.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "There are no Bridge Domain Interfaces created. Create at least one using the Navigation Tree", 
+                JOptionPane.showMessageDialog(null, "There are no Bridge Domain Interfaces created. Create at least one using the Navigation Tree or the Pools module", 
                     "Information", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 BDIsInterfaceFrame frame = new BDIsInterfaceFrame(selectedObjects, bdis);

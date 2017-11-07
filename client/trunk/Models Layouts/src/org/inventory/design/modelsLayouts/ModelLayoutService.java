@@ -66,16 +66,16 @@ public class ModelLayoutService {
     public ModelLayoutService(LocalObjectListItem listItem) {
         this.listItem = listItem;
         scene = new ModelLayoutScene(listItem);
+        shapes.put(I18N.gm("palette_category_display_name_predefined_shapes"), getCustomShapes());
         shapes.put(I18N.gm("palette_category_display_name_general_shapes"), new Shape [] {
             new LabelShape("org/inventory/design/modelsLayouts/res/label.png"),
             new RectangleShape("org/inventory/design/modelsLayouts/res/rectangle.png"),
             new PolygonShape("org/inventory/design/modelsLayouts/res/polygon.png"),
             new CircleShape("org/inventory/design/modelsLayouts/res/ellipse.png"),
         });
-        shapes.put(I18N.gm("palette_category_display_name_predefined_shapes"), getPredefinedShapes());
     }
     
-    private Shape [] getPredefinedShapes() {
+    private Shape [] getCustomShapes() {
         List<LocalObjectListItem> predefinedShapes = CommunicationsStub.getInstance().getList("PredefinedShape", false, true); //NOI18N
         if (predefinedShapes == null) {
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 

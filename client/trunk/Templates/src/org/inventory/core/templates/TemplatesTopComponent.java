@@ -47,8 +47,6 @@ import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
-import org.openide.windows.Mode;
-import org.openide.windows.WindowManager;
 
 /**
  * Template Manager Top component.
@@ -188,7 +186,7 @@ public final class TemplatesTopComponent extends TopComponent implements Explore
                                     @Override
                                     public Action[] getActions(boolean context) {
                                         List<Action> lstActions = new ArrayList(Arrays.asList(super.getActions(context)));
-                                        lstActions.add(0, TemplateActionsFactory.getAssociateLayoutAction());
+                                        lstActions.add(0,TemplateActionsFactory.getAssociateLayoutAction());
                                         lstActions.add(1, null);
                                         
                                         return lstActions.toArray(new Action[0]);
@@ -220,9 +218,6 @@ public final class TemplatesTopComponent extends TopComponent implements Explore
     @Override
     public void componentClosed() {
         em.setRootContext(Node.EMPTY);
-        
-        Mode myMode = WindowManager.getDefault().findMode("explorer"); //NOI18N
-        myMode.dockInto(this);
     }
     
     void writeProperties(java.util.Properties p) {}

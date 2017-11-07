@@ -30,7 +30,7 @@ import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 
 /**
- * Top component which displays the predefined shapes.
+ * Displays the custom shapes.
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public final class PredefinedShapesTopComponent extends TopComponent implements ExplorerManager.Provider {
@@ -79,8 +79,7 @@ public final class PredefinedShapesTopComponent extends TopComponent implements 
     @Override
     public void componentOpened() {
         if (CommunicationsStub.getInstance().getMetaForClass("GenericApplicationListType", true) == null) { //NOI18N
-            JOptionPane.showMessageDialog(null, 
-                String.format(I18N.gm("database_seems_outdated"), I18N.gm("patch_generic_application_list_type")), 
+            JOptionPane.showMessageDialog(null, I18N.gm("database_seems_outdated"), 
                 I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
             this.close();
             return;

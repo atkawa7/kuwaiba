@@ -19,6 +19,8 @@ package org.inventory.design.modelsLayouts.providers;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
@@ -54,13 +56,27 @@ public class ModelLayoutAcceptProvider implements AcceptProvider {
 
     @Override
     public void accept(Widget widget, Point point, Transferable t) { 
+        Shape shape;
+        try {
+            shape = (Shape) t.getTransferData(Shape.DATA_FLAVOR);
+            if (widget instanceof ModelLayoutScene) {
+                if (!(shape instanceof RectangleShape)) {
+                    NotificationUtil.getInstance().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, "The first shape has to be a rectangle");
+                    return;
+                }
+            }
+        }
+        catch (IOException | UnsupportedFlavorException ufe) {
+            return;
+        }
+        
         JTextField txtName = new JTextField(20);
         txtName.setName("txtName");
         JCheckBox chkEquipment = new JCheckBox();
         chkEquipment.setName("chkEquipment");
         
         JComplexDialogPanel pnlShape = new JComplexDialogPanel(
-            new String[] {"Shape name", "Is the shape an equipment?"}, 
+            new String[] {"Shape name", "Does the shape represent an inventory object?"}, 
             new JComponent[] {txtName, chkEquipment});
         if (JOptionPane.showConfirmDialog(null, pnlShape, "New Shape", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             
@@ -74,19 +90,12 @@ public class ModelLayoutAcceptProvider implements AcceptProvider {
                 for (Shape node : scene.getNodes()) {
                     if (!shapeName.isEmpty() && shapeName.equals(node.getName())) {
                         NotificationUtil.getInstance().showSimplePopup("Warning", 
-                            NotificationUtil.WARNING_MESSAGE, "There cannot be two figures with the same name");
+                            NotificationUtil.WARNING_MESSAGE, "There can not be two shapes with the same name");
                     }
                 }
                 try {                              
                     Widget newWidget = null;
-                    Shape shape = (Shape) t.getTransferData(Shape.DATA_FLAVOR);
                     
-                    if (widget instanceof ModelLayoutScene) {
-                        if (!(shape instanceof RectangleShape)) {
-                            NotificationUtil.getInstance().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, "The first shape only can be a rectangle");
-                            return;
-                        }
-                    }
                     Object parent = scene.findObject(widget);
                                         
                     Shape newShape = null;
@@ -128,7 +137,8 @@ public class ModelLayoutAcceptProvider implements AcceptProvider {
                             newWidget = scene.addNode(newShape);
                             newWidget.setVisible(false);
                             scene.validate();
-                            if  (JOptionPane.showConfirmDialog(null, "Is the model layout for an equipment which can be put in a Rack?", "Question", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                            if  (JOptionPane.showConfirmDialog(null, "Can this device be mounted in a rack?", 
+                                    "Information", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                                 JSpinner numberOfRackUnits = new JSpinner();
                                 numberOfRackUnits.setValue(1);
                                 
@@ -164,8 +174,7 @@ public class ModelLayoutAcceptProvider implements AcceptProvider {
                         if (newWidget instanceof SharedContentLookup)
                             ((SharedContentLookup) newWidget).fixLookup();
                     }
-                } catch (Exception ex) {            
-                }
+                } catch (Exception ex) {  }
             }
         }
     }

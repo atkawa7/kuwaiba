@@ -140,10 +140,10 @@ def htmlDivPieChart = chartsFactory.createHTMLDivWrapperChart(ChartType.PIECHART
 def location = Util.formatObjectList(bem.getParents(objectClassName, objectId), true, 4);
 
 def informationTable = new HTMLTable("width: 80%;", "infoTable", null);
-informationTable.getRows().add(new HTMLRow([new HTMLColumn(null, "generalInfoLabel", "<b>Element Name:</b>"), new HTMLColumn(null, "generalInfoValue", currentObj.getName())] as HTMLColumn []));
-informationTable.getRows().add(new HTMLRow([new HTMLColumn(null, "generalInfoLabel", "<b>Element Type:</b>"), new HTMLColumn(null, "generalInfoValue", currentObj.getClassName())] as HTMLColumn []));
-informationTable.getRows().add(new HTMLRow([new HTMLColumn(null, "generalInfoLabel", "<b>Location:</b>"), new HTMLColumn(null, "generalInfoValue", location)] as HTMLColumn []));
-informationTable.getRows().add(new HTMLRow([new HTMLColumn(null, "generalInfoLabel", "<b>Date:</b>"), new HTMLColumn(null, "generalInfoValue", DateFormat.getDateInstance(DateFormat.MEDIUM).format(new Date()))] as HTMLColumn []));
+informationTable.getRows().add(new HTMLRow([new HTMLColumn(null, "generalInfoLabel", "<b>Element Name</b>"), new HTMLColumn(null, "generalInfoValue", currentObj.getName())] as HTMLColumn []));
+informationTable.getRows().add(new HTMLRow([new HTMLColumn(null, "generalInfoLabel", "<b>Element Type</b>"), new HTMLColumn(null, "generalInfoValue", currentObj.getClassName())] as HTMLColumn []));
+informationTable.getRows().add(new HTMLRow([new HTMLColumn(null, "generalInfoLabel", "<b>Location</b>"), new HTMLColumn(null, "generalInfoValue", location)] as HTMLColumn []));
+informationTable.getRows().add(new HTMLRow([new HTMLColumn(null, "generalInfoLabel", "<b>Date</b>"), new HTMLColumn(null, "generalInfoValue", DateFormat.getDateInstance(DateFormat.MEDIUM).format(new Date()))] as HTMLColumn []));
 
 
 def headerTable = new HTMLTable("width: 100%;", "headerTable", null);

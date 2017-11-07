@@ -49,7 +49,7 @@ public final class ShowModelLayoutTopComponent extends TopComponent {
         this();
         this.objectLight = objectLight;
         
-        setName("Model Layout to " + objectLight.getName());
+        setName(String.format("Device Layout for %s ", objectLight.getName()));
         
         scene = new LayoutViewScene();
         associateLookup(scene.getLookup());

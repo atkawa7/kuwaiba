@@ -64,7 +64,7 @@ public class RelateSubnetToVFRAction extends GenericInventoryAction {
                 selectedObjects.add((LocalObjectLight)iterator.next());
             
             if (vfrInstances.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "There are no VRF instances created. Create at least one using the Navigation Tree", 
+                JOptionPane.showMessageDialog(null, "There are no VRF instances created. Create at least one using the Navigation Tree or the Pools module", 
                     "Information", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 VFRsFrame frame = new VFRsFrame(selectedObjects, vfrInstances);

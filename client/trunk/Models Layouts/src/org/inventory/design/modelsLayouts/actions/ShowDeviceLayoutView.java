@@ -27,14 +27,14 @@ import org.openide.util.lookup.ServiceProvider;
 import org.openide.windows.WindowManager;
 
 /**
- * Action used to show a model layout
+ * Action used to show how a given device looks like (in the real world)
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ShowLayoutView extends GenericObjectNodeAction {
+public class ShowDeviceLayoutView extends GenericObjectNodeAction {
     
-    public ShowLayoutView() {
-        putValue(NAME, "Show Equipment Model Layout View");
+    public ShowDeviceLayoutView() {
+        putValue(NAME, "Show Device Layout");
     }
 
     @Override
@@ -44,14 +44,14 @@ public class ShowLayoutView extends GenericObjectNodeAction {
 
     @Override
     public LocalPrivilege getPrivilege() {
-        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_MODELS_LAYOUTS, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_MODELS_LAYOUTS, LocalPrivilege.ACCESS_LEVEL_READ);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {        
         LocalClassMetadata equipmentModelClass = CommunicationsStub.getInstance().getMetaForClass("EquipmentModel", true); //NOI18N
         if (equipmentModelClass == null) {
-            JOptionPane.showMessageDialog(null, "This database seems outdated. Contact your administrator to apply the necessary patches to run the Show Equipment Model Layout View action", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "This database seems outdated. Contact your administrator to apply the necessary patches to run the Show Device Layout action", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         
@@ -65,11 +65,10 @@ public class ShowLayoutView extends GenericObjectNodeAction {
             } else {
                 if (modelLayoutView.isOpened())
                     modelLayoutView.requestAttention(true);
-                else { //Even after closed, the TCs (even the no-singletons) continue to exist in the NBP's PersistenceManager registry, 
+                else  //Even after closed, the TCs (even the no-singletons) continue to exist in the NBP's PersistenceManager registry, 
                        //so we will reuse the instance, refreshing the vierw first
-//                    modelLayoutView.refresh();
                     modelLayoutView.open();
-                }
+                
             }
             modelLayoutView.requestActive();
         }

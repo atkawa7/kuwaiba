@@ -121,7 +121,7 @@ public class RenderModelLayout {
                     return loli;
             }
         }
-        errorMessage = String.format("The object %s no has or not set the attribute \"model\"", localObject);
+        errorMessage = String.format("The object %s does not have an attribute \"model\" or is not set", localObject);
         return null;
     }
     
@@ -143,7 +143,7 @@ public class RenderModelLayout {
                 this.errorMessage = CommunicationsStub.getInstance().getError();
             }
         } else {
-            this.errorMessage = String.format("The EquipmentModel %s no has associate a layout", equipmentModel);
+            this.errorMessage = String.format("The EquipmentModel %s does not have a layout associated to it", equipmentModel);
         }
     }
         

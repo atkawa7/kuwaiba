@@ -66,7 +66,7 @@ public class RelateSubnetToVlanAction extends GenericInventoryAction {
                 selectedObjects.add((LocalObjectLight)iterator.next());
             
             if (vlans.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "There are no VLANs created. Create at least one using the Navigation Tree", 
+                JOptionPane.showMessageDialog(null, "There are no VLANs created. Create at least one using the Navigation Tree or the Pools module", 
                     "Information", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 VlansFrame frame = new VlansFrame(selectedObjects, vlans);
