@@ -86,7 +86,6 @@ import org.inventory.communications.wsclient.RemoteTaskResult;
 import org.inventory.communications.wsclient.ResultRecord;
 import org.inventory.communications.wsclient.SdhContainerLinkDefinition;
 import org.inventory.communications.wsclient.SdhPosition;
-import org.inventory.communications.wsclient.ServerSideException_Exception;
 import org.inventory.communications.wsclient.StringArray;
 import org.inventory.communications.wsclient.StringPair;
 import org.inventory.communications.wsclient.TaskNotificationDescriptor;
@@ -3602,7 +3601,7 @@ public class CommunicationsStub {
             long newObjectId = service.createSDHTransportLink(endpointA.getClassName(),
                     endpointA.getOid(), endpointB.getClassName(), endpointB.getOid(), transportLinkType, defaultName, session.getSessionId());
             return new LocalObjectLight(newObjectId, defaultName, transportLinkType);
-        } catch (ServerSideException_Exception ex) {
+        } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
         }
@@ -3626,7 +3625,7 @@ public class CommunicationsStub {
                     equipmentA.getOid(), equipmentB.getClassName(), equipmentB.getOid(), 
                     containerLinkType, remotepositions, defaultName, session.getSessionId());
             return new LocalObjectLight(newObjectId, defaultName, containerLinkType);
-        } catch (ServerSideException_Exception ex) {
+        } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
         }
@@ -3650,7 +3649,7 @@ public class CommunicationsStub {
                     equipmentA.getOid(), equipmentB.getClassName(), equipmentB.getOid(), 
                     containerLinkType, remotepositions, defaultName, session.getSessionId());
             return new LocalObjectLight(newObjectId, defaultName, containerLinkType);
-        } catch (ServerSideException_Exception ex) {
+        } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
         }
@@ -3664,7 +3663,7 @@ public class CommunicationsStub {
                 res.add(new LocalObjectLightList(route));
             
             return res;
-        } catch (ServerSideException_Exception ex) {
+        } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
         }
@@ -3678,7 +3677,7 @@ public class CommunicationsStub {
                 res.add(new LocalObjectLightList(route));
             
             return res;
-        } catch (ServerSideException_Exception ex) {
+        } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
         }
@@ -3702,7 +3701,7 @@ public class CommunicationsStub {
                 res.add(aLocalContainerDefinition);
             }            
             return res;
-        } catch (ServerSideException_Exception ex) {
+        } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
         }
@@ -3725,7 +3724,7 @@ public class CommunicationsStub {
                 res.add(aLocalContainerDefinition);
             }            
             return res;
-        } catch (ServerSideException_Exception ex) {
+        } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
         }
@@ -3850,7 +3849,7 @@ public class CommunicationsStub {
         try {
             service.deleteSDHTransportLink(transportLinkClass, transportLinkId, true, session.getSessionId());
             return true;
-        } catch (ServerSideException_Exception ex) {
+        } catch (Exception ex) {
             this.error = ex.getMessage();
             return false;
         }
@@ -3860,7 +3859,7 @@ public class CommunicationsStub {
         try {
             service.deleteSDHContainerLink(containerLinkClass, containerLinkId, true, session.getSessionId());
             return true;
-        } catch (ServerSideException_Exception ex) {
+        } catch (Exception ex) {
             this.error = ex.getMessage();
             return false;
         }
@@ -3870,7 +3869,7 @@ public class CommunicationsStub {
         try {
             service.deleteSDHTributaryLink(tributaryLinkClass, tributaryLinkId, true, session.getSessionId());
             return true;
-        } catch (ServerSideException_Exception ex) {
+        } catch (Exception ex) {
             this.error = ex.getMessage();
             return false;
         }
@@ -4033,7 +4032,7 @@ public class CommunicationsStub {
             long newObjectId = service.createMPLSLink(endpointA.getClassName(),
                     endpointA.getOid(), endpointB.getClassName(), endpointB.getOid(), transportLinkType, defaultName, session.getSessionId());
             return new LocalObjectLight(newObjectId, defaultName, transportLinkType);
-        } catch (ServerSideException_Exception ex) {
+        } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
         }
@@ -4043,7 +4042,7 @@ public class CommunicationsStub {
         try {
             service.deleteMPLSLink(linkClass, linkId, true, session.getSessionId());
             return true;
-        } catch (ServerSideException_Exception ex) {
+        } catch (Exception ex) {
             this.error = ex.getMessage();
             return false;
         }
@@ -4313,7 +4312,7 @@ public class CommunicationsStub {
         try {
             long projId = service.createProjectPool(name, description, instanceOfClass, session.getSessionId());
             return getPoolInfo(projId);
-        } catch (ServerSideException_Exception ex) {
+        } catch (Exception ex) {
             error = ex.getMessage();
             return null;
         }
