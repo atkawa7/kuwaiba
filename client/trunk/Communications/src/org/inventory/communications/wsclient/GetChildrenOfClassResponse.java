@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class GetChildrenOfClassResponse {
 
-    @XmlElement(name = "return", nillable = true)
+    @XmlElement(name = "return")
     protected List<RemoteObject> _return;
 
     /**

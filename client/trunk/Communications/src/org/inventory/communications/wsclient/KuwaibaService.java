@@ -28,486 +28,49 @@ public interface KuwaibaService {
 
     /**
      * 
-     * @param sessionId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.GroupInfo>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getGroups", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGroups")
-    @ResponseWrapper(localName = "getGroupsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGroupsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getGroupsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getGroupsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getGroups/Fault/ServerSideException")
-    })
-    public List<GroupInfo> getGroups(
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param listTypeItemClass
-     * @param viewId
-     * @param sessionId
-     * @param listTypeItemId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "deleteListTypeItemRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteListTypeItemRelatedView")
-    @ResponseWrapper(localName = "deleteListTypeItemRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteListTypeItemRelatedViewResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteListTypeItemRelatedViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteListTypeItemRelatedViewResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteListTypeItemRelatedView/Fault/ServerSideException")
-    })
-    public void deleteListTypeItemRelatedView(
-        @WebParam(name = "listTypeItemId", targetNamespace = "")
-        long listTypeItemId,
-        @WebParam(name = "listTypeItemClass", targetNamespace = "")
-        String listTypeItemClass,
-        @WebParam(name = "viewId", targetNamespace = "")
-        long viewId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param queryStructure
-     * @param ownerOid
-     * @param queryName
-     * @param description
-     * @param sessionId
-     * @return
-     *     returns long
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "createQuery", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateQuery")
-    @ResponseWrapper(localName = "createQueryResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateQueryResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createQueryRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createQueryResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createQuery/Fault/ServerSideException")
-    })
-    public long createQuery(
-        @WebParam(name = "queryName", targetNamespace = "")
-        String queryName,
-        @WebParam(name = "ownerOid", targetNamespace = "")
-        long ownerOid,
-        @WebParam(name = "queryStructure", targetNamespace = "")
-        byte[] queryStructure,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param queryOid
-     * @param sessionId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "deleteQuery", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteQuery")
-    @ResponseWrapper(localName = "deleteQueryResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteQueryResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteQueryRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteQueryResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteQuery/Fault/ServerSideException")
-    })
-    public void deleteQuery(
-        @WebParam(name = "queryOid", targetNamespace = "")
-        long queryOid,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param className
-     * @param sessionId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "deleteClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteClass")
-    @ResponseWrapper(localName = "deleteClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteClassResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteClassRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteClassResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteClass/Fault/ServerSideException")
-    })
-    public void deleteClass(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param includeListTypes
-     * @param sessionId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.ClassInfoLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getAllClassesLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetAllClassesLight")
-    @ResponseWrapper(localName = "getAllClassesLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetAllClassesLightResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getAllClassesLightRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getAllClassesLightResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getAllClassesLight/Fault/ServerSideException")
-    })
-    public List<ClassInfoLight> getAllClassesLight(
-        @WebParam(name = "includeListTypes", targetNamespace = "")
-        boolean includeListTypes,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param includeSelf
-     * @param includeAbstractClasses
-     * @param className
-     * @param sessionId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.ClassInfoLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getSubClassesLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSubClassesLight")
-    @ResponseWrapper(localName = "getSubClassesLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSubClassesLightResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getSubClassesLightRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getSubClassesLightResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getSubClassesLight/Fault/ServerSideException")
-    })
-    public List<ClassInfoLight> getSubClassesLight(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "includeAbstractClasses", targetNamespace = "")
-        boolean includeAbstractClasses,
-        @WebParam(name = "includeSelf", targetNamespace = "")
-        boolean includeSelf,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param includeSelf
-     * @param includeAbstractClasses
-     * @param className
-     * @param sessionId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.ClassInfoLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getSubClassesLightNoRecursive", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSubClassesLightNoRecursive")
-    @ResponseWrapper(localName = "getSubClassesLightNoRecursiveResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSubClassesLightNoRecursiveResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getSubClassesLightNoRecursiveRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getSubClassesLightNoRecursiveResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getSubClassesLightNoRecursive/Fault/ServerSideException")
-    })
-    public List<ClassInfoLight> getSubClassesLightNoRecursive(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "includeAbstractClasses", targetNamespace = "")
-        boolean includeAbstractClasses,
-        @WebParam(name = "includeSelf", targetNamespace = "")
-        boolean includeSelf,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param includeListTypes
-     * @param sessionId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.ClassInfo>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getAllClasses", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetAllClasses")
-    @ResponseWrapper(localName = "getAllClassesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetAllClassesResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getAllClassesRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getAllClassesResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getAllClasses/Fault/ServerSideException")
-    })
-    public List<ClassInfo> getAllClasses(
-        @WebParam(name = "includeListTypes", targetNamespace = "")
-        boolean includeListTypes,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param className
-     * @param attributeName
-     * @param sessionId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "deleteAttribute", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteAttribute")
-    @ResponseWrapper(localName = "deleteAttributeResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteAttributeResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteAttributeRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteAttributeResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteAttribute/Fault/ServerSideException")
-    })
-    public void deleteAttribute(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "attributeName", targetNamespace = "")
-        String attributeName,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param parentClassName
-     * @param sessionId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.ClassInfoLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getPossibleChildren", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPossibleChildren")
-    @ResponseWrapper(localName = "getPossibleChildrenResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPossibleChildrenResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getPossibleChildrenRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getPossibleChildrenResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getPossibleChildren/Fault/ServerSideException")
-    })
-    public List<ClassInfoLight> getPossibleChildren(
-        @WebParam(name = "parentClassName", targetNamespace = "")
-        String parentClassName,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param parentClassName
-     * @param sessionId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.ClassInfoLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getPossibleSpecialChildren", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPossibleSpecialChildren")
-    @ResponseWrapper(localName = "getPossibleSpecialChildrenResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPossibleSpecialChildrenResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getPossibleSpecialChildrenRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getPossibleSpecialChildrenResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getPossibleSpecialChildren/Fault/ServerSideException")
-    })
-    public List<ClassInfoLight> getPossibleSpecialChildren(
-        @WebParam(name = "parentClassName", targetNamespace = "")
-        String parentClassName,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param parentClassName
-     * @param sessionId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.ClassInfoLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getPossibleChildrenNoRecursive", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPossibleChildrenNoRecursive")
-    @ResponseWrapper(localName = "getPossibleChildrenNoRecursiveResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPossibleChildrenNoRecursiveResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getPossibleChildrenNoRecursiveRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getPossibleChildrenNoRecursiveResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getPossibleChildrenNoRecursive/Fault/ServerSideException")
-    })
-    public List<ClassInfoLight> getPossibleChildrenNoRecursive(
-        @WebParam(name = "parentClassName", targetNamespace = "")
-        String parentClassName,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param parentClassName
-     * @param sessionId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.ClassInfoLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getPossibleSpecialChildrenNoRecursive", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPossibleSpecialChildrenNoRecursive")
-    @ResponseWrapper(localName = "getPossibleSpecialChildrenNoRecursiveResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPossibleSpecialChildrenNoRecursiveResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getPossibleSpecialChildrenNoRecursiveRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getPossibleSpecialChildrenNoRecursiveResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getPossibleSpecialChildrenNoRecursive/Fault/ServerSideException")
-    })
-    public List<ClassInfoLight> getPossibleSpecialChildrenNoRecursive(
-        @WebParam(name = "parentClassName", targetNamespace = "")
-        String parentClassName,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param className
-     * @param sessionId
-     * @param recursive
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.ClassInfoLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getUpstreamContainmentHierarchy", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUpstreamContainmentHierarchy")
-    @ResponseWrapper(localName = "getUpstreamContainmentHierarchyResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUpstreamContainmentHierarchyResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getUpstreamContainmentHierarchyRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getUpstreamContainmentHierarchyResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getUpstreamContainmentHierarchy/Fault/ServerSideException")
-    })
-    public List<ClassInfoLight> getUpstreamContainmentHierarchy(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "recursive", targetNamespace = "")
-        boolean recursive,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param className
-     * @param sessionId
-     * @param recursive
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.ClassInfoLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getUpstreamSpecialContainmentHierarchy", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUpstreamSpecialContainmentHierarchy")
-    @ResponseWrapper(localName = "getUpstreamSpecialContainmentHierarchyResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUpstreamSpecialContainmentHierarchyResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getUpstreamSpecialContainmentHierarchyRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getUpstreamSpecialContainmentHierarchyResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getUpstreamSpecialContainmentHierarchy/Fault/ServerSideException")
-    })
-    public List<ClassInfoLight> getUpstreamSpecialContainmentHierarchy(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "recursive", targetNamespace = "")
-        boolean recursive,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param parentClassName
-     * @param childrenToBeAdded
-     * @param sessionId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "addPossibleChildren", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddPossibleChildren")
-    @ResponseWrapper(localName = "addPossibleChildrenResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddPossibleChildrenResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/addPossibleChildrenRequest", output = "http://ws.kuwaiba.org/KuwaibaService/addPossibleChildrenResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/addPossibleChildren/Fault/ServerSideException")
-    })
-    public void addPossibleChildren(
-        @WebParam(name = "parentClassName", targetNamespace = "")
-        String parentClassName,
-        @WebParam(name = "childrenToBeAdded", targetNamespace = "")
-        List<String> childrenToBeAdded,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param parentClassName
-     * @param possibleSpecialChildren
-     * @param sessionId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "addPossibleSpecialChildren", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddPossibleSpecialChildren")
-    @ResponseWrapper(localName = "addPossibleSpecialChildrenResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddPossibleSpecialChildrenResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/addPossibleSpecialChildrenRequest", output = "http://ws.kuwaiba.org/KuwaibaService/addPossibleSpecialChildrenResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/addPossibleSpecialChildren/Fault/ServerSideException")
-    })
-    public void addPossibleSpecialChildren(
-        @WebParam(name = "parentClassName", targetNamespace = "")
-        String parentClassName,
-        @WebParam(name = "possibleSpecialChildren", targetNamespace = "")
-        List<String> possibleSpecialChildren,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param parentClassId
-     * @param specialChildrenToBeRemoved
-     * @param sessionId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "removePossibleSpecialChildren", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePossibleSpecialChildren")
-    @ResponseWrapper(localName = "removePossibleSpecialChildrenResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePossibleSpecialChildrenResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/removePossibleSpecialChildrenRequest", output = "http://ws.kuwaiba.org/KuwaibaService/removePossibleSpecialChildrenResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/removePossibleSpecialChildren/Fault/ServerSideException")
-    })
-    public void removePossibleSpecialChildren(
-        @WebParam(name = "parentClassId", targetNamespace = "")
-        long parentClassId,
-        @WebParam(name = "specialChildrenToBeRemoved", targetNamespace = "")
-        List<Long> specialChildrenToBeRemoved,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
+     * @param visible
+     * @param isReadOnly
      * @param displayName
+     * @param administrative
+     * @param noCopy
+     * @param unique
      * @param name
+     * @param description
      * @param className
      * @param sessionId
-     * @return
-     *     returns long
+     * @param type
+     * @param mandatory
      * @throws ServerSideException_Exception
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "createListTypeItem", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateListTypeItem")
-    @ResponseWrapper(localName = "createListTypeItemResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateListTypeItemResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createListTypeItemRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createListTypeItemResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createListTypeItem/Fault/ServerSideException")
+    @RequestWrapper(localName = "createAttribute", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateAttribute")
+    @ResponseWrapper(localName = "createAttributeResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateAttributeResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createAttributeRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createAttributeResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createAttribute/Fault/ServerSideException")
     })
-    public long createListTypeItem(
+    public void createAttribute(
         @WebParam(name = "className", targetNamespace = "")
         String className,
         @WebParam(name = "name", targetNamespace = "")
         String name,
         @WebParam(name = "displayName", targetNamespace = "")
         String displayName,
+        @WebParam(name = "type", targetNamespace = "")
+        String type,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "administrative", targetNamespace = "")
+        boolean administrative,
+        @WebParam(name = "visible", targetNamespace = "")
+        boolean visible,
+        @WebParam(name = "isReadOnly", targetNamespace = "")
+        boolean isReadOnly,
+        @WebParam(name = "noCopy", targetNamespace = "")
+        boolean noCopy,
+        @WebParam(name = "unique", targetNamespace = "")
+        boolean unique,
+        @WebParam(name = "mandatory", targetNamespace = "")
+        boolean mandatory,
         @WebParam(name = "sessionId", targetNamespace = "")
         String sessionId)
         throws ServerSideException_Exception
@@ -515,48 +78,22 @@ public interface KuwaibaService {
 
     /**
      * 
-     * @param className
-     * @param oid
-     * @param sessionId
-     * @param releaseRelationships
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "deleteListTypeItem", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteListTypeItem")
-    @ResponseWrapper(localName = "deleteListTypeItemResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteListTypeItemResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteListTypeItemRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteListTypeItemResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteListTypeItem/Fault/ServerSideException")
-    })
-    public void deleteListTypeItem(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "releaseRelationships", targetNamespace = "")
-        boolean releaseRelationships,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param className
+     * @param reportId
      * @param sessionId
      * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
+     *     returns org.inventory.communications.wsclient.RemoteReport
      * @throws ServerSideException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getListTypeItems", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItems")
-    @ResponseWrapper(localName = "getListTypeItemsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItemsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getListTypeItemsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getListTypeItemsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getListTypeItems/Fault/ServerSideException")
+    @RequestWrapper(localName = "getReport", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetReport")
+    @ResponseWrapper(localName = "getReportResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetReportResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getReportRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getReportResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getReport/Fault/ServerSideException")
     })
-    public List<RemoteObjectLight> getListTypeItems(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
+    public RemoteReport getReport(
+        @WebParam(name = "reportId", targetNamespace = "")
+        long reportId,
         @WebParam(name = "sessionId", targetNamespace = "")
         String sessionId)
         throws ServerSideException_Exception
@@ -564,1223 +101,22 @@ public interface KuwaibaService {
 
     /**
      * 
-     * @param showAll
+     * @param query
      * @param sessionId
      * @return
-     *     returns byte[]
+     *     returns java.util.List<org.inventory.communications.wsclient.ResultRecord>
      * @throws ServerSideException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getClassHierarchy", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetClassHierarchy")
-    @ResponseWrapper(localName = "getClassHierarchyResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetClassHierarchyResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getClassHierarchyRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getClassHierarchyResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getClassHierarchy/Fault/ServerSideException")
+    @RequestWrapper(localName = "executeQuery", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ExecuteQuery")
+    @ResponseWrapper(localName = "executeQueryResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ExecuteQueryResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/executeQueryRequest", output = "http://ws.kuwaiba.org/KuwaibaService/executeQueryResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/executeQuery/Fault/ServerSideException")
     })
-    public byte[] getClassHierarchy(
-        @WebParam(name = "showAll", targetNamespace = "")
-        boolean showAll,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "closeSession", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CloseSession")
-    @ResponseWrapper(localName = "closeSessionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CloseSessionResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/closeSessionRequest", output = "http://ws.kuwaiba.org/KuwaibaService/closeSessionResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/closeSession/Fault/ServerSideException")
-    })
-    public void closeSession(
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param objectClassName
-     * @param maxResults
-     * @param oid
-     * @param sessionId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getObjectChildren", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectChildren")
-    @ResponseWrapper(localName = "getObjectChildrenResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectChildrenResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getObjectChildrenRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getObjectChildrenResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getObjectChildren/Fault/ServerSideException")
-    })
-    public List<RemoteObjectLight> getObjectChildren(
-        @WebParam(name = "objectClassName", targetNamespace = "")
-        String objectClassName,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "maxResults", targetNamespace = "")
-        int maxResults,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param objectClassName
-     * @param maxResults
-     * @param oid
-     * @param sessionId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getSiblings", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSiblings")
-    @ResponseWrapper(localName = "getSiblingsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSiblingsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getSiblingsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getSiblingsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getSiblings/Fault/ServerSideException")
-    })
-    public List<RemoteObjectLight> getSiblings(
-        @WebParam(name = "objectClassName", targetNamespace = "")
-        String objectClassName,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "maxResults", targetNamespace = "")
-        int maxResults,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param parentOid
-     * @param maxResults
-     * @param childrenClass
-     * @param parentClass
-     * @param sessionId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObject>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getChildrenOfClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClass")
-    @ResponseWrapper(localName = "getChildrenOfClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClass/Fault/ServerSideException")
-    })
-    public List<RemoteObject> getChildrenOfClass(
-        @WebParam(name = "parentOid", targetNamespace = "")
-        long parentOid,
-        @WebParam(name = "parentClass", targetNamespace = "")
-        String parentClass,
-        @WebParam(name = "childrenClass", targetNamespace = "")
-        String childrenClass,
-        @WebParam(name = "maxResults", targetNamespace = "")
-        int maxResults,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param parentOid
-     * @param maxResults
-     * @param childrenClass
-     * @param parentClass
-     * @param sessionId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getChildrenOfClassLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassLight")
-    @ResponseWrapper(localName = "getChildrenOfClassLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassLightResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassLightRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassLightResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassLight/Fault/ServerSideException")
-    })
-    public List<RemoteObjectLight> getChildrenOfClassLight(
-        @WebParam(name = "parentOid", targetNamespace = "")
-        long parentOid,
-        @WebParam(name = "parentClass", targetNamespace = "")
-        String parentClass,
-        @WebParam(name = "childrenClass", targetNamespace = "")
-        String childrenClass,
-        @WebParam(name = "maxResults", targetNamespace = "")
-        int maxResults,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param parentOid
-     * @param maxResults
-     * @param childrenClass
-     * @param parentClass
-     * @param sessionId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getChildrenOfClassLightRecursive", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassLightRecursive")
-    @ResponseWrapper(localName = "getChildrenOfClassLightRecursiveResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassLightRecursiveResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassLightRecursiveRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassLightRecursiveResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassLightRecursive/Fault/ServerSideException")
-    })
-    public List<RemoteObjectLight> getChildrenOfClassLightRecursive(
-        @WebParam(name = "parentOid", targetNamespace = "")
-        long parentOid,
-        @WebParam(name = "parentClass", targetNamespace = "")
-        String parentClass,
-        @WebParam(name = "childrenClass", targetNamespace = "")
-        String childrenClass,
-        @WebParam(name = "maxResults", targetNamespace = "")
-        int maxResults,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param oid
-     * @param sessionId
-     * @param objectclass
-     * @return
-     *     returns org.inventory.communications.wsclient.RemoteObjectLight
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getObjectLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectLight")
-    @ResponseWrapper(localName = "getObjectLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectLightResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getObjectLightRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getObjectLightResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getObjectLight/Fault/ServerSideException")
-    })
-    public RemoteObjectLight getObjectLight(
-        @WebParam(name = "objectclass", targetNamespace = "")
-        String objectclass,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param aObjectClass
-     * @param aOid
-     * @param bOid
-     * @param bObjectClass
-     * @param sessionId
-     * @return
-     *     returns org.inventory.communications.wsclient.RemoteObjectLight
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getCommonParent", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetCommonParent")
-    @ResponseWrapper(localName = "getCommonParentResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetCommonParentResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getCommonParentRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getCommonParentResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getCommonParent/Fault/ServerSideException")
-    })
-    public RemoteObjectLight getCommonParent(
-        @WebParam(name = "aObjectClass", targetNamespace = "")
-        String aObjectClass,
-        @WebParam(name = "aOid", targetNamespace = "")
-        long aOid,
-        @WebParam(name = "bObjectClass", targetNamespace = "")
-        String bObjectClass,
-        @WebParam(name = "bOid", targetNamespace = "")
-        long bOid,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param oid
-     * @param attributename
-     * @param sessionId
-     * @param objectclass
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getSpecialAttribute", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialAttribute")
-    @ResponseWrapper(localName = "getSpecialAttributeResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialAttributeResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getSpecialAttributeRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getSpecialAttributeResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getSpecialAttribute/Fault/ServerSideException")
-    })
-    public List<RemoteObjectLight> getSpecialAttribute(
-        @WebParam(name = "objectclass", targetNamespace = "")
-        String objectclass,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "attributename", targetNamespace = "")
-        String attributename,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param objectClass
-     * @param oid
-     * @param sessionId
-     * @return
-     *     returns org.inventory.communications.wsclient.RemoteObjectSpecialRelationships
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getSpecialAttributes", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialAttributes")
-    @ResponseWrapper(localName = "getSpecialAttributesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialAttributesResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getSpecialAttributesRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getSpecialAttributesResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getSpecialAttributes/Fault/ServerSideException")
-    })
-    public RemoteObjectSpecialRelationships getSpecialAttributes(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param arg3
-     * @param arg2
-     * @param arg1
-     * @param arg0
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getParentsUntilFirstOfClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetParentsUntilFirstOfClass")
-    @ResponseWrapper(localName = "getParentsUntilFirstOfClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetParentsUntilFirstOfClassResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getParentsUntilFirstOfClassRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getParentsUntilFirstOfClassResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getParentsUntilFirstOfClass/Fault/ServerSideException")
-    })
-    public List<RemoteObjectLight> getParentsUntilFirstOfClass(
-        @WebParam(name = "arg0", targetNamespace = "")
-        String arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        long arg1,
-        @WebParam(name = "arg2", targetNamespace = "")
-        String arg2,
-        @WebParam(name = "arg3", targetNamespace = "")
-        String arg3)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param objectClass
-     * @param oid
-     * @param sessionId
-     * @param objectToMatchClassName
-     * @return
-     *     returns org.inventory.communications.wsclient.RemoteObjectLight
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getFirstParentOfClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetFirstParentOfClass")
-    @ResponseWrapper(localName = "getFirstParentOfClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetFirstParentOfClassResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getFirstParentOfClassRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getFirstParentOfClassResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getFirstParentOfClass/Fault/ServerSideException")
-    })
-    public RemoteObjectLight getFirstParentOfClass(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "objectToMatchClassName", targetNamespace = "")
-        String objectToMatchClassName,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param objectClass
-     * @param parentClass
-     * @param oid
-     * @param sessionId
-     * @return
-     *     returns org.inventory.communications.wsclient.RemoteObject
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getParentOfClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetParentOfClass")
-    @ResponseWrapper(localName = "getParentOfClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetParentOfClassResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getParentOfClassRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getParentOfClassResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getParentOfClass/Fault/ServerSideException")
-    })
-    public RemoteObject getParentOfClass(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "parentClass", targetNamespace = "")
-        String parentClass,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param objectclass
-     * @param objectId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getObjectSpecialChildren", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectSpecialChildren")
-    @ResponseWrapper(localName = "getObjectSpecialChildrenResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectSpecialChildrenResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getObjectSpecialChildrenRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getObjectSpecialChildrenResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getObjectSpecialChildren/Fault/ServerSideException")
-    })
-    public List<RemoteObjectLight> getObjectSpecialChildren(
-        @WebParam(name = "objectclass", targetNamespace = "")
-        String objectclass,
-        @WebParam(name = "objectId", targetNamespace = "")
-        long objectId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.ClassInfoLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getInstanceableListTypes", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetInstanceableListTypes")
-    @ResponseWrapper(localName = "getInstanceableListTypesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetInstanceableListTypesResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getInstanceableListTypesRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getInstanceableListTypesResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getInstanceableListTypes/Fault/ServerSideException")
-    })
-    public List<ClassInfoLight> getInstanceableListTypes(
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param parentObjectClassName
-     * @param attributeNames
-     * @param parentOid
-     * @param attributeValues
-     * @param className
-     * @param sessionId
-     * @param templateId
-     * @return
-     *     returns long
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "createSpecialObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateSpecialObject")
-    @ResponseWrapper(localName = "createSpecialObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateSpecialObjectResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createSpecialObjectRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createSpecialObjectResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createSpecialObject/Fault/ServerSideException")
-    })
-    public long createSpecialObject(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "parentObjectClassName", targetNamespace = "")
-        String parentObjectClassName,
-        @WebParam(name = "parentOid", targetNamespace = "")
-        long parentOid,
-        @WebParam(name = "attributeNames", targetNamespace = "")
-        List<String> attributeNames,
-        @WebParam(name = "attributeValues", targetNamespace = "")
-        List<String> attributeValues,
-        @WebParam(name = "templateId", targetNamespace = "")
-        long templateId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param className
-     * @param oid
-     * @param sessionId
-     * @param releaseRelationships
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "deleteObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteObject")
-    @ResponseWrapper(localName = "deleteObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteObjectResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteObjectRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteObjectResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteObject/Fault/ServerSideException")
-    })
-    public void deleteObject(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "releaseRelationships", targetNamespace = "")
-        boolean releaseRelationships,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param classNames
-     * @param oid
-     * @param sessionId
-     * @param releaseRelationships
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "deleteObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteObjects")
-    @ResponseWrapper(localName = "deleteObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteObjectsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteObjectsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteObjectsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteObjects/Fault/ServerSideException")
-    })
-    public void deleteObjects(
-        @WebParam(name = "classNames", targetNamespace = "")
-        List<String> classNames,
-        @WebParam(name = "oid", targetNamespace = "")
-        List<Long> oid,
-        @WebParam(name = "releaseRelationships", targetNamespace = "")
-        boolean releaseRelationships,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param objectsOids
-     * @param targetClass
-     * @param objectsClasses
-     * @param targetOid
-     * @param sessionId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "moveObjectsToPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveObjectsToPool")
-    @ResponseWrapper(localName = "moveObjectsToPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveObjectsToPoolResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/moveObjectsToPoolRequest", output = "http://ws.kuwaiba.org/KuwaibaService/moveObjectsToPoolResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/moveObjectsToPool/Fault/ServerSideException")
-    })
-    public void moveObjectsToPool(
-        @WebParam(name = "targetClass", targetNamespace = "")
-        String targetClass,
-        @WebParam(name = "targetOid", targetNamespace = "")
-        long targetOid,
-        @WebParam(name = "objectsClasses", targetNamespace = "")
-        List<String> objectsClasses,
-        @WebParam(name = "objectsOids", targetNamespace = "")
-        List<Long> objectsOids,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param objectsOids
-     * @param targetClass
-     * @param objectsClasses
-     * @param targetOid
-     * @param sessionId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "moveObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveObjects")
-    @ResponseWrapper(localName = "moveObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveObjectsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/moveObjectsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/moveObjectsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/moveObjects/Fault/ServerSideException")
-    })
-    public void moveObjects(
-        @WebParam(name = "targetClass", targetNamespace = "")
-        String targetClass,
-        @WebParam(name = "targetOid", targetNamespace = "")
-        long targetOid,
-        @WebParam(name = "objectsClasses", targetNamespace = "")
-        List<String> objectsClasses,
-        @WebParam(name = "objectsOids", targetNamespace = "")
-        List<Long> objectsOids,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param objectsOids
-     * @param targetClass
-     * @param objectsClasses
-     * @param targetOid
-     * @param sessionId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "moveSpecialObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveSpecialObjects")
-    @ResponseWrapper(localName = "moveSpecialObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveSpecialObjectsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/moveSpecialObjectsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/moveSpecialObjectsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/moveSpecialObjects/Fault/ServerSideException")
-    })
-    public void moveSpecialObjects(
-        @WebParam(name = "targetClass", targetNamespace = "")
-        String targetClass,
-        @WebParam(name = "targetOid", targetNamespace = "")
-        long targetOid,
-        @WebParam(name = "objectsClasses", targetNamespace = "")
-        List<String> objectsClasses,
-        @WebParam(name = "objectsOids", targetNamespace = "")
-        List<Long> objectsOids,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param templateOids
-     * @param targetClass
-     * @param targetOid
-     * @param sessionId
-     * @param templateClases
-     * @param recursive
-     * @return
-     *     returns java.util.List<java.lang.Long>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "copyObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopyObjects")
-    @ResponseWrapper(localName = "copyObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopyObjectsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/copyObjectsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/copyObjectsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/copyObjects/Fault/ServerSideException")
-    })
-    public List<Long> copyObjects(
-        @WebParam(name = "targetClass", targetNamespace = "")
-        String targetClass,
-        @WebParam(name = "targetOid", targetNamespace = "")
-        long targetOid,
-        @WebParam(name = "templateClases", targetNamespace = "")
-        List<String> templateClases,
-        @WebParam(name = "templateOids", targetNamespace = "")
-        List<Long> templateOids,
-        @WebParam(name = "recursive", targetNamespace = "")
-        boolean recursive,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param templateOids
-     * @param targetClass
-     * @param targetOid
-     * @param sessionId
-     * @param templateClases
-     * @param recursive
-     * @return
-     *     returns java.util.List<java.lang.Long>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "copySpecialObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopySpecialObjects")
-    @ResponseWrapper(localName = "copySpecialObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopySpecialObjectsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/copySpecialObjectsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/copySpecialObjectsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/copySpecialObjects/Fault/ServerSideException")
-    })
-    public List<Long> copySpecialObjects(
-        @WebParam(name = "targetClass", targetNamespace = "")
-        String targetClass,
-        @WebParam(name = "targetOid", targetNamespace = "")
-        long targetOid,
-        @WebParam(name = "templateClases", targetNamespace = "")
-        List<String> templateClases,
-        @WebParam(name = "templateOids", targetNamespace = "")
-        List<Long> templateOids,
-        @WebParam(name = "recursive", targetNamespace = "")
-        boolean recursive,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param attributeNames
-     * @param attributeValues
-     * @param className
-     * @param oid
-     * @param sessionId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "updateObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateObject")
-    @ResponseWrapper(localName = "updateObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateObjectResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/updateObjectRequest", output = "http://ws.kuwaiba.org/KuwaibaService/updateObjectResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/updateObject/Fault/ServerSideException")
-    })
-    public void updateObject(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "attributeNames", targetNamespace = "")
-        List<String> attributeNames,
-        @WebParam(name = "attributeValues", targetNamespace = "")
-        List<String> attributeValues,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param className
-     * @param sessionId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.AttributeInfo>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getMandatoryAttributesInClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetMandatoryAttributesInClass")
-    @ResponseWrapper(localName = "getMandatoryAttributesInClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetMandatoryAttributesInClassResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getMandatoryAttributesInClassRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getMandatoryAttributesInClassResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getMandatoryAttributesInClass/Fault/ServerSideException")
-    })
-    public List<AttributeInfo> getMandatoryAttributesInClass(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param namePattern
-     * @param numberOfObjects
-     * @param parentOid
-     * @param parentClassName
-     * @param className
-     * @param sessionId
-     * @return
-     *     returns java.util.List<java.lang.Long>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "createBulkObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkObjects")
-    @ResponseWrapper(localName = "createBulkObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkObjectsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createBulkObjectsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createBulkObjectsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createBulkObjects/Fault/ServerSideException")
-    })
-    public List<Long> createBulkObjects(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "parentClassName", targetNamespace = "")
-        String parentClassName,
-        @WebParam(name = "parentOid", targetNamespace = "")
-        long parentOid,
-        @WebParam(name = "numberOfObjects", targetNamespace = "")
-        int numberOfObjects,
-        @WebParam(name = "namePattern", targetNamespace = "")
-        String namePattern,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param namePattern
-     * @param numberOfSpecialObjects
-     * @param parentClassName
-     * @param className
-     * @param sessionId
-     * @param parentId
-     * @return
-     *     returns java.util.List<java.lang.Long>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "createBulkSpecialObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkSpecialObjects")
-    @ResponseWrapper(localName = "createBulkSpecialObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkSpecialObjectsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createBulkSpecialObjectsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createBulkSpecialObjectsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createBulkSpecialObjects/Fault/ServerSideException")
-    })
-    public List<Long> createBulkSpecialObjects(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "parentClassName", targetNamespace = "")
-        String parentClassName,
-        @WebParam(name = "parentId", targetNamespace = "")
-        long parentId,
-        @WebParam(name = "numberOfSpecialObjects", targetNamespace = "")
-        int numberOfSpecialObjects,
-        @WebParam(name = "namePattern", targetNamespace = "")
-        String namePattern,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param aObjectClass
-     * @param aObjectId
-     * @param bObjectClass
-     * @param sessionId
-     * @param bObjectId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "connectMirrorPort", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectMirrorPort")
-    @ResponseWrapper(localName = "connectMirrorPortResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectMirrorPortResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/connectMirrorPortRequest", output = "http://ws.kuwaiba.org/KuwaibaService/connectMirrorPortResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/connectMirrorPort/Fault/ServerSideException")
-    })
-    public void connectMirrorPort(
-        @WebParam(name = "aObjectClass", targetNamespace = "")
-        String aObjectClass,
-        @WebParam(name = "aObjectId", targetNamespace = "")
-        long aObjectId,
-        @WebParam(name = "bObjectClass", targetNamespace = "")
-        String bObjectClass,
-        @WebParam(name = "bObjectId", targetNamespace = "")
-        long bObjectId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param objectClass
-     * @param sessionId
-     * @param objectId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "releaseMirrorPort", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ReleaseMirrorPort")
-    @ResponseWrapper(localName = "releaseMirrorPortResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ReleaseMirrorPortResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/releaseMirrorPortRequest", output = "http://ws.kuwaiba.org/KuwaibaService/releaseMirrorPortResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/releaseMirrorPort/Fault/ServerSideException")
-    })
-    public void releaseMirrorPort(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "objectId", targetNamespace = "")
-        long objectId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param aObjectClass
-     * @param aObjectId
-     * @param name
-     * @param parentClass
-     * @param connectionClass
-     * @param bObjectClass
-     * @param sessionId
-     * @param templateId
-     * @param bObjectId
-     * @param parentId
-     * @return
-     *     returns long
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "createPhysicalConnection", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePhysicalConnection")
-    @ResponseWrapper(localName = "createPhysicalConnectionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePhysicalConnectionResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createPhysicalConnectionRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createPhysicalConnectionResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createPhysicalConnection/Fault/ServerSideException")
-    })
-    public long createPhysicalConnection(
-        @WebParam(name = "aObjectClass", targetNamespace = "")
-        String aObjectClass,
-        @WebParam(name = "aObjectId", targetNamespace = "")
-        long aObjectId,
-        @WebParam(name = "bObjectClass", targetNamespace = "")
-        String bObjectClass,
-        @WebParam(name = "bObjectId", targetNamespace = "")
-        long bObjectId,
-        @WebParam(name = "parentClass", targetNamespace = "")
-        String parentClass,
-        @WebParam(name = "parentId", targetNamespace = "")
-        long parentId,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "connectionClass", targetNamespace = "")
-        String connectionClass,
-        @WebParam(name = "templateId", targetNamespace = "")
-        long templateId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param connectionId
-     * @param connectionClass
-     * @param sessionId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getPhysicalConnectionEndpoints", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalConnectionEndpoints")
-    @ResponseWrapper(localName = "getPhysicalConnectionEndpointsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalConnectionEndpointsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalConnectionEndpointsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalConnectionEndpointsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalConnectionEndpoints/Fault/ServerSideException")
-    })
-    public List<RemoteObjectLight> getPhysicalConnectionEndpoints(
-        @WebParam(name = "connectionClass", targetNamespace = "")
-        String connectionClass,
-        @WebParam(name = "connectionId", targetNamespace = "")
-        long connectionId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sideAClassNames
-     * @param linksIds
-     * @param sideBClassNames
-     * @param sideBIds
-     * @param sideAIds
-     * @param linksClassNames
-     * @param sessionId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "connectPhysicalLinks", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectPhysicalLinks")
-    @ResponseWrapper(localName = "connectPhysicalLinksResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectPhysicalLinksResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/connectPhysicalLinksRequest", output = "http://ws.kuwaiba.org/KuwaibaService/connectPhysicalLinksResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/connectPhysicalLinks/Fault/ServerSideException")
-    })
-    public void connectPhysicalLinks(
-        @WebParam(name = "sideAClassNames", targetNamespace = "")
-        List<String> sideAClassNames,
-        @WebParam(name = "sideAIds", targetNamespace = "")
-        List<Long> sideAIds,
-        @WebParam(name = "linksClassNames", targetNamespace = "")
-        List<String> linksClassNames,
-        @WebParam(name = "linksIds", targetNamespace = "")
-        List<Long> linksIds,
-        @WebParam(name = "sideBClassNames", targetNamespace = "")
-        List<String> sideBClassNames,
-        @WebParam(name = "sideBIds", targetNamespace = "")
-        List<Long> sideBIds,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sideAClassNames
-     * @param sideBClassNames
-     * @param sideBIds
-     * @param sideAIds
-     * @param containersClassNames
-     * @param sessionId
-     * @param containersIds
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "connectPhysicalContainers", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectPhysicalContainers")
-    @ResponseWrapper(localName = "connectPhysicalContainersResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectPhysicalContainersResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/connectPhysicalContainersRequest", output = "http://ws.kuwaiba.org/KuwaibaService/connectPhysicalContainersResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/connectPhysicalContainers/Fault/ServerSideException")
-    })
-    public void connectPhysicalContainers(
-        @WebParam(name = "sideAClassNames", targetNamespace = "")
-        List<String> sideAClassNames,
-        @WebParam(name = "sideAIds", targetNamespace = "")
-        List<Long> sideAIds,
-        @WebParam(name = "containersClassNames", targetNamespace = "")
-        List<String> containersClassNames,
-        @WebParam(name = "containersIds", targetNamespace = "")
-        List<Long> containersIds,
-        @WebParam(name = "sideBClassNames", targetNamespace = "")
-        List<String> sideBClassNames,
-        @WebParam(name = "sideBIds", targetNamespace = "")
-        List<Long> sideBIds,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sideToDisconnect
-     * @param connectionId
-     * @param connectionClass
-     * @param sessionId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "disconnectPhysicalConnection", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DisconnectPhysicalConnection")
-    @ResponseWrapper(localName = "disconnectPhysicalConnectionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DisconnectPhysicalConnectionResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/disconnectPhysicalConnectionRequest", output = "http://ws.kuwaiba.org/KuwaibaService/disconnectPhysicalConnectionResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/disconnectPhysicalConnection/Fault/ServerSideException")
-    })
-    public void disconnectPhysicalConnection(
-        @WebParam(name = "connectionClass", targetNamespace = "")
-        String connectionClass,
-        @WebParam(name = "connectionId", targetNamespace = "")
-        long connectionId,
-        @WebParam(name = "sideToDisconnect", targetNamespace = "")
-        int sideToDisconnect,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param objectClass
-     * @param sessionId
-     * @param objectId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getPhysicalPath", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalPath")
-    @ResponseWrapper(localName = "getPhysicalPathResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalPathResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalPathRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalPathResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalPath/Fault/ServerSideException")
-    })
-    public List<RemoteObjectLight> getPhysicalPath(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "objectId", targetNamespace = "")
-        long objectId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param linkId
-     * @param sessionId
-     * @param linkClass
-     * @return
-     *     returns org.inventory.communications.wsclient.RemoteLogicalConnectionDetails
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getLogicalLinkDetails", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetLogicalLinkDetails")
-    @ResponseWrapper(localName = "getLogicalLinkDetailsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetLogicalLinkDetailsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getLogicalLinkDetailsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getLogicalLinkDetailsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getLogicalLinkDetails/Fault/ServerSideException")
-    })
-    public RemoteLogicalConnectionDetails getLogicalLinkDetails(
-        @WebParam(name = "linkClass", targetNamespace = "")
-        String linkClass,
-        @WebParam(name = "linkId", targetNamespace = "")
-        long linkId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param objectBClass
-     * @param containerClass
-     * @param objectAClass
-     * @param objectBId
-     * @param objectAId
-     * @param sessionId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getContainersBetweenObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetContainersBetweenObjects")
-    @ResponseWrapper(localName = "getContainersBetweenObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetContainersBetweenObjectsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getContainersBetweenObjectsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getContainersBetweenObjectsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getContainersBetweenObjects/Fault/ServerSideException")
-    })
-    public List<RemoteObjectLight> getContainersBetweenObjects(
-        @WebParam(name = "objectAClass", targetNamespace = "")
-        String objectAClass,
-        @WebParam(name = "objectAId", targetNamespace = "")
-        long objectAId,
-        @WebParam(name = "objectBClass", targetNamespace = "")
-        String objectBClass,
-        @WebParam(name = "objectBId", targetNamespace = "")
-        long objectBId,
-        @WebParam(name = "containerClass", targetNamespace = "")
-        String containerClass,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param objectClass
-     * @param sessionId
-     * @param objectId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLightList>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getPhysicalConnectionsInObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalConnectionsInObject")
-    @ResponseWrapper(localName = "getPhysicalConnectionsInObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalConnectionsInObjectResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalConnectionsInObjectRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalConnectionsInObjectResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalConnectionsInObject/Fault/ServerSideException")
-    })
-    public List<RemoteObjectLightList> getPhysicalConnectionsInObject(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "objectId", targetNamespace = "")
-        long objectId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param objectClass
-     * @param sessionId
-     * @param objectId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "deletePhysicalConnection", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeletePhysicalConnection")
-    @ResponseWrapper(localName = "deletePhysicalConnectionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeletePhysicalConnectionResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deletePhysicalConnectionRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deletePhysicalConnectionResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deletePhysicalConnection/Fault/ServerSideException")
-    })
-    public void deletePhysicalConnection(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "objectId", targetNamespace = "")
-        long objectId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param serviceClass
-     * @param objectClass
-     * @param sessionId
-     * @param serviceId
-     * @param objectId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "associateObjectToService", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AssociateObjectToService")
-    @ResponseWrapper(localName = "associateObjectToServiceResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AssociateObjectToServiceResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/associateObjectToServiceRequest", output = "http://ws.kuwaiba.org/KuwaibaService/associateObjectToServiceResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/associateObjectToService/Fault/ServerSideException")
-    })
-    public void associateObjectToService(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "objectId", targetNamespace = "")
-        long objectId,
-        @WebParam(name = "serviceClass", targetNamespace = "")
-        String serviceClass,
-        @WebParam(name = "serviceId", targetNamespace = "")
-        long serviceId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param serviceClass
-     * @param objectClass
-     * @param sessionId
-     * @param serviceId
-     * @param objectId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "associateObjectsToService", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AssociateObjectsToService")
-    @ResponseWrapper(localName = "associateObjectsToServiceResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AssociateObjectsToServiceResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/associateObjectsToServiceRequest", output = "http://ws.kuwaiba.org/KuwaibaService/associateObjectsToServiceResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/associateObjectsToService/Fault/ServerSideException")
-    })
-    public void associateObjectsToService(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        List<String> objectClass,
-        @WebParam(name = "objectId", targetNamespace = "")
-        List<Long> objectId,
-        @WebParam(name = "serviceClass", targetNamespace = "")
-        String serviceClass,
-        @WebParam(name = "serviceId", targetNamespace = "")
-        long serviceId,
+    public List<ResultRecord> executeQuery(
+        @WebParam(name = "query", targetNamespace = "")
+        TransientQuery query,
         @WebParam(name = "sessionId", targetNamespace = "")
         String sessionId)
         throws ServerSideException_Exception
@@ -2089,25 +425,19 @@ public interface KuwaibaService {
 
     /**
      * 
-     * @param serviceClass
-     * @param targetId
+     * @param className
      * @param sessionId
-     * @param serviceId
      * @throws ServerSideException_Exception
      */
     @WebMethod
-    @RequestWrapper(localName = "releaseObjectFromService", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ReleaseObjectFromService")
-    @ResponseWrapper(localName = "releaseObjectFromServiceResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ReleaseObjectFromServiceResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/releaseObjectFromServiceRequest", output = "http://ws.kuwaiba.org/KuwaibaService/releaseObjectFromServiceResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/releaseObjectFromService/Fault/ServerSideException")
+    @RequestWrapper(localName = "deleteClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteClass")
+    @ResponseWrapper(localName = "deleteClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteClassResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteClassRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteClassResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteClass/Fault/ServerSideException")
     })
-    public void releaseObjectFromService(
-        @WebParam(name = "serviceClass", targetNamespace = "")
-        String serviceClass,
-        @WebParam(name = "serviceId", targetNamespace = "")
-        long serviceId,
-        @WebParam(name = "targetId", targetNamespace = "")
-        long targetId,
+    public void deleteClass(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
         @WebParam(name = "sessionId", targetNamespace = "")
         String sessionId)
         throws ServerSideException_Exception
@@ -2115,25 +445,22 @@ public interface KuwaibaService {
 
     /**
      * 
-     * @param serviceClass
+     * @param includeListTypes
      * @param sessionId
-     * @param serviceId
      * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
+     *     returns java.util.List<org.inventory.communications.wsclient.ClassInfoLight>
      * @throws ServerSideException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getServiceResources", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetServiceResources")
-    @ResponseWrapper(localName = "getServiceResourcesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetServiceResourcesResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getServiceResourcesRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getServiceResourcesResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getServiceResources/Fault/ServerSideException")
+    @RequestWrapper(localName = "getAllClassesLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetAllClassesLight")
+    @ResponseWrapper(localName = "getAllClassesLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetAllClassesLightResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getAllClassesLightRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getAllClassesLightResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getAllClassesLight/Fault/ServerSideException")
     })
-    public List<RemoteObjectLight> getServiceResources(
-        @WebParam(name = "serviceClass", targetNamespace = "")
-        String serviceClass,
-        @WebParam(name = "serviceId", targetNamespace = "")
-        long serviceId,
+    public List<ClassInfoLight> getAllClassesLight(
+        @WebParam(name = "includeListTypes", targetNamespace = "")
+        boolean includeListTypes,
         @WebParam(name = "sessionId", targetNamespace = "")
         String sessionId)
         throws ServerSideException_Exception
@@ -2141,744 +468,28 @@ public interface KuwaibaService {
 
     /**
      * 
-     * @param groupId
+     * @param includeSelf
+     * @param includeAbstractClasses
+     * @param className
      * @param sessionId
      * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.UserInfo>
+     *     returns java.util.List<org.inventory.communications.wsclient.ClassInfoLight>
      * @throws ServerSideException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getUsersInGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUsersInGroup")
-    @ResponseWrapper(localName = "getUsersInGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUsersInGroupResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getUsersInGroupRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getUsersInGroupResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getUsersInGroup/Fault/ServerSideException")
+    @RequestWrapper(localName = "getSubClassesLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSubClassesLight")
+    @ResponseWrapper(localName = "getSubClassesLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSubClassesLightResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getSubClassesLightRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getSubClassesLightResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getSubClassesLight/Fault/ServerSideException")
     })
-    public List<UserInfo> getUsersInGroup(
-        @WebParam(name = "groupId", targetNamespace = "")
-        long groupId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param groupId
-     * @param sessionId
-     * @param userId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "addUserToGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddUserToGroup")
-    @ResponseWrapper(localName = "addUserToGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddUserToGroupResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/addUserToGroupRequest", output = "http://ws.kuwaiba.org/KuwaibaService/addUserToGroupResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/addUserToGroup/Fault/ServerSideException")
-    })
-    public void addUserToGroup(
-        @WebParam(name = "userId", targetNamespace = "")
-        long userId,
-        @WebParam(name = "groupId", targetNamespace = "")
-        long groupId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param groupId
-     * @param sessionId
-     * @param userId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "removeUserFromGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemoveUserFromGroup")
-    @ResponseWrapper(localName = "removeUserFromGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemoveUserFromGroupResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/removeUserFromGroupRequest", output = "http://ws.kuwaiba.org/KuwaibaService/removeUserFromGroupResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/removeUserFromGroup/Fault/ServerSideException")
-    })
-    public void removeUserFromGroup(
-        @WebParam(name = "userId", targetNamespace = "")
-        long userId,
-        @WebParam(name = "groupId", targetNamespace = "")
-        long groupId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param accessLevel
-     * @param featureToken
-     * @param sessionId
-     * @param userId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "setPrivilegeToUser", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPrivilegeToUser")
-    @ResponseWrapper(localName = "setPrivilegeToUserResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPrivilegeToUserResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/setPrivilegeToUserRequest", output = "http://ws.kuwaiba.org/KuwaibaService/setPrivilegeToUserResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/setPrivilegeToUser/Fault/ServerSideException")
-    })
-    public void setPrivilegeToUser(
-        @WebParam(name = "userId", targetNamespace = "")
-        long userId,
-        @WebParam(name = "featureToken", targetNamespace = "")
-        String featureToken,
-        @WebParam(name = "accessLevel", targetNamespace = "")
-        int accessLevel,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param accessLevel
-     * @param featureToken
-     * @param groupId
-     * @param sessionId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "setPrivilegeToGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPrivilegeToGroup")
-    @ResponseWrapper(localName = "setPrivilegeToGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPrivilegeToGroupResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/setPrivilegeToGroupRequest", output = "http://ws.kuwaiba.org/KuwaibaService/setPrivilegeToGroupResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/setPrivilegeToGroup/Fault/ServerSideException")
-    })
-    public void setPrivilegeToGroup(
-        @WebParam(name = "groupId", targetNamespace = "")
-        long groupId,
-        @WebParam(name = "featureToken", targetNamespace = "")
-        String featureToken,
-        @WebParam(name = "accessLevel", targetNamespace = "")
-        int accessLevel,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param featureToken
-     * @param sessionId
-     * @param userId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "removePrivilegeFromUser", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePrivilegeFromUser")
-    @ResponseWrapper(localName = "removePrivilegeFromUserResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePrivilegeFromUserResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/removePrivilegeFromUserRequest", output = "http://ws.kuwaiba.org/KuwaibaService/removePrivilegeFromUserResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/removePrivilegeFromUser/Fault/ServerSideException")
-    })
-    public void removePrivilegeFromUser(
-        @WebParam(name = "userId", targetNamespace = "")
-        long userId,
-        @WebParam(name = "featureToken", targetNamespace = "")
-        String featureToken,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param featureToken
-     * @param groupId
-     * @param sessionId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "removePrivilegeFromGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePrivilegeFromGroup")
-    @ResponseWrapper(localName = "removePrivilegeFromGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePrivilegeFromGroupResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/removePrivilegeFromGroupRequest", output = "http://ws.kuwaiba.org/KuwaibaService/removePrivilegeFromGroupResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/removePrivilegeFromGroup/Fault/ServerSideException")
-    })
-    public void removePrivilegeFromGroup(
-        @WebParam(name = "groupId", targetNamespace = "")
-        long groupId,
-        @WebParam(name = "featureToken", targetNamespace = "")
-        String featureToken,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param firstName
-     * @param lastName
-     * @param privileges
-     * @param password
-     * @param defaultGroupId
-     * @param sessionId
-     * @param type
-     * @param enabled
-     * @param username
-     * @return
-     *     returns long
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "createUser", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateUser")
-    @ResponseWrapper(localName = "createUserResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateUserResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createUserRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createUserResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createUser/Fault/ServerSideException")
-    })
-    public long createUser(
-        @WebParam(name = "username", targetNamespace = "")
-        String username,
-        @WebParam(name = "password", targetNamespace = "")
-        String password,
-        @WebParam(name = "firstName", targetNamespace = "")
-        String firstName,
-        @WebParam(name = "LastName", targetNamespace = "")
-        String lastName,
-        @WebParam(name = "enabled", targetNamespace = "")
-        boolean enabled,
-        @WebParam(name = "type", targetNamespace = "")
-        int type,
-        @WebParam(name = "privileges", targetNamespace = "")
-        List<PrivilegeInfo> privileges,
-        @WebParam(name = "defaultGroupId", targetNamespace = "")
-        long defaultGroupId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param groupName
-     * @param description
-     * @param oid
-     * @param sessionId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "setGroupProperties", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetGroupProperties")
-    @ResponseWrapper(localName = "setGroupPropertiesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetGroupPropertiesResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/setGroupPropertiesRequest", output = "http://ws.kuwaiba.org/KuwaibaService/setGroupPropertiesResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/setGroupProperties/Fault/ServerSideException")
-    })
-    public void setGroupProperties(
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "groupName", targetNamespace = "")
-        String groupName,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param oids
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "deleteUsers", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteUsers")
-    @ResponseWrapper(localName = "deleteUsersResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteUsersResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteUsersRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteUsersResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteUsers/Fault/ServerSideException")
-    })
-    public void deleteUsers(
-        @WebParam(name = "oids", targetNamespace = "")
-        List<Long> oids,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param oids
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "deleteGroups", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteGroups")
-    @ResponseWrapper(localName = "deleteGroupsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteGroupsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteGroupsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteGroupsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteGroups/Fault/ServerSideException")
-    })
-    public void deleteGroups(
-        @WebParam(name = "oids", targetNamespace = "")
-        List<Long> oids,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param viewClassName
-     * @param background
-     * @param name
-     * @param listTypeItemClassName
-     * @param description
-     * @param sessionId
-     * @param listTypeItemId
-     * @param structure
-     * @return
-     *     returns long
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "createListTypeItemRelateView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateListTypeItemRelateView")
-    @ResponseWrapper(localName = "createListTypeItemRelateViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateListTypeItemRelateViewResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createListTypeItemRelateViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createListTypeItemRelateViewResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createListTypeItemRelateView/Fault/ServerSideException")
-    })
-    public long createListTypeItemRelateView(
-        @WebParam(name = "listTypeItemId", targetNamespace = "")
-        long listTypeItemId,
-        @WebParam(name = "listTypeItemClassName", targetNamespace = "")
-        String listTypeItemClassName,
-        @WebParam(name = "viewClassName", targetNamespace = "")
-        String viewClassName,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "structure", targetNamespace = "")
-        byte[] structure,
-        @WebParam(name = "background", targetNamespace = "")
-        byte[] background,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param listTypeItemClass
-     * @param viewId
-     * @param background
-     * @param name
-     * @param description
-     * @param sessionId
-     * @param listTypeItemId
-     * @param structure
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "updateListTypeItemRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateListTypeItemRelatedView")
-    @ResponseWrapper(localName = "updateListTypeItemRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateListTypeItemRelatedViewResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/updateListTypeItemRelatedViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/updateListTypeItemRelatedViewResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/updateListTypeItemRelatedView/Fault/ServerSideException")
-    })
-    public void updateListTypeItemRelatedView(
-        @WebParam(name = "listTypeItemId", targetNamespace = "")
-        long listTypeItemId,
-        @WebParam(name = "listTypeItemClass", targetNamespace = "")
-        String listTypeItemClass,
-        @WebParam(name = "viewId", targetNamespace = "")
-        long viewId,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "structure", targetNamespace = "")
-        byte[] structure,
-        @WebParam(name = "background", targetNamespace = "")
-        byte[] background,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param listTypeItemClass
-     * @param viewId
-     * @param sessionId
-     * @param listTypeItemId
-     * @return
-     *     returns org.inventory.communications.wsclient.ViewInfo
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getListTypeItemRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItemRelatedView")
-    @ResponseWrapper(localName = "getListTypeItemRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItemRelatedViewResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getListTypeItemRelatedViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getListTypeItemRelatedViewResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getListTypeItemRelatedView/Fault/ServerSideException")
-    })
-    public ViewInfo getListTypeItemRelatedView(
-        @WebParam(name = "listTypeItemId", targetNamespace = "")
-        long listTypeItemId,
-        @WebParam(name = "listTypeItemClass", targetNamespace = "")
-        String listTypeItemClass,
-        @WebParam(name = "viewId", targetNamespace = "")
-        long viewId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param listTypeItemClass
-     * @param limit
-     * @param sessionId
-     * @param listTypeItemId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.ViewInfoLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getListTypeItemRelatedViews", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItemRelatedViews")
-    @ResponseWrapper(localName = "getListTypeItemRelatedViewsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItemRelatedViewsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getListTypeItemRelatedViewsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getListTypeItemRelatedViewsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getListTypeItemRelatedViews/Fault/ServerSideException")
-    })
-    public List<ViewInfoLight> getListTypeItemRelatedViews(
-        @WebParam(name = "listTypeItemId", targetNamespace = "")
-        long listTypeItemId,
-        @WebParam(name = "listTypeItemClass", targetNamespace = "")
-        String listTypeItemClass,
-        @WebParam(name = "limit", targetNamespace = "")
-        int limit,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param viewClassName
-     * @param background
-     * @param objectClass
-     * @param name
-     * @param description
-     * @param sessionId
-     * @param objectId
-     * @param structure
-     * @return
-     *     returns long
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "createObjectRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateObjectRelatedView")
-    @ResponseWrapper(localName = "createObjectRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateObjectRelatedViewResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createObjectRelatedViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createObjectRelatedViewResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createObjectRelatedView/Fault/ServerSideException")
-    })
-    public long createObjectRelatedView(
-        @WebParam(name = "objectId", targetNamespace = "")
-        long objectId,
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "viewClassName", targetNamespace = "")
-        String viewClassName,
-        @WebParam(name = "structure", targetNamespace = "")
-        byte[] structure,
-        @WebParam(name = "background", targetNamespace = "")
-        byte[] background,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param background
-     * @param name
-     * @param description
-     * @param sessionId
-     * @param viewClass
-     * @param structure
-     * @return
-     *     returns long
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "createGeneralView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateGeneralView")
-    @ResponseWrapper(localName = "createGeneralViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateGeneralViewResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createGeneralViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createGeneralViewResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createGeneralView/Fault/ServerSideException")
-    })
-    public long createGeneralView(
-        @WebParam(name = "viewClass", targetNamespace = "")
-        String viewClass,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "structure", targetNamespace = "")
-        byte[] structure,
-        @WebParam(name = "background", targetNamespace = "")
-        byte[] background,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param viewId
-     * @param objectClass
-     * @param oid
-     * @param sessionId
-     * @return
-     *     returns org.inventory.communications.wsclient.ViewInfo
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getObjectRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectRelatedView")
-    @ResponseWrapper(localName = "getObjectRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectRelatedViewResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getObjectRelatedViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getObjectRelatedViewResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getObjectRelatedView/Fault/ServerSideException")
-    })
-    public ViewInfo getObjectRelatedView(
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "viewId", targetNamespace = "")
-        long viewId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param objectClass
-     * @param viewType
-     * @param limit
-     * @param oid
-     * @param sessionId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.ViewInfoLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getObjectRelatedViews", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectRelatedViews")
-    @ResponseWrapper(localName = "getObjectRelatedViewsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectRelatedViewsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getObjectRelatedViewsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getObjectRelatedViewsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getObjectRelatedViews/Fault/ServerSideException")
-    })
-    public List<ViewInfoLight> getObjectRelatedViews(
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "viewType", targetNamespace = "")
-        int viewType,
-        @WebParam(name = "limit", targetNamespace = "")
-        int limit,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param viewId
-     * @param sessionId
-     * @return
-     *     returns org.inventory.communications.wsclient.ViewInfo
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getGeneralView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralView")
-    @ResponseWrapper(localName = "getGeneralViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralViewResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getGeneralViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getGeneralViewResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getGeneralView/Fault/ServerSideException")
-    })
-    public ViewInfo getGeneralView(
-        @WebParam(name = "viewId", targetNamespace = "")
-        long viewId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param limit
-     * @param sessionId
-     * @param viewClass
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.ViewInfoLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getGeneralViews", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralViews")
-    @ResponseWrapper(localName = "getGeneralViewsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralViewsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getGeneralViewsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getGeneralViewsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getGeneralViews/Fault/ServerSideException")
-    })
-    public List<ViewInfoLight> getGeneralViews(
-        @WebParam(name = "viewClass", targetNamespace = "")
-        String viewClass,
-        @WebParam(name = "limit", targetNamespace = "")
-        int limit,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param viewId
-     * @param viewName
-     * @param background
-     * @param objectClass
-     * @param viewDescription
-     * @param sessionId
-     * @param objectOid
-     * @param structure
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "updateObjectRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateObjectRelatedView")
-    @ResponseWrapper(localName = "updateObjectRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateObjectRelatedViewResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/updateObjectRelatedViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/updateObjectRelatedViewResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/updateObjectRelatedView/Fault/ServerSideException")
-    })
-    public void updateObjectRelatedView(
-        @WebParam(name = "objectOid", targetNamespace = "")
-        long objectOid,
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "viewId", targetNamespace = "")
-        long viewId,
-        @WebParam(name = "viewName", targetNamespace = "")
-        String viewName,
-        @WebParam(name = "viewDescription", targetNamespace = "")
-        String viewDescription,
-        @WebParam(name = "structure", targetNamespace = "")
-        byte[] structure,
-        @WebParam(name = "background", targetNamespace = "")
-        byte[] background,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param viewId
-     * @param viewName
-     * @param background
-     * @param viewDescription
-     * @param sessionId
-     * @param structure
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "updateGeneralView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateGeneralView")
-    @ResponseWrapper(localName = "updateGeneralViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateGeneralViewResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/updateGeneralViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/updateGeneralViewResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/updateGeneralView/Fault/ServerSideException")
-    })
-    public void updateGeneralView(
-        @WebParam(name = "viewId", targetNamespace = "")
-        long viewId,
-        @WebParam(name = "viewName", targetNamespace = "")
-        String viewName,
-        @WebParam(name = "viewDescription", targetNamespace = "")
-        String viewDescription,
-        @WebParam(name = "structure", targetNamespace = "")
-        byte[] structure,
-        @WebParam(name = "background", targetNamespace = "")
-        byte[] background,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param oids
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "deleteGeneralView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteGeneralView")
-    @ResponseWrapper(localName = "deleteGeneralViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteGeneralViewResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteGeneralViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteGeneralViewResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteGeneralView/Fault/ServerSideException")
-    })
-    public void deleteGeneralView(
-        @WebParam(name = "oids", targetNamespace = "")
-        List<Long> oids,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param queryStructure
-     * @param queryOid
-     * @param ownerOid
-     * @param queryName
-     * @param description
-     * @param sessionId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "saveQuery", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SaveQuery")
-    @ResponseWrapper(localName = "saveQueryResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SaveQueryResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/saveQueryRequest", output = "http://ws.kuwaiba.org/KuwaibaService/saveQueryResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/saveQuery/Fault/ServerSideException")
-    })
-    public void saveQuery(
-        @WebParam(name = "queryOid", targetNamespace = "")
-        long queryOid,
-        @WebParam(name = "queryName", targetNamespace = "")
-        String queryName,
-        @WebParam(name = "ownerOid", targetNamespace = "")
-        long ownerOid,
-        @WebParam(name = "queryStructure", targetNamespace = "")
-        byte[] queryStructure,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param showPublic
-     * @param sessionId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteQueryLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getQueries", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetQueries")
-    @ResponseWrapper(localName = "getQueriesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetQueriesResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getQueriesRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getQueriesResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getQueries/Fault/ServerSideException")
-    })
-    public List<RemoteQueryLight> getQueries(
-        @WebParam(name = "showPublic", targetNamespace = "")
-        boolean showPublic,
+    public List<ClassInfoLight> getSubClassesLight(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "includeAbstractClasses", targetNamespace = "")
+        boolean includeAbstractClasses,
+        @WebParam(name = "includeSelf", targetNamespace = "")
+        boolean includeSelf,
         @WebParam(name = "sessionId", targetNamespace = "")
         String sessionId)
         throws ServerSideException_Exception
@@ -3496,29 +1107,6 @@ public interface KuwaibaService {
     public void unsubscribeUserFromTask(
         @WebParam(name = "userId", targetNamespace = "")
         long userId,
-        @WebParam(name = "taskId", targetNamespace = "")
-        long taskId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param taskId
-     * @return
-     *     returns org.inventory.communications.wsclient.RemoteTaskResult
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "executeTask", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ExecuteTask")
-    @ResponseWrapper(localName = "executeTaskResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ExecuteTaskResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/executeTaskRequest", output = "http://ws.kuwaiba.org/KuwaibaService/executeTaskResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/executeTask/Fault/ServerSideException")
-    })
-    public RemoteTaskResult executeTask(
         @WebParam(name = "taskId", targetNamespace = "")
         long taskId,
         @WebParam(name = "sessionId", targetNamespace = "")
@@ -5295,6 +2883,2413 @@ public interface KuwaibaService {
 
     /**
      * 
+     * @param includeSelf
+     * @param includeAbstractClasses
+     * @param className
+     * @param sessionId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.ClassInfoLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getSubClassesLightNoRecursive", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSubClassesLightNoRecursive")
+    @ResponseWrapper(localName = "getSubClassesLightNoRecursiveResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSubClassesLightNoRecursiveResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getSubClassesLightNoRecursiveRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getSubClassesLightNoRecursiveResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getSubClassesLightNoRecursive/Fault/ServerSideException")
+    })
+    public List<ClassInfoLight> getSubClassesLightNoRecursive(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "includeAbstractClasses", targetNamespace = "")
+        boolean includeAbstractClasses,
+        @WebParam(name = "includeSelf", targetNamespace = "")
+        boolean includeSelf,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param includeListTypes
+     * @param sessionId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.ClassInfo>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getAllClasses", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetAllClasses")
+    @ResponseWrapper(localName = "getAllClassesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetAllClassesResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getAllClassesRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getAllClassesResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getAllClasses/Fault/ServerSideException")
+    })
+    public List<ClassInfo> getAllClasses(
+        @WebParam(name = "includeListTypes", targetNamespace = "")
+        boolean includeListTypes,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param className
+     * @param attributeName
+     * @param sessionId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "deleteAttribute", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteAttribute")
+    @ResponseWrapper(localName = "deleteAttributeResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteAttributeResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteAttributeRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteAttributeResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteAttribute/Fault/ServerSideException")
+    })
+    public void deleteAttribute(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "attributeName", targetNamespace = "")
+        String attributeName,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param parentClassName
+     * @param sessionId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.ClassInfoLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getPossibleChildren", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPossibleChildren")
+    @ResponseWrapper(localName = "getPossibleChildrenResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPossibleChildrenResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getPossibleChildrenRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getPossibleChildrenResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getPossibleChildren/Fault/ServerSideException")
+    })
+    public List<ClassInfoLight> getPossibleChildren(
+        @WebParam(name = "parentClassName", targetNamespace = "")
+        String parentClassName,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param parentClassName
+     * @param sessionId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.ClassInfoLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getPossibleSpecialChildren", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPossibleSpecialChildren")
+    @ResponseWrapper(localName = "getPossibleSpecialChildrenResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPossibleSpecialChildrenResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getPossibleSpecialChildrenRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getPossibleSpecialChildrenResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getPossibleSpecialChildren/Fault/ServerSideException")
+    })
+    public List<ClassInfoLight> getPossibleSpecialChildren(
+        @WebParam(name = "parentClassName", targetNamespace = "")
+        String parentClassName,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param parentClassName
+     * @param sessionId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.ClassInfoLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getPossibleChildrenNoRecursive", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPossibleChildrenNoRecursive")
+    @ResponseWrapper(localName = "getPossibleChildrenNoRecursiveResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPossibleChildrenNoRecursiveResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getPossibleChildrenNoRecursiveRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getPossibleChildrenNoRecursiveResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getPossibleChildrenNoRecursive/Fault/ServerSideException")
+    })
+    public List<ClassInfoLight> getPossibleChildrenNoRecursive(
+        @WebParam(name = "parentClassName", targetNamespace = "")
+        String parentClassName,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param parentClassName
+     * @param sessionId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.ClassInfoLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getPossibleSpecialChildrenNoRecursive", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPossibleSpecialChildrenNoRecursive")
+    @ResponseWrapper(localName = "getPossibleSpecialChildrenNoRecursiveResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPossibleSpecialChildrenNoRecursiveResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getPossibleSpecialChildrenNoRecursiveRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getPossibleSpecialChildrenNoRecursiveResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getPossibleSpecialChildrenNoRecursive/Fault/ServerSideException")
+    })
+    public List<ClassInfoLight> getPossibleSpecialChildrenNoRecursive(
+        @WebParam(name = "parentClassName", targetNamespace = "")
+        String parentClassName,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param className
+     * @param sessionId
+     * @param recursive
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.ClassInfoLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getUpstreamContainmentHierarchy", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUpstreamContainmentHierarchy")
+    @ResponseWrapper(localName = "getUpstreamContainmentHierarchyResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUpstreamContainmentHierarchyResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getUpstreamContainmentHierarchyRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getUpstreamContainmentHierarchyResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getUpstreamContainmentHierarchy/Fault/ServerSideException")
+    })
+    public List<ClassInfoLight> getUpstreamContainmentHierarchy(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "recursive", targetNamespace = "")
+        boolean recursive,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param className
+     * @param sessionId
+     * @param recursive
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.ClassInfoLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getUpstreamSpecialContainmentHierarchy", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUpstreamSpecialContainmentHierarchy")
+    @ResponseWrapper(localName = "getUpstreamSpecialContainmentHierarchyResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUpstreamSpecialContainmentHierarchyResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getUpstreamSpecialContainmentHierarchyRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getUpstreamSpecialContainmentHierarchyResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getUpstreamSpecialContainmentHierarchy/Fault/ServerSideException")
+    })
+    public List<ClassInfoLight> getUpstreamSpecialContainmentHierarchy(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "recursive", targetNamespace = "")
+        boolean recursive,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param parentClassName
+     * @param childrenToBeAdded
+     * @param sessionId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "addPossibleChildren", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddPossibleChildren")
+    @ResponseWrapper(localName = "addPossibleChildrenResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddPossibleChildrenResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/addPossibleChildrenRequest", output = "http://ws.kuwaiba.org/KuwaibaService/addPossibleChildrenResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/addPossibleChildren/Fault/ServerSideException")
+    })
+    public void addPossibleChildren(
+        @WebParam(name = "parentClassName", targetNamespace = "")
+        String parentClassName,
+        @WebParam(name = "childrenToBeAdded", targetNamespace = "")
+        List<String> childrenToBeAdded,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param parentClassName
+     * @param possibleSpecialChildren
+     * @param sessionId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "addPossibleSpecialChildren", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddPossibleSpecialChildren")
+    @ResponseWrapper(localName = "addPossibleSpecialChildrenResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddPossibleSpecialChildrenResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/addPossibleSpecialChildrenRequest", output = "http://ws.kuwaiba.org/KuwaibaService/addPossibleSpecialChildrenResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/addPossibleSpecialChildren/Fault/ServerSideException")
+    })
+    public void addPossibleSpecialChildren(
+        @WebParam(name = "parentClassName", targetNamespace = "")
+        String parentClassName,
+        @WebParam(name = "possibleSpecialChildren", targetNamespace = "")
+        List<String> possibleSpecialChildren,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param parentClassId
+     * @param specialChildrenToBeRemoved
+     * @param sessionId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "removePossibleSpecialChildren", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePossibleSpecialChildren")
+    @ResponseWrapper(localName = "removePossibleSpecialChildrenResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePossibleSpecialChildrenResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/removePossibleSpecialChildrenRequest", output = "http://ws.kuwaiba.org/KuwaibaService/removePossibleSpecialChildrenResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/removePossibleSpecialChildren/Fault/ServerSideException")
+    })
+    public void removePossibleSpecialChildren(
+        @WebParam(name = "parentClassId", targetNamespace = "")
+        long parentClassId,
+        @WebParam(name = "specialChildrenToBeRemoved", targetNamespace = "")
+        List<Long> specialChildrenToBeRemoved,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param displayName
+     * @param name
+     * @param className
+     * @param sessionId
+     * @return
+     *     returns long
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "createListTypeItem", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateListTypeItem")
+    @ResponseWrapper(localName = "createListTypeItemResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateListTypeItemResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createListTypeItemRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createListTypeItemResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createListTypeItem/Fault/ServerSideException")
+    })
+    public long createListTypeItem(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "displayName", targetNamespace = "")
+        String displayName,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param className
+     * @param oid
+     * @param sessionId
+     * @param releaseRelationships
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "deleteListTypeItem", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteListTypeItem")
+    @ResponseWrapper(localName = "deleteListTypeItemResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteListTypeItemResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteListTypeItemRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteListTypeItemResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteListTypeItem/Fault/ServerSideException")
+    })
+    public void deleteListTypeItem(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "releaseRelationships", targetNamespace = "")
+        boolean releaseRelationships,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param className
+     * @param sessionId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getListTypeItems", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItems")
+    @ResponseWrapper(localName = "getListTypeItemsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItemsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getListTypeItemsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getListTypeItemsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getListTypeItems/Fault/ServerSideException")
+    })
+    public List<RemoteObjectLight> getListTypeItems(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "closeSession", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CloseSession")
+    @ResponseWrapper(localName = "closeSessionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CloseSessionResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/closeSessionRequest", output = "http://ws.kuwaiba.org/KuwaibaService/closeSessionResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/closeSession/Fault/ServerSideException")
+    })
+    public void closeSession(
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param objectClassName
+     * @param maxResults
+     * @param oid
+     * @param sessionId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getObjectChildren", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectChildren")
+    @ResponseWrapper(localName = "getObjectChildrenResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectChildrenResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getObjectChildrenRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getObjectChildrenResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getObjectChildren/Fault/ServerSideException")
+    })
+    public List<RemoteObjectLight> getObjectChildren(
+        @WebParam(name = "objectClassName", targetNamespace = "")
+        String objectClassName,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "maxResults", targetNamespace = "")
+        int maxResults,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param objectClassName
+     * @param maxResults
+     * @param oid
+     * @param sessionId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getSiblings", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSiblings")
+    @ResponseWrapper(localName = "getSiblingsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSiblingsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getSiblingsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getSiblingsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getSiblings/Fault/ServerSideException")
+    })
+    public List<RemoteObjectLight> getSiblings(
+        @WebParam(name = "objectClassName", targetNamespace = "")
+        String objectClassName,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "maxResults", targetNamespace = "")
+        int maxResults,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param parentOid
+     * @param maxResults
+     * @param childrenClass
+     * @param parentClass
+     * @param sessionId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObject>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getChildrenOfClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClass")
+    @ResponseWrapper(localName = "getChildrenOfClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClass/Fault/ServerSideException")
+    })
+    public List<RemoteObject> getChildrenOfClass(
+        @WebParam(name = "parentOid", targetNamespace = "")
+        long parentOid,
+        @WebParam(name = "parentClass", targetNamespace = "")
+        String parentClass,
+        @WebParam(name = "childrenClass", targetNamespace = "")
+        String childrenClass,
+        @WebParam(name = "maxResults", targetNamespace = "")
+        int maxResults,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param parentOid
+     * @param maxResults
+     * @param childrenClass
+     * @param parentClass
+     * @param sessionId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getChildrenOfClassLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassLight")
+    @ResponseWrapper(localName = "getChildrenOfClassLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassLightResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassLightRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassLightResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassLight/Fault/ServerSideException")
+    })
+    public List<RemoteObjectLight> getChildrenOfClassLight(
+        @WebParam(name = "parentOid", targetNamespace = "")
+        long parentOid,
+        @WebParam(name = "parentClass", targetNamespace = "")
+        String parentClass,
+        @WebParam(name = "childrenClass", targetNamespace = "")
+        String childrenClass,
+        @WebParam(name = "maxResults", targetNamespace = "")
+        int maxResults,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param parentOid
+     * @param maxResults
+     * @param childrenClass
+     * @param parentClass
+     * @param sessionId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getChildrenOfClassLightRecursive", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassLightRecursive")
+    @ResponseWrapper(localName = "getChildrenOfClassLightRecursiveResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassLightRecursiveResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassLightRecursiveRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassLightRecursiveResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassLightRecursive/Fault/ServerSideException")
+    })
+    public List<RemoteObjectLight> getChildrenOfClassLightRecursive(
+        @WebParam(name = "parentOid", targetNamespace = "")
+        long parentOid,
+        @WebParam(name = "parentClass", targetNamespace = "")
+        String parentClass,
+        @WebParam(name = "childrenClass", targetNamespace = "")
+        String childrenClass,
+        @WebParam(name = "maxResults", targetNamespace = "")
+        int maxResults,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param oid
+     * @param sessionId
+     * @param objectclass
+     * @return
+     *     returns org.inventory.communications.wsclient.RemoteObjectLight
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getObjectLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectLight")
+    @ResponseWrapper(localName = "getObjectLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectLightResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getObjectLightRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getObjectLightResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getObjectLight/Fault/ServerSideException")
+    })
+    public RemoteObjectLight getObjectLight(
+        @WebParam(name = "objectclass", targetNamespace = "")
+        String objectclass,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param aObjectClass
+     * @param aOid
+     * @param bOid
+     * @param bObjectClass
+     * @param sessionId
+     * @return
+     *     returns org.inventory.communications.wsclient.RemoteObjectLight
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getCommonParent", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetCommonParent")
+    @ResponseWrapper(localName = "getCommonParentResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetCommonParentResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getCommonParentRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getCommonParentResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getCommonParent/Fault/ServerSideException")
+    })
+    public RemoteObjectLight getCommonParent(
+        @WebParam(name = "aObjectClass", targetNamespace = "")
+        String aObjectClass,
+        @WebParam(name = "aOid", targetNamespace = "")
+        long aOid,
+        @WebParam(name = "bObjectClass", targetNamespace = "")
+        String bObjectClass,
+        @WebParam(name = "bOid", targetNamespace = "")
+        long bOid,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param oid
+     * @param attributename
+     * @param sessionId
+     * @param objectclass
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getSpecialAttribute", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialAttribute")
+    @ResponseWrapper(localName = "getSpecialAttributeResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialAttributeResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getSpecialAttributeRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getSpecialAttributeResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getSpecialAttribute/Fault/ServerSideException")
+    })
+    public List<RemoteObjectLight> getSpecialAttribute(
+        @WebParam(name = "objectclass", targetNamespace = "")
+        String objectclass,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "attributename", targetNamespace = "")
+        String attributename,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param objectClass
+     * @param oid
+     * @param sessionId
+     * @return
+     *     returns org.inventory.communications.wsclient.RemoteObjectSpecialRelationships
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getSpecialAttributes", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialAttributes")
+    @ResponseWrapper(localName = "getSpecialAttributesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialAttributesResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getSpecialAttributesRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getSpecialAttributesResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getSpecialAttributes/Fault/ServerSideException")
+    })
+    public RemoteObjectSpecialRelationships getSpecialAttributes(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param arg3
+     * @param arg2
+     * @param arg1
+     * @param arg0
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getParentsUntilFirstOfClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetParentsUntilFirstOfClass")
+    @ResponseWrapper(localName = "getParentsUntilFirstOfClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetParentsUntilFirstOfClassResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getParentsUntilFirstOfClassRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getParentsUntilFirstOfClassResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getParentsUntilFirstOfClass/Fault/ServerSideException")
+    })
+    public List<RemoteObjectLight> getParentsUntilFirstOfClass(
+        @WebParam(name = "arg0", targetNamespace = "")
+        String arg0,
+        @WebParam(name = "arg1", targetNamespace = "")
+        long arg1,
+        @WebParam(name = "arg2", targetNamespace = "")
+        String arg2,
+        @WebParam(name = "arg3", targetNamespace = "")
+        String arg3)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param objectClass
+     * @param oid
+     * @param sessionId
+     * @param objectToMatchClassName
+     * @return
+     *     returns org.inventory.communications.wsclient.RemoteObjectLight
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getFirstParentOfClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetFirstParentOfClass")
+    @ResponseWrapper(localName = "getFirstParentOfClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetFirstParentOfClassResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getFirstParentOfClassRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getFirstParentOfClassResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getFirstParentOfClass/Fault/ServerSideException")
+    })
+    public RemoteObjectLight getFirstParentOfClass(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "objectToMatchClassName", targetNamespace = "")
+        String objectToMatchClassName,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param objectClass
+     * @param parentClass
+     * @param oid
+     * @param sessionId
+     * @return
+     *     returns org.inventory.communications.wsclient.RemoteObject
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getParentOfClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetParentOfClass")
+    @ResponseWrapper(localName = "getParentOfClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetParentOfClassResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getParentOfClassRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getParentOfClassResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getParentOfClass/Fault/ServerSideException")
+    })
+    public RemoteObject getParentOfClass(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "parentClass", targetNamespace = "")
+        String parentClass,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param objectclass
+     * @param objectId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getObjectSpecialChildren", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectSpecialChildren")
+    @ResponseWrapper(localName = "getObjectSpecialChildrenResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectSpecialChildrenResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getObjectSpecialChildrenRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getObjectSpecialChildrenResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getObjectSpecialChildren/Fault/ServerSideException")
+    })
+    public List<RemoteObjectLight> getObjectSpecialChildren(
+        @WebParam(name = "objectclass", targetNamespace = "")
+        String objectclass,
+        @WebParam(name = "objectId", targetNamespace = "")
+        long objectId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.ClassInfoLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getInstanceableListTypes", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetInstanceableListTypes")
+    @ResponseWrapper(localName = "getInstanceableListTypesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetInstanceableListTypesResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getInstanceableListTypesRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getInstanceableListTypesResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getInstanceableListTypes/Fault/ServerSideException")
+    })
+    public List<ClassInfoLight> getInstanceableListTypes(
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param parentObjectClassName
+     * @param attributeNames
+     * @param parentOid
+     * @param attributeValues
+     * @param className
+     * @param sessionId
+     * @param templateId
+     * @return
+     *     returns long
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "createSpecialObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateSpecialObject")
+    @ResponseWrapper(localName = "createSpecialObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateSpecialObjectResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createSpecialObjectRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createSpecialObjectResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createSpecialObject/Fault/ServerSideException")
+    })
+    public long createSpecialObject(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "parentObjectClassName", targetNamespace = "")
+        String parentObjectClassName,
+        @WebParam(name = "parentOid", targetNamespace = "")
+        long parentOid,
+        @WebParam(name = "attributeNames", targetNamespace = "")
+        List<String> attributeNames,
+        @WebParam(name = "attributeValues", targetNamespace = "")
+        List<String> attributeValues,
+        @WebParam(name = "templateId", targetNamespace = "")
+        long templateId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param className
+     * @param oid
+     * @param sessionId
+     * @param releaseRelationships
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "deleteObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteObject")
+    @ResponseWrapper(localName = "deleteObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteObjectResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteObjectRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteObjectResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteObject/Fault/ServerSideException")
+    })
+    public void deleteObject(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "releaseRelationships", targetNamespace = "")
+        boolean releaseRelationships,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param classNames
+     * @param oid
+     * @param sessionId
+     * @param releaseRelationships
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "deleteObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteObjects")
+    @ResponseWrapper(localName = "deleteObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteObjectsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteObjectsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteObjectsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteObjects/Fault/ServerSideException")
+    })
+    public void deleteObjects(
+        @WebParam(name = "classNames", targetNamespace = "")
+        List<String> classNames,
+        @WebParam(name = "oid", targetNamespace = "")
+        List<Long> oid,
+        @WebParam(name = "releaseRelationships", targetNamespace = "")
+        boolean releaseRelationships,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param objectsOids
+     * @param targetClass
+     * @param objectsClasses
+     * @param targetOid
+     * @param sessionId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "moveObjectsToPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveObjectsToPool")
+    @ResponseWrapper(localName = "moveObjectsToPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveObjectsToPoolResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/moveObjectsToPoolRequest", output = "http://ws.kuwaiba.org/KuwaibaService/moveObjectsToPoolResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/moveObjectsToPool/Fault/ServerSideException")
+    })
+    public void moveObjectsToPool(
+        @WebParam(name = "targetClass", targetNamespace = "")
+        String targetClass,
+        @WebParam(name = "targetOid", targetNamespace = "")
+        long targetOid,
+        @WebParam(name = "objectsClasses", targetNamespace = "")
+        List<String> objectsClasses,
+        @WebParam(name = "objectsOids", targetNamespace = "")
+        List<Long> objectsOids,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param objectsOids
+     * @param targetClass
+     * @param objectsClasses
+     * @param targetOid
+     * @param sessionId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "moveObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveObjects")
+    @ResponseWrapper(localName = "moveObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveObjectsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/moveObjectsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/moveObjectsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/moveObjects/Fault/ServerSideException")
+    })
+    public void moveObjects(
+        @WebParam(name = "targetClass", targetNamespace = "")
+        String targetClass,
+        @WebParam(name = "targetOid", targetNamespace = "")
+        long targetOid,
+        @WebParam(name = "objectsClasses", targetNamespace = "")
+        List<String> objectsClasses,
+        @WebParam(name = "objectsOids", targetNamespace = "")
+        List<Long> objectsOids,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param objectsOids
+     * @param targetClass
+     * @param objectsClasses
+     * @param targetOid
+     * @param sessionId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "moveSpecialObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveSpecialObjects")
+    @ResponseWrapper(localName = "moveSpecialObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveSpecialObjectsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/moveSpecialObjectsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/moveSpecialObjectsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/moveSpecialObjects/Fault/ServerSideException")
+    })
+    public void moveSpecialObjects(
+        @WebParam(name = "targetClass", targetNamespace = "")
+        String targetClass,
+        @WebParam(name = "targetOid", targetNamespace = "")
+        long targetOid,
+        @WebParam(name = "objectsClasses", targetNamespace = "")
+        List<String> objectsClasses,
+        @WebParam(name = "objectsOids", targetNamespace = "")
+        List<Long> objectsOids,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param templateOids
+     * @param targetClass
+     * @param targetOid
+     * @param sessionId
+     * @param templateClases
+     * @param recursive
+     * @return
+     *     returns java.util.List<java.lang.Long>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "copySpecialObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopySpecialObjects")
+    @ResponseWrapper(localName = "copySpecialObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopySpecialObjectsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/copySpecialObjectsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/copySpecialObjectsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/copySpecialObjects/Fault/ServerSideException")
+    })
+    public List<Long> copySpecialObjects(
+        @WebParam(name = "targetClass", targetNamespace = "")
+        String targetClass,
+        @WebParam(name = "targetOid", targetNamespace = "")
+        long targetOid,
+        @WebParam(name = "templateClases", targetNamespace = "")
+        List<String> templateClases,
+        @WebParam(name = "templateOids", targetNamespace = "")
+        List<Long> templateOids,
+        @WebParam(name = "recursive", targetNamespace = "")
+        boolean recursive,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param attributeNames
+     * @param attributeValues
+     * @param className
+     * @param oid
+     * @param sessionId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "updateObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateObject")
+    @ResponseWrapper(localName = "updateObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateObjectResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/updateObjectRequest", output = "http://ws.kuwaiba.org/KuwaibaService/updateObjectResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/updateObject/Fault/ServerSideException")
+    })
+    public void updateObject(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "attributeNames", targetNamespace = "")
+        List<String> attributeNames,
+        @WebParam(name = "attributeValues", targetNamespace = "")
+        List<String> attributeValues,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param className
+     * @param sessionId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.AttributeInfo>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getMandatoryAttributesInClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetMandatoryAttributesInClass")
+    @ResponseWrapper(localName = "getMandatoryAttributesInClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetMandatoryAttributesInClassResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getMandatoryAttributesInClassRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getMandatoryAttributesInClassResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getMandatoryAttributesInClass/Fault/ServerSideException")
+    })
+    public List<AttributeInfo> getMandatoryAttributesInClass(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param namePattern
+     * @param numberOfObjects
+     * @param parentOid
+     * @param parentClassName
+     * @param className
+     * @param sessionId
+     * @return
+     *     returns java.util.List<java.lang.Long>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "createBulkObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkObjects")
+    @ResponseWrapper(localName = "createBulkObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkObjectsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createBulkObjectsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createBulkObjectsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createBulkObjects/Fault/ServerSideException")
+    })
+    public List<Long> createBulkObjects(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "parentClassName", targetNamespace = "")
+        String parentClassName,
+        @WebParam(name = "parentOid", targetNamespace = "")
+        long parentOid,
+        @WebParam(name = "numberOfObjects", targetNamespace = "")
+        int numberOfObjects,
+        @WebParam(name = "namePattern", targetNamespace = "")
+        String namePattern,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param namePattern
+     * @param numberOfSpecialObjects
+     * @param parentClassName
+     * @param className
+     * @param sessionId
+     * @param parentId
+     * @return
+     *     returns java.util.List<java.lang.Long>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "createBulkSpecialObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkSpecialObjects")
+    @ResponseWrapper(localName = "createBulkSpecialObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkSpecialObjectsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createBulkSpecialObjectsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createBulkSpecialObjectsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createBulkSpecialObjects/Fault/ServerSideException")
+    })
+    public List<Long> createBulkSpecialObjects(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "parentClassName", targetNamespace = "")
+        String parentClassName,
+        @WebParam(name = "parentId", targetNamespace = "")
+        long parentId,
+        @WebParam(name = "numberOfSpecialObjects", targetNamespace = "")
+        int numberOfSpecialObjects,
+        @WebParam(name = "namePattern", targetNamespace = "")
+        String namePattern,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param aObjectClass
+     * @param aObjectId
+     * @param bObjectClass
+     * @param sessionId
+     * @param bObjectId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "connectMirrorPort", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectMirrorPort")
+    @ResponseWrapper(localName = "connectMirrorPortResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectMirrorPortResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/connectMirrorPortRequest", output = "http://ws.kuwaiba.org/KuwaibaService/connectMirrorPortResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/connectMirrorPort/Fault/ServerSideException")
+    })
+    public void connectMirrorPort(
+        @WebParam(name = "aObjectClass", targetNamespace = "")
+        String aObjectClass,
+        @WebParam(name = "aObjectId", targetNamespace = "")
+        long aObjectId,
+        @WebParam(name = "bObjectClass", targetNamespace = "")
+        String bObjectClass,
+        @WebParam(name = "bObjectId", targetNamespace = "")
+        long bObjectId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param objectClass
+     * @param sessionId
+     * @param objectId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "releaseMirrorPort", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ReleaseMirrorPort")
+    @ResponseWrapper(localName = "releaseMirrorPortResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ReleaseMirrorPortResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/releaseMirrorPortRequest", output = "http://ws.kuwaiba.org/KuwaibaService/releaseMirrorPortResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/releaseMirrorPort/Fault/ServerSideException")
+    })
+    public void releaseMirrorPort(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "objectId", targetNamespace = "")
+        long objectId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param aObjectClass
+     * @param aObjectId
+     * @param name
+     * @param parentClass
+     * @param connectionClass
+     * @param bObjectClass
+     * @param sessionId
+     * @param templateId
+     * @param bObjectId
+     * @param parentId
+     * @return
+     *     returns long
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "createPhysicalConnection", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePhysicalConnection")
+    @ResponseWrapper(localName = "createPhysicalConnectionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePhysicalConnectionResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createPhysicalConnectionRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createPhysicalConnectionResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createPhysicalConnection/Fault/ServerSideException")
+    })
+    public long createPhysicalConnection(
+        @WebParam(name = "aObjectClass", targetNamespace = "")
+        String aObjectClass,
+        @WebParam(name = "aObjectId", targetNamespace = "")
+        long aObjectId,
+        @WebParam(name = "bObjectClass", targetNamespace = "")
+        String bObjectClass,
+        @WebParam(name = "bObjectId", targetNamespace = "")
+        long bObjectId,
+        @WebParam(name = "parentClass", targetNamespace = "")
+        String parentClass,
+        @WebParam(name = "parentId", targetNamespace = "")
+        long parentId,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "connectionClass", targetNamespace = "")
+        String connectionClass,
+        @WebParam(name = "templateId", targetNamespace = "")
+        long templateId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param connectionId
+     * @param connectionClass
+     * @param sessionId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getPhysicalConnectionEndpoints", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalConnectionEndpoints")
+    @ResponseWrapper(localName = "getPhysicalConnectionEndpointsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalConnectionEndpointsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalConnectionEndpointsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalConnectionEndpointsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalConnectionEndpoints/Fault/ServerSideException")
+    })
+    public List<RemoteObjectLight> getPhysicalConnectionEndpoints(
+        @WebParam(name = "connectionClass", targetNamespace = "")
+        String connectionClass,
+        @WebParam(name = "connectionId", targetNamespace = "")
+        long connectionId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sideAClassNames
+     * @param linksIds
+     * @param sideBClassNames
+     * @param sideBIds
+     * @param sideAIds
+     * @param linksClassNames
+     * @param sessionId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "connectPhysicalLinks", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectPhysicalLinks")
+    @ResponseWrapper(localName = "connectPhysicalLinksResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectPhysicalLinksResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/connectPhysicalLinksRequest", output = "http://ws.kuwaiba.org/KuwaibaService/connectPhysicalLinksResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/connectPhysicalLinks/Fault/ServerSideException")
+    })
+    public void connectPhysicalLinks(
+        @WebParam(name = "sideAClassNames", targetNamespace = "")
+        List<String> sideAClassNames,
+        @WebParam(name = "sideAIds", targetNamespace = "")
+        List<Long> sideAIds,
+        @WebParam(name = "linksClassNames", targetNamespace = "")
+        List<String> linksClassNames,
+        @WebParam(name = "linksIds", targetNamespace = "")
+        List<Long> linksIds,
+        @WebParam(name = "sideBClassNames", targetNamespace = "")
+        List<String> sideBClassNames,
+        @WebParam(name = "sideBIds", targetNamespace = "")
+        List<Long> sideBIds,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sideAClassNames
+     * @param sideBClassNames
+     * @param sideBIds
+     * @param sideAIds
+     * @param containersClassNames
+     * @param sessionId
+     * @param containersIds
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "connectPhysicalContainers", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectPhysicalContainers")
+    @ResponseWrapper(localName = "connectPhysicalContainersResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectPhysicalContainersResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/connectPhysicalContainersRequest", output = "http://ws.kuwaiba.org/KuwaibaService/connectPhysicalContainersResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/connectPhysicalContainers/Fault/ServerSideException")
+    })
+    public void connectPhysicalContainers(
+        @WebParam(name = "sideAClassNames", targetNamespace = "")
+        List<String> sideAClassNames,
+        @WebParam(name = "sideAIds", targetNamespace = "")
+        List<Long> sideAIds,
+        @WebParam(name = "containersClassNames", targetNamespace = "")
+        List<String> containersClassNames,
+        @WebParam(name = "containersIds", targetNamespace = "")
+        List<Long> containersIds,
+        @WebParam(name = "sideBClassNames", targetNamespace = "")
+        List<String> sideBClassNames,
+        @WebParam(name = "sideBIds", targetNamespace = "")
+        List<Long> sideBIds,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sideToDisconnect
+     * @param connectionId
+     * @param connectionClass
+     * @param sessionId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "disconnectPhysicalConnection", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DisconnectPhysicalConnection")
+    @ResponseWrapper(localName = "disconnectPhysicalConnectionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DisconnectPhysicalConnectionResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/disconnectPhysicalConnectionRequest", output = "http://ws.kuwaiba.org/KuwaibaService/disconnectPhysicalConnectionResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/disconnectPhysicalConnection/Fault/ServerSideException")
+    })
+    public void disconnectPhysicalConnection(
+        @WebParam(name = "connectionClass", targetNamespace = "")
+        String connectionClass,
+        @WebParam(name = "connectionId", targetNamespace = "")
+        long connectionId,
+        @WebParam(name = "sideToDisconnect", targetNamespace = "")
+        int sideToDisconnect,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param objectClass
+     * @param sessionId
+     * @param objectId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getPhysicalPath", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalPath")
+    @ResponseWrapper(localName = "getPhysicalPathResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalPathResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalPathRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalPathResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalPath/Fault/ServerSideException")
+    })
+    public List<RemoteObjectLight> getPhysicalPath(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "objectId", targetNamespace = "")
+        long objectId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param linkId
+     * @param sessionId
+     * @param linkClass
+     * @return
+     *     returns org.inventory.communications.wsclient.RemoteLogicalConnectionDetails
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getLogicalLinkDetails", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetLogicalLinkDetails")
+    @ResponseWrapper(localName = "getLogicalLinkDetailsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetLogicalLinkDetailsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getLogicalLinkDetailsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getLogicalLinkDetailsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getLogicalLinkDetails/Fault/ServerSideException")
+    })
+    public RemoteLogicalConnectionDetails getLogicalLinkDetails(
+        @WebParam(name = "linkClass", targetNamespace = "")
+        String linkClass,
+        @WebParam(name = "linkId", targetNamespace = "")
+        long linkId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param objectBClass
+     * @param containerClass
+     * @param objectAClass
+     * @param objectBId
+     * @param objectAId
+     * @param sessionId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getContainersBetweenObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetContainersBetweenObjects")
+    @ResponseWrapper(localName = "getContainersBetweenObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetContainersBetweenObjectsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getContainersBetweenObjectsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getContainersBetweenObjectsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getContainersBetweenObjects/Fault/ServerSideException")
+    })
+    public List<RemoteObjectLight> getContainersBetweenObjects(
+        @WebParam(name = "objectAClass", targetNamespace = "")
+        String objectAClass,
+        @WebParam(name = "objectAId", targetNamespace = "")
+        long objectAId,
+        @WebParam(name = "objectBClass", targetNamespace = "")
+        String objectBClass,
+        @WebParam(name = "objectBId", targetNamespace = "")
+        long objectBId,
+        @WebParam(name = "containerClass", targetNamespace = "")
+        String containerClass,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param objectClass
+     * @param sessionId
+     * @param objectId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLightList>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getPhysicalConnectionsInObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalConnectionsInObject")
+    @ResponseWrapper(localName = "getPhysicalConnectionsInObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalConnectionsInObjectResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalConnectionsInObjectRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalConnectionsInObjectResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalConnectionsInObject/Fault/ServerSideException")
+    })
+    public List<RemoteObjectLightList> getPhysicalConnectionsInObject(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "objectId", targetNamespace = "")
+        long objectId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param objectClass
+     * @param sessionId
+     * @param objectId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "deletePhysicalConnection", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeletePhysicalConnection")
+    @ResponseWrapper(localName = "deletePhysicalConnectionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeletePhysicalConnectionResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deletePhysicalConnectionRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deletePhysicalConnectionResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deletePhysicalConnection/Fault/ServerSideException")
+    })
+    public void deletePhysicalConnection(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "objectId", targetNamespace = "")
+        long objectId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param serviceClass
+     * @param objectClass
+     * @param sessionId
+     * @param serviceId
+     * @param objectId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "associateObjectToService", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AssociateObjectToService")
+    @ResponseWrapper(localName = "associateObjectToServiceResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AssociateObjectToServiceResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/associateObjectToServiceRequest", output = "http://ws.kuwaiba.org/KuwaibaService/associateObjectToServiceResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/associateObjectToService/Fault/ServerSideException")
+    })
+    public void associateObjectToService(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "objectId", targetNamespace = "")
+        long objectId,
+        @WebParam(name = "serviceClass", targetNamespace = "")
+        String serviceClass,
+        @WebParam(name = "serviceId", targetNamespace = "")
+        long serviceId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param serviceClass
+     * @param objectClass
+     * @param sessionId
+     * @param serviceId
+     * @param objectId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "associateObjectsToService", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AssociateObjectsToService")
+    @ResponseWrapper(localName = "associateObjectsToServiceResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AssociateObjectsToServiceResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/associateObjectsToServiceRequest", output = "http://ws.kuwaiba.org/KuwaibaService/associateObjectsToServiceResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/associateObjectsToService/Fault/ServerSideException")
+    })
+    public void associateObjectsToService(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        List<String> objectClass,
+        @WebParam(name = "objectId", targetNamespace = "")
+        List<Long> objectId,
+        @WebParam(name = "serviceClass", targetNamespace = "")
+        String serviceClass,
+        @WebParam(name = "serviceId", targetNamespace = "")
+        long serviceId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param serviceClass
+     * @param targetId
+     * @param sessionId
+     * @param serviceId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "releaseObjectFromService", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ReleaseObjectFromService")
+    @ResponseWrapper(localName = "releaseObjectFromServiceResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ReleaseObjectFromServiceResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/releaseObjectFromServiceRequest", output = "http://ws.kuwaiba.org/KuwaibaService/releaseObjectFromServiceResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/releaseObjectFromService/Fault/ServerSideException")
+    })
+    public void releaseObjectFromService(
+        @WebParam(name = "serviceClass", targetNamespace = "")
+        String serviceClass,
+        @WebParam(name = "serviceId", targetNamespace = "")
+        long serviceId,
+        @WebParam(name = "targetId", targetNamespace = "")
+        long targetId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param serviceClass
+     * @param sessionId
+     * @param serviceId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getServiceResources", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetServiceResources")
+    @ResponseWrapper(localName = "getServiceResourcesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetServiceResourcesResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getServiceResourcesRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getServiceResourcesResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getServiceResources/Fault/ServerSideException")
+    })
+    public List<RemoteObjectLight> getServiceResources(
+        @WebParam(name = "serviceClass", targetNamespace = "")
+        String serviceClass,
+        @WebParam(name = "serviceId", targetNamespace = "")
+        long serviceId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param groupId
+     * @param sessionId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.UserInfo>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getUsersInGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUsersInGroup")
+    @ResponseWrapper(localName = "getUsersInGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUsersInGroupResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getUsersInGroupRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getUsersInGroupResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getUsersInGroup/Fault/ServerSideException")
+    })
+    public List<UserInfo> getUsersInGroup(
+        @WebParam(name = "groupId", targetNamespace = "")
+        long groupId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param groupId
+     * @param sessionId
+     * @param userId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "addUserToGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddUserToGroup")
+    @ResponseWrapper(localName = "addUserToGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddUserToGroupResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/addUserToGroupRequest", output = "http://ws.kuwaiba.org/KuwaibaService/addUserToGroupResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/addUserToGroup/Fault/ServerSideException")
+    })
+    public void addUserToGroup(
+        @WebParam(name = "userId", targetNamespace = "")
+        long userId,
+        @WebParam(name = "groupId", targetNamespace = "")
+        long groupId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param groupId
+     * @param sessionId
+     * @param userId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "removeUserFromGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemoveUserFromGroup")
+    @ResponseWrapper(localName = "removeUserFromGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemoveUserFromGroupResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/removeUserFromGroupRequest", output = "http://ws.kuwaiba.org/KuwaibaService/removeUserFromGroupResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/removeUserFromGroup/Fault/ServerSideException")
+    })
+    public void removeUserFromGroup(
+        @WebParam(name = "userId", targetNamespace = "")
+        long userId,
+        @WebParam(name = "groupId", targetNamespace = "")
+        long groupId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param accessLevel
+     * @param featureToken
+     * @param sessionId
+     * @param userId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "setPrivilegeToUser", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPrivilegeToUser")
+    @ResponseWrapper(localName = "setPrivilegeToUserResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPrivilegeToUserResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/setPrivilegeToUserRequest", output = "http://ws.kuwaiba.org/KuwaibaService/setPrivilegeToUserResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/setPrivilegeToUser/Fault/ServerSideException")
+    })
+    public void setPrivilegeToUser(
+        @WebParam(name = "userId", targetNamespace = "")
+        long userId,
+        @WebParam(name = "featureToken", targetNamespace = "")
+        String featureToken,
+        @WebParam(name = "accessLevel", targetNamespace = "")
+        int accessLevel,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param accessLevel
+     * @param featureToken
+     * @param groupId
+     * @param sessionId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "setPrivilegeToGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPrivilegeToGroup")
+    @ResponseWrapper(localName = "setPrivilegeToGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPrivilegeToGroupResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/setPrivilegeToGroupRequest", output = "http://ws.kuwaiba.org/KuwaibaService/setPrivilegeToGroupResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/setPrivilegeToGroup/Fault/ServerSideException")
+    })
+    public void setPrivilegeToGroup(
+        @WebParam(name = "groupId", targetNamespace = "")
+        long groupId,
+        @WebParam(name = "featureToken", targetNamespace = "")
+        String featureToken,
+        @WebParam(name = "accessLevel", targetNamespace = "")
+        int accessLevel,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param featureToken
+     * @param sessionId
+     * @param userId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "removePrivilegeFromUser", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePrivilegeFromUser")
+    @ResponseWrapper(localName = "removePrivilegeFromUserResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePrivilegeFromUserResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/removePrivilegeFromUserRequest", output = "http://ws.kuwaiba.org/KuwaibaService/removePrivilegeFromUserResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/removePrivilegeFromUser/Fault/ServerSideException")
+    })
+    public void removePrivilegeFromUser(
+        @WebParam(name = "userId", targetNamespace = "")
+        long userId,
+        @WebParam(name = "featureToken", targetNamespace = "")
+        String featureToken,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param featureToken
+     * @param groupId
+     * @param sessionId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "removePrivilegeFromGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePrivilegeFromGroup")
+    @ResponseWrapper(localName = "removePrivilegeFromGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePrivilegeFromGroupResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/removePrivilegeFromGroupRequest", output = "http://ws.kuwaiba.org/KuwaibaService/removePrivilegeFromGroupResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/removePrivilegeFromGroup/Fault/ServerSideException")
+    })
+    public void removePrivilegeFromGroup(
+        @WebParam(name = "groupId", targetNamespace = "")
+        long groupId,
+        @WebParam(name = "featureToken", targetNamespace = "")
+        String featureToken,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param firstName
+     * @param lastName
+     * @param privileges
+     * @param password
+     * @param defaultGroupId
+     * @param sessionId
+     * @param type
+     * @param enabled
+     * @param username
+     * @return
+     *     returns long
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "createUser", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateUser")
+    @ResponseWrapper(localName = "createUserResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateUserResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createUserRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createUserResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createUser/Fault/ServerSideException")
+    })
+    public long createUser(
+        @WebParam(name = "username", targetNamespace = "")
+        String username,
+        @WebParam(name = "password", targetNamespace = "")
+        String password,
+        @WebParam(name = "firstName", targetNamespace = "")
+        String firstName,
+        @WebParam(name = "LastName", targetNamespace = "")
+        String lastName,
+        @WebParam(name = "enabled", targetNamespace = "")
+        boolean enabled,
+        @WebParam(name = "type", targetNamespace = "")
+        int type,
+        @WebParam(name = "privileges", targetNamespace = "")
+        List<PrivilegeInfo> privileges,
+        @WebParam(name = "defaultGroupId", targetNamespace = "")
+        long defaultGroupId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param groupName
+     * @param description
+     * @param oid
+     * @param sessionId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "setGroupProperties", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetGroupProperties")
+    @ResponseWrapper(localName = "setGroupPropertiesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetGroupPropertiesResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/setGroupPropertiesRequest", output = "http://ws.kuwaiba.org/KuwaibaService/setGroupPropertiesResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/setGroupProperties/Fault/ServerSideException")
+    })
+    public void setGroupProperties(
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "groupName", targetNamespace = "")
+        String groupName,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param oids
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "deleteUsers", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteUsers")
+    @ResponseWrapper(localName = "deleteUsersResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteUsersResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteUsersRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteUsersResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteUsers/Fault/ServerSideException")
+    })
+    public void deleteUsers(
+        @WebParam(name = "oids", targetNamespace = "")
+        List<Long> oids,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param oids
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "deleteGroups", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteGroups")
+    @ResponseWrapper(localName = "deleteGroupsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteGroupsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteGroupsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteGroupsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteGroups/Fault/ServerSideException")
+    })
+    public void deleteGroups(
+        @WebParam(name = "oids", targetNamespace = "")
+        List<Long> oids,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param viewClassName
+     * @param background
+     * @param name
+     * @param listTypeItemClassName
+     * @param description
+     * @param sessionId
+     * @param listTypeItemId
+     * @param structure
+     * @return
+     *     returns long
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "createListTypeItemRelateView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateListTypeItemRelateView")
+    @ResponseWrapper(localName = "createListTypeItemRelateViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateListTypeItemRelateViewResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createListTypeItemRelateViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createListTypeItemRelateViewResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createListTypeItemRelateView/Fault/ServerSideException")
+    })
+    public long createListTypeItemRelateView(
+        @WebParam(name = "listTypeItemId", targetNamespace = "")
+        long listTypeItemId,
+        @WebParam(name = "listTypeItemClassName", targetNamespace = "")
+        String listTypeItemClassName,
+        @WebParam(name = "viewClassName", targetNamespace = "")
+        String viewClassName,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "structure", targetNamespace = "")
+        byte[] structure,
+        @WebParam(name = "background", targetNamespace = "")
+        byte[] background,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param listTypeItemClass
+     * @param viewId
+     * @param background
+     * @param name
+     * @param description
+     * @param sessionId
+     * @param listTypeItemId
+     * @param structure
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "updateListTypeItemRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateListTypeItemRelatedView")
+    @ResponseWrapper(localName = "updateListTypeItemRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateListTypeItemRelatedViewResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/updateListTypeItemRelatedViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/updateListTypeItemRelatedViewResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/updateListTypeItemRelatedView/Fault/ServerSideException")
+    })
+    public void updateListTypeItemRelatedView(
+        @WebParam(name = "listTypeItemId", targetNamespace = "")
+        long listTypeItemId,
+        @WebParam(name = "listTypeItemClass", targetNamespace = "")
+        String listTypeItemClass,
+        @WebParam(name = "viewId", targetNamespace = "")
+        long viewId,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "structure", targetNamespace = "")
+        byte[] structure,
+        @WebParam(name = "background", targetNamespace = "")
+        byte[] background,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param listTypeItemClass
+     * @param viewId
+     * @param sessionId
+     * @param listTypeItemId
+     * @return
+     *     returns org.inventory.communications.wsclient.ViewInfo
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getListTypeItemRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItemRelatedView")
+    @ResponseWrapper(localName = "getListTypeItemRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItemRelatedViewResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getListTypeItemRelatedViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getListTypeItemRelatedViewResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getListTypeItemRelatedView/Fault/ServerSideException")
+    })
+    public ViewInfo getListTypeItemRelatedView(
+        @WebParam(name = "listTypeItemId", targetNamespace = "")
+        long listTypeItemId,
+        @WebParam(name = "listTypeItemClass", targetNamespace = "")
+        String listTypeItemClass,
+        @WebParam(name = "viewId", targetNamespace = "")
+        long viewId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param listTypeItemClass
+     * @param limit
+     * @param sessionId
+     * @param listTypeItemId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.ViewInfoLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getListTypeItemRelatedViews", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItemRelatedViews")
+    @ResponseWrapper(localName = "getListTypeItemRelatedViewsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItemRelatedViewsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getListTypeItemRelatedViewsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getListTypeItemRelatedViewsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getListTypeItemRelatedViews/Fault/ServerSideException")
+    })
+    public List<ViewInfoLight> getListTypeItemRelatedViews(
+        @WebParam(name = "listTypeItemId", targetNamespace = "")
+        long listTypeItemId,
+        @WebParam(name = "listTypeItemClass", targetNamespace = "")
+        String listTypeItemClass,
+        @WebParam(name = "limit", targetNamespace = "")
+        int limit,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param listTypeItemClass
+     * @param viewId
+     * @param sessionId
+     * @param listTypeItemId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "deleteListTypeItemRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteListTypeItemRelatedView")
+    @ResponseWrapper(localName = "deleteListTypeItemRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteListTypeItemRelatedViewResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteListTypeItemRelatedViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteListTypeItemRelatedViewResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteListTypeItemRelatedView/Fault/ServerSideException")
+    })
+    public void deleteListTypeItemRelatedView(
+        @WebParam(name = "listTypeItemId", targetNamespace = "")
+        long listTypeItemId,
+        @WebParam(name = "listTypeItemClass", targetNamespace = "")
+        String listTypeItemClass,
+        @WebParam(name = "viewId", targetNamespace = "")
+        long viewId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param viewClassName
+     * @param background
+     * @param objectClass
+     * @param name
+     * @param description
+     * @param sessionId
+     * @param objectId
+     * @param structure
+     * @return
+     *     returns long
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "createObjectRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateObjectRelatedView")
+    @ResponseWrapper(localName = "createObjectRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateObjectRelatedViewResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createObjectRelatedViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createObjectRelatedViewResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createObjectRelatedView/Fault/ServerSideException")
+    })
+    public long createObjectRelatedView(
+        @WebParam(name = "objectId", targetNamespace = "")
+        long objectId,
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "viewClassName", targetNamespace = "")
+        String viewClassName,
+        @WebParam(name = "structure", targetNamespace = "")
+        byte[] structure,
+        @WebParam(name = "background", targetNamespace = "")
+        byte[] background,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param background
+     * @param name
+     * @param description
+     * @param sessionId
+     * @param viewClass
+     * @param structure
+     * @return
+     *     returns long
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "createGeneralView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateGeneralView")
+    @ResponseWrapper(localName = "createGeneralViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateGeneralViewResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createGeneralViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createGeneralViewResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createGeneralView/Fault/ServerSideException")
+    })
+    public long createGeneralView(
+        @WebParam(name = "viewClass", targetNamespace = "")
+        String viewClass,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "structure", targetNamespace = "")
+        byte[] structure,
+        @WebParam(name = "background", targetNamespace = "")
+        byte[] background,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param viewId
+     * @param objectClass
+     * @param oid
+     * @param sessionId
+     * @return
+     *     returns org.inventory.communications.wsclient.ViewInfo
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getObjectRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectRelatedView")
+    @ResponseWrapper(localName = "getObjectRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectRelatedViewResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getObjectRelatedViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getObjectRelatedViewResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getObjectRelatedView/Fault/ServerSideException")
+    })
+    public ViewInfo getObjectRelatedView(
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "viewId", targetNamespace = "")
+        long viewId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param objectClass
+     * @param viewType
+     * @param limit
+     * @param oid
+     * @param sessionId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.ViewInfoLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getObjectRelatedViews", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectRelatedViews")
+    @ResponseWrapper(localName = "getObjectRelatedViewsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectRelatedViewsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getObjectRelatedViewsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getObjectRelatedViewsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getObjectRelatedViews/Fault/ServerSideException")
+    })
+    public List<ViewInfoLight> getObjectRelatedViews(
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "viewType", targetNamespace = "")
+        int viewType,
+        @WebParam(name = "limit", targetNamespace = "")
+        int limit,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param viewId
+     * @param sessionId
+     * @return
+     *     returns org.inventory.communications.wsclient.ViewInfo
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getGeneralView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralView")
+    @ResponseWrapper(localName = "getGeneralViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralViewResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getGeneralViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getGeneralViewResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getGeneralView/Fault/ServerSideException")
+    })
+    public ViewInfo getGeneralView(
+        @WebParam(name = "viewId", targetNamespace = "")
+        long viewId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param limit
+     * @param sessionId
+     * @param viewClass
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.ViewInfoLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getGeneralViews", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralViews")
+    @ResponseWrapper(localName = "getGeneralViewsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralViewsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getGeneralViewsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getGeneralViewsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getGeneralViews/Fault/ServerSideException")
+    })
+    public List<ViewInfoLight> getGeneralViews(
+        @WebParam(name = "viewClass", targetNamespace = "")
+        String viewClass,
+        @WebParam(name = "limit", targetNamespace = "")
+        int limit,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param viewId
+     * @param viewName
+     * @param background
+     * @param objectClass
+     * @param viewDescription
+     * @param sessionId
+     * @param objectOid
+     * @param structure
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "updateObjectRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateObjectRelatedView")
+    @ResponseWrapper(localName = "updateObjectRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateObjectRelatedViewResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/updateObjectRelatedViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/updateObjectRelatedViewResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/updateObjectRelatedView/Fault/ServerSideException")
+    })
+    public void updateObjectRelatedView(
+        @WebParam(name = "objectOid", targetNamespace = "")
+        long objectOid,
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "viewId", targetNamespace = "")
+        long viewId,
+        @WebParam(name = "viewName", targetNamespace = "")
+        String viewName,
+        @WebParam(name = "viewDescription", targetNamespace = "")
+        String viewDescription,
+        @WebParam(name = "structure", targetNamespace = "")
+        byte[] structure,
+        @WebParam(name = "background", targetNamespace = "")
+        byte[] background,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param viewId
+     * @param viewName
+     * @param background
+     * @param viewDescription
+     * @param sessionId
+     * @param structure
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "updateGeneralView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateGeneralView")
+    @ResponseWrapper(localName = "updateGeneralViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateGeneralViewResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/updateGeneralViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/updateGeneralViewResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/updateGeneralView/Fault/ServerSideException")
+    })
+    public void updateGeneralView(
+        @WebParam(name = "viewId", targetNamespace = "")
+        long viewId,
+        @WebParam(name = "viewName", targetNamespace = "")
+        String viewName,
+        @WebParam(name = "viewDescription", targetNamespace = "")
+        String viewDescription,
+        @WebParam(name = "structure", targetNamespace = "")
+        byte[] structure,
+        @WebParam(name = "background", targetNamespace = "")
+        byte[] background,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param oids
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "deleteGeneralView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteGeneralView")
+    @ResponseWrapper(localName = "deleteGeneralViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteGeneralViewResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteGeneralViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteGeneralViewResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteGeneralView/Fault/ServerSideException")
+    })
+    public void deleteGeneralView(
+        @WebParam(name = "oids", targetNamespace = "")
+        List<Long> oids,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param queryStructure
+     * @param ownerOid
+     * @param queryName
+     * @param description
+     * @param sessionId
+     * @return
+     *     returns long
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "createQuery", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateQuery")
+    @ResponseWrapper(localName = "createQueryResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateQueryResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createQueryRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createQueryResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createQuery/Fault/ServerSideException")
+    })
+    public long createQuery(
+        @WebParam(name = "queryName", targetNamespace = "")
+        String queryName,
+        @WebParam(name = "ownerOid", targetNamespace = "")
+        long ownerOid,
+        @WebParam(name = "queryStructure", targetNamespace = "")
+        byte[] queryStructure,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param queryStructure
+     * @param queryOid
+     * @param ownerOid
+     * @param queryName
+     * @param description
+     * @param sessionId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "saveQuery", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SaveQuery")
+    @ResponseWrapper(localName = "saveQueryResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SaveQueryResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/saveQueryRequest", output = "http://ws.kuwaiba.org/KuwaibaService/saveQueryResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/saveQuery/Fault/ServerSideException")
+    })
+    public void saveQuery(
+        @WebParam(name = "queryOid", targetNamespace = "")
+        long queryOid,
+        @WebParam(name = "queryName", targetNamespace = "")
+        String queryName,
+        @WebParam(name = "ownerOid", targetNamespace = "")
+        long ownerOid,
+        @WebParam(name = "queryStructure", targetNamespace = "")
+        byte[] queryStructure,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param queryOid
+     * @param sessionId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "deleteQuery", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteQuery")
+    @ResponseWrapper(localName = "deleteQueryResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteQueryResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteQueryRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteQueryResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteQuery/Fault/ServerSideException")
+    })
+    public void deleteQuery(
+        @WebParam(name = "queryOid", targetNamespace = "")
+        long queryOid,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param showPublic
+     * @param sessionId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemoteQueryLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getQueries", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetQueries")
+    @ResponseWrapper(localName = "getQueriesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetQueriesResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getQueriesRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getQueriesResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getQueries/Fault/ServerSideException")
+    })
+    public List<RemoteQueryLight> getQueries(
+        @WebParam(name = "showPublic", targetNamespace = "")
+        boolean showPublic,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
      * @param sessionId
      * @param projectClass
      * @param projectId
@@ -5438,7 +5433,7 @@ public interface KuwaibaService {
      * @param sessionId
      * @param resourceType
      * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
+     *     returns org.inventory.communications.wsclient.AssetLevelCorrelatedInformation
      * @throws ServerSideException_Exception
      */
     @WebMethod
@@ -5448,7 +5443,7 @@ public interface KuwaibaService {
     @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getAffectedServicesRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getAffectedServicesResponse", fault = {
         @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getAffectedServices/Fault/ServerSideException")
     })
-    public List<RemoteObjectLight> getAffectedServices(
+    public AssetLevelCorrelatedInformation getAffectedServices(
         @WebParam(name = "resourceType", targetNamespace = "")
         int resourceType,
         @WebParam(name = "resourceDefinition", targetNamespace = "")
@@ -6106,49 +6101,42 @@ public interface KuwaibaService {
 
     /**
      * 
-     * @param visible
-     * @param isReadOnly
-     * @param displayName
-     * @param administrative
-     * @param noCopy
-     * @param unique
-     * @param name
-     * @param description
-     * @param className
      * @param sessionId
-     * @param type
-     * @param mandatory
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.GroupInfo>
      * @throws ServerSideException_Exception
      */
     @WebMethod
-    @RequestWrapper(localName = "createAttribute", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateAttribute")
-    @ResponseWrapper(localName = "createAttributeResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateAttributeResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createAttributeRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createAttributeResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createAttribute/Fault/ServerSideException")
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getGroups", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGroups")
+    @ResponseWrapper(localName = "getGroupsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGroupsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getGroupsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getGroupsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getGroups/Fault/ServerSideException")
     })
-    public void createAttribute(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "displayName", targetNamespace = "")
-        String displayName,
-        @WebParam(name = "type", targetNamespace = "")
-        String type,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "administrative", targetNamespace = "")
-        boolean administrative,
-        @WebParam(name = "visible", targetNamespace = "")
-        boolean visible,
-        @WebParam(name = "isReadOnly", targetNamespace = "")
-        boolean isReadOnly,
-        @WebParam(name = "noCopy", targetNamespace = "")
-        boolean noCopy,
-        @WebParam(name = "unique", targetNamespace = "")
-        boolean unique,
-        @WebParam(name = "mandatory", targetNamespace = "")
-        boolean mandatory,
+    public List<GroupInfo> getGroups(
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param showAll
+     * @param sessionId
+     * @return
+     *     returns byte[]
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getClassHierarchy", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetClassHierarchy")
+    @ResponseWrapper(localName = "getClassHierarchyResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetClassHierarchyResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getClassHierarchyRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getClassHierarchyResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getClassHierarchy/Fault/ServerSideException")
+    })
+    public byte[] getClassHierarchy(
+        @WebParam(name = "showAll", targetNamespace = "")
+        boolean showAll,
         @WebParam(name = "sessionId", targetNamespace = "")
         String sessionId)
         throws ServerSideException_Exception
@@ -6179,45 +6167,22 @@ public interface KuwaibaService {
 
     /**
      * 
-     * @param reportId
      * @param sessionId
+     * @param taskId
      * @return
-     *     returns org.inventory.communications.wsclient.RemoteReport
+     *     returns org.inventory.communications.wsclient.RemoteTaskResult
      * @throws ServerSideException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getReport", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetReport")
-    @ResponseWrapper(localName = "getReportResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetReportResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getReportRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getReportResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getReport/Fault/ServerSideException")
+    @RequestWrapper(localName = "executeTask", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ExecuteTask")
+    @ResponseWrapper(localName = "executeTaskResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ExecuteTaskResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/executeTaskRequest", output = "http://ws.kuwaiba.org/KuwaibaService/executeTaskResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/executeTask/Fault/ServerSideException")
     })
-    public RemoteReport getReport(
-        @WebParam(name = "reportId", targetNamespace = "")
-        long reportId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param query
-     * @param sessionId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.ResultRecord>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "executeQuery", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ExecuteQuery")
-    @ResponseWrapper(localName = "executeQueryResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ExecuteQueryResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/executeQueryRequest", output = "http://ws.kuwaiba.org/KuwaibaService/executeQueryResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/executeQuery/Fault/ServerSideException")
-    })
-    public List<ResultRecord> executeQuery(
-        @WebParam(name = "query", targetNamespace = "")
-        TransientQuery query,
+    public RemoteTaskResult executeTask(
+        @WebParam(name = "taskId", targetNamespace = "")
+        long taskId,
         @WebParam(name = "sessionId", targetNamespace = "")
         String sessionId)
         throws ServerSideException_Exception
@@ -6280,6 +6245,41 @@ public interface KuwaibaService {
 
     /**
      * 
+     * @param templateOids
+     * @param targetClass
+     * @param targetOid
+     * @param sessionId
+     * @param templateClases
+     * @param recursive
+     * @return
+     *     returns java.util.List<java.lang.Long>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "copyObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopyObjects")
+    @ResponseWrapper(localName = "copyObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopyObjectsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/copyObjectsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/copyObjectsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/copyObjects/Fault/ServerSideException")
+    })
+    public List<Long> copyObjects(
+        @WebParam(name = "targetClass", targetNamespace = "")
+        String targetClass,
+        @WebParam(name = "targetOid", targetNamespace = "")
+        long targetOid,
+        @WebParam(name = "templateClases", targetNamespace = "")
+        List<String> templateClases,
+        @WebParam(name = "templateOids", targetNamespace = "")
+        List<Long> templateOids,
+        @WebParam(name = "recursive", targetNamespace = "")
+        boolean recursive,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
      * @param sessionId
      * @param taskId
      * @return
@@ -6296,32 +6296,6 @@ public interface KuwaibaService {
     public RemoteTask getTask(
         @WebParam(name = "taskId", targetNamespace = "")
         long taskId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param allegedParentClass
-     * @param className
-     * @param sessionId
-     * @return
-     *     returns boolean
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "isSubclassOf", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.IsSubclassOf")
-    @ResponseWrapper(localName = "isSubclassOfResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.IsSubclassOfResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/isSubclassOfRequest", output = "http://ws.kuwaiba.org/KuwaibaService/isSubclassOfResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/isSubclassOf/Fault/ServerSideException")
-    })
-    public boolean isSubclassOf(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "allegedParentClass", targetNamespace = "")
-        String allegedParentClass,
         @WebParam(name = "sessionId", targetNamespace = "")
         String sessionId)
         throws ServerSideException_Exception
@@ -6348,6 +6322,32 @@ public interface KuwaibaService {
         String objectclass,
         @WebParam(name = "oid", targetNamespace = "")
         long oid,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param allegedParentClass
+     * @param className
+     * @param sessionId
+     * @return
+     *     returns boolean
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "isSubclassOf", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.IsSubclassOf")
+    @ResponseWrapper(localName = "isSubclassOfResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.IsSubclassOfResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/isSubclassOfRequest", output = "http://ws.kuwaiba.org/KuwaibaService/isSubclassOfResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/isSubclassOf/Fault/ServerSideException")
+    })
+    public boolean isSubclassOf(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "allegedParentClass", targetNamespace = "")
+        String allegedParentClass,
         @WebParam(name = "sessionId", targetNamespace = "")
         String sessionId)
         throws ServerSideException_Exception
