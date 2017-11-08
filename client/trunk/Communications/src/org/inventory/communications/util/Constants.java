@@ -134,6 +134,14 @@ public class Constants {
      */
     public static final String CLASS_GENERICCOMMUNICATIONSELEMENT = "GenericCommunicationsElement";
     /**
+     * Class EquipmentModel
+     */
+    public static final String CLASS_EQUIPMENTMODEL = "EquipmentModel";
+    /**
+     * Class PredefinedShape
+     */
+    public static final String CLASS_CUSTOMSHAPE = "PredefinedShape";
+    /**
      * Root class of all logical connections
      */
     public static final String CLASS_GENERICLOGICALCONNECTION = "GenericLogicalConnection";

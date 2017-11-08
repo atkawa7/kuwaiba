@@ -54,16 +54,4 @@ public class TemplatesService  {
             }
         }));
     }
-    
-    public List<LocalClassMetadataLight> getClassesWithModelTypeAttribute() {
-        List <LocalClassMetadataLight> subclases = CommunicationsStub.getInstance()
-            .getLightSubclasses("GenericCommunicationsElement", false, false); //NOI18N
-        
-        if (subclases == null) {
-            NotificationUtil.getInstance().showSimplePopup("Error", 
-                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-        }
-                
-        return subclases;
-    }
 }

@@ -15,11 +15,14 @@
 package org.inventory.core.templates.nodes.actions;
 
 import java.awt.event.ActionEvent;
+import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
@@ -32,19 +35,33 @@ import org.openide.windows.WindowManager;
  * Shows the associate layout to a given list type item
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class AssociateLayoutAction extends GenericInventoryAction {
+public class EditLayoutAction extends GenericInventoryAction {
     
-    public AssociateLayoutAction() {
-        putValue(NAME, "Associate Layout");
+    public EditLayoutAction() {
+        putValue(NAME, I18N.gm("action_name_edit_layout"));
     }
-    
+
     @Override
     public LocalPrivilege getPrivilege() {
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_TEMPLATES, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
-
+    
+    @Override
+    public boolean isEnabled() {
+        TemplateElementNode selectedNode = Utilities.actionsGlobalContext().lookup(TemplateElementNode.class);
+        LocalObjectLight selectedObject = selectedNode.getLookup().lookup(LocalObjectLight.class);
+        
+        return CommunicationsStub.getInstance().isSubclassOf(selectedObject.getClassName(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
+    }
+    
     @Override
     public void actionPerformed(ActionEvent e) {
+        LocalClassMetadata equipmentModelClass = CommunicationsStub.getInstance().getMetaForClass(Constants.CLASS_EQUIPMENTMODEL, true);
+        if (equipmentModelClass == null) {
+            JOptionPane.showMessageDialog(null, String.format(I18N.gm("database_seems_outdated"), I18N.gm("patch_equipment_model_layout")), I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
         TemplateElementNode selectedNode = Utilities.actionsGlobalContext().lookup(TemplateElementNode.class);
         LocalObjectLight selectedObject = selectedNode.getLookup().lookup(LocalObjectLight.class);
         
@@ -61,7 +78,7 @@ public class AssociateLayoutAction extends GenericInventoryAction {
             if (attributeValue instanceof LocalObjectListItem) {                
                 LocalObjectListItem listItem = (LocalObjectListItem) attributeValue;
                 
-                if ("EquipmentModel".equals(listItem.getClassName())) { //NOI18N
+                if (Constants.CLASS_EQUIPMENTMODEL.equals(listItem.getClassName())) {
                     loli = listItem;
                     break;
                 }
@@ -88,5 +105,6 @@ public class AssociateLayoutAction extends GenericInventoryAction {
             }
         }
         topComponent.requestActive();
-    }    
+    }
+    
 }

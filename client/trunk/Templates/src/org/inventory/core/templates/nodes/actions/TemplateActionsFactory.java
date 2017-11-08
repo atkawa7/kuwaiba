@@ -28,6 +28,7 @@ public class TemplateActionsFactory {
     static DeleteTemplateElementAction deleteTemplateElementAction;
     static CreateTemplateElementSpecialAction createTemplateElementSpecialAction;
     static AssociateLayoutAction associateLayoutAction;
+    private static EditLayoutAction editLayoutAction;
     
     public static GenericInventoryAction getCreateTemplateAction() {
         if (createTemplateAction == null)
@@ -57,5 +58,9 @@ public class TemplateActionsFactory {
         if (associateLayoutAction == null)
             associateLayoutAction = new AssociateLayoutAction();
         return associateLayoutAction;
+    }
+    
+    public static EditLayoutAction getEditLayoutAction() {
+        return editLayoutAction == null ? editLayoutAction = new EditLayoutAction() : editLayoutAction;
     }
 }

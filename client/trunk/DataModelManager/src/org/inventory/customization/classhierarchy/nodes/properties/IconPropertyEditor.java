@@ -92,6 +92,9 @@ public class IconPropertyEditor extends PropertyEditorSupport
             if (myIcon == null)
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, String.format(I18N.gm("image_not_loaded"), fChooser.getSelectedFile().getAbsolutePath()));
             else{
+                // The width and height take a little time in be set
+                while (myIcon.getWidth(null) == -1 && myIcon.getHeight(null) == -1) {}
+                
                 if((myIcon.getHeight(null) > maxAllowedSize) || (myIcon.getWidth(null) > maxAllowedSize)) //Images have limits depending of if you need to set "icon" or "smallIcon"
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, String.format(I18N.gm("image_exceeds_limits")));
                 else{

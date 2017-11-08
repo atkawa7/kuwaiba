@@ -76,6 +76,8 @@ public class TemplateElementNode extends AbstractNode implements PropertyChangeL
         return new Action[] {TemplateActionsFactory.getCreateTemplateElementAction(), 
                              TemplateActionsFactory.getCreateTemplateElementSpecialAction(),
                              null, 
+                             TemplateActionsFactory.getEditLayoutAction(),
+                             null, 
                              TemplateActionsFactory.getDeleteTemplateElementAction(),
                              null,
                              CopyAction.get(CopyAction.class),
