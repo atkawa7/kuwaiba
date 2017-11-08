@@ -16,6 +16,7 @@
 package org.kuwaiba.ws.toserialize.business;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -100,14 +101,15 @@ public class RemoteObject implements Serializable {
         this.oid = oid;
     }
 
-    public static RemoteObject[] toRemoteObjectArray(List<RemoteBusinessObject> toBeWrapped){
+    public static List<RemoteObject> toRemoteObjectArray(List<RemoteBusinessObject> toBeWrapped){
         if (toBeWrapped == null)
             return null;
 
-        RemoteObject[] res = new RemoteObject[toBeWrapped.size()];
-        for (int i = 0; i < toBeWrapped.size(); i++)
-            res[i] = new RemoteObject(toBeWrapped.get(i));
-
+        List<RemoteObject> res = new ArrayList<>();
+        
+        for (RemoteBusinessObject rawObject : toBeWrapped)
+            res.add(new RemoteObject(rawObject));
+        
         return res;
     }
 }

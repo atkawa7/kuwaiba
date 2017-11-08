@@ -592,12 +592,25 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     public List<RemoteBusinessObjectLight> getObjectsWithFilterLight (String className, 
             String filterName, String filterValue) throws MetadataObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx()) {
-            Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
+            Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
 
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
             
             return getObjectsWithFilterLight(classNode, filterName, filterValue);
+        }
+    }
+    
+    @Override
+    public List<RemoteBusinessObject> getObjectsWithFilter (String className, 
+            String filterName, String filterValue) throws MetadataObjectNotFoundException, InvalidArgumentException {
+        try(Transaction tx = graphDb.beginTx()) {
+            Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
+
+            if (classNode == null)
+                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
+            
+            return getObjectsWithFilter(classNode, filterName, filterValue);
         }
     }
     
@@ -730,25 +743,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 }
             }
         }
-        /*
-        try(Transaction tx = graphDb.beginTx()) {
-            Node objectNode = getInstanceOfClass(objectClass, oid);
-            if (objectNode.hasRelationship(Direction.OUTGOING, RelTypes.CHILD_OF)){
-                Node parentNode = objectNode.getSingleRelationship(RelTypes.CHILD_OF, Direction.OUTGOING).getEndNode();
-
-                //If the direct parent is DummyRoot, return a dummy RemoteBusinessObject with oid = -1
-                if (parentNode.hasProperty(Constants.PROPERTY_NAME) && Constants.NODE_DUMMYROOT.equals(parentNode.getProperty(Constants.PROPERTY_NAME)) )
-                    return new RemoteBusinessObject(-1L, Constants.NODE_DUMMYROOT, Constants.NODE_DUMMYROOT);
-                else    
-                    return Util.createRemoteObjectLightFromNode(parentNode);
-            }
-            if (objectNode.hasRelationship(Direction.OUTGOING, RelTypes.CHILD_OF_SPECIAL)){
-                Node parentNode = objectNode.getSingleRelationship(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).getEndNode();
-                return Util.createRemoteObjectLightFromNode(parentNode);
-            }
-            throw new InvalidArgumentException(String.format("The Parent of object with id %s cannot be found", oid));
-        }
-        */
     }
     
     @Override
@@ -757,7 +751,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         
         try(Transaction tx = graphDb.beginTx()) {
             Node objectNode = getInstanceOfClass(objectClassName, oid);
-            List<RemoteBusinessObjectLight> parents = new ArrayList<>();
             while (true) {
                 Node parentNode = null;
                 if (objectNode.hasRelationship(RelTypes.CHILD_OF, Direction.OUTGOING))
@@ -770,14 +763,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 if (parentNode == null)
                     throw new ApplicationObjectNotFoundException(String.format("Navigation tree root not found. Contact your administrator (%s, %s)", objectClassName, oid));
                 
-                Label label = DynamicLabel.label(Constants.LABEL_ROOT); //If the parent node is the dummy root, just return null
-                if (parentNode.hasLabel(label))
-                    return parents.get(parents.size() - 1);
+                if (parentNode.hasLabel(DynamicLabel.label(Constants.LABEL_ROOT))) //If the parent node is the dummy root, just return null
+                    return null;
                 else { 
                     String parentNodeClass = Util.getClassName(parentNode);
-                    parents.add(Util.createRemoteObjectLightFromNode(parentNode));
+                    
                     if (mem.isSubClass(objectToMatchClassName, parentNodeClass))
-                        return parents.get(parents.size() - 1);
+                        return Util.createRemoteObjectLightFromNode(parentNode);
                     
                     objectNode = parentNode;
                 }
@@ -2304,6 +2296,23 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         
         for (Relationship subClassRel : classNode.getRelationships(Direction.INCOMING, RelTypes.EXTENDS))
             res.addAll(getObjectsWithFilterLight(subClassRel.getStartNode(), filterName, filterValue));
+        
+        return res;
+    }
+    
+    private List<RemoteBusinessObject> getObjectsWithFilter(Node classNode, 
+            String filterName, String filterValue) throws InvalidArgumentException {
+        
+        List<RemoteBusinessObject> res = new ArrayList<>();
+            
+        for (Relationship instanceOfRelationship : classNode.getRelationships(Direction.INCOMING, RelTypes.INSTANCE_OF)) {
+            Node instance = instanceOfRelationship.getStartNode();
+            if (instance.hasProperty(filterName) && instance.getProperty(filterName).equals(filterValue))
+                res.add(Util.createRemoteObjectFromNode(instance));
+        }
+        
+        for (Relationship subClassRel : classNode.getRelationships(Direction.INCOMING, RelTypes.EXTENDS))
+            res.addAll(getObjectsWithFilter(subClassRel.getStartNode(), filterName, filterValue));
         
         return res;
     }

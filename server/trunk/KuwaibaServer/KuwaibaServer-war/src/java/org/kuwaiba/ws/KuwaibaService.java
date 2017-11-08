@@ -53,6 +53,7 @@ import org.kuwaiba.ws.toserialize.application.UserInfo;
 import org.kuwaiba.ws.toserialize.application.UserInfoLight;
 import org.kuwaiba.ws.toserialize.application.ViewInfo;
 import org.kuwaiba.ws.toserialize.application.ViewInfoLight;
+import org.kuwaiba.ws.toserialize.business.AssetLevelCorrelatedInformation;
 import org.kuwaiba.ws.toserialize.business.RemoteLogicalConnectionDetails;
 import org.kuwaiba.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
@@ -1961,13 +1962,13 @@ public class KuwaibaService {
      *                             If the database objects can not be correctly mapped into serializable Java objects.
      */
     @WebMethod(operationName="getChildrenOfClass")
-    public RemoteObject[] getChildrenOfClass(@WebParam(name="parentOid")long parentOid,
+    public List<RemoteObject> getChildrenOfClass(@WebParam(name="parentOid")long parentOid,
             @WebParam(name="parentClass")String parentClass,
             @WebParam(name="childrenClass")String childrenClass,
             @WebParam(name="maxResults")int maxResults,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
-            RemoteObject[] res = wsBean.getChildrenOfClass(parentOid,parentClass,childrenClass, maxResults, getIPAddress(), sessionId);
+            List<RemoteObject> res = wsBean.getChildrenOfClass(parentOid,parentClass,childrenClass, maxResults, getIPAddress(), sessionId);
             return res;
         } catch(Exception e){
             if (e instanceof ServerSideException)
@@ -6626,11 +6627,11 @@ public class KuwaibaService {
      * the second is the number of the slot (optional) and the third is the port (optional). Note that to address a logical connection, the 
      * resource definition will contain only the name of such connection.
      * @param sessionId Session token
-     * @return The list of affected services
+     * @return A compact summary with the full information about the device/interface provided, the related services and their customers
      * @throws ServerSideException If the resource could not be found or if the resource definition/resource type is not valid
      */
     @WebMethod(operationName = "getAffectedServices")
-    public List<RemoteObjectLight> getAffectedServices(@WebParam(name = "resourceType")int resourceType,
+    public AssetLevelCorrelatedInformation getAffectedServices(@WebParam(name = "resourceType")int resourceType,
             @WebParam(name = "resourceDefinition")String resourceDefinition, 
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
