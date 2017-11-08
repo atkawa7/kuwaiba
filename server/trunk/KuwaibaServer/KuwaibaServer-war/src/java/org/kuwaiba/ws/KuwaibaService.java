@@ -6646,6 +6646,23 @@ public class KuwaibaService {
         }
     }
         //</editor-fold>
+    
+        //<editor-fold desc="Inventory Synchronization" defaultstate="collapsed">
+        /**
+         * Creates a Synchronization Group. A Sync Group is a set of Synchronization Configurations that will be processed by the same
+         * Synchronization Provider
+         * @param name
+         * @param syncProviderId
+         * @param sessionId
+         * @return
+         * @throws ServerSideException 
+         */
+//        @WebMethod(operationName = "createSynchronizationGroup")
+//        public long createSynchronizationGroup(@WebParam(name="name")String name, 
+//                @WebParam(name="syncProviderId")String syncProviderId, 
+//                @WebParam(name="sessionId")String sessionId) throws ServerSideException {
+//        }
+        //</editor-fold>
     // </editor-fold>
         
     // <editor-fold defaultstate="collapsed" desc="Helpers. Click on the + sign on the left to edit the code.">/**

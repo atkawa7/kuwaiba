@@ -64,7 +64,7 @@ public class PersistenceService {
         if (state == EXECUTION_STATE.RUNNING)
             throw new IllegalStateException("Persistence Service can not be started because is already running");
         
-        if (System.getSecurityManager() == null && Boolean.valueOf(configuration.getProperty("enableSecurityManager", "false")))
+        if (System.getSecurityManager() == null && (boolean)configuration.get("enableSecurityManager"))
             System.setSecurityManager(new SecurityManager());
         try {
             System.out.println(String.format("[KUWAIBA] [%s] Starting Persistence Service version %s", Calendar.getInstance().getTime(), Constants.PERSISTENCE_SERVICE_VERSION));
@@ -82,9 +82,10 @@ public class PersistenceService {
             bem = plf.createBusinessEntityManager(connectionManager, aem, mem);
             
             Properties applicationConfiguration = new Properties();
-            applicationConfiguration.put("backgroundsPath", configuration.getProperty("backgroundsPath"));
-            applicationConfiguration.put("corporateLogo", configuration.getProperty("corporateLogo"));
-            applicationConfiguration.put("enforceBusinessRules", configuration.getProperty("enforceBusinessRules"));
+            applicationConfiguration.put("backgroundsPath", configuration.get("backgroundsPath"));
+            applicationConfiguration.put("corporateLogo", configuration.get("corporateLogo"));
+            applicationConfiguration.put("enforceBusinessRules", configuration.get("enforceBusinessRules"));
+            applicationConfiguration.put("maxRoutes", configuration.get("maxRoutes"));
             aem.setConfiguration(applicationConfiguration);
             
             dataModelLoader = new DataModelLoader(connectionManager, mem);

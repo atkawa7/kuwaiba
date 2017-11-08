@@ -1591,7 +1591,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         List<RemoteBusinessObjectLightList> paths = new ArrayList<>();
         String cypherQuery = String.format("MATCH path = a-[r:%s*1..10{name:\"%s\"}]-b " +
                             "WHERE id(a) = %s AND id(b) = %s AND all(x in nodes(path) where 1 = size (filter(y in nodes(path) where x = y))) " +
-                            "RETURN nodes(path) as path LIMIT 10", RelTypes.RELATED_TO_SPECIAL, relationshipName, objectAId, objectBId);
+                            "RETURN nodes(path) as path ORDER BY length(path) ASC LIMIT %s", RelTypes.RELATED_TO_SPECIAL, relationshipName, objectAId, objectBId, 
+                                                                    aem.getConfiguration().get("maxRoutes")); //NOI18N
                                 
         try (Transaction tx = graphDb.beginTx()){
            

@@ -31,24 +31,59 @@ import org.kuwaiba.apis.persistence.PersistenceService;
 @Singleton
 @Startup
 public class StartupBean {
-
+    
     @PostConstruct
     public void init() {
         try {
             PersistenceService persistenceService = PersistenceService.getInstance();
             Context context = new InitialContext();
             Properties persistenceServiceProperties = new Properties();
-            persistenceServiceProperties.setProperty("dbPath", (String)context.lookup("java:comp/env/dbPath")); //NOI18N
-            persistenceServiceProperties.setProperty("backgroundsPath", (String)context.lookup("java:comp/env/backgroundsPath")); //NOI18N
-            persistenceServiceProperties.setProperty("corporateLogo", (String)context.lookup("java:comp/env/corporateLogo")); //NOI18N
-            persistenceServiceProperties.setProperty("enforceBusinessRules", (String)context.lookup("java:comp/env/enforceBusinessRules")); //NOI18N
+            try {
+                persistenceServiceProperties.put("dbPath", (String)context.lookup("java:comp/env/dbPath")); //NOI18N
+            }catch (NamingException ne) {
+                persistenceServiceProperties.put("dbPath","/data/db/kuwaiba.db"); //NOI18N
+                System.out.println("[KUWAIBA] Error reading the dbPath configuration variable. Using the default value instead: " + ne.getMessage());
+            }
+            
+            try {
+                persistenceServiceProperties.put("backgroundsPath", (String)context.lookup("java:comp/env/backgroundsPath")); //NOI18N
+            }catch (NamingException ne) {
+                persistenceServiceProperties.put("backgroundsPath", "/data/img/backgrounds"); //NOI18N
+                System.out.println("[KUWAIBA] Error reading the backgroundsPath configuration variable. Using the default value instead: " + ne.getMessage());
+            }
+            
+            try {
+                persistenceServiceProperties.put("corporateLogo", (String)context.lookup("java:comp/env/corporateLogo")); //NOI18N
+            }catch (NamingException ne) {
+                persistenceServiceProperties.put("corporateLogo", "http://neotropic.co/img/logo_blue.png"); //NOI18N
+                System.out.println("[KUWAIBA] Error reading the corporateLogo configuration variable. Using the default value instead: " + ne.getMessage());
+            }
+            
+            try {
+                persistenceServiceProperties.put("enforceBusinessRules", context.lookup("java:comp/env/enforceBusinessRules")); //NOI18N
+            }catch (NamingException ne) {
+                persistenceServiceProperties.put("enforceBusinessRules", false); //NOI18N
+                System.out.println("[KUWAIBA] Error reading the enforceBusinessRules configuration variable. Using the default value instead: " + ne.getMessage());
+            }
+            
+            try {
+                persistenceServiceProperties.put("maxRoutes", context.lookup("java:comp/env/maxRoutes")); //NOI18N
+            }catch (NamingException ne) {
+                persistenceServiceProperties.put("maxRoutes", 10); //NOI18N
+                System.out.println("[KUWAIBA] Error reading the maxRoutes configuration variable. Using the default value instead: " + ne.getMessage());
+            }
+            
+            try {
+                persistenceServiceProperties.put("enableSecurityManager", context.lookup("java:comp/env/enableSecurityManager")); //NOI18N
+            }catch (NamingException ne) {
+                persistenceServiceProperties.put("enableSecurityManager", false); //NOI18N
+                System.out.println("[KUWAIBA] Error reading the enableSecurityManager configuration variable. Using the default value instead: " + ne.getMessage());
+            }
+            
             persistenceService.setConfiguration(persistenceServiceProperties);
             persistenceService.start();
-        }catch (IllegalStateException ise) {
-            System.out.println("[KUWAIBA] Error initializing Persistence Service: " + ise.getMessage());
-        }catch (NamingException ne) {
-            System.out.println("[KUWAIBA] Error reading Persistence Service configuration variables: " + ne.getMessage());
+        } catch (IllegalStateException | NamingException ex) {
+            System.out.println("[KUWAIBA] Error initializing Persistence Service: " + ex.getMessage());
         }
     }
-
 }

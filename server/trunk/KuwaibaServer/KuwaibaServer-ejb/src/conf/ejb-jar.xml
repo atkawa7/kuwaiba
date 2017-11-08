@@ -57,13 +57,19 @@
         <env-entry>
            <description>Check defined business rules before performing any action</description>
            <env-entry-name>enforceBusinessRules</env-entry-name>
-           <env-entry-type>java.lang.String</env-entry-type>
-           <env-entry-value>true</env-entry-value>
+           <env-entry-type>java.lang.Boolean</env-entry-type>
+           <env-entry-value>false</env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Max number of routes to be return by the findRoutesThroughSpecialRelationships method</description>
+           <env-entry-name>maxRoutes</env-entry-name>
+           <env-entry-type>java.lang.Integer</env-entry-type>
+           <env-entry-value>20</env-entry-value>
         </env-entry>
         <env-entry>
            <description>Enable the default security manager</description>
            <env-entry-name>enableSecurityManager</env-entry-name>
-           <env-entry-type>java.lang.String</env-entry-type>
+           <env-entry-type>java.lang.Boolean</env-entry-type>
            <env-entry-value>false</env-entry-value>
         </env-entry>
      </session>
