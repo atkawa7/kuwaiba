@@ -105,7 +105,7 @@ allChildren_.each { child ->
         return;
     
     associatedServices.each { associatedSrv ->   
-        def theParent = aem.getNameOfSpecialParentByScaleUp(associatedSrv.getClassName(), associatedSrv.getId(), 2);
+        def theParent = bem.getFirstParentOfClass(associatedSrv.getClassName(), associatedSrv.getId(), "GenericCustomer");;
 
         if (theParent == null)
             return;
@@ -114,7 +114,7 @@ allChildren_.each { child ->
             [
             new HTMLColumn(associatedSrv.getName() == null ? "<Not Set>" : associatedSrv.getName()),
             new HTMLColumn(associatedSrv.getClassName() == null ? "<Not Set>" : associatedSrv.getClassName()),
-            new HTMLColumn(theParent),
+            new HTMLColumn(theParent.getName()),
             new HTMLColumn(child.getName() == null ? "<No set>" : child.getName() + " [" + child.getClassName() + "]"),
             ] as HTMLColumn[]));
         
