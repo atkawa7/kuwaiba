@@ -16,13 +16,10 @@
  */
 package org.inventory.core.templates;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.util.Constants;
-import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.templates.nodes.TemplatesModuleClassNode;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;

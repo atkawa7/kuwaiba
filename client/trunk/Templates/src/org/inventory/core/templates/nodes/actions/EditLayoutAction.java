@@ -27,7 +27,7 @@ import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.templates.nodes.TemplateElementNode;
-import org.inventory.design.deviceLayout.ModelLayoutTopComponent;
+import org.inventory.layout.DeviceLayoutTopComponent;
 import org.openide.util.Utilities;
 import org.openide.windows.WindowManager;
 
@@ -90,10 +90,10 @@ public class EditLayoutAction extends GenericInventoryAction {
             return;
         }
         
-        ModelLayoutTopComponent topComponent = (ModelLayoutTopComponent) WindowManager.getDefault().findTopComponent(ModelLayoutTopComponent.ID + loli.getId());
+        DeviceLayoutTopComponent topComponent = (DeviceLayoutTopComponent) WindowManager.getDefault().findTopComponent(DeviceLayoutTopComponent.ID + loli.getId());
         
         if (topComponent == null) {
-            topComponent = new ModelLayoutTopComponent(loli);
+            topComponent = new DeviceLayoutTopComponent(loli);
             topComponent.open();
         } else {
             if (topComponent.isOpened())

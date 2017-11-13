@@ -151,4 +151,4 @@
 * Added patch to create the EquipmentModel class and add the attribute model with type EquipmentModel to GenericCommunicationElement class
 * Added a manager for layouts related to equipment models
 * Added patch to create the GenericApplicationListType class and the PredefinedShape class to manage predefined shapes
-* Updated the Binary data type to manage the predefined shape icon, this data types is will remain hidden for this release
+* Updated the Binary data type to manage the custom shape icon, this data types is will remain hidden for this release

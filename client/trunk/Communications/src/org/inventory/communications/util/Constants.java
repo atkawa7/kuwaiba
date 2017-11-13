@@ -132,11 +132,15 @@ public class Constants {
     /**
      * Root class of all communications equipment (GenericDataLinkLayerElement, GenericNetworkElement, etc)
      */
-    public static final String CLASS_GENERICCOMMUNICATIONSELEMENT = "GenericCommunicationsElement";
+    public static final String CLASS_GENERICCOMMUNICATIONSELEMENT = "GenericCommunicationsElement";    
     /**
      * Class EquipmentModel
      */
     public static final String CLASS_EQUIPMENTMODEL = "EquipmentModel";
+    /**
+     * Root class of all application list type (PredefinedShape)
+     */
+    public static final String CLASS_GENERICAPPLICATIONLISTTYPE = "GenericApplicationListType";
     /**
      * Class PredefinedShape
      */

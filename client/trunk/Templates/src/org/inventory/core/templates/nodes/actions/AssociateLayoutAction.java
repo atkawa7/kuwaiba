@@ -20,11 +20,12 @@ import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.templates.nodes.TemplateElementNode;
-import org.inventory.design.deviceLayout.ModelLayoutTopComponent;
+import org.inventory.layout.DeviceLayoutTopComponent;
 import org.openide.util.Utilities;
 import org.openide.windows.WindowManager;
 
@@ -61,7 +62,7 @@ public class AssociateLayoutAction extends GenericInventoryAction {
             if (attributeValue instanceof LocalObjectListItem) {                
                 LocalObjectListItem listItem = (LocalObjectListItem) attributeValue;
                 
-                if ("EquipmentModel".equals(listItem.getClassName())) { //NOI18N
+                if (Constants.CLASS_EQUIPMENTMODEL.equals(listItem.getClassName())) {
                     loli = listItem;
                     break;
                 }
@@ -73,10 +74,10 @@ public class AssociateLayoutAction extends GenericInventoryAction {
             return;
         }
         
-        ModelLayoutTopComponent topComponent = (ModelLayoutTopComponent) WindowManager.getDefault().findTopComponent(ModelLayoutTopComponent.ID + loli.getId());
+        DeviceLayoutTopComponent topComponent = (DeviceLayoutTopComponent) WindowManager.getDefault().findTopComponent(DeviceLayoutTopComponent.ID + loli.getId());
         
         if (topComponent == null) {
-            topComponent = new ModelLayoutTopComponent(loli);
+            topComponent = new DeviceLayoutTopComponent(loli);
             topComponent.open();
         } else {
             if (topComponent.isOpened())
