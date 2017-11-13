@@ -362,33 +362,7 @@ public class Util {
             listAttributes.add(createAttributeMetadataFromNode(rel.getEndNode()));
         
         myClass.setAttributes(listAttributes);
-
-        //Possible Children
-        for (Relationship rel : classNode.getRelationships(Direction.OUTGOING, RelTypes.POSSIBLE_CHILD)) {
-            if((Boolean)rel.getEndNode().getProperty(Constants.PROPERTY_ABSTRACT)){
-                Iterable<Node> allSubclasses = Util.getAllSubclasses(rel.getEndNode());
-                for (Node childNode : allSubclasses) {
-                    if(!(Boolean)childNode.getProperty(Constants.PROPERTY_ABSTRACT)){
-                        myClass.getPossibleChildren().add((String)childNode.getProperty(Constants.PROPERTY_NAME));
-                    }
-                }//end for
-            }//end if
-            else {
-                myClass.getPossibleChildren().add((String)rel.getEndNode().getProperty(Constants.PROPERTY_NAME));
-            }
-        }
-        // Possible Special Children
-        for (Relationship relationship : classNode.getRelationships(Direction.OUTGOING, RelTypes.POSSIBLE_SPECIAL_CHILD)) {
-            if ((Boolean) relationship.getEndNode().getProperty(Constants.PROPERTY_ABSTRACT)) {
-                Iterable<Node> allSubClasses = Util.getAllSubclasses(relationship.getEndNode());
-                for (Node childNode : allSubClasses) {
-                    if (!(Boolean) childNode.getProperty(Constants.PROPERTY_ABSTRACT))
-                        myClass.getPossibleSpecialChildren().add((String) childNode.getProperty(Constants.PROPERTY_NAME));
-                }
-            } else {
-                myClass.getPossibleSpecialChildren().add((String) relationship.getEndNode().getProperty(Constants.PROPERTY_NAME));
-            }
-        }
+                
         return myClass;
     }
 

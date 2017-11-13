@@ -116,23 +116,23 @@ public class CacheManager {
         classIndex.remove(className);
     }
 
-    /**
-     * Adds an entry to the possible children index
-     * @param parent
-     * @param children
-     */
-    public void putPossibleChildren(String parent, List<String>children){
-        possibleChildrenIndex.put(parent, children);
-    }
-    
-    /**
-     * Adds an entry to the possible special children index
-     * @param parent The parent class
-     * @param children the list of possible special children classes
-     */
-    public void putPossibleSpecialChildren(String parent, List<String>children){
-        possibleSpecialChildrenIndex.put(parent, children);
-    }
+//    /**
+//     * Adds an entry to the possible children index
+//     * @param parent
+//     * @param children
+//     */
+//    public void putPossibleChildren(String parent, List<String>children){
+//        possibleChildrenIndex.put(parent, children);
+//    }
+//    
+//    /**
+//     * Adds an entry to the possible special children index
+//     * @param parent The parent class
+//     * @param children the list of possible special children classes
+//     */
+//    public void putPossibleSpecialChildren(String parent, List<String>children){
+//        possibleSpecialChildrenIndex.put(parent, children);
+//    }
 
     public void putSubClassNoRecursive(String parent, ClassMetadataLight newSubClass){
         List<ClassMetadataLight> children = subClassesNoRecursiveIndex.get(parent);
@@ -222,19 +222,19 @@ public class CacheManager {
         if (myList != null)
             myList.add(child);
     }
-
-    public void removePossibleChild(String parent, String child){
-        List<String> myList = possibleChildrenIndex.get(parent);
-        if (myList != null)
-            myList.remove(child);
-    }
-            
-    public void removePossibleSpecialChild(String parent, String child){
-        List<String> myList = possibleSpecialChildrenIndex.get(parent);
-        if (myList != null)
-            myList.remove(child);
-    }
-    
+//
+//    public void removePossibleChild(String parent, String child){
+//        List<String> myList = possibleChildrenIndex.get(parent);
+//        if (myList != null)
+//            myList.remove(child);
+//    }
+//            
+//    public void removePossibleSpecialChild(String parent, String child){
+//        List<String> myList = possibleSpecialChildrenIndex.get(parent);
+//        if (myList != null)
+//            myList.remove(child);
+//    }
+//    
     public List<String> getPossibleChildren(String parent){
         if (parent == null)
             return possibleChildrenIndex.get(Constants.NODE_DUMMYROOT);
