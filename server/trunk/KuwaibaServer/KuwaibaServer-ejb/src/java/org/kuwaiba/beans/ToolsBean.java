@@ -750,6 +750,21 @@ public class ToolsBean implements ToolsBeanRemote {
                 break;
                 case "8":
                 {
+                    try {
+                        ClassMetadata customShapeClassMetadata = mem.getClass("PredefinedShape"); //NOI18N
+                        
+                        ClassMetadata customShape = new ClassMetadata();
+                        customShape.setId(customShapeClassMetadata.getId());
+                        customShape.setName("CustomShape"); //NOI18N
+                        mem.setClassProperties(customShape);
+                        
+                        aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
+                            ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT,
+                            "Changed the PredefinedShape class name to CustomShape");
+                        break;
+                    } catch (MetadataObjectNotFoundException | ApplicationObjectNotFoundException 
+                        | InvalidArgumentException | ObjectNotFoundException ex) {}
+                    
                     String equipmentModelClassName = "EquipmentModel"; //NOI18N
                     ClassMetadata equipmentTypeClass;
                     
@@ -849,7 +864,7 @@ public class ToolsBean implements ToolsBeanRemote {
                                 return results;
                             }
                         }
-                    }                    
+                    }                                        
                     ClassMetadata classMetadata = new ClassMetadata();
                     classMetadata.setDisplayName("");
                     classMetadata.setDescription("");
@@ -883,20 +898,20 @@ public class ToolsBean implements ToolsBeanRemote {
                     } catch (DatabaseException | MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
                         results[i] += " * " + ex.getMessage();
                     }
-                    
+                                        
                     try {
-                        mem.getClass("PredefinedShape");
+                        mem.getClass("CustomShape"); //NOI18N
                         break;
                     } catch (MetadataObjectNotFoundException ex) {}
                     
                     if (genericApplicationListTypeId != -1) {
-                        long predefinedShapeId = -1;
+                        long customShapeId = -1;
                         try {
-                            classMetadata.setName("PredefinedShape"); //NOI18N
+                            classMetadata.setName("CustomShape"); //NOI18N
                             classMetadata.setParentClassName("GenericApplicationListType"); //NOI18N
                             classMetadata.setAbstract(false);
                             
-                            predefinedShapeId = mem.createClass(classMetadata);
+                            customShapeId = mem.createClass(classMetadata);
                             
                             aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
                                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT, 
@@ -905,7 +920,7 @@ public class ToolsBean implements ToolsBeanRemote {
                         } catch (DatabaseException | MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
                             results[i] += " * " + ex.getMessage();
                         }
-                        if (predefinedShapeId != -1) {
+                        if (customShapeId != -1) {
                             try {
                                 AttributeMetadata attributeMetadata = new AttributeMetadata();
                                 attributeMetadata.setDescription("");
@@ -917,11 +932,11 @@ public class ToolsBean implements ToolsBeanRemote {
                                 attributeMetadata.setName("icon"); //NOI18N
                                 attributeMetadata.setDisplayName("icon"); 
                                 attributeMetadata.setType("Binary"); //NOI18N
-                                mem.createAttribute(predefinedShapeId, attributeMetadata);
+                                mem.createAttribute(customShapeId, attributeMetadata);
                                 
                                 aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
                                     ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT,
-                                    String.format("Added attributes to class %s", "PredefinedShape"));
+                                    String.format("Added attributes to class %s", "CustomShape"));
                             } catch (MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
                                 results[i] += " * " + ex.getMessage();
                             }
