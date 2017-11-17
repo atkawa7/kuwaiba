@@ -33,11 +33,11 @@ import org.openide.windows.WindowManager;
  * Displays the custom shapes.
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public final class PredefinedShapesTopComponent extends TopComponent implements ExplorerManager.Provider {
+public final class CustomShapesTopComponent extends TopComponent implements ExplorerManager.Provider {
     private final ExplorerManager em = new ExplorerManager();
     private final BeanTreeView beanTreeView = new BeanTreeView();
 
-    public PredefinedShapesTopComponent() {
+    public CustomShapesTopComponent() {
         initComponents();
         initCustomComponents();
         setName(I18N.gm("top_component_name_predefined_shapes"));
@@ -55,7 +55,7 @@ public final class PredefinedShapesTopComponent extends TopComponent implements 
     
     @Override
     protected String preferredID() {
-        return "PredefinedShapesTopComponent"; //NOI18N
+        return "CustomShapesTopComponent"; //NOI18N
     }
     
     @Override

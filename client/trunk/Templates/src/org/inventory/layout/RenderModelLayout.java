@@ -98,7 +98,7 @@ public class RenderModelLayout {
         
         if(CommunicationsStub.getInstance().getMetaForClass(Constants.CLASS_CUSTOMSHAPE, true) == null) {
             JOptionPane.showMessageDialog(null, 
-                "This database seems outdated. Contact your administrator to apply the necessary patches to add the PredefinedShape class", 
+                "This database seems outdated. Contact your administrator to apply the necessary patches to add the CustomShape class", 
                 I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
             return null;            
         }

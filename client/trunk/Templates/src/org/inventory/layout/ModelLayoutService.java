@@ -38,7 +38,7 @@ import org.inventory.core.services.i18n.I18N;
 import org.inventory.layout.model.CircleShape;
 import org.inventory.layout.model.LabelShape;
 import org.inventory.layout.model.PolygonShape;
-import org.inventory.layout.model.PredefinedShape;
+import org.inventory.layout.model.CustomShape;
 import org.inventory.layout.model.RectangleShape;
 import org.inventory.layout.nodes.CategoryChildren;
 import org.inventory.layout.model.Shape;
@@ -116,9 +116,9 @@ public class ModelLayoutService {
             
             Image icon = Utils.getIconFromByteArray(binaryIcon.getByteArray(), Color.BLACK, 30, 30);
             
-            PredefinedShape predefinedShape = new PredefinedShape(item, icon);
-            predefinedShape.setName(item.getDisplayName() != null ? item.getDisplayName() : item.getName());
-            items.add(predefinedShape);
+            CustomShape customShape = new CustomShape(item, icon);
+            customShape.setName(item.getDisplayName() != null ? item.getDisplayName() : item.getName());
+            items.add(customShape);
         }
         return items.toArray(new Shape[0]);
     }

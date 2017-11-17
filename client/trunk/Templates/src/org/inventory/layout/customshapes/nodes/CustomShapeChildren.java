@@ -37,20 +37,20 @@ public class CustomShapeChildren extends AbstractChildren {
        setKeys(Collections.EMPTY_LIST);
     }
     
-    public CustomShapeChildren(List<LocalObjectLight> predefinedShapes) {
-        setKeys(predefinedShapes);
+    public CustomShapeChildren(List<LocalObjectLight> customShapes) {
+        setKeys(customShapes);
     }
 
     @Override
     public void addNotify() {
-        List<LocalObjectListItem> predefinedShapes = CommunicationsStub.getInstance().getList(Constants.CLASS_CUSTOMSHAPE, false, true);
-        if (predefinedShapes == null) {
+        List<LocalObjectListItem> customShapes = CommunicationsStub.getInstance().getList(Constants.CLASS_CUSTOMSHAPE, false, true);
+        if (customShapes == null) {
             setKeys(Collections.EMPTY_LIST);
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, 
                 CommunicationsStub.getInstance().getError());
         } else {
-            Collections.sort(predefinedShapes);
-            setKeys(predefinedShapes);
+            Collections.sort(customShapes);
+            setKeys(customShapes);
         }
     }
 

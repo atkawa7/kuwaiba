@@ -27,7 +27,7 @@ import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.layout.scene.ModelLayoutScene;
-import org.inventory.layout.customshapes.PredefinedShapesTopComponent;
+import org.inventory.layout.customshapes.CustomShapesTopComponent;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -222,9 +222,9 @@ public final class DeviceLayoutTopComponent extends TopComponent implements Acti
     }//GEN-LAST:event_btnShowPaletteActionPerformed
 
     private void btnManagePredefineShapesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnManagePredefineShapesActionPerformed
-            PredefinedShapesTopComponent topComponent = (PredefinedShapesTopComponent) WindowManager.getDefault().findTopComponent("PredefinedShapesTopComponent"); //NOI18N
+            CustomShapesTopComponent topComponent = (CustomShapesTopComponent) WindowManager.getDefault().findTopComponent("CustomShapesTopComponent"); //NOI18N
             if (topComponent == null) {
-                topComponent = new PredefinedShapesTopComponent();
+                topComponent = new CustomShapesTopComponent();
                 topComponent.open();
             } else {
                 if (topComponent.isOpened())

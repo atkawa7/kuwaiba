@@ -58,8 +58,8 @@ public class SetPaletteIconAction extends GenericInventoryAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        final LocalObjectListItem predefinedShape = Utilities.actionsGlobalContext().lookup(LocalObjectListItem.class);
-        if (predefinedShape == null)
+        final LocalObjectListItem customShape = Utilities.actionsGlobalContext().lookup(LocalObjectListItem.class);
+        if (customShape == null)
             return;
         
         JPanel pnlImgBrowser = new JPanel();
@@ -106,10 +106,10 @@ public class SetPaletteIconAction extends GenericInventoryAction {
 
                         String iconAttributeValue = fileName + ";/;" +  fileExtension + ";/;" + byteArrayEncode;
 
-                        LocalObject updatePredefinedShape = new LocalObject(predefinedShape.getClassName(), predefinedShape.getId(), 
+                        LocalObject updateCustomShape = new LocalObject(customShape.getClassName(), customShape.getId(), 
                             new String[] {"icon"}, new Object[] {iconAttributeValue});
 
-                        if (!CommunicationsStub.getInstance().saveObject(updatePredefinedShape)) {
+                        if (!CommunicationsStub.getInstance().saveObject(updateCustomShape)) {
                             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                                 NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                         } else {

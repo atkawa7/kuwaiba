@@ -25,7 +25,7 @@ import org.inventory.core.services.i18n.I18N;
 import org.inventory.layout.model.CircleShape;
 import org.inventory.layout.model.LabelShape;
 import org.inventory.layout.model.PolygonShape;
-import org.inventory.layout.model.PredefinedShape;
+import org.inventory.layout.model.CustomShape;
 import org.inventory.layout.model.RectangleShape;
 import org.inventory.layout.nodes.properties.ShapeGeneralProperty;
 import org.openide.nodes.AbstractNode;
@@ -68,8 +68,8 @@ public class ShapeNode extends AbstractNode implements PropertyChangeListener {
     @Override
     public Image getIcon(int i){
         Image icon = null;
-        if (getShape() instanceof PredefinedShape) {
-            icon = ((PredefinedShape) getShape()).getIcon();
+        if (getShape() instanceof CustomShape) {
+            icon = ((CustomShape) getShape()).getIcon();
             
             if (icon != null)
                 return icon;
@@ -79,7 +79,7 @@ public class ShapeNode extends AbstractNode implements PropertyChangeListener {
                 setIconBaseWithExtension(getShape().getUrlIcon());
                 return super.getIcon(i);
         }
-        return ImageUtilities.loadImage("org/inventory/predefinedshapes/res/list-type-item.png");
+        return ImageUtilities.loadImage("org/inventory/layout/customshapes/res/list-type-item.png");
     }
         
     @Override

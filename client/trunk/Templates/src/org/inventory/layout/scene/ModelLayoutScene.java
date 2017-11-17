@@ -83,9 +83,9 @@ public class ModelLayoutScene extends AbstractScene<Shape, String> implements Sh
     private final LocalObjectListItem listItem;
     private Widget rootWidget;
     
-    private boolean isNewPredefinedShape = false;
-    private Shape newPredefinedShapeParent;
-    private Shape newPredefinedShape;
+    private boolean isNewCustomShape = false;
+    private Shape newCustomShapeParent;
+    private Shape newCustomShape;
             
     public ModelLayoutScene(LocalObjectListItem listItem) {
         this.listItem = listItem;
@@ -100,28 +100,28 @@ public class ModelLayoutScene extends AbstractScene<Shape, String> implements Sh
         initSelectionListener();
     }
     
-    public boolean isNewPredefinedShape() {
-        return isNewPredefinedShape;
+    public boolean isNewCustomShape() {
+        return isNewCustomShape;
     }
     
-    public void setIsNewPredefinedShape(boolean isNewPredefinedShape) {
-        this.isNewPredefinedShape = isNewPredefinedShape;
+    public void setIsNewCustomShape(boolean isNewCustomShape) {
+        this.isNewCustomShape = isNewCustomShape;
     }
     
-    public Shape getNewPredefinedShapeParent() {
-        return newPredefinedShapeParent;
+    public Shape getNewCustomShapeParent() {
+        return newCustomShapeParent;
     }
     
-    public void setNewPredefinedShapeParent(Shape newPredefinedShapeParent) {
-        this.newPredefinedShapeParent = newPredefinedShapeParent;
+    public void setNewCustomShapeParent(Shape newCustomShapeParent) {
+        this.newCustomShapeParent = newCustomShapeParent;
     }
         
-    public Shape getNewPredefinedShape() {
-        return newPredefinedShape;
+    public Shape getNewCustomShape() {
+        return newCustomShape;
     }
     
-    public void setNewPredefinedShape(Shape newPredefinedShape) {
-        this.newPredefinedShape = newPredefinedShape;
+    public void setNewCustomShape(Shape newCustomShape) {
+        this.newCustomShape = newCustomShape;
     }
     
     public LocalObjectListItem getListItem() {
@@ -290,10 +290,10 @@ public class ModelLayoutScene extends AbstractScene<Shape, String> implements Sh
 
     @Override
     public void render(byte[] structure) throws IllegalArgumentException {
-        renderPredefinedShape(structure, null);
+        renderCustomShape(structure, null);
     }
         
-    public void renderPredefinedShape(byte[] structure, Shape parent) {
+    public void renderCustomShape(byte[] structure, Shape parent) {
         if (structure == null)
             return;
         
@@ -446,8 +446,8 @@ public class ModelLayoutScene extends AbstractScene<Shape, String> implements Sh
         if (shape == null)
             return;
         
-        if (isNewPredefinedShape && parent == newPredefinedShapeParent)
-            newPredefinedShape = shape;
+        if (isNewCustomShape && parent == newCustomShapeParent)
+            newCustomShape = shape;
                 
         Widget shapeWidget = addNode(shape);
         

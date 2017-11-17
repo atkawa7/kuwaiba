@@ -34,7 +34,7 @@ import org.inventory.layout.lookup.SharedContentLookup;
 import org.inventory.layout.model.CircleShape;
 import org.inventory.layout.model.LabelShape;
 import org.inventory.layout.model.PolygonShape;
-import org.inventory.layout.model.PredefinedShape;
+import org.inventory.layout.model.CustomShape;
 import org.inventory.layout.model.RectangleShape;
 import org.inventory.layout.model.Shape;
 import org.inventory.layout.scene.ModelLayoutScene;
@@ -108,24 +108,24 @@ public class ModelLayoutAcceptProvider implements AcceptProvider {
                         newShape = new CircleShape();
                     else if (shape instanceof PolygonShape)
                         newShape = new PolygonShape();
-                    else if (shape instanceof PredefinedShape) {
+                    else if (shape instanceof CustomShape) {
                         if (parent == null)
                             return;
                         
-                        RenderModelLayout render = new RenderModelLayout(((PredefinedShape) shape).getObject(), widget.getParentWidget(), -1, -1, -1, -1);
+                        RenderModelLayout render = new RenderModelLayout(((CustomShape) shape).getObject(), widget.getParentWidget(), -1, -1, -1, -1);
                                                 
                         if (render.hasEquipmentModelLayout()) {
-                            scene.setIsNewPredefinedShape(true);
-                            scene.setNewPredefinedShapeParent((Shape) parent);
+                            scene.setIsNewCustomShape(true);
+                            scene.setNewCustomShapeParent((Shape) parent);
                             
-                            scene.renderPredefinedShape(render.getEquipmentModelView().getStructure(), (Shape) parent);
+                            scene.renderCustomShape(render.getEquipmentModelView().getStructure(), (Shape) parent);
                             
-                            if (scene.getNewPredefinedShape() != null) {
-                                newWidget = scene.findWidget(scene.getNewPredefinedShape());
+                            if (scene.getNewCustomShape() != null) {
+                                newWidget = scene.findWidget(scene.getNewCustomShape());
                             }
-                            scene.setIsNewPredefinedShape(false);
-                            scene.setNewPredefinedShapeParent(null);
-                            scene.setNewPredefinedShape(null);
+                            scene.setIsNewCustomShape(false);
+                            scene.setNewCustomShapeParent(null);
+                            scene.setNewCustomShape(null);
                         }
                     }
                     if (newShape != null) {

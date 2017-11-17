@@ -138,13 +138,13 @@ public class Constants {
      */
     public static final String CLASS_EQUIPMENTMODEL = "EquipmentModel";
     /**
-     * Root class of all application list type (PredefinedShape)
+     * Root class of all application list type (CustomShape)
      */
     public static final String CLASS_GENERICAPPLICATIONLISTTYPE = "GenericApplicationListType";
     /**
-     * Class PredefinedShape
+     * Class CustomShape
      */
-    public static final String CLASS_CUSTOMSHAPE = "PredefinedShape";
+    public static final String CLASS_CUSTOMSHAPE = "CustomShape";
     /**
      * Root class of all logical connections
      */
@@ -269,7 +269,7 @@ public class Constants {
      * Possible attributes types
      */
     public static final String [] ATTRIBUTE_TYPES = new String[]{"String", "Integer", "Long", "Float", "Boolean", "Date", "Timestamp", 
-        /*"Binary" //TODO: This attribute type will be supported in a future release. The current use of this attribute type are in the PredefinedShape class*/};
+        /*"Binary" //TODO: This attribute type will be supported in a future release. The current use of this attribute type are in the CustomShape class*/};
     /**
      * Property name
      */

@@ -23,15 +23,15 @@ import org.inventory.communications.core.LocalObjectListItem;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class PredefinedShape extends Shape {
+public class CustomShape extends Shape {
     private Image icon;
     private LocalObjectListItem object;
     
-    public PredefinedShape(LocalObjectListItem object) {
+    public CustomShape(LocalObjectListItem object) {
         this.object = object;
     }
     
-    public PredefinedShape(LocalObjectListItem object, Image icon) {
+    public CustomShape(LocalObjectListItem object, Image icon) {
         this(object);
         this.icon = icon;
     }
@@ -54,13 +54,13 @@ public class PredefinedShape extends Shape {
     
     @Override
     public Shape shapeCopy() {
-        PredefinedShape predefinedShape = new PredefinedShape(getObject(), getIcon());
-        shapeCopy(predefinedShape);
-        return predefinedShape;
+        CustomShape customShape = new CustomShape(getObject(), getIcon());
+        shapeCopy(customShape);
+        return customShape;
     }
 
     @Override
     public String getShapeType() {
-        return "predefinedShape";  //NOI18N
+        return "customShape";  //NOI18N
     }
 }
